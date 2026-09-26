@@ -153,6 +153,105 @@ fun finite_goal_successors ::
   "finite_goal_successors P st (Resolution_Call_Goal q r d p) = finite_call_successors P st q r d p"
 | "finite_goal_successors P st (Resolution_Material_Goal q r M) = finite_material_successors st q r M"
 
+section \<open>The alternatives of a goal\<close>
+
+text \<open>
+  A goal's alternatives are read from R2's unifier alone, the state not substituted (F1 of the addition "The resolver at
+  the given's size" to task 495's entry): at a call goal the interface-and-clause pairs of its site whose interface and
+  head, renamed apart at its position, unify with its pattern; at a material goal the instance pairs of R1's solutions
+  that unify. A goal's successors are the image of its alternatives, so it has none exactly when it has no alternative
+  and one when it has one alternative. The count is a function of the program and the goal alone.
+\<close>
+
+text \<open>
+  An alternative of a call goal is the interface, the clause key and schema of a unifying pair with its unifier; of a
+  material goal, a unifying instance pair with its unifier. The unifier is determined by the pair, so the count is
+  the number of unifying pairs.
+\<close>
+
+definition finite_call_alternative_set where
+  "finite_call_alternative_set P q d p = ffUnion (fimage (\<lambda>(e,i). if e\<noteq>d then {||} else
+      ffUnion (fimage (\<lambda>((e',c),S). if e'\<noteq>d then {||} else
+        (case finite_unify_pairs [(finite_rename_apart (q,False) i,p),
+            (finite_rename_apart (q,True) (finite_schema_conclusion S),p)] of
+          None \<Rightarrow> {||}
+        | Some u \<Rightarrow> {|(i,c,S,u)|}))
+        (finite_system_clauses P)))
+    (finite_system_interfaces P))"
+
+definition finite_call_alternative_state where
+  "finite_call_alternative_state st q r d p z = (case z of (i,c,S,u) \<Rightarrow>
+    resolution_state_substitute (finite_binding_substitution u)
+      (Resolution_State (finite_clause_goals q d c S |\<union>| (resolution_pending st |-| {|Resolution_Call_Goal q r d p|}))
+        (finsert (finite_clause_node q d c S) (resolution_nodes st)) (resolution_witnesses st)))"
+
+lemma fimage_distributes:
+  "fimage f (ffUnion (fimage g A)) = ffUnion (fimage (\<lambda>a. fimage f (g a)) A)"
+  "fimage f (case x of None \<Rightarrow> B | Some y \<Rightarrow> C y) = (case x of None \<Rightarrow> fimage f B | Some y \<Rightarrow> fimage f (C y))"
+  "fimage f (case z of (a,b) \<Rightarrow> D a b) = (case z of (a,b) \<Rightarrow> fimage f (D a b))"
+  "fimage f (if b then B else B') = (if b then fimage f B else fimage f B')"
+  by (auto simp: fset_eq_iff ffUnion.rep_eq fimage.rep_eq split: option.split prod.split)
+
+lemma finite_call_successors_alternatives:
+  "finite_call_successors P st q r d p =
+    fimage (finite_call_alternative_state st q r d p) (finite_call_alternative_set P q d p)"
+  unfolding finite_call_successors_def finite_call_alternative_set_def
+  by (simp add: fimage_distributes finite_call_alternative_state_def split_def cong: if_cong option.case_cong)
+
+definition finite_material_alternative_set where
+  "finite_material_alternative_set M = (case finite_material_resolution M of
+      Material_Waits \<Rightarrow> {||}
+    | Material_Solutions Ws \<Rightarrow> ffUnion (fimage (\<lambda>W. ffUnion (fimage (\<lambda>E.
+        case finite_unify_pairs E of None \<Rightarrow> {||} | Some u \<Rightarrow> {|(E,u)|})
+      (finite_material_instance_pairs W M))) Ws))"
+
+definition finite_material_alternative_state where
+  "finite_material_alternative_state st q r M z = (case z of (E,u) \<Rightarrow> resolution_state_substitute
+    (finite_binding_substitution u)
+    (Resolution_State (resolution_pending st |-| {|Resolution_Material_Goal q r M|})
+      (resolution_nodes st) (resolution_witnesses st)))"
+
+lemma finite_material_successors_alternatives:
+  "finite_material_successors st q r M =
+    fimage (finite_material_alternative_state st q r M) (finite_material_alternative_set M)"
+  unfolding finite_material_successors_def finite_material_alternative_set_def
+  by (simp add: fimage_distributes finite_material_alternative_state_def cong: option.case_cong
+    split: finite_material_outcome.split)
+
+fun finite_goal_alternatives ::
+    "('a,'s,'d,'c) finite_schema_system \<Rightarrow> ('a,'s,'d,'c) resolution_goal \<Rightarrow> nat" where
+  "finite_goal_alternatives P (Resolution_Call_Goal q r d p) = fcard (finite_call_alternative_set P q d p)"
+| "finite_goal_alternatives P (Resolution_Material_Goal q r M) = fcard (finite_material_alternative_set M)"
+
+lemma fcard_one_singleton:
+  assumes "fcard A = 1"
+  obtains a where "A = {|a|}"
+proof -
+  have "card (fset A) = 1" using assms by (simp add: fcard.rep_eq)
+  then obtain a where "fset A = {a}" by (rule card_1_singletonE)
+  then have "A = {|a|}" by (simp add: fset_eq_iff)
+  then show thesis by (rule that)
+qed
+
+lemma finite_goal_alternatives_none:
+  "finite_goal_alternatives P g = 0 \<longleftrightarrow> finite_goal_successors P st g = {||}"
+  by (cases g) (simp_all add: finite_call_successors_alternatives finite_material_successors_alternatives)
+
+lemma finite_goal_alternatives_one:
+  assumes "finite_goal_alternatives P g = 1"
+  shows "\<exists>s. finite_goal_successors P st g = {|s|}"
+proof (cases g)
+  case (Resolution_Call_Goal q r d p)
+  have "fcard (finite_call_alternative_set P q d p) = 1" using assms Resolution_Call_Goal by simp
+  then obtain a where "finite_call_alternative_set P q d p = {|a|}" by (rule fcard_one_singleton)
+  then show ?thesis by (simp add: Resolution_Call_Goal finite_call_successors_alternatives)
+next
+  case (Resolution_Material_Goal q r M)
+  have "fcard (finite_material_alternative_set M) = 1" using assms Resolution_Material_Goal by simp
+  then obtain a where "finite_material_alternative_set M = {|a|}" by (rule fcard_one_singleton)
+  then show ?thesis by (simp add: Resolution_Material_Goal finite_material_successors_alternatives)
+qed
+
 section \<open>The witness construction\<close>
 
 text \<open>
@@ -243,12 +342,15 @@ definition finite_construction_step ::
 section \<open>Selection\<close>
 
 text \<open>
-  Selection reads a goal's groundness and where its variables occur: a ground goal first; then a call
-  goal whose free variables occur in no other pending goal; then a material goal R1 can solve; then a
-  call goal with a ground part. Within the first nonempty class the goal at the least position is
-  taken: positions are socket paths, and the order of sockets orders which goal is worked first, never
-  which alternative is kept. A goal holding a free registered variable is not selected; a registered
-  variable ready for its construction is constructed before any goal.
+  A registered variable ready for its construction is constructed before any goal, and a goal holding a
+  free registered variable is not selected. Among the other pending goals that are calls or material goals
+  R1 can solve (the candidates), selection takes in order (F1 of the addition "The resolver at the given's
+  size" to task 495's entry): a goal with no alternative, which ends its branch at once; a goal a priority
+  names; a goal with one alternative; then R3's classes, reading a goal's groundness and where its variables
+  occur — a ground goal, a call goal whose free variables occur in no other pending goal, a material goal R1
+  can solve, a call goal with a ground part. Within the first nonempty class the goal at the least position
+  is taken: positions are socket paths, and the order of sockets orders which goal is worked first, never
+  which alternative is kept. R3's default is the selection at the empty priority.
 \<close>
 
 fun finite_position_less :: "'s::linorder list \<Rightarrow> 's list \<Rightarrow> bool" where
@@ -299,23 +401,80 @@ definition finite_goal_selection ::
       c4 = ffilter finite_leaf_call_goal A in
     finite_first_goals (if c1\<noteq>{||} then c1 else if c2\<noteq>{||} then c2 else if c3\<noteq>{||} then c3 else c4))"
 
+fun finite_candidate_goal :: "('a,'s,'d,'c) resolution_goal \<Rightarrow> bool" where
+  "finite_candidate_goal (Resolution_Call_Goal q r d p) = True"
+| "finite_candidate_goal (Resolution_Material_Goal q r M) = (finite_material_resolution M \<noteq> Material_Waits)"
+
+lemma finite_goal_selection_candidate:
+  "g |\<in>| finite_goal_selection G A \<Longrightarrow> g |\<in>| A \<and> finite_candidate_goal g"
+  unfolding finite_goal_selection_def Let_def finite_first_goals_def
+  by (cases g) (auto simp: finite_independent_goal_def split: if_splits)
+
+text \<open>
+  The choice among the unheld pending goals A of the pending goals G at a priority: the alternatives of each candidate
+  are counted once, and each class is formed only when the classes before it are empty.
+\<close>
+
+definition finite_goal_choice ::
+    "(('a,'s,'d,'c) resolution_state \<Rightarrow> ('a,'s,'d,'c) resolution_goal \<Rightarrow> bool) \<Rightarrow>
+      ('a,'s::linorder,'d,'c) finite_schema_system \<Rightarrow> ('a,'s,'d,'c) resolution_state \<Rightarrow>
+      ('a,'s,'d,'c) resolution_goal fset \<Rightarrow> ('a,'s,'d,'c) resolution_goal fset \<Rightarrow> ('a,'s,'d,'c) resolution_goal fset" where
+  "finite_goal_choice pr P st G A = (let C = ffilter finite_candidate_goal A;
+      K = fimage (\<lambda>g. (finite_goal_alternatives P g,g)) C; c0 = fimage snd (ffilter (\<lambda>z. fst z = 0) K) in
+    if c0 \<noteq> {||} then finite_first_goals c0
+    else let cp = ffilter (pr st) C in if cp \<noteq> {||} then finite_first_goals cp
+    else let c1 = fimage snd (ffilter (\<lambda>z. fst z = 1) K) in if c1 \<noteq> {||} then finite_first_goals c1
+    else finite_goal_selection G A)"
+
+lemma finite_goal_choice_candidate:
+  "g |\<in>| finite_goal_choice pr P st G A \<Longrightarrow> g |\<in>| A \<and> finite_candidate_goal g"
+  unfolding finite_goal_choice_def Let_def
+  using finite_goal_selection_candidate[of g G A]
+  by (auto simp: finite_first_goals_def fimage.rep_eq ffilter.rep_eq split: if_splits)
+
 datatype ('a,'s,'d,'c) resolution_selection =
     Select_Construction "('a,'s,'d,'c) resolution_node fset"
   | Select_Goals "('a,'s,'d,'c) resolution_goal fset"
   | Select_None
 
-definition finite_plain_selection ::
-    "('a,'s::linorder,'d,'c) resolution_goal fset \<Rightarrow> ('a,'s,'d,'c) resolution_selection" where
-  "finite_plain_selection G = (let S = finite_goal_selection G G in if S={||} then Select_None else Select_Goals S)"
-
-definition finite_resolution_select ::
-    "('a,'s::linorder,'d,'c) finite_witness_construction \<Rightarrow> ('a,'s,'d,'c) finite_schema_system \<Rightarrow>
+definition finite_resolution_select_at ::
+    "(('a,'s,'d,'c) resolution_state \<Rightarrow> ('a,'s,'d,'c) resolution_goal \<Rightarrow> bool) \<Rightarrow>
+      ('a,'s::linorder,'d,'c) finite_witness_construction \<Rightarrow> ('a,'s,'d,'c) finite_schema_system \<Rightarrow>
       ('a,'s,'d,'c) resolution_state \<Rightarrow> ('a,'s,'d,'c) resolution_selection" where
-  "finite_resolution_select \<kappa> P st = (let G = resolution_pending st;
+  "finite_resolution_select_at pr \<kappa> P st = (let G = resolution_pending st;
       N = ffilter (\<lambda>nd. finite_constructed \<kappa> P G nd\<noteq>{||}) (resolution_nodes st) in
     if N\<noteq>{||} then Select_Construction (finite_first_nodes N)
-    else let S = finite_goal_selection G (ffilter (\<lambda>g. \<not> finite_held \<kappa> st g) G) in
+    else let S = finite_goal_choice pr P st G (ffilter (\<lambda>g. \<not> finite_held \<kappa> st g) G) in
       if S={||} then Select_None else Select_Goals S)"
+
+abbreviation finite_resolution_select ::
+    "('a,'s::linorder,'d,'c) finite_witness_construction \<Rightarrow> ('a,'s,'d,'c) finite_schema_system \<Rightarrow>
+      ('a,'s,'d,'c) resolution_state \<Rightarrow> ('a,'s,'d,'c) resolution_selection" where
+  "finite_resolution_select \<kappa> P \<equiv> finite_resolution_select_at (\<lambda>st g. False) \<kappa> P"
+
+text \<open>
+  At every priority the selection selects a nonempty set of pending, unheld candidates, and a construction exactly
+  where R3's default does: the premises of the liftings, whatever the priority names.
+\<close>
+
+lemma finite_resolution_select_at_exact:
+  shows "finite_resolution_select_at pr \<kappa> P st = Select_Goals G \<Longrightarrow> G \<noteq> {||} \<and>
+      (\<forall>g. g |\<in>| G \<longrightarrow> g |\<in>| resolution_pending st \<and> \<not> finite_held \<kappa> st g \<and> finite_candidate_goal g)"
+    and "finite_resolution_select_at pr \<kappa> P st = Select_Construction N \<longleftrightarrow>
+      finite_resolution_select \<kappa> P st = Select_Construction N"
+  subgoal
+    using finite_goal_choice_candidate[of _ pr P st "resolution_pending st"
+      "ffilter (\<lambda>g. \<not> finite_held \<kappa> st g) (resolution_pending st)"]
+    by (auto simp: finite_resolution_select_at_def Let_def split: if_splits)
+  subgoal by (auto simp: finite_resolution_select_at_def Let_def split: if_splits)
+  done
+
+definition finite_plain_selection ::
+    "(('a,'s,'d,'c) resolution_state \<Rightarrow> ('a,'s,'d,'c) resolution_goal \<Rightarrow> bool) \<Rightarrow>
+      ('a,'s::linorder,'d,'c) finite_schema_system \<Rightarrow> ('a,'s,'d,'c) resolution_state \<Rightarrow>
+      ('a,'s,'d,'c) resolution_selection" where
+  "finite_plain_selection pr P st = (let G = resolution_pending st; S = finite_goal_choice pr P st G G in
+    if S={||} then Select_None else Select_Goals S)"
 
 section \<open>The search\<close>
 
@@ -399,8 +558,8 @@ definition finite_resolution_search ::
 section \<open>The empty construction\<close>
 
 text \<open>
-  The construction registered for nothing holds no goal and constructs nothing: the search selects by
-  the classes alone, task 495's evaluator unchanged.
+  The construction registered for nothing holds no goal and constructs nothing: the search selects among
+  the pending goals alone.
 \<close>
 
 lemma no_witness_free_registered [simp]: "finite_free_registered no_witness_construction nd={||}"
@@ -413,17 +572,25 @@ lemma no_witness_held [simp]: "\<not> finite_held no_witness_construction st g"
   by (simp add: finite_held_def)
 
 theorem no_witness_selection:
-  "finite_resolution_select no_witness_construction P st = finite_plain_selection (resolution_pending st)"
+  "finite_resolution_select_at pr no_witness_construction P st = finite_plain_selection pr P st"
 proof -
   have "ffilter (\<lambda>g. \<not> finite_held no_witness_construction st g) (resolution_pending st) = resolution_pending st"
     by (simp add: fset_eq_iff)
-  then show ?thesis by (simp add: finite_resolution_select_def finite_plain_selection_def Let_def)
+  then show ?thesis by (simp add: finite_resolution_select_at_def finite_plain_selection_def Let_def)
 qed
+
+lemma finite_resolution_select_none_construction:
+  "finite_resolution_select_at pr no_witness_construction P st \<noteq> Select_Construction N"
+  by (simp add: no_witness_selection finite_plain_selection_def Let_def)
 
 theorem no_witness_search:
   "finite_resolution_search no_witness_construction P =
-    finite_resolution_search_by (\<lambda>st. finite_plain_selection (resolution_pending st)) no_witness_construction P"
-  unfolding finite_resolution_search_def by (simp only: no_witness_selection[abs_def])
+    finite_resolution_search_by (finite_plain_selection (\<lambda>st g. False) P) no_witness_construction P"
+proof -
+  have "finite_resolution_select no_witness_construction P = finite_plain_selection (\<lambda>st g. False) P"
+    by (rule ext) (rule no_witness_selection)
+  then show ?thesis by (simp add: finite_resolution_search_def)
+qed
 
 section \<open>The ground certificate and the result per call\<close>
 

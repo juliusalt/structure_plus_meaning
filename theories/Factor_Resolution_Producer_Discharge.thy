@@ -195,7 +195,7 @@ theorem finite_committed_found_supported:
     and only: "finite_registrations_premise_only \<kappa> P" and H: "resolution_registrations_held \<kappa> st"
     and unheld: "\<not> finite_held \<kappa> st (Resolution_Call_Goal q r e p)"
     and ctx: "finite_exchange_context (positive_meaning (decode_finite_system P)) F q st e p"
-    and found: "s |\<in>| resolution_found (finite_committed_search_by (finite_resolution_select \<kappa> P) \<kappa> K P n (Some q) B st)"
+    and found: "s |\<in>| resolution_found (finite_committed_search_by (finite_committed_select \<kappa> K P) \<kappa> K P n (Some q) B st)"
   shows "\<exists>\<theta>'. resolution_supported_at (\<lambda>_. False) F (fimage resolution_node_position (resolution_nodes s)) P s \<theta>'"
 proof -
   let ?M = "positive_meaning (decode_finite_system P)"
@@ -397,7 +397,7 @@ proof -
               a |\<notin>| finite_pattern_variables (finite_schema_conclusion S)"
             using only unfolding finite_registrations_premise_only_def by blast
           have call: "resolution_is_call ?g" by simp
-          have found': "s |\<in>| resolution_found (finite_committed_search_by (finite_resolution_select \<kappa> P) \<kappa> K P n
+          have found': "s |\<in>| resolution_found (finite_committed_search_by (finite_committed_select \<kappa> K P) \<kappa> K P n
               (Some (resolution_goal_position ?g)) B st)" using found by simp
           have h0n: "\<not> resolution_focused (Some (resolution_goal_position ?g)) (resolution_goal_position h0)"
             using h0st(2) by simp
@@ -459,13 +459,13 @@ corollary finite_committed_exchange_context:
   shows "\<exists>s \<theta>'. s |\<in>| finite_kept q (resolution_found (finite_committed_search \<kappa> K P n (Some q) B st)) \<and>
     resolution_supported_at (\<lambda>_. False) F (fimage resolution_node_position (resolution_nodes s)) P s \<theta>'"
 proof -
-  let ?R = "resolution_found (finite_committed_search_by (finite_resolution_select \<kappa> P) \<kappa> K P n (Some q) B st)"
+  let ?R = "resolution_found (finite_committed_search_by (finite_committed_select \<kappa> K P) \<kappa> K P n (Some q) B st)"
   have s0': "s0 |\<in>| ?R" using s0 by (simp add: finite_committed_search_def)
-  have s0'': "s0 |\<in>| resolution_found (finite_committed_search_by (finite_resolution_select \<kappa> P) \<kappa> K P n
+  have s0'': "s0 |\<in>| resolution_found (finite_committed_search_by (finite_committed_select \<kappa> K P) \<kappa> K P n
       (Some (resolution_goal_position (Resolution_Call_Goal q r e p))) B st)" using s0' by simp
   have call: "resolution_is_call (Resolution_Call_Goal q r e p)" by simp
   have "finite_kept (resolution_goal_position (Resolution_Call_Goal q r e p))
-      (resolution_found (finite_committed_search_by (finite_resolution_select \<kappa> P) \<kappa> K P n
+      (resolution_found (finite_committed_search_by (finite_committed_select \<kappa> K P) \<kappa> K P n
         (Some (resolution_goal_position (Resolution_Call_Goal q r e p))) B st)) \<noteq> {||}"
     by (rule finite_committed_kept_nonempty[OF \<kappa> I g call s0''])
   then have "finite_kept q ?R \<noteq> {||}" by simp

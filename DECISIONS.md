@@ -17265,6 +17265,9 @@ orders of the distinct union — every holder is invariant.
 - *The search*: unchanged. The socket is committed by R5's test at the viewed call, its parent committed at χ (50, 55,
   57, 60 and 63 are declared at their metadata views); its focused sub-search runs with the construction, so its subtree
   has one answer and the least of it is the construction's.
+  [Corrected by task 725 (q126): R3's construction never reaches x2 — head unification binds it to the caller's
+  variable — and the production is a step of R5's committed search at the narrowed socket; see the correction closing
+  this addition.]
 - *Sound under R5's barred pruning*: a commitment as R5's, its nodes barred; the certificate is the given's check at the
   constructed value, accepted by the finite proof checker; a derivation through any answer y of the socket has y in N by
   (i), and is exchanged for one through the kept answer by (ii) and (iii). *#565's premise*: the socket's exchange at a
@@ -17293,6 +17296,176 @@ alone; the given's readers stay exactly as installed — no clause refined, rest
 installed; each declaration, carrier and narrowing comes from its notion's contract, and none is made that no contract
 supplies; unresolved is never refuted and never admits; #519's counterexample — a commitment refuting a true call — is
 the case each kind's control is checked against, and each control refutes a false call beside a resolved true one.
+
+**[Corrected by task 725, a design, from q126 (implement-599, R5e's first step, 2026-09-26;
+`.build/plans/plan-94/q126.md`): the production at a narrowed socket is a step of R5's committed search, not R3's
+construction.]**
+
+*The two gaps.* (A) R3's construction never reaches 48.0's x2. `finite_call_successors` unifies the renamed interface
+and head with the goal's pattern, and R2's unifier binds a clause variable that faces a goal variable to the goal's
+variable: at 48(u,(ys,Y)) the node's binding of x2 is the caller's Y. `finite_free_registered`,
+`finite_construction_substitution`, `finite_registration_ready`, `finite_held` and W4a's holders invariant
+(`resolution_registrations_held`, #526's (b′)) read the node's own renamed variable ((pos,True),a), so x2 is never free
+there and the construction is never called: (c)'s "the search: unchanged" does not hold. (B) #565's exchange premise has
+no discharge at a narrowed socket: #630's (`finite_socket_kept_context`, `finite_socket_free_context`,
+`finite_socket_commitment_exchange`, `finite_declared_commitment_exchanges`) take `socket_discharged` at the whole
+meaning, with no class N, and `finite_registrations_premise_only`, which a registration at a head variable fails by
+definition (#621's Remains).
+
+*Where the union is needed.* The eight uses, read from `.build/tasks/585/clauses.txt`: 50.2/7 48(x13,(x15,x6)) beside
+49(x5,x6) at /8; 55.2/7 48(x19,(x20,x9)) and 55.2/8 48(x15,(x16,x7)) beside 49(x8,x9) at /9 and 1(x7) at /11; 57.0/8
+48(x17,(x19,x9)) beside 49(x8,x9) at /9; 60.1/4 48(x15,(x16,x10)) and 60.1/5 48(x11,(x12,x8)) beside 49(x9,x10) at /6
+and 1(x8) at /7; 63.1/2 48(x12,(x13,x11)) beside 1(x11) at /3; 63.2/2 48(x15,(x16,x9)) beside 1(x9) at /3. At every one
+the union's output is a head variable of the caller clause — inside χ of the metadata view R6c declares the caller at —
+and its inputs are outputs of siblings the clause resolves before it (its children in the recursion, at 57.0 also 42's).
+The output becomes premise-only only at the recursion's ancestors — 50.2's x13 and x15, 55.2's x15–x20, 57.0's x16 and
+x19, 60.1's x11–x16, 63.1's x12–x15, 63.2's x15–x18, 56.0's x13 and x14, 65.0's x15–x18, 72.0's x10 and x11 — where it
+is a child's whole metadata output and, at 50.2, 55.2, 57.0, 60.1 and 63.x, mostly an input of the ancestor's own union.
+So the union is needed at the eight sockets themselves, when the caller's goal is committed at its view (the focus root,
+R5's free socket) and R5's test commits the 48 goal: its inputs ground, its output held by the socket, its narrowing
+sibling and χ alone.
+
+*The courses weighed.*
+- (a) R3 and W4a changed so that a registered variable free after head unification — its binding a variable z of the
+  state — is constructed at z, readiness reading z's holders, the holders invariant and (b′) extended to z (#599's
+  proposal). Set aside. R3's construction reads no declaration, so it would construct x2 wherever z's holders are ready:
+  in the committed sub-search at the socket, and in any plain or unfocused search where every holder of z holds z alone
+  — at uses with no narrowing consumer and above callers not committed at χ, where the value is not complete. W4a's
+  completeness (every registration premise-only, `finite_construction_complete`) could not hold of the given's
+  construction, and the exact forms (W4a's, rc's) would need a completeness relative to the use, which R3 cannot tell.
+  It changes R3's five construction definitions and the step's witness record; W4a's holders invariant — a head
+  variable's holders are the caller clause's and the ancestors' goals, not the node's registered premises — with every
+  step lemma of `Factor_Construction_Holders`, W4a's completeness and lifting; R5's frame (`finite_registered_at`) and
+  the premise-only discharges; and the statements #540 and #651 make over W4a. F2b's refined state indexes the holders
+  and keeps F4's values beside nodes, so (a) would stand between F3 and F2b on the longest chain, a large build, and
+  F2b's projection would follow it.
+- (b) The union registered where it is premise-only, at the narrowed sockets' callers, R3 and W4a standing. Set aside:
+  no caller holds it premise-only (above); the ancestors that do hold a child's whole metadata reading there, and a
+  registration at them computes 50's, 55's or 56's reading — the counterpart #585 set aside ("a registration at the
+  callers' variable").
+- (d) R2's unifier oriented at the call step so that a goal variable facing a clause variable is bound to the clause's
+  (the pairs of `finite_call_successors` exchanged). Set aside: every variable-variable binding of R3's states changes,
+  and x2, then free, is (a)'s case, with (a)'s holders and constructions at un-narrowed uses.
+- (e) The registration kept in the witness construction at x2, R3 unchanged, R5 reading it at the socket. Set aside:
+  `finite_registrations_premise_only` fails of the construction, and R3 constructs x2 itself wherever a goal leaves 48's
+  argument inside a bare variable (the goal's variable is then bound to the renamed head, and x2 stays its own and
+  free), outside any narrowed socket, so W4a's completeness cannot hold of it either.
+
+*The decision for (A): the production at a narrowed socket, a step of R5's committed search.*
+1. *The registration is the socket's production.* 48's registration at 48.0's x2 is as (c) states it (base queries 5
+   from x0 and from x1, no step, the element its own key, identity equality of ground terms, the data list in the order
+   found). It is held by the narrowed socket's record — #599's extension of `resolution_declarations`, beside the class
+   N — as the socket's production: a registration at a clause of the socket's callee site whose variable stands at the
+   head's output at the socket's view, or none. It is not a registration of the witness construction κ: κ keeps
+   premise-only registrations (W4b's four at the given), `finite_registrations_premise_only` holds of it, and R3's
+   construction, W4a's holders invariant and W4a's completeness and exactness stand as they are.
+2. *The step.* R5's commitment record gains the production (a field or an extension, its name the builder's), read
+   from the declarations by the declared commitment and none at `no_commitment`. When R5's test — unchanged — commits a
+   call goal g at q whose socket declares a production, the committed step computes its value: W2's registration value
+   (`finite_registration_value`, the collection of its queries at the search's bound) at the ground bindings of the
+   registered clause's head matched against g's pattern (the head's variables at the view's input, ground by the test's
+   input condition). Where it is a value v, the goal's viewed output is matched against v and its variables are bound
+   throughout the state, and the committed sub-search runs from that state (`finite_committed_goal_outcome`, its sub-
+   search at the produced state); where it is none, the sub-search runs from the state as now (48's: endless, cut at the
+   bound, unresolved). The goal, ground, is resolved in its sub-search by the given's clauses — 48.0's 46, 47 and 47 at
+   v (`data_union_lists`) — so the checker checks what is provided. The production binds only variables of the
+   committed goal's pattern (focus variables) and binds them to ground values; the kept states go on with every node
+   present barred (`finite_committed_barring`, one rule, unchanged). At a commitment with no production every definition
+   is today's (a lemma each), so no landed statement changes; a commitment written as a record literal gains the
+   production's none.
+3. *Read by whom.* The production is read by R5's committed step and evaluated by W2's registration value — by the
+   search and the construction, never by a checker; the given's readers stay exactly as installed.
+4. *Exact.* Soundness is the checker's: the certificates are the sub-search's, as at every commitment. Through the
+   step: from a support of the focus whose socket output is y, (i) narrowing gives y ∈ N; (iii) production gives v an
+   answer in N — formed, the socket's goal true at v (`registration_complete_at_socket`, over W4a's
+   `finite_value_complete` at 48.0's x2); (ii) the socket's obligation over N gives a true instance of the caller clause
+   at v with its head changed only inside χ, which the parent — the focus root, committed at the view whose output is χ
+   — absorbs as R5's free socket does. So a kept state of the sub-search from the produced state is supported with every
+   node barred: #565's exchange premise, read at the produced state.
+
+*The decision for (B).*
+1. `finite_commitment_exchanges` reads the committed sub-search from the produced state; at no production it is today's.
+2. #630's context theorems (`finite_socket_kept_context`, `finite_socket_free_context`) and
+   `finite_socket_commitment_exchange` are stated once over a class N at a kept answer that is any answer in N, from
+   `narrowed_socket_discharged` (#599: (ii) at the kept answer, (i) at the support's); theirs are the instances at
+   N = ⊤ (`socket_discharged` the narrowed discharge at ⊤, #599's equation), names and statements kept.
+   `finite_narrowed_commitment_exchange` gives the exchange premise at a narrowed socket with a production, from
+   (i)–(iii) and `registration_complete_at_socket`; `finite_narrowed_commitment_exchanges` extends
+   `finite_declared_commitment_exchanges` to records with narrowed sockets and productions.
+3. No condition replaces `finite_registrations_premise_only`: the course keeps no registration of κ at a head variable,
+   and the premise stands where the discharges take it. The production's condition is its socket's discharge: a
+   production is declared only at a narrowed socket, and `registration_complete_at_socket` is required at every narrowed
+   socket that declares it; 48 used elsewhere declares nothing and is searched plainly, unresolved.
+
+*What of #599's parts it consumes.* (1) The record extension with N: consumed, the production a field beside N —
+#599's if it lands it now ((2)'s registration the field's value), R5f1's otherwise; `narrowed_socket_discharged` with
+its three obligations: consumed as the exchange's premise; R5's `socket_discharged` as its instance at N = ⊤: consumed
+by the restated context theorems. (2) The head-variable registration and `registration_complete_at_socket` over the
+meanings: consumed as the production and its completeness; W4a's `finite_registration_complete` (premise-only) is not
+used for it. (3) The transfer (relocation, agreement): consumed, extended to the production's registration (its query
+sites relocated with the declarations) where #599 does not. (4) The control of the obligations: kept; the search control
+is R5f2's. Nothing of #599's is left unused but a reading of the registration as κ's (`witness_registered` at a head
+variable), if #599 states one: the search never reads it.
+
+*What it makes true at the given's calls.* At each of the eight sockets, once the caller's goal is committed at its
+metadata view and R5's test commits the 48 goal, the union is produced by the step — the distinct union, first
+occurrences in order — and checked by 48's clause; a true call through it is resolved, and a false one — its narrowing
+consumer or a head check failing at every answer in N — is refuted by the committed forms' exactness at the produced
+state; a use of 48 with no narrowing consumer, or a goal the test does not commit, is searched plainly and stays
+unresolved, never refuted.
+
+*The builds* (rows R5f1 and R5f2 of the entry's table):
+
+| Build | What it establishes | After | Before | Size |
+|---|---|---|---|---|
+| R5f1 | The production step (`Factor_Resolution_Commitments`): the commitment's production (none at `no_commitment` and wherever the declarations declare none; from the narrowed sockets' productions by the declared commitment), its value by W2's registration value at the goal's ground head bindings, the goal's viewed output bound, the committed sub-search from the produced state (`finite_committed_goal_outcome`), `finite_commitment_exchanges` read there, each equal to today's at no production (lemmas); the frame, placement, position and barring facts at the step (it binds focus variables to ground values); the lifting's case, the exchange premise abstract; the production field of the narrowed record where #599 did not land it | #599, F3 #695 (F1 #693 through it), V2a #649 | F2c #701, #613, R5f2 | about 120K |
+| R5f2 | The exchange at narrowed sockets (`Factor_Narrowed_Productions`, new, above #599's theory and `Factor_Resolution_Socket_Discharges`): #630's context theorems and `finite_socket_commitment_exchange` over N at any kept answer in N, theirs the instances at N = ⊤; `finite_narrowed_commitment_exchange`, `finite_narrowed_commitment_exchanges`; the committed forms exact under discharged declarations with narrowed sockets and productions (per call, verdict, demand, native), R5's their instances at records declaring none; the transfer (relocation, agreement) at productions; the control in `Factor_Commitment_Controls`, one evaluation compiled once — a 48-shaped union beside a distinctness consumer, its output produced at the narrowed socket, a false call refuted and a true one resolved; the same union with no narrowing consumer unresolved; REASONING_REUSE.md's committed-choice row | R5f1 | rc #540, V2b #651's (3) | about 200K |
+
+*Edges.* #725 → F2b #699 removed: R3's search, its construction and W4a's holders are untouched, and F2b refines them as
+F3 leaves them. #725 → #609 removed if #599 lands the production field (#609 after #599 alone), replaced by R5f1 → #609
+otherwise. #725 → #540, #651 and #613 replaced by R5f2 → #540, R5f2 → #651 (its (3); its (1) and (2) need #599 alone, a
+division the planner may make) and R5f1 → #613. New: R5f1 → F2c #701. The longest chain F1 → F3 → F2b → F2c → C → R7 is
+unchanged while R5f1 (about 120K) lands beside F2b (about 380K), which it shares only F3 with; R5f2 lies off it, before
+rc, V2b and #611, which have slack: at most one splice, where R5f1 outlasts F2b.
+
+*The lines the briefs' Decided gain.*
+- #599 (if the planner mails it): "The narrowed socket's record carries, beside N, its production: the registration at
+  a clause of the socket's callee site whose variable stands at the head's output at the socket's view (48.0's x2), or
+  none; (2)'s registration is stated as that field's value, not as a registration of the witness construction;
+  `registration_complete_at_socket` is required at every narrowed socket declaring it; the search control of (4) is
+  R5f2's (task 725)."
+- #609: "48's registration at 48.0's x2 (`union_registration`) is the production of the eight narrowed sockets, held in
+  their records beside N, not a registration of the given's witness construction, which keeps W4b's premise-only
+  registrations (`finite_registrations_premise_only`); `union_registration_complete` is `registration_complete_at_socket`
+  at the eight sockets, and each socket's record names the production (task 725)."
+- #651: "The narrowed socket's production is carried with the socket along the match — its clause matched as V1 matches
+  the construction's clauses, its variable the image of the head variable — and `varied_registration_complete_at_socket`
+  is stated of the carried production, not of V1's `finite_varied_construction` (the construction holds no head
+  registration); (3)'s forms and transfer are R5f2's at the varied declarations (task 725)."
+- #540: "The union is produced by R5's committed step at the narrowed sockets (R5f1), not by the witness construction:
+  the construction keeps premise-only registrations (`finite_registrations_premise_only`), and W4a's completeness and
+  exactness are taken unchanged; R5's forms as R5f2 leaves them, with declarations carrying narrowed sockets and
+  productions discharged; no premise at a head registration (task 725)."
+- #613: "The committed step's production (R5f1: the sub-search from the produced state, the commitment's production) is
+  among the lifting's cases; R5f2's exchange at narrowed sockets is consumed, not re-proved; at a commitment with no
+  production the lifting's statements are R5's as they stand (task 725)."
+- #699 (F2b): "Task 725's course changes neither R3's search, its construction nor W4a's holders invariant: the
+  refinement projects R3's search as F3 leaves it; the production at narrowed sockets is R5's committed step, which F2c
+  refines (task 725)."
+- #701 (F2c): "R5's committed step as R5f1 leaves it — the committed goal's sub-search from the produced state, the
+  production from the declarations — is refined with the rest and projects to R5's (task 725)."
+- #611: "48's registration is carried as the eight sockets' production with `given_declarations` (R6b's carrying and
+  V2b), not joined to the given's witness construction: `given_union_registration` names the carried production, and
+  R7 joins nothing for it (task 725)." R7 #542: "The given's witness construction is W4b's four premise-only
+  registrations; the union is produced by the committed step at the declared narrowed sockets (task 725)."
+
+*What the builds must respect*, beyond the entry's: the production is read by R5's committed step alone and evaluated
+by W2's registration value, never by a checker, and stands only at a narrowed socket; the witness construction's
+registrations stay premise-only, and R3's construction, W4a's holders invariant, completeness and forms are unchanged;
+at a commitment with no production every definition, test and statement is today's; the production binds only the
+committed goal's output variables, to ground values; the names #630 gave the socket test's state conditions
+(`finite_call_narrowed`, `finite_material_narrowed`) stay apart from the narrowed socket's class; unresolved is never
+refuted and never admits; #519's counterexample is the control's case.
 
 ### The resolver at the given's size: the selection, a solved ground call reused, the shared state and the construction once
 
@@ -17532,7 +17705,9 @@ execution theories import the refinement theories of F2b, F2c and C.
 | R5 | Committed choice (`Factor_Resolution_Commitments`): a class declared at a site's outputs and invariance at its consumers, the committed search, exactness kept | R4, `Presentation_Transport`, `Factor_Presentation_Classes` | about 180K |
 | R6 | The given's declarations: 79, 32, 6, 10, 45, 48 and the consumers their outputs reach in the given's readers, each from its notion's contract [corrected by task 585: R6 (#520, q107's answer) declares 32, 6 with 5 inside it, 10, 45, their material sockets and the consumers a contract states invariant, discharged at the notions' systems and not carried; the rest is R6b's and R6c's] | R5 | about 150K |
 | R5d | [Added by task 585.] [Corrected by task 526 (review 590, follow-up 3): R5c's per-kind discharges are R5c″'s (#593, the direct producer) and R5c‴'s (#621, the socket kinds), and the forms' construction premise is W4a1's (#526); R5d consumes those, not R5c (#586).] Views and carriers (`Factor_Resolution_Commitments`, or a theory above it): the view of a term and of a pattern (a linear pattern and its pair rearrangement) with its laws; the declarations' record at views, R5's and R6's declarations restated at the identity and swap views; every test and obligation read through views, R5c's per-kind discharge instantiated at any view; `carrier_discharged`, the consumer its instance, a carrier from a presented function contract, `socket_discharged_carried`; in `Factor_Resolution_Controls`, a producer at a view with a free socket carried to its head (79's clause in small), a false call refuted and a true one resolved at five elements; REASONING_REUSE.md's committed-choice row | R5c (#586), R6 (#520) | about 200K |
-| R5e | [Added by task 585.] Narrowed sockets: `socket_discharged` with a class predicate N, R5's the instance at N = ⊤; a registration of a variable free after head unification, complete at a caller clause where its goal is a narrowed socket; the control: a 48-shaped union beside a distinctness consumer, a false call refuted and a true one resolved | R5d, W4a | about 150K |
+| R5e | [Added by task 585.] [Corrected by task 725: the registration is the narrowed sockets' production, read by R5's committed step (R5f1), not a registration of the witness construction; the exchange at narrowed sockets and the search control are R5f2's.] Narrowed sockets: `socket_discharged` with a class predicate N, R5's the instance at N = ⊤; a registration of a variable free after head unification, complete at a caller clause where its goal is a narrowed socket; the control: a 48-shaped union beside a distinctness consumer, a false call refuted and a true one resolved | R5d, W4a | about 150K |
+| R5f1 | [Added by task 725.] The production at a narrowed socket, a step of R5's committed search (`Factor_Resolution_Commitments`): the commitment's production from the narrowed sockets' records, its value by W2's registration value at the goal's ground head bindings, the committed sub-search from the produced state, `finite_commitment_exchanges` read there, each today's at no production; the frame and barring facts at the step; the lifting's case | R5e (#599), F3 (#695), V2a (#649) | about 120K |
+| R5f2 | [Added by task 725.] The exchange at narrowed sockets (`Factor_Narrowed_Productions`): #630's context theorems over a class N, R5's at N = ⊤; `finite_narrowed_commitment_exchange(s)`; the committed forms exact with productions; the transfer at productions; the control: a 48-shaped union produced at a narrowed socket, a false call refuted and a true one resolved, the un-narrowed use unresolved | R5f1 | about 200K |
 | R6b | [Added by task 585.] The given's declarations beyond R6's and the instantiation family's (79, 37, 12, 7, 39, 40, 29, 36, 42, 54; their sockets, consumers and the carriers 59, 51, 53 and 5), each discharged at its notion's system from its contract; all the given's declarations, R6's included, carried through #565's transfer to `given_program_system`, `given_rooted_readers_system`, `given_readers_program` and `given_program`; the control at the given's readers (79 at five roots, a false call refuted) | R5d, R6, #565 | about 200K |
 | R6c | [Added by task 585.] The instantiation family's declarations (50, 52, 55–65, 69, 72, 587; the carriers 46, 63, 55 at its scope, 584 and 586) and 48's (the registration at 48.0, the narrowed sockets at its eight uses), carried by the same transfer; the control (a pattern whose slots are unioned, a false call refuted) | R5e, R6b | about 220K |
 | R7 | The given at the guard's calls: 113, 80, 392 and 525 at the given as its own candidate, 505 and 590 at one of its definitions; the unresolved goals recorded (the least witnesses expected); seconds measured, E1's composition compared; the performance channel for a call past a held run | R4, R6 | about 150K |
@@ -17545,7 +17720,8 @@ execution theories import the refinement theories of F2b, F2c and C.
 | C | [Added by task 683.] The check of a found derivation over its graph by the existing graph reading, over shared terms, equivalent to the tree check of the unfolded certificate; certificates built once per node; code equations of the result forms | F3, F2c | about 330K |
 
 R1 and R2 are independent of each other; R3 follows both, R4 R3, R5 R4, R6 R5; R7 follows R4 and R6 [corrected by task 585: R5c follows R5b (#565), R5d R5c and R6, R5e R5d, R6b R5d, R6c
-R5e and R6b; rc (#540) follows R5e; R7 and #547 follow R6c]. R8 is independent of
+R5e and R6b; rc (#540) follows R5e; R7 and #547 follow R6c] [corrected by task 725: R5f1 follows R5e and F3, and F2c, #613 and R5f2 follow it; rc (#540) and
+V2b (#651) follow R5f2]. R8 is independent of
 R1–R7 and follows #483. The least witness's builds follow the planner's decision. The route:
 
 - #397 (the posing) evaluates no reader entry: unaffected.

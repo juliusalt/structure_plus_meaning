@@ -37,7 +37,7 @@ lemma lineage_segments:
   "systems_agree_on record_admission_system target_admission_system (system_definitions record_admission_system)"
   "systems_agree_on target_admission_system citation_admission_system (system_definitions target_admission_system)"
   "systems_agree_on citation_admission_system artifact_lookup_system (system_definitions citation_admission_system)"
-  "systems_agree_on artifact_lookup_system citation_resolution_system (system_definitions artifact_lookup_system)"
+
   "systems_agree_on citation_resolution_system citation_interpretation_system
     (system_definitions citation_resolution_system)"
   "systems_agree_on citation_interpretation_system citation_location_system
@@ -45,7 +45,7 @@ lemma lineage_segments:
   "systems_agree_on citation_location_system citation_reading_system (system_definitions citation_location_system)"
   "systems_agree_on citation_reading_system target_projection_system (system_definitions citation_reading_system)"
   "systems_agree_on target_projection_system data_subset_system (system_definitions target_projection_system)"
-  "systems_agree_on data_subset_system data_union_system (system_definitions data_subset_system)"
+
   "systems_agree_on data_union_system payload_disjoint_system (system_definitions data_union_system)"
   "systems_agree_on payload_disjoint_system quotation_admission_system (system_definitions payload_disjoint_system)"
   "systems_agree_on quotation_admission_system binder_admission_system (system_definitions quotation_admission_system)"
@@ -117,7 +117,6 @@ lemma closure_segments:
     vector_instantiation_system_def row_values_system_def application_reading_system_def
     prospective_instantiation_system_def scoped_instantiation_system_def)
 
-
 lemmas guard_definition_callee_list_agreement =
   whole_agreement_transitive[OF closure_segments(22) guard_closure_agreement]
 lemmas guard_definition_callee_inclusion_agreement =
@@ -160,17 +159,15 @@ lemmas guard_prospective_agreement =
   whole_agreement_transitive[OF closure_segments(3) guard_application_reading_agreement]
 lemmas guard_scoped_agreement = whole_agreement_transitive[OF closure_segments(2) guard_prospective_agreement]
 lemmas guard_instantiation_agreement = whole_agreement_transitive[OF closure_segments(1) guard_scoped_agreement]
-lemmas guard_binder_agreement = whole_agreement_transitive[OF lineage_segments(21) guard_instantiation_agreement]
-lemmas guard_quotation_agreement = whole_agreement_transitive[OF lineage_segments(20) guard_binder_agreement]
-lemmas guard_disjoint_agreement = whole_agreement_transitive[OF lineage_segments(19) guard_quotation_agreement]
-lemmas guard_union_agreement = whole_agreement_transitive[OF lineage_segments(18) guard_disjoint_agreement]
-lemmas guard_subset_agreement = whole_agreement_transitive[OF lineage_segments(17) guard_union_agreement]
-lemmas guard_projection_agreement = whole_agreement_transitive[OF lineage_segments(16) guard_subset_agreement]
-lemmas guard_reading_agreement = whole_agreement_transitive[OF lineage_segments(15) guard_projection_agreement]
-lemmas guard_location_agreement = whole_agreement_transitive[OF lineage_segments(14) guard_reading_agreement]
-lemmas guard_interpretation_agreement = whole_agreement_transitive[OF lineage_segments(13) guard_location_agreement]
-lemmas guard_resolution_agreement = whole_agreement_transitive[OF lineage_segments(12) guard_interpretation_agreement]
-lemmas guard_lookup_agreement = whole_agreement_transitive[OF lineage_segments(11) guard_resolution_agreement]
+lemmas guard_binder_agreement = whole_agreement_transitive[OF lineage_segments(19) guard_instantiation_agreement]
+lemmas guard_quotation_agreement = whole_agreement_transitive[OF lineage_segments(18) guard_binder_agreement]
+lemmas guard_disjoint_agreement = whole_agreement_transitive[OF lineage_segments(17) guard_quotation_agreement]
+lemmas guard_union_agreement = whole_agreement_transitive[OF lineage_segments(16) guard_disjoint_agreement]
+lemmas guard_projection_agreement = whole_agreement_transitive[OF lineage_segments(15) guard_subset_agreement]
+lemmas guard_reading_agreement = whole_agreement_transitive[OF lineage_segments(14) guard_projection_agreement]
+lemmas guard_location_agreement = whole_agreement_transitive[OF lineage_segments(13) guard_reading_agreement]
+lemmas guard_interpretation_agreement = whole_agreement_transitive[OF lineage_segments(12) guard_location_agreement]
+lemmas guard_resolution_agreement = whole_agreement_transitive[OF lineage_segments(11) guard_interpretation_agreement]
 lemmas guard_citation_agreement = whole_agreement_transitive[OF lineage_segments(10) guard_lookup_agreement]
 lemmas guard_target_agreement = whole_agreement_transitive[OF lineage_segments(9) guard_citation_agreement]
 lemmas guard_record_agreement = whole_agreement_transitive[OF lineage_segments(8) guard_target_agreement]

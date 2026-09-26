@@ -68,6 +68,11 @@ lemmas guard_closure_agreement = whole_agreement_transitive[OF given_reader_agre
 lemmas guard_root_family_agreement = whole_agreement_transitive[OF given_reader_agreements(3) additions_guard_agreement]
 lemmas guard_membership_agreement = whole_agreement_transitive[OF given_reader_agreements(7) additions_guard_agreement]
 lemmas guard_edge_agreement = whole_agreement_transitive[OF given_reader_agreements(6) additions_guard_agreement]
+lemmas guard_subset_agreement = whole_agreement_transitive[OF whole_agreement_transitive[OF
+  whole_agreement_transitive[OF row_values_subset_agreement row_values_complete_data_agreement]
+  complete_data_additions_agreement] additions_guard_agreement]
+lemmas guard_lookup_agreement = whole_agreement_transitive[OF
+  whole_agreement_transitive[OF complete_data_lookup_agreement complete_data_additions_agreement] additions_guard_agreement]
 
 subsection \<open>Each reader means in the program what it means in its own system\<close>
 

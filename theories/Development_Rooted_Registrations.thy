@@ -72,26 +72,21 @@ proof -
     if "systems_agree_on X guard_readers_system (system_definitions X)" "d\<in>system_definitions X"
     for X :: "(nat,nat,nat,nat) schema_system" and d c S
     using that whole_agreement_definitions[OF that(1)] unfolding systems_agree_on_def by blast
-  have subset_guard: "systems_agree_on data_subset_system guard_readers_system (system_definitions data_subset_system)"
-    by (rule whole_agreement_transitive[OF whole_agreement_transitive[OF whole_agreement_transitive[OF
-      row_values_subset_agreement row_values_complete_data_agreement] complete_data_additions_agreement]
-      additions_guard_agreement])
   have environment_guard: "systems_agree_on environment_inclusion_system guard_readers_system
       (system_definitions environment_inclusion_system)"
     by (rule whole_agreement_transitive[OF given_reader_agreements(8) additions_guard_agreement])
   have artifact_guard: "systems_agree_on artifact_inclusion_system guard_readers_system
       (system_definitions artifact_inclusion_system)"
     by (rule whole_agreement_transitive[OF inclusion_step environment_guard])
-  have lookup_guard: "systems_agree_on artifact_lookup_system guard_readers_system (system_definitions artifact_lookup_system)"
-    by (rule whole_agreement_transitive[OF whole_agreement_transitive[OF complete_data_lookup_agreement
-      complete_data_additions_agreement] additions_guard_agreement])
+
   have c77: "((77,0),package_closure_admission_schema)\<in>system_clauses guard_readers_system"
     and g77: "77\<in>system_definitions guard_readers_system"
     using guard_closure_clause[of 0 package_closure_admission_schema] callee[of 77 0 package_closure_admission_schema]
       guard_readers_formed unfolding schema_system_formed_def by auto
   have c47: "((47,1),data_subset_cons_schema)\<in>system_clauses guard_readers_system"
     and g47: "47\<in>system_definitions guard_readers_system" and g5: "5\<in>system_definitions guard_readers_system"
-    using at[OF subset_guard, of 47 1 data_subset_cons_schema] at[OF subset_guard, of 5 0 data_subset_cons_schema]
+    using at[OF guard_subset_agreement, of 47 1 data_subset_cons_schema]
+      at[OF guard_subset_agreement, of 5 0 data_subset_cons_schema]
     by (simp_all add: data_subset_clauses_def)
   have c392: "((392,0),package_additions_schema 391)\<in>system_clauses guard_readers_system"
     and g392: "392\<in>system_definitions guard_readers_system"
@@ -111,7 +106,8 @@ proof -
     using at[OF artifact_guard, of 112 1 "context_list_step_schema 37 112"] by (simp_all add: context_list_clauses_def)
   have c37: "((37,0),artifact_lookup_schema)\<in>system_clauses guard_readers_system"
     and g37: "37\<in>system_definitions guard_readers_system" and g12: "12\<in>system_definitions guard_readers_system"
-    using at[OF lookup_guard, of 37 0 artifact_lookup_schema] at[OF lookup_guard, of 12 0 artifact_lookup_schema]
+    using at[OF guard_lookup_agreement, of 37 0 artifact_lookup_schema]
+      at[OF guard_lookup_agreement, of 12 0 artifact_lookup_schema]
     by simp_all
   have g82: "82\<in>system_definitions guard_readers_system"
     using at[OF guard_edge_agreement, of 82 0 package_closure_admission_schema] given_entry_members(6) by blast

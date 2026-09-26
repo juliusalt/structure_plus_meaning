@@ -17,8 +17,10 @@ text \<open>
   @{text varied_narrowed_record}. Two conditions stand as named predicates: that a production carries to one
   registration (@{text productions_carry_uniquely}), from which with unique sources the varied record's static premise
   follows, and that W2's registration value at the carried registration is the source's at the bindings carried back
-  (@{text registration_values_carried}), which the search's equivariance under the match would give and which is not
-  built (q138).
+  (@{text registration_values_carried}), exactly the values R5f2's own construction carries
+  (@{text registration_values_carried_iff}), which the search's equivariance under the match would give and which is
+  not built (q138): one derivation of the productions' discharge at N (@{text productions_varied_at_values}), which the
+  locale takes as R5f2's premise, each consuming program discharging it by the semantic lemma.
 \<close>
 
 section \<open>The narrowed discharge at N\<close>
@@ -199,6 +201,68 @@ proof (intro allI impI)
   then show "witness_value (finite_collection_construction [R] m) P (registration_site R) (registration_schema R)
       (finite_bindings_carried_back f (finite_schema_variables (registration_schema R)) B) (registration_variable R) = Some v"
     by (simp add: finite_collection_construction_def finite_registration_matches_def)
+qed
+
+text \<open>
+  The converse: where the registration's clause is one of P's at its site, the values carried at every carried
+  registration by R5f2's own construction give W2's value at the carried registration as the source's, so the
+  predicate is exactly that condition.
+\<close>
+
+theorem registration_values_carried_collection:
+  assumes clause: "((registration_site R,c),registration_schema R) |\<in>| finite_system_clauses P"
+    and carried: "\<And>R'. R' |\<in>| registrations_varied P N R \<Longrightarrow>
+      production_values_carried (finite_collection_construction [R] m) P (finite_collection_construction [R'] m') N R"
+  shows "registration_values_carried P m N m' R"
+  unfolding registration_values_carried_def
+proof (intro allI impI)
+  fix c' T f h B v
+  assume T: "((registration_site R,c'),T) |\<in>| finite_system_clauses N"
+    and fh: "finite_schema_match (registration_schema R) T = Some (f,h)"
+    and val: "finite_registration_value N m' (registration_varied f T R) B = Some v"
+  have R': "registration_varied f T R |\<in>| registrations_varied P N R"
+    unfolding registrations_varied_member using clause T fh by blast
+  have w: "witness_value (finite_collection_construction [registration_varied f T R] m') N (registration_site R) T B
+      (f (registration_variable R)) = Some v"
+    using val by (simp add: finite_collection_construction_def finite_registration_matches_def)
+  have "witness_value (finite_collection_construction [R] m) P (registration_site R) (registration_schema R)
+      (finite_bindings_carried_back f (finite_schema_variables (registration_schema R)) B) (registration_variable R) = Some v"
+    using carried[OF R'] T fh w unfolding production_values_carried_def by blast
+  then show "finite_registration_value P m R
+      (finite_bindings_carried_back f (finite_schema_variables (registration_schema R)) B) = Some v"
+    by (simp add: finite_collection_construction_def finite_registration_matches_def)
+qed
+
+corollary registration_values_carried_iff:
+  assumes clause: "((registration_site R,c),registration_schema R) |\<in>| finite_system_clauses P"
+  shows "registration_values_carried P m N m' R \<longleftrightarrow> (\<forall>R'. R' |\<in>| registrations_varied P N R \<longrightarrow>
+    production_values_carried (finite_collection_construction [R] m) P (finite_collection_construction [R'] m') N R)"
+  using production_values_carried_collection registration_values_carried_collection[OF clause] by blast
+
+text \<open>
+  One derivation of R5f2's premise at N, the productions' discharge: from the values at every carried registration.
+\<close>
+
+theorem productions_varied_at_values:
+  fixes P :: "('a,'s::linorder,'d,'c) finite_schema_system" and N :: "('b,'t::linorder,'d,'e) finite_schema_system"
+    and PD :: "('a,'s,'d,'v) produced_declarations"
+  assumes Pf: "finite_system_formed P" and Nf: "finite_system_formed N"
+    and at_productions: "\<And>e S s keep Vp Vh R x. (e,S,s,keep,Vp,Vh) |\<in>| declared_sockets PD \<Longrightarrow>
+      declared_production PD e S s = Some R \<Longrightarrow>
+      (registration_site R,x) \<in> positive_meaning (decode_finite_system N) \<longleftrightarrow>
+        (registration_site R,x) \<in> positive_meaning (decode_finite_system P)"
+    and agree: "varied_narrowings_agree P N PD"
+    and formed: "declarations_formed (resolution_declarations.truncate PD)"
+    and productions: "productions_discharged (positive_meaning (decode_finite_system P)) P m PD"
+    and values_at: "\<And>e S s keep Vp Vh R. (e,S,s,keep,Vp,Vh) |\<in>| declared_sockets PD \<Longrightarrow>
+      declared_production PD e S s = Some R \<Longrightarrow> registration_values_carried P m N m' R"
+  shows "productions_discharged (positive_meaning (decode_finite_system N)) N m' (produced_declarations_varied P N PD)"
+proof (rule productions_discharged_varied[OF Pf Nf at_productions agree formed productions])
+  fix e S s keep Vp Vh R R'
+  assume a: "(e,S,s,keep,Vp,Vh) |\<in>| declared_sockets PD" and b: "declared_production PD e S s = Some R"
+    and c: "R' |\<in>| registrations_varied P N R"
+  show "production_values_carried (finite_collection_construction [R] m) P (finite_collection_construction [R'] m') N R"
+    by (rule production_values_carried_collection[OF values_at[OF a b] c])
 qed
 
 section \<open>The varied record's static premise\<close>
@@ -455,10 +519,12 @@ section \<open>The premises stated once, and the committed forms at the varied n
 
 text \<open>
   The locale holds the source's discharged record, frames and productions, the meanings agreeing at the record's sites
-  and at the productions' sites, the sources' classes agreeing, the values at the carried registrations
-  (@{const registration_values_carried}) and the varied record's static premise (@{const narrowed_productions_declared},
-  derived by @{text narrowed_productions_declared_varied} under unique sources). From them the carried record, frames
-  and productions are discharged at N, the exchange premise at N is R5f2's, and the forms at N are R5f2's named forms
+  and at the productions' sites, the sources' classes agreeing, and at N R5f2's premise, the productions' discharge
+  (@{const productions_discharged}; each consuming program discharges it by the semantic lemma, q138, and
+  @{text productions_varied_at_values} derives it from @{const registration_values_carried}) and the varied record's
+  static premise (@{const narrowed_productions_declared},
+  derived by @{text narrowed_productions_declared_varied} under unique sources). From them the carried record and frames
+  are discharged at N, the exchange premise at N is R5f2's, and the forms at N are R5f2's named forms
   at the carried discharge. The native form is R5f2's @{thm [source] native_narrowed_resolution_exact} at the same three
   facts, once N is the native program type. A construction at N is any whose registrations are premise-only and whose
   lifts hold there; V1's varied construction is one wherever the source's is complete
@@ -482,19 +548,14 @@ locale varied_narrowed_record =
     and frames: "narrowed_frames_discharged (positive_meaning (decode_finite_system P))
       (narrowed_declarations.truncate PD) \<Phi>"
     and productions: "productions_discharged (positive_meaning (decode_finite_system P)) P m PD"
-    and values_at: "\<And>e S s keep Vp Vh R. (e,S,s,keep,Vp,Vh) |\<in>| declared_sockets PD \<Longrightarrow>
-      declared_production PD e S s = Some R \<Longrightarrow> registration_values_carried P m N m' R"
+    and productions_varied_at:
+      "productions_discharged (positive_meaning (decode_finite_system N)) N m' (produced_declarations_varied P N PD)"
     and declared': "narrowed_productions_declared (produced_declarations_varied P N PD)"
 begin
 
 lemma formed: "declarations_formed (resolution_declarations.truncate PD)"
   using discharged by (simp add: narrowed_declarations_discharged_def)
 
-lemma carried:
-  assumes "(e,S,s,keep,Vp,Vh) |\<in>| declared_sockets PD" "declared_production PD e S s = Some R"
-    "R' |\<in>| registrations_varied P N R"
-  shows "production_values_carried (finite_collection_construction [R] m) P (finite_collection_construction [R'] m') N R"
-  by (rule production_values_carried_collection[OF values_at[OF assms(1,2)] assms(3)])
 
 lemma discharged_varied: "narrowed_declarations_discharged (positive_meaning (decode_finite_system N))
     (narrowed_declarations.truncate (produced_declarations_varied P N PD)) corr"
@@ -506,9 +567,6 @@ lemma frames_varied_at: "narrowed_frames_discharged (positive_meaning (decode_fi
   using narrowed_frames_varied_discharged[OF Pf Nf at agree formed frames]
   by (simp add: produced_declarations_varied_truncate)
 
-lemma productions_varied_at:
-  "productions_discharged (positive_meaning (decode_finite_system N)) N m' (produced_declarations_varied P N PD)"
-  by (rule productions_discharged_varied[OF Pf Nf at_productions agree formed productions carried])
 
 theorem finite_varied_narrowed_commitment_exchanges:
   assumes \<kappa>': "finite_witness_construction_formed \<kappa>'" and only': "finite_registrations_premise_only \<kappa>' N"
@@ -627,6 +685,35 @@ proof -
     using narrowed_declarations_relocated_discharged[OF Qf injective discharged relocates] relocated by simp
   show ?thesis
     by (rule narrowed_declarations_varied_discharged[OF Pf Nf _ agree dR]) (simp only: system_alpha_positive_meaning[OF alpha])
+qed
+
+text \<open>The narrowed frames relocated (R5f2's @{thm [source] narrowed_frames_relocated_discharged}) and varied.\<close>
+
+theorem narrowed_frames_relocated_varied_discharged:
+  fixes Q :: "('a,'s::linorder,'d,'c) finite_schema_system" and g :: "'d \<Rightarrow> 'e"
+    and N :: "('b,'t::linorder,'e,'f) finite_schema_system" and ND :: "('a,'s,'d) narrowed_declarations"
+    and D' :: "('a,'s,'e,'v) produced_declarations"
+  assumes Qf: "schema_system_formed (decode_finite_system Q)"
+    and injective: "inj_on g (system_definitions (decode_finite_system Q) \<union>
+      declared_sites (resolution_declarations.truncate ND) \<union> frame_sites \<Phi>)"
+    and relocated: "narrowed_declarations.truncate D' =
+      narrowed (declarations_relocated g (resolution_declarations.truncate ND)) \<nu>"
+    and relocates: "\<And>e S s keep Vp Vh. (e,S,s,keep,Vp,Vh) |\<in>| declared_sockets ND \<Longrightarrow>
+      \<nu> (g e) (finite_rename_schema id id g S) s = declared_narrowing ND e S s"
+    and frames: "narrowed_frames_discharged (positive_meaning (decode_finite_system Q)) ND \<Phi>"
+    and alpha: "system_alpha_variant (decode_finite_system (finite_rename_system g Q)) (decode_finite_system N)"
+    and agree: "varied_narrowings_agree (finite_rename_system g Q) N D'"
+    and formed: "declarations_formed (resolution_declarations.truncate D')"
+  shows "narrowed_frames_discharged (positive_meaning (decode_finite_system N))
+    (narrowed_declarations_varied (finite_rename_system g Q) N D') (frames_varied (finite_rename_system g Q) N (frames_relocated g \<Phi>))"
+proof -
+  have Pf: "finite_system_formed (finite_rename_system g Q)" and Nf: "finite_system_formed N"
+    using alpha by (simp_all add: system_alpha_variant_def finite_system_formed_correct)
+  have fR: "narrowed_frames_discharged (positive_meaning (decode_finite_system (finite_rename_system g Q)))
+      (narrowed_declarations.truncate D') (frames_relocated g \<Phi>)"
+    unfolding relocated by (rule narrowed_frames_relocated_discharged[OF Qf injective relocates frames])
+  show ?thesis
+    by (rule narrowed_frames_varied_discharged[OF Pf Nf _ agree formed fR]) (simp only: system_alpha_positive_meaning[OF alpha])
 qed
 
 corollary productions_relocated_varied_discharged:

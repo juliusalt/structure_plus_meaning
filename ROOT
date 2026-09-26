@@ -1328,6 +1328,7 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Factor_Required_History_Investigation
     Ordered_Finite_Terms
     Factor_Resolution_Commitments
+    Factor_Resolution_Modes
     Factor_Resolution_Producer_Discharge
     Factor_Resolution_Material_Discharge
     Factor_Resolution_Socket_Discharges
@@ -1670,6 +1671,7 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Criticism_Octet_Samples
     Factor_Executed_Controls
     Factor_Resolution_Controls
+    Factor_Mode_Controls
     Factor_Commitment_Controls
     Factor_Narrowed_Controls
     Factor_Source_Execution_Sharing

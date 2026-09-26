@@ -975,6 +975,7 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Retained_Clause_Execution
     Finite_Set_Encoding
     Factor_Finite_Schema_Renaming
+    Factor_Finite_Schema_Matching
     Factor_Finite_Checked_Requirements
     RRA_Finite_Syntax_Construction
     Factor_Finite_Reference_Tables

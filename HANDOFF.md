@@ -113,8 +113,7 @@ was placed when #668 landed.
 **Order** (the queue holds it; the planner's choice, a residual until the native answer to the selection problem
 exists, Q2): the slots are one pool, each free slot going to the first task in the queue that can start and a review
 standing where its review task stands, so every review stands right after its build. By slack on the longest chain:
-the fix #721 at the head (review 712's 1: the resolver line's rebuild closure restored), then #665's builds on the
-longest chain (#672, #674, #689), F1 #693, #676,
+#665's builds on the longest chain first (#672, #674, #689), F1 #693, #676,
 F3 #695, F2b #699, F2c #701, C #703; R5e #599 and R6c's #609; #597, the rooted reading's reuse row #720 (a fix continuing #716), R6c's instantiation family (#607, #679, #681) beside R6b's parts
 #601 and #603; V3's #653 and #687, then #655 and #688; the carryings #605 and #663 with V2a #649 and V2b #651; rc
 #540 and #661; #611; R7 #542, its native part #707, #399 and its controls #709, #547; the route in its chains' order
@@ -260,6 +259,10 @@ a task):
   in a fix made from main after the landing, or in the first task made from main after it; a task that changes one of
   those rows waits on it. A task in the one tree installs its theories only at hand-over and keeps nothing of its own
   uncommitted there when it parks or comes back (q30).
+- **Facts in a locale context.** A fact noted in a locale context reaches only the interpretations registered in
+  theories the noting theory imports; facts moved above an interpretation are cited as `L.fact[OF <the predicate,
+  stated once>]`; a move of facts probes the theories that cite them (review 721's 3: #721's brief assumed the
+  contrary, which cost a check).
 - **Text with backticks goes through a file.** `v2.py reply`, `tell` and `ledger` given their text as an argument pass
   it through a shell, which strips a backticked name: write such a text to a file under the planner's drafts and pass
   `--file`.
@@ -368,7 +371,8 @@ follow-ups are in `PLANNING_LOG.md` and the earlier states (`HANDOFF-before-cond
   and 561's at `package_request_system`), `Development_Asked_Registrations` (#635: #399's two courses, placed) and
   `Development_First_Request_Registrations` (#640: at the first request's program and its installation, placed),
   `Development_Rooted_Registrations` (#687, `c91495e8`: complete at the given's rooted readers); one discharge by
-  agreement for the four programs, `readers_agreement_registrations_complete` (#711, `88479260`); the
+  agreement for the four programs, `readers_agreement_registrations_complete` (#711, `88479260`), the relocated facts in a context block of
+  `Development_Rooted_Registrations` so that `Development_Given_Extensions` stays off it (#721, `39afda12`); the
   three registrations' code from the programs' clauses (#660, `aa72ef2a`: `bound_witness_registration` and
   `merge_witness_registration`, nullary values built at module load, review 660's 2).
 - **The shared patterns** (#683's F2): `Factor_Shared_Patterns` (F2a #697, `d19426d3`: patterns over the shared-term
@@ -531,7 +535,7 @@ planner searches for a theory before briefing a task that edits it.
 
 - **The graph's width**: the route is one chain — (#672 → #674 → #689, #597) → #676 → R5e, R6b's and R6c's parts →
   the carryings → R7 → #399 — so between its landings little else of it can start; #672 and #597 run side by side,
-  and beside them the rooted reading's reuse row #720 and the rebuild closure's fix #721. Nothing is invented
+  and beside them the rooted reading's reuse row #720. Nothing is invented
   to fill the gaps.
 - **What the next events ask**: the first one-session base's landing, after which probes start in about 3 s — not yet:
   #685's and #670's landings stayed on the chain (`PLANNING_LOG.md`, plan-92). #674 (with #689), #601 and #613 grew or

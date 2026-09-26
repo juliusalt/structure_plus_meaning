@@ -17539,7 +17539,7 @@ priority names 12 only once its input is ground. 12 then runs on a free input, 1
   over a field of n entries, O(n³) states (the carrier holds 38 addresses at 77/1). A production at 37.0/2 whose value is
   12's input — an answer wherever 12 has one, artifact identity being reflexive on the artifacts it admits
   (`artifact_identity_exact`) — replaces that search by a check (v = 7) [taken up by correction (13) below, task 789]. (b) Then the check: 7 and 6 compare the artifact
-  with itself (5's dead "later" walks, O(n²) states a field), and 11 meets ground data whose target, 11's premise-only
+  with itself (5's dead "later" walks, O(n²) states a field [taken up by correction (14) below, task 794]), and 11 meets ground data whose target, 11's premise-only
   variable, no goal binds, 10's material premise waiting for it: 9 and 8 invert the data conversion, two or three
   alternatives an entry, the dead failing at 1 and 8 (from depth about 505 at bound 800, v = 7's trace). Its binder is a
   registration at 11's premise-only target, the artifact its data present (task 496's construction). Both are designs of
@@ -17693,7 +17693,7 @@ answer wherever 12 has one: its input.
   steps), 9 and 8 branching, dead at 1 and 8, the derivation past depth 1,199 — (b) #790's registration of 11's target
   is its binder. At 77/2 (a definition's code artifact, about 114 addresses) the check 12(t4,t4) itself comes first: 7's
   four bag comparisons of a field with itself, 5 walking to each element and its dead "later" walk past it, O(n²)
-  steps a field, each state carrying the field, 37 states a second — R7's attribution (#787's Remains).
+  steps a field, each state carrying the field, 37 states a second — R7's attribution (#787's Remains) [taken up by correction (14) below, task 794].
 - *Weighed and not taken*: the order alone (correction (12)'s v = 6: it leaves the least presentation to compute); 12
   searched plainly at 37.0/2 (every presentation kept to the bound for a true call); a canonical presentation of x4
   computed by a reader as the value (a HOL function presenting, where the stored presentation is already an answer);
@@ -17709,6 +17709,154 @@ answer wherever 12 has one: its input.
   R5f1's step reads; the kind is a pattern of clause variables at bindings; no payload is read; sites are compared for
   equality.
 - *The builds*: rows I1–I3 of the builds table below.]
+
+[Corrected by task 794, a design, from correction (13)'s question (#789's, placed before R7 #542 by the planner) and
+its counts (`.build/tasks/789/result.md`, `.build/tasks/789/p1/probe.log`). (14) A check keeps its first found state.
+Under correction (13) 12 is produced at 37.0/2 and its committed sub-search is the check 12(t4,t4): 11(t4) twice and
+7(t4,t4), whose four bag comparisons 6(Fk,Fk) walk the looked-up artifact's fields. At 77/2 that check, not 11's cost,
+is met first (#789: not returned in 45 s, ≥ 1,668 states, 605 steps and 52 dead ends at 5, 351 steps at 2, no step
+past it).
+- *Where the cost stands.* 6's cons clause at a field compared with itself, 6((x,y),z) with z = x·y: 5(x,(z,w)) at
+  6.1/0 and 6(y,w) at 6.1/1. O4's whole-view mode takes 5 first, a binder with its output w free (6.1/1 does not
+  commit in a check: its parent's output z is fixed by the caller, correction (12)'s table). 5 has two successors:
+  *here* (w := y; its premises 2(x) and 4(y), both ground) and *later* (w := x·w′; 2(x) and 5(x,(y,w′))). Here is the
+  derivation. Later looks for a second occurrence of x in y: at every step one successor (here's head no longer
+  unifies), a 2-check of the skipped entry, down to the empty list, where no clause of 5 applies — a witnessed dead
+  end. At level i of a field of n entries that is n − i states: Σ ≈ n²/2 a field, every one inside 12's committed
+  sub-search (#789's counts: 1,491 of its 1,668 states in committed sub-searches; the 605 steps and 52 dead ends at 5
+  are later walks, the 351 steps at 2 their formation checks). 4(y)'s list check at each level is linear: F3 closes it
+  by the node solved at the level before, the one-alternative goals under here being taken in position order before
+  6(y,w).
+- *Neither reading asked, alone.* (a) Not the enumeration of several derivations of a ground goal: the fields of a code
+  artifact hold distinct entries (carrier, incidence and functional fields are sets; the counted field is empty in every
+  artifact 77 and 113 meet, the sizes below), so each field has exactly one derivation — the cost is the search
+  learning that later has none. The committed step does keep every found state of a ground goal, though
+  (`finite_kept` keeps the states whose answer is least, and at a ground goal every answer is the goal), so where a
+  field repeats an entry each of its ∏ m_j! derivations continues the search: not met at 77 or 113, met wherever an
+  artifact holds repeated counted attachments. (b) Not the order in which 5's clauses are tried: R5's joins are unions
+  (`finite_outcome_union` over every successor in `finite_committed_goal_outcome`), every successor explored whatever
+  the order. The order matters once a join stops at a found state; then here must come first. The cost is the
+  exhaustiveness of R5's joins below a call whose every answer is already fixed.
+- *Two presentations of one bag in different orders.* 6(x·y, z) with z another order: 5 walks to x's position in z —
+  the derivation itself, Σ of the displacements, n²/2 for a reversal — then here, and later past it. The walk to each
+  entry is the certificate's own size in the given's clauses, which stay as installed: no producing-side course
+  removes it. The dead walk past the entry goes as for one order.
+- *The cure: the first join below a ground focus.* At a state whose focus is a position q (Some q) and whose call at q
+  — the pending goal at q, or the node at q — is ground under the state, every found state below answers that one
+  call, and one found state decides it. There R5's join of a goal's successors keeps the first block, in the order of a
+  key, whose outcome holds a found state, joining every block's diagnoses only where no block finds; its join of a
+  committed goal's kept continuations does the same with one block. The key is structural, determinate first: the
+  number of goals the step adds under the goal's position that hold a variable under the successor state (at 5 here
+  adds 2(x) and 4(y), ground: 0; later adds 5(x,(y,w′)): 1). Equal keys form one block, joined as today. The
+  selection's goals (one, at the least position) and a construction's nodes stay unions, and so does every join at no
+  focus (None) or at a focus whose call holds a variable. A committed goal ground under its produced state — 12(t4,t4)
+  — is so a check: its whole sub-search keeps its first found state. A verdict's root call is ground; the check of it
+  is the committed search started at the root's own focus: the root goal stands at [] (`finite_initial_state`), Some []
+  focuses every goal as None does, and its call is ground, so every join below it is first. These are the check forms
+  (K2); the committed forms at None stay as they are.
+- *Exactness.* (1) Soundness: a join's found states are found states of its parts, so every found state is reached by
+  R5's steps from the start (`finite_committed_search_relation`, its join case); the certificates are the checker's.
+  (2) The lifting (#613's `finite_committed_lifting_by`, over the selection parameter): at a union, as today. At a
+  first join the induction has a supported part x0 whose outcome keeps a supported found state or a non-witnessed
+  diagnosis. If a block before x0's finds, the join returns its found state: it holds no pending goal in the focus, so
+  it is supported at the focus with every node barred (the conditions on focused goals vacuous, its placement from the
+  relation: `finite_committed_search_placed`, stated at U); where the search commits nothing the root values it keeps
+  are those of a ground root. Else x0's block is evaluated: its found state, or its non-witnessed diagnosis joined with
+  every earlier block's; a found state of a later block is supported again. So the keeping outcome holds at the join.
+  (3) The exchange: R5's premise, its statement unchanged — some kept state of a committed goal's sub-search supported
+  at the outer focus with every node barred. Every discharge of it (the direct producer #593, the socket kinds #630,
+  R5f2's produced state, I2's input production through R5f2's) goes through #565's placement argument
+  (`finite_committed_found_placed`): every found state of the sub-search is supported under the goal's exchange
+  context, reading the sub-search only through the relation, frame, placement, positions, registered-unbound, found
+  and kept-nonempty lemmas, which gain the join case. So the premise holds of the search with first joins wherever it
+  holds today, and no discharge is restated; #631's material part reads the canonical solutions' successors, not a
+  search. (4) Refutation: a first join where no block finds evaluates every block and joins their diagnoses, as the
+  union does, so a refutation (no found state, every diagnosis witnessed) is today's; unresolved never refutes and
+  never admits. (5) At any priority of F1's selection (q142): the join reads no selection; its case is proved in the
+  lifting over the selection parameter, and O2's frame relation and discharges at any priority read the same lemmas.
+  (6) Completeness at a socket (#599's `registration_complete_at_socket`), R5f2's and I2's productions and W2's and
+  W4a's registrations are values, not joins: unchanged. (7) Positions: below a ground focus every found state answers
+  the focus call, and which one is kept is a tie among equal answers — its certificate. The key reads no clause key,
+  name or position; equal keys are a union. Which calls resolve at the edge of a bound can depend on the order, as it
+  depends on R3's least-position selection today. (8) At no commitment and no focus
+  (`finite_committed_search_by_plain`, stated at None) every join is a union: R3's search. Every form stated at None
+  keeps its statement; its value changes only inside a committed sub-search whose call is ground, which keeps one found
+  state where it kept every derivation.
+- *The table*: the goals and sockets 77's and 113's searches meet (#779's, #787's and #789's tables and this
+  correction's counts), with the focus each stands under:
+
+| Goal (socket) | Its focus | Its joins | At 77 | At 113 |
+|---|---|---|---|---|
+| The root: 77(E,sites), 113(E,F) | Some [] under the check forms, ground | first | the package closure's traversal decided at its first found state; a false call exhaustive, as today | at 113/7 nothing commits (37 at 112.0/0, 12 at 37.0/2, 7 at 12.0/2, 6 at 7.0/0–3 are uncommitted checks, #794's counts): the bag checks under 37 stand in the root's check |
+| 37 at 75.0/1, committed, output x3 free | Some q37: its call holds x3 until 12's production | unions (5 at 37.0/1 walks to the use's row and past it — the dead walk past the row, O(rows) a lookup, stays); from the production (x3 := x4) on, first | met wherever a reader commits 37 with its output free | 37 at 112.0/0 ground: in the root's check |
+| 12 at 37.0/2, produced: 12(t4,t4) | Some q12, ground | first: the check | 11(t4) twice and 7(t4,t4) | a goal of the root's check |
+| 7 at 12.0/2; 6 at 7.0/0–3 | within 12's check or the root's (committed or not) | first | the four fields | the same |
+| 5 at 6.1/0: whole-view binder, output w free | within the check | first: here (key 0) before later (key 1); later never explored once here finds | at 77/2's largest artifact 51 branchings at 5, each skipping later | the same |
+| 6 at 6.1/1: the recursion, uncommitted in a check | within the check | first | | |
+| 11 at 12.0/0–1 | within 12's check | first: 9's and 8's alternatives only until a derivation | RD1 #808 produces 11's target | the same |
+| a producer committed with a free output (6 producing at 6.1/1, 48's unions, 37 before the production) | Some q, its call holding a variable | unions, R5's least answer kept; its kept continuations first where the outer focus is ground | | |
+
+- *The prediction, checked* (`.build/tasks/794/draft/theories/Moded_Branching.thy`: #789's draft with v = 8, its v = 7
+  and the first join with successors keyed by the clause of the node the step adds, and v = 9, the same with the
+  determinate key — the design; fam 2 and 3 call 7 at an artifact of 77/2's environment, with itself and with its four
+  field lists reversed; three shared runs, CPU 11–14 % busy, no CPU wait, memory 20.0–25.4 GiB on average and
+  23.6–35.4 at its peak of 60.4; each probe bounded at 175 s and each call at its stated seconds, the process tree
+  stopped at the bound; `.build/tasks/794/p1`–`p3`, `.build/tasks/794/measurements.log`). The fields (carrier,
+  incidence, counted, functional) of 77/2's environment's artifacts: (1,0,0,0), (9,6,0,2), (27,23,0,1), (18,14,0,1).
+
+| Call, bound | v = 7 (#789: modes, the production) | v = 8 (first join, clause order) | v = 9 (first join, determinate first) |
+|---|---|---|---|
+| 7(t,t), (27,23,0,1), 4000 | found, 1,701 states, 13.1 s | found, 695 states, 7.5 s | found, 695 states, 7.8 s: 51 branchings at 5, each skipping later; no dead end at 5 |
+| 7(t,t), (9,6,0,2) | found, 326 | found, 221 | |
+| 7(t, reversed t), (9,6,0,2) | found, 322 | found, 297 | found, 297 |
+| 7(t, reversed t), (27,23,0,1) | not returned in 15 s | not returned in 15 s | not returned in 15 s: ≥ 1,040 states on one path, depth 1,039, the derivation's own walks |
+| 77/2, 4000 (v = 7 at 1200) | not returned in 45 s: ≥ 1,668; 605 steps and 52 dead ends at 5 | not returned in 80 s: ≥ 3,900, deepest 1,737; 1 dead end at 5; 1,674 steps at 8, 109 witnessed at 1 | not returned in 60 s: ≥ 3,879, deepest 1,140; 1 dead end at 5; 2,160 steps at 8, 127 witnessed at 1 |
+| 77/1, 4000 (v = 7 at 1200) | not returned in 65 s: ≥ 7,180; 34 dead ends at 5; 3,954 steps at 8 | not returned in 40 s: ≥ 5,596, deepest 1,540; 1 dead end at 5; 2,958 steps at 8 | not returned in 35 s: ≥ 12,726, deepest 889; 1 dead end at 5; 8,660 steps at 8 |
+| 113/7, 400 | found, 211 | found, 150 (228 joins stopped with blocks left) | found, 189 |
+
+  At the largest artifact the first join removes 1,006 of 1,701 states — the later walks over 27 and 23 entries with
+  their formation checks — and skips later at every one of the 51 entries. At 77/2 and 77/1 the search is past the bag
+  check and in 11's inversion (9 and 8, dead at 1 and 8), RD1 #808's. The reversed fields keep their walk. The
+  determinate key orders 5 as the clause key does; the two differ only in 11's inversion, whose cost RD1 removes, and
+  at 113/7 (189 against 150).
+- *What the cure leaves* (each reported, none cured here): (1) the check's linear remainder, about 13.6 states an entry
+  at the largest artifact (6's step, 5's here, the entry's formation check, the reused list check), at about 90 states a
+  second in R5's abstract state: one check per definition's code artifact, of the order of 10⁵–10⁶ states for 77 over
+  the given's 28,729 addresses (#455), its per-state cost F2c #701's and F2d #810's; (2) the walk to each entry where
+  two presentations of a bag differ in order, the certificate's own size; (3) at a focus whose call holds a variable,
+  the dead walk past a row at 37.0/1's lookup, O(rows) a lookup beside the walk to it.
+- *Weighed and not taken*: a production at 6's recursion (6.1/1): in a check 6.1/1 does not commit — its parent's
+  output z is fixed, so the socket's obligation (every answer extends to a true instance, the head changed only inside
+  its output) cannot move z — and no production is met; forced, its determined value (6's input y, 6 being reflexive:
+  correction (13)'s input registration) makes 5(x,(z,y)) hold only where z is x·y in order, a true check of two orders
+  refuted; the value that would make later fail at once, z without x, is no pattern of the clause's variables. A
+  committed selection at 5 under the bag class (5 declared a producer at the whole view, its output up to multiset, 6
+  at 6.1/1 its consumer): exact — 5's answers at one input are one multiset, 6's second argument invariant — but R5
+  keeps the least answer, so its sub-search enumerates every answer and the dead walk is that enumeration's tail; it
+  removes only the continuations of repeated entries, which the first join removes too, at the cost of declarations. A
+  commitment kind for ground goals, the brief's first course taken literally: the sub-search of a ground committed goal
+  needs the first join inside anyway (5's successors are not ground), the kind changes the tests every discharge is
+  stated at, and at 113 nothing commits — its bag checks stand in the root's search, which the root's own focus
+  reaches. A switch in the commitment turning first joins on, at None too: every discharge is stated at its
+  commitment's constructor and would be restated over the field; Some [] reaches the root with none. First joins at
+  every focus, non-ground ones included: exact — every found state of a committed sub-search is supported under its
+  context — but a non-ground commitment's kept presentation would depend on the order, which is no tie; R5 keeps the
+  least answer there. The clause key as the order (v = 8): the same at 5, but a position, and an installed program's
+  clause keys are the native package reader's addresses. A merge-based bag comparison, a membership check before
+  later, 5's clauses reordered: each restates the given's readers. Leaving it to R7's attribution: R7 resolves 77 at
+  the given, where every definition's check pays n²/2 dead states a field before anything can be attributed.
+- *What the builds must respect*: the given's readers exactly as installed; the first join read by R5's committed step
+  alone, never by a test, a discharge's hypothesis or a checker; it applies only below a ground focus (Some q, the call
+  at q ground under the state), None and a focus whose call holds a variable keeping unions; the key structural, equal
+  keys one block; a first join where no block finds joins every block's diagnoses; unresolved never refutes and never
+  admits; `finite_committed_search_by_plain` and every form's statement kept, values changed only below a ground focus;
+  results independent of positions but for ties; nothing reads the bootstrap loop's datatypes; every control keeps
+  R4's value beside its own, and a committed control whose value changes (a ground committed goal with several
+  derivations) is reported with both.
+- *What it relies on* (task 376's test): the join reads whether the call at the focus position holds a variable, the
+  variables of the goals a step adds under the goal's position and whether a block's outcome holds a found state;
+  positions are compared by prefix, as R5's focus compares them; no payload, name or clause key is read.
+- *The builds*: rows K1–K3 of the builds table below.]
 
 Presentation freedom makes a false call expensive: a true call is resolved at the first presentation its producer
 yields, a false one only after every presentation (n! root lists of n roots), so a refusal past a few elements reaches
@@ -18419,6 +18567,9 @@ execution theories import the refinement theories of F2b, F2c and C.
 | I1 | [Added by task 789, correction (13).] The determined value; the files it changes: `Factor_Least_Collections` (the datatype, the value, the one proof by cases, `finite_registration_value_formed`), `Factor_Least_Witness_Registrations` (the kind's case of the generic completeness contract), `Factor_Varied_Narrowed_Sockets` (`map_registration_families`'s case), `Factor_Varied_Narrowed_Transfer` (the carried values), and any proof the constructor breaks where a theory unfolds `finite_registration_value` at an abstract registration: `Determined_Value p` of `registration_families`, beside `Single_Family` and `Paired_Families`; `finite_determined_value p B` (p's term at B where every variable of p is bound and the term formed, none otherwise), `finite_determined_value_formed`, `finite_determined_value_decoded` (the decoded value is p evaluated at the decoded valuation); `finite_registration_value`'s case and `finite_registration_value_determined` (independent of the program and the bound); every proof by cases over the families gaining its case, statements kept; `map_registration_families`'s case (the pattern renamed by the binder map) with its value lemma; `determined_value_complete` (W4a's `finite_value_complete` at a determined value, once: complete wherever the premises holding the variable hold at a formed value only at the pattern's term); `determined_values_carried` (`registration_values_carried` of a determined registration) and the relocated construction's value at one | q143's answer (A), given; no edge with F2c #701 (whichever lands second extends the other's case analyses over the families) | about 60K |
 | I2 | [Added by task 789, correction (13).] The input production (`Factor_Input_Productions`, new, above `Factor_Narrowed_Productions` and `Factor_Artifact_Admission`; `ROOT`, `THEORY_MAP.md`): `input_registration d S Vc a`, `producer_reflexive M d Vc`; `input_registration_head`, `input_registration_produces` (at N = ⊤), `input_registration_answers` (from `producer_reflexive`), `input_registration_complete_at_socket` (`registration_complete_at_socket` at a socket of class ⊤ declaring it), `input_productions_discharged` (`productions_discharged` of a record whose productions are input registrations of reflexive producers at sockets of class ⊤, beside collection productions discharged as R5f2 states); the transfer by agreement at the registration's site, by relocation and along the match, with no premise of the search's equivariance; 12's instance: `identity_input_registration`, `artifact_identity_reflexive` (from `artifact_identity_exact`), `identity_input_complete_at_lookup` (at `lookup_socket_schema`, 2, `view_identity`, `artifact_lookup_system`); the control in `Factor_Input_Production_Controls` (new, imported by no theory; one evaluation compiled once): a lookup of a small artifact through an environment of two rows, as 37 through 12, R5f2's narrowed commitment with the input registration at the socket — the true call resolved with one certificate where R5's committed search without the production keeps the least presentation (states of both), the false call refuted as by R4, R4's value beside | I1, R5f2 (landed) | about 90K |
 | I3 | [Added by task 789, correction (13).] The given's production (`Development_Given_Productions`, new, beside #782's record; `Development_Given_Productions_Execution`, new, imported by no theory): the given's produced record with `identity_input_registration` at (37, `lookup_socket_schema`, 2), class ⊤, beside #782's productions; relocated to the rooted readers, the asked and first request's programs and their installations (the sites mapped as the records', the clause carried along the match as V2b carries a production); `productions_discharged` there from I2's transfer and the meaning at 12; the static premise kept; the evaluation: 77/1 and 77/2 at the moded selection with O4's modes, with and without the production (and with (b)'s registration once #790's builds have landed), outcomes and states, the next cost named | I2, #782, O4 | about 100K |
+| K1 | [Added by task 794, correction (14).] The first join below a ground focus (`Factor_Resolution_Commitments`; `Factor_Shared_Commitments` if F2c #701 has landed): `finite_focus_ground F st` (F = Some q, the goal or node at q holding no variable under the state), `finite_determinate_key q s` (the goals of s under q, not at q, holding a variable), `finite_first_outcome` (the first block whose outcome finds, else every block's diagnoses) and `finite_search_join` (at a ground focus the first join over blocks by a key, else `finite_outcome_union`); `finite_committed_goal_outcome` reading it at a goal's successors (the determinate key) and at a committed goal's kept continuations (one block); the join laws (`finite_search_join_found`: a found state of a join is one of a part's; `_union` off a ground focus; `_lifted`: a part's keeping outcome carried to the join, a found state at the focus supported with every node barred); the join case of `finite_committed_search_relation`, `_frame`, `_placed` (stated at U), `_positions`, `_found`, `finite_committed_search_registered_unbound`, `finite_committed_kept_nonempty` and `finite_committed_lifting_by`, statements kept; `finite_committed_search_by_plain` kept; every proof that unfolds the committed step given the join laws; the committed controls evaluated again, a changed value reported with R4's beside; with F2c landed, the join in its shared committed search and its projection | none unlanded (the lander rule with O2 #802 and F2c #701) | about 180K (230K with F2c's representation) |
+| K2 | [Added by task 794, correction (14).] The check forms (`Factor_Resolution_Checks`, new, above `Factor_Committed_Registrations`, `Factor_Narrowed_Productions` and `Factor_Input_Productions`; `ROOT`, `THEORY_MAP.md`): the committed forms at a selection parameter started at the root's own focus — `finite_check_resolution_by`, `finite_check_verdict_by`, `finite_check_demand_by`, `native_check_resolution_by` (`finite_committed_search_by sel κ K P n (Some []) {||} (finite_initial_state d t)`), exact from the committed forms' premises through the lifting at Some []; `finite_check_root_focus` (Some [] focuses every goal: `finite_focus_pending (Some []) st = resolution_pending st`); the check instances of the forms R7 #542 and #547 call — rc's numbered and native forms at a priority (O3), R5f2's narrowed forms, the framed forms, I2's input-production forms — each from its form's premises; the control in `Factor_Check_Controls` (new, imported by no theory; one evaluation compiled once): 7 at an artifact of 27 and 23 entries with itself and with its fields reversed, states at the check form and the committed form, a pair with one entry changed refuted as by R4, R4's value beside | K1; O3 and I2 #813 for their instances | about 120K |
+| K3 | [Added by task 794, correction (14).] The given at the check forms (`Development_Given_Checks_Execution`, new, imported by no theory): 77/1, 77/2 and 113/7 at the check forms with O4's modes, I3a's production and RD1's target, against the committed forms at the same records — outcomes, states, dead ends at 5, the next cost named; 77 at one of the given's own definitions as far as the probe's bound reaches | K2, I3a #815, RD1 #808, O4 | about 60K |
 
 R1 and R2 are independent of each other; R3 follows both, R4 R3, R5 R4, R6 R5; R7 follows R4 and R6 [corrected by task 585: R5c follows R5b (#565), R5d R5c and R6, R5e R5d, R6b R5d, R6c
 R5e and R6b; rc (#540) follows R5e; R7 and #547 follow R6c] [corrected by task 725: R5f1 follows R5e and F3, and F2c, #613 and R5f2 follow it; rc (#540) and
@@ -18427,7 +18578,11 @@ R7 #542 and #547 follow O3 and O4; F2c #701 and C #703 are independent of them, 
 one among them; O2's order against #724 is the planner's] [corrected by task 789 (q143): I1 has no edge with F2c #701,
 whichever lands second extending the other's case analyses over the families, and #790's build waits on I1 where it
 edits `registration_families` or `Factor_Least_Collections`, its determined value, if it has one, being I1's
-constructor; I2 follows I1; I3 follows I2, #782 and O4; R7 #542 and #547 follow I3 as well]. R8 is independent of
+constructor; I2 follows I1; I3 follows I2, #782 and O4; R7 #542 and #547 follow I3 as well] [corrected by task 794: K1 waits on nothing unlanded and has no edge with O2 #802
+or F2c #701, which edit or represent R5's committed step — whichever lands second carries the join case into the
+other's statements (O2's lemmas at any priority, F2c's shared committed search and its projection); K2 follows K1, and
+O3 and I2 #813 for its instances; K3 follows K2, I3a #815, RD1 #808 and O4; R7 #542 and #547 call the check forms and
+follow K2 and K3]. R8 is independent of
 R1–R7 and follows #483. The least witness's builds follow the planner's decision. The route:
 
 - #397 (the posing) evaluates no reader entry: unaffected.

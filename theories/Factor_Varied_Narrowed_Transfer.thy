@@ -240,6 +240,91 @@ corollary registration_values_carried_iff:
   using production_values_carried_collection registration_values_carried_collection[OF clause] by blast
 
 text \<open>
+  A determined registration's values carry outright: its value reads neither the program nor the bound, and at the
+  bindings carried back it is the same term, wherever the pattern's variables are the registered schema's.
+\<close>
+
+theorem determined_values_carried:
+  assumes det: "registration_families R = Determined_Value p"
+    and scope: "finite_pattern_variables p |\<subseteq>| finite_schema_variables (registration_schema R)"
+  shows "registration_values_carried P m N m' R"
+  unfolding registration_values_carried_def
+proof (intro allI impI)
+  fix c' T f h B v
+  assume val: "finite_registration_value N m' (registration_varied f T R) B = Some v"
+  define B' where "B' = finite_bindings_carried_back f (finite_schema_variables (registration_schema R)) B"
+  have mapped: "finite_determined_value (map_finite_term_pattern f p) B = Some v"
+    using val by (simp add: finite_registration_value_varied_determined[OF det])
+  have bound: "finite_pattern_variables (map_finite_term_pattern f p) |\<subseteq>| fimage fst B"
+    and vf: "finite_term_formed v" and v: "v = resolution_value (finite_binding_valuation B) (map_finite_term_pattern f p)"
+    using mapped by (auto simp: finite_determined_value_some)
+  have at_back: "finite_binding_valuation B' x = (finite_binding_valuation B \<circ> f) x"
+    if "x |\<in>| finite_pattern_variables p" for x
+    using carried_back_valuation[of x] scope that unfolding B'_def by auto
+  have eq: "resolution_value (finite_binding_valuation B') p = v"
+    unfolding v resolution_value_rename by (rule resolution_value_cong) (rule at_back)
+  have sub: "finite_pattern_variables p |\<subseteq>| fimage fst B'"
+  proof (rule fsubsetI)
+    fix x assume x: "x |\<in>| finite_pattern_variables p"
+    have "f x |\<in>| finite_pattern_variables (map_finite_term_pattern f p)"
+      using x by (induction p) auto
+    then have "f x |\<in>| fimage fst B" using bound by blast
+    then obtain t where t: "(f x,t) |\<in>| B" by (force simp: fimage.rep_eq)
+    have "(x,t) |\<in>| B'" using t x scope unfolding B'_def by (auto simp: finite_bindings_carried_back_member)
+    then show "x |\<in>| fimage fst B'" by (force simp: fimage.rep_eq)
+  qed
+  have "finite_determined_value p B' = Some v" using sub eq vf by (simp add: finite_determined_value_some)
+  then show "finite_registration_value P m R
+      (finite_bindings_carried_back f (finite_schema_variables (registration_schema R)) B) = Some v"
+    by (simp add: finite_registration_value_determined[OF det] B'_def)
+qed
+
+text \<open>
+  Relocated (@{const finite_relocated_construction}), the construction of a determined registration whose clause is one
+  of P's gives, at the relocated site and clause, the determined value itself.
+\<close>
+
+theorem finite_relocated_determined_value:
+  fixes P :: "('a,'s::linorder,'d,'c) finite_schema_system" and R :: "('a,'s,'d,'v) collection_registration"
+    and g :: "'d \<Rightarrow> 'e"
+  assumes det: "registration_families R = Determined_Value p"
+    and clause: "((registration_site R,c),registration_schema R) |\<in>| finite_system_clauses P"
+  shows "witness_value (finite_relocated_construction g P (finite_collection_construction [R] n)) Q
+      (g (registration_site R)) (finite_rename_schema id id g (registration_schema R)) B (registration_variable R) =
+    finite_determined_value p B"
+proof -
+  let ?\<kappa> = "finite_collection_construction [R] n :: ('a,'s,'d,'c) finite_witness_construction"
+  have reg: "a |\<in>| witness_registered ?\<kappa> d S \<longleftrightarrow>
+      d = registration_site R \<and> S = registration_schema R \<and> a = registration_variable R" for a d S
+    by (auto simp: finite_collection_construction_registered finite_registration_matches_def)
+  have val: "witness_value ?\<kappa> P (registration_site R) (registration_schema R) B (registration_variable R) =
+      finite_determined_value p B"
+    by (simp add: finite_collection_construction_def finite_registration_matches_def
+        finite_registration_value_determined[OF det])
+  define Vs where "Vs = fimage (\<lambda>((d,c),S). witness_value ?\<kappa> P d S B (registration_variable R))
+      (ffilter (\<lambda>((d,c),S). g d = g (registration_site R) \<and>
+        finite_rename_schema id id g S = finite_rename_schema id id g (registration_schema R) \<and>
+        registration_variable R |\<in>| witness_registered ?\<kappa> d S) (finite_system_clauses P))"
+  have Vs: "Vs = {|finite_determined_value p B|}"
+  proof (rule fset_eqI)
+    fix z
+    show "z |\<in>| Vs \<longleftrightarrow> z |\<in>| {|finite_determined_value p B|}"
+    proof
+      assume "z |\<in>| Vs"
+      then obtain d c S where "((d,c),S) |\<in>| finite_system_clauses P"
+          "registration_variable R |\<in>| witness_registered ?\<kappa> d S"
+          "z = witness_value ?\<kappa> P d S B (registration_variable R)"
+        unfolding Vs_def by (auto simp: resolution_fset_simps)
+      then show "z |\<in>| {|finite_determined_value p B|}" using reg val by auto
+    next
+      assume "z |\<in>| {|finite_determined_value p B|}"
+      then show "z |\<in>| Vs" using clause reg val unfolding Vs_def by (force simp: resolution_fset_simps)
+    qed
+  qed
+  show ?thesis by (simp add: finite_relocated_construction_def Vs_def[symmetric] Let_def Vs)
+qed
+
+text \<open>
   One derivation of R5f2's premise at N, the productions' discharge: from the values at every carried registration.
 \<close>
 

@@ -311,5 +311,93 @@ class KeptHeapTests(unittest.TestCase):
         self.assertTrue(validate.call_args.kwargs['keep_heap'])
         self.assertFalse(validate.call_args.kwargs['advance_base'])
 
+def trigger_on(*arguments):
+    return checker.one_session_trigger(*arguments, enabled=True)
+
+
+class OneSessionBaseTests(unittest.TestCase):
+    """A check that makes a base makes it one session over HOL when it rebuilds half the library or the chain's modeled
+    start passes 10 s (task 623: a probe's start was 38.3 s on a chain of 148 sessions and 14.99 GB, 2.90 s on one)."""
+
+    def chain(self, sessions, heap_bytes, stored=('Pure', 'HOL')):
+        """A fake chain: one directory per session, each with its ROOT, and a store holding Pure's, HOL's and every
+        session's heap, all of its bytes (sparse) in the first."""
+        temporary = tempfile.TemporaryDirectory(prefix='incremental-chain-')
+        self.addCleanup(temporary.cleanup)
+        root = Path(temporary.name)
+        heaps = root / 'home/.isabelle/Isabelle2025-2/heaps/polyml-5.9.2_x86_64_32-linux'
+        heaps.mkdir(parents=True)
+        directories = []
+        names = [*stored, *('Incremental_%04d' % i for i in range(sessions))]
+        for index, name in enumerate(names):
+            with (heaps / name).open('wb') as heap:
+                heap.truncate(heap_bytes if index == 0 else 0)
+            if index >= len(stored):
+                directory = root / name
+                directory.mkdir()
+                parent = names[index - 1] if index > len(stored) else 'HOL'
+                (directory / 'ROOT').write_text('session ' + name + ' = ' + parent + ' +\n  theories A\n')
+                directories.append(str(directory))
+        return directories, root / 'home'
+
+    def test_the_start_is_the_model_over_the_chains_sessions_and_heaps(self):
+        directories, home = self.chain(148, 14_990_000_000)
+        self.assertEqual(checker.chain_start(directories, home),
+                         {'sessions': 148, 'heap_gb': 14.99, 'seconds': 36.66})  # task 623: 36.7 s
+        directories, home = self.chain(1, 1_084_000_000)
+        self.assertEqual(checker.chain_start(directories, home)['seconds'], 3.31)  # task 623: 3.3 s
+
+    def test_a_heap_the_store_does_not_hold_counts_nothing(self):
+        directories, home = self.chain(2, 1_000_000_000, stored=('Pure',))
+        self.assertEqual(checker.chain_start(directories, home),
+                         {'sessions': 2, 'heap_gb': 1.0, 'seconds': 3.27})
+
+    def test_the_start_at_its_bound_does_not_trigger_and_past_it_does(self):
+        at = checker.chain_start(*self.chain(12, 4_920_000_000))
+        past = checker.chain_start(*self.chain(12, 4_930_000_000))
+        self.assertEqual((at['seconds'], past['seconds'] > 10.0), (10.0, True))
+        self.assertFalse(trigger_on(True, 1, 100, at)['holds'])
+        trigger = trigger_on(True, 1, 100, past)
+        self.assertTrue(trigger['holds'] and trigger['start_past_bound'] and not trigger['rebuilt_share'])
+
+    def test_half_the_library_rebuilt_triggers_and_less_does_not(self):
+        quick = checker.chain_start(*self.chain(3, 300_000_000))
+        self.assertLess(quick['seconds'], 10.0)
+        trigger = trigger_on(True, 956, 1912, quick)
+        self.assertTrue(trigger['holds'] and trigger['rebuilt_share'] and not trigger['start_past_bound'])
+        self.assertFalse(trigger_on(True, 955, 1912, quick)['holds'])
+        self.assertTrue(trigger_on(True, 1745, 1912, quick)['holds'])  # train618's landing
+
+    def test_the_ordinary_check_is_as_before(self):
+        quick = checker.chain_start(*self.chain(3, 300_000_000))
+        trigger = trigger_on(True, 12, 1912, quick)
+        self.assertFalse(trigger['holds'])
+        self.assertIsNone(checker.one_session_trigger(False, 1912, 1912, quick))  # a check that makes no base
+
+    def test_the_trigger_is_inert_until_the_harness_enables_it(self):
+        slow = checker.chain_start(*self.chain(148, 14_990_000_000))
+        with patch.dict('os.environ', {}, clear=True):
+            off = checker.one_session_trigger(True, 1912, 1912, slow)
+        self.assertEqual((off['holds'], off['enabled'], off['rebuilt_share'], off['start_past_bound']),
+                         (False, False, True, True))
+        with patch.dict('os.environ', {checker.ONE_SESSION_SWITCH: '1'}):
+            self.assertTrue(checker.one_session_trigger(True, 1912, 1912, slow)['holds'])
+        with patch.dict('os.environ', {checker.ONE_SESSION_SWITCH: '0'}):
+            self.assertFalse(checker.one_session_trigger(True, 1912, 1912, slow)['holds'])
+
+    def test_a_one_session_proof_is_over_hol_and_an_incremental_one_over_the_base(self):
+        base, project, proof = Path('/bases/b/proof'), Path('/tree'), Path('/checks/c/proof')
+        ordinary = checker.proof_command(base, project, proof, False, 'abcd1234', 16, 1200, [], ['A', 'B'])
+        whole = checker.proof_command(base, project, proof, True, 'abcd1234', 16, 2390, [], ['A', 'B'])
+        self.assertEqual(ordinary[ordinary.index('--parent-project') + 1], str(base))
+        self.assertEqual(ordinary[ordinary.index('--session') + 1], 'Incremental_abcd1234')
+        self.assertNotIn('--parent-project', whole)
+        self.assertEqual(whole[whole.index('--session') + 1], 'Complete_abcd1234')
+        self.assertEqual(whole[-2:], ['A', 'B'])
+        self.assertEqual([w for w in whole if w != 'Complete_abcd1234' and w != '2390'],
+                         [w for w in ordinary if w not in ('--parent-project', str(base), 'Incremental_abcd1234',
+                                                           '1200')])
+
+
 if __name__ == '__main__':
     unittest.main()

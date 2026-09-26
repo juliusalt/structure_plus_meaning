@@ -356,6 +356,63 @@ def proof_timeout(timeout, rebuilt):
     return max(timeout, int(SECONDS_PER_REBUILT * rebuilt))
 
 
+# The start of a process on a base, by task 623's model (`.build/tasks/623/result.md`, measured on 2026-09-26 at light
+# load, a lower envelope): the Isabelle/Scala side's session dependencies cost START_PER_SESSION for each session of the
+# chain above HOL, Poly/ML's load of the heaps START_PER_GB for each GB of the chain's heap files, Pure's and HOL's among
+# them, over START_SECONDS; 36.7 s predicted for the chain of 148 sessions and 14.99 GB, 37.4 measured; 3.3 predicted for
+# a base of one session, 3.1 measured.
+START_SECONDS = 1.6
+START_PER_SESSION = 0.085
+START_PER_GB = 1.5
+START_BOUND = 10.0   # a chain whose modeled start passes it is replaced by one session at the next base made
+REBUILT_SHARE = 0.5  # a check that rebuilds at least this share of the library makes its base one session
+# The trigger is inert until the harness sets this switch: a one-session base has no parent, so the harness's pruning of
+# the bases outside the active lineage would remove the superseded chain's heaps and proofs, which is the owner's to
+# retire (Q29) and which a running probe or check may stand on. The harness sets it once its pruning keeps them.
+ONE_SESSION_SWITCH = 'INCREMENTAL_CHECK_ONE_SESSION_BASE'
+
+
+def one_session_enabled():
+    """Whether the harness has enabled one-session bases: its switch set to 1 in the environment."""
+    return os.environ.get(ONE_SESSION_SWITCH) == '1'
+
+
+def chain_start(directories, home=None):
+    """The start the chain of a base's directories gives by the model: its sessions above HOL (each directory's ROOT
+    names one), the GB of their heap files and of Pure's and HOL's in the store, and the modeled seconds."""
+    home = Path(home or isabelle_places.USER_HOME)
+    sessions = [re.match(r'session (\w+) =', (Path(d) / 'ROOT').read_text())[1] for d in directories]
+    heaps = [found[0] for session in ('Pure', 'HOL', *sessions)
+             for found in [sorted(home.glob('.isabelle/*/heaps/*/' + session))] if found]
+    gb = sum(heap.stat().st_size for heap in heaps) / 1e9
+    return {'sessions': len(sessions), 'heap_gb': round(gb, 3),
+            'seconds': round(START_SECONDS + START_PER_SESSION * len(sessions) + START_PER_GB * gb, 2)}
+
+
+def one_session_trigger(stores_heap, rebuilt, theories, start, enabled=None):
+    """Whether the base a check makes is one session over HOL holding every theory, as `Complete_20260922e` was, rather
+    than one more incremental session over its base's chain: decided before anything is built, for a check whose proof
+    stores a heap that becomes a base (advancing, or kept for a landing to adopt), when it rebuilds at least half the
+    library or the chain's modeled start passes the bound, and the harness has enabled it (`one_session_enabled`);
+    None for a check that makes no base."""
+    if not stores_heap:
+        return None
+    enabled = one_session_enabled() if enabled is None else enabled
+    share = rebuilt >= REBUILT_SHARE * theories
+    slow = start['seconds'] > START_BOUND
+    return {'holds': enabled and (share or slow), 'enabled': enabled, 'rebuilt': rebuilt, 'theories': theories,
+            'rebuilt_share': share, 'start': start, 'start_past_bound': slow, 'bound_seconds': START_BOUND}
+
+
+def proof_command(base, project, proof, one_session, session_suffix, threads, timeout, flags, roots):
+    """The proof of a check: over its base's chain, or, when the base it makes is one session, over HOL."""
+    parent = [] if one_session else ['--parent-project', str(base)]
+    session = ('Complete_' if one_session else 'Incremental_') + session_suffix
+    return [sys.executable, '-B', str(TOOLS / 'prove_context.py'), *parent, '--project', str(project),
+            '--output', str(proof), '--session', session, '--threads', str(threads), '--timeout', str(timeout),
+            *flags, *roots]
+
+
 def validate(base, output, *, threads, jobs, selected, all_recipes, timeout, lineage=None, advance_base=False,
              keep_heap=False):
     started = time.monotonic()
@@ -394,22 +451,26 @@ def validate(base, output, *, threads, jobs, selected, all_recipes, timeout, lin
         summary.update(base_receipt_sha256=base_inputs[parent['receipt']],
                        base_theories=len(base_sources), base_context_receipt=parent['receipt'],
                        theories=len(sources), reused_theories=len(reused), rebuilt_theories=sorted(rebuilt))
+        stores_heap = (advance_base or keep_heap) and not selected
+        trigger = one_session_trigger(stores_heap, len(rebuilt), len(names),
+                                      chain_start(parent['directories']) if stores_heap else None)
+        one_session = bool(trigger and trigger['holds'])
+        summary['one_session_base'] = trigger
         phase('base_and_impact', begin)
 
         proof = None
-        if rebuilt:
+        if rebuilt or one_session:
             begin = time.monotonic()
             proof = output / 'proof'
             # Every theory is a root, so that the context it leaves holds the whole library: its session proves the
             # rebuilt theories and takes the rest from its parents as before, and a check made on it reuses all it
             # holds. Rooted at the rebuilt theories alone, a context held their import closure (627 of 1,840 theories
             # after the landing of 2026-09-24 07:16), and the next check on it proved 1,663 theories again, past its time.
-            summary['proof_timeout'] = proof_timeout(timeout, len(rebuilt))
-            code, _ = run_logged([sys.executable, '-B', str(TOOLS / 'prove_context.py'), '--parent-project', str(base),
-                                  '--project', str(ROOT), '--output', str(proof),
-                                  '--session', 'Incremental_' + uuid.uuid4().hex[:8], '--threads', str(threads),
-                                  '--timeout', str(summary['proof_timeout']), *heap_flags(advance_base, keep_heap),
-                                  *proof_roots(names, rebuilt)], output / 'proof.log', 7200)
+            # A base of one session proves them all over HOL, and its chain is that one session.
+            summary['proof_timeout'] = proof_timeout(timeout, len(sources) if one_session else len(rebuilt))
+            code, _ = run_logged(proof_command(base, ROOT, proof, one_session, uuid.uuid4().hex[:8], threads,
+                                               summary['proof_timeout'], heap_flags(advance_base, keep_heap),
+                                               proof_roots(names, rebuilt)), output / 'proof.log', 7200)
             phase('proof', begin)
             summary['proof'] = str(proof / 'result.json')
             assert code == 0, 'Incremental proof failed; see ' + str(proof / 'build.log')

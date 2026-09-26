@@ -1,5 +1,5 @@
 theory Development_Asked_Registrations
-  imports Development_First_Problem_Asked Development_Given_Registrations
+  imports Development_First_Problem_Asked Development_Rooted_Registrations
 begin
 
 text \<open>
@@ -38,20 +38,8 @@ qed
 lemma asked_readers_guard_agreement:
   "systems_agree_on guard_readers_system asked_program_system
     (system_definitions guard_readers_system\<inter>system_definitions asked_program_system)"
-proof -
-  let ?U="system_definitions guard_readers_system\<inter>system_definitions asked_program_system"
-  have goals: "system_definitions guard_readers_system\<subseteq>system_definitions first_problem_goals_system"
-    by (rule whole_agreement_definitions[OF goals_extension_agreement])
-  have guard: "system_definitions first_problem_goals_system\<subseteq>system_definitions first_problem_guard_system"
-    unfolding asked_guard_definitions by blast
-  have "systems_agree_on guard_readers_system first_problem_goals_system ?U"
-    by (rule systems_agree_on_subdomain[OF goals_extension_agreement]) blast
-  moreover have "systems_agree_on first_problem_goals_system first_problem_guard_system ?U"
-    by (rule systems_agree_on_subdomain[OF first_problem_guard.guarded_old_agreement]) (use goals in blast)
-  moreover have "systems_agree_on first_problem_guard_system asked_program_system ?U"
-    by (rule systems_agree_on_subdomain[OF asked_guard_agreement]) (use goals guard in blast)
-  ultimately show ?thesis by (rule systems_agree_on_transitive[OF systems_agree_on_transitive])
-qed
+  unfolding asked_program_system_def
+  by (rule rooted_intersection_agreement[OF whole_agreement_transitive[OF guard_program_agreement asked_given_agreement]])
 
 text \<open>
   A callee of a clause of a program agreeing with the asked program on their common definitions stands in both, when
@@ -102,63 +90,20 @@ lemma asked_reader_sites:
   "392\<in>system_definitions guard_readers_system" "392\<in>system_definitions asked_program_system"
   "77\<in>system_definitions guard_readers_system" "77\<in>system_definitions asked_program_system"
 proof -
-  note callee=asked_callee[OF guard_readers_formed asked_readers_guard_agreement]
-  have roots: "fset asked_roots\<subseteq>system_definitions asked_program_system"
-    unfolding asked_program_system_def by (rule rooted_system_roots[OF asked_joined_formed asked_roots_joined])
-  have entry: "d|\<in>|given_reader_entries \<Longrightarrow> d\<in>system_definitions asked_program_system" for d
-    using roots by (auto simp: asked_roots_def)
-  have guard: "d|\<in>|given_guard_entries \<Longrightarrow> d\<in>system_definitions guard_readers_system" for d
-    using given_guard_entries_members by blast
-  have transfer: "((d,c),S)\<in>system_clauses guard_readers_system"
-    if agree: "systems_agree_on Q guard_readers_system (system_definitions Q)"
-      and d: "d\<in>system_definitions Q" and clause: "((d,c),S)\<in>system_clauses Q" for Q d c S
-    using agree d clause unfolding systems_agree_on_def by blast
-  have a77: "77\<in>system_definitions asked_program_system" by (rule entry[OF given_rooted_members(2)])
-  have c77: "((77,0),package_closure_admission_schema)\<in>system_clauses guard_readers_system"
-    by (rule transfer[OF whole_agreement_transitive[OF given_reader_agreements(2) additions_guard_agreement]]) simp_all
-  have p47: "(1,47,Pattern_Pair data_y data_z)\<in>schema_premises package_closure_admission_schema"
-    by (simp add: package_closure_admission_schema_def)
-  have p76: "(2,76,Pattern_Pair (Pattern_Pair data_x data_z) data_z)\<in>schema_premises package_closure_admission_schema"
-    by (simp add: package_closure_admission_schema_def)
-  have s47: "47\<in>system_definitions guard_readers_system \<and> 47\<in>system_definitions asked_program_system"
-    by (rule callee[OF a77 c77 p47])
-  have s76: "76\<in>system_definitions guard_readers_system \<and> 76\<in>system_definitions asked_program_system"
-    by (rule callee[OF a77 c77 p76])
-  have c47: "((47,1),data_subset_cons_schema)\<in>system_clauses guard_readers_system"
-    by (rule transfer[OF whole_agreement_transitive[OF whole_agreement_transitive[OF whole_agreement_transitive[OF
-      row_values_subset_agreement row_values_complete_data_agreement] complete_data_additions_agreement]
-      additions_guard_agreement]]) (simp_all add: data_subset_clauses_def)
-  have p5: "(0,5,Pattern_Pair data_x (Pattern_Pair data_z data_w))\<in>schema_premises data_subset_cons_schema"
-    by (simp add: data_subset_cons_schema_def)
-  have s5: "5\<in>system_definitions guard_readers_system \<and> 5\<in>system_definitions asked_program_system"
-    using s47 by (intro callee[OF _ c47 p5]) blast
-  have a392: "392\<in>system_definitions asked_program_system" by (rule entry[OF given_rooted_members(10)])
-  have c392: "((392,0),package_additions_schema 391)\<in>system_clauses guard_readers_system"
-    by (rule transfer[OF additions_guard_agreement]) (simp_all add: use_additions_families(3))
-  have p391: "(5,391,Pattern_Pair (Pattern_Pair data_x (Pattern_Pair data_y (Pattern_Pair data_z data_w)))
-      (Pattern_Variable 5))\<in>schema_premises (package_additions_schema 391)"
-    by (simp add: package_additions_schema_def)
-  have s391: "391\<in>system_definitions guard_readers_system \<and> 391\<in>system_definitions asked_program_system"
-    by (rule callee[OF a392 c392 p391])
-  have c391: "((391,1),context_list_step_schema 390 391)\<in>system_clauses guard_readers_system"
-    by (rule transfer[OF additions_guard_agreement]) (simp_all add: use_additions_families(2) context_list_clauses_def)
-  have p390: "(0,390,Pattern_Pair data_x data_y)\<in>schema_premises (context_list_step_schema 390 391)"
-    by (simp add: context_list_step_schema_def)
-  have s390: "390\<in>system_definitions guard_readers_system \<and> 390\<in>system_definitions asked_program_system"
-    using s391 by (intro callee[OF _ c391 p390]) blast
+  have g: "d\<in>system_definitions guard_readers_system" if "d\<in>{5,47,76,82,113,390,391,392,77}" for d
+    using that given_rooted_read_sites(2)[of d] given_rooted_entry_sites(1,3) by auto
+  have a: "d\<in>system_definitions asked_program_system" if "d\<in>{5,47,76,82,113,390,391,392,77}" for d
+    using that given_rooted_read_sites(1)[of d] given_rooted_entry_sites(2,4) asked_readers_inside by auto
   show "5\<in>system_definitions guard_readers_system" "5\<in>system_definitions asked_program_system"
     "47\<in>system_definitions guard_readers_system" "47\<in>system_definitions asked_program_system"
     "76\<in>system_definitions guard_readers_system" "76\<in>system_definitions asked_program_system"
+    "82\<in>system_definitions guard_readers_system" "82\<in>system_definitions asked_program_system"
+    "113\<in>system_definitions guard_readers_system" "113\<in>system_definitions asked_program_system"
     "390\<in>system_definitions guard_readers_system" "390\<in>system_definitions asked_program_system"
     "391\<in>system_definitions guard_readers_system" "391\<in>system_definitions asked_program_system"
-    using s5 s47 s76 s390 s391 by blast+
-  show "82\<in>system_definitions guard_readers_system" "113\<in>system_definitions guard_readers_system"
-    "392\<in>system_definitions guard_readers_system" "77\<in>system_definitions guard_readers_system"
-    by (rule guard[OF given_guard_members(6)], rule guard[OF given_guard_members(8)],
-      rule guard[OF given_guard_members(10)], rule guard[OF given_guard_members(2)])
-  show "82\<in>system_definitions asked_program_system" "113\<in>system_definitions asked_program_system"
-    "392\<in>system_definitions asked_program_system" "77\<in>system_definitions asked_program_system"
-    by (rule entry[OF given_rooted_members(6)], rule entry[OF given_rooted_members(8)], rule a392, rule a77)
+    "392\<in>system_definitions guard_readers_system" "392\<in>system_definitions asked_program_system"
+    "77\<in>system_definitions guard_readers_system" "77\<in>system_definitions asked_program_system"
+    by (simp_all only: g a insert_iff simp_thms)
 qed
 
 lemma asked_goal_sites:
@@ -231,14 +176,7 @@ lemma asked_readers_meanings:
   by simp_all
 
 lemma asked_readers_listing: "context_list_rule_relation (positive_meaning asked_program_system) 390 391"
-proof -
-  have e: "(390,t)\<in>positive_meaning asked_program_system \<longleftrightarrow> (390,t)\<in>positive_meaning guard_readers_system"
-    "(391,t)\<in>positive_meaning asked_program_system \<longleftrightarrow> (391,t)\<in>positive_meaning guard_readers_system" for t
-    using asked_readers_meaning_at[OF asked_reader_sites(11,12)] asked_readers_meaning_at[OF asked_reader_sites(13,14)]
-    by simp_all
-  show ?thesis
-    by (rule context_list_rule_relation.intro) (unfold e, rule context_list_rule_relation.equation[OF given_readers_listing])
-qed
+  by (rule read_meanings_listing, rule asked_readers_meaning_at) (auto simp: asked_reader_sites)
 
 lemma asked_goals_listing: "context_list_rule_relation (positive_meaning asked_program_system) 523 524"
 proof -
@@ -257,12 +195,14 @@ theorem asked_registrations_complete:
   "finite_registration_complete finite_asked_program n (additions_witness_registration 392 391)"
   "finite_registration_complete finite_asked_program n (additions_witness_registration 525 524)"
 proof -
+  have sites: "{5,12,47,76,82,113,390,391}\<subseteq>system_definitions asked_program_system"
+    using given_rooted_read_sites(1) asked_readers_inside by blast
+  note by_agreement=readers_agreement_registrations_complete[where P=finite_asked_program,
+    unfolded finite_asked_program_exact, OF asked_program_formed asked_readers_guard_agreement sites]
   show "finite_registration_complete finite_asked_program n bound_witness_registration"
-    by (rule bound_witness_registration_complete)
-      (simp_all only: finite_asked_program_exact asked_readers_meanings)
+    by (rule by_agreement(1))
   show "finite_registration_complete finite_asked_program n (additions_witness_registration 392 391)"
-    by (rule additions_witness_registration_complete[where element_site=390])
-      (simp_all only: finite_asked_program_exact asked_readers_meanings asked_readers_listing)
+    by (rule by_agreement(2))
   show "finite_registration_complete finite_asked_program n (additions_witness_registration 525 524)"
     by (rule additions_witness_registration_complete[where element_site=523])
       (simp_all only: finite_asked_program_exact asked_readers_meanings asked_goals_listing)
@@ -274,12 +214,8 @@ lemma asked_readers_finite_clauses:
   assumes "d\<in>system_definitions guard_readers_system" "d\<in>system_definitions asked_program_system"
   shows "((d,c),S) |\<in>| finite_system_clauses finite_asked_program \<longleftrightarrow>
     ((d,c),S) |\<in>| finite_system_clauses finite_given_readers"
-proof -
-  have "((d,c),decode_finite_schema S)\<in>system_clauses asked_program_system \<longleftrightarrow>
-      ((d,c),decode_finite_schema S)\<in>system_clauses guard_readers_system"
-    using asked_readers_guard_agreement assms unfolding systems_agree_on_def by blast
-  then show ?thesis by (simp only: finite_system_clause_decoded finite_asked_program_exact finite_given_readers_exact)
-qed
+  by (rule readers_agreement_finite_clauses[where P=finite_asked_program,
+    unfolded finite_asked_program_exact, OF asked_readers_guard_agreement assms])
 
 lemma asked_single_clause:
   assumes single: "\<And>c T. ((d,c),T)\<in>system_clauses asked_program_system \<longleftrightarrow> c=0 \<and> T=X"
@@ -383,36 +319,36 @@ lemma asked_placement_coordinates:
 
 text \<open>The installation is the mapped extension of the given's reader package by the asked program.\<close>
 
-lemma asked_mapped_extension:
-  "finite_mapped_native_extension given_environment finite_rooted_given_readers finite_asked_program
-    (snd given_readers_installed) [] given_readers_program given_readers_placement"
-  by (rule finite_mapped_native_extension.intro[OF given_readers_extensible(1,2) finite_asked_program_formed
-    finite_asked_program_extends given_readers_extensible(3,4)])
+lemmas asked_mapped_extension=asked_extension.mapped_extension
+
+text \<open>The placed course is the instance of the one every extension of the given's readers has.\<close>
 
 theorem asked_relocated_construction_complete:
   "finite_construction_complete (asked_relocated_construction n) asked_placed_program"
-  unfolding asked_relocated_construction_def asked_placed_program_def asked_placement_coordinates
-  by (rule finite_mapped_native_extension.relocated_construction_complete[OF asked_mapped_extension
-    asked_construction_complete])
+  unfolding asked_relocated_construction_def asked_placed_program_def asked_placement_def
+  by (rule asked_extension.relocated_complete[OF asked_construction_complete])
 
 lemma asked_relocated_registered_clause:
   assumes "a |\<in>| witness_registered (asked_relocated_construction n) e T"
   shows "\<exists>c. ((e,c),T) |\<in>| finite_system_clauses asked_placed_program"
-  using finite_mapped_native_extension.relocated_registered_clause[OF asked_mapped_extension] assms
-  unfolding asked_relocated_construction_def asked_placed_program_def asked_placement_coordinates by blast
+  using assms unfolding asked_relocated_construction_def asked_placed_program_def asked_placement_def
+  by (rule asked_extension.relocated_clause)
 
 lemma asked_relocated_formed: "finite_witness_construction_formed (asked_relocated_construction n)"
   unfolding asked_relocated_construction_def
   by (rule finite_relocated_construction_formed[OF finite_collection_construction_formed])
 
 lemmas asked_placed_resolution_refutation_exact =
-  finite_complete_resolution_refutation_exact[OF asked_relocated_formed asked_relocated_construction_complete]
+  asked_extension.placed_resolution_refutation_exact[OF finite_collection_construction_formed asked_construction_complete,
+    folded asked_placement_def asked_relocated_construction_def asked_placed_program_def]
 
 lemmas asked_placed_verdict_exact =
-  finite_complete_verdict_exact[OF asked_relocated_formed asked_relocated_construction_complete]
+  asked_extension.placed_verdict_exact[OF finite_collection_construction_formed asked_construction_complete,
+    folded asked_placement_def asked_relocated_construction_def asked_placed_program_def]
 
 lemmas asked_placed_demand_exact =
-  finite_complete_demand_exact[OF asked_relocated_formed asked_relocated_construction_complete]
+  asked_extension.placed_demand_exact[OF finite_collection_construction_formed asked_construction_complete,
+    folded asked_placement_def asked_relocated_construction_def asked_placed_program_def]
 
 text \<open>The placed program means the numbered program at the placed sites, and the installed package at its entry.\<close>
 
@@ -423,8 +359,8 @@ lemma asked_placed_meaning:
   assumes "d\<in>system_definitions asked_program_system"
   shows "(asked_placement d,t)\<in>positive_meaning (decode_finite_system asked_placed_program) \<longleftrightarrow>
     (d,t)\<in>positive_meaning asked_program_system"
-  unfolding asked_placed_program_def finite_rename_system_correct finite_asked_program_exact
-  by (rule renamed_meaning_at[OF asked_program_formed asked_placement_injective assms])
+  using asked_extension.placed_meaning[of d t] assms
+  unfolding asked_placed_program_def asked_placement_def finite_asked_program_exact by simp
 
 lemma asked_placed_entry_meaning:
   "(asked_entry,t)\<in>positive_meaning (decode_finite_system asked_placed_program) \<longleftrightarrow>

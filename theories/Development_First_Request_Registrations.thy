@@ -71,30 +71,36 @@ lemma first_request_meanings:
   by (simp_all only: first_request_read_meaning insert_iff simp_thms given_readers_meanings)
 
 lemma first_request_listing: "context_list_rule_relation (positive_meaning first_request_program_system) 390 391"
-proof -
-  have e: "(390,t)\<in>positive_meaning first_request_program_system \<longleftrightarrow> (390,t)\<in>positive_meaning guard_readers_system"
-    "(391,t)\<in>positive_meaning first_request_program_system \<longleftrightarrow> (391,t)\<in>positive_meaning guard_readers_system" for t
-    by (simp_all only: first_request_read_meaning insert_iff simp_thms)
-  show ?thesis
-    by (rule context_list_rule_relation.intro) (unfold e, rule context_list_rule_relation.equation[OF given_readers_listing])
-qed
+  by (rule read_meanings_listing, rule first_request_read_meaning) auto
 
 section \<open>The registrations and the construction complete at the program\<close>
+
+text \<open>
+  The program agrees with the given's readers on their common definitions (@{thm [source] rooted_intersection_agreement}),
+  so the registrations are complete at it by agreement (@{thm [source] readers_agreement_registrations_complete}).
+\<close>
+
+lemma first_request_readers_guard_agreement:
+  "systems_agree_on guard_readers_system first_request_program_system
+    (system_definitions guard_readers_system\<inter>system_definitions first_request_program_system)"
+  unfolding first_request_program_system_def by (rule rooted_intersection_agreement[OF guard_first_request_agreement])
 
 theorem first_request_registrations_complete:
   "finite_registration_complete finite_first_request_program n bound_witness_registration"
   "finite_registration_complete finite_first_request_program n (additions_witness_registration 392 391)"
   "finite_registration_complete finite_first_request_program n merge_witness_registration"
 proof -
+  have sites: "{5,12,47,76,82,113,390,391}\<subseteq>system_definitions first_request_program_system"
+    using first_request_read_sites(1) by blast
+  note by_agreement=readers_agreement_registrations_complete[where P=finite_first_request_program,
+    unfolded finite_first_request_program_exact, OF first_request_program_formed first_request_readers_guard_agreement
+    sites]
   show "finite_registration_complete finite_first_request_program n bound_witness_registration"
-    by (rule bound_witness_registration_complete)
-      (simp_all only: finite_first_request_program_exact first_request_meanings)
+    by (rule by_agreement(1))
   show "finite_registration_complete finite_first_request_program n (additions_witness_registration 392 391)"
-    by (rule additions_witness_registration_complete[where element_site=390])
-      (simp_all only: finite_first_request_program_exact first_request_meanings first_request_listing)
+    by (rule by_agreement(2))
   show "finite_registration_complete finite_first_request_program n merge_witness_registration"
-    by (rule merge_witness_registration_complete)
-      (simp_all only: finite_first_request_program_exact first_request_meanings)
+    by (rule by_agreement(3))
 qed
 
 subsection \<open>The clauses the registrations name\<close>
@@ -196,9 +202,11 @@ section \<open>Relocated at the installation\<close>
 text \<open>
   The installation places the request's program by @{const first_request_placement}
   (@{thm [source] given_readers_extension.installed_placement_def}); the construction relocated by it is complete at
-  the placed program (@{text relocated_construction_complete}), and every variable it registers names a clause
-  of it (@{text relocated_registered_clause}). The placed program is the program the installation compiles
-  into the installed package, whose meaning is the placed program's (@{thm [source] first_request_installation}).
+  the placed program, and every variable it registers names a clause of it: the placed course of every extension of
+  the given's readers (@{thm [source] given_readers_extension.relocated_complete},
+  @{thm [source] given_readers_extension.relocated_clause}), at this installation. The placed program is the program
+  the installation compiles into the installed package, whose meaning is the placed program's
+  (@{thm [source] first_request_installation}).
 \<close>
 
 abbreviation first_request_relocated where
@@ -208,53 +216,35 @@ abbreviation first_request_relocated where
 abbreviation first_request_placed where
   "first_request_placed \<equiv> finite_rename_system first_request_placement finite_first_request_program"
 
-
 theorem first_request_relocated_complete:
   "finite_construction_complete (first_request_relocated n) first_request_placed"
-  unfolding first_request_placement_def first_request_extension.installed_placement_def
-  by (rule finite_mapped_native_extension.relocated_construction_complete[OF first_request_extension.mapped_extension
-    first_request_construction_complete])
+  unfolding first_request_placement_def
+  by (rule first_request_extension.relocated_complete[OF first_request_construction_complete])
 
 lemma first_request_relocated_clause:
   assumes "a |\<in>| witness_registered (first_request_relocated n) e T"
   shows "\<exists>c. ((e,c),T) |\<in>| finite_system_clauses first_request_placed"
-  using assms unfolding first_request_placement_def first_request_extension.installed_placement_def
-  by (rule finite_mapped_native_extension.relocated_registered_clause[OF first_request_extension.mapped_extension])
+  using assms unfolding first_request_placement_def by (rule first_request_extension.relocated_clause)
 
 lemma first_request_relocated_formed: "finite_witness_construction_formed (first_request_relocated n)"
   by (rule finite_relocated_construction_formed[OF finite_collection_construction_formed])
 
 lemmas first_request_placed_resolution_refutation_exact =
-  finite_complete_resolution_refutation_exact[OF first_request_relocated_formed first_request_relocated_complete]
+  first_request_extension.placed_resolution_refutation_exact[OF finite_collection_construction_formed
+    first_request_construction_complete, folded first_request_placement_def]
 
 lemmas first_request_placed_verdict_exact =
-  finite_complete_verdict_exact[OF first_request_relocated_formed first_request_relocated_complete]
+  first_request_extension.placed_verdict_exact[OF finite_collection_construction_formed
+    first_request_construction_complete, folded first_request_placement_def]
 
 lemmas first_request_placed_demand_exact =
-  finite_complete_demand_exact[OF first_request_relocated_formed first_request_relocated_complete]
+  first_request_extension.placed_demand_exact[OF finite_collection_construction_formed
+    first_request_construction_complete, folded first_request_placement_def]
 
 text \<open>
   Each definition means at its placed site in the placed program what it means in the program, and so what the
-  installed program means there (@{thm [source] given_readers_extension.installed_meaning}): stated once for every
-  extension of the given's readers.
+  installed program means there (@{thm [source] given_readers_extension.placed_meaning}).
 \<close>
-
-context given_readers_extension
-begin
-
-lemma placed_meaning:
-  assumes "d\<in>system_definitions (decode_finite_system Q)"
-  shows "(installed_placement d,t)\<in>positive_meaning (decode_finite_system (finite_rename_system installed_placement Q))
-    \<longleftrightarrow> (d,t)\<in>positive_meaning (decode_finite_system Q)"
-  unfolding finite_rename_system_correct by (rule renamed_meaning_at[OF target_formed installation(5) assms])
-
-lemma placed_installed_meaning:
-  assumes "d\<in>system_definitions (decode_finite_system Q)"
-  shows "(installed_placement d,t)\<in>positive_meaning (decode_finite_system (finite_rename_system installed_placement Q))
-    \<longleftrightarrow> (installed_placement d,t)\<in>positive_meaning installed_program"
-  using placed_meaning[OF assms] installed_meaning[OF assms] by simp
-
-end
 
 lemma first_request_placed_meaning:
   assumes "d\<in>system_definitions first_request_program_system"

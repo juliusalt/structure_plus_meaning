@@ -326,28 +326,28 @@ text \<open>The placed course is the instance of the one every extension of the 
 theorem asked_relocated_construction_complete:
   "finite_construction_complete (asked_relocated_construction n) asked_placed_program"
   unfolding asked_relocated_construction_def asked_placed_program_def asked_placement_def
-  by (rule asked_extension.relocated_complete[OF asked_construction_complete])
+  by (rule given_readers_extension.relocated_complete[OF asked_extension.readers_extension asked_construction_complete])
 
 lemma asked_relocated_registered_clause:
   assumes "a |\<in>| witness_registered (asked_relocated_construction n) e T"
   shows "\<exists>c. ((e,c),T) |\<in>| finite_system_clauses asked_placed_program"
   using assms unfolding asked_relocated_construction_def asked_placed_program_def asked_placement_def
-  by (rule asked_extension.relocated_clause)
+  by (rule given_readers_extension.relocated_clause[OF asked_extension.readers_extension])
 
 lemma asked_relocated_formed: "finite_witness_construction_formed (asked_relocated_construction n)"
   unfolding asked_relocated_construction_def
   by (rule finite_relocated_construction_formed[OF finite_collection_construction_formed])
 
 lemmas asked_placed_resolution_refutation_exact =
-  asked_extension.placed_resolution_refutation_exact[OF finite_collection_construction_formed asked_construction_complete,
+  given_readers_extension.placed_resolution_refutation_exact[OF asked_extension.readers_extension finite_collection_construction_formed asked_construction_complete,
     folded asked_placement_def asked_relocated_construction_def asked_placed_program_def]
 
 lemmas asked_placed_verdict_exact =
-  asked_extension.placed_verdict_exact[OF finite_collection_construction_formed asked_construction_complete,
+  given_readers_extension.placed_verdict_exact[OF asked_extension.readers_extension finite_collection_construction_formed asked_construction_complete,
     folded asked_placement_def asked_relocated_construction_def asked_placed_program_def]
 
 lemmas asked_placed_demand_exact =
-  asked_extension.placed_demand_exact[OF finite_collection_construction_formed asked_construction_complete,
+  given_readers_extension.placed_demand_exact[OF asked_extension.readers_extension finite_collection_construction_formed asked_construction_complete,
     folded asked_placement_def asked_relocated_construction_def asked_placed_program_def]
 
 text \<open>The placed program means the numbered program at the placed sites, and the installed package at its entry.\<close>

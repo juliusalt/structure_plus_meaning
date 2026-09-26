@@ -1873,6 +1873,7 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Development_Given_Program
     Development_Given_Declarations
     Factor_Root_Family_Declarations
+    Factor_Artifact_Citation_Declarations
     Development_Given_Declarations_Execution
     Native_Control_Quotation_Construction
     Native_Control_Quotation_Representation

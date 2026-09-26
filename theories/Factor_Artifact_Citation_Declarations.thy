@@ -959,6 +959,18 @@ lemmas artifact_citation_listed_simps = socket_listed_simps view_listed[OF looku
   view_listed[OF whole_view_def] lookup_view_formed outer_pair_view_formed headed_fields_view_formed whole_view_formed
   consumer_input_def whole_view_term view_identity_term pair_view_some
 
+text \<open>
+  A socket carried along its listed clause is framed at its carried set (@{thm [source] socket_framed_carried}): the
+  socket's output and every carrier's output, computed from the clause, the carrier list and the views. Each socket
+  below is framed so, its frame the set the carrying computes, and its discharge follows from the frame
+  (@{thm [source] socket_framed_discharged}).
+\<close>
+
+lemma socket_framed_at_carried:
+  assumes carried: "socket_carried M S s keep Vp Vh c0 cs" and frame: "carried_variables S s Vp cs = C"
+  shows "socket_framed M S s keep Vp Vh C"
+  using socket_framed_carried[OF carried] unfolding frame .
+
 subsection \<open>12 inside 37: the stored artifact compared with the output\<close>
 
 definition lookup_socket_schema :: "(nat,nat,nat) finite_factor_schema" where
@@ -984,10 +996,14 @@ proof -
     using identity_producer_discharged by (simp add: artifact_citation_correspondence_simps)
 qed
 
+lemma lookup_socket_framed:
+  "socket_framed (positive_meaning artifact_lookup_system) lookup_socket_schema 2 False view_identity lookup_view {3}"
+  by (rule socket_framed_at_carried[OF socket_carried_listed[OF meaning_answers_formed view_identity_formed lookup_identity_producer, where \<sigma> = "\<lambda>_. 1" and cs = "[]"]])
+    (simp_all add: artifact_citation_listed_simps lookup_socket_schema_def)
+
 theorem lookup_socket_discharged:
   "socket_discharged (positive_meaning artifact_lookup_system) lookup_socket_schema 2 False view_identity lookup_view"
-  by (rule socket_discharged_carried[OF socket_carried_listed[OF meaning_answers_formed view_identity_formed lookup_identity_producer, where \<sigma> = "\<lambda>_. 1" and cs = "[]"]])
-    (simp add: artifact_citation_listed_simps lookup_socket_schema_def)
+  by (rule socket_framed_discharged[OF lookup_socket_framed])
 
 subsection \<open>7 inside 12: the two admitted artifacts compared, 11 carrying the output\<close>
 
@@ -1023,11 +1039,15 @@ qed
 abbreviation identity_carriers :: "nat clause_carrier list" where
   "identity_carriers \<equiv> [(1,consumer_carrier_view whole_view,consumer_input whole_view fields_correspondence,(=))]"
 
+lemma identity_socket_framed:
+  "socket_framed (positive_meaning artifact_identity_system) identity_socket_schema 2 False view_identity view_identity {1}"
+  by (rule socket_framed_at_carried[OF socket_carried_listed[OF meaning_answers_formed view_identity_formed identity_comparison_producer, where \<sigma> = "\<lambda>_. 1" and cs = "identity_carriers"]])
+    (simp_all add: artifact_citation_listed_simps identity_socket_schema_def
+      consumer_discharged_carrier[OF whole_view_formed fields_correspondence_symp, THEN iffD1, OF identity_admission_consumer])
+
 theorem identity_socket_discharged:
   "socket_discharged (positive_meaning artifact_identity_system) identity_socket_schema 2 False view_identity view_identity"
-  by (rule socket_discharged_carried[OF socket_carried_listed[OF meaning_answers_formed view_identity_formed identity_comparison_producer, where \<sigma> = "\<lambda>_. 1" and cs = "identity_carriers"]])
-    (simp add: artifact_citation_listed_simps identity_socket_schema_def
-      consumer_discharged_carrier[OF whole_view_formed fields_correspondence_symp, THEN iffD1, OF identity_admission_consumer])
+  by (rule socket_framed_discharged[OF identity_socket_framed])
 
 subsection \<open>6 inside 7: each field's bag comparison\<close>
 
@@ -1056,17 +1076,23 @@ proof -
   show ?thesis unfolding producer_discharged_site[OF eq] view_identity_output by (rule bag_producer_discharged)
 qed
 
-theorem comparison_socket_discharged:
+lemma comparison_socket_framed:
   assumes i: "i \<in> {0,1,2,3}"
-  shows "socket_discharged (positive_meaning artifact_comparison_system) comparison_socket_schema i False
-    view_identity view_identity"
+  shows "socket_framed (positive_meaning artifact_comparison_system) comparison_socket_schema i False
+    view_identity view_identity {i + 4}"
 proof -
   have "i = 0 \<or> i = 1 \<or> i = 2 \<or> i = 3" using i by simp
   then show ?thesis
     apply (elim disjE)
-    apply (simp only:, rule socket_discharged_carried[OF socket_carried_listed[OF meaning_answers_formed view_identity_formed comparison_bag_producer, where \<sigma> = "\<lambda>_. 1" and cs = "[]"]], simp add: artifact_citation_listed_simps comparison_socket_schema_def)+
+    apply (simp only:, rule socket_framed_at_carried[OF socket_carried_listed[OF meaning_answers_formed view_identity_formed comparison_bag_producer, where \<sigma> = "\<lambda>_. 1" and cs = "[]"]], simp add: artifact_citation_listed_simps comparison_socket_schema_def, simp add: artifact_citation_listed_simps comparison_socket_schema_def)+
     done
 qed
+
+theorem comparison_socket_discharged:
+  assumes i: "i \<in> {0,1,2,3}"
+  shows "socket_discharged (positive_meaning artifact_comparison_system) comparison_socket_schema i False
+    view_identity view_identity"
+  by (rule socket_framed_discharged[OF comparison_socket_framed[OF i]])
 
 subsection \<open>6 inside 29: each collected field's bag comparison\<close>
 
@@ -1097,17 +1123,23 @@ lemma headed_bag_producer:
   unfolding producer_discharged_site[OF headed_material_components(3)] view_identity_output
   by (rule bag_producer_discharged)
 
-theorem headed_socket_discharged:
+lemma headed_socket_framed:
   assumes i: "i \<in> {5,6,7}"
-  shows "socket_discharged (positive_meaning headed_material_system) headed_socket_schema i False
-    view_identity headed_fields_view"
+  shows "socket_framed (positive_meaning headed_material_system) headed_socket_schema i False
+    view_identity headed_fields_view {i}"
 proof -
   have "i = 5 \<or> i = 6 \<or> i = 7" using i by simp
   then show ?thesis
     apply (elim disjE)
-    apply (simp only:, rule socket_discharged_carried[OF socket_carried_listed[OF meaning_answers_formed view_identity_formed headed_bag_producer, where \<sigma> = "\<lambda>_. 1" and cs = "[]"]], simp add: artifact_citation_listed_simps headed_socket_schema_def)+
+    apply (simp only:, rule socket_framed_at_carried[OF socket_carried_listed[OF meaning_answers_formed view_identity_formed headed_bag_producer, where \<sigma> = "\<lambda>_. 1" and cs = "[]"]], simp add: artifact_citation_listed_simps headed_socket_schema_def, simp add: artifact_citation_listed_simps headed_socket_schema_def)+
     done
 qed
+
+theorem headed_socket_discharged:
+  assumes i: "i \<in> {5,6,7}"
+  shows "socket_discharged (positive_meaning headed_material_system) headed_socket_schema i False
+    view_identity headed_fields_view"
+  by (rule socket_framed_discharged[OF headed_socket_framed[OF i]])
 
 subsection \<open>29 inside 32: a root's incidence rows, carried by 21 and 31\<close>
 
@@ -1175,9 +1207,9 @@ abbreviation family_carriers :: "nat clause_carrier list" where
   "family_carriers \<equiv> [(1,consumer_carrier_view whole_view,consumer_input whole_view (given_correspondence 6),(=)),
     (2,consumer_carrier_view view_identity,consumer_input view_identity (given_correspondence 6),(=))]"
 
-theorem family_rows_socket_discharged:
-  "socket_discharged (positive_meaning family_admission_system) family_rows_socket_schema 0 False
-    headed_incidence_view view_identity"
+lemma family_rows_socket_framed:
+  "socket_framed (positive_meaning family_admission_system) family_rows_socket_schema 0 False
+    headed_incidence_view view_identity {2}"
 proof -
   let ?M = "positive_meaning family_admission_system"
   have producer: "producer_discharged ?M 29 headed_incidence_view [snd (snd headed_incidence_view)]
@@ -1188,12 +1220,17 @@ proof -
   have c31: "consumer_discharged ?M 31 view_identity (given_correspondence 6)"
     using sockets_rows_consumer by (simp add: artifact_citation_correspondence_simps)
   show ?thesis
-    by (rule socket_discharged_carried[OF socket_carried_listed[OF meaning_answers_formed headed_incidence_view_formed
+    by (rule socket_framed_at_carried[OF socket_carried_listed[OF meaning_answers_formed headed_incidence_view_formed
       producer, where \<sigma> = "\<lambda>_. 2" and cs = family_carriers]])
-      (simp add: artifact_citation_listed_simps family_rows_socket_schema_def view_listed[OF headed_incidence_view_def]
+      (simp_all add: artifact_citation_listed_simps family_rows_socket_schema_def view_listed[OF headed_incidence_view_def]
         consumer_discharged_carrier[OF whole_view_formed given_correspondence_symp, THEN iffD1, OF c21]
         consumer_discharged_carrier[OF view_identity_formed given_correspondence_symp, THEN iffD1, OF c31])
 qed
+
+theorem family_rows_socket_discharged:
+  "socket_discharged (positive_meaning family_admission_system) family_rows_socket_schema 0 False
+    headed_incidence_view view_identity"
+  by (rule socket_framed_discharged[OF family_rows_socket_framed])
 
 subsection \<open>39 inside 40: the resolved use and target\<close>
 
@@ -1214,11 +1251,16 @@ lemma interpretation_resolution_producer:
   unfolding producer_discharged_site[OF citation_interpretation_resolution]
   using resolution_producer_discharged by (simp add: artifact_citation_correspondence_simps)
 
+lemma interpretation_socket_framed:
+  "socket_framed (positive_meaning citation_interpretation_system) interpretation_socket_schema 0 False
+    outer_pair_view inner_right_view {3,4}"
+  by (rule socket_framed_at_carried[OF socket_carried_listed[OF meaning_answers_formed outer_pair_view_formed interpretation_resolution_producer, where \<sigma> = "\<lambda>v. if v = 4 then 3 else 4" and cs = "[]"]])
+    (simp_all add: artifact_citation_listed_simps interpretation_socket_schema_def)
+
 theorem interpretation_socket_discharged:
   "socket_discharged (positive_meaning citation_interpretation_system) interpretation_socket_schema 0 False
     outer_pair_view inner_right_view"
-  by (rule socket_discharged_carried[OF socket_carried_listed[OF meaning_answers_formed outer_pair_view_formed interpretation_resolution_producer, where \<sigma> = "\<lambda>v. if v = 4 then 3 else 4" and cs = "[]"]])
-    (simp add: artifact_citation_listed_simps interpretation_socket_schema_def)
+  by (rule socket_framed_discharged[OF interpretation_socket_framed])
 
 subsection \<open>6 inside 36's external clause: the interior's bag of the slot and the target\<close>
 
@@ -1251,11 +1293,16 @@ lemma admission_bag_producer:
   unfolding producer_discharged_site[OF citation_admission_components(3)] view_identity_output
   by (rule bag_producer_discharged)
 
+lemma external_socket_framed:
+  "socket_framed (positive_meaning citation_admission_system) external_socket_schema 5 False
+    view_identity inner_right_view {5}"
+  by (rule socket_framed_at_carried[OF socket_carried_listed[OF meaning_answers_formed view_identity_formed admission_bag_producer, where \<sigma> = "\<lambda>_. 1" and cs = "[]"]])
+    (simp_all add: artifact_citation_listed_simps external_socket_schema_def)
+
 theorem external_socket_discharged:
   "socket_discharged (positive_meaning citation_admission_system) external_socket_schema 5 False
     view_identity inner_right_view"
-  by (rule socket_discharged_carried[OF socket_carried_listed[OF meaning_answers_formed view_identity_formed admission_bag_producer, where \<sigma> = "\<lambda>_. 1" and cs = "[]"]])
-    (simp add: artifact_citation_listed_simps external_socket_schema_def)
+  by (rule socket_framed_discharged[OF external_socket_framed])
 
 subsection \<open>32 inside 54: the binder family's rows, carried by 53 to the binders\<close>
 
@@ -1387,10 +1434,14 @@ lemma binder_socket_decoded: "decode_finite_schema binder_socket_schema = binder
 abbreviation binder_carriers :: "nat clause_carrier list" where
   "binder_carriers \<equiv> [(0,view_swap,row_bag_transport,binder_bag_transport)]"
 
+lemma binder_socket_framed:
+  "socket_framed (positive_meaning binder_admission_system) binder_socket_schema 1 False view_identity view_identity {2,3}"
+  by (rule socket_framed_at_carried[OF socket_carried_listed[OF meaning_answers_formed view_identity_formed binder_family_producer, where \<sigma> = "\<lambda>_. 1" and cs = "binder_carriers"]])
+    (simp_all add: artifact_citation_listed_simps binder_socket_schema_def diagonal_rows_carrier)
+
 theorem binder_socket_discharged:
   "socket_discharged (positive_meaning binder_admission_system) binder_socket_schema 1 False view_identity view_identity"
-  by (rule socket_discharged_carried[OF socket_carried_listed[OF meaning_answers_formed view_identity_formed binder_family_producer, where \<sigma> = "\<lambda>_. 1" and cs = "binder_carriers"]])
-    (simp add: artifact_citation_listed_simps binder_socket_schema_def diagonal_rows_carrier)
+  by (rule socket_framed_discharged[OF binder_socket_framed])
 
 section \<open>The declarations, each at its notion's system\<close>
 
@@ -1495,11 +1546,30 @@ theorem lookup_declarations_discharged:
   using lookup_producer_discharged lookup_socket_discharged
   by (simp add: discharged_unfold lookup_declarations_def)
 
+text \<open>
+  The frames beside the records: each declared socket at the set its carrying frames it at, discharged at the
+  record's notion system (@{const frames_discharged}). A record that declares no socket has no frame.
+\<close>
+
+definition lookup_frames :: "(nat,nat,nat) resolution_frames" where
+  "lookup_frames = {|(37,lookup_socket_schema,2,{|3|})|}"
+
+theorem lookup_frames_discharged:
+  "frames_discharged (positive_meaning artifact_lookup_system) lookup_declarations lookup_frames"
+  using lookup_socket_framed by (auto simp: frames_discharged_def lookup_declarations_def lookup_frames_def)
+
 theorem identity_declarations_discharged:
   "declarations_discharged (positive_meaning artifact_identity_system) identity_declarations
     artifact_citation_correspondence"
   using identity_producer_discharged identity_socket_discharged
   by (simp add: discharged_unfold identity_declarations_def)
+
+definition identity_frames :: "(nat,nat,nat) resolution_frames" where
+  "identity_frames = {|(12,identity_socket_schema,2,{|1|})|}"
+
+theorem identity_frames_discharged:
+  "frames_discharged (positive_meaning artifact_identity_system) identity_declarations identity_frames"
+  using identity_socket_framed by (auto simp: frames_discharged_def identity_declarations_def identity_frames_def)
 
 theorem comparison_declarations_discharged:
   "declarations_discharged (positive_meaning artifact_comparison_system) comparison_declarations
@@ -1507,6 +1577,16 @@ theorem comparison_declarations_discharged:
   using comparison_producer_discharged comparison_socket_discharged[of 0] comparison_socket_discharged[of 1]
     comparison_socket_discharged[of 2] comparison_socket_discharged[of 3]
   by (simp add: discharged_unfold comparison_declarations_def)
+
+definition comparison_frames :: "(nat,nat,nat) resolution_frames" where
+  "comparison_frames = {|(7,comparison_socket_schema,0,{|4|}),(7,comparison_socket_schema,1,{|5|}),
+    (7,comparison_socket_schema,2,{|6|}),(7,comparison_socket_schema,3,{|7|})|}"
+
+theorem comparison_frames_discharged:
+  "frames_discharged (positive_meaning artifact_comparison_system) comparison_declarations comparison_frames"
+  using comparison_socket_framed[of 0] comparison_socket_framed[of 1] comparison_socket_framed[of 2]
+    comparison_socket_framed[of 3]
+  by (auto simp: frames_discharged_def comparison_declarations_def comparison_frames_def)
 
 theorem fields_admission_declarations_discharged:
   "declarations_discharged (positive_meaning artifact_admission_system) fields_admission_declarations
@@ -1520,11 +1600,28 @@ theorem headed_declarations_discharged:
     headed_socket_discharged[of 6] headed_socket_discharged[of 7]
   by (simp add: discharged_unfold headed_declarations_def)
 
+definition headed_frames :: "(nat,nat,nat) resolution_frames" where
+  "headed_frames = {|(29,headed_socket_schema,5,{|5|}),(29,headed_socket_schema,6,{|6|}),
+    (29,headed_socket_schema,7,{|7|})|}"
+
+theorem headed_frames_discharged:
+  "frames_discharged (positive_meaning headed_material_system) headed_declarations headed_frames"
+  using headed_socket_framed[of 5] headed_socket_framed[of 6] headed_socket_framed[of 7]
+  by (auto simp: frames_discharged_def headed_declarations_def headed_frames_def)
+
 theorem family_rows_declarations_discharged:
   "declarations_discharged (positive_meaning family_admission_system) family_rows_declarations
     artifact_citation_correspondence"
   using family_artifact_consumer keyed_rows_consumer sockets_rows_consumer family_rows_socket_discharged
   by (simp add: discharged_unfold family_rows_declarations_def)
+
+definition family_rows_frames :: "(nat,nat,nat) resolution_frames" where
+  "family_rows_frames = {|(32,family_rows_socket_schema,0,{|2|})|}"
+
+theorem family_rows_frames_discharged:
+  "frames_discharged (positive_meaning family_admission_system) family_rows_declarations family_rows_frames"
+  using family_rows_socket_framed
+  by (auto simp: frames_discharged_def family_rows_declarations_def family_rows_frames_def)
 
 theorem record_artifact_declarations_discharged:
   "declarations_discharged (positive_meaning record_admission_system) record_artifact_declarations
@@ -1541,6 +1638,13 @@ theorem admission_declarations_discharged:
     artifact_citation_correspondence"
   using admission_producer_discharged admission_artifact_consumer external_socket_discharged
   by (simp add: discharged_unfold admission_declarations_def)
+
+definition admission_frames :: "(nat,nat,nat) resolution_frames" where
+  "admission_frames = {|(36,external_socket_schema,5,{|5|})|}"
+
+theorem admission_frames_discharged:
+  "frames_discharged (positive_meaning citation_admission_system) admission_declarations admission_frames"
+  using external_socket_framed by (auto simp: frames_discharged_def admission_declarations_def admission_frames_def)
 
 theorem reading_declarations_discharged:
   "declarations_discharged (positive_meaning citation_reading_system) reading_declarations
@@ -1564,6 +1668,15 @@ theorem interpretation_declarations_discharged:
   using interpretation_producer_discharged interpretation_socket_discharged
   by (simp add: discharged_unfold interpretation_declarations_def)
 
+definition interpretation_frames :: "(nat,nat,nat) resolution_frames" where
+  "interpretation_frames = {|(40,interpretation_socket_schema,0,{|3,4|})|}"
+
+theorem interpretation_frames_discharged:
+  "frames_discharged (positive_meaning citation_interpretation_system) interpretation_declarations
+    interpretation_frames"
+  using interpretation_socket_framed
+  by (auto simp: frames_discharged_def interpretation_declarations_def interpretation_frames_def)
+
 theorem projection_target_declarations_discharged:
   "declarations_discharged (positive_meaning target_projection_system) projection_target_declarations
     artifact_citation_correspondence"
@@ -1574,6 +1687,13 @@ theorem binder_declarations_discharged:
     artifact_citation_correspondence"
   using binder_producer_discharged binder_artifact_consumer binder_socket_discharged
   by (simp add: discharged_unfold binder_declarations_def)
+
+definition binder_frames :: "(nat,nat,nat) resolution_frames" where
+  "binder_frames = {|(54,binder_socket_schema,1,{|2,3|})|}"
+
+theorem binder_frames_discharged:
+  "frames_discharged (positive_meaning binder_admission_system) binder_declarations binder_frames"
+  using binder_socket_framed by (auto simp: frames_discharged_def binder_declarations_def binder_frames_def)
 
 theorem bag_binder_declarations_discharged:
   "declarations_discharged (positive_meaning bag_comparison_system) bag_binder_declarations

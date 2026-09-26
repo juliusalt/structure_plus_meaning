@@ -64,7 +64,7 @@ into the briefs #522 and #523 corrected, or recorded superseded there.
   #605 → its installed carrying #663 → R6c's carrying
   #611 → rc's numbered forms #540 (after #676) and native form #661 → R7 #542 (the numbered course; #661 feeds its
   native part #707) and the request at the given #547 → #399.
-- The clause match (#642's addition, briefed by #643; M #645, V1 #647, V3's #653, #687 and #655 landed): V2a #649 (after #597 and the forms
+- The clause match (#642's addition, briefed by #643; M #645, V1 #647 and V3's #653, #687, #655 and #688 landed): V2a #649 (after #597 and the forms
   #676) and V2b #651 (after #599), divided so that #605 does not wait on #599; V3, divided by plan-89 by the room its
   relations leave, in one theory edited in turn: #653 (the general statement in `given_readers_extension`) beside #687
   (the given's registrations complete at the rooted readers, `Development_Rooted_Registrations`), then #655 (the given's
@@ -372,7 +372,9 @@ follow-ups are in `PLANNING_LOG.md` and the earlier states (`HANDOFF-before-cond
   `Development_Installed_Presentations`: an extension's installed package read natively through
   `given_readers_extension`, `installed_construction` relocated and varied and complete there, `installed_entry_exact`
   the native exact form at the installed entry); V3's given part #655 (`9deb810e`: the given's installation read
-  natively, the construction complete at the rooted readers relocated and varied, `given_installed_presentation_exact`).
+  natively, the construction complete at the rooted readers relocated and varied, `given_installed_presentation_exact`); V3's
+  instances #688 (`f8e987a6`: `asked_installed_construction` and `asked_installed_exact` at 526,
+  `first_request_installed_construction` and `first_request_installed_exact` at 561).
 - **The probe's start and the base** (Q29): a probe's start is the base's chain (#623, `.build/tasks/623/result.md`);
   the one-session base landed inert (#624) and switched on by the owner (Q29–Q32, 2026-09-26); the start estimated by the chain (#625); held at the library's scale, 3.33
   s against 37.68 s (#628); `Factor_Resolution_Commitments`' proof time (#629).
@@ -552,7 +554,8 @@ planner searches for a theory before briefing a task that edits it.
   #688 — 656's 1 (one lemma over any site at which a package is read, the two presentations' exactness its instances,
   at the head of `Development_Installed_Presentations`); #663, #447 — 656's 2 (`Factor_Varied_Constructions`' facts at
   `finite_mapped_native_extension` consumed through `given_readers_mapped_extension`, not derived again); #699 — 698's 1
-  (the table read by an index by position) and 4 (the share cost per search beside the per-step saving); #542 — 698's 4.
+  (the table read by an index by position) and 4 (the share cost per search beside the per-step saving); #542 — 698's 4;
+  #711 — 692's 2 (`asked_mapped_extension` re-cited as `asked_extension.mapped_extension`).
 - **The harness's gaps met by this run's tasks** are owed to the owner and listed in `PLANNING_LOG.md` (2026-09-26,
   plan-86); new ones go there.
 - **Ledger entries that can leave** (the harness's `v2.py ledger`): Q7's and Q2's questions and answers, recorded in the

@@ -1,5 +1,5 @@
 theory Factor_Artifact_Citation_Declarations
-  imports Development_Given_Declarations Factor_Resolution_Carriers Factor_Root_Family_Declarations Factor_Citation_Reading
+  imports Factor_Producer_Correspondences Factor_Resolution_Carriers Factor_Root_Family_Declarations Factor_Citation_Reading
     Factor_Headed_Material Factor_Artifact_Comparison Factor_Data_Collection_Operations
     Factor_Scoped_Instantiation Factor_Record_Admission Factor_Term_Sequence_Presentations
 begin
@@ -1054,11 +1054,6 @@ proof -
     by (intro conjI formed' car consumer_carrier_covered sub empty corr_all)
 qed
 
-text \<open>A clause's premise at a key, read from a finite functional premise family.\<close>
-
-lemma ffilter_finsert: "ffilter P (finsert a A) = (if P a then finsert a (ffilter P A) else ffilter P A)"
-  by transfer auto
-
 subsection \<open>12 inside 37: the stored artifact compared with the output\<close>
 
 definition lookup_socket_schema :: "(nat,nat,nat) finite_factor_schema" where
@@ -1595,18 +1590,14 @@ lemma family_rows_bag:
   assumes c: "given_correspondence 32 y y'" and f: "term_formed y" "term_formed y'"
   shows "row_bag_transport y y'"
 proof -
-  obtain S where S: "family_rows_presents S y" "family_rows_presents S y'"
-    using c by (auto simp: given_correspondence_def presentation_transport_def)
-  obtain rs where rs: "distinct rs" "set rs = S" "y = data_list_term (map address_pair_data rs)"
-    using S(1) by (auto simp: data_collection_presents_def list_all2_function)
-  obtain rs' where rs': "distinct rs'" "set rs' = S" "y' = data_list_term (map address_pair_data rs')"
-    using S(2) by (auto simp: data_collection_presents_def list_all2_function)
-  have m: "mset rs = mset rs'" using rs rs' set_eq_iff_mset_eq_distinct by metis
+  obtain rs rs' where d: "distinct rs" "distinct rs'" and m: "mset rs = mset rs'"
+      and rs: "y = data_list_term (map address_pair_data rs)" and rs': "y' = data_list_term (map address_pair_data rs')"
+    by (rule family_rows_enumerations[OF c])
   let ?row = "\<lambda>z::local_address \<times> octets. (Payload_Term (fst z),Payload_Term (snd z))"
   have rows: "data_list_term (map address_pair_data zs) = pair_list_term (map ?row zs)" for zs
     by (induction zs) (simp_all add: address_pair_data_def)
   have "row_bag_presents (mset (map ?row rs)) y" "row_bag_presents (mset (map ?row rs)) y'"
-    using rs(3) rs'(3) f m unfolding row_bag_presents_rows rows by (metis mset_map)+
+    using rs rs' f m unfolding row_bag_presents_rows rows by (metis mset_map)+
   then show ?thesis by (auto simp: presentation_transport_def)
 qed
 

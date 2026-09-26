@@ -1,5 +1,5 @@
 theory Factor_Resolution_Carriers
-  imports Factor_Resolution_Socket_Discharges Factor_Substitution Presentation_Function_Witnesses
+  imports RRA_Selection Factor_Resolution_Socket_Discharges Factor_Substitution Presentation_Function_Witnesses
 begin
 
 text \<open>
@@ -910,5 +910,222 @@ proof -
   qed
   show ?thesis unfolding socket_discharged_def using first calls nomat by blast
 qed
+
+section \<open>A socket carried along its listed clause\<close>
+
+text \<open>
+  The conditions of @{const socket_carried} and @{const carrier_step}, each given where the clause states it
+  (@{text socket_carriedI}, @{text carrier_stepI}), and all of them at once for a clause written as a finite value
+  (@{text socket_carried_listed}): the premise at each key and its parts at a view are read by
+  @{const finite_relation_option} over the clause's rows, the carried variables at every prefix of the carrier list
+  follow from them, and a carrier's input correspondence needs the agreement of its own input's variables only
+  (@{text carrier_listed}, @{text carriers_listed}). What is left to a socket is its producer, the renaming that
+  covers its output and the facts its carriers are discharged by, each stated at its notion's system. A socket's proof
+  is then one application of @{text socket_carried_listed}, the rest computed by the simplifier from the clause, the
+  carrier list and the views (@{text socket_listed_simps}).
+\<close>
+
+lemma finite_relation_option_at:
+  assumes "finite_relation_functional R" "(k,a) |\<in>| R"
+  shows "finite_relation_option R k = Some a"
+  using finite_relation_option_correct[OF assms(1)] assms(2) by blast
+
+lemma output_covered_renamed:
+  assumes formed: "view_formed V"
+    and renamed: "\<And>h. evaluate_pattern (h \<circ> \<sigma>) (decode_finite_pattern out) =
+      evaluate_pattern h (decode_finite_pattern (snd (snd V)))"
+  shows "output_covered M d V out"
+  unfolding output_covered_def
+proof (intro allI impI)
+  fix t u y assume viewed: "resolution_view_term V t = Some (u,y)"
+  obtain p pi po where V: "V = (p,pi,po)" by (cases V rule: prod_cases3)
+  obtain h where "y = evaluate_pattern h (decode_finite_pattern po)"
+    using viewed resolution_view_term_valuation[OF formed[unfolded V]] V by auto
+  then show "\<exists>g. evaluate_pattern g (decode_finite_pattern out) = y" using renamed[of h] V by auto
+qed
+
+lemma carrier_stepI:
+  assumes carried: "\<And>g g'. (\<And>v. v \<notin> carried_variables S s Vp cs \<Longrightarrow> g v = g' v) \<Longrightarrow>
+      carried_correspond S s Vp c0 (take i cs) g g' \<Longrightarrow>
+      cin (evaluate_pattern g (decode_finite_pattern ip)) (evaluate_pattern g' (decode_finite_pattern ip))"
+    and at: "cs ! i = (k,V,cin,cout)" and formed: "view_formed V"
+    and premise: "finite_relation_option (finite_schema_premises S) k = Some (d,p)"
+    and parts: "resolution_view_pattern V p = Some (ip,op)"
+    and discharged: "carrier_discharged M d V cin cout" and covered: "output_covered M d V op"
+    and inputs: "fset (finite_pattern_variables ip) \<inter> carried_variables S s Vp cs \<subseteq> carried_variables S s Vp (take i cs)"
+    and outputs: "fset (finite_pattern_variables op) \<inter> carried_variables S s Vp (take i cs) = {}"
+  shows "carrier_step M S s Vp c0 cs i"
+  unfolding carrier_step_def using assms by auto
+
+lemma socket_carriedI:
+  assumes formed_meaning: "\<forall>e t. (e,t) \<in> M \<longrightarrow> term_formed t" and formed: "view_formed Vp"
+    and premise: "finite_relation_option (finite_schema_premises S) s = Some (d,p)"
+    and parts: "resolution_view_pattern Vp p = Some (xi,yo)"
+    and producer: "producer_discharged M d Vp [snd (snd Vp)] (\<lambda>_. c0)"
+    and covered: "output_covered M d Vp yo"
+    and input: "fset (finite_pattern_variables xi) \<inter> carried_variables S s Vp cs = {}"
+    and material: "\<And>N. (s,N) \<notin> schema_material_premises (decode_finite_schema S)"
+    and steps: "\<And>i. i < length cs \<Longrightarrow> carrier_step M S s Vp c0 cs i"
+    and others: "\<And>q e r. (q,e,r) \<in> schema_premises (decode_finite_schema S) \<Longrightarrow> q \<noteq> s \<Longrightarrow> q \<notin> fst ` set cs \<Longrightarrow>
+      pattern_variables r \<inter> carried_variables S s Vp cs = {}"
+    and materials: "\<And>q N. (q,N) \<in> schema_material_premises (decode_finite_schema S) \<Longrightarrow>
+      material_variables N \<inter> carried_variables S s Vp cs = {}"
+    and head: "head_apart keep Vh S (carried_variables S s Vp cs)"
+  shows "socket_carried M S s keep Vp Vh c0 cs"
+  unfolding socket_carried_def using assms by auto
+
+text \<open>
+  The i-th carrier as the clause lists it: @{const carrier_step}'s conditions, its input's correspondence asked of
+  valuations agreeing at the input's own uncarried variables, which the other valuations' agreement gives.
+\<close>
+
+definition carrier_listed ::
+    "('d \<times> factor_term) set \<Rightarrow> ('a,'s,'d) finite_factor_schema \<Rightarrow> 's \<Rightarrow> nat resolution_view \<Rightarrow>
+      (factor_term \<Rightarrow> factor_term \<Rightarrow> bool) \<Rightarrow> 's clause_carrier list \<Rightarrow> nat \<Rightarrow> bool" where
+  "carrier_listed M S s Vp c0 cs i \<longleftrightarrow> (case cs ! i of (k,V,cin,cout) \<Rightarrow> view_formed V \<and>
+    (case finite_relation_option (finite_schema_premises S) k of None \<Rightarrow> False | Some (d,p) \<Rightarrow>
+      (case resolution_view_pattern V p of None \<Rightarrow> False | Some (ip,op) \<Rightarrow>
+        carrier_discharged M d V cin cout \<and> output_covered M d V op \<and>
+        fset (finite_pattern_variables ip) \<inter> carried_variables S s Vp cs \<subseteq> carried_variables S s Vp (take i cs) \<and>
+        fset (finite_pattern_variables op) \<inter> carried_variables S s Vp (take i cs) = {} \<and>
+        (\<forall>g g'. (\<forall>v\<in>fset (finite_pattern_variables ip) - carried_variables S s Vp cs. g v = g' v) \<longrightarrow>
+          carried_correspond S s Vp c0 (take i cs) g g' \<longrightarrow>
+          cin (evaluate_pattern g (decode_finite_pattern ip)) (evaluate_pattern g' (decode_finite_pattern ip))))))"
+
+lemma carrier_step_listed:
+  assumes listed: "carrier_listed M S s Vp c0 cs i"
+  shows "carrier_step M S s Vp c0 cs i"
+proof -
+  obtain k V cin cout where c: "cs ! i = (k,V,cin,cout)" by (rule prod_cases4[of "cs ! i"])
+  obtain d p where at: "finite_relation_option (finite_schema_premises S) k = Some (d,p)"
+    using listed c unfolding carrier_listed_def by (auto split: option.split_asm)
+  obtain ip op where vw: "resolution_view_pattern V p = Some (ip,op)"
+    using listed c at unfolding carrier_listed_def by (auto split: option.split_asm)
+  have l: "view_formed V" "carrier_discharged M d V cin cout" "output_covered M d V op"
+    "fset (finite_pattern_variables ip) \<inter> carried_variables S s Vp cs \<subseteq> carried_variables S s Vp (take i cs)"
+    "fset (finite_pattern_variables op) \<inter> carried_variables S s Vp (take i cs) = {}"
+    "\<forall>g g'. (\<forall>v\<in>fset (finite_pattern_variables ip) - carried_variables S s Vp cs. g v = g' v) \<longrightarrow>
+      carried_correspond S s Vp c0 (take i cs) g g' \<longrightarrow>
+      cin (evaluate_pattern g (decode_finite_pattern ip)) (evaluate_pattern g' (decode_finite_pattern ip))"
+    using listed c at vw unfolding carrier_listed_def by simp_all
+  show ?thesis
+  proof (rule carrier_stepI[OF _ c l(1) at vw l(2-5)])
+    fix g g' assume agree: "\<And>v. v \<notin> carried_variables S s Vp cs \<Longrightarrow> g v = g' v"
+      and corr: "carried_correspond S s Vp c0 (take i cs) g g'"
+    show "cin (evaluate_pattern g (decode_finite_pattern ip)) (evaluate_pattern g' (decode_finite_pattern ip))"
+      using l(6) agree corr by blast
+  qed
+qed
+
+fun carriers_listed ::
+    "('d \<times> factor_term) set \<Rightarrow> ('a,'s,'d) finite_factor_schema \<Rightarrow> 's \<Rightarrow> nat resolution_view \<Rightarrow>
+      (factor_term \<Rightarrow> factor_term \<Rightarrow> bool) \<Rightarrow> 's clause_carrier list \<Rightarrow> nat \<Rightarrow> 's clause_carrier list \<Rightarrow> bool" where
+  "carriers_listed M S s Vp c0 cs i [] \<longleftrightarrow> True"
+| "carriers_listed M S s Vp c0 cs i (_ # rest) \<longleftrightarrow>
+    carrier_listed M S s Vp c0 cs i \<and> carriers_listed M S s Vp c0 cs (Suc i) rest"
+
+lemma carriers_listed_steps:
+  assumes "carriers_listed M S s Vp c0 cs j rest" "i < length rest"
+  shows "carrier_step M S s Vp c0 cs (j + i)"
+  using assms
+proof (induction rest arbitrary: j i)
+  case Nil
+  then show ?case by simp
+next
+  case (Cons c rest)
+  show ?case
+  proof (cases i)
+    case 0
+    have "carrier_listed M S s Vp c0 cs j" using Cons.prems(1) by simp
+    then show ?thesis using 0 by (simp add: carrier_step_listed)
+  next
+    case (Suc i')
+    have "carrier_step M S s Vp c0 cs (Suc j + i')"
+      using Cons.IH[of "Suc j" i'] Cons.prems Suc by simp
+    then show ?thesis using Suc by simp
+  qed
+qed
+
+text \<open>
+  The socket as its clause lists it: its premise read by @{const finite_relation_option} at the producer's site and
+  its output covered through a renaming @{text \<sigma>} of the view's output, every carrier listed, and the conditions of
+  @{const socket_carried} on the other premises over the clause's own rows.
+\<close>
+
+definition socket_listed ::
+    "('d \<times> factor_term) set \<Rightarrow> ('a,'s,'d) finite_factor_schema \<Rightarrow> 's \<Rightarrow> bool \<Rightarrow> nat resolution_view \<Rightarrow>
+      nat resolution_view \<Rightarrow> (factor_term \<Rightarrow> factor_term \<Rightarrow> bool) \<Rightarrow> 's clause_carrier list \<Rightarrow> 'd \<Rightarrow> ('a \<Rightarrow> nat) \<Rightarrow> bool" where
+  "socket_listed M S s keep Vp Vh c0 cs d \<sigma> \<longleftrightarrow>
+    (case finite_relation_option (finite_schema_premises S) s of None \<Rightarrow> False | Some (e,p) \<Rightarrow> e = d \<and>
+      (case resolution_view_pattern Vp p of None \<Rightarrow> False | Some (xi,yo) \<Rightarrow>
+        (\<forall>h. evaluate_pattern (h \<circ> \<sigma>) (decode_finite_pattern yo) =
+          evaluate_pattern h (decode_finite_pattern (snd (snd Vp)))) \<and>
+        fset (finite_pattern_variables xi) \<inter> carried_variables S s Vp cs = {})) \<and>
+    (\<forall>N. (s,N) \<notin> schema_material_premises (decode_finite_schema S)) \<and>
+    carriers_listed M S s Vp c0 cs 0 cs \<and>
+    (\<forall>(q,e,r)\<in>fset (finite_schema_premises S). q \<noteq> s \<longrightarrow> q \<notin> fst ` set cs \<longrightarrow>
+      fset (finite_pattern_variables r) \<inter> carried_variables S s Vp cs = {}) \<and>
+    (\<forall>q N. (q,N) \<in> schema_material_premises (decode_finite_schema S) \<longrightarrow>
+      material_variables N \<inter> carried_variables S s Vp cs = {}) \<and>
+    head_apart keep Vh S (carried_variables S s Vp cs)"
+
+theorem socket_carried_listed:
+  assumes answers: "\<forall>e t. (e,t) \<in> M \<longrightarrow> term_formed t" and formed: "view_formed Vp"
+    and producer: "producer_discharged M d Vp [snd (snd Vp)] (\<lambda>_. c0)"
+    and listed: "socket_listed M S s keep Vp Vh c0 cs d \<sigma>"
+  shows "socket_carried M S s keep Vp Vh c0 cs"
+proof -
+  let ?C = "carried_variables S s Vp cs"
+  note l = listed[unfolded socket_listed_def]
+  obtain p where at: "finite_relation_option (finite_schema_premises S) s = Some (d,p)"
+    using l by (auto split: option.split_asm)
+  obtain xi yo where vw: "resolution_view_pattern Vp p = Some (xi,yo)"
+    using l at by (auto split: option.split_asm)
+  have renamed: "\<And>h. evaluate_pattern (h \<circ> \<sigma>) (decode_finite_pattern yo) =
+      evaluate_pattern h (decode_finite_pattern (snd (snd Vp)))"
+    using l at vw by simp
+  have input: "fset (finite_pattern_variables xi) \<inter> ?C = {}" using l at vw by simp
+  have material: "\<And>N. (s,N) \<notin> schema_material_premises (decode_finite_schema S)" using l by blast
+  have steps: "\<And>i. i < length cs \<Longrightarrow> carrier_step M S s Vp c0 cs i"
+    using carriers_listed_steps[of M S s Vp c0 cs 0 cs] l by simp
+  have rows: "\<forall>(q,e,r)\<in>fset (finite_schema_premises S). q \<noteq> s \<longrightarrow> q \<notin> fst ` set cs \<longrightarrow>
+      fset (finite_pattern_variables r) \<inter> ?C = {}" using l by blast
+  have others: "pattern_variables r \<inter> ?C = {}"
+    if qr: "(q,e,r) \<in> schema_premises (decode_finite_schema S)" and qs: "q \<noteq> s" and qc: "q \<notin> fst ` set cs"
+    for q e r
+  proof -
+    obtain pf where memf: "(q,e,pf) |\<in>| finite_schema_premises S" and r: "r = decode_finite_pattern pf"
+      by (rule decoded_premiseE[OF qr])
+    have "fset (finite_pattern_variables pf) \<inter> ?C = {}" using rows memf qs qc by fastforce
+    then show ?thesis using r by (simp add: finite_pattern_variables_correct)
+  qed
+  have materials: "\<And>q N. (q,N) \<in> schema_material_premises (decode_finite_schema S) \<Longrightarrow>
+      material_variables N \<inter> ?C = {}" using l by blast
+  have head: "head_apart keep Vh S ?C" using l by blast
+  show ?thesis
+    by (rule socket_carriedI[OF answers formed at vw producer output_covered_renamed[OF formed renamed] input
+      material steps others materials head])
+qed
+
+text \<open>The rows of a finite relation at a key, read over its listed rows (the empty rows: @{thm [source] ffilter_empty_set}).\<close>
+
+lemma ffilter_finsert: "ffilter P (finsert a A) = (if P a then finsert a (ffilter P A) else ffilter P A)"
+  by transfer auto
+
+text \<open>
+  A view named by a constant is read by the simplifier through its three parts, the constant kept, so that the facts
+  stated of the named view (its formation, the carriers discharged at it, the outputs covered at it) still apply.
+\<close>
+
+lemma view_listed:
+  assumes "V = (a,b,c)"
+  shows "(case V of (p,pi,po) \<Rightarrow> f p pi po) = f a b c" "fst V = a" "fst (snd V) = b" "snd (snd V) = c"
+  using assms by simp_all
+
+lemmas socket_listed_simps = socket_listed_def carrier_listed_def carried_variables_def premise_parts_def
+  output_variables_def carried_correspond_def output_corresponds_def finite_relation_option_def ffilter_finsert head_apart_def
+  resolution_view_pattern_def view_lookup_def view_listed[OF consumer_carrier_view_def] view_listed[OF join_view_def]
+  view_listed[OF view_identity_def[unfolded identity_view_def]] consumer_carrier_view_formed join_view_formed
+  view_identity_formed output_covered_variable consumer_carrier_covered decode_finite_schema_def map_relation_values_def
 
 end

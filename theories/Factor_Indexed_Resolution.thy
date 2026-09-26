@@ -358,6 +358,21 @@ text \<open>
   call is ground, by the key of that call.
 \<close>
 
+text \<open>
+  A set of indexed states is computed, so its trees need an executable equality: HOL's equality on the tree
+  typedef, which compares the trees it wraps (@{thm [source] RBT.impl_of_inject}). No statement changes with it.
+\<close>
+
+instantiation RBT.rbt :: ("{linorder,equal}", equal) equal
+begin
+definition equal_rbt :: "('a,'b) RBT.rbt \<Rightarrow> ('a,'b) RBT.rbt \<Rightarrow> bool" where
+  "equal_rbt t u \<longleftrightarrow> RBT.impl_of t = RBT.impl_of u"
+instance by standard (simp add: equal_rbt_def RBT.impl_of_inject)
+end
+
+lemma equal_rbt_code [code]: "HOL.equal t u \<longleftrightarrow> RBT.impl_of t = RBT.impl_of u"
+  by (simp add: equal_eq equal_rbt_def RBT.impl_of_inject)
+
 declare [[typedef_overloaded]]
 
 record ('a,'s::linorder,'d,'c) indexed_state =
@@ -1334,7 +1349,7 @@ definition indexed_waits :: "('a,'s::linorder,'d,'c) indexed_state \<Rightarrow>
            fBex (tree_bucket (indexed_goals r) q') (\<lambda>h. case indexed_goal_value h of
              Resolution_Call_Goal q'' r'' d' p' \<Rightarrow> d' = d \<and> p' = p
            | Resolution_Material_Goal q'' r'' M \<Rightarrow> False)) \<or>
-         fBex (tree_bucket (indexed_node_calls r) (resolution_call_key p)) (\<lambda>q'. take (length q') q \<noteq> q' \<and>
+         fBex (tree_bucket (indexed_node_calls r) (resolution_call_key p)) (\<lambda>q'. finite_position_left q' q \<and>
            tree_count (indexed_open r) q' \<noteq> 0 \<and> fBex (tree_bucket (indexed_nodes r) q') (\<lambda>hn.
              resolution_node_site (indexed_node_value hn) = d \<and> resolution_node_call (indexed_node_value hn) = p)))
     | Resolution_Material_Goal q rr M \<Rightarrow> False)"
@@ -1396,18 +1411,18 @@ proof (cases "indexed_goal_value hg")
         using less hq by blast
     qed
   qed
-  have nodes: "fBex (tree_bucket (indexed_node_calls r) (resolution_call_key p)) (\<lambda>q'. take (length q') q \<noteq> q' \<and>
+  have nodes: "fBex (tree_bucket (indexed_node_calls r) (resolution_call_key p)) (\<lambda>q'. finite_position_left q' q \<and>
         tree_count (indexed_open r) q' \<noteq> 0 \<and> fBex (tree_bucket (indexed_nodes r) q') (\<lambda>hn.
           resolution_node_site (indexed_node_value hn) = d \<and> resolution_node_call (indexed_node_value hn) = p)) \<longleftrightarrow>
       fBex (indexed_node_set r) (\<lambda>nd. resolution_node_site nd = d \<and> resolution_node_call nd = p \<and>
-        take (length (resolution_node_position nd)) q \<noteq> resolution_node_position nd \<and>
+        finite_position_left (resolution_node_position nd) q \<and>
         \<not> finite_solved_node (indexed_project r) nd)"
     if ground: "finite_pattern_variables p = {||}"
   proof
-    assume "fBex (tree_bucket (indexed_node_calls r) (resolution_call_key p)) (\<lambda>q'. take (length q') q \<noteq> q' \<and>
+    assume "fBex (tree_bucket (indexed_node_calls r) (resolution_call_key p)) (\<lambda>q'. finite_position_left q' q \<and>
         tree_count (indexed_open r) q' \<noteq> 0 \<and> fBex (tree_bucket (indexed_nodes r) q') (\<lambda>hn.
           resolution_node_site (indexed_node_value hn) = d \<and> resolution_node_call (indexed_node_value hn) = p))"
-    then obtain q' hn where q': "take (length q') q \<noteq> q'" "tree_count (indexed_open r) q' \<noteq> 0"
+    then obtain q' hn where q': "finite_position_left q' q" "tree_count (indexed_open r) q' \<noteq> 0"
       and hn: "hn |\<in>| tree_bucket (indexed_nodes r) q'"
       and m: "resolution_node_site (indexed_node_value hn) = d" "resolution_node_call (indexed_node_value hn) = p"
       by auto
@@ -1415,22 +1430,22 @@ proof (cases "indexed_goal_value hg")
     have "\<not> finite_solved_node (indexed_project r) (indexed_node_value hn)"
       using indexed_solved[OF r, of "indexed_node_value hn"] pos q'(2) by simp
     then show "fBex (indexed_node_set r) (\<lambda>nd. resolution_node_site nd = d \<and> resolution_node_call nd = p \<and>
-        take (length (resolution_node_position nd)) q \<noteq> resolution_node_position nd \<and>
+        finite_position_left (resolution_node_position nd) q \<and>
         \<not> finite_solved_node (indexed_project r) nd)"
       using indexed_node_in_set[OF hn] pos q'(1) m by auto
   next
     assume "fBex (indexed_node_set r) (\<lambda>nd. resolution_node_site nd = d \<and> resolution_node_call nd = p \<and>
-        take (length (resolution_node_position nd)) q \<noteq> resolution_node_position nd \<and>
+        finite_position_left (resolution_node_position nd) q \<and>
         \<not> finite_solved_node (indexed_project r) nd)"
     then obtain nd where nd: "nd |\<in>| indexed_node_set r" "resolution_node_site nd = d" "resolution_node_call nd = p"
-        "take (length (resolution_node_position nd)) q \<noteq> resolution_node_position nd"
+        "finite_position_left (resolution_node_position nd) q"
         "\<not> finite_solved_node (indexed_project r) nd" by auto
     obtain hn where hn: "hn |\<in>| tree_bucket (indexed_nodes r) (resolution_node_position nd)" "indexed_node_value hn = nd"
       by (rule indexed_node_set_at[OF r nd(1)])
     have found: "resolution_node_position nd |\<in>| tree_bucket (indexed_node_calls r) (resolution_call_key p)"
       using indexed_node_call_found[OF r hn(1)] hn(2) nd(3) ground by simp
     have "tree_count (indexed_open r) (resolution_node_position nd) \<noteq> 0" using indexed_solved[OF r] nd(5) by simp
-    then show "fBex (tree_bucket (indexed_node_calls r) (resolution_call_key p)) (\<lambda>q'. take (length q') q \<noteq> q' \<and>
+    then show "fBex (tree_bucket (indexed_node_calls r) (resolution_call_key p)) (\<lambda>q'. finite_position_left q' q \<and>
         tree_count (indexed_open r) q' \<noteq> 0 \<and> fBex (tree_bucket (indexed_nodes r) q') (\<lambda>hn.
           resolution_node_site (indexed_node_value hn) = d \<and> resolution_node_call (indexed_node_value hn) = p))"
       using found nd hn by auto
@@ -2080,7 +2095,8 @@ definition indexed_goal_choice :: "(('a,'s::linorder,'d,'c) indexed_state \<Righ
       c0 = ffilter (\<lambda>h. indexed_goal_alternatives h = 0 \<or> indexed_pruned r h \<or> indexed_reusable r h) C in
     if c0 \<noteq> {||} then indexed_first_goals c0
     else let cp = ffilter (rp r) C in if cp \<noteq> {||} then indexed_first_goals cp
-    else let c1 = ffilter (\<lambda>h. indexed_goal_alternatives h = 1) C in if c1 \<noteq> {||} then indexed_first_goals c1
+    else let c1 = ffilter (\<lambda>h. indexed_goal_alternatives h = 1 \<and> \<not> indexed_waits r h) C in
+      if c1 \<noteq> {||} then indexed_first_goals c1
     else indexed_waiting_selection r A)"
 
 lemma indexed_goal_choice_member: "h |\<in>| indexed_goal_choice rp r A \<Longrightarrow> h |\<in>| A"
@@ -2111,13 +2127,16 @@ proof -
   qed
   have cp: "ffilter (rp r) ?C = ffilter (\<lambda>h. pr (indexed_project r) (indexed_goal_value h)) ?C"
     by (rule ffilter_cong_on) (use rp in \<open>auto simp: ffilter.rep_eq\<close>)
-  have c1: "ffilter (\<lambda>h. indexed_goal_alternatives h = 1) ?C =
-      ffilter (\<lambda>h. finite_goal_alternatives P (indexed_goal_value h) = 1) ?C"
+  have c1: "ffilter (\<lambda>h. indexed_goal_alternatives h = 1 \<and> \<not> indexed_waits r h) ?C =
+      ffilter (\<lambda>h. finite_goal_alternatives P (indexed_goal_value h) = 1 \<and>
+        \<not> finite_goal_waits (indexed_project r) (indexed_goal_value h)) ?C"
   proof (rule ffilter_cong_on)
     fix h assume "h |\<in>| ?C"
     then obtain q where q: "h |\<in>| tree_bucket (indexed_goals r) q" using at by blast
-    show "indexed_goal_alternatives h = 1 \<longleftrightarrow> finite_goal_alternatives P (indexed_goal_value h) = 1"
-      using indexed_goal_variables_at(2)[OF r q] by simp
+    show "(indexed_goal_alternatives h = 1 \<and> \<not> indexed_waits r h) \<longleftrightarrow>
+        (finite_goal_alternatives P (indexed_goal_value h) = 1 \<and>
+        \<not> finite_goal_waits (indexed_project r) (indexed_goal_value h))"
+      using indexed_goal_variables_at(2)[OF r q] indexed_waits[OF r q] by simp
   qed
   note w = indexed_waiting_selection[OF r A]
   show "fimage indexed_goal_value (indexed_goal_choice rp r A) =
@@ -2318,5 +2337,7 @@ proof -
     by (rule indexed_search[OF index_state(1)]) simp
   then show ?thesis by (simp add: finite_resolution_search_def index_state(2))
 qed
+
+export_code finite_resolution_search checking SML
 
 end

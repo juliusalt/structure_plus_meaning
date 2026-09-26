@@ -115,10 +115,20 @@ locale given_readers_extension =
       (system_definitions given_rooted_readers_system)"
 begin
 
-sublocale install: finite_mapped_native_extension given_environment finite_rooted_given_readers Q
-    "snd given_readers_installed" "[]" given_readers_program given_readers_placement
+text \<open>
+  The extension over the given's reader package, stated once: the sublocale below and every use reaching facts of
+  @{text finite_mapped_native_extension} stated after this theory take it.
+\<close>
+
+lemma mapped_extension:
+  "finite_mapped_native_extension given_environment finite_rooted_given_readers Q
+    (snd given_readers_installed) [] given_readers_program given_readers_placement"
   by (rule finite_mapped_native_extension.intro[OF given_readers_extensible(1,2) target
     agreement[folded finite_rooted_given_readers_exact] given_readers_extensible(3,4)])
+
+sublocale install: finite_mapped_native_extension given_environment finite_rooted_given_readers Q
+    "snd given_readers_installed" "[]" given_readers_program given_readers_placement
+  by (rule mapped_extension)
 
 lemma target_formed: "schema_system_formed (decode_finite_system Q)"
   using target by (simp only: finite_system_formed_correct)

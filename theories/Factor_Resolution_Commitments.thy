@@ -4951,4 +4951,780 @@ proof -
   then show ?thesis by (rule finite_kept_nonempty[OF s0])
 qed
 
+section \<open>The socket test at the socket's frame\<close>
+
+text \<open>
+  Correction (10) of DECISIONS.md, task 495's entry (task 730; build B1, task 743): the socket test read at the
+  socket's frame. A frame of a socket is a set C of its clause's variables outside which the obligation's new instance
+  agrees with the old one (@{text socket_framed}): the obligation itself gives it at the socket's default frame, the
+  clause's variables outside the socket's inputs (@{text socket_discharged_framed}), and the carrying at the carried set
+  (@{text Factor_Resolution_Carriers.socket_framed_carried}). Frames are declared beside the records, a finite family of
+  (site, clause, key, frame) discharged by @{text frames_discharged}; no field is added to the record, and a socket
+  with no declared frame is tested at its default frame. The test reads one frame per socket commitment, chosen among
+  the default and the frames the family declares for the socket (@{text finite_frame_at}): (i) the parent's other
+  premises pending or closed with their variables outside the frame (@{text finite_children_framed}), (ii) every
+  premise-only variable free or outside the frame with a ground binding (@{text finite_premise_only_framed}), (iii) at a
+  free socket, the parent absorbing the frame (@{text finite_parent_absorbs}) in place of the variant test. Today's test
+  and every statement over it stand as they are; at the default frame the framed test contains it wherever every node's
+  call is its clause's head under the node's bindings (@{text finite_nodes_headed}, the invariant's linkage).
+\<close>
+
+subsection \<open>The framed obligation\<close>
+
+definition socket_framed ::
+    "('d \<times> factor_term) set \<Rightarrow> ('a,'s,'d) finite_factor_schema \<Rightarrow> 's \<Rightarrow> bool \<Rightarrow> nat resolution_view \<Rightarrow>
+      nat resolution_view \<Rightarrow> 'a set \<Rightarrow> bool" where
+  "socket_framed M S s keep Vp Vh C \<longleftrightarrow>
+    (\<forall>d p. (s,d,p) |\<in>| finite_schema_premises S \<longrightarrow> resolution_view_pattern Vp p \<noteq> None) \<and>
+    (\<forall>h. clause_true M (decode_finite_schema S) h \<longrightarrow>
+      (\<forall>d p xi yo t y'. (s,d,p) |\<in>| finite_schema_premises S \<longrightarrow> resolution_view_pattern Vp p = Some (xi,yo) \<longrightarrow>
+        (d,t) \<in> M \<longrightarrow> resolution_view_term Vp t = Some (evaluate_pattern h (decode_finite_pattern xi),y') \<longrightarrow>
+        (\<exists>h'. clause_true M (decode_finite_schema S) h' \<and> head_kept keep Vh S h h' \<and>
+          (\<forall>a\<in>schema_variables (decode_finite_schema S) - C. h' a = h a) \<and>
+          evaluate_pattern h' (decode_finite_pattern xi) = evaluate_pattern h (decode_finite_pattern xi) \<and>
+          evaluate_pattern h' (decode_finite_pattern yo) = y')) \<and>
+      (\<forall>N g. (s,N) \<in> schema_material_premises (decode_finite_schema S) \<longrightarrow> evaluate_material_satisfaction g N \<longrightarrow>
+        evaluate_pattern g (material_source N) = evaluate_pattern h (material_source N) \<longrightarrow>
+        (\<exists>h'. clause_true M (decode_finite_schema S) h' \<and> head_kept keep Vh S h h' \<and>
+          (\<forall>a\<in>schema_variables (decode_finite_schema S) - C. h' a = h a) \<and>
+          (\<forall>a\<in>material_variables N. h' a = g a))))"
+
+lemma socket_framed_discharged:
+  assumes framed: "socket_framed M S s keep Vp Vh C"
+  shows "socket_discharged M S s keep Vp Vh"
+proof -
+  note F = framed[unfolded socket_framed_def]
+  have calls: "\<exists>h'. clause_true M (decode_finite_schema S) h' \<and> head_kept keep Vh S h h' \<and>
+      evaluate_pattern h' (decode_finite_pattern xi) = evaluate_pattern h (decode_finite_pattern xi) \<and>
+      evaluate_pattern h' (decode_finite_pattern yo) = y'"
+    if h: "clause_true M (decode_finite_schema S) h" and p: "(s,d,p) |\<in>| finite_schema_premises S"
+      and v: "resolution_view_pattern Vp p = Some (xi,yo)" and t: "(d,t) \<in> M"
+      and vt: "resolution_view_term Vp t = Some (evaluate_pattern h (decode_finite_pattern xi),y')" for h d p xi yo t y'
+    using conjunct1[OF mp[OF spec[OF conjunct2[OF F], of h] h], rule_format, OF p v t vt] by blast
+  have mats: "\<exists>h'. clause_true M (decode_finite_schema S) h' \<and> head_kept keep Vh S h h' \<and>
+      (\<forall>a\<in>material_variables N. h' a = g a)"
+    if h: "clause_true M (decode_finite_schema S) h" and N: "(s,N) \<in> schema_material_premises (decode_finite_schema S)"
+      and g: "evaluate_material_satisfaction g N"
+      and src: "evaluate_pattern g (material_source N) = evaluate_pattern h (material_source N)" for h N g
+    using conjunct2[OF mp[OF spec[OF conjunct2[OF F], of h] h], rule_format, OF N g src] by blast
+  show ?thesis unfolding socket_discharged_def using conjunct1[OF F] calls mats by blast
+qed
+
+text \<open>
+  The socket's default frame: the clause's variables outside the socket's inputs. The obligation's new instance keeps
+  the inputs (@{text socket_inputs_kept}), so the obligation is framed there.
+\<close>
+
+definition socket_default_frame ::
+    "nat resolution_view \<Rightarrow> nat resolution_view \<Rightarrow> ('a,'s,'d) finite_factor_schema \<Rightarrow> 's \<Rightarrow> 'a set" where
+  "socket_default_frame Vp Vh S s = schema_variables (decode_finite_schema S) - socket_inputs Vp Vh S s"
+
+lemma socket_discharged_framed:
+  assumes obl: "socket_discharged M S s keep Vp Vh" and formed: "schema_formed (decode_finite_schema S)"
+  shows "socket_framed M S s keep Vp Vh (socket_default_frame Vp Vh S s)"
+proof -
+  have first: "\<forall>d p. (s,d,p) |\<in>| finite_schema_premises S \<longrightarrow> resolution_view_pattern Vp p \<noteq> None"
+    using obl unfolding socket_discharged_def by (rule conjunct1)
+  have calls: "\<exists>h'. clause_true M (decode_finite_schema S) h' \<and> head_kept keep Vh S h h' \<and>
+      (\<forall>a\<in>schema_variables (decode_finite_schema S) - socket_default_frame Vp Vh S s. h' a = h a) \<and>
+      evaluate_pattern h' (decode_finite_pattern xi) = evaluate_pattern h (decode_finite_pattern xi) \<and>
+      evaluate_pattern h' (decode_finite_pattern yo) = y'"
+    if h: "clause_true M (decode_finite_schema S) h" and p: "(s,d,p) |\<in>| finite_schema_premises S"
+      and v: "resolution_view_pattern Vp p = Some (xi,yo)" and t: "(d,t) \<in> M"
+      and vt: "resolution_view_term Vp t = Some (evaluate_pattern h (decode_finite_pattern xi),y')" for h d p xi yo t y'
+  proof -
+    obtain h' where cl: "clause_true M (decode_finite_schema S) h'" and hk: "head_kept keep Vh S h h'"
+        and inp: "\<forall>a\<in>socket_inputs Vp Vh S s. h' a = h a" and yo: "evaluate_pattern h' (decode_finite_pattern yo) = y'"
+      using socket_inputs_kept(1)[OF obl formed h p v t vt] by blast
+    have xi: "evaluate_pattern h' (decode_finite_pattern xi) = evaluate_pattern h (decode_finite_pattern xi)"
+      by (rule evaluate_pattern_cong) (use inp p v in \<open>unfold socket_inputs_def, blast\<close>)
+    have fr: "\<forall>a\<in>schema_variables (decode_finite_schema S) - socket_default_frame Vp Vh S s. h' a = h a"
+      using inp by (auto simp: socket_default_frame_def)
+    show ?thesis using cl hk fr xi yo by blast
+  qed
+  have mats: "\<exists>h'. clause_true M (decode_finite_schema S) h' \<and> head_kept keep Vh S h h' \<and>
+      (\<forall>a\<in>schema_variables (decode_finite_schema S) - socket_default_frame Vp Vh S s. h' a = h a) \<and>
+      (\<forall>a\<in>material_variables N. h' a = g a)"
+    if h: "clause_true M (decode_finite_schema S) h" and N: "(s,N) \<in> schema_material_premises (decode_finite_schema S)"
+      and g: "evaluate_material_satisfaction g N"
+      and src: "evaluate_pattern g (material_source N) = evaluate_pattern h (material_source N)" for h N g
+  proof -
+    obtain h' where cl: "clause_true M (decode_finite_schema S) h'" and hk: "head_kept keep Vh S h h'"
+        and inp: "\<forall>a\<in>socket_inputs Vp Vh S s. h' a = h a" and ag: "\<forall>a\<in>material_variables N. h' a = g a"
+      using socket_inputs_kept(2)[OF obl formed h N g src] by blast
+    have fr: "\<forall>a\<in>schema_variables (decode_finite_schema S) - socket_default_frame Vp Vh S s. h' a = h a"
+      using inp by (auto simp: socket_default_frame_def)
+    show ?thesis using cl hk fr ag by blast
+  qed
+  show ?thesis unfolding socket_framed_def using first calls mats by blast
+qed
+
+definition finite_default_frame ::
+    "nat resolution_view \<Rightarrow> nat resolution_view \<Rightarrow> ('a,'s,'d) finite_factor_schema \<Rightarrow> 's \<Rightarrow> 'a fset" where
+  "finite_default_frame Vp Vh S s = finite_schema_variables S |-| finite_socket_inputs Vp Vh S s"
+
+lemma finite_default_frame_correct: "fset (finite_default_frame Vp Vh S s) = socket_default_frame Vp Vh S s"
+  by (simp add: finite_default_frame_def socket_default_frame_def finite_socket_inputs_correct
+    finite_schema_variables_correct)
+
+subsection \<open>Frames beside the records\<close>
+
+text \<open>
+  A frame family holds (site, clause, key, frame) beside the records, as registrations stand beside the construction:
+  the search reads it, the discharge proves it, and a record without frames is today's. It is discharged when every
+  frame it holds is a frame of every socket the record declares at that site, clause and key.
+\<close>
+
+type_synonym ('a,'s,'d) resolution_frames = "('d \<times> ('a,'s,'d) finite_factor_schema \<times> 's \<times> 'a fset) fset"
+
+definition frames_discharged ::
+    "('d \<times> factor_term) set \<Rightarrow> ('a,'s,'d) resolution_declarations \<Rightarrow> ('a,'s,'d) resolution_frames \<Rightarrow> bool" where
+  "frames_discharged M D \<Phi> \<longleftrightarrow> (\<forall>e S s C keep Vp Vh. (e,S,s,C) |\<in>| \<Phi> \<longrightarrow>
+    (e,S,s,keep,Vp,Vh) |\<in>| declared_sockets D \<longrightarrow> socket_framed M S s keep Vp Vh (fset C))"
+
+lemma no_frames_discharged: "frames_discharged M D {||}"
+  by (simp add: frames_discharged_def)
+
+lemma frames_union_discharged:
+  assumes "frames_discharged M D \<Phi>" "frames_discharged M D \<Psi>"
+  shows "frames_discharged M D (\<Phi> |\<union>| \<Psi>)"
+  using assms unfolding frames_discharged_def by blast
+
+text \<open>
+  The frame a socket commitment reads: a choice is the default frame (@{const None}) or a declared frame
+  (@{term "Some C"}), available at a socket only where the family declares it at the socket's site, clause and key.
+  The choices of a family are the default and every frame it holds.
+\<close>
+
+definition finite_frame_at ::
+    "('a,'s,'d) resolution_frames \<Rightarrow> nat resolution_view \<Rightarrow> nat resolution_view \<Rightarrow> 'd \<Rightarrow>
+      ('a,'s,'d) finite_factor_schema \<Rightarrow> 's \<Rightarrow> 'a fset option \<Rightarrow> 'a fset option" where
+  "finite_frame_at \<Phi> Vp Vh e S s ch = (case ch of None \<Rightarrow> Some (finite_default_frame Vp Vh S s)
+    | Some C \<Rightarrow> if (e,S,s,C) |\<in>| \<Phi> then Some C else None)"
+
+definition finite_frame_choices :: "('a,'s,'d) resolution_frames \<Rightarrow> 'a fset option fset" where
+  "finite_frame_choices \<Phi> = finsert None ((\<lambda>(e,S,s,C). Some C) |`| \<Phi>)"
+
+lemma finite_frame_at_framed:
+  assumes decl: "declarations_discharged M D corr" and frames: "frames_discharged M D \<Phi>"
+    and socket: "(e,S,s,keep,Vp,Vh) |\<in>| declared_sockets D" and at: "finite_frame_at \<Phi> Vp Vh e S s ch = Some C"
+    and formed: "schema_formed (decode_finite_schema S)"
+  shows "socket_framed M S s keep Vp Vh (fset C)"
+proof (cases ch)
+  case None
+  then have C: "C = finite_default_frame Vp Vh S s" using at by (simp add: finite_frame_at_def)
+  have "socket_discharged M S s keep Vp Vh"
+    by (rule conjunct2[OF conjunct2[OF conjunct2[OF decl[unfolded declarations_discharged_def]]], rule_format, OF socket])
+  then show ?thesis unfolding C finite_default_frame_correct by (rule socket_discharged_framed[OF _ formed])
+next
+  case (Some C')
+  then have "(e,S,s,C) |\<in>| \<Phi>" using at by (simp add: finite_frame_at_def split: if_splits)
+  then show ?thesis by (rule frames[unfolded frames_discharged_def, rule_format, OF _ socket])
+qed
+
+subsection \<open>The three conditions at a frame\<close>
+
+text \<open>
+  (i) Every premise and material premise of the parent is pending as its instance, or, at another key, closed with its
+  instance ground and its variables outside the frame; every pending goal under the parent is one of the instances.
+  (ii) Every premise-only variable of the parent is free, or outside the frame with a ground binding. At the default
+  frame they are correction (9)'s conditions (@{text finite_children_closed_framed},
+  @{text finite_premise_only_inputs_framed}).
+\<close>
+
+definition finite_children_framed ::
+    "'a fset \<Rightarrow> ('a,'s,'d,'c) resolution_state \<Rightarrow> ('a,'s,'d,'c) resolution_node \<Rightarrow> 's \<Rightarrow> bool" where
+  "finite_children_framed C st nd s \<longleftrightarrow>
+    fBall (finite_schema_premises (resolution_node_schema nd)) (\<lambda>(s',e,p).
+      Resolution_Call_Goal (resolution_node_position nd@[s']) (Some (resolution_node_site nd,resolution_node_clause nd,s')) e
+        (finite_pattern_substitute (finite_node_binding nd) p) |\<in>| resolution_pending st \<or>
+      (s' \<noteq> s \<and> resolution_pending_under st (resolution_node_position nd@[s']) = {||} \<and>
+        finite_pattern_variables (finite_pattern_substitute (finite_node_binding nd) p) = {||} \<and>
+        finite_pattern_variables p |\<inter>| C = {||})) \<and>
+    fBall (finite_schema_materials (resolution_node_schema nd)) (\<lambda>(s',N).
+      Resolution_Material_Goal (resolution_node_position nd@[s']) (resolution_node_site nd,resolution_node_clause nd,s')
+        (finite_material_pattern_substitute (finite_node_binding nd) N) |\<in>| resolution_pending st \<or>
+      (s' \<noteq> s \<and> resolution_pending_under st (resolution_node_position nd@[s']) = {||} \<and>
+        finite_material_variables (finite_material_pattern_substitute (finite_node_binding nd) N) = {||} \<and>
+        finite_material_variables N |\<inter>| C = {||})) \<and>
+    fBall (resolution_pending st) (\<lambda>h. resolution_goal_position h \<noteq> [] \<longrightarrow>
+      butlast (resolution_goal_position h) = resolution_node_position nd \<longrightarrow>
+      fBex (finite_schema_premises (resolution_node_schema nd)) (\<lambda>(s,e,p).
+        h = Resolution_Call_Goal (resolution_node_position nd@[s]) (Some (resolution_node_site nd,resolution_node_clause nd,s)) e
+          (finite_pattern_substitute (finite_node_binding nd) p)) \<or>
+      fBex (finite_schema_materials (resolution_node_schema nd)) (\<lambda>(s,N).
+        h = Resolution_Material_Goal (resolution_node_position nd@[s]) (resolution_node_site nd,resolution_node_clause nd,s)
+          (finite_material_pattern_substitute (finite_node_binding nd) N)))"
+
+definition finite_premise_only_framed ::
+    "'a fset \<Rightarrow> ('a,'s,'d,'c) resolution_state \<Rightarrow> ('a,'s,'d,'c) resolution_node \<Rightarrow> bool" where
+  "finite_premise_only_framed C st nd \<longleftrightarrow>
+    fBall (finite_schema_variables (resolution_node_schema nd) |-|
+        finite_pattern_variables (finite_schema_conclusion (resolution_node_schema nd))) (\<lambda>a.
+      ((a,Finite_Variable ((resolution_node_position nd,True),a)) |\<in>| resolution_node_bindings nd \<and>
+        fBall (resolution_pending st) (\<lambda>h. ((resolution_node_position nd,True),a) |\<in>| resolution_goal_variables h \<longrightarrow>
+          resolution_goal_position h \<noteq> [] \<and> butlast (resolution_goal_position h) = resolution_node_position nd)) \<or>
+      (a |\<notin>| C \<and> finite_pattern_variables (finite_node_binding nd a) = {||}))"
+
+text \<open>
+  (iii) At a free socket the parent absorbs the frame. With ho the head's output at the head's view, O the socket's own
+  variables (its premise's output at the premise's view, or a material premise's variables) and the parent's bindings:
+  every variable of ho in the frame and not in O is bound to a variable occurring in the binding of no other variable
+  of ho, and the bindings of the variables of ho outside the frame share no variable with those of the variables in it.
+  The holders' set gains the variables bound at the first kind (@{text finite_parent_absorbed}), in place of the whole
+  output's.
+\<close>
+
+definition finite_socket_own :: "nat resolution_view \<Rightarrow> ('a,'s,'d) finite_factor_schema \<Rightarrow> 's \<Rightarrow> 'a fset" where
+  "finite_socket_own Vp S s =
+    ffUnion ((\<lambda>z. case resolution_view_pattern Vp (snd (snd z)) of Some v \<Rightarrow> finite_pattern_variables (snd v)
+        | None \<Rightarrow> {||}) |`| ffilter (\<lambda>z. fst z = s) (finite_schema_premises S)) |\<union>|
+    ffUnion ((\<lambda>z. finite_material_variables (snd z)) |`| ffilter (\<lambda>z. fst z = s) (finite_schema_materials S))"
+
+definition finite_parent_absorbs ::
+    "nat resolution_view \<Rightarrow> nat resolution_view \<Rightarrow> 'a fset \<Rightarrow> ('a,'s,'d,'c) resolution_node \<Rightarrow> 's \<Rightarrow> bool" where
+  "finite_parent_absorbs Vp Vh C nd s \<longleftrightarrow>
+    (case resolution_view_pattern Vh (finite_schema_conclusion (resolution_node_schema nd)) of None \<Rightarrow> False
+    | Some (hi,ho) \<Rightarrow>
+      fBall (finite_pattern_variables ho) (\<lambda>a. a |\<in>| C \<longrightarrow> a |\<notin>| finite_socket_own Vp (resolution_node_schema nd) s \<longrightarrow>
+        (case finite_node_binding nd a of Finite_Variable v \<Rightarrow>
+            fBall (finite_pattern_variables ho) (\<lambda>b. b \<noteq> a \<longrightarrow> v |\<notin>| finite_pattern_variables (finite_node_binding nd b))
+          | _ \<Rightarrow> False)) \<and>
+      fBall (finite_pattern_variables ho) (\<lambda>a. a |\<notin>| C \<longrightarrow> fBall (finite_pattern_variables ho) (\<lambda>b. b |\<in>| C \<longrightarrow>
+        finite_pattern_variables (finite_node_binding nd a) |\<inter>| finite_pattern_variables (finite_node_binding nd b) = {||})))"
+
+definition finite_parent_absorbed ::
+    "nat resolution_view \<Rightarrow> nat resolution_view \<Rightarrow> 'a fset \<Rightarrow> ('a,'s,'d,'c) resolution_node \<Rightarrow> 's \<Rightarrow>
+      ('s,'a) resolution_variable fset" where
+  "finite_parent_absorbed Vp Vh C nd s =
+    (case resolution_view_pattern Vh (finite_schema_conclusion (resolution_node_schema nd)) of None \<Rightarrow> {||}
+    | Some (hi,ho) \<Rightarrow> ffUnion ((\<lambda>a. finite_pattern_variables (finite_node_binding nd a)) |`|
+        ffilter (\<lambda>a. a |\<in>| C \<and> a |\<notin>| finite_socket_own Vp (resolution_node_schema nd) s) (finite_pattern_variables ho)))"
+
+subsection \<open>The test at a frame\<close>
+
+text \<open>
+  The kept and free sockets, the socket commitment and the state conditions at a frame choice: each reads the frame the
+  choice gives at the parent it finds (@{const finite_frame_at}), and is today's with (i)-(iii) read there.
+\<close>
+
+definition finite_socket_kept_framed ::
+    "('a,'s,'d) resolution_declarations \<Rightarrow> ('a,'s,'d) resolution_frames \<Rightarrow> nat resolution_view \<Rightarrow>
+      nat resolution_view \<Rightarrow> 'a fset option \<Rightarrow> 's list option \<Rightarrow> ('a,'s,'d,'c) resolution_state \<Rightarrow> 's list \<Rightarrow>
+      ('s,'a) resolution_variable fset \<Rightarrow> ('a,'s,'d,'c) resolution_goal \<Rightarrow> bool" where
+  "finite_socket_kept_framed D \<Phi> Vp Vh ch F st q Y g \<longleftrightarrow> q \<noteq> [] \<and> fBex (resolution_nodes st) (\<lambda>nd.
+    resolution_node_position nd = butlast q \<and>
+    (resolution_node_site nd,resolution_node_schema nd,last q,True,Vp,Vh) |\<in>| declared_sockets D \<and>
+    (case finite_frame_at \<Phi> Vp Vh (resolution_node_site nd) (resolution_node_schema nd) (last q) ch of None \<Rightarrow> False
+      | Some C \<Rightarrow> finite_premise_only_framed C st nd)) \<and>
+    finite_socket_holders F st q Y g"
+
+definition finite_socket_free_framed ::
+    "('a,'s,'d) resolution_declarations \<Rightarrow> ('a,'s,'d) resolution_frames \<Rightarrow> nat resolution_view \<Rightarrow>
+      nat resolution_view \<Rightarrow> 'a fset option \<Rightarrow> 's list option \<Rightarrow> ('a,'s,'d,'c) resolution_state \<Rightarrow> 's list \<Rightarrow>
+      ('s,'a) resolution_variable fset \<Rightarrow> ('a,'s,'d,'c) resolution_goal \<Rightarrow> bool" where
+  "finite_socket_free_framed D \<Phi> Vp Vh ch F st q Y g \<longleftrightarrow> q \<noteq> [] \<and> F = Some (butlast q) \<and>
+    fBex (resolution_nodes st) (\<lambda>nd. resolution_node_position nd = butlast q \<and>
+    (resolution_node_site nd,resolution_node_schema nd,last q,False,Vp,Vh) |\<in>| declared_sockets D \<and>
+    (case finite_frame_at \<Phi> Vp Vh (resolution_node_site nd) (resolution_node_schema nd) (last q) ch of None \<Rightarrow> False
+      | Some C \<Rightarrow> finite_premise_only_framed C st nd \<and> finite_parent_absorbs Vp Vh C nd (last q) \<and>
+        finite_socket_holders F st q (Y |\<union>| finite_parent_absorbed Vp Vh C nd (last q)) g))"
+
+definition finite_socket_declared_framed ::
+    "('a,'s,'d) resolution_declarations \<Rightarrow> ('a,'s,'d) resolution_frames \<Rightarrow> nat resolution_view \<Rightarrow>
+      nat resolution_view \<Rightarrow> 'a fset option \<Rightarrow> 's list option \<Rightarrow> ('a,'s,'d,'c) resolution_state \<Rightarrow> 's list \<Rightarrow>
+      ('s,'a) resolution_variable fset \<Rightarrow> ('a,'s,'d,'c) resolution_goal \<Rightarrow> bool" where
+  "finite_socket_declared_framed D \<Phi> Vp Vh ch F st q Y g \<longleftrightarrow>
+    finite_socket_kept_framed D \<Phi> Vp Vh ch F st q Y g \<or> finite_socket_free_framed D \<Phi> Vp Vh ch F st q Y g"
+
+definition finite_socket_commitment_framed ::
+    "('a,'s,'d) resolution_declarations \<Rightarrow> ('a,'s,'d) resolution_frames \<Rightarrow> nat resolution_view \<Rightarrow>
+      nat resolution_view \<Rightarrow> 'a fset option \<Rightarrow> 's list option \<Rightarrow> ('a,'s,'d,'c) resolution_state \<Rightarrow>
+      ('a,'s,'d,'c) resolution_goal \<Rightarrow> bool" where
+  "finite_socket_commitment_framed D \<Phi> Vp Vh ch F st g = (case g of
+      Resolution_Call_Goal q r d p \<Rightarrow> (case resolution_view_pattern Vp p of
+          Some (x,y) \<Rightarrow> finite_pattern_variables x = {||} \<and> finite_pattern_variables y \<noteq> {||} \<and>
+            finite_socket_declared_framed D \<Phi> Vp Vh ch F st q (finite_pattern_variables y) g
+        | None \<Rightarrow> False)
+    | Resolution_Material_Goal q r M \<Rightarrow> finite_canonical_solutions M \<noteq> None \<and> finite_free_fields M \<and>
+        finite_socket_declared_framed D \<Phi> Vp Vh ch F st q (finite_material_variables M) g)"
+
+definition finite_call_framed ::
+    "('a,'s,'d) resolution_declarations \<Rightarrow> ('a,'s,'d) resolution_frames \<Rightarrow> nat resolution_view \<Rightarrow>
+      nat resolution_view \<Rightarrow> 'a fset option \<Rightarrow> 's list option \<Rightarrow> ('a,'s,'d,'c) resolution_state \<Rightarrow>
+      ('a,'s,'d,'c) resolution_goal \<Rightarrow> bool" where
+  "finite_call_framed D \<Phi> Vp Vh ch F st g \<longleftrightarrow> (case g of
+      Resolution_Call_Goal q r e p \<Rightarrow> (case resolution_view_pattern Vp p of
+          Some (x,y) \<Rightarrow> fBex (resolution_nodes st) (\<lambda>nd. resolution_node_position nd = butlast q \<and>
+            (case finite_frame_at \<Phi> Vp Vh (resolution_node_site nd) (resolution_node_schema nd) (last q) ch of
+                None \<Rightarrow> False
+              | Some C \<Rightarrow> finite_children_framed C st nd (last q)) \<and> finite_premise_only_unshared nd \<and>
+            finite_socket_pair Vp q (resolution_node_schema nd) \<and>
+            (finite_socket_kept_framed D \<Phi> Vp Vh ch F st q (finite_pattern_variables y) g \<or>
+              finite_input_output_apart Vh nd))
+        | None \<Rightarrow> True)
+    | Resolution_Material_Goal q r M \<Rightarrow> True)"
+
+definition finite_material_framed ::
+    "('a,'s,'d) resolution_declarations \<Rightarrow> ('a,'s,'d) resolution_frames \<Rightarrow> nat resolution_view \<Rightarrow>
+      nat resolution_view \<Rightarrow> 'a fset option \<Rightarrow> 's list option \<Rightarrow> ('a,'s,'d,'c) resolution_state \<Rightarrow>
+      ('a,'s,'d,'c) resolution_goal \<Rightarrow> bool" where
+  "finite_material_framed D \<Phi> Vp Vh ch F st g \<longleftrightarrow> (case g of
+      Resolution_Material_Goal q r M \<Rightarrow> fBex (resolution_nodes st) (\<lambda>nd. resolution_node_position nd = butlast q \<and>
+        (case finite_frame_at \<Phi> Vp Vh (resolution_node_site nd) (resolution_node_schema nd) (last q) ch of
+            None \<Rightarrow> False
+          | Some C \<Rightarrow> finite_children_framed C st nd (last q)) \<and> finite_premise_only_unshared nd \<and>
+        (finite_socket_kept_framed D \<Phi> Vp Vh ch F st q (finite_material_variables M) g \<or>
+          finite_input_output_apart Vh nd))
+    | Resolution_Call_Goal q r e p \<Rightarrow> True)"
+
+text \<open>
+  The framed test: @{const finite_declared_commitment}'s shape with one frame chosen per socket commitment, the direct
+  test, the goal-premise condition and every condition beside (i)-(iii) kept as they stand.
+\<close>
+
+definition finite_framed_commitment ::
+    "('a,'s,'d) resolution_declarations \<Rightarrow> ('a,'s,'d) resolution_frames \<Rightarrow> ('a,'s,'d,'c) resolution_commitment" where
+  "finite_framed_commitment D \<Phi> = \<lparr>commit_call=(\<lambda>F st g. finite_goal_premise st g \<and>
+      (finite_direct_commitment D F st g \<or>
+        (resolution_is_call g \<and> fBex (finite_socket_views D) (\<lambda>(Vp,Vh). fBex (finite_frame_choices \<Phi>) (\<lambda>ch.
+          finite_socket_commitment_framed D \<Phi> Vp Vh ch F st g \<and> finite_call_framed D \<Phi> Vp Vh ch F st g))))),
+    commit_material=(\<lambda>F st g. finite_material_premise st g \<and> \<not> resolution_is_call g \<and>
+      fBex (finite_socket_views D) (\<lambda>(Vp,Vh). fBex (finite_frame_choices \<Phi>) (\<lambda>ch.
+        finite_socket_commitment_framed D \<Phi> Vp Vh ch F st g \<and> finite_material_framed D \<Phi> Vp Vh ch F st g)))\<rparr>"
+
+export_code finite_parent_absorbs finite_call_framed finite_material_framed checking SML
+
+lemma finite_framed_commitment_premise:
+  assumes "commit_call (finite_framed_commitment D \<Phi>) F st g"
+  shows "finite_goal_premise st g"
+  using assms by (simp add: finite_framed_commitment_def)
+
+theorem finite_framed_commitment_none: "finite_framed_commitment no_declarations \<Phi> = no_commitment"
+  by (simp add: finite_framed_commitment_def finite_direct_commitment_def finite_socket_views_def
+    no_declarations_def no_commitment_def)
+
+lemma finite_socket_commitment_framed_view:
+  assumes c: "finite_socket_commitment_framed D \<Phi> Vp Vh ch F st g" and call: "resolution_is_call g"
+  obtains q r d p x y where "g = Resolution_Call_Goal q r d p" "resolution_view_pattern Vp p = Some (x,y)"
+    "finite_pattern_variables x = {||}" "finite_pattern_variables y \<noteq> {||}"
+proof (cases g)
+  case (Resolution_Call_Goal q r d p)
+  show thesis
+  proof (cases "resolution_view_pattern Vp p")
+    case None
+    then show thesis using c Resolution_Call_Goal by (simp add: finite_socket_commitment_framed_def)
+  next
+    case (Some z)
+    obtain x y where z: "z = (x,y)" by (cases z)
+    have f: "finite_pattern_variables x = {||}" "finite_pattern_variables y \<noteq> {||}"
+      using c Resolution_Call_Goal Some z by (simp_all add: finite_socket_commitment_framed_def)
+    show thesis using Resolution_Call_Goal Some z f by (intro that[of q r d p x y]) simp_all
+  qed
+next
+  case (Resolution_Material_Goal q r M)
+  then show thesis using call by simp
+qed
+
+text \<open>
+  A committed call's input, read at the view it is committed at, is ground, as under today's test: a direct commitment
+  is today's, and a socket commitment reads the socket's premise view.
+\<close>
+
+lemma finite_framed_commitment_input_ground:
+  assumes committed: "commit_call (finite_framed_commitment D \<Phi>) F st g"
+  obtains q r d p V x y where "g = Resolution_Call_Goal q r d p"
+    "(\<exists>hs. (d,V,hs) |\<in>| declared_producers D) \<or> (\<exists>Vh. (V,Vh) |\<in>| finite_socket_views D)"
+    "resolution_view_pattern (V :: nat resolution_view) p = Some (x,y)"
+    "finite_pattern_variables x = {||}" "finite_pattern_variables y \<noteq> {||}"
+proof -
+  have gp: "finite_goal_premise st g" by (rule finite_framed_commitment_premise[OF committed])
+  from committed have cc: "finite_direct_commitment D F st g \<or>
+      (resolution_is_call g \<and> fBex (finite_socket_views D) (\<lambda>(Vp,Vh). fBex (finite_frame_choices \<Phi>) (\<lambda>ch.
+        finite_socket_commitment_framed D \<Phi> Vp Vh ch F st g \<and> finite_call_framed D \<Phi> Vp Vh ch F st g)))"
+    by (simp add: finite_framed_commitment_def)
+  have "\<exists>q r d p V x y. g = Resolution_Call_Goal q r d p \<and>
+      ((\<exists>hs. (d,V,hs) |\<in>| declared_producers D) \<or> (\<exists>Vh. (V,Vh) |\<in>| finite_socket_views D)) \<and>
+      resolution_view_pattern (V :: nat resolution_view) p = Some (x,y) \<and>
+      finite_pattern_variables x = {||} \<and> finite_pattern_variables y \<noteq> {||}"
+    using cc
+  proof
+    assume "finite_direct_commitment D F st g"
+    then have dc: "commit_call (finite_declared_commitment D) F st g" using gp by (simp add: finite_declared_commitment_def)
+    show ?thesis by (rule finite_declared_commitment_input_ground[OF dc]) blast
+  next
+    assume a: "resolution_is_call g \<and> fBex (finite_socket_views D) (\<lambda>(Vp,Vh). fBex (finite_frame_choices \<Phi>) (\<lambda>ch.
+        finite_socket_commitment_framed D \<Phi> Vp Vh ch F st g \<and> finite_call_framed D \<Phi> Vp Vh ch F st g))"
+    then obtain w where wm: "w |\<in>| finite_socket_views D"
+        and w: "(\<lambda>(Vp,Vh). fBex (finite_frame_choices \<Phi>) (\<lambda>ch.
+          finite_socket_commitment_framed D \<Phi> Vp Vh ch F st g \<and> finite_call_framed D \<Phi> Vp Vh ch F st g)) w"
+      by blast
+    obtain Vp Vh where ww: "w = (Vp,Vh)" by (cases w)
+    obtain ch where cm: "finite_socket_commitment_framed D \<Phi> Vp Vh ch F st g" using w ww by auto
+    obtain q r d p x y where f: "g = Resolution_Call_Goal q r d p" "resolution_view_pattern Vp p = Some (x,y)"
+        "finite_pattern_variables x = {||}" "finite_pattern_variables y \<noteq> {||}"
+      by (rule finite_socket_commitment_framed_view[OF cm conjunct1[OF a]])
+    have "(Vp,Vh) |\<in>| finite_socket_views D" using wm ww by simp
+    then show ?thesis using f by blast
+  qed
+  then show thesis using that by blast
+qed
+
+subsection \<open>Today's test inside the framed test\<close>
+
+text \<open>
+  At the default frame (i) and (ii) are correction (9)'s conditions, and the variant test implies (iii) wherever the
+  parent's call is its clause's head under its bindings (@{text finite_nodes_headed}): the invariant's linkage gives it at
+  every node (@{text Factor_Resolution_Socket_Discharges.finite_node_binding_linked}). So every goal today's test commits
+  at such a state the framed test commits, for every frame family.
+\<close>
+
+definition finite_nodes_headed :: "('a,'s,'d,'c) resolution_state \<Rightarrow> bool" where
+  "finite_nodes_headed st \<longleftrightarrow> fBall (resolution_nodes st) (\<lambda>nd. resolution_node_call nd =
+    finite_pattern_substitute (finite_node_binding nd) (finite_schema_conclusion (resolution_node_schema nd)))"
+
+lemma fBall_weaken:
+  assumes "fBall A P" "\<And>x. x |\<in>| A \<Longrightarrow> P x \<Longrightarrow> Q x"
+  shows "fBall A Q"
+  using assms by blast
+
+lemma finite_children_closed_framed:
+  assumes closed: "finite_children_closed Vp Vh st nd s"
+  shows "finite_children_framed (finite_default_frame Vp Vh (resolution_node_schema nd) s) st nd s"
+proof -
+  note c = closed[unfolded finite_children_closed_def]
+  show ?thesis unfolding finite_children_framed_def
+    apply (intro conjI)
+      apply (rule fBall_weaken[OF conjunct1[OF c]])
+      apply (auto split: prod.splits simp: finite_default_frame_def dest: fsubsetD)[1]
+     apply (rule fBall_weaken[OF conjunct1[OF conjunct2[OF c]]])
+     apply (auto split: prod.splits simp: finite_default_frame_def dest: fsubsetD)[1]
+    apply (rule conjunct2[OF conjunct2[OF c]])
+    done
+qed
+
+lemma finite_premise_only_inputs_framed:
+  assumes "finite_premise_only_inputs Vp Vh st nd s"
+  shows "finite_premise_only_framed (finite_default_frame Vp Vh (resolution_node_schema nd) s) st nd"
+  using assms unfolding finite_premise_only_inputs_def finite_premise_only_framed_def
+  by (auto simp: finite_default_frame_def)
+
+lemma finite_socket_holders_mono:
+  assumes hold: "finite_socket_holders F st q Y g" and sub: "\<And>v. v |\<in>| Y' \<Longrightarrow> v |\<in>| Y"
+  shows "finite_socket_holders F st q Y' g"
+proof -
+  have e: "A |\<inter>| Y' = {||}" if "A |\<inter>| Y = {||}" for A
+    using that by (simp add: fset_eq_iff) (blast dest: sub)
+  show ?thesis using hold e unfolding finite_socket_holders_def by blast
+qed
+
+lemma finite_pattern_substitute_variable_holds:
+  assumes "a |\<in>| finite_pattern_variables p" "v |\<in>| finite_pattern_variables (\<beta> a)"
+  shows "v |\<in>| finite_pattern_variables (finite_pattern_substitute \<beta> p)"
+  using assms by (induction p) auto
+
+text \<open>A variant output is a renaming of the head output (moved from @{text Factor_Resolution_Material_Discharge}).\<close>
+
+lemma finite_variant_pairs_substitute:
+  "finite_variant_pairs p (finite_pattern_substitute \<beta> p) = Some l \<Longrightarrow>
+    (\<forall>b. b |\<in>| finite_pattern_variables p \<longrightarrow> (\<exists>w. \<beta> b = Finite_Variable w \<and> (b,w) \<in> set l)) \<and>
+    (\<forall>b w. (b,w) \<in> set l \<longrightarrow> \<beta> b = Finite_Variable w)"
+proof (induction p arbitrary: l)
+  case (Finite_Variable a)
+  then show ?case by (cases "\<beta> a") auto
+next
+  case (Finite_Pattern_Target x)
+  then show ?case by simp
+next
+  case (Finite_Pattern_Payload x)
+  then show ?case by simp
+next
+  case (Finite_Pattern_Pair p1 p2)
+  from Finite_Pattern_Pair.prems obtain l1 l2 where l1: "finite_variant_pairs p1 (finite_pattern_substitute \<beta> p1) = Some l1"
+    and l2: "finite_variant_pairs p2 (finite_pattern_substitute \<beta> p2) = Some l2" and l: "l = l1 @ l2"
+    by (auto split: option.splits)
+  show ?case using Finite_Pattern_Pair.IH(1)[OF l1] Finite_Pattern_Pair.IH(2)[OF l2] l by auto
+qed
+
+text \<open>Each variable of a pattern whose substitution is a variant of it is bound to a variable of its own.\<close>
+
+lemma finite_variant_substitute_apart:
+  assumes var: "finite_variant p (finite_pattern_substitute \<beta> p)" and a: "a |\<in>| finite_pattern_variables p"
+  shows "\<exists>v. \<beta> a = Finite_Variable v \<and>
+    (\<forall>b. b |\<in>| finite_pattern_variables p \<longrightarrow> b \<noteq> a \<longrightarrow> v |\<notin>| finite_pattern_variables (\<beta> b))"
+proof -
+  obtain l where l: "finite_variant_pairs p (finite_pattern_substitute \<beta> p) = Some l"
+      and all: "list_all (\<lambda>(a,v). list_all (\<lambda>(b,w). (a = b) = (v = w)) l) l"
+    using var unfolding finite_variant_def
+    by (cases "finite_variant_pairs p (finite_pattern_substitute \<beta> p)") auto
+  note L = finite_variant_pairs_substitute[OF l]
+  obtain v where av: "\<beta> a = Finite_Variable v" "(a,v) \<in> set l" using L a by blast
+  have "v |\<notin>| finite_pattern_variables (\<beta> b)" if b: "b |\<in>| finite_pattern_variables p" "b \<noteq> a" for b
+  proof -
+    obtain w where bw: "\<beta> b = Finite_Variable w" "(b,w) \<in> set l" using L b(1) by blast
+    have "(a = b) = (v = w)" using all av(2) bw(2) by (auto simp: list_all_iff)
+    then show ?thesis using b(2) bw(1) by simp
+  qed
+  then show ?thesis using av(1) by blast
+qed
+
+lemma finite_socket_kept_framed_default:
+  assumes kept: "finite_socket_kept D Vp Vh F st q Y g"
+  shows "finite_socket_kept_framed D \<Phi> Vp Vh None F st q Y g"
+proof -
+  obtain nd where q: "q \<noteq> []" and nd: "nd |\<in>| resolution_nodes st" "resolution_node_position nd = butlast q"
+      "(resolution_node_site nd,resolution_node_schema nd,last q,True,Vp,Vh) |\<in>| declared_sockets D"
+      and po: "finite_premise_only_inputs Vp Vh st nd (last q)" and hold: "finite_socket_holders F st q Y g"
+    using kept unfolding finite_socket_kept_def by blast
+  have "finite_premise_only_framed (finite_default_frame Vp Vh (resolution_node_schema nd) (last q)) st nd"
+    by (rule finite_premise_only_inputs_framed[OF po])
+  then show ?thesis unfolding finite_socket_kept_framed_def finite_frame_at_def using q nd hold by auto
+qed
+
+lemma finite_socket_free_framed_default:
+  assumes free: "finite_socket_free D Vp Vh F st q Y g" and headed: "finite_nodes_headed st"
+  shows "finite_socket_free_framed D \<Phi> Vp Vh None F st q Y g"
+proof -
+  obtain nd where q: "q \<noteq> []" "F = Some (butlast q)" and nd: "nd |\<in>| resolution_nodes st"
+      "resolution_node_position nd = butlast q"
+      "(resolution_node_site nd,resolution_node_schema nd,last q,False,Vp,Vh) |\<in>| declared_sockets D"
+      and po: "finite_premise_only_inputs Vp Vh st nd (last q)"
+      and pc: "case finite_parent_output Vh nd of None \<Rightarrow> False
+        | Some out \<Rightarrow> finite_socket_holders F st q (Y |\<union>| finite_pattern_variables out) g"
+    using free unfolding finite_socket_free_def by blast
+  obtain out where out: "finite_parent_output Vh nd = Some out"
+      and hold: "finite_socket_holders F st q (Y |\<union>| finite_pattern_variables out) g"
+    using pc by (cases "finite_parent_output Vh nd") auto
+  let ?S = "resolution_node_schema nd"
+  let ?c = "finite_schema_conclusion ?S"
+  let ?\<beta> = "finite_node_binding nd"
+  let ?C = "finite_default_frame Vp Vh ?S (last q)"
+  have call: "resolution_node_call nd = finite_pattern_substitute ?\<beta> ?c"
+    using headed nd(1) unfolding finite_nodes_headed_def by blast
+  obtain v where v: "resolution_view_pattern Vh ?c = Some v"
+    using out by (cases "resolution_view_pattern Vh ?c") (auto simp: finite_parent_output_def)
+  obtain hi ho where vv: "v = (hi,ho)" by (cases v)
+  have vh: "resolution_view_pattern Vh ?c = Some (hi,ho)" using v vv by simp
+  have vk: "resolution_view_pattern Vh (resolution_node_call nd) =
+      Some (finite_pattern_substitute ?\<beta> hi,finite_pattern_substitute ?\<beta> ho)"
+    unfolding call by (rule resolution_view_pattern_substitute[OF vh])
+  have oo: "out = finite_pattern_substitute ?\<beta> ho" and var: "finite_variant ho (finite_pattern_substitute ?\<beta> ho)"
+    using out vh vk by (auto simp: finite_parent_output_def split: if_splits)
+  have hv: "\<exists>v. ?\<beta> a = Finite_Variable v \<and>
+      (\<forall>b. b |\<in>| finite_pattern_variables ho \<longrightarrow> b \<noteq> a \<longrightarrow> v |\<notin>| finite_pattern_variables (?\<beta> b))"
+    if "a |\<in>| finite_pattern_variables ho" for a
+    by (rule finite_variant_substitute_apart[OF var that])
+  have i: "a |\<in>| ?C \<longrightarrow> a |\<notin>| finite_socket_own Vp ?S (last q) \<longrightarrow> (case ?\<beta> a of Finite_Variable v \<Rightarrow>
+      fBall (finite_pattern_variables ho) (\<lambda>b. b \<noteq> a \<longrightarrow> v |\<notin>| finite_pattern_variables (?\<beta> b)) | _ \<Rightarrow> False)"
+    if a: "a |\<in>| finite_pattern_variables ho" for a
+  proof -
+    obtain v where v: "?\<beta> a = Finite_Variable v"
+        and dis: "\<forall>b. b |\<in>| finite_pattern_variables ho \<longrightarrow> b \<noteq> a \<longrightarrow> v |\<notin>| finite_pattern_variables (?\<beta> b)"
+      using hv[OF a] by blast
+    show ?thesis using dis by (auto simp: v)
+  qed
+  have ii: "a |\<notin>| ?C \<longrightarrow> fBall (finite_pattern_variables ho) (\<lambda>b. b |\<in>| ?C \<longrightarrow>
+      finite_pattern_variables (?\<beta> a) |\<inter>| finite_pattern_variables (?\<beta> b) = {||})"
+    if a: "a |\<in>| finite_pattern_variables ho" for a
+  proof (intro impI fBallI)
+    fix b assume aC: "a |\<notin>| ?C" and b: "b |\<in>| finite_pattern_variables ho" and bC: "b |\<in>| ?C"
+    have ba: "b \<noteq> a" using aC bC by auto
+    obtain v where v: "?\<beta> a = Finite_Variable v"
+        and dis: "\<forall>c. c |\<in>| finite_pattern_variables ho \<longrightarrow> c \<noteq> a \<longrightarrow> v |\<notin>| finite_pattern_variables (?\<beta> c)"
+      using hv[OF a] by blast
+    have "v |\<notin>| finite_pattern_variables (?\<beta> b)" using dis b ba by blast
+    then show "finite_pattern_variables (?\<beta> a) |\<inter>| finite_pattern_variables (?\<beta> b) = {||}"
+      by (auto simp: v fset_eq_iff)
+  qed
+  have abs: "finite_parent_absorbs Vp Vh ?C nd (last q)"
+    unfolding finite_parent_absorbs_def vh option.case prod.case by (intro conjI fBallI) (erule i, erule ii)
+  have sub: "w |\<in>| Y |\<union>| finite_pattern_variables out"
+    if w: "w |\<in>| Y |\<union>| finite_parent_absorbed Vp Vh ?C nd (last q)" for w
+  proof (cases "w |\<in>| Y")
+    case False
+    then have "w |\<in>| finite_parent_absorbed Vp Vh ?C nd (last q)" using w by simp
+    then obtain a where a: "a |\<in>| finite_pattern_variables ho" "w |\<in>| finite_pattern_variables (?\<beta> a)"
+      by (auto simp: finite_parent_absorbed_def vh ffUnion.rep_eq)
+    show ?thesis using finite_pattern_substitute_variable_holds[where \<beta>="?\<beta>", OF a] oo by simp
+  qed simp
+  have hold': "finite_socket_holders F st q (Y |\<union>| finite_parent_absorbed Vp Vh ?C nd (last q)) g"
+    by (rule finite_socket_holders_mono[OF hold sub])
+  have pof: "finite_premise_only_framed ?C st nd" by (rule finite_premise_only_inputs_framed[OF po])
+  show ?thesis unfolding finite_socket_free_framed_def finite_frame_at_def using q nd pof abs hold' by auto
+qed
+
+lemma finite_socket_commitment_framed_default:
+  assumes c: "finite_socket_commitment D Vp Vh F st g" and headed: "finite_nodes_headed st"
+  shows "finite_socket_commitment_framed D \<Phi> Vp Vh None F st g"
+proof -
+  have declared: "finite_socket_declared_framed D \<Phi> Vp Vh None F st q Y g"
+    if "finite_socket_declared D Vp Vh F st q Y g" for q Y
+    using that finite_socket_kept_framed_default finite_socket_free_framed_default[OF _ headed]
+    unfolding finite_socket_declared_def finite_socket_declared_framed_def by blast
+  show ?thesis using c declared unfolding finite_socket_commitment_def finite_socket_commitment_framed_def
+    by (cases g) (auto split: option.splits)
+qed
+
+lemma finite_call_narrowed_framed_default:
+  assumes n: "finite_call_narrowed D Vp Vh F st g"
+  shows "finite_call_framed D \<Phi> Vp Vh None F st g"
+proof (cases g)
+  case (Resolution_Call_Goal q r e p)
+  show ?thesis
+  proof (cases "resolution_view_pattern Vp p")
+    case None
+    then show ?thesis using Resolution_Call_Goal by (simp add: finite_call_framed_def)
+  next
+    case (Some z)
+    obtain x y where z: "z = (x,y)" by (cases z)
+    obtain nd where nd: "nd |\<in>| resolution_nodes st" "resolution_node_position nd = butlast q"
+        "finite_children_closed Vp Vh st nd (last q)" "finite_premise_only_unshared nd"
+        "finite_socket_pair Vp q (resolution_node_schema nd)"
+        and alt: "finite_socket_kept D Vp Vh F st q (finite_pattern_variables y) g \<or> finite_input_output_apart Vh nd"
+      using n unfolding finite_call_narrowed_def Resolution_Call_Goal resolution_goal.case Some z option.case prod.case
+      by blast
+    have alt': "finite_socket_kept_framed D \<Phi> Vp Vh None F st q (finite_pattern_variables y) g \<or>
+        finite_input_output_apart Vh nd"
+      using alt finite_socket_kept_framed_default by blast
+    have cf: "finite_children_framed (finite_default_frame Vp Vh (resolution_node_schema nd) (last q)) st nd (last q)"
+      by (rule finite_children_closed_framed[OF nd(3)])
+    show ?thesis unfolding finite_call_framed_def Resolution_Call_Goal resolution_goal.case Some z option.case prod.case
+      using nd alt' cf Resolution_Call_Goal by (auto simp: finite_frame_at_def)
+  qed
+next
+  case (Resolution_Material_Goal q r M)
+  then show ?thesis by (simp add: finite_call_framed_def)
+qed
+
+lemma finite_material_narrowed_framed_default:
+  assumes n: "finite_material_narrowed D Vp Vh F st g"
+  shows "finite_material_framed D \<Phi> Vp Vh None F st g"
+proof (cases g)
+  case (Resolution_Material_Goal q r M)
+  obtain nd where nd: "nd |\<in>| resolution_nodes st" "resolution_node_position nd = butlast q"
+      "finite_children_closed Vp Vh st nd (last q)" "finite_premise_only_unshared nd"
+      and alt: "finite_socket_kept D Vp Vh F st q (finite_material_variables M) g \<or> finite_input_output_apart Vh nd"
+    using n unfolding finite_material_narrowed_def Resolution_Material_Goal resolution_goal.case by blast
+  have alt': "finite_socket_kept_framed D \<Phi> Vp Vh None F st q (finite_material_variables M) g \<or>
+      finite_input_output_apart Vh nd"
+    using alt finite_socket_kept_framed_default by blast
+  have cf: "finite_children_framed (finite_default_frame Vp Vh (resolution_node_schema nd) (last q)) st nd (last q)"
+    by (rule finite_children_closed_framed[OF nd(3)])
+  show ?thesis unfolding finite_material_framed_def Resolution_Material_Goal resolution_goal.case
+    using nd alt' cf Resolution_Material_Goal by (auto simp: finite_frame_at_def)
+next
+  case (Resolution_Call_Goal q r e p)
+  then show ?thesis by (simp add: finite_material_framed_def)
+qed
+
+theorem finite_framed_commitment_call:
+  assumes c: "commit_call (finite_declared_commitment D) F st g" and headed: "finite_nodes_headed st"
+  shows "commit_call (finite_framed_commitment D \<Phi>) F st g"
+proof -
+  have ch: "None |\<in>| finite_frame_choices \<Phi>" by (simp add: finite_frame_choices_def)
+  have sock: "fBex (finite_frame_choices \<Phi>) (\<lambda>ch.
+      finite_socket_commitment_framed D \<Phi> Vp Vh ch F st g \<and> finite_call_framed D \<Phi> Vp Vh ch F st g)"
+    if "finite_socket_commitment D Vp Vh F st g" "finite_call_narrowed D Vp Vh F st g" for Vp Vh
+    using ch finite_socket_commitment_framed_default[OF that(1) headed] finite_call_narrowed_framed_default[OF that(2)]
+    by blast
+  have gp: "finite_goal_premise st g" by (rule finite_declared_commitment_premise[OF c])
+  from c have cc: "finite_direct_commitment D F st g \<or>
+      (resolution_is_call g \<and> fBex (finite_socket_views D) (\<lambda>(Vp,Vh).
+        finite_socket_commitment D Vp Vh F st g \<and> finite_call_narrowed D Vp Vh F st g))"
+    by (simp add: finite_declared_commitment_def)
+  have "finite_direct_commitment D F st g \<or>
+      (resolution_is_call g \<and> fBex (finite_socket_views D) (\<lambda>(Vp,Vh). fBex (finite_frame_choices \<Phi>) (\<lambda>ch.
+        finite_socket_commitment_framed D \<Phi> Vp Vh ch F st g \<and> finite_call_framed D \<Phi> Vp Vh ch F st g)))"
+    using cc
+  proof
+    assume a: "resolution_is_call g \<and> fBex (finite_socket_views D) (\<lambda>(Vp,Vh).
+        finite_socket_commitment D Vp Vh F st g \<and> finite_call_narrowed D Vp Vh F st g)"
+    then obtain w where wm: "w |\<in>| finite_socket_views D"
+        and w: "(\<lambda>(Vp,Vh). finite_socket_commitment D Vp Vh F st g \<and> finite_call_narrowed D Vp Vh F st g) w"
+      by blast
+    obtain Vp Vh where ww: "w = (Vp,Vh)" by (cases w)
+    have "fBex (finite_frame_choices \<Phi>) (\<lambda>ch.
+        finite_socket_commitment_framed D \<Phi> Vp Vh ch F st g \<and> finite_call_framed D \<Phi> Vp Vh ch F st g)"
+      using sock w ww by simp
+    then show ?thesis using a wm ww by blast
+  qed blast
+  then show ?thesis using gp by (simp add: finite_framed_commitment_def)
+qed
+
+theorem finite_framed_commitment_material:
+  assumes c: "commit_material (finite_declared_commitment D) F st g" and headed: "finite_nodes_headed st"
+  shows "commit_material (finite_framed_commitment D \<Phi>) F st g"
+proof -
+  have ch: "None |\<in>| finite_frame_choices \<Phi>" by (simp add: finite_frame_choices_def)
+  have sock: "fBex (finite_frame_choices \<Phi>) (\<lambda>ch.
+      finite_socket_commitment_framed D \<Phi> Vp Vh ch F st g \<and> finite_material_framed D \<Phi> Vp Vh ch F st g)"
+    if "finite_socket_commitment D Vp Vh F st g" "finite_material_narrowed D Vp Vh F st g" for Vp Vh
+    using ch finite_socket_commitment_framed_default[OF that(1) headed]
+      finite_material_narrowed_framed_default[OF that(2)] by blast
+  from c have mp: "finite_material_premise st g" and nc: "\<not> resolution_is_call g"
+    and b: "fBex (finite_socket_views D) (\<lambda>(Vp,Vh).
+      finite_socket_commitment D Vp Vh F st g \<and> finite_material_narrowed D Vp Vh F st g)"
+    by (simp_all add: finite_declared_commitment_def)
+  obtain w where wm: "w |\<in>| finite_socket_views D"
+      and w: "(\<lambda>(Vp,Vh). finite_socket_commitment D Vp Vh F st g \<and> finite_material_narrowed D Vp Vh F st g) w"
+    using b by blast
+  obtain Vp Vh where ww: "w = (Vp,Vh)" by (cases w)
+  have "fBex (finite_frame_choices \<Phi>) (\<lambda>ch.
+      finite_socket_commitment_framed D \<Phi> Vp Vh ch F st g \<and> finite_material_framed D \<Phi> Vp Vh ch F st g)"
+    using sock w ww by simp
+  then have "fBex (finite_socket_views D) (\<lambda>(Vp,Vh). fBex (finite_frame_choices \<Phi>) (\<lambda>ch.
+      finite_socket_commitment_framed D \<Phi> Vp Vh ch F st g \<and> finite_material_framed D \<Phi> Vp Vh ch F st g))"
+    using wm ww by blast
+  then show ?thesis using mp nc by (simp add: finite_framed_commitment_def)
+qed
+
+subsection \<open>An open input is never committed\<close>
+
+text \<open>
+  Review 604's rule from the input's groundness (review 726's follow-up 2): a socket whose viewed input holds a
+  variable the parent binds to a non-ground pattern is committed at no view that reads it so, at any frame. A variable
+  of the parent's head output held by the viewed input is in no frame, so (iii) admits any binding of it: such a socket
+  commits exactly at a caller that grounds that head output, and never at one leaving it non-ground.
+\<close>
+
+lemma finite_framed_open_input:
+  assumes g: "g = Resolution_Call_Goal q r e (finite_pattern_substitute \<beta> p0)"
+    and v: "resolution_view_pattern Vp p0 = Some (xi0,yo0)"
+    and a: "a |\<in>| finite_pattern_variables xi0" and unground: "finite_pattern_variables (\<beta> a) \<noteq> {||}"
+  shows "\<not> finite_socket_commitment_framed D \<Phi> Vp Vh ch F st g"
+proof
+  assume c: "finite_socket_commitment_framed D \<Phi> Vp Vh ch F st g"
+  have vp: "resolution_view_pattern Vp (finite_pattern_substitute \<beta> p0) =
+      Some (finite_pattern_substitute \<beta> xi0,finite_pattern_substitute \<beta> yo0)"
+    by (rule resolution_view_pattern_substitute[OF v])
+  have ground: "finite_pattern_variables (finite_pattern_substitute \<beta> xi0) = {||}"
+    using c vp unfolding g finite_socket_commitment_framed_def by simp
+  obtain w where w: "w |\<in>| finite_pattern_variables (\<beta> a)" using unground by auto
+  show False using finite_pattern_substitute_variable_holds[where \<beta>=\<beta>, OF a w] ground by simp
+qed
+
+theorem finite_framed_commitment_open_input:
+  assumes g: "g = Resolution_Call_Goal q r e (finite_pattern_substitute \<beta> p0)"
+    and direct: "\<not> finite_direct_commitment D F st g"
+    and viewed: "\<And>Vp Vh. (Vp,Vh) |\<in>| finite_socket_views D \<Longrightarrow> \<exists>xi0 yo0 a.
+      resolution_view_pattern Vp p0 = Some (xi0,yo0) \<and> a |\<in>| finite_pattern_variables xi0 \<and>
+      finite_pattern_variables (\<beta> a) \<noteq> {||}"
+  shows "\<not> commit_call (finite_framed_commitment D \<Phi>) F st g"
+proof
+  assume "commit_call (finite_framed_commitment D \<Phi>) F st g"
+  then have "fBex (finite_socket_views D) (\<lambda>(Vp,Vh). fBex (finite_frame_choices \<Phi>) (\<lambda>ch.
+      finite_socket_commitment_framed D \<Phi> Vp Vh ch F st g \<and> finite_call_framed D \<Phi> Vp Vh ch F st g))"
+    using direct by (simp add: finite_framed_commitment_def)
+  then obtain w where wm: "w |\<in>| finite_socket_views D"
+      and w: "(\<lambda>(Vp,Vh). fBex (finite_frame_choices \<Phi>) (\<lambda>ch.
+        finite_socket_commitment_framed D \<Phi> Vp Vh ch F st g \<and> finite_call_framed D \<Phi> Vp Vh ch F st g)) w"
+    by blast
+  obtain Vp Vh where ww: "w = (Vp,Vh)" by (cases w)
+  obtain ch where cm: "finite_socket_commitment_framed D \<Phi> Vp Vh ch F st g" using w ww by auto
+  obtain xi0 yo0 a where "resolution_view_pattern Vp p0 = Some (xi0,yo0)" "a |\<in>| finite_pattern_variables xi0"
+      "finite_pattern_variables (\<beta> a) \<noteq> {||}"
+    using viewed[of Vp Vh] wm ww by blast
+  then show False using finite_framed_open_input[OF g] cm by blast
+qed
+
 end

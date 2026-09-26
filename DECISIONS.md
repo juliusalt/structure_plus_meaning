@@ -17254,6 +17254,35 @@ With F3: B1 follows it, the closed-premise truth lemma as F3 leaves it.
   obligation is proved at it, from the carrying, never supplied without it; at no frames the test is today's but for
   (iii), which only admits; unresolved is never refuted and never admits; #519's counterexample and (1)'s variant
   control stay refused.]
+[Marked by task 743 (B1): the framed obligation `socket_framed M S s keep Vp Vh C` (`socket_framed_discharged`: it gives
+`socket_discharged`), its default frame `socket_default_frame` (`finite_default_frame`, `finite_default_frame_correct`) given
+by `socket_discharged_framed` from `socket_inputs_kept` under the clause's formation, and at the carried set
+`Factor_Resolution_Carriers.socket_framed_carried` (the carrying lemma's own proof, `socket_discharged_carried` now its
+corollary) and `socket_framed_listed` (through the listed shape); the frame family `resolution_frames`, a finite family of
+(site, clause, key, frame) beside the records, discharged by `frames_discharged` (`no_frames_discharged`,
+`frames_union_discharged`). A frame is chosen per socket commitment as a choice, `None` the default and `Some C` a
+declared frame, available at a socket only where the family declares it at the socket's site, clause and key
+(`finite_frame_at`, the choices `finite_frame_choices`); `finite_frame_at_framed` gives the framed obligation at the frame
+a choice gives under `declarations_discharged` and `frames_discharged`. The conditions at a frame:
+`finite_children_framed C st nd s` (i), `finite_premise_only_framed C st nd` (ii), `finite_parent_absorbs Vp Vh C nd s`
+(iii, over the socket's own variables `finite_socket_own`) and its holders' variables `finite_parent_absorbed`; the test at
+a choice `finite_socket_kept_framed`, `finite_socket_free_framed`, `finite_socket_declared_framed`,
+`finite_socket_commitment_framed`, `finite_call_framed`, `finite_material_framed`, and `finite_framed_commitment D Φ`, with
+`finite_framed_commitment_premise`, `_input_ground` and `_none`. Today's test is contained: each of its conditions implies
+its framed form at the default choice (`finite_children_closed_framed`, `finite_premise_only_inputs_framed`,
+`finite_socket_kept_framed_default`, `finite_socket_free_framed_default`, `finite_socket_commitment_framed_default`,
+`finite_call_narrowed_framed_default`, `finite_material_narrowed_framed_default`), and every goal today's test commits the
+framed test commits, for every Φ (`finite_framed_commitment_call`, `finite_framed_commitment_material`), at a state whose
+every node's call is its clause's head under its bindings (`finite_nodes_headed`): the variant test speaks of the call and
+(iii) of the bindings, and the invariant's linkage relates them at every node
+(`Factor_Resolution_Socket_Discharges.finite_node_binding_linked`), so the containment holds wherever the search reads
+the test. Review 726's lemma: `finite_framed_open_input` (a goal whose viewed input holds a variable the parent binds to a
+non-ground pattern commits at no socket reading it so, at any choice) and `finite_framed_commitment_open_input`. The
+narrowed socket at a frame: `Factor_Narrowed_Sockets.narrowed_socket_framed` (`narrowed_socket_framed_discharged`,
+`socket_framed_narrowed`), at the carried set `narrowed_socket_framed_carried` (`narrowed_socket_discharged_carried` its
+corollary), and beside a narrowed record `narrowed_frames_discharged` (`frames_discharged_unnarrowed`). The variant lemma
+`finite_variant_pairs_substitute` moved from `Factor_Resolution_Material_Discharge` to where the test reads it, its
+statement unchanged, beside `finite_variant_substitute_apart`.]
 
 Presentation freedom makes a false call expensive: a true call is resolved at the first presentation its producer
 yields, a false one only after every presentation (n! root lists of n roots), so a refusal past a few elements reaches
@@ -17760,7 +17789,12 @@ inclusion quadratic, and #644's two-row depth shows its growth; deferring it wou
    the call's successors and never the reuse step, and the focus is solved in its own subtree as before F3; no committed
    goal is cut for being reusable];
    `finite_children_instances` and `finite_siblings_pending` read pending goals, so a parent one of whose premises was
-   closed by reuse does not commit, which is never a refutation; R5c′'s frame keeps its statements but the position-keeping
+   closed by reuse does not commit, which is never a refutation [Corrected (task 743, review 696's follow-up 4): since
+   correction (9) the socket test reads `finite_children_closed`, which counts a premise closed by reuse as closed — nothing
+   pending at or under its position — so such a parent may commit; the exchange stays proved,
+   `Factor_Resolution_Material_Discharge.finite_closed_premise_true` taking the reused premise true by
+   `resolution_solved_node_true`, and the framed test of correction (10) reads the same condition at a frame
+   (`finite_children_framed`)]; R5c′'s frame keeps its statements but the position-keeping
    one (`finite_committed_search_positions`), restated so that a pending call's position keeps a node, a pending call or
    its closing by a solved node. The holders invariant is untouched: a ground goal holds no variable.
 4. *The waiting rule* (F1's (iv)). A ground call equal to a pending goal at a lesser position, or to the call of a node

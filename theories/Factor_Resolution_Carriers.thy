@@ -603,9 +603,9 @@ text \<open>
   and the head outside χ keep theirs.
 \<close>
 
-theorem socket_discharged_carried:
+theorem socket_framed_carried:
   assumes carried: "socket_carried M S s keep Vp Vh c0 cs"
-  shows "socket_discharged M S s keep Vp Vh"
+  shows "socket_framed M S s keep Vp Vh (carried_variables S s Vp cs)"
 proof -
   define C where "C = carried_variables S s Vp cs"
   define Cn where "Cn n = carried_variables S s Vp (take n cs)" for n
@@ -643,6 +643,7 @@ proof -
     then show "resolution_view_pattern Vp p \<noteq> None" using vw0 by simp
   qed
   have core: "\<exists>h'. clause_true M (decode_finite_schema S) h' \<and> head_kept keep Vh S h h' \<and>
+      (\<forall>v\<in>schema_variables (decode_finite_schema S) - C. h' v = h v) \<and>
       evaluate_pattern h' (decode_finite_pattern xi) = evaluate_pattern h (decode_finite_pattern xi) \<and>
       evaluate_pattern h' (decode_finite_pattern yo) = y'"
     if ct: "clause_true M (decode_finite_schema S) h" and tM: "(d0,t) \<in> M"
@@ -893,9 +894,10 @@ proof -
       qed
       ultimately show ?thesis using Some z by (simp add: head_kept_def)
     qed
-    show ?thesis using ct' hk exi eyo by blast
+    show ?thesis using ct' hk offC exi eyo by blast
   qed
   have calls: "\<exists>h'. clause_true M (decode_finite_schema S) h' \<and> head_kept keep Vh S h h' \<and>
+      (\<forall>v\<in>schema_variables (decode_finite_schema S) - C. h' v = h v) \<and>
       evaluate_pattern h' (decode_finite_pattern xi') = evaluate_pattern h (decode_finite_pattern xi') \<and>
       evaluate_pattern h' (decode_finite_pattern yo') = y'"
     if ct: "clause_true M (decode_finite_schema S) h" and memp: "(s,d,p) |\<in>| finite_schema_premises S"
@@ -908,8 +910,18 @@ proof -
     then have x: "xi' = xi" and y: "yo' = yo" using vwp vw0 by simp_all
     show ?thesis using core[OF ct, of t y'] tM vt d x y by simp
   qed
-  show ?thesis unfolding socket_discharged_def using first calls nomat by blast
+  show ?thesis unfolding socket_framed_def C_def[symmetric] using first calls nomat by blast
 qed
+
+text \<open>
+  The carrying keeps every variable outside the carried set (DECISIONS.md, task 495's entry, correction (10)): the
+  socket is framed there, and its obligation is the framed one's.
+\<close>
+
+theorem socket_discharged_carried:
+  assumes carried: "socket_carried M S s keep Vp Vh c0 cs"
+  shows "socket_discharged M S s keep Vp Vh"
+  by (rule socket_framed_discharged[OF socket_framed_carried[OF carried]])
 
 section \<open>A socket carried along its listed clause\<close>
 
@@ -1106,6 +1118,18 @@ proof -
     by (rule socket_carriedI[OF answers formed at vw producer output_covered_renamed[OF formed renamed] input
       material steps others materials head])
 qed
+
+text \<open>
+  A socket framed through its listed clause: a declaration theory frames a socket at its carried set in one line through
+  the listed shape (correction (10)).
+\<close>
+
+theorem socket_framed_listed:
+  assumes answers: "\<forall>e t. (e,t) \<in> M \<longrightarrow> term_formed t" and formed: "view_formed Vp"
+    and producer: "producer_discharged M d Vp [snd (snd Vp)] (\<lambda>_. c0)"
+    and listed: "socket_listed M S s keep Vp Vh c0 cs d \<sigma>"
+  shows "socket_framed M S s keep Vp Vh (carried_variables S s Vp cs)"
+  by (rule socket_framed_carried[OF socket_carried_listed[OF answers formed producer listed]])
 
 text \<open>The rows of a finite relation at a key, read over its listed rows (the empty rows: @{thm [source] ffilter_empty_set}).\<close>
 

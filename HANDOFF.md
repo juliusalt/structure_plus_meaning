@@ -82,7 +82,7 @@ by q112: the direct producer's discharge under two state hypotheses, the two cou
 (landed `0dd1e4ed`: one barring rule for every committed step, the commitment test checking the
 discharges' state conditions, the direct producer discharged, the premise's call part weakened by H and unheld, q115)
 and its remainder, the socket kinds' discharges in two halves side by side, #630 (the kept-head and free sockets and the
-inner commitment, which reads theirs; the entry marked) and #631 (the material single solution), both continuing it; R5d's views #595
+inner commitment, which reads theirs; the entry marked) and #631 (the material single solution, landed `e994a1de`), both continuing it; R5d's views #595
 waits on them, and R6 #520 (landed `2dfbebd1`, narrowed by q107:
 the declarations R5's form reaches — 32, 6, 10, 45, their material sockets, the consumers a contract states invariant —
 discharged at the notions' systems), each with its review; the design #585 (accepted: task 495's entry, "The given's
@@ -502,6 +502,12 @@ What landed that open work builds on, a line each; how it went and each review's
   asked program and at the asked placement (`asked_mapped_extension`); the native form at `asked_environment` and
   `asked_entry` not stated, since it does not type with W4a's relocation (q118). Review 638's follow-ups: 1 and 2 to
   #642, 3 to #640 and next-edits 241.
+- **R5c⁗b** (#631, `e994a1de`): `Factor_Resolution_Material_Discharge.finite_material_commitment_exchanges`, the
+  material single solution's discharge of the exchange premise under q116's conditions; task 495's entry's correction
+  (7) with its three counterexamples. Review 633's follow-ups: the test's conjunction with `finite_material_narrowed`,
+  the blank line in `Factor_Least_Witness_Registrations` and the controls of (7) to #630; the discharge's citation to
+  #595; the shared successor-support step and `finite_canonical_observation` next-edits 242–243; `restated` up to
+  renaming of free variables the harness's.
 
 ## Open
 
@@ -644,9 +650,20 @@ searches for a theory before briefing a task that edits it.
   given's sockets commit under R3's selection is #605's control's and R7's to report; one that does not
   moves the selection parameter (#613) onto the route. q119, q120 (plan-84): #630's socket discharges stand
   (`Factor_Resolution_Socket_Discharges`: `finite_socket_kept_context`, `finite_socket_free_context`); the rest reads
-  #631's definitions, so #630 parks on q120 until #631 lands: answer q120 then, beside the `after 630 631`. q118 (#635) and
+  #631's definitions, so #630 parked on q120 until #631 landed (`e994a1de`); q120 answered then. q118 (#635) and
   q121 (#640), the native form at an installation, answered by plan-84: the placed course at both installations,
   design #642 for the native forms.
+- **Not handled at plan-84's end.** (1) implement-636's performance problem (06:11, task 636, W4b's controls): the
+  given's readers resolved by R3/R4 over environment values go one level per row and address — 113 (environment
+  inclusion) at a pair (environment value, collected merge) of two one-row environments unresolved at bound 80 (6 s,
+  every diagnosis `Resolution_Cut`), no return at bound 200 within 130 s; 77's bound collection at a closed
+  installation of a two-definition program (4 artifacts, 55 positions) `None` at bound 40 (11 s), no return at 120 or
+  250 (drafts `.build/tasks/636/draft/`, runs 4, 6, 10). 561's merge collection and its conflict run in seconds. It lies
+  on the route (R7 #542, #547 and #399 resolve 113 and 77 at the given), so its attribution and fix at the cause is a
+  task ordered before R7, named for #636 (`v2.py after 636 FIXTASK`); #636 continues with what does not depend on it.
+  (2) Brief #643's proposals (M, V1, V2, V3 and the corrected briefs `corrected-605.md` … `corrected-399.md` in its
+  folder): place them (`v2.py accept 643`), apply the corrected briefs by rewrite, and take the stand-in edges of #605,
+  #540, #542, #547 and #399 on #643 out once the proposals are wired.
 - **The graph's width** (plan-78, plan-81, plan-83): the route is one chain — #630, #631 → R5d #595, #597 → R5e #599
   and R6b's parts → R6c → R7 #542 → #399 — so between its landings little else can start; beside it run #635, #636 and
   #640, and R6b's and R6c's parts after #597. Nothing is invented to fill the gaps: what is open beside the
@@ -684,7 +701,7 @@ searches for a theory before briefing a task that edits it.
   (#317); a re-review writes over its first verdict (#65, #302, #438, #562, #620; #461's accepting review's follow-ups lost with it, #620's restated in one line); `v2.py ledger` records a text beginning with `--`
   (Q15); a task tree's owner ledger is main's stale copy (#386's review, follow-up 4); a queued exclusive claim granted
   after the base advanced refuses the probe launched at the grant (#425: pin `--base` at the claim); the restated check
-  misses a restatement differing only by variable names or a fixed type (#411); `probe_runs` locates a skipped
+  misses a restatement differing only by variable names or a fixed type (#411, review 633); `probe_runs` locates a skipped
   `export_code` line by the probe copy's shifted line numbers (#454's review, follow-up 5); a whole-library rebuild
   beside another heavy run exhausted Poly/ML's store (#483's review): such a check could run alone; a brief task could not
   read a sibling brief's delivered brief under `.build/tasks/522/brief/` (#523's result); a theory removed from ROOT leaves

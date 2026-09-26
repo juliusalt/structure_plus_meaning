@@ -37,6 +37,12 @@ definition finite_system_formed :: "('a,'s,'d,'c) finite_schema_system \<Rightar
       d |\<in>| finite_system_definitions P \<and> finite_schema_formed S \<and>
       finite_schema_dependencies S |\<subseteq>| finite_system_definitions P)"
 
+lemma finite_system_clause_formed:
+  assumes "finite_system_formed P" "((e,c),S) |\<in>| finite_system_clauses P"
+  shows "finite_schema_formed S"
+  using fbspec[OF assms(1)[unfolded finite_system_formed_def, THEN conjunct2, THEN conjunct2, THEN conjunct2] assms(2)]
+  by simp
+
 lemma finite_system_formed_correct:
   fixes P :: "('a,'s,'d,'c) finite_schema_system"
   shows "finite_system_formed P \<longleftrightarrow> schema_system_formed (decode_finite_system P)"

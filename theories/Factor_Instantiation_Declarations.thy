@@ -52,6 +52,22 @@ proof -
   then show ?thesis by (simp add: bag_corresponds_lists)
 qed
 
+text \<open>
+  A consumer reading its whole argument, whose check holds of a list exactly as of its permutations, is answered by
+  a bag of that list: the whole consumer (@{thm [source] whole_consumer}) at the bag correspondence.
+\<close>
+
+lemma whole_bag_consumer:
+  assumes lists: "\<And>xs ys. mset xs = mset ys \<Longrightarrow> (e,data_list_term xs) \<in> M \<Longrightarrow> (e,data_list_term ys) \<in> M"
+  shows "consumer_discharged M e whole_view bag_corresponds"
+proof (rule whole_consumer)
+  fix v v' assume "bag_corresponds v v'" "(e,v) \<in> M"
+  then show "(e,v') \<in> M" unfolding bag_corresponds_def using lists by blast
+next
+  fix v v' assume "bag_corresponds v v'"
+  then show "bag_corresponds v' v" unfolding bag_corresponds_def by (metis (no_types))
+qed
+
 fun tuple_corresponds :: "(factor_term \<Rightarrow> factor_term \<Rightarrow> bool) list \<Rightarrow> factor_term \<Rightarrow> factor_term \<Rightarrow> bool" where
   "tuple_corresponds [] x y \<longleftrightarrow> x = y"
 | "tuple_corresponds [c] x y \<longleftrightarrow> c x y"

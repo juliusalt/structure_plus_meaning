@@ -55,6 +55,18 @@ lemma finite_listed_union_code [code abstract]:
   by (simp add: finite_listed_union_def listed_image_union_def ffUnion.rep_eq fset_of_list.rep_eq)
 
 text \<open>
+  The union of the images of a finite set, built once and then only read, is in the same way the listed union of
+  the images' listings: the finite-set image form of the listed image union.
+\<close>
+
+definition listed_fimage_union :: "('a \<Rightarrow> 'b fset) \<Rightarrow> 'a fset \<Rightarrow> 'b fset" where
+  "listed_fimage_union f A = ffUnion (fimage f A)"
+
+lemma listed_fimage_union_code [code abstract]:
+  "fset (listed_fimage_union f A) = listed_image_union (\<lambda>x. fset (f x)) (fset A)"
+  by (simp add: listed_fimage_union_def listed_image_union_def ffUnion.rep_eq fimage.rep_eq image_image)
+
+text \<open>
   A list's members are those of its first @{term n} elements and of the rest: the split a join of two rule
   programs sharing a leading prefix of definitions reads.
 \<close>

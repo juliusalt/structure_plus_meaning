@@ -80,4 +80,38 @@ text \<open>
   with every pair already collected.
 \<close>
 
+section \<open>Images, unions and filters read at their members\<close>
+
+text \<open>
+  An image, a union of images and a filter of a finite set depend on their function only at the set's members; an
+  image fixing every member is the set, and a member of one image is a member of the union.
+\<close>
+
+lemma ffUnion_fimage_member: "y |\<in>| G \<Longrightarrow> x |\<in>| f y \<Longrightarrow> x |\<in>| ffUnion (fimage f G)"
+  by (force simp: ffUnion.rep_eq fimage.rep_eq)
+
+lemma fimage_fixed:
+  assumes "\<And>z. z |\<in>| B \<Longrightarrow> f z = z"
+  shows "fimage f B = B"
+proof -
+  have "f ` fset B = fset B" using assms by (force intro: rev_image_eqI)
+  then show ?thesis by (metis fimage.rep_eq fset_inject)
+qed
+
+lemma fimage_cong_on: "(\<And>x. x |\<in>| A \<Longrightarrow> f x = g x) \<Longrightarrow> fimage f A = fimage g A"
+  by (force simp: fset_eq_iff fimage.rep_eq)
+
+lemma ffUnion_fimage_agree:
+  assumes "\<And>x. x |\<in>| A \<Longrightarrow> f x=g x"
+  shows "ffUnion (fimage f A)=ffUnion (fimage g A)"
+  by (simp only: fimage_cong_on[OF assms])
+
+lemma ffilter_cong_on: "(\<And>x. x |\<in>| X \<Longrightarrow> F x \<longleftrightarrow> G x) \<Longrightarrow> ffilter F X = ffilter G X"
+  by (auto simp: fset_eq_iff ffilter.rep_eq)
+
+text \<open>The rows of a finite relation at a key, read over its listed rows, one insertion at a time.\<close>
+
+lemma ffilter_finsert: "ffilter P (finsert a A) = (if P a then finsert a (ffilter P A) else ffilter P A)"
+  by transfer auto
+
 end

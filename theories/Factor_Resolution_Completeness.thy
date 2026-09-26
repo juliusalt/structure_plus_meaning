@@ -4,6 +4,15 @@ theory Factor_Resolution_Completeness
 begin
 
 text \<open>
+  A finite pattern renamed by a binder map is read, decoded, as the pattern at the valuation composed with the map:
+  the renaming's decoding (@{thm [source] decode_finite_pattern_map}) read by @{thm [source] evaluate_rename_pattern}.
+\<close>
+
+lemma evaluate_map_finite_pattern:
+  "evaluate_pattern v (decode_finite_pattern (map_finite_term_pattern f p)) = evaluate_pattern (v \<circ> f) (decode_finite_pattern p)"
+  by (simp add: decode_finite_pattern_map evaluate_rename_pattern)
+
+text \<open>
   Completeness and exactness of the resolving evaluator (R4 of DECISIONS.md "The native evaluator constructs the
   missing witnesses by resolution", items 5 and 6). A refuted call has no derivation: every true call of a
   formed program is the root of a branch the search keeps, down to the bound, so a search that neither

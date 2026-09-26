@@ -50,4 +50,38 @@ text \<open>
   so callers do not depend on a singleton's storage already being deduplicated.
 \<close>
 
+text \<open>A value where one is determined: the singleton's element, and none otherwise.\<close>
+
+lemma singleton_some_iff:
+  "(if X = {|fthe_elem X|} then Some (fthe_elem X) else None) = Some y \<longleftrightarrow> X = {|y|}"
+proof
+  assume a: "(if X = {|fthe_elem X|} then Some (fthe_elem X) else None) = Some y"
+  have single: "X = {|fthe_elem X|}"
+  proof (rule ccontr)
+    assume "X \<noteq> {|fthe_elem X|}"
+    then show False using a by simp
+  qed
+  have "fthe_elem X = y" using a[unfolded if_P[OF single]] by simp
+  then show "X = {|y|}" using single by metis
+next
+  assume "X = {|y|}"
+  then show "(if X = {|fthe_elem X|} then Some (fthe_elem X) else None) = Some y" by (simp add: fthe_felem_eq)
+qed
+
+lemma singleton_option_iff:
+  "(if X = {|fthe_elem X|} then fthe_elem X else None) = Some y \<longleftrightarrow> X = {|Some y|}"
+proof
+  assume a: "(if X = {|fthe_elem X|} then fthe_elem X else None) = Some y"
+  have single: "X = {|fthe_elem X|}"
+  proof (rule ccontr)
+    assume "X \<noteq> {|fthe_elem X|}"
+    then show False using a by simp
+  qed
+  have "fthe_elem X = Some y" using a[unfolded if_P[OF single]] .
+  then show "X = {|Some y|}" using single by metis
+next
+  assume "X = {|Some y|}"
+  then show "(if X = {|fthe_elem X|} then fthe_elem X else None) = Some y" by (simp add: fthe_felem_eq)
+qed
+
 end

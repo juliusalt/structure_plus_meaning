@@ -16,21 +16,6 @@ text \<open>
   the formation its caller establishes, and no existing constant changes its definition.
 \<close>
 
-lemma fimage_agree:
-  assumes "\<And>x. x |\<in>| A \<Longrightarrow> f x=g x"
-  shows "fimage f A=fimage g A"
-  by (rule fimage_cong) (simp_all add: assms)
-
-lemma ffUnion_fimage_agree:
-  assumes "\<And>x. x |\<in>| A \<Longrightarrow> f x=g x"
-  shows "ffUnion (fimage f A)=ffUnion (fimage g A)"
-  by (simp only: fimage_agree[OF assms])
-
-lemma ffilter_agree:
-  assumes "\<And>x. x |\<in>| A \<Longrightarrow> P x=Q x"
-  shows "ffilter P A=ffilter Q A"
-  using assms by (auto intro!: fset_eqI)
-
 section \<open>The targets of a formed environment's citations\<close>
 
 text \<open>
@@ -70,13 +55,13 @@ proof
     case (Local a)
     have "ffilter (\<lambda>C. finite_target_formed (Finite_Anchor C a)) (finite_artifacts_at E u)=
         ffilter (\<lambda>C. a |\<in>| finite_carrier (finite_structure C)) (finite_artifacts_at E u)"
-      by (rule ffilter_agree) (simp add: local)
+      by (rule ffilter_cong_on) (simp add: local)
     then show ?thesis by (simp only: Local finite_citation_targets.simps finite_citation_targets_formed.simps)
   next
     case (External k a)
     have "ffilter (\<lambda>C. finite_target_formed (Finite_Anchor C a)) (finite_bound_artifacts E u k)=
         ffilter (\<lambda>C. a |\<in>| finite_carrier (finite_structure C)) (finite_bound_artifacts E u k)"
-      by (rule ffilter_agree) (simp add: bound)
+      by (rule ffilter_cong_on) (simp add: bound)
     then show ?thesis by (simp only: External finite_citation_targets.simps finite_citation_targets_formed.simps)
   next
     case Local_Whole

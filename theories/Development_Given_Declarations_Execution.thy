@@ -23,7 +23,7 @@ text \<open>
   reached, and it aborts in code, as in @{text Development_Socket_Liveness_Execution}.
 \<close>
 
-declare [[code abort: finite_object_of]]
+declare [[code abort: finite_object_of union_class]]
 
 definition given_control_artifact :: finite_exact_artifact where
   "given_control_artifact = \<lparr>finite_structure = \<lparr>finite_carrier = {|[1],[2],[3],[4],[5]|}, finite_incidence = {||}\<rparr>,
@@ -35,7 +35,7 @@ definition given_control_rows :: "local_address list \<Rightarrow> finite_factor
 
 abbreviation given_control_resolution :: "nat \<Rightarrow> finite_factor_term \<Rightarrow> bool option" where
   "given_control_resolution d t \<equiv> finite_resolution_verdict (finite_committed_resolution no_witness_construction
-    (finite_declared_commitment given_declarations) finite_rooted_given_readers d t 40)"
+    (finite_narrowed_commitment finite_rooted_given_readers 0 given_declarations {||}) finite_rooted_given_readers d t 40)"
 
 lemma given_declarations_control:
   "given_control_resolution 500 (Finite_Target (Finite_Whole given_control_artifact)) = Some True \<and>

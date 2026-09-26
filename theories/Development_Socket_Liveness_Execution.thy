@@ -57,14 +57,8 @@ declare [[code abort: finite_object_of union_class]]
 
 
 definition liveness_declarations :: "(nat,nat,nat) resolution_declarations" where
-  "liveness_declarations = declarations_list ([given_declarations, quotation_declarations, binding_declarations,
-    instantiation_declarations, scoped_declarations, prospective_declarations, application_declarations,
-    row_values_declarations, vector_declarations, record_declarations, material_declarations,
-    premise_rows_declarations, premise_family_declarations, schema_declarations] @
-    map (resolution_declarations.truncate \<circ> union_narrowed) [quotation_union_sockets, instantiation_union_sockets,
-      prospective_union_sockets, vector_union_sockets, premise_rows_union_sockets] @
-    [call_admission_declarations, clause_payloads_declarations, interface_slot_declarations,
-      stated_clause_declarations])"
+  "liveness_declarations =
+    declarations_union (resolution_declarations.truncate given_declarations) stated_clause_declarations"
 
 definition liveness_frames :: "(nat,nat,nat) resolution_frames" where
   "liveness_frames = lookup_frames |\<union>| identity_frames |\<union>| comparison_frames |\<union>| headed_frames |\<union>|

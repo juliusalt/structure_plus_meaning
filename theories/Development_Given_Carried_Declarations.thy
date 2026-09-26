@@ -1,7 +1,7 @@
 theory Development_Given_Carried_Declarations
   imports Factor_Artifact_Citation_Declarations Factor_Row_Selection_Socket_Declarations
     Factor_Definition_Reading_Declarations Development_Given_Declarations Development_Given_Extensions
-    Development_Given_Registrations
+    Development_Given_Registrations Factor_Union_Declarations Factor_Narrowed_Productions
 begin
 
 text \<open>
@@ -280,6 +280,36 @@ definition given_notion_discharged ::
     (\<forall>e S s keep Vp Vh. (e,S,s,keep,Vp,Vh) |\<in>| declared_sockets D \<longrightarrow>
       (\<exists>c. ((e,c),decode_finite_schema S) \<in> system_clauses P)))"
 
+text \<open>
+  The agreement chain every carrying from a notion's system to the given's programs reads: the notion's system agrees
+  with the joined program on its whole domain and with the rooted readers where both define, and is closed there.
+\<close>
+
+lemma given_agreements:
+  assumes Pf: "schema_system_formed P" and agree: "systems_agree_on P guard_readers_system (system_definitions P)"
+  shows "systems_agree_on P given_program_system (system_definitions P \<inter> system_definitions given_program_system)"
+    and "system_dependency_closed P (system_definitions P \<inter> system_definitions given_program_system)"
+    and "systems_agree_on P given_rooted_readers_system
+      (system_definitions P \<inter> system_definitions given_rooted_readers_system)"
+    and "system_dependency_closed P (system_definitions P \<inter> system_definitions given_rooted_readers_system)"
+    and "system_definitions P \<subseteq> system_definitions given_program_system"
+proof -
+  have program: "systems_agree_on P given_program_system (system_definitions P)"
+    by (rule whole_agreement_transitive[OF agree guard_program_agreement])
+  show shared: "systems_agree_on P given_program_system
+      (system_definitions P \<inter> system_definitions given_program_system)"
+    by (rule systems_agree_on_subdomain[OF program Int_lower1])
+  show "system_dependency_closed P (system_definitions P \<inter> system_definitions given_program_system)"
+    by (rule systems_agree_on_intersection_closed[OF Pf given_program_formed shared])
+  show rooted: "systems_agree_on P given_rooted_readers_system
+      (system_definitions P \<inter> system_definitions given_rooted_readers_system)"
+    unfolding given_rooted_readers_system_def by (rule rooted_intersection_agreement[OF program])
+  show "system_dependency_closed P (system_definitions P \<inter> system_definitions given_rooted_readers_system)"
+    by (rule systems_agree_on_intersection_closed[OF Pf given_rooted_readers_formed rooted])
+  show "system_definitions P \<subseteq> system_definitions given_program_system"
+    by (rule whole_agreement_definitions[OF program])
+qed
+
 theorem given_notion_carried:
   assumes "given_notion_discharged D corr"
   shows "declarations_discharged (positive_meaning given_program_system) D corr"
@@ -298,8 +328,7 @@ proof -
     obtain c where "((e,c),decode_finite_schema S) \<in> system_clauses P" using clauses m by blast
     then show ?thesis using given_socket_clause[OF Pf agree] by blast
   qed
-  have program: "systems_agree_on P given_program_system (system_definitions P)"
-    by (rule whole_agreement_transitive[OF agree guard_program_agreement])
+  note chain = given_agreements[OF Pf agree]
   have socks: "schema_dependencies (decode_finite_schema S) \<subseteq> system_definitions P"
     if m: "(e,S,s,keep,Vp,Vh) |\<in>| declared_sockets D" for e S s keep Vp Vh
   proof -
@@ -307,13 +336,13 @@ proof -
     then show ?thesis using Pf unfolding schema_system_formed_def by blast
   qed
   have shared: "systems_agree_on P given_program_system (system_definitions P \<inter> system_definitions given_program_system)"
-    by (rule systems_agree_on_subdomain[OF program Int_lower1])
+    by (rule chain(1))
   show "declarations_discharged (positive_meaning given_program_system) D corr"
     by (rule declarations_shared_discharged[OF Pf given_program_formed shared _ _ socks discharged])
       (use prods cons in blast)+
   have rooted: "systems_agree_on P given_rooted_readers_system
       (system_definitions P \<inter> system_definitions given_rooted_readers_system)"
-    unfolding given_rooted_readers_system_def by (rule rooted_intersection_agreement[OF program])
+    by (rule chain(3))
   show "declarations_discharged (positive_meaning given_rooted_readers_system) D corr"
     by (rule declarations_shared_discharged[OF Pf given_rooted_readers_formed rooted _ _ socks discharged])
       (use prods cons in blast)+
@@ -844,8 +873,8 @@ text \<open>
   the committed search over the given's rooted readers.
 \<close>
 
-definition given_declarations :: "(nat,nat,nat) resolution_declarations" where
-  "given_declarations = declarations_list [given_bag_declarations, given_artifact_declarations,
+definition given_plain_declarations :: "(nat,nat,nat) resolution_declarations" where
+  "given_plain_declarations = declarations_list [given_bag_declarations, given_artifact_declarations,
     given_family_declarations, given_target_declarations, given_disjoint_declarations, given_binder_declarations,
     root_family_producer_record, root_family_closure_record, root_family_bound_record, root_family_membership_record,
     lookup_declarations, identity_declarations, comparison_declarations, fields_admission_declarations,
@@ -860,17 +889,471 @@ definition given_declarations :: "(nat,nat,nat) resolution_declarations" where
     call_admission_declarations, interface_slot_declarations, binding_declarations, clause_payloads_declarations,
     application_declarations]"
 
-theorem given_declarations_discharged:
-  "declarations_discharged (positive_meaning given_program_system) given_declarations given_declarations_correspondence"
-  "declarations_discharged (positive_meaning given_rooted_readers_system) given_declarations
+theorem given_plain_declarations_discharged:
+  "declarations_discharged (positive_meaning given_program_system) given_plain_declarations
     given_declarations_correspondence"
-  unfolding given_declarations_def
+  "declarations_discharged (positive_meaning given_rooted_readers_system) given_plain_declarations
+    given_declarations_correspondence"
+  unfolding given_plain_declarations_def
   by (rule given_notions_carried; use given_records_discharged in auto)+
+
+theorem given_plain_declarations_selected:
+  assumes "(e,S,s,keep,Vp,Vh) |\<in>| declared_sockets given_plain_declarations"
+  shows "given_socket_selected S e"
+  by (rule given_notions_carried(3)[OF _ assms[unfolded given_plain_declarations_def]])
+    (use given_records_discharged in auto)
+
+section \<open>48's narrowed sockets joined: the given's one record\<close>
+
+text \<open>
+  The given's record is one produced record (R5f2's @{const produced}): the plain record above and the produced record
+  of 48's eight narrowed sockets (#609's @{const union_produced}, class @{const union_class}, production
+  @{const union_registration}). A socket is keyed by its site, schema and socket; the join holds, at every key the
+  produced record holds, its socket, class and production, and at every other key the plain record's socket, of the
+  trivial class and no production. The two parts never meet at a key, so each is discharged where it was and the join
+  by the two discharges (@{text produced_join_discharged}), its frames (@{text produced_join_frames}), productions and
+  static premise likewise.
+\<close>
+
+definition socket_keyed ::
+    "('a,'s,'d) resolution_declarations \<Rightarrow> 'd \<Rightarrow> ('a,'s,'d) finite_factor_schema \<Rightarrow> 's \<Rightarrow> bool" where
+  "socket_keyed E e S s \<longleftrightarrow> fBex (declared_sockets E) (\<lambda>(e',S',s',rest). e' = e \<and> S' = S \<and> s' = s)"
+
+lemma socket_keyed_iff: "socket_keyed E e S s \<longleftrightarrow> (\<exists>keep Vp Vh. (e,S,s,keep,Vp,Vh) |\<in>| declared_sockets E)"
+  unfolding socket_keyed_def fBex_member_iff by force
+
+definition unkeyed_declarations ::
+    "('a,'s,'d) resolution_declarations \<Rightarrow> ('a,'s,'d) resolution_declarations \<Rightarrow> ('a,'s,'d) resolution_declarations" where
+  "unkeyed_declarations E D =
+    D\<lparr>declared_sockets := ffilter (\<lambda>(e,S,s,rest). \<not> socket_keyed E e S s) (declared_sockets D)\<rparr>"
+
+definition produced_join ::
+    "('a,'s,'d) resolution_declarations \<Rightarrow> ('a,'s,'d,'v) produced_declarations \<Rightarrow> ('a,'s,'d,'v) produced_declarations" where
+  "produced_join D PD = produced (narrowed (declarations_union
+      (unkeyed_declarations (resolution_declarations.truncate PD) D) (resolution_declarations.truncate PD))
+      (\<lambda>e S s. if socket_keyed (resolution_declarations.truncate PD) e S s then declared_narrowing PD e S s
+        else (\<lambda>_. True)))
+    (\<lambda>e S s. if socket_keyed (resolution_declarations.truncate PD) e S s then declared_production PD e S s else None)"
+
+lemma produced_join_fields [simp]:
+  "declared_producers (produced_join D PD) = declared_producers D |\<union>| declared_producers PD"
+  "declared_consumers (produced_join D PD) = declared_consumers D |\<union>| declared_consumers PD"
+  "declared_narrowing (produced_join D PD) e S s =
+    (if socket_keyed (resolution_declarations.truncate PD) e S s then declared_narrowing PD e S s else (\<lambda>_. True))"
+  "declared_production (produced_join D PD) e S s =
+    (if socket_keyed (resolution_declarations.truncate PD) e S s then declared_production PD e S s else None)"
+  by (simp_all add: produced_join_def declarations_union_def unkeyed_declarations_def)
+
+lemma produced_join_sockets:
+  "(e,S,s,keep,Vp,Vh) |\<in>| declared_sockets (produced_join D PD) \<longleftrightarrow>
+    ((e,S,s,keep,Vp,Vh) |\<in>| declared_sockets D \<and> \<not> socket_keyed (resolution_declarations.truncate PD) e S s) \<or>
+    (e,S,s,keep,Vp,Vh) |\<in>| declared_sockets PD"
+  by (auto simp: produced_join_def declarations_union_def unkeyed_declarations_def)
+
+lemma produced_join_keyed:
+  "(e,S,s,keep,Vp,Vh) |\<in>| declared_sockets PD \<Longrightarrow> socket_keyed (resolution_declarations.truncate PD) e S s"
+  unfolding socket_keyed_iff truncate_fields by blast
+
+lemma produced_join_truncate:
+  "resolution_declarations.truncate (produced_join D PD) =
+    declarations_union (unkeyed_declarations (resolution_declarations.truncate PD) D) (resolution_declarations.truncate PD)"
+  by (simp add: produced_join_def)
+
+theorem produced_join_discharged:
+  assumes plain: "declarations_discharged M D corr"
+    and produced: "narrowed_declarations_discharged M (narrowed_declarations.truncate PD) corr"
+  shows "narrowed_declarations_discharged M (narrowed_declarations.truncate (produced_join D PD)) corr"
+proof -
+  have fD: "declarations_formed D" using plain by (simp add: declarations_discharged_def)
+  have fP: "declarations_formed (resolution_declarations.truncate PD)" using narrowed_formed[OF produced] by simp
+  show ?thesis unfolding narrowed_declarations_discharged_def
+  proof (intro conjI allI impI)
+    show "declarations_formed (resolution_declarations.truncate (narrowed_declarations.truncate (produced_join D PD)))"
+      using fD fP by (auto simp: declarations_formed_def produced_join_truncate declarations_union_def
+        unkeyed_declarations_def)
+  next
+    fix d V hs assume "(d,V,hs) |\<in>| declared_producers (narrowed_declarations.truncate (produced_join D PD))"
+    then have "(d,V,hs) |\<in>| declared_producers D \<or> (d,V,hs) |\<in>| declared_producers (narrowed_declarations.truncate PD)"
+      by simp
+    then show "producer_discharged M d V hs (corr d)"
+      using plain narrowed_producer[OF produced] unfolding declarations_discharged_def by blast
+  next
+    fix d e V i assume "(d,e,V,i) |\<in>| declared_consumers (narrowed_declarations.truncate (produced_join D PD))"
+    then have "(d,e,V,i) |\<in>| declared_consumers D \<or> (d,e,V,i) |\<in>| declared_consumers (narrowed_declarations.truncate PD)"
+      by simp
+    then show "consumer_discharged M e V (corr d i)"
+      using plain narrowed_consumer[OF produced] unfolding declarations_discharged_def by blast
+  next
+    fix e S s keep Vp Vh
+    assume m: "(e,S,s,keep,Vp,Vh) |\<in>| declared_sockets (narrowed_declarations.truncate (produced_join D PD))"
+    then have "((e,S,s,keep,Vp,Vh) |\<in>| declared_sockets D \<and> \<not> socket_keyed (resolution_declarations.truncate PD) e S s) \<or>
+        (e,S,s,keep,Vp,Vh) |\<in>| declared_sockets PD" by (simp add: produced_join_sockets)
+    then show "narrowed_socket_discharged M S s keep Vp Vh
+        (declared_narrowing (narrowed_declarations.truncate (produced_join D PD)) e S s)"
+    proof
+      assume a: "(e,S,s,keep,Vp,Vh) |\<in>| declared_sockets D \<and> \<not> socket_keyed (resolution_declarations.truncate PD) e S s"
+      have "socket_discharged M S s keep Vp Vh" using plain a unfolding declarations_discharged_def by blast
+      then show ?thesis using a by (simp add: socket_discharged_narrowed)
+    next
+      assume b: "(e,S,s,keep,Vp,Vh) |\<in>| declared_sockets PD"
+      have "narrowed_socket_discharged M S s keep Vp Vh (declared_narrowing (narrowed_declarations.truncate PD) e S s)"
+        by (rule narrowed_socket[OF produced]) (use b in simp)
+      then show ?thesis using produced_join_keyed[OF b] by simp
+    qed
+  qed
+qed
+
+definition frames_join ::
+    "('a,'s,'d) resolution_declarations \<Rightarrow> ('a,'s,'d) resolution_frames \<Rightarrow> ('a,'s,'d) resolution_frames \<Rightarrow>
+      ('a,'s,'d) resolution_frames" where
+  "frames_join E \<Phi> \<Psi> =
+    ffilter (\<lambda>(e,S,s,C). \<not> socket_keyed E e S s) \<Phi> |\<union>| ffilter (\<lambda>(e,S,s,C). socket_keyed E e S s) \<Psi>"
+
+theorem produced_join_frames:
+  assumes plain: "frames_discharged M D \<Phi>"
+    and produced: "narrowed_frames_discharged M (narrowed_declarations.truncate PD) \<Psi>"
+  shows "narrowed_frames_discharged M (narrowed_declarations.truncate (produced_join D PD))
+    (frames_join (resolution_declarations.truncate PD) \<Phi> \<Psi>)"
+  unfolding narrowed_frames_discharged_def
+proof (intro allI impI)
+  fix e S s C keep Vp Vh
+  assume f: "(e,S,s,C) |\<in>| frames_join (resolution_declarations.truncate PD) \<Phi> \<Psi>"
+    and m: "(e,S,s,keep,Vp,Vh) |\<in>| declared_sockets (narrowed_declarations.truncate (produced_join D PD))"
+  have m': "((e,S,s,keep,Vp,Vh) |\<in>| declared_sockets D \<and> \<not> socket_keyed (resolution_declarations.truncate PD) e S s) \<or>
+      (e,S,s,keep,Vp,Vh) |\<in>| declared_sockets PD" using m by (simp add: produced_join_sockets)
+  show "narrowed_socket_framed M S s keep Vp Vh
+      (declared_narrowing (narrowed_declarations.truncate (produced_join D PD)) e S s) (fset C)"
+  proof (cases "socket_keyed (resolution_declarations.truncate PD) e S s")
+    case True
+    have b: "(e,S,s,keep,Vp,Vh) |\<in>| declared_sockets PD" using m' True by blast
+    have "(e,S,s,C) |\<in>| \<Psi>" using f True by (auto simp: frames_join_def)
+    then have "narrowed_socket_framed M S s keep Vp Vh (declared_narrowing PD e S s) (fset C)"
+      using produced[unfolded narrowed_frames_discharged_def produced_truncations] b by blast
+    then show ?thesis using True by simp
+  next
+    case False
+    have a: "(e,S,s,keep,Vp,Vh) |\<in>| declared_sockets D" using m' False produced_join_keyed[of e S s keep Vp Vh PD]
+      by blast
+    have "(e,S,s,C) |\<in>| \<Phi>" using f False by (auto simp: frames_join_def)
+    then have "socket_framed M S s keep Vp Vh (fset C)" using plain a unfolding frames_discharged_def by blast
+    then show ?thesis using False by (simp add: socket_framed_narrowed)
+  qed
+qed
+
+theorem produced_join_productions:
+  assumes produced: "productions_discharged M P n PD"
+  shows "productions_discharged M P n (produced_join D PD)"
+  unfolding productions_discharged_def
+proof (intro allI impI)
+  fix e S s keep Vp Vh R
+  assume m: "(e,S,s,keep,Vp,Vh) |\<in>| declared_sockets (produced_join D PD)"
+    and p: "declared_production (produced_join D PD) e S s = Some R"
+  have k: "socket_keyed (resolution_declarations.truncate PD) e S s" using p by (simp split: if_split_asm)
+  have b: "(e,S,s,keep,Vp,Vh) |\<in>| declared_sockets PD" using m k by (simp add: produced_join_sockets)
+  have p': "declared_production PD e S s = Some R" using p k by simp
+  have "head_registration Vp (registration_schema R) (registration_variable R) \<and>
+      head_registration_produces (finite_collection_construction [R] n) P (registration_site R) (registration_schema R)
+        (registration_variable R) (declared_narrowing PD e S s) \<and>
+      head_registration_answers M (finite_collection_construction [R] n) P (registration_site R)
+        (registration_schema R) Vp (registration_variable R)"
+    using produced b p' unfolding productions_discharged_def by blast
+  then show "head_registration Vp (registration_schema R) (registration_variable R) \<and>
+      head_registration_produces (finite_collection_construction [R] n) P (registration_site R) (registration_schema R)
+        (registration_variable R) (declared_narrowing (produced_join D PD) e S s) \<and>
+      head_registration_answers M (finite_collection_construction [R] n) P (registration_site R)
+        (registration_schema R) Vp (registration_variable R)"
+    using k by simp
+qed
+
+theorem produced_join_declared:
+  assumes declared: "narrowed_productions_declared PD"
+  shows "narrowed_productions_declared (produced_join D PD)"
+  unfolding narrowed_productions_declared_def
+proof (intro allI impI)
+  fix e S s keep Vp Vh
+  assume m: "(e,S,s,keep,Vp,Vh) |\<in>| declared_sockets (produced_join D PD)"
+    and n: "declared_narrowing (produced_join D PD) e S s \<noteq> (\<lambda>_. True)"
+  have k: "socket_keyed (resolution_declarations.truncate PD) e S s" using n by (simp split: if_split_asm)
+  have b: "(e,S,s,keep,Vp,Vh) |\<in>| declared_sockets PD" using m k by (simp add: produced_join_sockets)
+  have n': "declared_narrowing PD e S s \<noteq> (\<lambda>_. True)" using n k by simp
+  have "declared_production PD e S s \<noteq> None" using declared b n' unfolding narrowed_productions_declared_def by blast
+  then show "declared_production (produced_join D PD) e S s \<noteq> None" using k by simp
+qed
+
+lemma union_produced_declared: "narrowed_productions_declared (union_produced Z)"
+  by (simp add: narrowed_productions_declared_def)
+
+subsection \<open>48's sockets carried from their notions' systems\<close>
+
+text \<open>
+  A narrowed record with no producer and no consumer, discharged at a notion's system whose socket schemas are its
+  clauses, is carried to the joined program by the agreement chain (@{thm [source] given_agreements}) and R5e's transfer
+  by agreement (@{thm [source] narrowed_declarations_agree_discharged}, @{thm [source] narrowed_frames_agree_discharged}),
+  and to the rooted readers wherever they hold its sites.
+\<close>
+
+lemma given_narrowed_carried:
+  assumes Pf: "schema_system_formed P" and agree: "systems_agree_on P guard_readers_system (system_definitions P)"
+    and empty: "declared_producers ND = {||}" "declared_consumers ND = {||}"
+    and clauses: "\<forall>e S s keep Vp Vh. (e,S,s,keep,Vp,Vh) |\<in>| declared_sockets ND \<longrightarrow>
+      (\<exists>c. ((e,c),decode_finite_schema S) \<in> system_clauses P)"
+  shows "narrowed_declarations_discharged (positive_meaning P) ND corr \<Longrightarrow>
+      narrowed_declarations_discharged (positive_meaning given_program_system) ND corr"
+    and "narrowed_frames_discharged (positive_meaning P) ND \<Phi> \<Longrightarrow>
+      narrowed_frames_discharged (positive_meaning given_program_system) ND \<Phi>"
+    and "(e,S,s,keep,Vp,Vh) |\<in>| declared_sockets ND \<Longrightarrow> given_socket_selected S e"
+    and "(\<forall>e S s keep Vp Vh. (e,S,s,keep,Vp,Vh) |\<in>| declared_sockets ND \<longrightarrow>
+        e \<in> system_definitions given_rooted_readers_system) \<Longrightarrow>
+      narrowed_declarations_discharged (positive_meaning P) ND corr \<Longrightarrow>
+      narrowed_declarations_discharged (positive_meaning given_rooted_readers_system) ND corr"
+    and "(\<forall>e S s keep Vp Vh. (e,S,s,keep,Vp,Vh) |\<in>| declared_sockets ND \<longrightarrow>
+        e \<in> system_definitions given_rooted_readers_system) \<Longrightarrow>
+      narrowed_frames_discharged (positive_meaning P) ND \<Phi> \<Longrightarrow>
+      narrowed_frames_discharged (positive_meaning given_rooted_readers_system) ND \<Phi>"
+proof -
+  note chain = given_agreements[OF Pf agree]
+  have socket: "\<exists>e S s keep Vp Vh. (e,S,s,keep,Vp,Vh) |\<in>| declared_sockets ND \<and>
+      (x = e \<or> x \<in> schema_dependencies (decode_finite_schema S))"
+    if "x \<in> declared_sites (resolution_declarations.truncate ND)" for x
+    using that empty by (fastforce simp: declared_sites_def)
+  have sitesP: "declared_sites (resolution_declarations.truncate ND) \<subseteq> system_definitions P"
+  proof
+    fix x assume "x \<in> declared_sites (resolution_declarations.truncate ND)"
+    then obtain e S s keep Vp Vh where m: "(e,S,s,keep,Vp,Vh) |\<in>| declared_sockets ND"
+        and x: "x = e \<or> x \<in> schema_dependencies (decode_finite_schema S)" using socket by blast
+    obtain c where "((e,c),decode_finite_schema S) \<in> system_clauses P" using clauses[rule_format, OF m] by blast
+    then show "x \<in> system_definitions P" using Pf x unfolding schema_system_formed_def by blast
+  qed
+  have sitesG: "declared_sites (resolution_declarations.truncate ND) \<subseteq>
+      system_definitions P \<inter> system_definitions given_program_system" using sitesP chain(5) by blast
+  show "narrowed_declarations_discharged (positive_meaning P) ND corr \<Longrightarrow>
+      narrowed_declarations_discharged (positive_meaning given_program_system) ND corr"
+    by (rule narrowed_declarations_agree_discharged[OF Pf given_program_formed chain(1) chain(2) sitesG])
+  show "narrowed_frames_discharged (positive_meaning P) ND \<Phi> \<Longrightarrow>
+      narrowed_frames_discharged (positive_meaning given_program_system) ND \<Phi>"
+    by (rule narrowed_frames_agree_discharged[OF Pf given_program_formed chain(1) chain(2) sitesG])
+  show "given_socket_selected S e" if m: "(e,S,s,keep,Vp,Vh) |\<in>| declared_sockets ND"
+  proof -
+    obtain c where "((e,c),decode_finite_schema S) \<in> system_clauses P" using clauses m by blast
+    then show ?thesis using given_socket_clause[OF Pf agree] by blast
+  qed
+  have sitesR: "declared_sites (resolution_declarations.truncate ND) \<subseteq>
+      system_definitions P \<inter> system_definitions given_rooted_readers_system"
+    if member: "\<forall>e S s keep Vp Vh. (e,S,s,keep,Vp,Vh) |\<in>| declared_sockets ND \<longrightarrow>
+      e \<in> system_definitions given_rooted_readers_system"
+  proof
+    fix x assume x0: "x \<in> declared_sites (resolution_declarations.truncate ND)"
+    then obtain e S s keep Vp Vh where m: "(e,S,s,keep,Vp,Vh) |\<in>| declared_sockets ND"
+        and x: "x = e \<or> x \<in> schema_dependencies (decode_finite_schema S)" using socket by blast
+    have eR: "e \<in> system_definitions given_rooted_readers_system" by (rule member[rule_format, OF m])
+    obtain c where cP: "((e,c),decode_finite_schema S) \<in> system_clauses P" using clauses[rule_format, OF m] by blast
+    have "((e,c),S) |\<in>| finite_system_clauses finite_rooted_given_readers"
+      by (rule given_socket_clause(2)[OF Pf agree cP eR])
+    then have "((e,c),decode_finite_schema S) \<in> system_clauses given_rooted_readers_system"
+      by (simp only: finite_system_clause_decoded finite_rooted_given_readers_exact)
+    then have "x \<in> system_definitions given_rooted_readers_system"
+      using given_rooted_readers_formed x eR unfolding schema_system_formed_def by blast
+    then show "x \<in> system_definitions P \<inter> system_definitions given_rooted_readers_system" using sitesP x0 by blast
+  qed
+  show "narrowed_declarations_discharged (positive_meaning given_rooted_readers_system) ND corr"
+    if member: "\<forall>e S s keep Vp Vh. (e,S,s,keep,Vp,Vh) |\<in>| declared_sockets ND \<longrightarrow>
+        e \<in> system_definitions given_rooted_readers_system"
+      and d: "narrowed_declarations_discharged (positive_meaning P) ND corr"
+    by (rule narrowed_declarations_agree_discharged[OF Pf given_rooted_readers_formed chain(3) chain(4)
+      sitesR[OF member] d])
+  show "narrowed_frames_discharged (positive_meaning given_rooted_readers_system) ND \<Phi>"
+    if member: "\<forall>e S s keep Vp Vh. (e,S,s,keep,Vp,Vh) |\<in>| declared_sockets ND \<longrightarrow>
+        e \<in> system_definitions given_rooted_readers_system"
+      and f: "narrowed_frames_discharged (positive_meaning P) ND \<Phi>"
+    by (rule narrowed_frames_agree_discharged[OF Pf given_rooted_readers_formed chain(3) chain(4)
+      sitesR[OF member] f])
+qed
+
+lemma union_narrowed_empty [simp]:
+  "declared_producers (union_narrowed Z) = {||}" "declared_consumers (union_narrowed Z) = {||}"
+  "declared_sockets (union_narrowed Z) = Z" "declared_narrowing (union_narrowed Z) e S s = union_class"
+  by (simp_all add: union_narrowed_def)
+
+lemma union_narrowed_corr:
+  assumes d: "narrowed_declarations_discharged M (union_narrowed Z) corr"
+  shows "narrowed_declarations_discharged M (union_narrowed Z) corr'"
+  unfolding narrowed_declarations_discharged_def
+proof (intro conjI allI impI)
+  show "declarations_formed (resolution_declarations.truncate (union_narrowed Z))" by (rule narrowed_formed[OF d])
+next
+  fix d V hs assume "(d,V,hs) |\<in>| declared_producers (union_narrowed Z)"
+  then show "producer_discharged M d V hs (corr' d)" by simp
+next
+  fix d e V i assume "(d,e,V,i) |\<in>| declared_consumers (union_narrowed Z)"
+  then show "consumer_discharged M e V (corr' d i)" by simp
+next
+  fix e S s keep Vp Vh assume "(e,S,s,keep,Vp,Vh) |\<in>| declared_sockets (union_narrowed Z)"
+  then show "narrowed_socket_discharged M S s keep Vp Vh (declared_narrowing (union_narrowed Z) e S s)"
+    by (rule narrowed_socket[OF d])
+qed
+
+lemma union_narrowed_union:
+  assumes d: "narrowed_declarations_discharged M (union_narrowed Z) corr"
+    and d': "narrowed_declarations_discharged M (union_narrowed Z') corr"
+  shows "narrowed_declarations_discharged M (union_narrowed (Z |\<union>| Z')) corr"
+  unfolding narrowed_declarations_discharged_def
+proof (intro conjI allI impI)
+  have fZ: "fBall Z (\<lambda>(e,S,s,keep,Vp,Vh). view_formed Vp \<and> view_formed Vh)"
+    using narrowed_formed[OF d] by (simp add: declarations_formed_def)
+  have fZ': "fBall Z' (\<lambda>(e,S,s,keep,Vp,Vh). view_formed Vp \<and> view_formed Vh)"
+    using narrowed_formed[OF d'] by (simp add: declarations_formed_def)
+  show "declarations_formed (resolution_declarations.truncate (union_narrowed (Z |\<union>| Z')))"
+    using fZ fZ' by (fastforce simp: declarations_formed_def)
+next
+  fix d V hs assume "(d,V,hs) |\<in>| declared_producers (union_narrowed (Z |\<union>| Z'))"
+  then show "producer_discharged M d V hs (corr d)" by simp
+next
+  fix d e V i assume "(d,e,V,i) |\<in>| declared_consumers (union_narrowed (Z |\<union>| Z'))"
+  then show "consumer_discharged M e V (corr d i)" by simp
+next
+  fix e S s keep Vp Vh assume "(e,S,s,keep,Vp,Vh) |\<in>| declared_sockets (union_narrowed (Z |\<union>| Z'))"
+  then have "(e,S,s,keep,Vp,Vh) |\<in>| declared_sockets (union_narrowed Z) \<or>
+      (e,S,s,keep,Vp,Vh) |\<in>| declared_sockets (union_narrowed Z')" by simp
+  then show "narrowed_socket_discharged M S s keep Vp Vh (declared_narrowing (union_narrowed (Z |\<union>| Z')) e S s)"
+  proof
+    assume "(e,S,s,keep,Vp,Vh) |\<in>| declared_sockets (union_narrowed Z)"
+    from narrowed_socket[OF d this] show ?thesis by simp
+  next
+    assume "(e,S,s,keep,Vp,Vh) |\<in>| declared_sockets (union_narrowed Z')"
+    from narrowed_socket[OF d' this] show ?thesis by simp
+  qed
+qed
+
+lemma union_frames_union:
+  assumes "narrowed_frames_discharged M (union_narrowed Z) \<Phi>" "narrowed_frames_discharged M (union_narrowed Z') \<Phi>'"
+    and "fst ` fset \<Phi> \<inter> fst ` fset Z' = {}" and "fst ` fset \<Phi>' \<inter> fst ` fset Z = {}"
+  shows "narrowed_frames_discharged M (union_narrowed (Z |\<union>| Z')) (\<Phi> |\<union>| \<Phi>')"
+  unfolding narrowed_frames_discharged_def union_narrowed_empty funion_iff
+proof (intro allI impI)
+  fix e S s C keep Vp Vh
+  assume f: "(e,S,s,C) |\<in>| \<Phi> \<or> (e,S,s,C) |\<in>| \<Phi>'"
+    and m: "(e,S,s,keep,Vp,Vh) |\<in>| Z \<or> (e,S,s,keep,Vp,Vh) |\<in>| Z'"
+  show "narrowed_socket_framed M S s keep Vp Vh union_class (fset C)" using f
+  proof
+    assume f1: "(e,S,s,C) |\<in>| \<Phi>"
+    have "e \<in> fst ` fset \<Phi>" using f1 by force
+    then have "(e,S,s,keep,Vp,Vh) |\<notin>| Z'" using assms(3) by force
+    then have "(e,S,s,keep,Vp,Vh) |\<in>| Z" using m by blast
+    then show ?thesis
+      by (rule assms(1)[unfolded narrowed_frames_discharged_def union_narrowed_empty, rule_format, OF f1])
+  next
+    assume f2: "(e,S,s,C) |\<in>| \<Phi>'"
+    have "e \<in> fst ` fset \<Phi>'" using f2 by force
+    then have "(e,S,s,keep,Vp,Vh) |\<notin>| Z" using assms(4) by force
+    then have "(e,S,s,keep,Vp,Vh) |\<in>| Z'" using m by blast
+    then show ?thesis
+      by (rule assms(2)[unfolded narrowed_frames_discharged_def union_narrowed_empty, rule_format, OF f2])
+  qed
+qed
+
+lemma given_union_clauses:
+  "\<forall>e S s keep Vp Vh. (e,S,s,keep,Vp,Vh) |\<in>| declared_sockets (union_narrowed quotation_union_sockets) \<longrightarrow>
+    (\<exists>c. ((e,c),decode_finite_schema S) \<in> system_clauses quotation_admission_system)"
+  "\<forall>e S s keep Vp Vh. (e,S,s,keep,Vp,Vh) |\<in>| declared_sockets (union_narrowed instantiation_union_sockets) \<longrightarrow>
+    (\<exists>c. ((e,c),decode_finite_schema S) \<in> system_clauses pattern_instantiation_system)"
+  "\<forall>e S s keep Vp Vh. (e,S,s,keep,Vp,Vh) |\<in>| declared_sockets (union_narrowed prospective_union_sockets) \<longrightarrow>
+    (\<exists>c. ((e,c),decode_finite_schema S) \<in> system_clauses prospective_instantiation_system)"
+  "\<forall>e S s keep Vp Vh. (e,S,s,keep,Vp,Vh) |\<in>| declared_sockets (union_narrowed vector_union_sockets) \<longrightarrow>
+    (\<exists>c. ((e,c),decode_finite_schema S) \<in> system_clauses vector_instantiation_system)"
+  "\<forall>e S s keep Vp Vh. (e,S,s,keep,Vp,Vh) |\<in>| declared_sockets (union_narrowed premise_rows_union_sockets) \<longrightarrow>
+    (\<exists>c. ((e,c),decode_finite_schema S) \<in> system_clauses premise_rows_system)"
+  by (auto simp: quotation_union_sockets_def quotation_pair_socket_decoded quotation_admission_clauses_def
+    instantiation_union_sockets_def instantiation_pair_socket_decoded pattern_instantiation_clauses_def
+    prospective_union_sockets_def prospective_socket_decoded vector_union_sockets_def vector_cons_socket_decoded
+    vector_instantiation_clauses_def premise_rows_union_sockets_def premise_call_socket_decoded
+    premise_material_socket_decoded premise_rows_clauses_def)
+
+lemmas given_union_quotation = given_narrowed_carried[where ND = "union_narrowed quotation_union_sockets",
+  OF quotation_admission_system_formed guard_quotation_agreement union_narrowed_empty(1,2) given_union_clauses(1)]
+lemmas given_union_instantiation = given_narrowed_carried[where ND = "union_narrowed instantiation_union_sockets",
+  OF pattern_instantiation_system_formed guard_instantiation_agreement union_narrowed_empty(1,2) given_union_clauses(2)]
+lemmas given_union_prospective = given_narrowed_carried[where ND = "union_narrowed prospective_union_sockets",
+  OF prospective_instantiation_system_formed guard_prospective_agreement union_narrowed_empty(1,2)
+  given_union_clauses(3)]
+lemmas given_union_vector = given_narrowed_carried[where ND = "union_narrowed vector_union_sockets",
+  OF vector_instantiation_system_formed guard_vector_instantiation_agreement union_narrowed_empty(1,2)
+  given_union_clauses(4)]
+lemmas given_union_premise_rows = given_narrowed_carried[where ND = "union_narrowed premise_rows_union_sockets",
+  OF premise_rows_system_formed guard_premise_rows_agreement union_narrowed_empty(1,2) given_union_clauses(5)]
+
+subsection \<open>The given's record\<close>
+
+definition given_union_sockets :: union_sockets where
+  "given_union_sockets = quotation_union_sockets |\<union>| instantiation_union_sockets |\<union>| prospective_union_sockets |\<union>|
+    vector_union_sockets |\<union>| premise_rows_union_sockets"
+
+definition given_union_frames :: "(nat,nat,nat) resolution_frames" where
+  "given_union_frames = quotation_union_frames |\<union>| instantiation_union_frames |\<union>| prospective_union_frames |\<union>|
+    vector_union_frames |\<union>| premise_rows_union_frames"
+
+definition given_declarations :: "(nat,nat,nat,nat) produced_declarations" where
+  "given_declarations = produced_join given_plain_declarations (union_produced given_union_sockets)"
+
+lemma union_produced_simps [simp]:
+  "declared_producers (union_produced Z) = {||}" "declared_consumers (union_produced Z) = {||}"
+  "declared_sockets (union_produced Z) = Z" "declared_narrowing (union_produced Z) e S s = union_class"
+  by (simp_all add: union_produced_def)
+
+lemma given_declarations_sockets:
+  "(e,S,s,keep,Vp,Vh) |\<in>| declared_sockets given_declarations \<longleftrightarrow>
+    ((e,S,s,keep,Vp,Vh) |\<in>| declared_sockets given_plain_declarations \<and>
+      \<not> (\<exists>keep Vp Vh. (e,S,s,keep,Vp,Vh) |\<in>| given_union_sockets)) \<or> (e,S,s,keep,Vp,Vh) |\<in>| given_union_sockets"
+  unfolding given_declarations_def produced_join_sockets socket_keyed_iff truncate_fields union_produced_simps ..
 
 theorem given_declarations_selected:
   assumes "(e,S,s,keep,Vp,Vh) |\<in>| declared_sockets given_declarations"
   shows "given_socket_selected S e"
-  by (rule given_notions_carried(3)[OF _ assms[unfolded given_declarations_def]])
-    (use given_records_discharged in auto)
+proof -
+  have "(e,S,s,keep,Vp,Vh) |\<in>| declared_sockets given_plain_declarations \<or>
+      (e,S,s,keep,Vp,Vh) |\<in>| given_union_sockets" using assms unfolding given_declarations_sockets by blast
+  then show ?thesis
+  proof
+    assume "(e,S,s,keep,Vp,Vh) |\<in>| declared_sockets given_plain_declarations"
+    then show ?thesis by (rule given_plain_declarations_selected)
+  next
+    assume "(e,S,s,keep,Vp,Vh) |\<in>| given_union_sockets"
+    then consider (q) "(e,S,s,keep,Vp,Vh) |\<in>| quotation_union_sockets"
+      | (i) "(e,S,s,keep,Vp,Vh) |\<in>| instantiation_union_sockets"
+      | (p) "(e,S,s,keep,Vp,Vh) |\<in>| prospective_union_sockets"
+      | (v) "(e,S,s,keep,Vp,Vh) |\<in>| vector_union_sockets"
+      | (r) "(e,S,s,keep,Vp,Vh) |\<in>| premise_rows_union_sockets"
+      unfolding given_union_sockets_def funion_iff by blast
+    then show ?thesis
+    proof cases
+      case q
+      then obtain c where "((e,c),decode_finite_schema S) \<in> system_clauses quotation_admission_system"
+        using given_union_clauses(1) by fastforce
+      then show ?thesis using given_socket_clause[OF quotation_admission_system_formed guard_quotation_agreement] by blast
+    next
+      case i
+      then obtain c where "((e,c),decode_finite_schema S) \<in> system_clauses pattern_instantiation_system"
+        using given_union_clauses(2) by fastforce
+      then show ?thesis
+        using given_socket_clause[OF pattern_instantiation_system_formed guard_instantiation_agreement] by blast
+    next
+      case p
+      then obtain c where "((e,c),decode_finite_schema S) \<in> system_clauses prospective_instantiation_system"
+        using given_union_clauses(3) by fastforce
+      then show ?thesis
+        using given_socket_clause[OF prospective_instantiation_system_formed guard_prospective_agreement] by blast
+    next
+      case v
+      then obtain c where "((e,c),decode_finite_schema S) \<in> system_clauses vector_instantiation_system"
+        using given_union_clauses(4) by fastforce
+      then show ?thesis
+        using given_socket_clause[OF vector_instantiation_system_formed guard_vector_instantiation_agreement] by blast
+    next
+      case r
+      then obtain c where "((e,c),decode_finite_schema S) \<in> system_clauses premise_rows_system"
+        using given_union_clauses(5) by fastforce
+      then show ?thesis using given_socket_clause[OF premise_rows_system_formed guard_premise_rows_agreement] by blast
+    qed
+  qed
+qed
 
 end

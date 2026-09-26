@@ -82,6 +82,61 @@ definition narrowed_socket_discharged ::
         (\<exists>h'. clause_true M (decode_finite_schema S) h' \<and> head_kept keep Vh S h h' \<and>
           (\<forall>a\<in>material_variables N'. h' a = g a))))"
 
+text \<open>
+  The narrowed socket's obligation at a frame C (DECISIONS.md, task 495's entry, correction (10)): the new instance
+  agrees with the old one at the clause's variables outside C, over the socket's class as
+  @{const narrowed_socket_discharged} reads it.
+\<close>
+
+definition narrowed_socket_framed ::
+    "('d \<times> factor_term) set \<Rightarrow> ('a,'s,'d) finite_factor_schema \<Rightarrow> 's \<Rightarrow> bool \<Rightarrow> nat resolution_view \<Rightarrow>
+      nat resolution_view \<Rightarrow> (factor_term \<Rightarrow> bool) \<Rightarrow> 'a set \<Rightarrow> bool" where
+  "narrowed_socket_framed M S s keep Vp Vh N C \<longleftrightarrow> socket_narrowing M S s Vp N \<and>
+    (\<forall>d p. (s,d,p) |\<in>| finite_schema_premises S \<longrightarrow> resolution_view_pattern Vp p \<noteq> None) \<and>
+    (\<forall>h. clause_true M (decode_finite_schema S) h \<longrightarrow>
+      (\<forall>d p xi yo t y'. (s,d,p) |\<in>| finite_schema_premises S \<longrightarrow> resolution_view_pattern Vp p = Some (xi,yo) \<longrightarrow>
+        (d,t) \<in> M \<longrightarrow> resolution_view_term Vp t = Some (evaluate_pattern h (decode_finite_pattern xi),y') \<longrightarrow> N y' \<longrightarrow>
+        (\<exists>h'. clause_true M (decode_finite_schema S) h' \<and> head_kept keep Vh S h h' \<and>
+          (\<forall>a\<in>schema_variables (decode_finite_schema S) - C. h' a = h a) \<and>
+          evaluate_pattern h' (decode_finite_pattern xi) = evaluate_pattern h (decode_finite_pattern xi) \<and>
+          evaluate_pattern h' (decode_finite_pattern yo) = y')) \<and>
+      (\<forall>N' g. (s,N') \<in> schema_material_premises (decode_finite_schema S) \<longrightarrow> evaluate_material_satisfaction g N' \<longrightarrow>
+        evaluate_pattern g (material_source N') = evaluate_pattern h (material_source N') \<longrightarrow>
+        (\<exists>h'. clause_true M (decode_finite_schema S) h' \<and> head_kept keep Vh S h h' \<and>
+          (\<forall>a\<in>schema_variables (decode_finite_schema S) - C. h' a = h a) \<and>
+          (\<forall>a\<in>material_variables N'. h' a = g a))))"
+
+lemma narrowed_socket_framed_discharged:
+  assumes framed: "narrowed_socket_framed M S s keep Vp Vh N C"
+  shows "narrowed_socket_discharged M S s keep Vp Vh N"
+proof -
+  note F = framed[unfolded narrowed_socket_framed_def]
+  note O = conjunct2[OF conjunct2[OF F]]
+  have calls: "\<exists>h'. clause_true M (decode_finite_schema S) h' \<and> head_kept keep Vh S h h' \<and>
+      evaluate_pattern h' (decode_finite_pattern xi) = evaluate_pattern h (decode_finite_pattern xi) \<and>
+      evaluate_pattern h' (decode_finite_pattern yo) = y'"
+    if h: "clause_true M (decode_finite_schema S) h" and p: "(s,d,p) |\<in>| finite_schema_premises S"
+      and v: "resolution_view_pattern Vp p = Some (xi,yo)" and t: "(d,t) \<in> M"
+      and vt: "resolution_view_term Vp t = Some (evaluate_pattern h (decode_finite_pattern xi),y')" and n: "N y'"
+    for h d p xi yo t y'
+    using conjunct1[OF mp[OF spec[OF O, of h] h], rule_format, OF p v t vt n] by blast
+  have mats: "\<exists>h'. clause_true M (decode_finite_schema S) h' \<and> head_kept keep Vh S h h' \<and>
+      (\<forall>a\<in>material_variables N'. h' a = g a)"
+    if h: "clause_true M (decode_finite_schema S) h"
+      and m: "(s,N') \<in> schema_material_premises (decode_finite_schema S)"
+      and g: "evaluate_material_satisfaction g N'"
+      and src: "evaluate_pattern g (material_source N') = evaluate_pattern h (material_source N')" for h N' g
+    using conjunct2[OF mp[OF spec[OF O, of h] h], rule_format, OF m g src] by blast
+  show ?thesis unfolding narrowed_socket_discharged_def
+    using conjunct1[OF F] conjunct1[OF conjunct2[OF F]] calls mats by blast
+qed
+
+text \<open>R5's framed socket is the narrowed framed socket at N = True.\<close>
+
+theorem socket_framed_narrowed:
+  "socket_framed M S s keep Vp Vh C \<longleftrightarrow> narrowed_socket_framed M S s keep Vp Vh (\<lambda>_. True) C"
+  by (simp add: narrowed_socket_framed_def socket_narrowing_def socket_framed_def)
+
 text \<open>R5's socket is the narrowed socket at N = True.\<close>
 
 theorem socket_discharged_narrowed:
@@ -154,6 +209,25 @@ corollary declarations_discharged_unnarrowed:
   "declarations_discharged M D corr \<longleftrightarrow> narrowed_declarations_discharged M (unnarrowed D) corr"
   by (subst narrowed_declarations_discharged_top) simp_all
 
+text \<open>
+  A frame family beside a narrowed record is discharged when every frame it holds is a frame of every socket the record
+  declares at that site, clause and key, over that socket's class. Beside the record declaring no narrowing it is the
+  frames' discharge beside its truncation.
+\<close>
+
+definition narrowed_frames_discharged ::
+    "('d \<times> factor_term) set \<Rightarrow> ('a,'s,'d) narrowed_declarations \<Rightarrow> ('a,'s,'d) resolution_frames \<Rightarrow> bool" where
+  "narrowed_frames_discharged M ND \<Phi> \<longleftrightarrow> (\<forall>e S s C keep Vp Vh. (e,S,s,C) |\<in>| \<Phi> \<longrightarrow>
+    (e,S,s,keep,Vp,Vh) |\<in>| declared_sockets ND \<longrightarrow>
+    narrowed_socket_framed M S s keep Vp Vh (declared_narrowing ND e S s) (fset C))"
+
+lemma narrowed_frames_discharged_empty: "narrowed_frames_discharged M ND {||}"
+  by (simp add: narrowed_frames_discharged_def)
+
+corollary frames_discharged_unnarrowed:
+  "frames_discharged M D \<Phi> \<longleftrightarrow> narrowed_frames_discharged M (unnarrowed D) \<Phi>"
+  by (simp add: narrowed_frames_discharged_def frames_discharged_def socket_framed_narrowed)
+
 section \<open>The obligation over N discharged along the clause's carriers\<close>
 
 text \<open>
@@ -214,17 +288,17 @@ next
     by (rule conjI[OF conjunct1[OF B'] conjI[OF calls conjunct2[OF conjunct2[OF B']]]])
 qed
 
-theorem narrowed_socket_discharged_carried:
+theorem narrowed_socket_framed_carried:
   assumes carried: "socket_carried (narrowed_meaning M d0 Vp N) S s keep Vp Vh c0 cs"
     and site: "finite_relation_option (finite_schema_premises S) s = Some (d0,p0)"
     and narrowing: "clause_narrowed M S d0 Vp N"
-  shows "narrowed_socket_discharged M S s keep Vp Vh N"
+  shows "narrowed_socket_framed M S s keep Vp Vh N (carried_variables S s Vp cs)"
 proof -
   let ?M = "narrowed_meaning M d0 Vp N"
-  have sd: "socket_discharged ?M S s keep Vp Vh" by (rule socket_discharged_carried[OF carried])
+  have sd: "socket_framed ?M S s keep Vp Vh (carried_variables S s Vp cs)" by (rule socket_framed_carried[OF carried])
   have ct: "\<And>h. clause_true ?M (decode_finite_schema S) h \<longleftrightarrow> clause_true M (decode_finite_schema S) h"
     by (rule clause_true_narrowed_meaning[OF narrowing])
-  note sd' = sd[unfolded socket_discharged_def ct]
+  note sd' = sd[unfolded socket_framed_def ct]
   note S2 = mp[OF spec[OF conjunct2[OF sd']]]
   have vp: "view_formed Vp" using carried unfolding socket_carried_def by blast
   have uniq: "d = d0 \<and> p = p0" if "(s,d,p) |\<in>| finite_schema_premises S" for d p
@@ -247,11 +321,13 @@ proof -
       (\<forall>d p xi yo t y'. (s,d,p) |\<in>| finite_schema_premises S \<longrightarrow> resolution_view_pattern Vp p = Some (xi,yo) \<longrightarrow>
         (d,t) \<in> M \<longrightarrow> resolution_view_term Vp t = Some (evaluate_pattern h (decode_finite_pattern xi),y') \<longrightarrow> N y' \<longrightarrow>
         (\<exists>h'. clause_true M (decode_finite_schema S) h' \<and> head_kept keep Vh S h h' \<and>
+          (\<forall>a\<in>schema_variables (decode_finite_schema S) - carried_variables S s Vp cs. h' a = h a) \<and>
           evaluate_pattern h' (decode_finite_pattern xi) = evaluate_pattern h (decode_finite_pattern xi) \<and>
           evaluate_pattern h' (decode_finite_pattern yo) = y')) \<and>
       (\<forall>N' g. (s,N') \<in> schema_material_premises (decode_finite_schema S) \<longrightarrow> evaluate_material_satisfaction g N' \<longrightarrow>
         evaluate_pattern g (material_source N') = evaluate_pattern h (material_source N') \<longrightarrow>
         (\<exists>h'. clause_true M (decode_finite_schema S) h' \<and> head_kept keep Vh S h h' \<and>
+          (\<forall>a\<in>schema_variables (decode_finite_schema S) - carried_variables S s Vp cs. h' a = h a) \<and>
           (\<forall>a\<in>material_variables N'. h' a = g a)))"
   proof (intro allI impI conjI)
     fix h d p xi yo t y'
@@ -261,6 +337,7 @@ proof -
     have d: "d = d0" using uniq[OF p] by simp
     have aN: "(d,t) \<in> ?M" using a vt n d unfolding narrowed_meaning_def by auto
     show "\<exists>h'. clause_true M (decode_finite_schema S) h' \<and> head_kept keep Vh S h h' \<and>
+        (\<forall>a\<in>schema_variables (decode_finite_schema S) - carried_variables S s Vp cs. h' a = h a) \<and>
         evaluate_pattern h' (decode_finite_pattern xi) = evaluate_pattern h (decode_finite_pattern xi) \<and>
         evaluate_pattern h' (decode_finite_pattern yo) = y'"
       by (rule conjunct1[OF S2[OF h], rule_format, OF p w aN vt])
@@ -271,11 +348,19 @@ proof -
       and sat: "evaluate_material_satisfaction g N'"
       and se: "evaluate_pattern g (material_source N') = evaluate_pattern h (material_source N')"
     show "\<exists>h'. clause_true M (decode_finite_schema S) h' \<and> head_kept keep Vh S h h' \<and>
+        (\<forall>a\<in>schema_variables (decode_finite_schema S) - carried_variables S s Vp cs. h' a = h a) \<and>
         (\<forall>a\<in>material_variables N'. h' a = g a)"
       by (rule conjunct2[OF S2[OF h], rule_format, OF m sat se])
   qed
-  show ?thesis unfolding narrowed_socket_discharged_def by (rule conjI[OF i conjI[OF conjunct1[OF sd'] main]])
+  show ?thesis unfolding narrowed_socket_framed_def by (rule conjI[OF i conjI[OF conjunct1[OF sd'] main]])
 qed
+
+theorem narrowed_socket_discharged_carried:
+  assumes carried: "socket_carried (narrowed_meaning M d0 Vp N) S s keep Vp Vh c0 cs"
+    and site: "finite_relation_option (finite_schema_premises S) s = Some (d0,p0)"
+    and narrowing: "clause_narrowed M S d0 Vp N"
+  shows "narrowed_socket_discharged M S s keep Vp Vh N"
+  by (rule narrowed_socket_framed_discharged[OF narrowed_socket_framed_carried[OF carried site narrowing]])
 
 section \<open>A registration at a head variable\<close>
 

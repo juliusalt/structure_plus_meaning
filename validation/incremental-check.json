@@ -1,6 +1,6 @@
 {
- "base_receipt_sha256": "47ffc3fdcdc6d2e413882df63485cbe79b102f3ea497a96388f6d3c81455213e",
- "checked_content_sha256": "d7bad4af3afc98476518d0dfd711c536528c9bd880b73697217ed8fe2e22fcfa",
+ "base_receipt_sha256": "aa9a43a05c02af38a05b50a33d6fdfab2122cd790cde16489009391308d809bc",
+ "checked_content_sha256": "57bb159b636985d88b7183a575fabe3c0db67fe898e151ac4f11a4c1ea686c48",
  "host_tests": {
   "kernel": {
    "exit_code": 0,
@@ -17,17 +17,17 @@
    "ran": 309,
    "skipped": 0,
    "tail": [
-    "{\"status\": \"failed\", \"error\": \"[Errno 2] No such file or directory: '/tmp/tmpr_g508m4/no-project/theories/Development_Answer_a2d8d6490cc2.thy'\"}"
+    "{\"status\": \"failed\", \"error\": \"[Errno 2] No such file or directory: '/tmp/tmp4fwj9lnn/no-project/theories/Development_Answer_a2d8d6490cc2.thy'\"}"
    ]
   }
  },
  "phases": {
-  "base_and_impact": 0.35,
+  "base_and_impact": 0.36,
   "execution_impact": 0.0,
   "export": 0.0,
-  "proof": 84.12,
-  "recipe_impact": 0.45,
-  "recipes_and_host_tests": 11.4
+  "proof": 71.94,
+  "recipe_impact": 0.41,
+  "recipes_and_host_tests": 11.48
  },
  "rebuilt_theories": [
   "Development_Asked_Registrations",
@@ -42,19 +42,14 @@
   "Development_Rooted_Registrations",
   "Factor_Artifact_Citation_Declarations",
   "Factor_Commitment_Controls",
-  "Factor_Construction_Holders",
   "Factor_Instantiation_Declarations",
-  "Factor_Least_Collections",
   "Factor_Least_Witness_Registrations",
   "Factor_Narrowed_Controls",
   "Factor_Narrowed_Sockets",
   "Factor_Producer_Correspondences",
-  "Factor_Program_Resolution",
   "Factor_Reader_Witness_Registrations",
-  "Factor_Resolution_Acceptance",
   "Factor_Resolution_Carriers",
   "Factor_Resolution_Commitments",
-  "Factor_Resolution_Completeness",
   "Factor_Resolution_Controls",
   "Factor_Resolution_Material_Discharge",
   "Factor_Resolution_Producer_Discharge",
@@ -223,8 +218,8 @@
    "status": "unchanged"
   }
  },
- "reused_theories": 1908,
- "seconds": 102.11,
+ "reused_theories": 1913,
+ "seconds": 90.48,
  "source_checks": {
   "missing_theory_files": [],
   "proof_escape_matches": [],

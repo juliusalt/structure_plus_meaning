@@ -96,11 +96,13 @@ into the briefs #522 and #523 corrected, or recorded superseded there.
   rooted closures (#715), since read from their roots (#716; Open 99).
 - The resolver at the given's size (#644's attribution and #683's addition to task 495's entry, "The resolver at the
   given's size", both accepted), briefed by #684 (`.build/tasks/684/result.md`) and placed by plan-90: F1 #693 (R3's
-  default selection at a priority reading the commitment's tests; landed, `b69af34f`), F3 #695 (a solved ground call
+  default selection at a priority reading the commitment's tests; landed, `b69af34f`), F3 #695 (landed `a2e8ee81`; a solved ground call
   reused; after F1 and #676, before #613; re-planned by plan-97 from its tree at its partial end, q129's course (b) at
-  a committed focus; its measurements and F5's trigger the investigation #742, after F3 and before R7 #542), F2a #697 and F2a′ #713 (patterns over the shared-term table, ground nodes
-  collapsed into references, the keyed constructors; landed), F2b #699 and F2c #701
-  (R3's and R5's searches over the refined shared state), C #703 (a found derivation checked over its graph; before
+  a committed focus; its measurements and F5's trigger the investigation #742, accepted: F5's trigger does not hold, R7 #542 re-measures it), F2a #697 and F2a′ #713 (patterns over the shared-term table, ground nodes
+  collapsed into references, the keyed constructors; landed), F2b1 #699 and F2b2 #755 (F2b divided at q130:
+  R3's search over an indexed state keeping R3's patterns, then F2a's shared patterns over it) and F2c #701 (R5's
+  committed search over the shared state), the waiting fix #757 (F3's waiting rule before class (iii) and to nodes left of the goal, #742's figures; after F2b1,
+  B1 and R5f1, before R7 #542 and #613), C #703 (a found derivation checked over its graph; before
   #542, #547 and #399), each with its review; divided from R7 the stated-leaves program's presentation #705 (landed) and 526's native course #707 (after #542, #653, #688 and #661, before #399), from #399 its controls #709
   (after #399, before #401, #403 and #553); #542, #399, #547 and #443 rewritten from #684's corrected briefs (#542 the
   numbered course, off #653, #661 and #688), their reviews #543 and #400 narrowed to them. #685 landed (`57e13b53`: the tuple in `Finite_Pattern_Tuples`); then #672,
@@ -129,9 +131,9 @@ line, a row at a locus; the decomposition's schema and library; the digit layout
 **Word changes are serialized** (Decisions): none is queued. A word change's records are re-recorded after its landing
 by a task of their own (Open 100).
 
-**Shape.** No build waits on a review task. The route's longest chain, 13 deep, runs F3 #695 → B1 #743 → B2a #745 → B2b #747 →
-rc #540 → #661 → #707 → #399 → #709 → the record #553 → #447 → #449 → #450; F3 → B1 → R5f1 → R5f2 → #540, B1 → B3a →
-B3b → #611 → #542 have no slack, F3 → F2b → F2c → C → #542 one step, the carryings more — past the
+**Shape.** No build waits on a review task. The route's longest chain runs B1 #743 → B2a #745 → B2b #747 →
+rc #540 → #661 → #707 → #399 → #709 → the record #553 → #447 → #449 → #450; B1 → R5f1 → R5f2 → #540, B1 → B3a →
+B3b → #611 → #542 have no slack, F2b1 → F2b2 → F2c → C → #542 none since F2b's division at q130, the carryings more — past the
 limit through splices, so nothing is added after the route's tail until it shortens (the status line gives the depths).
 The approval build (Open 142) after #407 and #447 waits for it to shorten; the controls task #718 after C (depth 10)
 was placed when #668 landed.
@@ -139,8 +141,8 @@ was placed when #668 landed.
 **Order** (the queue holds it; the planner's choice, a residual until the native answer to the selection problem
 exists, Q2): the slots are one pool, each free slot going to the first task in the queue that can start and a review
 standing where its review task stands, so every review stands right after its build. By slack on the longest chain:
-F3 #695; B1 #743, F2b #699, B2a #745 and B3a #749; R5f1 #734 and the
-measurement #742; B2b #747, B3b #751 and R5f2 #736; F2c #701 and C #703; the brief #733; V2b #651 and its (3) #738;
+B1 #743, F2b1 #699, F2b2 #755, B2a #745 and B3a #749; R5f1 #734 and the
+waiting fix #757; B2b #747, B3b #751 and R5f2 #736; F2c #701 and C #703; the brief #733; V2b #651 and its (3) #738;
 R6c's #609 and #681; rc #540 and #661; #611; R7 #542, its native part #707, #399 and its controls #709, #547; the route in its chains'
 order (#551, #549, #553, #401, #403, #443, #447, #407, #445, #449); the controls #718 after C, and the lifting's
 consolidation #613, then #724 last.
@@ -457,6 +459,16 @@ follow-ups are in `PLANNING_LOG.md` and the earlier states (`HANDOFF-before-cond
   in value, the alternatives from unifiers, `finite_resolution_select_none_construction` and
   `finite_resolution_select_lifts` in `Factor_Program_Resolution` and `Factor_Resolution_Completeness`, one lemma for
   R4's exactness.
+- **The reuse** (#683's F3, #695, `a2e8ee81`): a ground call solved on its branch closes an equal call left of it — the
+  reuse step, the certificate through solved nodes (`finite_node_proof_solved_accepted`, `resolution_solved_node_true`),
+  the lifting's case; no reuse at the focus of a committed sub-search (q129's course (b):
+  `finite_committed_successors_cases` and its two step lemmas); the positions restated with their reuse case; in
+  `Factor_Program_Resolution` and `Factor_Resolution_Commitments`. `finite_goal_alternatives_none` now holds at a goal
+  not closed by reuse, `no_commitment_successors` at `F = None` only.
+- **F3's measurements** (#742, `.build/tasks/742/result.md`): F3 halves 113's row (113/3 depth 278 against F1's 862);
+  its reuse tests cost 89 % of 77's search (F2b1's indexes remove them); its waiting rule never applies (the fix #757);
+  77 at one definition unresolved by 1,000; F5's trigger does not hold (3 of 181 solves repeat across queries), R7
+  re-measures it; its draft `F3_Attribution.thy` measures the fixes.
 - **The shared patterns** (#683's F2): `Factor_Shared_Patterns` (F2a #697, `d19426d3`: patterns over the shared-term
   table, substitution and unification equal to R2's over the projection; ground leaves references, a ground pair a node
   until `share_node` makes it one); F2a′ #713 (`df24c463`: `share_collapse`, ground nodes collapsed into references
@@ -580,21 +592,15 @@ planner searches for a theory before briefing a task that edits it.
 
 ## Now
 
-- **The graph's width**: every open task waits on F3 #695, directly or through the resolver line, so while F3 runs
-  nothing else can start; the route is one chain, F3 → (B1 → B2a → B2b; B1 → R5f1 → R5f2; B1 → B3a → B3b; F2b → F2c →
-  C) → rc #540 and #611 → R7 #542 → #707 → #399. Nothing is invented to fill the gaps: the low-moves batch (next-edits
+- **The graph's width**: every open task waits, directly or through the resolver line, on B1 #743, F2b1 #699 and what follows them; the route is one chain, (B1 → B2a → B2b; B1 → R5f1 → R5f2; B1 → B3a →
+  B3b; F2b1 → F2b2 → F2c → C) → rc #540 and #611 → R7 #542 → #707 → #399. Nothing is invented to fill the gaps: the low-moves batch (next-edits
   274, 276, 278, 281) moves statements out of theories B1–B3b, #681 and #609 edit, so it waits until they have landed.
 - **Briefs written before their theories grew** may be refused at their start (#596 was; #607 was divided by #678):
   each is resized or divided then. Nearest their rooms: #613 (195K beside 264K of relations at the edit; divided there
   into (1) and (3), then (2) and (4)); #542 and #399 (84K and 70K of margin at proposal, before rc's, V3's and the fix's
   theories added to their relations); the samples build #551 (384K at proposal; a hand-back divides its corrected item
-  (3), the planner's); F2b #699, whose load grew by plan-90's mails.
-- **q129** (F3 #695, answered, `.build/plans/plan-97/q129.md`): course (b), the reuse step not taken at the focus of a
-  committed sub-search — task 683's entry assumed a committed goal's output unbound, and R5f1's produced focus is ground
-  by design; reuse targets left of the closed goal and R3b's acceptance over solved nodes
-  (`finite_node_proof_solved_accepted`, `resolution_solved_node_true`) accepted. #695 continues from its tree
-  (`.build/tasks/695/result.md`); its measurements and F5's trigger are the investigation #742.
-- **What the next events ask**: F3's landing (#734 matches course (b)); #733's proposal, its builds after #741; review
+  (3), the planner's). F2b #699 did not fit its window and was divided at q130 into F2b1 #699 and F2b2 #755.
+- **What the next events ask**: #733's proposal, its builds after #741; review
   608's first verdict's follow-ups 1–5, like review 602's, are held by no file (a review file keeps the last verdict
   only); the first one-session base's landing, after which probes start in about 3 s — not yet: the 754 batch's base
   still stands on the chain (25 theories over a parent), as #670's and #685's did (`PLANNING_LOG.md`, plan-92, plan-98).
@@ -653,7 +659,10 @@ planner searches for a theory before briefing a task that edits it.
   #699, #701, #703 — q129's restated facts; #734 — course (b), after B1, its production at the framed test; #681, #609
   — their sockets through `socket_carried_listed`, after B1; #724 — review 732's 2, its first part
   (`declarations_list_members`, `declarations_list_socket_member` beside `declarations_list`). Plan-98: #611 — review
-  754's 1–3 (next-edits 285–287).
+  754's 1–3 (next-edits 285–287); #699 — review 696's 1, 3 and 5 (next-edits 288, 290, 292); #703 — its 2
+  (next-edits 289); #743 — its 4 (next-edits 291); #742 — its 6; #699, #701, #703, #613, #734, #743 — the two statements
+  F3 restated beyond its result's list; #701 — F2b's division at q130, its search over F2b2 #755's state; #699 — #742's figures, the priority parameter, 696's 3 and 5 now #757's; #701, #755 —
+  the priority parameter; #542 — F5's re-measurement (#742).
 - **The harness's gaps met by this run's tasks** are owed to the owner and listed in `PLANNING_LOG.md` (2026-09-26,
   plan-86); new ones go there.
 - **Ledger entries that can leave** (the harness's `v2.py ledger`): Q7's and Q2's questions and answers, recorded in the

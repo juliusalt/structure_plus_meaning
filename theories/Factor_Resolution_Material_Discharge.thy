@@ -38,26 +38,6 @@ lemma finite_material_ground_value:
 
 subsection \<open>A variant output is a renaming of the head output\<close>
 
-lemma finite_variant_pairs_substitute:
-  "finite_variant_pairs p (finite_pattern_substitute \<beta> p) = Some l \<Longrightarrow>
-    (\<forall>b. b |\<in>| finite_pattern_variables p \<longrightarrow> (\<exists>w. \<beta> b = Finite_Variable w \<and> (b,w) \<in> set l)) \<and>
-    (\<forall>b w. (b,w) \<in> set l \<longrightarrow> \<beta> b = Finite_Variable w)"
-proof (induction p arbitrary: l)
-  case (Finite_Variable a)
-  then show ?case by (cases "\<beta> a") auto
-next
-  case (Finite_Pattern_Target x)
-  then show ?case by simp
-next
-  case (Finite_Pattern_Payload x)
-  then show ?case by simp
-next
-  case (Finite_Pattern_Pair p1 p2)
-  from Finite_Pattern_Pair.prems obtain l1 l2 where l1: "finite_variant_pairs p1 (finite_pattern_substitute \<beta> p1) = Some l1"
-    and l2: "finite_variant_pairs p2 (finite_pattern_substitute \<beta> p2) = Some l2" and l: "l = l1 @ l2"
-    by (auto split: option.splits)
-  show ?case using Finite_Pattern_Pair.IH(1)[OF l1] Finite_Pattern_Pair.IH(2)[OF l2] l by auto
-qed
 
 lemma finite_variant_substitute_variable:
   assumes "finite_variant p (finite_pattern_substitute \<beta> p)" "b |\<in>| finite_pattern_variables p"

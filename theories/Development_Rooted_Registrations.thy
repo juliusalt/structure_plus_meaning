@@ -4,17 +4,18 @@ begin
 
 text \<open>
   The given's witness registrations of 77 and 392 (\<open>Factor_Reader_Witness_Registrations\<close>) complete at the program
-  the given's own installation places, the rooted readers (@{const finite_rooted_given_readers}), discharged there
-  from that program's meanings, as \<open>Development_Given_Registrations\<close> discharges them at the given's readers
-  (@{const finite_given_readers}). The rooted readers agree with the given's readers on their common definitions
-  (the rooted closure of the joined program, which agrees with the given's readers on theirs); the read sites the
-  registrations ask stand in both (@{text given_rooted_read_sites}, the walks over the given's readers' clauses), and
-  mean there what the given's readers mean (@{thm [source] given_readers_meanings}, @{thm [source] given_readers_listing}): 82 and 113, guard
-  entries, through @{thm [source] given_rooted_guard_meaning}, the others through the agreement. The clauses at 77
-  and 392 are the given's readers' there, matched as @{thm [source] given_readers_registered_clauses} matches them; no
-  clause stands at 525 or 561. The registrations' completeness is discharged once, by agreement with the given's
-  readers (@{text readers_agreement_registrations_complete}), of which the rooted readers, the asked program and the
-  first request's program are instances. The placed course of every extension of the given's readers, a construction
+  the given's own installation places, the rooted readers (@{const finite_rooted_given_readers}), discharged there by
+  agreement with the given's readers (@{const finite_given_readers}), where \<open>Development_Given_Registrations\<close>
+  discharges them. The rooted readers agree with the given's readers on their common definitions (the rooted closure
+  of the joined program, which agrees with the given's readers on theirs); the read sites the registrations ask stand
+  in both (@{text given_rooted_read_sites}, the walks over the given's readers' clauses), so they mean there what the
+  given's readers mean (@{text readers_agreement_meanings}), and so what the readers' own systems mean
+  (@{thm [source] given_readers_meanings}, @{thm [source] given_readers_listing}). The clauses at 77 and 392 are the
+  given's readers' there, matched as @{thm [source] given_readers_registered_clauses} matches them; no clause stands
+  at 525 or 561. The registrations' completeness is discharged once, by agreement with the given's readers
+  (@{text readers_agreement_registrations_complete}), of which the rooted readers, the asked program and the first
+  request's program are instances, their meanings at the read sites instances of @{text readers_agreement_meanings}.
+  The placed course of every extension of the given's readers, a construction
   relocated to its placed program, is stated here, in @{text given_readers_extension}, so that
   \<open>Development_Given_Extensions\<close> stays below the resolver's line.
 \<close>
@@ -26,11 +27,6 @@ lemma given_rooted_guard_agreement:
     (system_definitions guard_readers_system\<inter>system_definitions given_rooted_readers_system)"
   unfolding given_rooted_readers_system_def by (rule rooted_intersection_agreement[OF guard_program_agreement])
 
-lemma given_rooted_readers_meaning_at:
-  assumes "d\<in>system_definitions guard_readers_system" "d\<in>system_definitions given_rooted_readers_system"
-  shows "(d,t)\<in>positive_meaning given_rooted_readers_system \<longleftrightarrow> (d,t)\<in>positive_meaning guard_readers_system"
-  using positive_meaning_shared_definitions[OF guard_readers_formed given_rooted_readers_formed
-    given_rooted_guard_agreement assms] by simp
 
 section \<open>The sites the registrations read stand in the rooted readers\<close>
 
@@ -155,10 +151,94 @@ proof -
     using that g5 g12 g47 g76 g82 g113 g390 g391 by blast
 qed
 
+lemma given_rooted_sites: "{5,12,47,76,82,113,390,391}\<subseteq>system_definitions given_rooted_readers_system"
+  using given_rooted_read_sites(1) by blast
+
+section \<open>The registrations complete by agreement\<close>
+
+text \<open>
+  The one discharge by agreement: a program agreeing with the given's readers on their common definitions (which
+  are closed under their callees, @{thm [source] systems_agree_on_intersection_closed}) means at every definition both
+  hold what the given's readers mean (@{thm [source] positive_meaning_shared_definitions}); holding the read sites,
+  which stand in the given's readers (@{thm [source] given_rooted_read_sites}), it means there what the readers' own
+  systems mean (@{thm [source] read_meanings_systems}, @{thm [source] read_meanings_listing}), stated once
+  (@{text readers_agreement_meanings}), and a finite program presenting it has the registrations complete by their
+  discharge at the given's readers (@{thm [source] read_meanings_registrations_complete}). Every program extending the
+  given's readers is an instance: the rooted readers below, the asked program and the first request's program.
+\<close>
+
+lemma readers_agreement_meanings:
+  fixes X :: "(nat,nat,nat,nat) schema_system"
+  assumes formed: "schema_system_formed X"
+    and agree: "systems_agree_on guard_readers_system X (system_definitions guard_readers_system\<inter>system_definitions X)"
+    and sites: "{5,12,47,76,82,113,390,391}\<subseteq>system_definitions X"
+  shows "\<And>d t. d\<in>system_definitions guard_readers_system \<Longrightarrow> d\<in>system_definitions X \<Longrightarrow>
+      (d,t)\<in>positive_meaning X \<longleftrightarrow> (d,t)\<in>positive_meaning guard_readers_system"
+    and "\<And>d t. d\<in>{5,12,47,76,82,113,390,391} \<Longrightarrow>
+      (d,t)\<in>positive_meaning X \<longleftrightarrow> (d,t)\<in>positive_meaning guard_readers_system"
+    and "(5,t)\<in>positive_meaning X \<longleftrightarrow> (5,t)\<in>positive_meaning bag_comparison_system"
+    and "(12,t)\<in>positive_meaning X \<longleftrightarrow> (12,t)\<in>positive_meaning artifact_identity_system"
+    and "(47,t)\<in>positive_meaning X \<longleftrightarrow> (47,t)\<in>positive_meaning data_subset_system"
+    and "(76,t)\<in>positive_meaning X \<longleftrightarrow> (76,t)\<in>positive_meaning definition_callee_list_system"
+    and "(82,t)\<in>positive_meaning X \<longleftrightarrow> (82,t)\<in>positive_meaning definition_edge_reading_system"
+    and "(113,t)\<in>positive_meaning X \<longleftrightarrow> (113,t)\<in>positive_meaning environment_inclusion_system"
+    and "context_list_rule_relation (positive_meaning X) 390 391"
+proof -
+  show shared: "(d,t)\<in>positive_meaning X \<longleftrightarrow> (d,t)\<in>positive_meaning guard_readers_system"
+    if "d\<in>system_definitions guard_readers_system" "d\<in>system_definitions X" for d t
+    using positive_meaning_shared_definitions[OF guard_readers_formed formed agree that] by simp
+  show read: "(d,t)\<in>positive_meaning X \<longleftrightarrow> (d,t)\<in>positive_meaning guard_readers_system"
+    if "d\<in>{5,12,47,76,82,113,390,391}" for d t
+    by (rule shared[OF given_rooted_read_sites(2)[OF that] subsetD[OF sites that]])
+  have six: "(d,t)\<in>positive_meaning X \<longleftrightarrow> (d,t)\<in>positive_meaning guard_readers_system"
+    if "d\<in>{5,12,47,76,82,113}" for d t
+    by (rule read) (use that in auto)
+  note systems=read_meanings_systems[OF six]
+  show "(5,t)\<in>positive_meaning X \<longleftrightarrow> (5,t)\<in>positive_meaning bag_comparison_system" by (rule systems(1))
+  show "(12,t)\<in>positive_meaning X \<longleftrightarrow> (12,t)\<in>positive_meaning artifact_identity_system" by (rule systems(2))
+  show "(47,t)\<in>positive_meaning X \<longleftrightarrow> (47,t)\<in>positive_meaning data_subset_system" by (rule systems(3))
+  show "(76,t)\<in>positive_meaning X \<longleftrightarrow> (76,t)\<in>positive_meaning definition_callee_list_system"
+    by (rule systems(4))
+  show "(82,t)\<in>positive_meaning X \<longleftrightarrow> (82,t)\<in>positive_meaning definition_edge_reading_system"
+    by (rule systems(5))
+  show "(113,t)\<in>positive_meaning X \<longleftrightarrow> (113,t)\<in>positive_meaning environment_inclusion_system"
+    by (rule systems(6))
+  show "context_list_rule_relation (positive_meaning X) 390 391" by (rule read_meanings_listing, rule read) auto
+qed
+
+theorem readers_agreement_registrations_complete:
+  fixes P :: "(nat,nat,nat,nat) finite_schema_system"
+  assumes formed: "schema_system_formed (decode_finite_system P)"
+    and agree: "systems_agree_on guard_readers_system (decode_finite_system P)
+      (system_definitions guard_readers_system\<inter>system_definitions (decode_finite_system P))"
+    and sites: "{5,12,47,76,82,113,390,391}\<subseteq>system_definitions (decode_finite_system P)"
+  shows "finite_registration_complete P n bound_witness_registration"
+    and "finite_registration_complete P n (additions_witness_registration 392 391)"
+    and "finite_registration_complete P n merge_witness_registration"
+proof -
+  note read=readers_agreement_meanings(2)[OF formed agree sites]
+  show "finite_registration_complete P n bound_witness_registration"
+    by (rule read_meanings_registrations_complete(1)) (rule read, auto)
+  show "finite_registration_complete P n (additions_witness_registration 392 391)"
+    by (rule read_meanings_registrations_complete(3)[OF _ readers_agreement_meanings(9)[OF formed agree sites]])
+      (rule read, auto)
+  show "finite_registration_complete P n merge_witness_registration"
+    by (rule read_meanings_registrations_complete(2)) (rule read, auto)
+qed
+
+section \<open>The rooted readers mean at the read sites what the given's readers mean\<close>
+
+lemma given_rooted_readers_meaning_at:
+  assumes "d\<in>system_definitions guard_readers_system" "d\<in>system_definitions given_rooted_readers_system"
+  shows "(d,t)\<in>positive_meaning given_rooted_readers_system \<longleftrightarrow> (d,t)\<in>positive_meaning guard_readers_system"
+  by (rule readers_agreement_meanings(1)[OF given_rooted_readers_formed given_rooted_guard_agreement given_rooted_sites
+    assms])
+
 lemma given_rooted_read_meaning:
   assumes "d\<in>{5,12,47,76,82,113,390,391}"
   shows "(d,t)\<in>positive_meaning given_rooted_readers_system \<longleftrightarrow> (d,t)\<in>positive_meaning guard_readers_system"
-  by (rule given_rooted_readers_meaning_at[OF given_rooted_read_sites(2)[OF assms] given_rooted_read_sites(1)[OF assms]])
+  by (rule readers_agreement_meanings(2)[OF given_rooted_readers_formed given_rooted_guard_agreement given_rooted_sites
+    assms])
 
 text \<open>77 and 392 are entries of the given's readers and roots of the rooted readers.\<close>
 
@@ -197,47 +277,12 @@ lemma given_rooted_readers_meanings:
   "(76,t)\<in>positive_meaning given_rooted_readers_system \<longleftrightarrow> (76,t)\<in>positive_meaning definition_callee_list_system"
   "(82,t)\<in>positive_meaning given_rooted_readers_system \<longleftrightarrow> (82,t)\<in>positive_meaning definition_edge_reading_system"
   "(113,t)\<in>positive_meaning given_rooted_readers_system \<longleftrightarrow> (113,t)\<in>positive_meaning environment_inclusion_system"
-  using given_rooted_read_meaning[of 5 t] given_rooted_read_meaning[of 47 t] given_rooted_read_meaning[of 76 t]
-    given_rooted_guard_meaning[OF given_guard_members(6)] given_rooted_guard_meaning[OF given_guard_members(8)]
-    given_readers_meanings
-  by simp_all
+  by (simp_all only: readers_agreement_meanings(3,5,6,7,8)[OF given_rooted_readers_formed given_rooted_guard_agreement
+    given_rooted_sites])
 
 lemma given_rooted_readers_listing: "context_list_rule_relation (positive_meaning given_rooted_readers_system) 390 391"
-  by (rule read_meanings_listing, rule given_rooted_read_meaning) auto
+  by (rule readers_agreement_meanings(9)[OF given_rooted_readers_formed given_rooted_guard_agreement given_rooted_sites])
 
-section \<open>The registrations complete by agreement\<close>
-
-text \<open>
-  The one discharge by agreement: a finite program agreeing with the given's readers on their common definitions
-  (which are closed under their callees, @{thm [source] systems_agree_on_intersection_closed}) and holding the read
-  sites means there what the given's readers mean (@{thm [source] positive_meaning_shared_definitions}), so the
-  registrations are complete at it by their discharge at the given's readers
-  (@{thm [source] read_meanings_registrations_complete}). The read sites stand in the given's readers
-  (@{thm [source] given_rooted_read_sites}). Every program extending the given's readers is an instance: the rooted
-  readers below, the asked program and the first request's program.
-\<close>
-
-theorem readers_agreement_registrations_complete:
-  fixes P :: "(nat,nat,nat,nat) finite_schema_system"
-  assumes formed: "schema_system_formed (decode_finite_system P)"
-    and agree: "systems_agree_on guard_readers_system (decode_finite_system P)
-      (system_definitions guard_readers_system\<inter>system_definitions (decode_finite_system P))"
-    and sites: "{5,12,47,76,82,113,390,391}\<subseteq>system_definitions (decode_finite_system P)"
-  shows "finite_registration_complete P n bound_witness_registration"
-    and "finite_registration_complete P n (additions_witness_registration 392 391)"
-    and "finite_registration_complete P n merge_witness_registration"
-proof -
-  have read: "(d,t)\<in>positive_meaning (decode_finite_system P) \<longleftrightarrow> (d,t)\<in>positive_meaning guard_readers_system"
-    if "d\<in>{5,12,47,76,82,113,390,391}" for d t
-    using positive_meaning_shared_definitions[OF guard_readers_formed formed agree
-      given_rooted_read_sites(2)[OF that] subsetD[OF sites that]] by simp
-  show "finite_registration_complete P n bound_witness_registration"
-    by (rule read_meanings_registrations_complete(1)) (rule read, auto)
-  show "finite_registration_complete P n (additions_witness_registration 392 391)"
-    by (rule read_meanings_registrations_complete(3)[OF _ read_meanings_listing]; rule read; auto)
-  show "finite_registration_complete P n merge_witness_registration"
-    by (rule read_meanings_registrations_complete(2)) (rule read, auto)
-qed
 
 section \<open>The registrations complete there\<close>
 
@@ -245,10 +290,9 @@ theorem given_rooted_registrations_complete:
   "finite_registration_complete finite_rooted_given_readers n bound_witness_registration"
   "finite_registration_complete finite_rooted_given_readers n (additions_witness_registration 392 391)"
 proof -
-  have sites: "{5,12,47,76,82,113,390,391}\<subseteq>system_definitions given_rooted_readers_system"
-    using given_rooted_read_sites(1) by blast
   note by_agreement=readers_agreement_registrations_complete[where P=finite_rooted_given_readers,
-    unfolded finite_rooted_given_readers_exact, OF given_rooted_readers_formed given_rooted_guard_agreement sites]
+    unfolded finite_rooted_given_readers_exact, OF given_rooted_readers_formed given_rooted_guard_agreement
+    given_rooted_sites]
   show "finite_registration_complete finite_rooted_given_readers n bound_witness_registration"
     by (rule by_agreement(1))
   show "finite_registration_complete finite_rooted_given_readers n (additions_witness_registration 392 391)"

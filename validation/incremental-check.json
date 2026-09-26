@@ -1,6 +1,6 @@
 {
- "base_receipt_sha256": "5420804527e6fe6cc99412fbcab6cbcc0a5c934cc7557e89e484e2a6121c6b9c",
- "checked_content_sha256": "31eff48be3e8e7aea97c1667ea07b95d005bab2f0061508a62ff6da371b510f0",
+ "base_receipt_sha256": "da80503317299ba8e3762f64514aa610f355f4bfaccae03259f399c287c48a36",
+ "checked_content_sha256": "376bac6a629aa17622408ca08f2281e3fa0af53e43f0975acbf90bcdd5e2e391",
  "host_tests": {
   "kernel": {
    "exit_code": 0,
@@ -17,24 +17,31 @@
    "ran": 306,
    "skipped": 0,
    "tail": [
-    "{\"status\": \"failed\", \"error\": \"[Errno 2] No such file or directory: '/tmp/tmpwxo5lgi4/no-project/theories/Development_Answer_a2d8d6490cc2.thy'\"}"
+    "{\"status\": \"failed\", \"error\": \"[Errno 2] No such file or directory: '/tmp/tmpzjrh28kc/no-project/theories/Development_Answer_a2d8d6490cc2.thy'\"}"
    ]
   }
  },
  "phases": {
-  "base_and_impact": 0.36,
+  "base_and_impact": 0.34,
   "execution_impact": 0.0,
   "export": 0.0,
-  "proof": 45.49,
-  "recipe_impact": 0.43,
-  "recipes_and_host_tests": 11.22
+  "proof": 70.1,
+  "recipe_impact": 0.42,
+  "recipes_and_host_tests": 11.45
  },
  "rebuilt_theories": [
-  "Factor_Artifact_Citation_Declarations",
+  "Development_Asked_Registrations",
+  "Development_First_Request_Registrations",
+  "Development_Given_Registrations",
+  "Development_Installed_Presentations",
+  "Development_Installed_Presentations_Execution",
+  "Development_Rooted_Registrations",
   "Factor_Commitment_Controls",
-  "Factor_Instantiation_Declarations",
-  "Factor_Resolution_Carriers",
-  "Factor_Root_Family_Declarations"
+  "Factor_Least_Witness_Registrations",
+  "Factor_Reader_Witness_Registrations",
+  "Factor_Resolution_Controls",
+  "Factor_Resolution_Views",
+  "Factor_Varied_Constructions"
  ],
  "recipes": {
   "allocated-environments": {
@@ -194,8 +201,8 @@
    "status": "unchanged"
   }
  },
- "reused_theories": 1930,
- "seconds": 68.06,
+ "reused_theories": 1923,
+ "seconds": 94.16,
  "source_checks": {
   "missing_theory_files": [],
   "proof_escape_matches": [],

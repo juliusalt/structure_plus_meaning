@@ -407,6 +407,19 @@ proof -
   show ?thesis using functional inst valuation by (simp add: finite_query_element_def M Let_def)
 qed
 
+lemma finite_query_holds_equation:
+  assumes functional: "finite_relation_functional B" and bound: "(c,t) |\<in>| B"
+  shows "finite_query_holds P \<lparr>query_equations=[(c,pe)],query_site=d,query_goal=g,query_element=el\<rparr> B E e \<longleftrightarrow>
+    (\<exists>\<theta>. resolution_value \<theta> pe=t \<and> (\<forall>(u,p)\<in>set E. resolution_value \<theta> p=u) \<and> \<theta> el=e \<and>
+      (d,decode_finite_term (resolution_value \<theta> g)) \<in> positive_meaning (decode_finite_system P))"
+proof -
+  have "finite_relation_option B c=Some t" using finite_relation_option_correct[OF functional] bound by blast
+  then have "finite_query_inputs \<lparr>query_equations=[(c,pe)],query_site=d,query_goal=g,query_element=el\<rparr> B E=
+      Some ((t,pe)#E)"
+    by (simp add: finite_query_inputs_def)
+  then show ?thesis by (auto simp: finite_query_holds_def)
+qed
+
 section \<open>A query's answers: the instances its search finds, each resolved as a ground call\<close>
 
 text \<open>
@@ -1769,6 +1782,18 @@ proof -
   then show ?thesis using distinct_map[of "finite_family_key F" "map fst es"] by blast
 qed
 
+
+lemma finite_family_collection_keys:
+  assumes collect: "finite_family_collection P n F B=Some (es,[])"
+  shows "distinct (map (finite_family_key F \<circ> fst) es)"
+proof -
+  obtain A where base: "finite_family_base P n F B=Some A"
+    using collect by (cases "finite_family_base P n F B") (simp_all add: finite_family_collection_def finite_collect_def)
+  have "finite_collect Ordered_Factor_Term (finite_family_key F) (finite_family_identity P n F) (Some A)
+      (finite_family_step P n F B) n=Some (es,[])"
+    using collect base by (simp add: finite_family_collection_def)
+  then show ?thesis by (rule finite_collect_keys)
+qed
 
 theorem finite_family_value_presents:
   "decode_finite_term (finite_family_value es)=data_list_term (map (decode_finite_term \<circ> fst) es)"

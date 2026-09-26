@@ -272,12 +272,13 @@ definition commitment_sibling_declarations :: "(nat,nat,nat) resolution_declarat
 text \<open>
   The order control (task 589): the sibling control's clause with r's call holding a leaf, c(X) :- r(Pair [] Z),
   prod(Pair X Y), cons(Pair Z Y), over r([],z2), r([],z1) :- c(x) and prod's and cons' facts, prod's socket declared
-  with the kept head and discharged. R3's selection takes r first, a leaf-bearing call at the lower position; its
-  branch z1 reaches the root's call, pruned under the unbarred root. Had prod been committed in branch z2, its kept
-  answer a would leave cons(z2,a) false and the true call c(x) refuted; under the test of correction (9) a socket
-  commits after a resolved sibling only where the sibling is closed with its variables among the socket's inputs
-  (@{const finite_children_closed}), and Z, which r fixes, is not among prod's inputs, so prod is searched plainly and
-  resolved as by R4.
+  with the kept head and discharged. R3's former selection took r first, a leaf-bearing call at the lower position;
+  its branch z1 reached the root's call, pruned under the unbarred root, and prod, reached after r, was searched
+  plainly and resolved as by R4. Under F1's selection (task 693) prod is committable once c's clause is resolved and
+  the commitment's priority takes it before r: it commits, keeps a, and every branch ends at a cut at the barred
+  root, so the call is unresolved, never refuted — the value the addition "The resolver at the given's size" to task
+  495's entry predicted. Had the kept answer been carried to cons(z2,a) the true call would have been refuted; the
+  barred cut keeps it unresolved, and R4 resolves it.
 \<close>
 
 definition commitment_order_clause :: "(nat,nat,nat) finite_factor_schema" where
@@ -419,7 +420,8 @@ text \<open>
   c(X) :- r(Pair X Z), prod(Pair Z Y), chk(Y), over r(x,z1), r(x2,z2), prod(z1,a), prod(z1,b), prod(z2,c), prod(z2,d),
   chk(a), chk(b) (x = [1], x2 = [2], z1 = [3], z2 = [4], a to d = [5] to [8]), prod's socket declared with the kept
   head. The declaration is discharged: every answer of prod at z1 extends a true instance of the clause with the head
-  kept, and at z2 the clause has no true instance. R3's selection takes r first, its call holding a leaf; once r is
+  kept, and at z2 the clause has no true instance. The selection takes r first, its call having one alternative at
+  c(x) (F1, task 693; R3's former selection took it for its leaf); once r is
   closed its variables X and Z are among prod's inputs (prod's premise input Z, the head's input, the whole conclusion
   X, which is no pair), so the socket commits and keeps one of prod's answers at z1: one certificate against R4's two,
   where the test before correction (9), which asked every sibling pending, searched prod plainly and kept both (two,
@@ -529,7 +531,7 @@ lemma site_one_material_controls:
       (Finite_Payload []) 20) = Some True \<and>
     finite_resolution_verdict (finite_committed_resolution no_witness_construction
       (finite_declared_commitment commitment_order_declarations) commitment_order_program 3
-      (Finite_Payload []) 20) = Some True"
+      (Finite_Payload []) 20) = None"
   by eval
 
 text \<open>

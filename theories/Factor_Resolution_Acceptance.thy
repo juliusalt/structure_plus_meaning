@@ -1397,9 +1397,8 @@ lemma finite_outcome_union_fields [simp]:
   by (simp_all add: finite_outcome_union_def)
 
 lemma finite_resolution_select_goals:
-  "finite_resolution_select \<kappa> P st = Select_Goals G \<Longrightarrow> G |\<subseteq>| resolution_pending st"
-  by (auto simp: finite_resolution_select_def finite_goal_selection_def finite_first_goals_def Let_def
-    resolution_fset_simps split: if_splits)
+  "finite_resolution_select_at pr \<kappa> P st = Select_Goals G \<Longrightarrow> G |\<subseteq>| resolution_pending st"
+  by (auto dest: finite_resolution_select_at_exact(1))
 
 lemma finite_resolution_pattern_search_found:
   assumes \<kappa>: "finite_witness_construction_formed \<kappa>"

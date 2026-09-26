@@ -17394,6 +17394,13 @@ abstract step's — so R4's and R5's statements are read unchanged, and the refi
   `shared_pair_exact`), equal to R2's unifier over the projection. This is the missing use at the resolver of
   REASONING_REUSE.md's row "A term over the shared subterms of a family of terms", with its table extended as the
   traversal constructs, which that row records as not done at B6.
+  [Corrected by task 713 (review 698's follow-up 5), after F2a (#697): under a table extended as the search makes
+  ground terms, a ground leaf enters as a reference (`share_pattern_exact`) and a ground pair is made a reference by the
+  first-occurrence step (`share_node_exact`) and by the recursive collapse of ground nodes (`share_collapse_exact`,
+  whose result holds no node without a variable, `shared_collapsed_ground`), with keyed forms equal to them
+  (`keyed_share_node_exact`, `keyed_share_pattern_exact`, `keyed_share_collapse_exact`). The unifier reads the table and
+  makes no ground term, and the canonical constructors (`shared_leaf_exact`, `shared_pair_exact`) are not used: their
+  explicit shared terms are ones a later extension of the table could make non-canonical.]
 - Substitution stops at a subterm none of whose variables the unifier binds; an index from each free variable to the goals
   and nodes holding it (an instance of `Carrier_Indexes`) makes a step visit only the holders of the variables its unifier
   binds; ground nodes and ground goals are kept apart and never substituted.

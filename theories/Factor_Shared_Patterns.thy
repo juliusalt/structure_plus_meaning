@@ -276,6 +276,10 @@ partial_function (option) shared_unify_pairs ::
           | Some (k, l) \<Rightarrow> shared_unify_pairs T ((p1, Shared_Ground k) # (q1, Shared_Ground l) # F))
       | Shared_Node B p' q' \<Rightarrow> shared_unify_pairs T ((p1, p') # (q1, q') # F)))))"
 
+text \<open>Its equation is the code of the unifier: a code equation proved, as every partial function's is.\<close>
+
+declare shared_unify_pairs.simps [code]
+
 subsection \<open>R2 at ground patterns\<close>
 
 text \<open>
@@ -809,5 +813,163 @@ proof (induction t arbitrary: T)
     by (cases "value_reference_step (Pair_Shape i j) T2")
   show ?case using Finite_Pair.IH(1)[of T] Finite_Pair.IH(2)[of T1] by (simp add: s1 s2 s3)
 qed (simp_all add: case_prod_unfold)
+
+subsection \<open>Ground nodes collapsed into references\<close>
+
+text \<open>
+  A substitution can leave a pair whose parts are all ground, a node without variables. The collapse makes
+  every such node a reference, bottom-up through @{const share_node}, extending the table. Its result is
+  \emph{collapsed}: every node holds a variable, so a collapsed pattern without variables is a reference
+  (@{text shared_collapsed_ground}), and ground subterms are compared as references. The projection is
+  unchanged and every earlier reference decodes as before.
+\<close>
+
+fun share_collapse :: "'a shared_pattern \<Rightarrow> shape list \<Rightarrow> 'a shared_pattern \<times> shape list" where
+  "share_collapse (Shared_Node A p r) T = (case share_collapse p T of (p', T1) \<Rightarrow>
+    (case share_collapse r T1 of (r', T2) \<Rightarrow> share_node p' r' T2))"
+| "share_collapse (Shared_Variable a) T = (Shared_Variable a, T)"
+| "share_collapse (Shared_Ground i) T = (Shared_Ground i, T)"
+
+fun shared_collapsed :: "'a shared_pattern \<Rightarrow> bool" where
+  "shared_collapsed (Shared_Node A p r) \<longleftrightarrow> A \<noteq> {||} \<and> shared_collapsed p \<and> shared_collapsed r"
+| "shared_collapsed (Shared_Variable a) \<longleftrightarrow> True"
+| "shared_collapsed (Shared_Ground i) \<longleftrightarrow> True"
+
+lemma shared_collapsed_ground:
+  "shared_collapsed p \<Longrightarrow> shared_pattern_variables p = {||} \<Longrightarrow> \<exists>i. p = Shared_Ground i"
+  by (cases p) auto
+
+lemma share_node_collapsed:
+  assumes p: "shared_collapsed p" and r: "shared_collapsed r"
+  shows "shared_collapsed (fst (share_node p r T))"
+proof (cases "\<exists>i j. p = Shared_Ground i \<and> r = Shared_Ground j")
+  case True
+  then show ?thesis by (auto simp: case_prod_unfold)
+next
+  case False
+  then have eq: "share_node p r T = (shared_node p r, T)" by (cases p; cases r) auto
+  have "shared_pattern_variables p |\<union>| shared_pattern_variables r \<noteq> {||}"
+    using False p r by (cases p; cases r) auto
+  then show ?thesis using p r eq by (simp add: shared_node_def)
+qed
+
+theorem share_collapse_exact:
+  "table_formed T \<Longrightarrow> shared_pattern_formed T p \<Longrightarrow> table_formed (snd (share_collapse p T)) \<and>
+    shared_pattern_formed (snd (share_collapse p T)) (fst (share_collapse p T)) \<and>
+    shared_pattern_project (snd (share_collapse p T)) (fst (share_collapse p T)) = shared_pattern_project T p \<and>
+    shared_collapsed (fst (share_collapse p T)) \<and>
+    (\<forall>i u. reference_term T i = Some u \<longrightarrow> reference_term (snd (share_collapse p T)) i = Some u)"
+proof (induction p arbitrary: T)
+  case (Shared_Node A p r)
+  have table: "table_formed T" and fp: "shared_pattern_formed T p" and fr: "shared_pattern_formed T r"
+    using Shared_Node.prems by simp_all
+  obtain p' T1 where s1: "share_collapse p T = (p', T1)" by (cases "share_collapse p T")
+  obtain r' T2 where s2: "share_collapse r T1 = (r', T2)" by (cases "share_collapse r T1")
+  obtain n T3 where s3: "share_node p' r' T2 = (n, T3)" by (cases "share_node p' r' T2")
+  have f1: "table_formed T1" and fp1: "shared_pattern_formed T1 p'" and pp: "shared_pattern_project T1 p' = shared_pattern_project T p"
+    and cp: "shared_collapsed p'" and k1: "\<forall>i u. reference_term T i = Some u \<longrightarrow> reference_term T1 i = Some u"
+    using Shared_Node.IH(1)[OF table fp] s1 by simp_all
+  have fr1: "shared_pattern_formed T1 r \<and> shared_pattern_project T1 r = shared_pattern_project T r"
+    by (rule shared_pattern_extended[OF table fr]) (use k1 in blast)
+  have f2: "table_formed T2" and fr2: "shared_pattern_formed T2 r'" and pr: "shared_pattern_project T2 r' = shared_pattern_project T1 r"
+    and cr: "shared_collapsed r'" and k2: "\<forall>i u. reference_term T1 i = Some u \<longrightarrow> reference_term T2 i = Some u"
+    using Shared_Node.IH(2)[OF f1 fr1[THEN conjunct1]] s2 by simp_all
+  have ext: "shared_pattern_formed T2 p' \<and> shared_pattern_project T2 p' = shared_pattern_project T1 p'"
+    by (rule shared_pattern_extended[OF f1 fp1]) (use k2 in blast)
+  have n: "table_formed T3 \<and> shared_pattern_formed T3 n \<and>
+      shared_pattern_project T3 n = Finite_Pattern_Pair (shared_pattern_project T2 p') (shared_pattern_project T2 r') \<and>
+      (\<forall>i u. reference_term T2 i = Some u \<longrightarrow> reference_term T3 i = Some u)"
+    using share_node_exact[OF f2 ext[THEN conjunct1] fr2] s3 by simp
+  have cn: "shared_collapsed n" using share_node_collapsed[OF cp cr, of T2] s3 by simp
+  have k: "\<forall>i u. reference_term T i = Some u \<longrightarrow> reference_term T3 i = Some u" using k1 k2 n by blast
+  show ?case using n ext pp pr fr1 cn k by (simp add: s1 s2 s3)
+qed auto
+
+subsection \<open>The keyed constructors\<close>
+
+text \<open>
+  The constructors above take the table's plain first-occurrence step, which searches the table. Their
+  keyed forms take the keyed step at the shape key (@{const keyed_share_shape}, as @{const keyed_shared_family}
+  does) over a state that represents the table, and return what the plain ones return with a state that
+  represents the extended table.
+\<close>
+
+fun keyed_share_node :: "'a shared_pattern \<Rightarrow> 'a shared_pattern \<Rightarrow> share_state \<Rightarrow> 'a shared_pattern \<times> share_state" where
+  "keyed_share_node (Shared_Ground i) (Shared_Ground j) q =
+    (case keyed_share_shape (Pair_Shape i j) q of (k, q') \<Rightarrow> (Shared_Ground k, q'))"
+| "keyed_share_node p r q = (shared_node p r, q)"
+
+lemma keyed_share_node_exact:
+  assumes rep: "keyed_state_represents q T"
+  shows "fst (keyed_share_node p r q) = fst (share_node p r T) \<and>
+    keyed_state_represents (snd (keyed_share_node p r q)) (snd (share_node p r T))"
+proof (cases "\<exists>i j. p = Shared_Ground i \<and> r = Shared_Ground j")
+  case True
+  then obtain i j where "p = Shared_Ground i" "r = Shared_Ground j" by blast
+  then show ?thesis using keyed_share_shape_exact[OF rep, of "Pair_Shape i j"] by (simp add: case_prod_unfold)
+next
+  case False
+  have "keyed_share_node p r q = (shared_node p r, q)" using False by (cases p; cases r) auto
+  moreover have "share_node p r T = (shared_node p r, T)" using False by (cases p; cases r) auto
+  ultimately show ?thesis using rep by simp
+qed
+
+fun keyed_share_pattern :: "'a finite_term_pattern \<Rightarrow> share_state \<Rightarrow> 'a shared_pattern \<times> share_state" where
+  "keyed_share_pattern (Finite_Variable a) q = (Shared_Variable a, q)"
+| "keyed_share_pattern (Finite_Pattern_Target t) q =
+    (case keyed_share_term (Finite_Target t) q of (i, q') \<Rightarrow> (Shared_Ground i, q'))"
+| "keyed_share_pattern (Finite_Pattern_Payload v) q =
+    (case keyed_share_term (Finite_Payload v) q of (i, q') \<Rightarrow> (Shared_Ground i, q'))"
+| "keyed_share_pattern (Finite_Pattern_Pair p r) q = (case keyed_share_pattern p q of (p', q1) \<Rightarrow>
+    (case keyed_share_pattern r q1 of (r', q2) \<Rightarrow> keyed_share_node p' r' q2))"
+
+lemma keyed_share_pattern_exact:
+  "keyed_state_represents q T \<Longrightarrow> fst (keyed_share_pattern p q) = fst (share_pattern p T) \<and>
+    keyed_state_represents (snd (keyed_share_pattern p q)) (snd (share_pattern p T))"
+proof (induction p arbitrary: q T)
+  case (Finite_Variable a)
+  then show ?case by simp
+next
+  case (Finite_Pattern_Target t)
+  show ?case using keyed_share_term_exact[OF Finite_Pattern_Target.prems, of "Finite_Target t"]
+    by (simp add: case_prod_unfold)
+next
+  case (Finite_Pattern_Payload v)
+  show ?case using keyed_share_term_exact[OF Finite_Pattern_Payload.prems, of "Finite_Payload v"]
+    by (simp add: case_prod_unfold)
+next
+  case (Finite_Pattern_Pair p r)
+  obtain p' q1 where k1: "keyed_share_pattern p q = (p', q1)" by (cases "keyed_share_pattern p q")
+  obtain p'' T1 where s1: "share_pattern p T = (p'', T1)" by (cases "share_pattern p T")
+  have e1: "p' = p''" and r1: "keyed_state_represents q1 T1"
+    using Finite_Pattern_Pair.IH(1)[OF Finite_Pattern_Pair.prems] k1 s1 by simp_all
+  obtain r' q2 where k2: "keyed_share_pattern r q1 = (r', q2)" by (cases "keyed_share_pattern r q1")
+  obtain r'' T2 where s2: "share_pattern r T1 = (r'', T2)" by (cases "share_pattern r T1")
+  have e2: "r' = r''" and r2: "keyed_state_represents q2 T2"
+    using Finite_Pattern_Pair.IH(2)[OF r1] k2 s2 by simp_all
+  show ?case using keyed_share_node_exact[OF r2, of p' r'] by (simp add: k1 s1 k2 s2 e1 e2)
+qed
+
+fun keyed_share_collapse :: "'a shared_pattern \<Rightarrow> share_state \<Rightarrow> 'a shared_pattern \<times> share_state" where
+  "keyed_share_collapse (Shared_Node A p r) q = (case keyed_share_collapse p q of (p', q1) \<Rightarrow>
+    (case keyed_share_collapse r q1 of (r', q2) \<Rightarrow> keyed_share_node p' r' q2))"
+| "keyed_share_collapse (Shared_Variable a) q = (Shared_Variable a, q)"
+| "keyed_share_collapse (Shared_Ground i) q = (Shared_Ground i, q)"
+
+lemma keyed_share_collapse_exact:
+  "keyed_state_represents q T \<Longrightarrow> fst (keyed_share_collapse p q) = fst (share_collapse p T) \<and>
+    keyed_state_represents (snd (keyed_share_collapse p q)) (snd (share_collapse p T))"
+proof (induction p arbitrary: q T)
+  case (Shared_Node A p r)
+  obtain p' q1 where k1: "keyed_share_collapse p q = (p', q1)" by (cases "keyed_share_collapse p q")
+  obtain p'' T1 where s1: "share_collapse p T = (p'', T1)" by (cases "share_collapse p T")
+  have e1: "p' = p''" and r1: "keyed_state_represents q1 T1"
+    using Shared_Node.IH(1)[OF Shared_Node.prems] k1 s1 by simp_all
+  obtain r' q2 where k2: "keyed_share_collapse r q1 = (r', q2)" by (cases "keyed_share_collapse r q1")
+  obtain r'' T2 where s2: "share_collapse r T1 = (r'', T2)" by (cases "share_collapse r T1")
+  have e2: "r' = r''" and r2: "keyed_state_represents q2 T2"
+    using Shared_Node.IH(2)[OF r1] k2 s2 by simp_all
+  show ?case using keyed_share_node_exact[OF r2, of p' r'] by (simp add: k1 s1 k2 s2 e1 e2)
+qed simp_all
 
 end

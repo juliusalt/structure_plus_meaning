@@ -14,6 +14,7 @@ import proof_timings
 TOOL = Path(__file__).resolve().parent / "proof_timings.py"
 WORKSPACE = 'theory T imports A B begin\nlemma x: True by simp\nexport_code f checking SML\nend\n'
 CHECKED = 'theory T imports "Base_1.A" "Base_1.B" begin\nlemma x: True by simp\nexport_code f checking SML\nend\n'
+OTHER = 'theory U imports T begin\nend\n'
 
 
 def timing(fields):
@@ -30,6 +31,10 @@ def session_database(path, text):
         connection.execute("insert into isabelle_session_info values (?,?)", ("S", zstd.compress(raw.encode())))
         connection.execute("insert into isabelle_sources values (?,?,?,?)",
                            ("S", "/proof/theories/T.thy", True, zstd.compress(text.encode())))
+        connection.execute("insert into isabelle_sources values (?,?,?,?)",
+                           ("S", "/proof/theories/U.thy", False, OTHER.encode()))
+        connection.execute("update isabelle_session_info set command_timings=?", (zstd.compress((raw + timing(
+            {"elapsed": "0.1", "name": "theory", "offset": "1", "file": "/proof/theories/U.thy"})).encode()),))
     connection.close()
 
 
@@ -54,6 +59,9 @@ class ProofTimings(unittest.TestCase):
             self.assertEqual([(r["line"], r["command"], r["seconds"]) for r in rows],
                              [(1, "theory", 0.2), (3, "export_code", 3.25)])
             self.assertEqual(rows[1]["source_line"], "export_code f checking SML")
+            retained = json.loads((Path(directory) / "out" / "timings.json").read_text())
+            self.assertEqual({row["theory"] for row in retained["completed_commands"]}, {"T"})
+            self.assertEqual(list(retained["sources"]), ["T"])
             self.assertEqual(hashlib.sha256(database.read_bytes()).hexdigest(), before)
             self.assertEqual(sorted(p.name for p in database.parent.iterdir()), ["S.db"])
 
@@ -61,16 +69,16 @@ class ProofTimings(unittest.TestCase):
         with tempfile.TemporaryDirectory() as directory:
             database = Path(directory) / "S.db"
             session_database(database, CHECKED)
-            run = subprocess.run([sys.executable, "-B", str(TOOL), "--database", str(database), "--theory", "U",
+            run = subprocess.run([sys.executable, "-B", str(TOOL), "--database", str(database), "--theory", "V",
                                   "--output", str(Path(directory) / "timings.json")], capture_output=True, text=True)
             self.assertNotEqual(run.returncode, 0)
-            self.assertIn("checked no theory named U", run.stderr)
+            self.assertIn("checked no theory named V", run.stderr)
 
     def test_checked_sources_by_theory(self):
         with tempfile.TemporaryDirectory() as directory:
             database = Path(directory) / "S.db"
             session_database(database, CHECKED)
-            self.assertEqual(proof_timings.checked_sources(database), {"T": CHECKED})
+            self.assertEqual(proof_timings.checked_sources(database), {"T": CHECKED, "U": OTHER})
 
 
 if __name__ == "__main__":

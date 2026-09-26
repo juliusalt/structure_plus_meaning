@@ -1241,16 +1241,292 @@ theorem native_narrowed_resolution_exact:
 lemmas finite_narrowed_forms_exact = finite_narrowed_refutation_exact finite_narrowed_verdict_exact
   finite_narrowed_demand_exact native_narrowed_resolution_exact
 
+text \<open>
+  At a record declaring no narrowing and no production the forms are B2b's framed forms (review 737's follow-up 2):
+  the narrowed commitment there is the framed commitment (@{thm [source] finite_unproduced_commitment}), and B2b's
+  discharges of the declarations and the frames are all it takes.
+\<close>
+
+corollary finite_unproduced_refutation_exact:
+  fixes P :: "('a,'s::linorder,'d,'c) finite_schema_system"
+  assumes \<kappa>: "finite_witness_construction_formed \<kappa>"
+    and discharged: "declarations_discharged (positive_meaning (decode_finite_system P)) D corr"
+    and frames: "frames_discharged (positive_meaning (decode_finite_system P)) D \<Phi>"
+    and only: "finite_registrations_premise_only \<kappa> P"
+    and constructions: "finite_construction_lifts (\<lambda>_. False) \<kappa> P"
+    and refutes: "finite_resolution_refutes (finite_committed_resolution \<kappa>
+      (finite_narrowed_commitment P m (unproduced (unnarrowed D) :: ('a,'s,'d,'v) produced_declarations) \<Phi>) P d t n)"
+  shows "(d,decode_finite_term t) \<notin> positive_meaning (decode_finite_system P)"
+  by (rule finite_framed_refutation_exact[OF \<kappa> discharged frames only constructions
+    refutes[unfolded finite_unproduced_commitment narrowed_truncate]])
+
+corollary finite_unproduced_verdict_exact:
+  fixes P :: "('a,'s::linorder,'d,'c) finite_schema_system"
+  assumes \<kappa>: "finite_witness_construction_formed \<kappa>"
+    and discharged: "declarations_discharged (positive_meaning (decode_finite_system P)) D corr"
+    and frames: "frames_discharged (positive_meaning (decode_finite_system P)) D \<Phi>"
+    and only: "finite_registrations_premise_only \<kappa> P"
+    and constructions: "finite_construction_lifts (\<lambda>_. False) \<kappa> P"
+    and verdict: "finite_resolution_verdict (finite_committed_resolution \<kappa>
+      (finite_narrowed_commitment P m (unproduced (unnarrowed D) :: ('a,'s,'d,'v) produced_declarations) \<Phi>) P d t n) = Some b"
+  shows "b \<longleftrightarrow> (d,decode_finite_term t) \<in> positive_meaning (decode_finite_system P)"
+  by (rule finite_framed_verdict_exact[OF \<kappa> discharged frames only constructions
+    verdict[unfolded finite_unproduced_commitment narrowed_truncate]])
+
+corollary finite_unproduced_demand_exact:
+  fixes P :: "('a,'s::linorder,'d,'c) finite_schema_system"
+  assumes \<kappa>: "finite_witness_construction_formed \<kappa>"
+    and discharged: "declarations_discharged (positive_meaning (decode_finite_system P)) D corr"
+    and frames: "frames_discharged (positive_meaning (decode_finite_system P)) D \<Phi>"
+    and only: "finite_registrations_premise_only \<kappa> P"
+    and constructions: "finite_construction_lifts (\<lambda>_. False) \<kappa> P"
+    and result: "finite_committed_demand \<kappa>
+      (finite_narrowed_commitment P m (unproduced (unnarrowed D) :: ('a,'s,'d,'v) produced_declarations) \<Phi>) P Q n = Some A"
+  shows "schema_system_formed (decode_finite_system P)"
+    "fset A = {q\<in>fset Q. decode_finite_call_term q \<in> positive_meaning (decode_finite_system P)}"
+  using finite_framed_demand_exact[OF \<kappa> discharged frames only constructions
+    result[unfolded finite_unproduced_commitment narrowed_truncate]] by blast+
+
+corollary native_unproduced_resolution_exact:
+  assumes \<kappa>: "finite_witness_construction_formed \<kappa>"
+    and discharged: "declarations_discharged (positive_meaning (decode_finite_system P)) D corr"
+    and frames: "frames_discharged (positive_meaning (decode_finite_system P)) D \<Phi>"
+    and only: "finite_registrations_premise_only \<kappa> P"
+    and constructions: "finite_construction_lifts (\<lambda>_. False) \<kappa> P"
+    and result: "native_committed_resolution \<kappa> (finite_narrowed_commitment P m (unproduced (unnarrowed D)) \<Phi>) P R n = (T,A)"
+  shows "fimage fst T = R"
+    and "(q,Finite_Resolved C) |\<in>| T \<Longrightarrow> C \<noteq> {||} \<and> fBall C (\<lambda>p. finite_checks_schema_proof P p (fst q) (snd q)) \<and>
+      decode_finite_call_term q \<in> positive_meaning (decode_finite_system P)"
+    and "(q,r) |\<in>| T \<Longrightarrow> finite_resolution_refutes r \<Longrightarrow>
+      decode_finite_call_term q \<notin> positive_meaning (decode_finite_system P)"
+    and "A = Some B \<Longrightarrow> schema_system_formed (decode_finite_system P) \<and>
+      fset B = {q\<in>fset R. decode_finite_call_term q \<in> positive_meaning (decode_finite_system P)}"
+  using native_framed_resolution_exact[OF \<kappa> discharged frames only constructions
+    result[unfolded finite_unproduced_commitment narrowed_truncate]] by blast+
+
+section \<open>The narrowed frames carried by relocation and by agreement\<close>
+
+text \<open>
+  The narrowed obligation at a frame reads the clause's callees only through the meaning at them, as R5's framed
+  obligation does (@{thm [source] socket_framed_callees}): a clause whose premises are the source's with their callees
+  mapped, its conclusion, material premises and variables the source's, and whose truth is the source's, keeps the
+  obligation at every class and frame (task 774, review 737's follow-up 1 (c)).
+\<close>
+
+lemma narrowed_socket_framed_callees:
+  assumes src: "narrowed_socket_framed M S s keep Vp Vh N C"
+    and prem: "\<And>q e p. (q,e,p) |\<in>| finite_schema_premises R \<longleftrightarrow>
+      (\<exists>d. (q,d,p) |\<in>| finite_schema_premises S \<and> e = g d)"
+    and conc: "finite_schema_conclusion R = finite_schema_conclusion S"
+    and mat: "schema_material_premises (decode_finite_schema R) = schema_material_premises (decode_finite_schema S)"
+    and ct: "\<And>h. clause_true M' (decode_finite_schema R) h \<longleftrightarrow> clause_true M (decode_finite_schema S) h"
+    and eq: "\<And>d x. d \<in> schema_dependencies (decode_finite_schema S) \<Longrightarrow> (g d,x) \<in> M' \<longleftrightarrow> (d,x) \<in> M"
+    and vars: "schema_variables (decode_finite_schema R) = schema_variables (decode_finite_schema S)"
+  shows "narrowed_socket_framed M' R s keep Vp Vh N C"
+proof -
+  have hk: "head_kept keep Vh R h h' \<longleftrightarrow> head_kept keep Vh S h h'" for h h' unfolding head_kept_def conc ..
+  have dep: "d \<in> schema_dependencies (decode_finite_schema S)" if "(q,d,p) |\<in>| finite_schema_premises S" for q d p
+    by (rule schema_dependencies_premise[of q d "decode_finite_pattern p"]) (use that in \<open>auto simp: finite_premise_decoded\<close>)
+  note src' = src[unfolded narrowed_socket_framed_def socket_narrowing_def]
+  note S2 = mp[OF spec[OF conjunct2[OF conjunct2[OF src']]]]
+  show ?thesis unfolding narrowed_socket_framed_def socket_narrowing_def vars
+  proof (intro conjI allI impI)
+    fix h d p xi yo
+    assume h: "clause_true M' (decode_finite_schema R) h" and p: "(s,d,p) |\<in>| finite_schema_premises R"
+      and v: "resolution_view_pattern Vp p = Some (xi,yo)"
+    from p obtain d0 where p0: "(s,d0,p) |\<in>| finite_schema_premises S" using prem by blast
+    have hS: "clause_true M (decode_finite_schema S) h" using h ct by simp
+    show "N (evaluate_pattern h (decode_finite_pattern yo))" by (rule conjunct1[OF src', rule_format, OF hS p0 v])
+  next
+    fix d p assume "(s,d,p) |\<in>| finite_schema_premises R"
+    then obtain d0 where "(s,d0,p) |\<in>| finite_schema_premises S" using prem by blast
+    then show "resolution_view_pattern Vp p \<noteq> None" using conjunct1[OF conjunct2[OF src']] by blast
+  next
+    fix h d p xi yo t y'
+    assume h: "clause_true M' (decode_finite_schema R) h" and p: "(s,d,p) |\<in>| finite_schema_premises R"
+      and v: "resolution_view_pattern Vp p = Some (xi,yo)" and a: "(d,t) \<in> M'"
+      and vt: "resolution_view_term Vp t = Some (evaluate_pattern h (decode_finite_pattern xi),y')" and n: "N y'"
+    from p obtain d0 where p0: "(s,d0,p) |\<in>| finite_schema_premises S" and d: "d = g d0" using prem by blast
+    have a0: "(d0,t) \<in> M" using a eq[OF dep[OF p0]] d by simp
+    have hS: "clause_true M (decode_finite_schema S) h" using h ct by simp
+    obtain h2 where "clause_true M (decode_finite_schema S) h2" "head_kept keep Vh S h h2"
+        "\<forall>a\<in>schema_variables (decode_finite_schema S) - C. h2 a = h a"
+        "evaluate_pattern h2 (decode_finite_pattern xi) = evaluate_pattern h (decode_finite_pattern xi)"
+        "evaluate_pattern h2 (decode_finite_pattern yo) = y'"
+      using conjunct1[OF S2[OF hS], rule_format, OF p0 v a0 vt n] by blast
+    then show "\<exists>h'. clause_true M' (decode_finite_schema R) h' \<and> head_kept keep Vh R h h' \<and>
+        (\<forall>a\<in>schema_variables (decode_finite_schema S) - C. h' a = h a) \<and>
+        evaluate_pattern h' (decode_finite_pattern xi) = evaluate_pattern h (decode_finite_pattern xi) \<and>
+        evaluate_pattern h' (decode_finite_pattern yo) = y'"
+      using ct hk by blast
+  next
+    fix h N' v
+    assume h: "clause_true M' (decode_finite_schema R) h"
+      and m: "(s,N') \<in> schema_material_premises (decode_finite_schema R)"
+      and sat: "evaluate_material_satisfaction v N'"
+      and se: "evaluate_pattern v (material_source N') = evaluate_pattern h (material_source N')"
+    have hS: "clause_true M (decode_finite_schema S) h" using h ct by simp
+    have mS: "(s,N') \<in> schema_material_premises (decode_finite_schema S)" using m by (simp only: mat)
+    obtain h2 where "clause_true M (decode_finite_schema S) h2" "head_kept keep Vh S h h2"
+        "\<forall>a\<in>schema_variables (decode_finite_schema S) - C. h2 a = h a" "\<forall>a\<in>material_variables N'. h2 a = v a"
+      using conjunct2[OF S2[OF hS], rule_format, OF mS sat se] by blast
+    then show "\<exists>h'. clause_true M' (decode_finite_schema R) h' \<and> head_kept keep Vh R h h' \<and>
+        (\<forall>a\<in>schema_variables (decode_finite_schema S) - C. h' a = h a) \<and>
+        (\<forall>a\<in>material_variables N'. h' a = v a)"
+      using ct hk by blast
+  qed
+qed
+
+lemma narrowed_socket_framed_relocated:
+  assumes src: "narrowed_socket_framed M S s keep Vp Vh N C"
+    and eq: "\<And>d x. d \<in> schema_dependencies (decode_finite_schema S) \<Longrightarrow> (g d,x) \<in> M' \<longleftrightarrow> (d,x) \<in> M"
+  shows "narrowed_socket_framed M' (finite_rename_schema id id g S) s keep Vp Vh N C"
+proof (rule narrowed_socket_framed_callees[OF src _ _ _ _ eq])
+  let ?R = "finite_rename_schema id id g S"
+  have img: "finite_schema_premises ?R = (\<lambda>(s,d,p). (s,g d,p)) |`| finite_schema_premises S"
+    by (simp add: finite_rename_schema_def case_prod_unfold finite_term_pattern.map_id)
+  show "(q,e,p) |\<in>| finite_schema_premises ?R \<longleftrightarrow> (\<exists>d. (q,d,p) |\<in>| finite_schema_premises S \<and> e = g d)" for q e p
+  proof
+    assume "(q,e,p) |\<in>| finite_schema_premises ?R"
+    then have "(q,e,p) \<in> (\<lambda>(s,d,p). (s,g d,p)) ` fset (finite_schema_premises S)" unfolding img fimage.rep_eq .
+    then show "\<exists>d. (q,d,p) |\<in>| finite_schema_premises S \<and> e = g d" by force
+  next
+    assume "\<exists>d. (q,d,p) |\<in>| finite_schema_premises S \<and> e = g d"
+    then obtain d where d: "(q,d,p) |\<in>| finite_schema_premises S" "e = g d" by blast
+    have "(q,e,p) \<in> (\<lambda>(s,d,p). (s,g d,p)) ` fset (finite_schema_premises S)"
+      by (rule image_eqI[of _ _ "(q,d,p)"]) (use d in simp_all)
+    then show "(q,e,p) |\<in>| finite_schema_premises ?R" unfolding img fimage.rep_eq .
+  qed
+  show "finite_schema_conclusion ?R = finite_schema_conclusion S" by simp
+  have "schema_material_premises (rename_schema id id g (decode_finite_schema S)) =
+      schema_material_premises (rename_schema id id id (decode_finite_schema S))"
+    by (simp add: rename_schema_def)
+  then show "schema_material_premises (decode_finite_schema ?R) = schema_material_premises (decode_finite_schema S)"
+    by (simp add: finite_rename_schema_correct)
+  show "clause_true M' (decode_finite_schema ?R) h \<longleftrightarrow> clause_true M (decode_finite_schema S) h" for h
+    unfolding finite_rename_schema_correct by (rule clause_true_relocated[OF eq])
+  show "schema_variables (decode_finite_schema ?R) = schema_variables (decode_finite_schema S)"
+    by (simp add: finite_rename_schema_correct renamed_schema_variables)
+qed
+
+text \<open>
+  The narrowed frames relocate with the declarations as B2b's frames do (@{thm [source] frames_relocated_at}), each
+  socket's class given at its relocated site as the narrowed discharge gives it
+  (@{thm [source] narrowed_declarations_relocated_discharged}).
+\<close>
+
+theorem narrowed_frames_relocated_at:
+  assumes at: "\<And>d x. d \<in> declared_sites (resolution_declarations.truncate ND) \<Longrightarrow> (g d,x) \<in> M' \<longleftrightarrow> (d,x) \<in> M"
+    and injective: "inj_on g (declared_sites (resolution_declarations.truncate ND) \<union> frame_sites \<Phi>)"
+    and relocates: "\<And>e S s keep Vp Vh. (e,S,s,keep,Vp,Vh) |\<in>| declared_sockets ND \<Longrightarrow>
+      \<nu> (g e) (finite_rename_schema id id g S) s = declared_narrowing ND e S s"
+    and frames: "narrowed_frames_discharged M ND \<Phi>"
+  shows "narrowed_frames_discharged M' (narrowed (declarations_relocated g (resolution_declarations.truncate ND)) \<nu>)
+    (frames_relocated g \<Phi>)"
+  unfolding narrowed_frames_discharged_def
+proof (intro allI impI)
+  let ?D = "resolution_declarations.truncate ND"
+  fix e' S' s C keep Vp Vh
+  assume fr: "(e',S',s,C) |\<in>| frames_relocated g \<Phi>"
+    and so: "(e',S',s,keep,Vp,Vh) |\<in>| declared_sockets (narrowed (declarations_relocated g ?D) \<nu>)"
+  obtain e1 S1 where f1: "(e1,S1,s,C) |\<in>| \<Phi>" "e' = g e1" "S' = finite_rename_schema id id g S1"
+    using fr by (auto simp: frames_relocated_def)
+  obtain e2 S2 where s2: "(e2,S2,s,keep,Vp,Vh) |\<in>| declared_sockets ?D" "e' = g e2"
+      "S' = finite_rename_schema id id g S2"
+    using so by (auto simp: declarations_relocated_def)
+  have sites1: "e1 \<in> frame_sites \<Phi>" "schema_dependencies (decode_finite_schema S1) \<subseteq> frame_sites \<Phi>"
+    using f1(1) by (force simp: frame_sites_def)+
+  have sub: "schema_dependencies (decode_finite_schema S2) \<subseteq> declared_sites ?D"
+    by (rule declared_sites_members(5)[OF s2(1)])
+  have "g e1 = g e2" using f1(2) s2(2) by simp
+  then have e: "e1 = e2"
+    by (rule inj_onD[OF injective]) (use sites1(1) declared_sites_members(4)[OF s2(1)] in blast)+
+  have S: "S1 = S2"
+    by (rule finite_rename_schema_callees_inj[OF _ inj_on_subset[OF injective]])
+      (use f1(3) s2(3) sites1(2) sub in auto)
+  have s2N: "(e2,S2,s,keep,Vp,Vh) |\<in>| declared_sockets ND" using s2(1) by simp
+  have "(e2,S2,s,C) |\<in>| \<Phi>" using f1(1) e S by simp
+  then have src: "narrowed_socket_framed M S2 s keep Vp Vh (declared_narrowing ND e2 S2 s) (fset C)"
+    by (rule frames[unfolded narrowed_frames_discharged_def, rule_format, OF _ s2N])
+  have "narrowed_socket_framed M' (finite_rename_schema id id g S2) s keep Vp Vh (declared_narrowing ND e2 S2 s) (fset C)"
+    by (rule narrowed_socket_framed_relocated[OF src at]) (use sub in blast)
+  then show "narrowed_socket_framed M' S' s keep Vp Vh
+      (declared_narrowing (narrowed (declarations_relocated g ?D) \<nu>) e' S' s) (fset C)"
+    using relocates[OF s2N] s2(2,3) by simp
+qed
+
+theorem narrowed_frames_relocated_discharged:
+  fixes P :: "('a,'s::linorder,'d,'c) finite_schema_system" and g :: "'d \<Rightarrow> 'e"
+  assumes Pf: "schema_system_formed (decode_finite_system P)"
+    and injective: "inj_on g (system_definitions (decode_finite_system P) \<union>
+      declared_sites (resolution_declarations.truncate ND) \<union> frame_sites \<Phi>)"
+    and relocates: "\<And>e S s keep Vp Vh. (e,S,s,keep,Vp,Vh) |\<in>| declared_sockets ND \<Longrightarrow>
+      \<nu> (g e) (finite_rename_schema id id g S) s = declared_narrowing ND e S s"
+    and frames: "narrowed_frames_discharged (positive_meaning (decode_finite_system P)) ND \<Phi>"
+  shows "narrowed_frames_discharged (positive_meaning (decode_finite_system (finite_rename_system g P)))
+    (narrowed (declarations_relocated g (resolution_declarations.truncate ND)) \<nu>) (frames_relocated g \<Phi>)"
+proof -
+  have inj: "inj_on g (system_definitions (decode_finite_system P) \<union> declared_sites (resolution_declarations.truncate ND))"
+    by (rule inj_on_subset[OF injective]) blast
+  show ?thesis
+  proof (rule narrowed_frames_relocated_at[OF _ _ relocates frames])
+    show "(g d,x) \<in> positive_meaning (decode_finite_system (finite_rename_system g P)) \<longleftrightarrow>
+        (d,x) \<in> positive_meaning (decode_finite_system P)"
+      if "d \<in> declared_sites (resolution_declarations.truncate ND)" for d x
+      using relocated_meaning_at[OF Pf inj that] by simp
+    show "inj_on g (declared_sites (resolution_declarations.truncate ND) \<union> frame_sites \<Phi>)"
+      by (rule inj_on_subset[OF injective]) blast
+  qed
+qed
+
+text \<open>
+  By agreement the narrowed frames carry as the narrowed discharge does
+  (@{thm [source] narrowed_declarations_agree_discharged}): every callee a socket's obligation reads is a declared
+  site, where the two meanings agree.
+\<close>
+
+theorem narrowed_frames_agree_discharged:
+  assumes Pf: "schema_system_formed P" and Qf: "schema_system_formed Q"
+    and agree: "systems_agree_on P Q V" and closed: "system_dependency_closed P V"
+    and sites: "declared_sites (resolution_declarations.truncate ND) \<subseteq> V"
+    and frames: "narrowed_frames_discharged (positive_meaning P) ND \<Phi>"
+  shows "narrowed_frames_discharged (positive_meaning Q) ND \<Phi>"
+  unfolding narrowed_frames_discharged_def
+proof (intro allI impI)
+  fix e S s C keep Vp Vh assume f: "(e,S,s,C) |\<in>| \<Phi>" and m: "(e,S,s,keep,Vp,Vh) |\<in>| declared_sockets ND"
+  have m': "(e,S,s,keep,Vp,Vh) |\<in>| declared_sockets (resolution_declarations.truncate ND)" using m by simp
+  have src: "narrowed_socket_framed (positive_meaning P) S s keep Vp Vh (declared_narrowing ND e S s) (fset C)"
+    by (rule frames[unfolded narrowed_frames_discharged_def, rule_format, OF f m])
+  have sub: "schema_dependencies (decode_finite_schema S) \<subseteq> declared_sites (resolution_declarations.truncate ND)"
+    by (rule declared_sites_members(5)[OF m'])
+  have eqQ: "(id d,x) \<in> positive_meaning Q \<longleftrightarrow> (d,x) \<in> positive_meaning P"
+    if "d \<in> schema_dependencies (decode_finite_schema S)" for d x
+    using positive_meaning_dependency_locality[OF Pf Qf agree closed subsetD[OF sites subsetD[OF sub that]], of x]
+    by simp
+  show "narrowed_socket_framed (positive_meaning Q) S s keep Vp Vh (declared_narrowing ND e S s) (fset C)"
+  proof (rule narrowed_socket_framed_callees[OF src _ _ _ _ eqQ])
+    show "(q,e',p) |\<in>| finite_schema_premises S \<longleftrightarrow> (\<exists>d. (q,d,p) |\<in>| finite_schema_premises S \<and> e' = id d)"
+      for q e' p by simp
+    show "clause_true (positive_meaning Q) (decode_finite_schema S) h \<longleftrightarrow>
+        clause_true (positive_meaning P) (decode_finite_schema S) h" for h
+      using clause_true_relocated[of "decode_finite_schema S" id "positive_meaning Q" "positive_meaning P" h, OF eqQ]
+      by simp
+  qed simp_all
+qed
+
 section \<open>The transfer at productions\<close>
 
 text \<open>
   By relocation: the narrowed discharge is carried by #599's @{thm [source] narrowed_declarations_relocated_discharged},
-  its classes given at the relocated sites; the relocated record's frames, productions (their registrations' query
-  sites relocated with the declarations) and the two named conditions are the relocated side's premises. By
-  agreement: the narrowed discharge is carried by @{thm [source] narrowed_declarations_agree_discharged}; a
-  production's value is computed in the program it is read in, so the productions stand at the other program as its
-  premise. The verdicts are then carried as R5's are (@{thm [source] finite_committed_relocation_transfer},
-  @{thm [source] finite_committed_agreement_transfer}).
+  its classes given at the relocated sites, and the narrowed frames, relocated with the declarations, by
+  @{thm [source] narrowed_frames_relocated_discharged} (task 774). By agreement: the narrowed discharge and the
+  narrowed frames are carried at the declared sites (@{thm [source] narrowed_declarations_agree_discharged},
+  @{thm [source] narrowed_frames_agree_discharged}), the frames the source's. Two premises of the other side remain.
+  Its productions' discharge: a production's value is W2's registration value computed by the resolution search in
+  the program the committed step searches, and neither the search's equivariance under a site relocation nor its
+  locality under agreement is stated (q138). Its static premise at a relocated record: the relocated record's
+  productions are its own data. The verdicts are then carried as R5's are
+  (@{thm [source] finite_committed_relocation_transfer}, @{thm [source] finite_committed_agreement_transfer}).
 \<close>
 
 corollary finite_narrowed_relocation_transfer:
@@ -1269,8 +1545,6 @@ corollary finite_narrowed_relocation_transfer:
       narrowed (declarations_relocated g (resolution_declarations.truncate D)) \<nu>"
     and relocates: "\<And>e S s keep Vp Vh. (e,S,s,keep,Vp,Vh) |\<in>| declared_sockets D \<Longrightarrow>
       \<nu> (g e) (finite_rename_schema id id g S) s = declared_narrowing D e S s"
-    and frames': "narrowed_frames_discharged (positive_meaning (decode_finite_system (finite_rename_system g P)))
-      (narrowed_declarations.truncate D') \<Phi>'"
     and productions': "productions_discharged (positive_meaning (decode_finite_system (finite_rename_system g P)))
       (finite_rename_system g P) m' D'"
     and declared': "narrowed_productions_declared D'"
@@ -1278,10 +1552,11 @@ corollary finite_narrowed_relocation_transfer:
     and cl': "finite_construction_lifts (\<lambda>_. False) \<kappa>' (finite_rename_system g P)"
     and Pf: "schema_system_formed (decode_finite_system P)"
     and injective: "inj_on g (insert d (system_definitions (decode_finite_system P) \<union>
-      declared_sites (resolution_declarations.truncate D)))"
+      declared_sites (resolution_declarations.truncate D) \<union> frame_sites \<Phi>))"
     and v: "finite_resolution_verdict (finite_committed_resolution \<kappa> (finite_narrowed_commitment P m D \<Phi>) P d t n) = Some b"
     and v': "finite_resolution_verdict (finite_committed_resolution \<kappa>'
-      (finite_narrowed_commitment (finite_rename_system g P) m' D' \<Phi>') (finite_rename_system g P) (g d) t n') = Some b'"
+      (finite_narrowed_commitment (finite_rename_system g P) m' D' (frames_relocated g \<Phi>)) (finite_rename_system g P)
+      (g d) t n') = Some b'"
   shows "b = b'"
 proof -
   have ex: "finite_commitment_exchanges (\<lambda>_. False) \<kappa> (finite_narrowed_commitment P m D \<Phi>) P"
@@ -1295,9 +1570,18 @@ proof -
   have dR: "narrowed_declarations_discharged (positive_meaning (decode_finite_system (finite_rename_system g P)))
       (narrowed_declarations.truncate D') (corr \<circ> inv_into (declared_sites (resolution_declarations.truncate D)) g)"
     using narrowed_declarations_relocated_discharged[OF Pf inj0 discharged rel0] relocated by simp
+  have fR: "narrowed_frames_discharged (positive_meaning (decode_finite_system (finite_rename_system g P)))
+      (narrowed_declarations.truncate D') (frames_relocated g \<Phi>)"
+  proof -
+    have "narrowed_frames_discharged (positive_meaning (decode_finite_system (finite_rename_system g P)))
+        (narrowed (declarations_relocated g (resolution_declarations.truncate (narrowed_declarations.truncate D))) \<nu>)
+        (frames_relocated g \<Phi>)"
+      by (rule narrowed_frames_relocated_discharged[OF Pf _ rel0 frames]) (rule inj_on_subset[OF injective], auto)
+    then show ?thesis using relocated by simp
+  qed
   have ex': "finite_commitment_exchanges (\<lambda>_. False) \<kappa>'
-      (finite_narrowed_commitment (finite_rename_system g P) m' D' \<Phi>') (finite_rename_system g P)"
-    by (rule finite_narrowed_commitment_exchanges[OF \<kappa>' dR frames' productions' declared' only'])
+      (finite_narrowed_commitment (finite_rename_system g P) m' D' (frames_relocated g \<Phi>)) (finite_rename_system g P)"
+    by (rule finite_narrowed_commitment_exchanges[OF \<kappa>' dR fR productions' declared' only'])
   have inj: "inj_on g (insert d (system_definitions (decode_finite_system P)))"
     by (rule inj_on_subset[OF injective]) blast
   show ?thesis by (rule finite_committed_relocation_transfer[OF \<kappa> ex cl \<kappa>' ex' cl' Pf inj v v'])
@@ -1314,17 +1598,14 @@ corollary finite_narrowed_agreement_transfer:
     and declared: "narrowed_productions_declared D"
     and only: "finite_registrations_premise_only \<kappa> P" and cl: "finite_construction_lifts (\<lambda>_. False) \<kappa> P"
     and \<kappa>': "finite_witness_construction_formed \<kappa>'"
-    and frames': "narrowed_frames_discharged (positive_meaning (decode_finite_system Q))
-      (narrowed_declarations.truncate D) \<Phi>'"
     and productions': "productions_discharged (positive_meaning (decode_finite_system Q)) Q m' D"
-
     and only': "finite_registrations_premise_only \<kappa>' Q" and cl': "finite_construction_lifts (\<lambda>_. False) \<kappa>' Q"
     and Pf: "schema_system_formed (decode_finite_system P)" and Qf: "schema_system_formed (decode_finite_system Q)"
     and agree: "systems_agree_on (decode_finite_system P) (decode_finite_system Q) V"
     and closed: "system_dependency_closed (decode_finite_system P) V" and dV: "d \<in> V"
     and sites: "declared_sites (resolution_declarations.truncate D) \<subseteq> V"
     and v: "finite_resolution_verdict (finite_committed_resolution \<kappa> (finite_narrowed_commitment P m D \<Phi>) P d t n) = Some b"
-    and v': "finite_resolution_verdict (finite_committed_resolution \<kappa>' (finite_narrowed_commitment Q m' D \<Phi>') Q d t n') =
+    and v': "finite_resolution_verdict (finite_committed_resolution \<kappa>' (finite_narrowed_commitment Q m' D \<Phi>) Q d t n') =
       Some b'"
   shows "b = b'"
 proof -
@@ -1335,8 +1616,10 @@ proof -
   have dQ: "narrowed_declarations_discharged (positive_meaning (decode_finite_system Q))
       (narrowed_declarations.truncate D) corr"
     by (rule narrowed_declarations_agree_discharged[OF Pf Qf agree closed sites0 discharged])
-  have ex': "finite_commitment_exchanges (\<lambda>_. False) \<kappa>' (finite_narrowed_commitment Q m' D \<Phi>') Q"
-    by (rule finite_narrowed_commitment_exchanges[OF \<kappa>' dQ frames' productions' declared only'])
+  have fQ: "narrowed_frames_discharged (positive_meaning (decode_finite_system Q)) (narrowed_declarations.truncate D) \<Phi>"
+    by (rule narrowed_frames_agree_discharged[OF Pf Qf agree closed sites0 frames])
+  have ex': "finite_commitment_exchanges (\<lambda>_. False) \<kappa>' (finite_narrowed_commitment Q m' D \<Phi>) Q"
+    by (rule finite_narrowed_commitment_exchanges[OF \<kappa>' dQ fQ productions' declared only'])
   show ?thesis by (rule finite_committed_agreement_transfer[OF \<kappa> ex cl \<kappa>' ex' cl' Pf Qf agree closed dV v v'])
 qed
 

@@ -16895,6 +16895,33 @@ the commitment test check (a) at every commitment and the premise-only condition
 commitment it cannot justify, never a call; it then discharges the producer without hypotheses ((b) from #526's lemma)
 and the socket kinds, these counterexamples its controls.]
 
+[Corrected by task 621 (R5c‴), the planner's answers to q112 and q115. (6) One barring rule: every committed step — a
+committed call, a committed material premise, a construction step — bars, for the rest of the search, the nodes present
+where the search goes on after it, beside those already barred (`finite_committed_barring B st`, B joined with the
+positions of st's nodes; `finite_goal_barring`, `finite_material_committed`). #526's construction barring is its
+instance as #526 states it; a committed call's continuation is B joined with the kept state's nodes (before, those
+nodes alone: a larger barred set only removes rank obligations, `resolution_supported_at_barred_mono`, so the premise's
+call part stands); a committed material premise, which kept the barred set, now bars the nodes present, and #565's
+material part asks its canonical successor supported at that set. The test checks, where it commits, the state
+conditions the discharges need, so the search refuses a commitment it cannot justify, never a call: at every
+commitment the goal is a premise of the node at its parent position (`finite_goal_premise`, moved into
+`Factor_Resolution_Commitments`; a material goal its material premise, `finite_material_premise`); at a socket, the
+parent clause's premise-only variables are free at the parent node — each bound to its own variable, so distinct and
+unbound — and held by no pending goal but the parent's children (`finite_premise_only_free`, a conjunct of
+`finite_socket_kept` and `finite_socket_free`). At no declaration the search is R4's (`finite_declared_commitment_none`,
+the `_plain` facts). With (a) from the test and (b) from #526's (b′), at a program whose registrations are premise-only
+(`finite_registrations_premise_only`, a condition on the construction and the program, true where nothing is
+registered), the direct producer's discharge has no hypothesis on the state
+(`Factor_Resolution_Producer_Discharge.finite_direct_commitment_exchanges`). #593's counterexamples: (i) the material
+single solution now bars the root, and the true call is unresolved, never refuted (`Factor_Resolution_Controls.material_control`:
+R4 `Some True`, the committed resolution `None`); (ii) is not reached by R3's search: a construction binds a registered
+variable only when every goal holding it holds nothing else (`finite_registration_ready`), so a premise-only variable
+that links a sibling to the socket's output is never constructed while that sibling is pending, and every sibling is
+pending when a socket commits; it stays a counterexample to the premise at the states the premise quantifies over,
+which the premise-only test excludes. The socket kinds' discharges, from the socket obligation over
+`finite_committed_found_supported`, are #630's (the kept-head and free sockets, the inner commitment) and #631's (the
+material single solution).]
+
 Presentation freedom makes a false call expensive: a true call is resolved at the first presentation its producer
 yields, a false one only after every presentation (n! root lists of n roots), so a refusal past a few elements reaches
 the bound and is unresolved. The commitment (R5): a site declared *functional up to a presentation class* at its

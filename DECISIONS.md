@@ -17743,7 +17743,14 @@ rate; the builds measure the samples and R7 the given.
    goals that are calls or solvable material goals (the candidates), in order: (i) a goal the search settles at once —
    no alternative, or (with F3) pruned or reusable; (ii) a goal the priority names; (iii) a goal with one alternative;
    (iv) R3's classes over the candidates (`finite_goal_selection`: ground, independent, solvable material, leaf), where
-   (with F3) a ground call equal to one in progress waits while another candidate stands. Within a class the least
+   (with F3) a ground call equal to one in progress waits while another candidate stands [Corrected (task 757, from #742's measurements): the
+   waiting rule applies before (iii) — a goal with one alternative is taken there only when it does not wait, and
+   R3's classes take the goals that do not wait first — so a ground call the rule holds is taken only when no goal it
+   does not hold can be. Placed in (iv) alone it never applied, the ground calls it holds having one alternative and
+   being taken in (iii) first: 69 of 124 ground solves at 77/1 and 39 of 140 at 113/3 were a call solved beside an
+   equal call in progress. The order of work alone changes; ground solves per distinct call over all branches at
+   113/1, 113/3 and 77/1 (bound 400) are 1.23, 1.50 and 2.05 after it (1.56, 2.12 and 2.25 before), none of them a
+   call that could have waited (`.build/tasks/757/measurements.md`)]. Within a class the least
    position, as R3's: positions order which goal is worked first, never which alternative is kept. R3's default is the
    selection at the empty priority. R5's default (`finite_committed_search`) is the selection at the commitment's own
    tests: a goal `commit_call K` or `commit_material K` accepts on the focused state, at no focus or with its parent's
@@ -17817,7 +17824,11 @@ inclusion quadratic, and #644's two-row depth shows its growth; deferring it wou
    its closing by a solved node. The holders invariant is untouched: a ground goal holds no variable.
 4. *The waiting rule* (F1's (iv)). A ground call equal to a pending goal at a lesser position, or to the call of a node
    that is not its ancestor and whose subtree is not solved, is not selected while another candidate stands, so the second
-   occurrence is closed by the first rather than solved beside it. It never empties the selection.
+   occurrence is closed by the first rather than solved beside it. It never empties the selection. [Corrected (task
+   757, review 696's follow-up 3): the node test reads the nodes left of the goal (`finite_position_left`), the only
+   nodes that can close it since q129's left-only reuse — a node right of it made it wait for nothing — and the rule
+   stands before F1's (iii) (item 2's correction), where #742's figures show it must stand to apply at all. The
+   positions are Main's `lexord` on socket paths, left of its non-prefix part (review 696's follow-up 5).]
 5. *Weighed.* Deferring F3 to a measurement at the given: the arithmetic above decides it. Tabling of non-ground call
    variants with answer tables (suspension and completion, SLG-style): a new search, where the measured repetition is of
    ground calls. The reuse recorded in the state (a new field), or the solved subtree copied at the goal's position: a

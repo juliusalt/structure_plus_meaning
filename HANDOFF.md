@@ -63,17 +63,23 @@ into the briefs #522 and #523 corrected, or recorded superseded there.
   sockets) → R6c's #609 (48; also after #607 and #679, whose views its sockets' parents take); R6b's numbered carrying
   #605 → its installed carrying #663 → R6c's carrying
   #611 → rc's numbered forms #540 (after #676) and native form #661 → R7 #542 and the request at the given #547 → #399.
-- The clause match (#642's addition, briefed by #643; M #645 landed): V1 #647; V2a #649 (after #597 and the forms
-  #676) and V2b #651 (after #599), divided so that #605 does not wait on #599; V3's parts #653 (the asked and request
-  installations), #655 (the given's) and #657 (the control, off the route).
+- The clause match (#642's addition, briefed by #643; M #645 and V1 #647 landed): V2a #649 (after #597 and the forms
+  #676) and V2b #651 (after #599), divided so that #605 does not wait on #599; V3, divided by plan-89 by the room its
+  relations leave, in one theory edited in turn: #653 (the general statement in `given_readers_extension`) beside #687
+  (the given's registrations complete at the rooted readers, `Development_Rooted_Registrations`), then #655 (the given's
+  installation), then #688 (the instances at the asked relation and the first request, which #542, #547 and #399
+  consume), then the control #657 (off the route).
 - The resolver at the given's size (#644's attribution and #683's addition to task 495's entry, "The resolver at the
   given's size", both accepted): builds F1 (R3's default selection, with a priority reading the commitment's tests), F3
   (a solved ground call reused), F2a, F2b and F2c (the search's state over shared subterms; R3's and R5's refined
   searches) and C (the check of a found derivation over its graph), briefed by #684 with the controls task, #399 and #542
   divided within a build's room and #547 and #443 corrected — the stand-in #542, #547 and #399 wait on until its
-  proposal is placed. C before R7; F1 after #668 and #685 (they change `Factor_Resolution_Commitments` before it), F3
-  after F1, #613 after F3 (told to #684). The socket fact (#683's "A fact of R5's tests": 32 at 79.0/1 never commits, so
-  79's committed sub-search would enumerate its rows at the given) is the design #686's, before #674 and #601. Off the
+  proposal is placed. C before R7; #685 after #674 and F1 after #685 (#672, #674, #685 and F1 each change
+  `Factor_Resolution_Commitments`, in that order), F3 after F1, #613 after F3 (told to #684). The socket fact (#683's "A
+  fact of R5's tests": 32 at 79.0/1 never commits) is settled by #686's correction (9) of task 495's entry: a socket
+  commits once the siblings resolved before it are closed with their variables among its inputs; #672 states the inputs
+  and the closed siblings beside the test, #674 changes the test (with a control) and marks #683's section, #601 states
+  the instance at 79.0/1 after #672, and #605 waits on #674. Off the
   route: the committed lifting's consolidation #613. #540's and #605's briefs were divided by #659 (#661 and #663 their
   new parts).
 
@@ -99,9 +105,9 @@ line gives the depths). The approval build (Open 142) after #407 and #447 waits 
 **Order** (the queue holds it; the planner's choice, a residual until the native answer to the selection problem
 exists, Q2): the slots are one pool, each free slot going to the first task in the queue that can start and a review
 standing where its review task stands, so every review stands right after its build. By slack on the longest chain:
-V1 #647 and its review; the fix's brief #684 and the socket design #686; #665's builds on the longest chain first (#666, #668,
-the tuple's move #685, #672, #670, #674, #676), then R5e #599 and R6c's #609; #597, R6c's instantiation family (#607, #679,
-#681) beside R6b's parts #601 and #603; V3's #653 and #655 in the slots the route leaves; the carryings #605 and #663
+the fix's brief #684; #665's builds on the longest chain first (#666, #668, #672, #670, #674, #676, the tuple's move
+#685 after #674), then R5e #599 and R6c's #609; #597, R6c's instantiation family (#607, #679, #681) beside R6b's parts
+#601 and #603; V3's #653 and #687, then #655 and #688, in the slots the route leaves; the carryings #605 and #663
 with V2a #649 and V2b #651; rc #540 and #661; #611; R7 #542 and #547; the route in its chains' order (#399, #551,
 #549, #553, #401, #403, #443, #447, #407, #445, #449); #657 and the consolidation #613 last.
 ## Decisions
@@ -264,7 +270,8 @@ follow-ups are in `PLANNING_LOG.md` and the earlier states (`HANDOFF-before-cond
   payload audit's reliances), #460 (`584c3a76`, its decision withdrawn by Q27), #482 (`e2b239ac`), #495 (`3e8049be`,
   with the plan's record of Q27; #585's addition), #496 (`e9c4b54b`, with the plan's record of Q28; #642's addition
   `6bb79246`); #481's attribution of the recording (`.build/tasks/481/result.md`); #683's addition to task 495's entry
-  (the resolver at the given's size) from #644's attribution (`.build/tasks/644/result.md`).
+  (the resolver at the given's size) from #644's attribution (`.build/tasks/644/result.md`); #686's correction (9) of
+  task 495's entry (R5's socket test read at the socket's inputs, `.build/tasks/686/result.md`).
 - **The development package**: `Development_Package_Program.package_program` (#340; a landing that changes one of its
   six programs derives it again, Q18 (c)), the closed package `development_package_environment` (#342); its generic
   content beside its notions (#426).
@@ -336,7 +343,11 @@ follow-ups are in `PLANNING_LOG.md` and the earlier states (`HANDOFF-before-cond
   `merge_witness_registration`, nullary values built at module load, review 660's 2).
 - **The clause match** (#642's addition): M `Factor_Finite_Schema_Matching` (#645, `2139dfe2`: `finite_schema_match`
   deciding alpha variance of two finite clauses with their binder and socket maps, `finite_schema_matched` and the
-  clause facts along it; its socket types read as linearly ordered, review 646's 1).
+  clause facts along it; its socket types read as linearly ordered, review 646's 1); V1 `Factor_Varied_Constructions`
+  (#647, `95b03407`: `finite_varied_construction`, a construction carried along the match to an alpha-variant program,
+  `varied_construction_complete` under agreeing meanings, `varied_relocated_complete` after W4a's relocation in a finite
+  mapped extension; where the placed program holds two distinct alpha-equal clauses at one site with differing values
+  the variation gives no value there — unresolved, never wrong, review 648).
 - **The probe's start and the base** (Q29): a probe's start is the base's chain (#623, `.build/tasks/623/result.md`);
   the one-session base landed inert (#624); the start estimated by the chain (#625); held at the library's scale, 3.33
   s against 37.68 s (#628); `Factor_Resolution_Commitments`' proof time (#629).
@@ -449,7 +460,7 @@ planner searches for a theory before briefing a task that edits it.
   passed: a review refused at its start is resized to its room, as #596 was. #595 landed (`e46ed1a6`) after a fix round
   that took review 596.3's finding (the vocabulary restating library content) by importing `Native_Collection_Programs`
   for the tuple of patterns; of the re-review's follow-ups, that import — 382 theories of the development line added to
-  the resolution line's ancestors — is undone by the fix #685 after #668 (a move, no copy), and the matchers' lemmas
+  the resolution line's ancestors — is undone by the fix #685 (a move, no copy; after #674 since #686), and the matchers' lemmas
   once and the layout went to #666 (Mailed).
 - **#607 divided** by #678 (`.build/tasks/678/result.md`): #607 the instantiation family's first part (50, 52, 55–58),
   #679 the second (59–65), #681 the third (69, 72, 587), each with its review, a chain after #597 spliced before #611;
@@ -475,9 +486,10 @@ planner searches for a theory before briefing a task that edits it.
   and R6c's parts → the carryings → R7 → #399 — so between its landings little else can start; after #668 three builds
   run side by side; beside the chain run the clause-match line (#645, #647, #653, #655) and #644. Nothing is invented to
   fill the gaps.
-- **What the next events ask**: the brief #684's proposal (F1's edges, #613's blockers, the route's divisions); the
-  design #686's verdict (the socket narrowing, before #674 and #601); #685's check (a changed recorded word would make
-  it a word change, the planner's to order); Q29's answer. The samples build #551 is the
+- **What the next events ask**: the brief #684's proposal (F1 after #685, #613's blockers, the route's divisions, the
+  controls task); #685's check (a changed recorded word would make it a word change, the planner's to order); Q29's
+  answer. V3's parts and #672, #674 and #601 grew or were divided by plan-89 against their relations: a build refused at
+  its start is divided then. The samples build #551 is the
   part of #544's division nearest its room (384K at proposal): a hand-back there divides corrected item (3), the
   planner's.
 - **Mailed, read by each task's first session** (open tasks only): #540 — q110, #506's 1 and 7, q105 (the barred
@@ -505,7 +517,11 @@ planner searches for a theory before briefing a task that edits it.
   the parts' results (#607, #679, #681, #609); #681 — #601's discharges of the carriers 59 and 51; #666 — the
   re-review of #595's fix round, follow-ups 2 and 3 (the matchers' lemmas once, the layout); #684 — the planner's
   answers to #683's questions (C before R7; F1 after #668 and #685, F3 after F1, F2a at once; #613 after F3; the socket
-  fact #686's; the controls task after C).
+  fact #686's; the controls task after C). Plan-89: #657 — review 648's follow-ups (the merge over alpha-equal clauses
+  stated at the registered sites; the match's cost at every construction call measured beside the read-backs) and V3's
+  division; #684 — review 648's efficiency follow-up for R7, V3's division (#542, #547 and #399 wait on #688), #686's F1
+  and F3 items (F1 after #685, now after #674) and its downstream; #685 — after #674; #605, #547 — 32 committed at
+  79.0/1 under #674's test (#686).
 - **The harness's gaps met by this run's tasks** are owed to the owner and listed in `PLANNING_LOG.md` (2026-09-26,
   plan-86); new ones go there.
 - **Ledger entries that can leave** (the harness's `v2.py ledger`): Q7's and Q2's questions and answers, recorded in the

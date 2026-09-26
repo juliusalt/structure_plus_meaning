@@ -302,6 +302,53 @@ definition commitment_order_declarations :: "(nat,nat,nat) resolution_declaratio
   "commitment_order_declarations = \<lparr>declared_producers={||}, declared_consumers={||},
     declared_sockets={|(3,commitment_order_clause,1,True)|}\<rparr>"
 
+text \<open>
+  The material control (task 621, #593's first counterexample): p(x) :- mat(C;A,E,B,F), q(Pair A E), over an artifact
+  C of two atoms and no incidence, q(Pair A_o E) a fact at the enumeration A_o of C's atoms that is not the canonical
+  one and q(Pair A_c E) :- p(x) at the canonical A_c, the material socket declared with the kept head. Under the
+  former rule a committed material premise kept the barred set: after the commitment q(A_c)'s one derivation reached
+  p(x), a ground goal equal to the unbarred root's call, pruned, and the true call was refuted. Under the one barring
+  rule the root is barred at the commitment and the branch ends in a cut: the call is unresolved, never refuted, and
+  R4 resolves it.
+\<close>
+
+abbreviation material_control_artifact :: finite_exact_artifact where
+  "material_control_artifact \<equiv> finite_enumerated_artifact [[1],[2]] [] [] []"
+
+definition material_control_answer :: "local_address list \<Rightarrow> nat finite_term_pattern" where
+  "material_control_answer as = finite_exact_term_pattern (Finite_Pair
+    (finite_enumeration_term (map (finite_atom_term material_control_artifact) as)) (finite_enumeration_term []))"
+
+definition material_control_clause :: "(nat,nat,nat) finite_factor_schema" where
+  "material_control_clause = \<lparr>finite_schema_conclusion=Finite_Pattern_Payload [],
+    finite_schema_premises={|(1,(0,Finite_Pattern_Pair (Finite_Variable 1) (Finite_Variable 2)))|},
+    finite_schema_materials={|(0,\<lparr>finite_material_source=Finite_Pattern_Target (Finite_Whole material_control_artifact),
+      finite_material_atoms=Finite_Variable 1, finite_material_edges=Finite_Variable 2,
+      finite_material_counts=Finite_Variable 3, finite_material_functions=Finite_Variable 4\<rparr>)|}\<rparr>"
+
+definition material_control_loop :: "(nat,nat,nat) finite_factor_schema" where
+  "material_control_loop = \<lparr>finite_schema_conclusion=
+      material_control_answer (fst (finite_artifact_rows material_control_artifact)),
+    finite_schema_premises={|(0,(1,Finite_Pattern_Payload []))|}, finite_schema_materials={||}\<rparr>"
+
+definition material_control_program :: "(nat,nat,nat,nat) finite_schema_system" where
+  "material_control_program = \<lparr>finite_system_interfaces={|(0,Finite_Variable 0),(1,Finite_Variable 0)|},
+    finite_system_clauses={|
+      ((0,0),commitment_fact (material_control_answer (rev (fst (finite_artifact_rows material_control_artifact))))),
+      ((0,1),material_control_loop),((1,0),material_control_clause)|}\<rparr>"
+
+definition material_control_declarations :: "(nat,nat,nat) resolution_declarations" where
+  "material_control_declarations = \<lparr>declared_producers={||}, declared_consumers={||},
+    declared_sockets={|(1,material_control_clause,0,True)|}\<rparr>"
+
+lemma material_control:
+  "finite_resolution_verdict (finite_program_resolution no_witness_construction material_control_program 1
+      (Finite_Payload []) 20) = Some True \<and>
+    finite_resolution_verdict (finite_committed_resolution no_witness_construction
+      (finite_declared_commitment material_control_declarations) material_control_program 1
+      (Finite_Payload []) 20) = None"
+  by eval
+
 lemma site_one_material_controls:
   "finite_material_resolution (site_one_material [[1],[2]]) = Material_Solutions
       {|{|(2,Finite_Target (Finite_Whole (finite_enumerated_artifact [[1],[2]] [] [] []))),

@@ -23,7 +23,6 @@ lemma data_bag_function:
   "data_bag_presents (\<lambda>a t. t = f a) N t \<longleftrightarrow> (\<exists>xs. mset xs = N \<and> t = data_list_term (map f xs))"
   by (auto simp: data_bag_presents_def data_sequence_presents_def list_all2_function)
 
-
 abbreviation site_bag_presents :: "local_address option definition_site multiset \<Rightarrow> factor_term \<Rightarrow> bool" where
   "site_bag_presents \<equiv> data_bag_presents (\<lambda>d t. t = definition_site_value d)"
 
@@ -168,11 +167,15 @@ lemma selection_view_formed: "view_formed selection_view"
 
 lemma root_family_view_term:
   "resolution_view_term root_family_view (Pair_Term (Pair_Term e u) (Pair_Term r w)) = Some (Pair_Term (Pair_Term e u) r,w)"
-  by (simp add: resolution_view_term_def root_family_view_def view_lookup_def)
+  using resolution_view_term_values[OF root_family_view_formed[unfolded root_family_view_def], of 4
+    "Pair_Term (Pair_Term e u) (Pair_Term r w)" "Pair_Term (Pair_Term e u) r" w]
+  by (simp add: root_family_view_def view_values_simps)
 
 lemma selection_view_term:
   "resolution_view_term selection_view (Pair_Term m (Pair_Term l r)) = Some (Pair_Term m l,r)"
-  by (simp add: resolution_view_term_def selection_view_def view_lookup_def)
+  using resolution_view_term_values[OF selection_view_formed[unfolded selection_view_def], of 3
+    "Pair_Term m (Pair_Term l r)" "Pair_Term m l" r]
+  by (simp add: selection_view_def view_values_simps)
 
 lemma root_family_view_pattern:
   "resolution_view_pattern root_family_view (Finite_Pattern_Pair (Finite_Pattern_Pair a b) (Finite_Pattern_Pair c d)) =
@@ -183,7 +186,6 @@ lemma selection_view_pattern:
   "resolution_view_pattern selection_view (Finite_Pattern_Pair a (Finite_Pattern_Pair b c)) =
     Some (Finite_Pattern_Pair a b,c)"
   by (simp add: resolution_view_pattern_def selection_view_def view_lookup_def)
-
 
 section \<open>(1) 79 a producer at its view\<close>
 
@@ -701,7 +703,6 @@ lemma root_family_carried:
 lemma consumer_input_pair: "corr v v' \<Longrightarrow> consumer_input view_identity corr (Pair_Term u v) (Pair_Term u v')"
   unfolding consumer_input_def view_identity_term
   by (intro exI[of _ u] exI[of _ v] exI[of _ v'] exI[of _ "Pair_Term u v'"]) (simp add: pair_view_def)
-
 
 lemma root_family_socket_views:
   "resolution_view_pattern view_identity (Finite_Pattern_Pair (Finite_Pattern_Pair (Finite_Variable (4::nat)) (Finite_Variable 2))

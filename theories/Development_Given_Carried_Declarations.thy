@@ -379,7 +379,7 @@ lemma given_notion_reading: "given_notion_discharged reading_declarations given_
   apply (rule given_notion_dischargedI[OF citation_reading_system_formed guard_reading_agreement _ _ reading_declarations_discharged])
   apply (auto simp: reading_declarations_def)[2]
   apply (auto simp: reading_declarations_def given_correspondence_unfold)[2]
-  apply (auto simp: reading_declarations_def reading_socket_decoded)
+  apply (auto simp: reading_declarations_def)
   done
 
 lemma given_notion_location: "given_notion_discharged location_declarations given_declarations_correspondence"

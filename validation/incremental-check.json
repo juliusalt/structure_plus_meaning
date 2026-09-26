@@ -1,6 +1,6 @@
 {
- "base_receipt_sha256": "9a5c4624e9bcc4450022e32c65fa99d1101ec90f0359f6f7ef9b61227a40af41",
- "checked_content_sha256": "92c1eed713247e1aea16e124c0b59bd4468627ed4bbafd7fc7d4514383216cd6",
+ "base_receipt_sha256": "47ffc3fdcdc6d2e413882df63485cbe79b102f3ea497a96388f6d3c81455213e",
+ "checked_content_sha256": "d7bad4af3afc98476518d0dfd711c536528c9bd880b73697217ed8fe2e22fcfa",
  "host_tests": {
   "kernel": {
    "exit_code": 0,
@@ -17,44 +17,53 @@
    "ran": 309,
    "skipped": 0,
    "tail": [
-    "{\"status\": \"failed\", \"error\": \"[Errno 2] No such file or directory: '/tmp/tmp535j7g2k/no-project/theories/Development_Answer_a2d8d6490cc2.thy'\"}"
+    "{\"status\": \"failed\", \"error\": \"[Errno 2] No such file or directory: '/tmp/tmpr_g508m4/no-project/theories/Development_Answer_a2d8d6490cc2.thy'\"}"
    ]
   }
  },
  "phases": {
-  "base_and_impact": 0.36,
+  "base_and_impact": 0.35,
   "execution_impact": 0.0,
   "export": 0.0,
-  "proof": 57.21,
-  "recipe_impact": 0.44,
-  "recipes_and_host_tests": 11.5
+  "proof": 84.12,
+  "recipe_impact": 0.45,
+  "recipes_and_host_tests": 11.4
  },
  "rebuilt_theories": [
   "Development_Asked_Registrations",
-  "Development_Bounded_Recording_Execution",
-  "Development_First_Problem",
-  "Development_First_Problem_Asked",
-  "Development_First_Problem_Execution",
-  "Development_First_Request_Program",
   "Development_First_Request_Registrations",
   "Development_Given_Carried_Declarations",
   "Development_Given_Declarations",
   "Development_Given_Declarations_Execution",
-  "Development_Given_Execution",
-  "Development_Given_Extensions",
-  "Development_Given_Installation",
   "Development_Given_Installed_Declarations",
-  "Development_Given_Program",
-  "Development_Given_Readers",
   "Development_Given_Registrations",
   "Development_Installed_Presentations",
   "Development_Installed_Presentations_Execution",
-  "Development_Native_State",
-  "Development_Native_State_Execution",
   "Development_Rooted_Registrations",
+  "Factor_Artifact_Citation_Declarations",
   "Factor_Commitment_Controls",
+  "Factor_Construction_Holders",
+  "Factor_Instantiation_Declarations",
+  "Factor_Least_Collections",
+  "Factor_Least_Witness_Registrations",
   "Factor_Narrowed_Controls",
-  "Factor_Resolution_Controls"
+  "Factor_Narrowed_Sockets",
+  "Factor_Producer_Correspondences",
+  "Factor_Program_Resolution",
+  "Factor_Reader_Witness_Registrations",
+  "Factor_Resolution_Acceptance",
+  "Factor_Resolution_Carriers",
+  "Factor_Resolution_Commitments",
+  "Factor_Resolution_Completeness",
+  "Factor_Resolution_Controls",
+  "Factor_Resolution_Material_Discharge",
+  "Factor_Resolution_Producer_Discharge",
+  "Factor_Resolution_Socket_Discharges",
+  "Factor_Resolution_Views",
+  "Factor_Root_Family_Declarations",
+  "Factor_Schema_Instantiation_Declarations",
+  "Factor_Varied_Constructions",
+  "Factor_Varied_Declarations"
  ],
  "recipes": {
   "allocated-environments": {
@@ -214,8 +223,8 @@
    "status": "unchanged"
   }
  },
- "reused_theories": 1917,
- "seconds": 75.16,
+ "reused_theories": 1908,
+ "seconds": 102.11,
  "source_checks": {
   "missing_theory_files": [],
   "proof_escape_matches": [],

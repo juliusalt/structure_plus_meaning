@@ -184,6 +184,8 @@ certificate path (about 160 s a cycle), which needs a round-by-round corresponde
 - A definition on the producing side (R5's committed step) may change with every statement of R3, R4 and R5 kept by
   name and statement, as R5f1's and K1's do; a control whose figure changes is reported with both and R4's beside
   (#794's verdict). R5's `_def`s may become instances of their generalizations, statements kept (review 803's 1).
+  A premise bundle of the lifting (`finite_lifting_premises`) may gain a conjunct discharged where the bundle is built,
+  every theorem outside it keeping its statement and meaning (q147, K1's join).
 - A route selection that is not a priority of F1's must meet `finite_selection_unheld` for the committed search's
   held, confined and registered-unbound facts (review 803's 2); none is planned.
 - A free socket whose viewed input holds a variable of the parent's head output at its view never commits under R5's

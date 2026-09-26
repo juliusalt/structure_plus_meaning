@@ -6,9 +6,10 @@ text \<open>
   The given's four witness registrations (\<open>Factor_Reader_Witness_Registrations\<close>) at the first request's program
   (@{const finite_first_request_program}, the views 560 and 561 over the given's joined readers, rooted at the
   given's reader entries and 561), and relocated at its installation. A registration's completeness depends on the
-  program's meanings and is not carried from another program: each hypothesis is discharged here from this program's
-  meanings, which are the given's readers' at every definition both hold. The program holds the clauses of 77, 392
-  and 561; 525's stands in the guard's goals program, and names no clause here.
+  program's meanings and is not carried from another program: it is discharged here by agreement with the given's
+  readers (@{thm [source] readers_agreement_registrations_complete}): the program agrees with them on their common
+  definitions, so at the read sites it means what they mean (@{thm [source] readers_agreement_meanings}). The program
+  holds the clauses of 77, 392 and 561; 525's stands in the guard's goals program, and names no clause here.
 \<close>
 
 section \<open>A single-clause family of a formed program in its finite presentation\<close>
@@ -32,6 +33,11 @@ lemma guard_first_request_agreement:
   "systems_agree_on guard_readers_system first_request_joined_system (system_definitions guard_readers_system)"
   by (rule whole_agreement_transitive[OF guard_program_agreement first_request_given_agreement])
 
+lemma first_request_readers_guard_agreement:
+  "systems_agree_on guard_readers_system first_request_program_system
+    (system_definitions guard_readers_system\<inter>system_definitions first_request_program_system)"
+  unfolding first_request_program_system_def by (rule rooted_intersection_agreement[OF guard_first_request_agreement])
+
 lemma first_request_guard_clause:
   assumes "d\<in>system_definitions first_request_program_system" "d\<in>system_definitions guard_readers_system"
   shows "((d,c),S)\<in>system_clauses first_request_program_system \<longleftrightarrow> ((d,c),S)\<in>system_clauses guard_readers_system"
@@ -51,10 +57,14 @@ lemma first_request_read_sites:
   "d\<in>{5,12,47,76,82,113,390,391} \<Longrightarrow> d\<in>system_definitions guard_readers_system"
   using first_request_readers_inside given_rooted_read_sites by blast+
 
+lemma first_request_sites: "{5,12,47,76,82,113,390,391}\<subseteq>system_definitions first_request_program_system"
+  using first_request_read_sites(1) by blast
+
 lemma first_request_read_meaning:
   assumes "d\<in>{5,12,47,76,82,113,390,391}"
   shows "(d,t)\<in>positive_meaning first_request_program_system \<longleftrightarrow> (d,t)\<in>positive_meaning guard_readers_system"
-  by (rule first_request_guard_meaning[OF first_request_read_sites[OF assms]])
+  by (rule readers_agreement_meanings(2)[OF first_request_program_formed first_request_readers_guard_agreement
+    first_request_sites assms])
 
 subsection \<open>The meanings the registrations ask\<close>
 
@@ -68,10 +78,12 @@ lemma first_request_meanings:
     (82,t)\<in>positive_meaning definition_edge_reading_system"
   "(113,t)\<in>positive_meaning first_request_program_system \<longleftrightarrow>
     (113,t)\<in>positive_meaning environment_inclusion_system"
-  by (simp_all only: first_request_read_meaning insert_iff simp_thms given_readers_meanings)
+  by (simp_all only: readers_agreement_meanings(3,4,5,6,7,8)[OF first_request_program_formed
+    first_request_readers_guard_agreement first_request_sites])
 
 lemma first_request_listing: "context_list_rule_relation (positive_meaning first_request_program_system) 390 391"
-  by (rule read_meanings_listing, rule first_request_read_meaning) auto
+  by (rule readers_agreement_meanings(9)[OF first_request_program_formed first_request_readers_guard_agreement
+    first_request_sites])
 
 section \<open>The registrations and the construction complete at the program\<close>
 
@@ -80,21 +92,14 @@ text \<open>
   so the registrations are complete at it by agreement (@{thm [source] readers_agreement_registrations_complete}).
 \<close>
 
-lemma first_request_readers_guard_agreement:
-  "systems_agree_on guard_readers_system first_request_program_system
-    (system_definitions guard_readers_system\<inter>system_definitions first_request_program_system)"
-  unfolding first_request_program_system_def by (rule rooted_intersection_agreement[OF guard_first_request_agreement])
-
 theorem first_request_registrations_complete:
   "finite_registration_complete finite_first_request_program n bound_witness_registration"
   "finite_registration_complete finite_first_request_program n (additions_witness_registration 392 391)"
   "finite_registration_complete finite_first_request_program n merge_witness_registration"
 proof -
-  have sites: "{5,12,47,76,82,113,390,391}\<subseteq>system_definitions first_request_program_system"
-    using first_request_read_sites(1) by blast
   note by_agreement=readers_agreement_registrations_complete[where P=finite_first_request_program,
     unfolded finite_first_request_program_exact, OF first_request_program_formed first_request_readers_guard_agreement
-    sites]
+    first_request_sites]
   show "finite_registration_complete finite_first_request_program n bound_witness_registration"
     by (rule by_agreement(1))
   show "finite_registration_complete finite_first_request_program n (additions_witness_registration 392 391)"

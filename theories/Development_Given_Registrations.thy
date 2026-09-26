@@ -80,10 +80,22 @@ text \<open>
   The one discharge: the registrations' completeness asks the meanings at the read sites 5, 12, 47, 76, 82 and 113
   and, for the additions notion's, the listing at 391 over 390. These are discharged once, at the given's readers,
   from the readers' own systems (@{thm [source] given_readers_meanings}, @{thm [source] given_readers_listing}); a
-  program meaning at those sites what the given's readers mean has the registrations complete, none proved again. A
-  program agreeing with the given's readers on their common definitions and holding the read sites is one
-  (@{text readers_agreement_registrations_complete}, \<open>Development_Rooted_Registrations\<close>).
+  program meaning at those sites what the given's readers mean means there what those systems mean
+  (@{text read_meanings_systems}) and has the registrations complete, none proved again. A program agreeing with the
+  given's readers on their common definitions and holding the read sites is one (@{text readers_agreement_meanings},
+  @{text readers_agreement_registrations_complete}, \<open>Development_Rooted_Registrations\<close>).
 \<close>
+
+lemma read_meanings_systems:
+  assumes read: "\<And>d t. d\<in>{5,12,47,76,82,113} \<Longrightarrow>
+      (d,t)\<in>positive_meaning Q \<longleftrightarrow> (d,t)\<in>positive_meaning guard_readers_system"
+  shows "(5,t)\<in>positive_meaning Q \<longleftrightarrow> (5,t)\<in>positive_meaning bag_comparison_system"
+    "(12,t)\<in>positive_meaning Q \<longleftrightarrow> (12,t)\<in>positive_meaning artifact_identity_system"
+    "(47,t)\<in>positive_meaning Q \<longleftrightarrow> (47,t)\<in>positive_meaning data_subset_system"
+    "(76,t)\<in>positive_meaning Q \<longleftrightarrow> (76,t)\<in>positive_meaning definition_callee_list_system"
+    "(82,t)\<in>positive_meaning Q \<longleftrightarrow> (82,t)\<in>positive_meaning definition_edge_reading_system"
+    "(113,t)\<in>positive_meaning Q \<longleftrightarrow> (113,t)\<in>positive_meaning environment_inclusion_system"
+  by (simp_all only: read insert_iff simp_thms given_readers_meanings)
 
 lemma read_meanings_listing:
   assumes read: "\<And>d t. d\<in>{390,391} \<Longrightarrow> (d,t)\<in>positive_meaning Q \<longleftrightarrow> (d,t)\<in>positive_meaning guard_readers_system"
@@ -105,14 +117,7 @@ theorem read_meanings_registrations_complete:
     and "context_list_rule_relation (positive_meaning (decode_finite_system P)) 390 391 \<Longrightarrow>
       finite_registration_complete P n (additions_witness_registration 392 391)"
 proof -
-  have m: "(5,t)\<in>positive_meaning (decode_finite_system P) \<longleftrightarrow> (5,t)\<in>positive_meaning bag_comparison_system"
-    "(12,t)\<in>positive_meaning (decode_finite_system P) \<longleftrightarrow> (12,t)\<in>positive_meaning artifact_identity_system"
-    "(47,t)\<in>positive_meaning (decode_finite_system P) \<longleftrightarrow> (47,t)\<in>positive_meaning data_subset_system"
-    "(76,t)\<in>positive_meaning (decode_finite_system P) \<longleftrightarrow> (76,t)\<in>positive_meaning definition_callee_list_system"
-    "(82,t)\<in>positive_meaning (decode_finite_system P) \<longleftrightarrow> (82,t)\<in>positive_meaning definition_edge_reading_system"
-    "(113,t)\<in>positive_meaning (decode_finite_system P) \<longleftrightarrow> (113,t)\<in>positive_meaning environment_inclusion_system"
-    for t
-    by (simp_all only: read insert_iff simp_thms given_readers_meanings)
+  note m=read_meanings_systems[OF read]
   show "finite_registration_complete P n bound_witness_registration"
     by (rule bound_witness_registration_complete) (simp_all only: m)
   show "finite_registration_complete P n merge_witness_registration"
@@ -333,15 +338,17 @@ lemma request_readers_meanings:
   "(82,t)\<in>positive_meaning package_request_system \<longleftrightarrow> (82,t)\<in>positive_meaning definition_edge_reading_system"
   "(113,t)\<in>positive_meaning package_request_system \<longleftrightarrow> (113,t)\<in>positive_meaning environment_inclusion_system"
 proof -
-  have m: "d\<in>system_definitions package_retention_admission_system" if "d\<in>{5,12,47,76,82,113}" for d
-    using that by auto
+  have read: "(d,t)\<in>positive_meaning package_request_system \<longleftrightarrow> (d,t)\<in>positive_meaning guard_readers_system"
+    if "d\<in>{5,12,47,76,82,113}" for d t
+    by (rule request_given_meaning) (use that in auto)
+  note systems=read_meanings_systems[OF read]
   show "(5,t)\<in>positive_meaning package_request_system \<longleftrightarrow> (5,t)\<in>positive_meaning bag_comparison_system"
     "(12,t)\<in>positive_meaning package_request_system \<longleftrightarrow> (12,t)\<in>positive_meaning artifact_identity_system"
     "(47,t)\<in>positive_meaning package_request_system \<longleftrightarrow> (47,t)\<in>positive_meaning data_subset_system"
     "(76,t)\<in>positive_meaning package_request_system \<longleftrightarrow> (76,t)\<in>positive_meaning definition_callee_list_system"
     "(82,t)\<in>positive_meaning package_request_system \<longleftrightarrow> (82,t)\<in>positive_meaning definition_edge_reading_system"
     "(113,t)\<in>positive_meaning package_request_system \<longleftrightarrow> (113,t)\<in>positive_meaning environment_inclusion_system"
-    by (simp_all only: request_given_meaning[OF m] given_readers_meanings insert_iff simp_thms)
+    by (simp_all only: systems)
 qed
 
 theorem request_registrations_complete:

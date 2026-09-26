@@ -16,119 +16,6 @@ text \<open>
   producers, consumers and carriers by the meaning. No clause key is read or mapped and no clause changes.
 \<close>
 
-section \<open>A clause and its readings along a renaming\<close>
-
-text \<open>A clause's truth reads a valuation at the clause's variables alone.\<close>
-
-lemma clause_true_cong:
-  assumes agree: "\<And>a. a \<in> schema_variables S \<Longrightarrow> u a = v a"
-  shows "clause_true M S u \<longleftrightarrow> clause_true M S v"
-proof -
-  have pv: "evaluate_pattern u p = evaluate_pattern v p" if "(q,d,p) \<in> schema_premises S" for q d p
-  proof (rule evaluate_pattern_cong)
-    fix a assume "a \<in> pattern_variables p"
-    then have "a \<in> schema_variables S" using that by (force simp: schema_variables_def)
-    then show "u a = v a" by (rule agree)
-  qed
-  have mv: "evaluate_material_satisfaction u N \<longleftrightarrow> evaluate_material_satisfaction v N"
-    if "(q,N) \<in> schema_material_premises S" for q N
-  proof (rule evaluate_material_satisfaction_cong)
-    fix a assume "a \<in> material_variables N"
-    then have "a \<in> schema_variables S" using that by (force simp: schema_variables_def)
-    then show "u a = v a" by (rule agree)
-  qed
-  have fv: "(\<forall>a\<in>schema_variables S. term_formed (u a)) \<longleftrightarrow> (\<forall>a\<in>schema_variables S. term_formed (v a))"
-    using agree by simp
-  have calls: "(\<forall>q d p. (q,d,p) \<in> schema_premises S \<longrightarrow> (d,evaluate_pattern u p) \<in> M) \<longleftrightarrow>
-      (\<forall>q d p. (q,d,p) \<in> schema_premises S \<longrightarrow> (d,evaluate_pattern v p) \<in> M)"
-    using pv by metis
-  have mats: "(\<forall>q N. (q,N) \<in> schema_material_premises S \<longrightarrow> evaluate_material_satisfaction u N) \<longleftrightarrow>
-      (\<forall>q N. (q,N) \<in> schema_material_premises S \<longrightarrow> evaluate_material_satisfaction v N)"
-    using mv by metis
-  show ?thesis unfolding clause_true_def by (simp only: fv calls mats)
-qed
-
-text \<open>
-  A clause renamed by binder and socket maps, its callees kept, is true at a valuation exactly when the source is
-  true at the valuation composed with the binder map, the two meanings agreeing at the callees.
-\<close>
-
-lemma clause_true_renamed:
-  assumes eq: "\<And>d x. d \<in> schema_dependencies S \<Longrightarrow> (d,x) \<in> M' \<longleftrightarrow> (d,x) \<in> M"
-  shows "clause_true M' (rename_schema f h id S) v \<longleftrightarrow> clause_true M S (v \<circ> f)"
-proof -
-  let ?R = "rename_schema f h id S"
-  have fv: "(\<forall>a\<in>schema_variables ?R. term_formed (v a)) \<longleftrightarrow> (\<forall>a\<in>schema_variables S. term_formed ((v \<circ> f) a))"
-    by (simp add: renamed_schema_variables)
-  have prem: "(q,e,p') \<in> schema_premises ?R \<longleftrightarrow>
-      (\<exists>s d p. (s,d,p) \<in> schema_premises S \<and> q = h s \<and> e = d \<and> p' = rename_pattern f p)" for q e p'
-    by (simp add: rename_schema_def map_socket_graph_member)
-  have mat: "(q,N') \<in> schema_material_premises ?R \<longleftrightarrow>
-      (\<exists>s N. (s,N) \<in> schema_material_premises S \<and> q = h s \<and> N' = rename_material_pattern f N)" for q N'
-    by (force simp: rename_schema_def)
-  have calls: "(\<forall>q e p'. (q,e,p') \<in> schema_premises ?R \<longrightarrow> (e,evaluate_pattern v p') \<in> M') \<longleftrightarrow>
-      (\<forall>q d p. (q,d,p) \<in> schema_premises S \<longrightarrow> (d,evaluate_pattern (v \<circ> f) p) \<in> M)"
-  proof
-    assume A: "\<forall>q e p'. (q,e,p') \<in> schema_premises ?R \<longrightarrow> (e,evaluate_pattern v p') \<in> M'"
-    show "\<forall>q d p. (q,d,p) \<in> schema_premises S \<longrightarrow> (d,evaluate_pattern (v \<circ> f) p) \<in> M"
-    proof (intro allI impI)
-      fix q d p assume qd: "(q,d,p) \<in> schema_premises S"
-      have "(h q,d,rename_pattern f p) \<in> schema_premises ?R" using qd prem by blast
-      then have "(d,evaluate_pattern v (rename_pattern f p)) \<in> M'" using A by blast
-      then show "(d,evaluate_pattern (v \<circ> f) p) \<in> M"
-        using eq[OF schema_dependencies_premise[OF qd]] by (simp add: evaluate_rename_pattern)
-    qed
-  next
-    assume B: "\<forall>q d p. (q,d,p) \<in> schema_premises S \<longrightarrow> (d,evaluate_pattern (v \<circ> f) p) \<in> M"
-    show "\<forall>q e p'. (q,e,p') \<in> schema_premises ?R \<longrightarrow> (e,evaluate_pattern v p') \<in> M'"
-    proof (intro allI impI)
-      fix q e p' assume "(q,e,p') \<in> schema_premises ?R"
-      then obtain s p where sp: "(s,e,p) \<in> schema_premises S" and p': "p' = rename_pattern f p" using prem by blast
-      have "(e,evaluate_pattern (v \<circ> f) p) \<in> M" using B sp by blast
-      then show "(e,evaluate_pattern v p') \<in> M'"
-        using eq[OF schema_dependencies_premise[OF sp]] p' by (simp add: evaluate_rename_pattern)
-    qed
-  qed
-  have mats: "(\<forall>q N'. (q,N') \<in> schema_material_premises ?R \<longrightarrow> evaluate_material_satisfaction v N') \<longleftrightarrow>
-      (\<forall>q N. (q,N) \<in> schema_material_premises S \<longrightarrow> evaluate_material_satisfaction (v \<circ> f) N)"
-  proof
-    assume A: "\<forall>q N'. (q,N') \<in> schema_material_premises ?R \<longrightarrow> evaluate_material_satisfaction v N'"
-    show "\<forall>q N. (q,N) \<in> schema_material_premises S \<longrightarrow> evaluate_material_satisfaction (v \<circ> f) N"
-    proof (intro allI impI)
-      fix q N assume "(q,N) \<in> schema_material_premises S"
-      then have "(h q,rename_material_pattern f N) \<in> schema_material_premises ?R" using mat by blast
-      then show "evaluate_material_satisfaction (v \<circ> f) N" using A evaluate_rename_material by blast
-    qed
-  next
-    assume B: "\<forall>q N. (q,N) \<in> schema_material_premises S \<longrightarrow> evaluate_material_satisfaction (v \<circ> f) N"
-    show "\<forall>q N'. (q,N') \<in> schema_material_premises ?R \<longrightarrow> evaluate_material_satisfaction v N'"
-    proof (intro allI impI)
-      fix q N' assume "(q,N') \<in> schema_material_premises ?R"
-      then obtain s N where "(s,N) \<in> schema_material_premises S" "N' = rename_material_pattern f N" using mat by blast
-      then show "evaluate_material_satisfaction v N'" using B evaluate_rename_material by blast
-    qed
-  qed
-  show ?thesis unfolding clause_true_def by (simp only: fv calls mats)
-qed
-
-text \<open>A view reads a pattern renamed by a binder map as the renaming of its reading.\<close>
-
-lemma resolution_view_pattern_map:
-  assumes "resolution_view_pattern V c = Some (ci,co)"
-  shows "resolution_view_pattern V (map_finite_term_pattern f c) =
-    Some (map_finite_term_pattern f ci,map_finite_term_pattern f co)"
-  using resolution_view_pattern_substitute[OF assms, of "\<lambda>a. Finite_Variable (f a)"]
-  by (simp only: finite_pattern_substitute_variable_map)
-
-lemma resolution_view_parts_variables:
-  assumes formed: "view_formed V" and viewed: "resolution_view_pattern V c = Some (ci,co)"
-  shows "fset (finite_pattern_variables ci) \<subseteq> fset (finite_pattern_variables c)"
-    and "fset (finite_pattern_variables co) \<subseteq> fset (finite_pattern_variables c)"
-  using resolution_view_pattern_variables[OF formed viewed] by auto
-
-lemma decoded_pattern_variables: "pattern_variables (decode_finite_pattern p) = fset (finite_pattern_variables p)"
-  by (metis finite_pattern_variables_correct)
-
 section \<open>A socket's obligation along the match\<close>
 
 context finite_schema_matched
@@ -157,7 +44,7 @@ lemma evaluate_back:
   shows "evaluate_pattern ((u \<circ> binder_inverse) \<circ> f) (decode_finite_pattern q) = evaluate_pattern u (decode_finite_pattern q)"
 proof (rule evaluate_pattern_cong)
   fix a assume "a \<in> pattern_variables (decode_finite_pattern q)"
-  then have "a \<in> schema_variables (decode_finite_schema S)" using assms by (auto simp: decoded_pattern_variables)
+  then have "a \<in> schema_variables (decode_finite_schema S)" using assms by (auto simp: finite_pattern_variables_correct[symmetric])
   then show "((u \<circ> binder_inverse) \<circ> f) a = u a" by (rule inverse_agrees)
 qed
 

@@ -402,6 +402,21 @@ proof -
   show ?thesis using resolution_view_pattern_parts[of p pi po c ci co] formed viewed V by (simp add: finite_view_parts_def)
 qed
 
+text \<open>A view reads a pattern renamed by a binder map as the renaming of its reading.\<close>
+
+lemma resolution_view_pattern_map:
+  assumes "resolution_view_pattern V c = Some (ci,co)"
+  shows "resolution_view_pattern V (map_finite_term_pattern f c) =
+    Some (map_finite_term_pattern f ci,map_finite_term_pattern f co)"
+  using resolution_view_pattern_substitute[OF assms, of "\<lambda>a. Finite_Variable (f a)"]
+  by (simp only: finite_pattern_substitute_variable_map)
+
+lemma resolution_view_parts_variables:
+  assumes formed: "view_formed V" and viewed: "resolution_view_pattern V c = Some (ci,co)"
+  shows "fset (finite_pattern_variables ci) \<subseteq> fset (finite_pattern_variables c)"
+    and "fset (finite_pattern_variables co) \<subseteq> fset (finite_pattern_variables c)"
+  using resolution_view_pattern_variables[OF formed viewed] by auto
+
 text \<open>A view reads the value of a pattern it matches as the values of the pattern's viewed parts.\<close>
 
 lemma resolution_view_pattern_value:
@@ -679,6 +694,108 @@ definition clause_true :: "('d \<times> factor_term) set \<Rightarrow> ('a,'s,'d
     (\<forall>q d p. (q,d,p) \<in> schema_premises S \<longrightarrow> (d,evaluate_pattern h p) \<in> M) \<and>
     (\<forall>q N. (q,N) \<in> schema_material_premises S \<longrightarrow> evaluate_material_satisfaction h N)"
 
+lemma evaluate_material_satisfaction_cong:
+  assumes "\<And>a. a \<in> material_variables N \<Longrightarrow> f a = g a"
+  shows "evaluate_material_satisfaction f N \<longleftrightarrow> evaluate_material_satisfaction g N"
+proof -
+  have "evaluate_pattern f p = evaluate_pattern g p" if "p \<in> set (material_fields N)" for p
+    by (rule evaluate_pattern_cong) (use assms that in \<open>auto simp: material_variables_def\<close>)
+  then show ?thesis by (simp add: material_fields_def)
+qed
+
+text \<open>A clause's truth reads a valuation at the clause's variables alone.\<close>
+
+lemma clause_true_cong:
+  assumes agree: "\<And>a. a \<in> schema_variables S \<Longrightarrow> u a = v a"
+  shows "clause_true M S u \<longleftrightarrow> clause_true M S v"
+proof -
+  have pv: "evaluate_pattern u p = evaluate_pattern v p" if "(q,d,p) \<in> schema_premises S" for q d p
+  proof (rule evaluate_pattern_cong)
+    fix a assume "a \<in> pattern_variables p"
+    then have "a \<in> schema_variables S" using that by (force simp: schema_variables_def)
+    then show "u a = v a" by (rule agree)
+  qed
+  have mv: "evaluate_material_satisfaction u N \<longleftrightarrow> evaluate_material_satisfaction v N"
+    if "(q,N) \<in> schema_material_premises S" for q N
+  proof (rule evaluate_material_satisfaction_cong)
+    fix a assume "a \<in> material_variables N"
+    then have "a \<in> schema_variables S" using that by (force simp: schema_variables_def)
+    then show "u a = v a" by (rule agree)
+  qed
+  have fv: "(\<forall>a\<in>schema_variables S. term_formed (u a)) \<longleftrightarrow> (\<forall>a\<in>schema_variables S. term_formed (v a))"
+    using agree by simp
+  have calls: "(\<forall>q d p. (q,d,p) \<in> schema_premises S \<longrightarrow> (d,evaluate_pattern u p) \<in> M) \<longleftrightarrow>
+      (\<forall>q d p. (q,d,p) \<in> schema_premises S \<longrightarrow> (d,evaluate_pattern v p) \<in> M)"
+    using pv by metis
+  have mats: "(\<forall>q N. (q,N) \<in> schema_material_premises S \<longrightarrow> evaluate_material_satisfaction u N) \<longleftrightarrow>
+      (\<forall>q N. (q,N) \<in> schema_material_premises S \<longrightarrow> evaluate_material_satisfaction v N)"
+    using mv by metis
+  show ?thesis unfolding clause_true_def by (simp only: fv calls mats)
+qed
+
+text \<open>
+  A clause renamed by binder and socket maps, its callees kept, is true at a valuation exactly when the source is
+  true at the valuation composed with the binder map, the two meanings agreeing at the callees.
+\<close>
+
+lemma clause_true_renamed:
+  assumes eq: "\<And>d x. d \<in> schema_dependencies S \<Longrightarrow> (d,x) \<in> M' \<longleftrightarrow> (d,x) \<in> M"
+  shows "clause_true M' (rename_schema f h id S) v \<longleftrightarrow> clause_true M S (v \<circ> f)"
+proof -
+  let ?R = "rename_schema f h id S"
+  have fv: "(\<forall>a\<in>schema_variables ?R. term_formed (v a)) \<longleftrightarrow> (\<forall>a\<in>schema_variables S. term_formed ((v \<circ> f) a))"
+    by (simp add: renamed_schema_variables)
+  have prem: "(q,e,p') \<in> schema_premises ?R \<longleftrightarrow>
+      (\<exists>s d p. (s,d,p) \<in> schema_premises S \<and> q = h s \<and> e = d \<and> p' = rename_pattern f p)" for q e p'
+    by (simp add: rename_schema_def map_socket_graph_member)
+  have mat: "(q,N') \<in> schema_material_premises ?R \<longleftrightarrow>
+      (\<exists>s N. (s,N) \<in> schema_material_premises S \<and> q = h s \<and> N' = rename_material_pattern f N)" for q N'
+    by (force simp: rename_schema_def)
+  have calls: "(\<forall>q e p'. (q,e,p') \<in> schema_premises ?R \<longrightarrow> (e,evaluate_pattern v p') \<in> M') \<longleftrightarrow>
+      (\<forall>q d p. (q,d,p) \<in> schema_premises S \<longrightarrow> (d,evaluate_pattern (v \<circ> f) p) \<in> M)"
+  proof
+    assume A: "\<forall>q e p'. (q,e,p') \<in> schema_premises ?R \<longrightarrow> (e,evaluate_pattern v p') \<in> M'"
+    show "\<forall>q d p. (q,d,p) \<in> schema_premises S \<longrightarrow> (d,evaluate_pattern (v \<circ> f) p) \<in> M"
+    proof (intro allI impI)
+      fix q d p assume qd: "(q,d,p) \<in> schema_premises S"
+      have "(h q,d,rename_pattern f p) \<in> schema_premises ?R" using qd prem by blast
+      then have "(d,evaluate_pattern v (rename_pattern f p)) \<in> M'" using A by blast
+      then show "(d,evaluate_pattern (v \<circ> f) p) \<in> M"
+        using eq[OF schema_dependencies_premise[OF qd]] by (simp add: evaluate_rename_pattern)
+    qed
+  next
+    assume B: "\<forall>q d p. (q,d,p) \<in> schema_premises S \<longrightarrow> (d,evaluate_pattern (v \<circ> f) p) \<in> M"
+    show "\<forall>q e p'. (q,e,p') \<in> schema_premises ?R \<longrightarrow> (e,evaluate_pattern v p') \<in> M'"
+    proof (intro allI impI)
+      fix q e p' assume "(q,e,p') \<in> schema_premises ?R"
+      then obtain s p where sp: "(s,e,p) \<in> schema_premises S" and p': "p' = rename_pattern f p" using prem by blast
+      have "(e,evaluate_pattern (v \<circ> f) p) \<in> M" using B sp by blast
+      then show "(e,evaluate_pattern v p') \<in> M'"
+        using eq[OF schema_dependencies_premise[OF sp]] p' by (simp add: evaluate_rename_pattern)
+    qed
+  qed
+  have mats: "(\<forall>q N'. (q,N') \<in> schema_material_premises ?R \<longrightarrow> evaluate_material_satisfaction v N') \<longleftrightarrow>
+      (\<forall>q N. (q,N) \<in> schema_material_premises S \<longrightarrow> evaluate_material_satisfaction (v \<circ> f) N)"
+  proof
+    assume A: "\<forall>q N'. (q,N') \<in> schema_material_premises ?R \<longrightarrow> evaluate_material_satisfaction v N'"
+    show "\<forall>q N. (q,N) \<in> schema_material_premises S \<longrightarrow> evaluate_material_satisfaction (v \<circ> f) N"
+    proof (intro allI impI)
+      fix q N assume "(q,N) \<in> schema_material_premises S"
+      then have "(h q,rename_material_pattern f N) \<in> schema_material_premises ?R" using mat by blast
+      then show "evaluate_material_satisfaction (v \<circ> f) N" using A evaluate_rename_material by blast
+    qed
+  next
+    assume B: "\<forall>q N. (q,N) \<in> schema_material_premises S \<longrightarrow> evaluate_material_satisfaction (v \<circ> f) N"
+    show "\<forall>q N'. (q,N') \<in> schema_material_premises ?R \<longrightarrow> evaluate_material_satisfaction v N'"
+    proof (intro allI impI)
+      fix q N' assume "(q,N') \<in> schema_material_premises ?R"
+      then obtain s N where "(s,N) \<in> schema_material_premises S" "N' = rename_material_pattern f N" using mat by blast
+      then show "evaluate_material_satisfaction v N'" using B evaluate_rename_material by blast
+    qed
+  qed
+  show ?thesis unfolding clause_true_def by (simp only: fv calls mats)
+qed
+
 text \<open>
   A socket's obligation reads the premise at the socket through the premise's view and the head through the head's
   view. A socket declared at a premise its view does not match is refused: the first conjunct is false there.
@@ -822,7 +939,6 @@ next
   moreover have "a \<in> pattern_variables (decode_finite_pattern ci)" using a Some z by (simp add: head_inputs_def)
   ultimately show ?thesis by (rule evaluate_pattern_agree)
 qed
-
 
 text \<open>
   The obligation's new instance agrees with the old one on the socket's inputs, at a call premise and at a material
@@ -1038,6 +1154,16 @@ definition declarations_union ::
 fun declarations_list :: "('a,'s,'d) resolution_declarations list \<Rightarrow> ('a,'s,'d) resolution_declarations" where
   "declarations_list [] = no_declarations"
 | "declarations_list (D#Ds) = declarations_union D (declarations_list Ds)"
+
+lemma declarations_list_socket_member:
+  assumes "D \<in> set Ds" "z |\<in>| declared_sockets D"
+  shows "z |\<in>| declared_sockets (declarations_list Ds)"
+  using assms by (induction Ds) (auto simp: declarations_union_def no_declarations_def)
+
+lemma declarations_list_members:
+  "(d,V,hs) |\<in>| declared_producers (declarations_list Ds) \<Longrightarrow> \<exists>D\<in>set Ds. (d,V,hs) |\<in>| declared_producers D"
+  "(d,e,V,i) |\<in>| declared_consumers (declarations_list Ds) \<Longrightarrow> \<exists>D\<in>set Ds. (d,e,V,i) |\<in>| declared_consumers D"
+  by (induction Ds) (auto simp: declarations_union_def no_declarations_def)
 
 lemma declarations_union_discharged:
   assumes "declarations_discharged M D corr" "declarations_discharged M E corr"
@@ -1509,6 +1635,16 @@ definition finite_canonical_solutions ::
             then Some (finite_material_candidates M [finite_material_tuple C (finite_artifact_rows C)]) else None
         | Finite_Anchor C a \<Rightarrow> None)
     | _ \<Rightarrow> None)"
+
+text \<open>
+  A material premise whose skeleton is not an open reading, as where an unreadable field stands beside an open one, has
+  no canonical solutions, at a ground whole source too (review 809).
+\<close>
+
+lemma finite_canonical_solutions_unread:
+  assumes "finite_material_skeleton M \<noteq> Open_Reading"
+  shows "finite_canonical_solutions M = None"
+  using assms by (auto simp: finite_canonical_solutions_def split: finite_term_pattern.splits finite_exact_target.splits)
 
 lemma finite_canonical_solutions_member:
   assumes canonical: "finite_canonical_solutions M = Some Ws'"
@@ -2211,7 +2347,6 @@ lemma finite_committed_goal_outcome_unproduced:
          (rec F (finite_goal_barring K F B st g)) S)"
   using none by (simp add: finite_committed_goal_outcome_eq finite_goal_committing_unproduced[OF none])
 
-
 text \<open>
   A construction step is committed as a goal is: every node present at it is barred in the rest of the search, for
   the ranks that justify pruning do not carry across a construction (task 526, q110), and it constructs at the
@@ -2370,7 +2505,6 @@ corollary finite_committed_search_plain:
   assumes free: "\<And>st N. finite_resolution_select \<kappa> P st \<noteq> Select_Construction N"
   shows "finite_committed_search \<kappa> no_commitment P n None {||} = finite_resolution_search \<kappa> P n"
   by (simp add: finite_committed_search_def finite_resolution_search_def finite_committed_search_by_plain[OF free])
-
 
 section \<open>Every found state keeps the invariant\<close>
 
@@ -3037,6 +3171,40 @@ definition finite_premise_only_inputs ::
 
 export_code finite_children_closed finite_premise_only_inputs checking SML
 
+text \<open>
+  A premise-only variable is free (@{text finite_free_premise_only}) when the node binds it to its own renamed-apart
+  variable and only the parent's goals hold that variable, which is then a free premise-only variable of the node
+  (@{text finite_free_premise_variable}). At single-valued bindings the test's first disjunct is that freedom, read
+  through the node's one row (@{text finite_premise_only_bound}).
+\<close>
+
+definition finite_free_premise_only where
+  "finite_free_premise_only st np a \<longleftrightarrow>
+    finite_node_binding np a = Finite_Variable ((resolution_node_position np,True),a) \<and>
+    (\<forall>h. h |\<in>| resolution_pending st \<longrightarrow> ((resolution_node_position np,True),a) |\<in>| resolution_goal_variables h \<longrightarrow>
+      resolution_goal_position h \<noteq> [] \<and> butlast (resolution_goal_position h) = resolution_node_position np)"
+
+definition finite_free_premise_variable where
+  "finite_free_premise_variable st np z \<longleftrightarrow> fst z = (resolution_node_position np,True) \<and>
+    snd z |\<in>| finite_schema_variables (resolution_node_schema np) \<and>
+    snd z |\<notin>| finite_pattern_variables (finite_schema_conclusion (resolution_node_schema np)) \<and>
+    finite_free_premise_only st np (snd z)"
+
+lemma finite_premise_only_bound:
+  assumes poi: "finite_premise_only_inputs Vp Vh st np k"
+    and sv: "single_valued (fset (resolution_node_bindings np))"
+    and a: "a |\<in>| finite_schema_variables (resolution_node_schema np)"
+      "a |\<notin>| finite_pattern_variables (finite_schema_conclusion (resolution_node_schema np))"
+  shows "finite_free_premise_only st np a \<or>
+    (a |\<in>| finite_socket_inputs Vp Vh (resolution_node_schema np) k \<and>
+      finite_pattern_variables (finite_node_binding np a) = {||})"
+proof -
+  have "a |\<in>| finite_schema_variables (resolution_node_schema np) |-|
+      finite_pattern_variables (finite_schema_conclusion (resolution_node_schema np))" using a by simp
+  from fbspec[OF poi[unfolded finite_premise_only_inputs_def] this]
+  show ?thesis unfolding finite_free_premise_only_def using finite_node_binding_row[OF sv] by blast
+qed
+
 definition finite_output_consumer ::
     "('a,'s,'d) resolution_declarations \<Rightarrow> 'd \<Rightarrow> ('s,'a) resolution_variable finite_term_pattern list \<Rightarrow>
       ('s,'a) resolution_variable fset \<Rightarrow> ('a,'s,'d,'c) resolution_goal \<Rightarrow> bool" where
@@ -3481,7 +3649,6 @@ theorem finite_declared_commitment_none: "finite_declared_commitment no_declarat
 lemma resolution_value_variable: "resolution_value \<theta> (Finite_Variable z) = \<theta> z"
   by (simp add: resolution_value_def)
 
-
 corollary finite_declared_resolution_none:
   "(\<And>st N. finite_resolution_select \<kappa> P st \<noteq> Select_Construction N) \<Longrightarrow>
     finite_committed_resolution \<kappa> (finite_declared_commitment no_declarations) P d t n = finite_program_resolution \<kappa> P d t n"
@@ -3540,7 +3707,6 @@ lemma finite_lifted_diagnosis:
   "D |\<in>| resolution_diagnoses R \<Longrightarrow> \<not> finite_witnessed_diagnosis D \<Longrightarrow> finite_lifted_outcome U F P R"
   unfolding finite_lifted_outcome_def by blast
 
-
 lemma finite_focus_pending_focused:
   "g |\<in>| finite_focus_pending F st \<longleftrightarrow> g |\<in>| resolution_pending st \<and> resolution_focused F (resolution_goal_position g)"
   by (cases F) (auto simp: finite_focus_pending_def resolution_fset_simps)
@@ -3572,7 +3738,6 @@ proof
     using sup g fq nd(1,2,3) unfolding gq resolution_supported_at_def by blast
   with nd(4,5) show False by simp
 qed
-
 
 text \<open>
   At a committed call the premise asks for a kept state only where the lifting applies it (task 621, q115): at a state
@@ -3616,6 +3781,11 @@ text \<open>
 definition finite_commitment_exchanges ::
     "(('s,'a) resolution_variable \<Rightarrow> bool) \<Rightarrow> ('a,'s::linorder,'d,'c) finite_witness_construction \<Rightarrow>
       ('a,'s,'d,'c) resolution_commitment \<Rightarrow> ('a,'s,'d,'c) finite_schema_system \<Rightarrow> bool" where
+  "finite_commitment_exchanges U \<kappa> K P \<longleftrightarrow> finite_commitment_exchanges_at (finite_commitment_priority K) U \<kappa> K P"
+
+text \<open>Its body, the exchange at that priority unfolded.\<close>
+
+lemma finite_commitment_exchanges_unfold:
   "finite_commitment_exchanges U \<kappa> K P \<longleftrightarrow>
     (\<forall>n F B st \<theta> g d t. resolution_invariant P d t st \<longrightarrow> resolution_supported_at U F B P st \<theta> \<longrightarrow>
       g |\<in>| finite_focus_pending F st \<longrightarrow>
@@ -3639,6 +3809,7 @@ definition finite_commitment_exchanges ::
               (resolution_found (finite_committed_search \<kappa> K P n (Some (resolution_goal_position g))
                 (finite_committed_barring B (finite_produced_state K F st g)) (finite_produced_state K F st g))) \<and>
             resolution_supported_at U F (fimage resolution_node_position (resolution_nodes s)) P s \<theta>'))))"
+  by (simp only: finite_commitment_exchanges_def finite_commitment_exchanges_at_def finite_committed_search_def)
 
 lemma finite_commitment_exchanges_priority:
   "finite_commitment_exchanges U \<kappa> K P \<longleftrightarrow> finite_commitment_exchanges_at (finite_commitment_priority K) U \<kappa> K P"
@@ -4422,7 +4593,6 @@ lemma finite_committed_successors_material:
   using assms that
   by (auto simp: finite_committed_successors_def finite_material_successors_solutions
     split: option.splits if_splits finite_material_outcome.splits)
-
 
 subsection \<open>A substitution step\<close>
 
@@ -7231,6 +7401,48 @@ next
   show ?case using Finite_Pattern_Pair.IH(1)[OF l1] Finite_Pattern_Pair.IH(2)[OF l2] l by auto
 qed
 
+text \<open>
+  A pattern whose substitution is a variant of it is bound variable for variable: each of its variables to a variable,
+  distinct ones to distinct ones.
+\<close>
+
+lemma finite_variant_substitute_variable:
+  assumes "finite_variant p (finite_pattern_substitute \<beta> p)" "b |\<in>| finite_pattern_variables p"
+  obtains w where "\<beta> b = Finite_Variable w"
+proof -
+  obtain l where l: "finite_variant_pairs p (finite_pattern_substitute \<beta> p) = Some l"
+    using assms(1) unfolding finite_variant_def by (auto split: option.splits)
+  show thesis using finite_variant_pairs_substitute[OF l] assms(2) that by blast
+qed
+
+lemma list_all_pairs_consistent:
+  assumes all: "list_all (\<lambda>(a,v). list_all (\<lambda>(b,w). (a = b) = (v = w)) l) l"
+    and ax: "(a,x) \<in> set l" and cy: "(c,y) \<in> set l"
+  shows "(a = c) = (x = y)"
+proof -
+  from all have A: "\<forall>(a',v')\<in>set l. \<forall>(b',w')\<in>set l. (a' = b') = (v' = w')"
+    by (simp only: list_all_iff)
+  have B: "\<forall>(b',w')\<in>set l. (a = b') = (x = w')" using bspec[OF A ax] by (simp only: prod.case)
+  show ?thesis using bspec[OF B cy] by (simp only: prod.case)
+qed
+
+lemma finite_variant_substitute_injective:
+  assumes v: "finite_variant p (finite_pattern_substitute \<beta> p)"
+    and b: "b |\<in>| finite_pattern_variables p" and b': "b' |\<in>| finite_pattern_variables p" and eq: "\<beta> b = \<beta> b'"
+  shows "b = b'"
+proof -
+  obtain l where l: "finite_variant_pairs p (finite_pattern_substitute \<beta> p) = Some l"
+    using v unfolding finite_variant_def by (auto split: option.splits)
+  have all: "list_all (\<lambda>(a,v). list_all (\<lambda>(b,w). (a = b) = (v = w)) l) l"
+    using v unfolding finite_variant_def l by (simp only: option.case)
+  have fv: "\<forall>b. b |\<in>| finite_pattern_variables p \<longrightarrow> (\<exists>w. \<beta> b = Finite_Variable w \<and> (b,w) \<in> set l)"
+    using finite_variant_pairs_substitute[OF l] by (rule conjunct1)
+  obtain w where w: "\<beta> b = Finite_Variable w \<and> (b,w) \<in> set l" using fv b by blast
+  obtain w' where w': "\<beta> b' = Finite_Variable w' \<and> (b',w') \<in> set l" using fv b' by blast
+  have "w = w'" using w w' eq by simp
+  then show ?thesis using list_all_pairs_consistent[OF all conjunct2[OF w] conjunct2[OF w']] by simp
+qed
+
 text \<open>Each variable of a pattern whose substitution is a variant of it is bound to a variable of its own.\<close>
 
 lemma finite_variant_substitute_apart:
@@ -7238,19 +7450,71 @@ lemma finite_variant_substitute_apart:
   shows "\<exists>v. \<beta> a = Finite_Variable v \<and>
     (\<forall>b. b |\<in>| finite_pattern_variables p \<longrightarrow> b \<noteq> a \<longrightarrow> v |\<notin>| finite_pattern_variables (\<beta> b))"
 proof -
-  obtain l where l: "finite_variant_pairs p (finite_pattern_substitute \<beta> p) = Some l"
-      and all: "list_all (\<lambda>(a,v). list_all (\<lambda>(b,w). (a = b) = (v = w)) l) l"
-    using var unfolding finite_variant_def
-    by (cases "finite_variant_pairs p (finite_pattern_substitute \<beta> p)") auto
-  note L = finite_variant_pairs_substitute[OF l]
-  obtain v where av: "\<beta> a = Finite_Variable v" "(a,v) \<in> set l" using L a by blast
+  obtain v where v: "\<beta> a = Finite_Variable v" by (rule finite_variant_substitute_variable[OF var a])
   have "v |\<notin>| finite_pattern_variables (\<beta> b)" if b: "b |\<in>| finite_pattern_variables p" "b \<noteq> a" for b
   proof -
-    obtain w where bw: "\<beta> b = Finite_Variable w" "(b,w) \<in> set l" using L b(1) by blast
-    have "(a = b) = (v = w)" using all av(2) bw(2) by (auto simp: list_all_iff)
-    then show ?thesis using b(2) bw(1) by simp
+    obtain w where w: "\<beta> b = Finite_Variable w" by (rule finite_variant_substitute_variable[OF var b(1)])
+    have "w \<noteq> v"
+    proof
+      assume "w = v"
+      then have "\<beta> b = \<beta> a" using v w by simp
+      then show False using finite_variant_substitute_injective[OF var b(1) a] b(2) by blast
+    qed
+    then show ?thesis using w by simp
   qed
-  then show ?thesis using av(1) by blast
+  then show ?thesis using v by blast
+qed
+
+text \<open>
+  A variant head output absorbs every frame: each of its variables is bound to a variable of its own, so both conditions
+  of (iii) hold whatever the frame, and the variables bound at the first kind lie in the call's output (B1's
+  @{text finite_socket_free_framed_default} cites it at the default frame).
+\<close>
+
+lemma finite_variant_absorbs:
+  assumes vh: "resolution_view_pattern Vh (finite_schema_conclusion (resolution_node_schema nd)) = Some (hi,ho)"
+    and var: "finite_variant ho (finite_pattern_substitute (finite_node_binding nd) ho)"
+  shows "finite_parent_absorbs Vp Vh C nd s"
+    and "finite_parent_absorbed Vp Vh C nd s |\<subseteq>| finite_pattern_variables (finite_pattern_substitute (finite_node_binding nd) ho)"
+proof -
+  let ?S = "resolution_node_schema nd"
+  let ?\<beta> = "finite_node_binding nd"
+  have hv: "\<exists>v. ?\<beta> a = Finite_Variable v \<and>
+      (\<forall>b. b |\<in>| finite_pattern_variables ho \<longrightarrow> b \<noteq> a \<longrightarrow> v |\<notin>| finite_pattern_variables (?\<beta> b))"
+    if "a |\<in>| finite_pattern_variables ho" for a
+    by (rule finite_variant_substitute_apart[OF var that])
+  have i: "a |\<in>| C \<longrightarrow> a |\<notin>| finite_socket_own Vp ?S s \<longrightarrow> (case ?\<beta> a of Finite_Variable v \<Rightarrow>
+      fBall (finite_pattern_variables ho) (\<lambda>b. b \<noteq> a \<longrightarrow> v |\<notin>| finite_pattern_variables (?\<beta> b)) | _ \<Rightarrow> False)"
+    if a: "a |\<in>| finite_pattern_variables ho" for a
+  proof -
+    obtain v where v: "?\<beta> a = Finite_Variable v"
+        and dis: "\<forall>b. b |\<in>| finite_pattern_variables ho \<longrightarrow> b \<noteq> a \<longrightarrow> v |\<notin>| finite_pattern_variables (?\<beta> b)"
+      using hv[OF a] by blast
+    show ?thesis using dis by (auto simp: v)
+  qed
+  have ii: "a |\<notin>| C \<longrightarrow> fBall (finite_pattern_variables ho) (\<lambda>b. b |\<in>| C \<longrightarrow>
+      finite_pattern_variables (?\<beta> a) |\<inter>| finite_pattern_variables (?\<beta> b) = {||})"
+    if a: "a |\<in>| finite_pattern_variables ho" for a
+  proof (intro impI fBallI)
+    fix b assume aC: "a |\<notin>| C" and b: "b |\<in>| finite_pattern_variables ho" and bC: "b |\<in>| C"
+    have ba: "b \<noteq> a" using aC bC by auto
+    obtain v where v: "?\<beta> a = Finite_Variable v"
+        and dis: "\<forall>c. c |\<in>| finite_pattern_variables ho \<longrightarrow> c \<noteq> a \<longrightarrow> v |\<notin>| finite_pattern_variables (?\<beta> c)"
+      using hv[OF a] by blast
+    have "v |\<notin>| finite_pattern_variables (?\<beta> b)" using dis b ba by blast
+    then show "finite_pattern_variables (?\<beta> a) |\<inter>| finite_pattern_variables (?\<beta> b) = {||}"
+      by (auto simp: v fset_eq_iff)
+  qed
+  show "finite_parent_absorbs Vp Vh C nd s"
+    unfolding finite_parent_absorbs_def vh option.case prod.case by (intro conjI fBallI) (erule i, erule ii)
+  show "finite_parent_absorbed Vp Vh C nd s |\<subseteq>| finite_pattern_variables (finite_pattern_substitute ?\<beta> ho)"
+  proof (rule fsubsetI)
+    fix w assume "w |\<in>| finite_parent_absorbed Vp Vh C nd s"
+    then obtain a where a: "a |\<in>| finite_pattern_variables ho" "w |\<in>| finite_pattern_variables (?\<beta> a)"
+      by (auto simp: finite_parent_absorbed_def vh ffUnion.rep_eq)
+    show "w |\<in>| finite_pattern_variables (finite_pattern_substitute ?\<beta> ho)"
+      by (rule finite_pattern_substitute_variable_holds[where \<beta>="?\<beta>", OF a])
+  qed
 qed
 
 lemma finite_socket_kept_framed_default:
@@ -7295,43 +7559,10 @@ proof -
     unfolding call by (rule resolution_view_pattern_substitute[OF vh])
   have oo: "out = finite_pattern_substitute ?\<beta> ho" and var: "finite_variant ho (finite_pattern_substitute ?\<beta> ho)"
     using out vh vk by (auto simp: finite_parent_output_def split: if_splits)
-  have hv: "\<exists>v. ?\<beta> a = Finite_Variable v \<and>
-      (\<forall>b. b |\<in>| finite_pattern_variables ho \<longrightarrow> b \<noteq> a \<longrightarrow> v |\<notin>| finite_pattern_variables (?\<beta> b))"
-    if "a |\<in>| finite_pattern_variables ho" for a
-    by (rule finite_variant_substitute_apart[OF var that])
-  have i: "a |\<in>| ?C \<longrightarrow> a |\<notin>| finite_socket_own Vp ?S (last q) \<longrightarrow> (case ?\<beta> a of Finite_Variable v \<Rightarrow>
-      fBall (finite_pattern_variables ho) (\<lambda>b. b \<noteq> a \<longrightarrow> v |\<notin>| finite_pattern_variables (?\<beta> b)) | _ \<Rightarrow> False)"
-    if a: "a |\<in>| finite_pattern_variables ho" for a
-  proof -
-    obtain v where v: "?\<beta> a = Finite_Variable v"
-        and dis: "\<forall>b. b |\<in>| finite_pattern_variables ho \<longrightarrow> b \<noteq> a \<longrightarrow> v |\<notin>| finite_pattern_variables (?\<beta> b)"
-      using hv[OF a] by blast
-    show ?thesis using dis by (auto simp: v)
-  qed
-  have ii: "a |\<notin>| ?C \<longrightarrow> fBall (finite_pattern_variables ho) (\<lambda>b. b |\<in>| ?C \<longrightarrow>
-      finite_pattern_variables (?\<beta> a) |\<inter>| finite_pattern_variables (?\<beta> b) = {||})"
-    if a: "a |\<in>| finite_pattern_variables ho" for a
-  proof (intro impI fBallI)
-    fix b assume aC: "a |\<notin>| ?C" and b: "b |\<in>| finite_pattern_variables ho" and bC: "b |\<in>| ?C"
-    have ba: "b \<noteq> a" using aC bC by auto
-    obtain v where v: "?\<beta> a = Finite_Variable v"
-        and dis: "\<forall>c. c |\<in>| finite_pattern_variables ho \<longrightarrow> c \<noteq> a \<longrightarrow> v |\<notin>| finite_pattern_variables (?\<beta> c)"
-      using hv[OF a] by blast
-    have "v |\<notin>| finite_pattern_variables (?\<beta> b)" using dis b ba by blast
-    then show "finite_pattern_variables (?\<beta> a) |\<inter>| finite_pattern_variables (?\<beta> b) = {||}"
-      by (auto simp: v fset_eq_iff)
-  qed
-  have abs: "finite_parent_absorbs Vp Vh ?C nd (last q)"
-    unfolding finite_parent_absorbs_def vh option.case prod.case by (intro conjI fBallI) (erule i, erule ii)
+  have abs: "finite_parent_absorbs Vp Vh ?C nd (last q)" by (rule finite_variant_absorbs(1)[OF vh var])
   have sub: "w |\<in>| Y |\<union>| finite_pattern_variables out"
     if w: "w |\<in>| Y |\<union>| finite_parent_absorbed Vp Vh ?C nd (last q)" for w
-  proof (cases "w |\<in>| Y")
-    case False
-    then have "w |\<in>| finite_parent_absorbed Vp Vh ?C nd (last q)" using w by simp
-    then obtain a where a: "a |\<in>| finite_pattern_variables ho" "w |\<in>| finite_pattern_variables (?\<beta> a)"
-      by (auto simp: finite_parent_absorbed_def vh ffUnion.rep_eq)
-    show ?thesis using finite_pattern_substitute_variable_holds[where \<beta>="?\<beta>", OF a] oo by simp
-  qed simp
+    using w finite_variant_absorbs(2)[where Vp=Vp and C="?C" and s="last q", OF vh var] oo by (auto dest: fsubsetD)
   have hold': "finite_socket_holders F st q (Y |\<union>| finite_parent_absorbed Vp Vh ?C nd (last q)) g"
     by (rule finite_socket_holders_mono[OF hold sub])
   have pof: "finite_premise_only_framed ?C st nd" by (rule finite_premise_only_inputs_framed[OF po])

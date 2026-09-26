@@ -95,16 +95,6 @@ abbreviation given_records where
 lemma given_plain_declarations_records: "given_plain_declarations = declarations_list given_records"
   by (simp only: given_plain_declarations_def)
 
-lemma declarations_list_socket_member:
-  assumes "D \<in> set Ds" "z |\<in>| declared_sockets D"
-  shows "z |\<in>| declared_sockets (declarations_list Ds)"
-  using assms by (induction Ds) (auto simp: declarations_union_def no_declarations_def)
-
-lemma declarations_list_members:
-  "(d,V,hs) |\<in>| declared_producers (declarations_list Ds) \<Longrightarrow> \<exists>D\<in>set Ds. (d,V,hs) |\<in>| declared_producers D"
-  "(d,e,V,i) |\<in>| declared_consumers (declarations_list Ds) \<Longrightarrow> \<exists>D\<in>set Ds. (d,e,V,i) |\<in>| declared_consumers D"
-  by (induction Ds) (auto simp: declarations_union_def no_declarations_def)
-
 lemma given_plain_declarations_socket_of:
   assumes "\<exists>s keep Vp Vh. (e,S,s,keep,Vp,Vh) |\<in>| declared_sockets D"
     and "D \<in> set given_records"
@@ -664,7 +654,6 @@ theorem extension_installed_lifts:
   by (rule finite_construction_complete_lifts[OF installed_construction_complete[OF assms]])
 
 end
-
 
 text \<open>The given's record at the asked relation's installed guard and at the first request's installed program.\<close>
 

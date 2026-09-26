@@ -44,8 +44,6 @@ definition finite_goal_holds ::
     | Resolution_Material_Goal q r N \<Rightarrow>
         finite_material_ground_satisfied (finite_material_pattern_substitute (resolution_substitution \<theta>) N))"
 
-
-
 definition finite_exchange_context ::
     "('d \<times> factor_term) set \<Rightarrow> 's list option \<Rightarrow> 's list \<Rightarrow> ('a,'s,'d,'c) resolution_state \<Rightarrow> 'd \<Rightarrow>
       ('s,'a) resolution_variable finite_term_pattern \<Rightarrow> bool" where
@@ -53,7 +51,6 @@ definition finite_exchange_context ::
     (\<exists>\<theta>1. (\<forall>z. z |\<in>| finite_pattern_variables p \<longrightarrow> \<theta>1 z = \<theta>2 z) \<and>
       (\<forall>h. h |\<in>| finite_focus_pending F st \<longrightarrow> \<not> resolution_focused (Some q) (resolution_goal_position h) \<longrightarrow>
         finite_goal_holds M \<theta>1 h)))"
-
 
 lemma resolution_goal_substitute_origin:
   assumes "z |\<in>| resolution_goal_variables (resolution_goal_substitute \<sigma> g)"
@@ -101,7 +98,6 @@ lemma finite_goal_holds_substitute:
   "finite_goal_holds M \<theta> (resolution_goal_substitute \<sigma> g) \<longleftrightarrow> finite_goal_holds M (\<lambda>z. resolution_value \<theta> (\<sigma> z)) g"
   by (cases g) (simp_all add: finite_goal_holds_def resolution_value_composes finite_material_substitute_value)
 
-
 subsection \<open>Support with every node barred, and at the state before\<close>
 
 lemma resolution_supported_at_holds:
@@ -123,7 +119,6 @@ next
   then show ?thesis by (simp add: Resolution_Material_Goal finite_goal_holds_def)
 qed
 
-
 lemma resolution_supported_at_barred_allI:
   assumes holds: "\<And>h. h |\<in>| resolution_pending s \<Longrightarrow> resolution_focused F (resolution_goal_position h) \<Longrightarrow>
       finite_goal_holds (positive_meaning (decode_finite_system P)) \<theta> h"
@@ -143,7 +138,6 @@ proof -
 qed
 
 subsection \<open>The committed goal stands alone under its position\<close>
-
 
 lemma finite_committed_goal_alone:
   assumes I: "resolution_invariant P d t st" and g: "g |\<in>| resolution_pending st" "resolution_is_call g"
@@ -611,9 +605,6 @@ text \<open>
   hole list (@{thm [source] resolution_view_holes_single}). R5's producer and its right- and left-side consumers are the record's identity and
   swap views (@{text view_identity_term}, @{text view_swap_term}), instances of the same lemmas.
 \<close>
-
-
-
 
 theorem finite_direct_context:
   fixes H :: "('a,'s,'d,'c) resolution_goal set" and V :: "nat resolution_view"

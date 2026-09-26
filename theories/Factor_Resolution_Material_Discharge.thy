@@ -23,7 +23,8 @@ text \<open>
   (\<open>finite_parent_context\<close>), stated once over correction (9)'s weaker conditions (\<open>finite_children_closed\<close>,
   \<open>finite_premise_only_inputs\<close>): a sibling resolved before the socket is closed, its instance ground and true
   (\<open>finite_closed_premise_true\<close>) and its variables among the inputs the obligation keeps. At a socket commitment of the
-  test the context holds (\<open>finite_declared_socket_context\<close>); the discharge is stated at the socket's declared views,
+  test, read at its default frame, the framed context holds (\<open>finite_framed_socket_context\<close>);
+  the discharge is stated at the socket's declared views,
   the parent's head read at the head's view, and at any discharged declarations. The same discharge is stated at the
   framed test of correction (10) (\<open>finite_framed_material_commitment_exchanges\<close>), today's its instance at no frames.
 \<close>
@@ -36,46 +37,6 @@ lemma finite_material_ground_value:
       (resolution_value \<theta> (finite_material_edges N)) (resolution_value \<theta> (finite_material_counts N))
       (resolution_value \<theta> (finite_material_functions N))"
   by (simp add: finite_material_ground_satisfied_def resolution_value_exact[symmetric])
-
-subsection \<open>A variant output is a renaming of the head output\<close>
-
-
-lemma finite_variant_substitute_variable:
-  assumes "finite_variant p (finite_pattern_substitute \<beta> p)" "b |\<in>| finite_pattern_variables p"
-  obtains w where "\<beta> b = Finite_Variable w"
-proof -
-  obtain l where l: "finite_variant_pairs p (finite_pattern_substitute \<beta> p) = Some l"
-    using assms(1) unfolding finite_variant_def by (auto split: option.splits)
-  show thesis using finite_variant_pairs_substitute[OF l] assms(2) that by blast
-qed
-
-lemma list_all_pairs_consistent:
-  assumes all: "list_all (\<lambda>(a,v). list_all (\<lambda>(b,w). (a = b) = (v = w)) l) l"
-    and ax: "(a,x) \<in> set l" and cy: "(c,y) \<in> set l"
-  shows "(a = c) = (x = y)"
-proof -
-  from all have A: "\<forall>(a',v')\<in>set l. \<forall>(b',w')\<in>set l. (a' = b') = (v' = w')"
-    by (simp only: list_all_iff)
-  have B: "\<forall>(b',w')\<in>set l. (a = b') = (x = w')" using bspec[OF A ax] by (simp only: prod.case)
-  show ?thesis using bspec[OF B cy] by (simp only: prod.case)
-qed
-
-lemma finite_variant_substitute_injective:
-  assumes v: "finite_variant p (finite_pattern_substitute \<beta> p)"
-    and b: "b |\<in>| finite_pattern_variables p" and b': "b' |\<in>| finite_pattern_variables p" and eq: "\<beta> b = \<beta> b'"
-  shows "b = b'"
-proof -
-  obtain l where l: "finite_variant_pairs p (finite_pattern_substitute \<beta> p) = Some l"
-    using v unfolding finite_variant_def by (auto split: option.splits)
-  have all: "list_all (\<lambda>(a,v). list_all (\<lambda>(b,w). (a = b) = (v = w)) l) l"
-    using v unfolding finite_variant_def l by (simp only: option.case)
-  have fv: "\<forall>b. b |\<in>| finite_pattern_variables p \<longrightarrow> (\<exists>w. \<beta> b = Finite_Variable w \<and> (b,w) \<in> set l)"
-    using finite_variant_pairs_substitute[OF l] by (rule conjunct1)
-  obtain w where w: "\<beta> b = Finite_Variable w \<and> (b,w) \<in> set l" using fv b by blast
-  obtain w' where w': "\<beta> b' = Finite_Variable w' \<and> (b',w') \<in> set l" using fv b' by blast
-  have "w = w'" using w w' eq by simp
-  then show ?thesis using list_all_pairs_consistent[OF all conjunct2[OF w] conjunct2[OF w']] by simp
-qed
 
 subsection \<open>The canonical successor at the all-barred set\<close>
 
@@ -259,14 +220,12 @@ qed
 
 subsection \<open>Facts the discharge reads\<close>
 
-
 lemma resolution_value_target: "resolution_value \<theta> (Finite_Pattern_Target x) = Finite_Target x"
   by (simp add: resolution_value_def)
 
 lemma finite_pattern_substitute_variable_eq:
   "finite_pattern_substitute \<sigma> p = Finite_Variable w \<Longrightarrow> \<exists>x. p = Finite_Variable x \<and> \<sigma> x = Finite_Variable w"
   by (cases p) auto
-
 
 lemma finite_free_fields_variables:
   assumes free: "finite_free_fields M"
@@ -501,58 +460,6 @@ definition finite_parent_context ::
   "finite_parent_context P Vp Vh st nd s \<longleftrightarrow> nd |\<in>| resolution_nodes st \<and> resolution_node_linked P st nd \<and>
     finite_children_closed Vp Vh st nd s \<and> finite_premise_only_inputs Vp Vh st nd s \<and> finite_premise_only_unshared nd"
 
-text \<open>
-  At a socket commitment of the test the parent context holds, at the socket's views and key. This is the one lemma
-  that reads the test's conditions on the parent node; a change of those conditions proves it again. The exchanges
-  read the declaration and the holders from the test themselves.
-\<close>
-
-lemma finite_declared_socket_context:
-  assumes I: "resolution_invariant P d t st"
-    and sc: "finite_socket_commitment D Vp Vh F st g"
-    and cn: "finite_call_narrowed D Vp Vh F st g" and mn: "finite_material_narrowed D Vp Vh F st g"
-  obtains nd where "nd |\<in>| resolution_nodes st" "resolution_node_position nd = butlast (resolution_goal_position g)"
-    "resolution_goal_position g \<noteq> []" "finite_parent_context P Vp Vh st nd (last (resolution_goal_position g))"
-proof -
-  let ?q = "resolution_goal_position g"
-  have dist: "resolution_positions_distinct st" using I by (simp add: resolution_invariant_def)
-  have declared: "?q \<noteq> [] \<and> (\<exists>nd'. nd' |\<in>| resolution_nodes st \<and> resolution_node_position nd' = butlast ?q \<and>
-      finite_premise_only_inputs Vp Vh st nd' (last ?q))"
-    if "finite_socket_declared D Vp Vh F st ?q Y g" for Y
-    using that unfolding finite_socket_declared_def finite_socket_kept_def finite_socket_free_def by blast
-  have narrowed: "\<exists>nd. nd |\<in>| resolution_nodes st \<and> resolution_node_position nd = butlast ?q \<and>
-      finite_children_closed Vp Vh st nd (last ?q) \<and> finite_premise_only_unshared nd"
-  proof (cases g)
-    case (Resolution_Call_Goal q r e p)
-    obtain x y where v: "resolution_view_pattern Vp p = Some (x,y)"
-      using sc Resolution_Call_Goal by (auto simp: finite_socket_commitment_def split: option.splits)
-    show ?thesis using cn Resolution_Call_Goal v unfolding finite_call_narrowed_def by auto
-  next
-    case (Resolution_Material_Goal q r M)
-    show ?thesis using mn Resolution_Material_Goal unfolding finite_material_narrowed_def by auto
-  qed
-  have decl: "\<exists>Y. finite_socket_declared D Vp Vh F st ?q Y g"
-  proof (cases g)
-    case (Resolution_Call_Goal q r e p)
-    then show ?thesis using sc by (auto simp: finite_socket_commitment_def split: option.splits)
-  next
-    case (Resolution_Material_Goal q r M)
-    then show ?thesis using sc by (auto simp: finite_socket_commitment_def)
-  qed
-  obtain Y where dY: "finite_socket_declared D Vp Vh F st ?q Y g" using decl by blast
-  obtain nd' where qne: "?q \<noteq> []" and nd': "nd' |\<in>| resolution_nodes st" "resolution_node_position nd' = butlast ?q"
-    and poi: "finite_premise_only_inputs Vp Vh st nd' (last ?q)"
-    using declared[OF dY] by blast
-  obtain nd where nd: "nd |\<in>| resolution_nodes st" "resolution_node_position nd = butlast ?q"
-    and closed: "finite_children_closed Vp Vh st nd (last ?q)" and unsh: "finite_premise_only_unshared nd"
-    using narrowed by blast
-  have "nd' = nd" using dist nd'(1) nd(1) nd'(2) nd(2) unfolding resolution_positions_distinct_def by auto
-  then have "finite_parent_context P Vp Vh st nd (last ?q)"
-    using nd(1) I closed unsh poi
-    unfolding finite_parent_context_def resolution_invariant_def resolution_nodes_placed_def by blast
-  then show thesis using that nd qne by blast
-qed
-
 subsection \<open>The parent context at a frame\<close>
 
 text \<open>
@@ -624,18 +531,6 @@ proof -
       finite_pattern_substitute (finite_node_binding np) (finite_schema_conclusion (resolution_node_schema np))"
     unfolding call by (rule finite_pattern_substitute_cong) (metis agree finite_schema_variables_members(1))
 qed
-
-definition finite_free_premise_only where
-  "finite_free_premise_only st np a \<longleftrightarrow>
-    finite_node_binding np a = Finite_Variable ((resolution_node_position np,True),a) \<and>
-    (\<forall>h. h |\<in>| resolution_pending st \<longrightarrow> ((resolution_node_position np,True),a) |\<in>| resolution_goal_variables h \<longrightarrow>
-      resolution_goal_position h \<noteq> [] \<and> butlast (resolution_goal_position h) = resolution_node_position np)"
-
-definition finite_free_premise_variable where
-  "finite_free_premise_variable st np z \<longleftrightarrow> fst z = (resolution_node_position np,True) \<and>
-    snd z |\<in>| finite_schema_variables (resolution_node_schema np) \<and>
-    snd z |\<notin>| finite_pattern_variables (finite_schema_conclusion (resolution_node_schema np)) \<and>
-    finite_free_premise_only st np (snd z)"
 
 definition finite_framed_parent_context ::
     "('a,'s::linorder,'d,'c) finite_schema_system \<Rightarrow> 'a fset \<Rightarrow> ('a,'s,'d,'c) resolution_state \<Rightarrow>
@@ -725,8 +620,8 @@ qed
 
 text \<open>
   At a socket commitment of the framed test the parent context holds at the frame the test chose, at the socket's views
-  and key: the one lemma reading the framed test's conditions on the parent node, as
-  @{text finite_declared_socket_context} reads today's.
+  and key: the one lemma reading the framed test's conditions on the parent node, today's test read at its
+  default frame.
 \<close>
 
 lemma finite_framed_socket_context:
@@ -859,58 +754,6 @@ lemma finite_parent_absorbed_iff:
   shows "z |\<in>| finite_parent_absorbed Vp Vh C nd s \<longleftrightarrow> (\<exists>b. b |\<in>| finite_pattern_variables ho \<and> b |\<in>| C \<and>
     b |\<notin>| finite_socket_own Vp (resolution_node_schema nd) s \<and> z |\<in>| finite_pattern_variables (finite_node_binding nd b))"
   by (auto simp: finite_parent_absorbed_def vh ffUnion.rep_eq fimage.rep_eq ffilter.rep_eq)
-
-text \<open>
-  A variant head output absorbs every frame: each of its variables is bound to a variable of its own, so both conditions
-  of (iii) hold whatever the frame, and the variables bound at the first kind lie in the call's output (B1's
-  @{text finite_socket_free_framed_default} reads the same argument at the default frame).
-\<close>
-
-lemma finite_variant_absorbs:
-  assumes vh: "resolution_view_pattern Vh (finite_schema_conclusion (resolution_node_schema nd)) = Some (hi,ho)"
-    and var: "finite_variant ho (finite_pattern_substitute (finite_node_binding nd) ho)"
-  shows "finite_parent_absorbs Vp Vh C nd s"
-    and "finite_parent_absorbed Vp Vh C nd s |\<subseteq>| finite_pattern_variables (finite_pattern_substitute (finite_node_binding nd) ho)"
-proof -
-  let ?S = "resolution_node_schema nd"
-  let ?\<beta> = "finite_node_binding nd"
-  have hv: "\<exists>v. ?\<beta> a = Finite_Variable v \<and>
-      (\<forall>b. b |\<in>| finite_pattern_variables ho \<longrightarrow> b \<noteq> a \<longrightarrow> v |\<notin>| finite_pattern_variables (?\<beta> b))"
-    if "a |\<in>| finite_pattern_variables ho" for a
-    by (rule finite_variant_substitute_apart[OF var that])
-  have i: "a |\<in>| C \<longrightarrow> a |\<notin>| finite_socket_own Vp ?S s \<longrightarrow> (case ?\<beta> a of Finite_Variable v \<Rightarrow>
-      fBall (finite_pattern_variables ho) (\<lambda>b. b \<noteq> a \<longrightarrow> v |\<notin>| finite_pattern_variables (?\<beta> b)) | _ \<Rightarrow> False)"
-    if a: "a |\<in>| finite_pattern_variables ho" for a
-  proof -
-    obtain v where v: "?\<beta> a = Finite_Variable v"
-        and dis: "\<forall>b. b |\<in>| finite_pattern_variables ho \<longrightarrow> b \<noteq> a \<longrightarrow> v |\<notin>| finite_pattern_variables (?\<beta> b)"
-      using hv[OF a] by blast
-    show ?thesis using dis by (auto simp: v)
-  qed
-  have ii: "a |\<notin>| C \<longrightarrow> fBall (finite_pattern_variables ho) (\<lambda>b. b |\<in>| C \<longrightarrow>
-      finite_pattern_variables (?\<beta> a) |\<inter>| finite_pattern_variables (?\<beta> b) = {||})"
-    if a: "a |\<in>| finite_pattern_variables ho" for a
-  proof (intro impI fBallI)
-    fix b assume aC: "a |\<notin>| C" and b: "b |\<in>| finite_pattern_variables ho" and bC: "b |\<in>| C"
-    have ba: "b \<noteq> a" using aC bC by auto
-    obtain v where v: "?\<beta> a = Finite_Variable v"
-        and dis: "\<forall>c. c |\<in>| finite_pattern_variables ho \<longrightarrow> c \<noteq> a \<longrightarrow> v |\<notin>| finite_pattern_variables (?\<beta> c)"
-      using hv[OF a] by blast
-    have "v |\<notin>| finite_pattern_variables (?\<beta> b)" using dis b ba by blast
-    then show "finite_pattern_variables (?\<beta> a) |\<inter>| finite_pattern_variables (?\<beta> b) = {||}"
-      by (auto simp: v fset_eq_iff)
-  qed
-  show "finite_parent_absorbs Vp Vh C nd s"
-    unfolding finite_parent_absorbs_def vh option.case prod.case by (intro conjI fBallI) (erule i, erule ii)
-  show "finite_parent_absorbed Vp Vh C nd s |\<subseteq>| finite_pattern_variables (finite_pattern_substitute ?\<beta> ho)"
-  proof (rule fsubsetI)
-    fix w assume "w |\<in>| finite_parent_absorbed Vp Vh C nd s"
-    then obtain a where a: "a |\<in>| finite_pattern_variables ho" "w |\<in>| finite_pattern_variables (?\<beta> a)"
-      by (auto simp: finite_parent_absorbed_def vh ffUnion.rep_eq)
-    show "w |\<in>| finite_pattern_variables (finite_pattern_substitute ?\<beta> ho)"
-      by (rule finite_pattern_substitute_variable_holds[where \<beta>="?\<beta>", OF a])
-  qed
-qed
 
 lemma finite_pattern_substitute_variables_iff:
   "z |\<in>| finite_pattern_variables (finite_pattern_substitute \<sigma> p) \<longleftrightarrow>
@@ -2255,7 +2098,7 @@ lemma finite_material_socket_exchange:
     and gF: "Resolution_Material_Goal q r M |\<in>| finite_focus_pending F st"
     and Ws: "finite_canonical_solutions M = Some Ws" and free: "finite_free_fields M"
     and prem: "finite_material_premise st (Resolution_Material_Goal q r M)"
-    and nd: "nd |\<in>| resolution_nodes st" "resolution_node_position nd = butlast q" and qne: "q \<noteq> []"
+    and nd: "resolution_node_position nd = butlast q" and qne: "q \<noteq> []"
     and ctx: "finite_parent_context P Vp Vh st nd (last q)"
     and socket: "socket_discharged (positive_meaning (decode_finite_system P)) (resolution_node_schema nd) (last q) keep Vp Vh"
     and Vh: "view_formed Vh"
@@ -2268,7 +2111,8 @@ lemma finite_material_socket_exchange:
   shows "\<exists>st' \<theta>'. st' |\<in>| finite_solution_successors st q r M Ws \<and>
     resolution_supported_at U F (finite_committed_barring B st) P st' \<theta>'"
 proof -
-  have linked: "resolution_node_linked P st nd" using ctx by (simp add: finite_parent_context_def)
+  have nd0: "nd |\<in>| resolution_nodes st" and linked: "resolution_node_linked P st nd"
+    using ctx by (simp_all add: finite_parent_context_def)
   have formed: "schema_formed (decode_finite_schema (resolution_node_schema nd))"
     by (rule finite_linked_schema_formed[OF I linked])
   let ?C = "finite_default_frame Vp Vh (resolution_node_schema nd) (last q)"
@@ -2278,7 +2122,7 @@ proof -
     unfolding finite_default_frame_correct by (rule socket_discharged_framed[OF socket formed])
   have call: "resolution_node_call nd =
       finite_pattern_substitute (finite_node_binding nd) (finite_schema_conclusion (resolution_node_schema nd))"
-    by (rule finite_node_binding_linked(2)[OF I nd(1)])
+    by (rule finite_node_binding_linked(2)[OF I nd0])
   have headF: "keep \<or> (F = Some (butlast q) \<and> finite_parent_absorbs Vp Vh ?C nd (last q) \<and>
       finite_input_output_apart Vh nd \<and> finite_parent_absorbed Vp Vh ?C nd (last q) |\<subseteq>| Y)"
   proof (cases keep)
@@ -2304,7 +2148,7 @@ proof -
     have apart: "finite_input_output_apart Vh nd" using cl ap by (simp add: finite_input_output_apart_def)
     show ?thesis using Fq abs apart absY by blast
   qed simp
-  show ?thesis by (rule finite_framed_material_exchange[OF I sup gF Ws free prem nd qne ctxF sockF Vh hold Ysub headF])
+  show ?thesis by (rule finite_framed_material_exchange[OF I sup gF Ws free prem nd0 nd qne ctxF sockF Vh hold Ysub headF])
 qed
 
 subsection \<open>The discharge of the premise's material part\<close>

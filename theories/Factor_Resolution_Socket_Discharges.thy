@@ -19,7 +19,7 @@ text \<open>
   ground instance among the socket's inputs, every pending goal under the parent one of the instances, each premise-only
   variable free or among the inputs with a ground binding, none held by the parent's call; at a free socket the call's
   viewed input sharing no variable with its output. The commitment test checks it where it commits
-  (@{text finite_declared_socket_context}), so the exchange premise holds with no hypothesis on the state
+  (@{text finite_framed_socket_context}), so the exchange premise holds with no hypothesis on the state
   (@{text finite_declared_commitment_exchanges}); the sockets' exchange holds at any discharged declarations, the
   contexts taken at the socket's declared views, and at every socket commitment of the test, including a socket whose
   closed siblings hold only its inputs (correction (9)). At a frame (B2a of correction (10)) the parent context, the
@@ -54,15 +54,6 @@ lemma finite_material_ground_substitute:
   by (simp add: finite_material_ground_satisfied_def finite_material_pattern_substitute_def resolution_value_substitute
     finite_exact_term_pattern_eq_iff finite_material_observation_correct resolution_value_substitute_decoded
     decode_finite_material_def)
-
-lemma evaluate_material_satisfaction_cong:
-  assumes "\<And>a. a \<in> material_variables N \<Longrightarrow> f a = g a"
-  shows "evaluate_material_satisfaction f N \<longleftrightarrow> evaluate_material_satisfaction g N"
-proof -
-  have "evaluate_pattern f p = evaluate_pattern g p" if "p \<in> set (material_fields N)" for p
-    by (rule evaluate_pattern_cong) (use assms that in \<open>auto simp: material_variables_def\<close>)
-  then show ?thesis by (simp add: material_fields_def)
-qed
 
 lemma evaluate_material_variables_formed:
   assumes sat: "evaluate_material_satisfaction h N" and a: "a \<in> material_variables N"
@@ -440,28 +431,6 @@ lemma finite_children_closed_children:
         (finite_material_pattern_substitute (finite_node_binding np) N0))"
   by (rule finite_children_framed_children[OF finite_children_closed_framed[OF closed] h])
 
-lemma finite_premise_only_bound:
-  assumes poi: "finite_premise_only_inputs Vp Vh st np k"
-    and sv: "single_valued (fset (resolution_node_bindings np))"
-    and a: "a |\<in>| finite_schema_variables (resolution_node_schema np)"
-      "a |\<notin>| finite_pattern_variables (finite_schema_conclusion (resolution_node_schema np))"
-  shows "(finite_node_binding np a = Finite_Variable ((resolution_node_position np,True),a) \<and>
-      (\<forall>h. h |\<in>| resolution_pending st \<longrightarrow> ((resolution_node_position np,True),a) |\<in>| resolution_goal_variables h \<longrightarrow>
-        resolution_goal_position h \<noteq> [] \<and> butlast (resolution_goal_position h) = resolution_node_position np)) \<or>
-    (a |\<in>| finite_socket_inputs Vp Vh (resolution_node_schema np) k \<and>
-      finite_pattern_variables (finite_node_binding np a) = {||})"
-proof -
-  have "a |\<in>| finite_schema_variables (resolution_node_schema np) |-|
-      finite_pattern_variables (finite_schema_conclusion (resolution_node_schema np))" using a by simp
-  from fbspec[OF poi[unfolded finite_premise_only_inputs_def] this]
-  have c: "((a,Finite_Variable ((resolution_node_position np,True),a)) |\<in>| resolution_node_bindings np \<and>
-      (\<forall>h. h |\<in>| resolution_pending st \<longrightarrow> ((resolution_node_position np,True),a) |\<in>| resolution_goal_variables h \<longrightarrow>
-        resolution_goal_position h \<noteq> [] \<and> butlast (resolution_goal_position h) = resolution_node_position np)) \<or>
-    (a |\<in>| finite_socket_inputs Vp Vh (resolution_node_schema np) k \<and>
-      finite_pattern_variables (finite_node_binding np a) = {||})" by auto
-  then show ?thesis using finite_node_binding_row[OF sv] by blast
-qed
-
 section \<open>The parent context read at the socket\<close>
 
 text \<open>
@@ -579,7 +548,7 @@ proof -
   show "finite_free_premise_only st np c \<or>
       (c |\<in>| finite_socket_inputs Vp Vh ?S (last q) \<and> finite_pattern_variables (?\<beta> c) = {||})"
     if "c |\<in>| finite_schema_variables ?S" "c |\<notin>| finite_pattern_variables (finite_schema_conclusion ?S)"
-    unfolding finite_free_premise_only_def by (rule finite_premise_only_bound[OF poi sv that])
+    by (rule finite_premise_only_bound[OF poi sv that])
   show "((resolution_node_position np,True),c) |\<notin>| finite_pattern_variables (resolution_node_call np)"
     if "c |\<in>| finite_schema_variables ?S" "c |\<notin>| finite_pattern_variables (finite_schema_conclusion ?S)"
     using unsh that unfolding finite_premise_only_unshared_def by auto

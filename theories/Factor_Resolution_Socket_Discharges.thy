@@ -1198,11 +1198,10 @@ next
   assume I: "resolution_invariant P d t st" and sup: "resolution_supported_at (\<lambda>_. False) F B P st \<theta>"
     and gF: "g |\<in>| finite_focus_pending F st" and gq: "g = Resolution_Material_Goal q r M"
     and Ws: "finite_canonical_solutions M = Some Ws" and cm: "commit_material (finite_declared_commitment D) F st g"
-  have nar: "finite_material_narrowed D view_identity view_identity F st g"
-    using cm by (simp add: finite_declared_commitment_pair(2)[OF pairs])
+
   show "\<exists>st' \<theta>'. st' |\<in>| finite_solution_successors st q r M Ws \<and>
       resolution_supported_at (\<lambda>_. False) F (finite_committed_barring B st) P st' \<theta>'"
-    by (rule finite_material_commitment_exchanges[OF pairs discharged I sup gF gq Ws cm nar])
+    by (rule finite_material_commitment_exchanges[OF discharged I sup gF gq Ws cm])
 qed
 
 end

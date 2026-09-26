@@ -1,6 +1,6 @@
 {
- "base_receipt_sha256": "b7977512c2b50a1c6e0b230d7ac55940aea212e3d94746853b6623d4fda7ae9e",
- "checked_content_sha256": "665a4fd54153b7ee5a44d6ec8df4180899006d37422e68700fe5f9e6d10d795f",
+ "base_receipt_sha256": "6a2bafe0636fba6547f191828d91613bdcf53333ad1ebdb924d5f5ab4a43ce6d",
+ "checked_content_sha256": "20e9425ace2b40485856cc82fb7e70f93d18dbc98f61c0616968dec5713e8275",
  "host_tests": {
   "kernel": {
    "exit_code": 0,
@@ -17,7 +17,7 @@
    "ran": 306,
    "skipped": 0,
    "tail": [
-    "{\"status\": \"failed\", \"error\": \"[Errno 2] No such file or directory: '/tmp/tmpstnmkn9v/no-project/theories/Development_Answer_a2d8d6490cc2.thy'\"}"
+    "{\"status\": \"failed\", \"error\": \"[Errno 2] No such file or directory: '/tmp/tmprn7xttjs/no-project/theories/Development_Answer_a2d8d6490cc2.thy'\"}"
    ]
   }
  },
@@ -25,12 +25,27 @@
   "base_and_impact": 0.35,
   "execution_impact": 0.0,
   "export": 0.0,
-  "proof": 18.99,
+  "proof": 58.15,
   "recipe_impact": 0.42,
-  "recipes_and_host_tests": 11.15
+  "recipes_and_host_tests": 11.17
  },
  "rebuilt_theories": [
-  "Factor_Shared_Patterns"
+  "Development_Asked_Registrations",
+  "Development_First_Request_Registrations",
+  "Development_Given_Declarations",
+  "Development_Given_Declarations_Execution",
+  "Development_Given_Registrations",
+  "Development_Installed_Presentations",
+  "Development_Rooted_Registrations",
+  "Factor_Least_Witness_Registrations",
+  "Factor_Reader_Witness_Registrations",
+  "Factor_Resolution_Commitments",
+  "Factor_Resolution_Controls",
+  "Factor_Resolution_Material_Discharge",
+  "Factor_Resolution_Producer_Discharge",
+  "Factor_Resolution_Socket_Discharges",
+  "Factor_Resolution_Views",
+  "Factor_Varied_Constructions"
  ],
  "recipes": {
   "allocated-environments": {
@@ -190,8 +205,8 @@
    "status": "unchanged"
   }
  },
- "reused_theories": 1927,
- "seconds": 36.62,
+ "reused_theories": 1912,
+ "seconds": 75.86,
  "source_checks": {
   "missing_theory_files": [],
   "proof_escape_matches": [],

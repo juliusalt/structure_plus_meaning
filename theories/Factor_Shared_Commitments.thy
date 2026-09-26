@@ -318,6 +318,21 @@ definition represented_committed_successors ::
     else rep_successors R r h)"
 
 text \<open>
+  The first join below a ground focus over the representation (task 821, K1): whether the call at the focus holds a
+  variable, and the determinate key of a successor, are read through the access, as R5's step reads them on the state
+  (@{text access_formed.focus_ground}, @{text access_formed.determinate_key}): no projection is made for them.
+\<close>
+
+definition access_focus_ground :: "'s list option \<Rightarrow> ('g,'n,'k,'a,'s,'d,'c) search_access \<Rightarrow> bool" where
+  "access_focus_ground F V = (case F of None \<Rightarrow> False | Some q \<Rightarrow>
+    fBall (access_goals_at V q) (\<lambda>h. access_variables V h = {||}) \<and>
+    fBall (access_nodes_at V q) (\<lambda>n. finite_pattern_variables (resolution_node_call (access_node V n)) = {||}))"
+
+definition access_determinate_key :: "'s list \<Rightarrow> ('g,'n,'k,'a,'s,'d,'c) search_access \<Rightarrow> nat" where
+  "access_determinate_key q V = fcard (ffilter (\<lambda>h. take (length q) (access_goal_position V h) = q \<and>
+    access_goal_position V h \<noteq> q \<and> access_variables V h \<noteq> {||}) (access_goals V))"
+
+text \<open>
   The committed step at a goal: pruned among the unbarred nodes it is closed, among the barred ones cut; committing,
   its sub-search runs from the produced state with the goal's position as the focus and the states keeping the least
   answer are continued; otherwise its committed successors are searched. The commitment's tests read the projection
@@ -342,7 +357,10 @@ definition represented_committed_goal_outcome ::
        S = represented_committed_successors R F cm r V h in
        if S = {||} then (if access_witnesses V = {||} then Resolution_Outcome {||} {||}
          else Resolution_Outcome {||} {|Resolution_Witnessed (access_witnesses V) (access_goal V h)|})
-       else finite_outcome_union (fimage (rec F (if cm then B |\<union>| rep_node_positions R r else B)) S))"
+       else if access_focus_ground F V
+         then finite_first_outcome (rec F (if cm then B |\<union>| rep_node_positions R r else B))
+           (finite_key_blocks (\<lambda>s'. access_determinate_key (resolution_goal_position (access_goal V h)) (rep_access R s')) S)
+         else finite_outcome_union (fimage (rec F (if cm then B |\<union>| rep_node_positions R r else B)) S))"
 
 text \<open>
   The committed step at a state: the selection at the priority reads the access of the focused state, a construction
@@ -356,8 +374,9 @@ definition represented_committed_step ::
       ('a,'s,'d,'c) finite_schema_system \<Rightarrow> ('s list option \<Rightarrow> 's list fset \<Rightarrow> 'r \<Rightarrow> ('a,'s,'d,'c) resolution_outcome) \<Rightarrow>
       's list option \<Rightarrow> 's list fset \<Rightarrow> 'r \<Rightarrow> ('a,'s,'d,'c) resolution_outcome" where
   "represented_committed_step R pr gd \<kappa> K P rec F B r = (let V = rep_access R r;
-      so = (if fBex (access_goals V) (gd r) then Some (rep_project R r) else None) in
-    case access_select (\<lambda>h. gd r h \<and> pr (finite_focused F (the so)) (access_goal V h)) (access_focused F V) of
+      so = (if fBex (access_goals V) (gd r) then Some (rep_project R r) else None);
+      fo = map_option (finite_focused F) so in
+    case access_select (\<lambda>h. gd r h \<and> pr (the fo) (access_goal V h)) (access_focused F V) of
       Access_Construction N \<Rightarrow> (let M = ffilter (\<lambda>m. resolution_focused F (access_node_position V m)) N in
         if M = {||} then Resolution_Outcome {||} {|Resolution_Stuck (fimage (access_goal V) (access_focus_goals F V))|}
         else finite_outcome_union (fimage (\<lambda>m. rec F (B |\<union>| rep_node_positions R r) (rep_construct R r m)) M))
@@ -377,6 +396,121 @@ primrec represented_committed_search ::
 | "represented_committed_search R pr gd \<kappa> K P (Suc n) F B r =
     (if access_focus_goals F (rep_access R r) = {||} then Resolution_Outcome {|rep_project R r|} {||}
      else represented_committed_step R pr gd \<kappa> K P (represented_committed_search R pr gd \<kappa> K P n) F B (rep_refresh R r))"
+
+text \<open>The two reads through a formed access are those on the state.\<close>
+
+context access_formed
+begin
+
+lemma focus_ground: "access_focus_ground F V \<longleftrightarrow> finite_focus_ground F st"
+proof (cases F)
+  case None
+  then show ?thesis by (simp add: access_focus_ground_def)
+next
+  case (Some q)
+  have g: "fBall (access_goals_at V q) (\<lambda>h. access_variables V h = {||}) \<longleftrightarrow>
+      fBall (resolution_pending st) (\<lambda>g. resolution_goal_position g = q \<longrightarrow> resolution_goal_variables g = {||})"
+    unfolding pending using goals_at goal_position variables by auto
+  have n: "fBall (access_nodes_at V q) (\<lambda>n. finite_pattern_variables (resolution_node_call (access_node V n)) = {||}) \<longleftrightarrow>
+      fBall (resolution_nodes st) (\<lambda>nd. resolution_node_position nd = q \<longrightarrow>
+        finite_pattern_variables (resolution_node_call nd) = {||})"
+  proof
+    assume a: "fBall (access_nodes_at V q) (\<lambda>n. finite_pattern_variables (resolution_node_call (access_node V n)) = {||})"
+    show "fBall (resolution_nodes st) (\<lambda>nd. resolution_node_position nd = q \<longrightarrow>
+        finite_pattern_variables (resolution_node_call nd) = {||})"
+    proof (intro fBallI impI)
+      fix nd assume nd: "nd |\<in>| resolution_nodes st" and p: "resolution_node_position nd = q"
+      from nd obtain m where "m |\<in>| access_nodes_at V (resolution_node_position nd)" "access_node V m = nd"
+        using nodes by blast
+      then show "finite_pattern_variables (resolution_node_call nd) = {||}" using a p by auto
+    qed
+  next
+    assume a: "fBall (resolution_nodes st) (\<lambda>nd. resolution_node_position nd = q \<longrightarrow>
+        finite_pattern_variables (resolution_node_call nd) = {||})"
+    show "fBall (access_nodes_at V q) (\<lambda>n. finite_pattern_variables (resolution_node_call (access_node V n)) = {||})"
+    proof (intro fBallI)
+      fix m assume m: "m |\<in>| access_nodes_at V q"
+      have p: "resolution_node_position (access_node V m) = q" using node_at[OF m] by blast
+      have "access_node V m |\<in>| resolution_nodes st" using nodes m p by blast
+      then show "finite_pattern_variables (resolution_node_call (access_node V m)) = {||}" using a p by blast
+    qed
+  qed
+  show ?thesis using Some g n by (simp add: access_focus_ground_def finite_focus_ground_def)
+qed
+
+lemma determinate_key: "access_determinate_key q V = finite_determinate_key q st"
+proof -
+  let ?P = "\<lambda>g. take (length q) (resolution_goal_position g) = q \<and> resolution_goal_position g \<noteq> q \<and>
+    resolution_goal_variables g \<noteq> {||}"
+  let ?H = "ffilter (\<lambda>h. ?P (access_goal V h)) (access_goals V)"
+  have filt: "ffilter (\<lambda>h. take (length q) (access_goal_position V h) = q \<and> access_goal_position V h \<noteq> q \<and>
+      access_variables V h \<noteq> {||}) (access_goals V) = ?H"
+    by (rule ffilter_cong_on) (simp add: goal_position variables)
+  have img: "ffilter ?P (resolution_pending st) = fimage (access_goal V) ?H"
+    unfolding pending by (rule fimage_ffilter_value)
+  have inj: "inj_on (access_goal V) (fset ?H)"
+    by (rule inj_onI) (auto intro: goal_inj simp: ffilter.rep_eq)
+  show ?thesis unfolding access_determinate_key_def finite_determinate_key_def filt img
+    using inj by (simp add: fcard.rep_eq fimage.rep_eq card_image)
+qed
+
+end
+
+text \<open>The first join is congruent in its parts and its key on the joined set, and commutes with an image of it.\<close>
+
+lemma finite_first_outcome_cong:
+  assumes "\<And>Y x. Y \<in> set Ys \<Longrightarrow> x |\<in>| Y \<Longrightarrow> f x = g x"
+  shows "finite_first_outcome f Ys = finite_first_outcome g Ys"
+  using assms
+proof (induction Ys)
+  case Nil
+  then show ?case by simp
+next
+  case (Cons X Xs)
+  have i: "fimage f X = fimage g X" by (rule fset.map_cong0) (use Cons.prems in auto)
+  have "finite_first_outcome f Xs = finite_first_outcome g Xs" by (rule Cons.IH) (use Cons.prems in auto)
+  then show ?case using i by (simp add: Let_def)
+qed
+
+lemma finite_first_outcome_blocks_cong:
+  assumes key: "\<And>x. x |\<in>| X \<Longrightarrow> key x = key' x" and f: "\<And>x. x |\<in>| X \<Longrightarrow> f x = g x"
+  shows "finite_first_outcome f (finite_key_blocks key X) = finite_first_outcome g (finite_key_blocks key' X)"
+proof -
+  have i: "fimage key X = fimage key' X" by (rule fset.map_cong0) (simp add: key)
+  have "ffilter (\<lambda>x. key x = k) X = ffilter (\<lambda>x. key' x = k) X" for k by (rule ffilter_cong_on) (simp add: key)
+  then have "finite_key_blocks key X = finite_key_blocks key' X" unfolding finite_key_blocks_def i by simp
+  moreover have "finite_first_outcome f (finite_key_blocks key' X) = finite_first_outcome g (finite_key_blocks key' X)"
+    by (rule finite_first_outcome_cong) (blast intro: f finite_key_blocks_subset)
+  ultimately show ?thesis by simp
+qed
+
+lemma finite_outcome_union_image_found:
+  assumes "y |\<in>| resolution_found (finite_outcome_union (fimage f X))"
+  shows "\<exists>x. x |\<in>| X \<and> y |\<in>| resolution_found (f x)"
+  using assms by (auto simp: finite_outcome_union_def resolution_fset_simps)
+
+lemma finite_key_blocks_first_found:
+  assumes "y |\<in>| resolution_found (finite_first_outcome f (finite_key_blocks key X))"
+  shows "\<exists>x. x |\<in>| X \<and> y |\<in>| resolution_found (f x)"
+proof -
+  have "\<exists>Y x. Y \<in> set (finite_key_blocks key X) \<and> x |\<in>| Y \<and> y |\<in>| resolution_found (f x)"
+    using assms by (rule finite_first_outcome_found)
+  then show ?thesis using finite_key_blocks_subset by metis
+qed
+
+lemma finite_first_outcome_image:
+  "finite_first_outcome f (map (fimage h) Ys) = finite_first_outcome (\<lambda>y. f (h y)) Ys"
+  by (induction Ys) (simp_all add: Let_def fset.map_comp comp_def)
+
+lemma finite_search_join_image:
+  "finite_search_join F st key f (fimage h Y) = (if finite_focus_ground F st
+    then finite_first_outcome (\<lambda>y. f (h y)) (finite_key_blocks (\<lambda>y. key (h y)) Y)
+    else finite_outcome_union (fimage (\<lambda>y. f (h y)) Y))"
+proof -
+  have "finite_key_blocks key (fimage h Y) = map (fimage h) (finite_key_blocks (\<lambda>y. key (h y)) Y)"
+    unfolding finite_key_blocks_def by (simp add: fset.map_comp comp_def fimage_ffilter_value)
+  then show ?thesis by (simp add: finite_search_join_def finite_first_outcome_image fset.map_comp comp_def)
+qed
 
 section \<open>A formed committed representation searches as R5 does\<close>
 
@@ -540,7 +674,7 @@ proof -
           using rec[OF conjunct1[OF share[OF r0(1)]]] conjunct2[OF share[OF r0(1)]] r0(2) by simp
       qed
       show ?thesis
-        unfolding represented_committed_goal_outcome_def finite_committed_goal_outcome_def Let_def
+        unfolding represented_committed_goal_outcome_def finite_committed_goal_outcome_eq Let_def
         by (simp only: if_not_P[OF npu] if_not_P[OF npb] if_P[OF c] sost if_P[OF c'] if_not_P[OF unpruned(1)]
           if_not_P[OF unpruned(2)] if_P[OF True] sub kept)
     next
@@ -559,11 +693,33 @@ proof -
         unfolding gb S[symmetric] fset.map_comp comp_def by (rule fset.map_cong0) (simp add: rec SF)
       have e: "?S = {||} \<longleftrightarrow> finite_committed_successors K P F ?st ?g = {||}"
         using S fimage_is_fempty[of "rep_project R" ?S] by simp
+      let ?Bc = "if ?cm then B |\<union>| rep_node_positions R r else B"
+      let ?q = "resolution_goal_position ?g"
+      have kS: "access_determinate_key ?q (rep_access R s') = finite_determinate_key ?q (rep_project R s')"
+        if "s' |\<in>| ?S" for s'
+      proof -
+        interpret w: access_formed \<kappa> P "rep_access R s'" "rep_project R s'" by (rule access[OF SF[OF that]])
+        show ?thesis by (rule w.determinate_key)
+      qed
+      have fS: "recI F ?Bc s' = recA F (finite_goal_barring K F B ?st ?g) (rep_project R s')" if "s' |\<in>| ?S" for s'
+        using rec[OF SF[OF that]] gb by simp
+      have fb: "finite_first_outcome (recI F ?Bc) (finite_key_blocks (\<lambda>s'. access_determinate_key ?q (rep_access R s')) ?S) =
+          finite_first_outcome (\<lambda>y. recA F (finite_goal_barring K F B ?st ?g) (rep_project R y))
+            (finite_key_blocks (\<lambda>y. finite_determinate_key ?q (rep_project R y)) ?S)"
+        by (rule finite_first_outcome_blocks_cong) (simp_all add: kS fS)
+      have im: "fimage (recI F ?Bc) ?S = fimage (\<lambda>y. recA F (finite_goal_barring K F B ?st ?g) (rep_project R y)) ?S"
+        by (rule fset.map_cong0) (simp add: fS)
+      have jn: "(if access_focus_ground F ?V
+          then finite_first_outcome (recI F ?Bc) (finite_key_blocks (\<lambda>s'. access_determinate_key ?q (rep_access R s')) ?S)
+          else finite_outcome_union (fimage (recI F ?Bc) ?S)) =
+        finite_search_join F ?st (finite_determinate_key ?q) (recA F (finite_goal_barring K F B ?st ?g))
+          (finite_committed_successors K P F ?st ?g)"
+        unfolding S[symmetric] finite_search_join_image v.focus_ground fb im ..
       show ?thesis
-        unfolding represented_committed_goal_outcome_def finite_committed_goal_outcome_def Let_def
+        unfolding represented_committed_goal_outcome_def finite_committed_goal_outcome_eq Let_def
           if_not_P[OF npu] if_not_P[OF npb] if_not_P[OF nc] if_not_P[OF unpruned(1)] if_not_P[OF unpruned(2)]
           if_not_P[OF False]
-        using img e v.witnesses by simp
+        using jn e v.witnesses by simp
     qed
   qed
 qed
@@ -579,7 +735,7 @@ proof -
   let ?recA = "finite_committed_search_by (finite_resolution_select_at pr \<kappa> P) \<kappa> K P m"
   let ?st = "rep_project R r" let ?V = "rep_access R r"
   let ?so = "if fBex (access_goals ?V) (gd r) then Some ?st else None"
-  let ?rp = "\<lambda>h. gd r h \<and> pr (finite_focused F (the ?so)) (access_goal ?V h)"
+  let ?rp = "\<lambda>h. gd r h \<and> pr (the (map_option (finite_focused F) ?so)) (access_goal ?V h)"
   interpret v: access_formed \<kappa> P ?V ?st by (rule access[OF Fr])
   interpret vf: access_formed \<kappa> P "access_focused F ?V" "finite_focused F ?st" by (rule v.focused)
   have rp: "?rp h \<longleftrightarrow> pr (finite_focused F ?st) (access_goal (access_focused F ?V) h)"
@@ -677,7 +833,7 @@ lemma step_found:
 proof -
   let ?V = "rep_access R r"
   let ?so = "if fBex (access_goals ?V) (gd r) then Some (rep_project R r) else None"
-  let ?rp = "\<lambda>h. gd r h \<and> pr (finite_focused F (the ?so)) (access_goal ?V h)"
+  let ?rp = "\<lambda>h. gd r h \<and> pr (the (map_option (finite_focused F) ?so)) (access_goal ?V h)"
   have goal: "\<exists>r0. Fi r0 \<and> rep_project R r0 = y"
     if h: "h |\<in>| access_goals ?V" and y: "y |\<in>| resolution_found (represented_committed_goal_outcome R gd recI K F B r ?V ?so h)"
     for h y
@@ -704,12 +860,25 @@ proof -
     next
       case nc: False
       let ?cm = "gd r h \<and> finite_material_committed K F (the ?so) (access_goal ?V h)"
-      have "y |\<in>| resolution_found (finite_outcome_union (fimage (recI F (if ?cm then B |\<union>| rep_node_positions R r else B))
-          (represented_committed_successors R F ?cm r ?V h)))"
+      let ?f = "recI F (if ?cm then B |\<union>| rep_node_positions R r else B)"
+      let ?S = "represented_committed_successors R F ?cm r ?V h"
+      let ?k = "\<lambda>s'. access_determinate_key (resolution_goal_position (access_goal ?V h)) (rep_access R s')"
+      have yj: "y |\<in>| resolution_found (if access_focus_ground F ?V
+          then finite_first_outcome ?f (finite_key_blocks ?k ?S) else finite_outcome_union (fimage ?f ?S))"
         using y np nc by (auto simp: represented_committed_goal_outcome_def Let_def split: if_splits)
+      have "\<exists>s'. s' |\<in>| ?S \<and> y |\<in>| resolution_found (?f s')"
+      proof (cases "access_focus_ground F ?V")
+        case True
+        then have "y |\<in>| resolution_found (finite_first_outcome ?f (finite_key_blocks ?k ?S))" using yj by simp
+        then show ?thesis by (rule finite_key_blocks_first_found)
+      next
+        case False
+        then have "y |\<in>| resolution_found (finite_outcome_union (fimage ?f ?S))" using yj by simp
+        then show ?thesis by (rule finite_outcome_union_image_found)
+      qed
       then obtain s' where s': "s' |\<in>| represented_committed_successors R F ?cm r ?V h"
         and ys: "y |\<in>| resolution_found (recI F (if ?cm then B |\<union>| rep_node_positions R r else B) s')"
-        by (auto simp: finite_outcome_union_def)
+        by blast
       show ?thesis using recfound[OF committed_successors(2)[OF Fr h s'] ys] .
     qed
   qed

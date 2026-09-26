@@ -135,8 +135,7 @@ definition artifact_citation_correspondence :: "nat \<Rightarrow> nat \<Rightarr
 lemma bag_correspondence_lists:
   assumes "data_elements xs" "data_elements ys" "mset xs = mset ys"
   shows "given_correspondence 6 (data_list_term xs) (data_list_term ys)"
-  unfolding given_correspondence_def presentation_transport_def data_bag_value_presents_def
-  using assms by (simp; blast)
+  using assms by (simp add: given_correspondence_def data_bag_value_transport_lists)
 
 lemma bag_answers_correspond:
   assumes "(6,Pair_Term x y) \<in> positive_meaning bag_comparison_system"
@@ -274,13 +273,13 @@ proof -
     and f: "f = data_list_term (map Payload_Term F)" and E: "distinct E" "set E = headed_incidence (object_structure R) k"
     and B: "count_list B = (\<lambda>v. bag_count (object_data R) (k,v))"
     and F: "distinct F" "set F = {v. (k,v) \<in> functional_bindings (object_data R)}"
-    using local unfolding headed_material_presents_def by blast
+    using local by (rule headed_material_presentsE)
   obtain E' B' F' where e': "e' = data_list_term (map address_pair_data E')"
     and b': "b' = data_list_term (map Payload_Term B')" and f': "f' = data_list_term (map Payload_Term F')"
     and E': "distinct E'" "set E' = headed_incidence (object_structure R) k"
     and B': "count_list B' = (\<lambda>v. bag_count (object_data R) (k,v))"
     and F': "distinct F'" "set F' = {v. (k,v) \<in> functional_bindings (object_data R)}"
-    using local' unfolding headed_material_presents_def by blast
+    using local' by (rule headed_material_presentsE)
   have "mset E = mset E'" using E E' set_eq_iff_mset_eq_distinct by metis
   then have mE: "mset (map address_pair_data E) = mset (map address_pair_data E')" by simp
   have mB: "mset (map Payload_Term B) = mset (map Payload_Term B')"
@@ -533,7 +532,7 @@ lemma bag_lists:
   assumes "given_correspondence 6 y y'"
   obtains zs zs' where "y = data_list_term zs" "y' = data_list_term zs'" "mset zs = mset zs'"
     "data_elements zs" "data_elements zs'"
-  using assms by (auto simp: given_correspondence_def presentation_transport_def data_bag_value_presents_def)
+  using assms by (auto simp: given_correspondence_def data_bag_value_transport)
 
 lemma mapped_bag_list:
   assumes inj: "inj f" and c: "given_correspondence 6 (data_list_term (map f A)) t"

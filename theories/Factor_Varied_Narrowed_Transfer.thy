@@ -405,14 +405,14 @@ next
       evaluate_pattern h' (decode_finite_pattern xi) = evaluate_pattern v (decode_finite_pattern xi) \<and>
       evaluate_pattern h' (decode_finite_pattern yo) = y'"
   proof (intro exI conjI)
-    show "clause_true M' (decode_finite_schema T) (h2 \<circ> binder_inverse)" by (rule clause_true_back[OF eq h2(1)])
-    show "head_kept keep Vh T v (h2 \<circ> binder_inverse)" by (rule head_kept_along[OF h2(2) Vhf])
+    show "clause_true M' (decode_finite_schema T) (h2 \<circ> binder_inverse)" by (rule extension_carried(1)[OF eq h2(1,2) Vhf])
+    show "head_kept keep Vh T v (h2 \<circ> binder_inverse)" by (rule extension_carried(2)[OF eq h2(1,2) Vhf])
     show "\<forall>a\<in>schema_variables (decode_finite_schema T) - f ` C. (h2 \<circ> binder_inverse) a = v a"
       by (rule frame_along[OF h2(3)])
     show "evaluate_pattern (h2 \<circ> binder_inverse) (decode_finite_pattern xi) = evaluate_pattern v (decode_finite_pattern xi)"
-      using h2(4) by (simp add: xy evaluate_map_finite_pattern evaluate_back[OF xv])
+      using extension_carried(3)[OF eq h2(1,2) Vhf xv] h2(4) by (simp add: xy evaluate_map_finite_pattern[of v])
     show "evaluate_pattern (h2 \<circ> binder_inverse) (decode_finite_pattern yo) = y'"
-      using h2(5) by (simp add: xy evaluate_map_finite_pattern evaluate_back[OF yv])
+      using extension_carried(3)[OF eq h2(1,2) Vhf yv] h2(5) by (simp add: xy)
   qed
 next
   fix v N g
@@ -436,16 +436,16 @@ next
       (\<forall>a\<in>schema_variables (decode_finite_schema T) - f ` C. h' a = v a) \<and>
       (\<forall>a\<in>material_variables N. h' a = g a)"
   proof (intro exI conjI)
-    show "clause_true M' (decode_finite_schema T) (h2 \<circ> binder_inverse)" by (rule clause_true_back[OF eq h2(1)])
-    show "head_kept keep Vh T v (h2 \<circ> binder_inverse)" by (rule head_kept_along[OF h2(2) Vhf])
+    show "clause_true M' (decode_finite_schema T) (h2 \<circ> binder_inverse)" by (rule extension_carried(1)[OF eq h2(1,2) Vhf])
+    show "head_kept keep Vh T v (h2 \<circ> binder_inverse)" by (rule extension_carried(2)[OF eq h2(1,2) Vhf])
     show "\<forall>a\<in>schema_variables (decode_finite_schema T) - f ` C. (h2 \<circ> binder_inverse) a = v a"
       by (rule frame_along[OF h2(3)])
     show "\<forall>b\<in>material_variables N. (h2 \<circ> binder_inverse) b = g b"
     proof
       fix b assume "b \<in> material_variables N"
       then obtain a where a: "a \<in> material_variables N0" "b = f a" using N0(2) by (auto simp: renamed_material_variables)
-      have "(h2 \<circ> binder_inverse) b = ((h2 \<circ> binder_inverse) \<circ> f) a" using a(2) by simp
-      also have "\<dots> = h2 a" using inverse_agrees[of a h2] a(1) mv by blast
+      have "(h2 \<circ> binder_inverse) b = h2 a"
+        using extension_carried(4)[OF eq h2(1,2) Vhf subsetD[OF mv a(1)]] a(2) by simp
       also have "\<dots> = g b" using h2(4) a by simp
       finally show "(h2 \<circ> binder_inverse) b = g b" .
     qed

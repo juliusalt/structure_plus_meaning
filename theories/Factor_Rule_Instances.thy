@@ -145,6 +145,15 @@ abbreviation evaluate_material_satisfaction ::
       (evaluate_pattern f (material_atoms M)) (evaluate_pattern f (material_edges M))
       (evaluate_pattern f (material_counts M)) (evaluate_pattern f (material_functions M))"
 
+text \<open>A pattern renamed by a binder map is read as the pattern at the valuation composed with the map.\<close>
+
+lemma evaluate_rename_pattern: "evaluate_pattern v (rename_pattern f p) = evaluate_pattern (v \<circ> f) p"
+  by (induction p) simp_all
+
+lemma evaluate_rename_material:
+  "evaluate_material_satisfaction v (rename_material_pattern f M) \<longleftrightarrow> evaluate_material_satisfaction (v \<circ> f) M"
+  by (simp add: rename_material_pattern_def evaluate_rename_pattern)
+
 lemma evaluate_material_instance:
   assumes formed: "material_pattern_formed M"
     and assignment: "\<forall>a\<in>material_variables M. (a,f a)\<in>V"

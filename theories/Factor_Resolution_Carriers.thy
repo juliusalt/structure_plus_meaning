@@ -283,12 +283,6 @@ lemma view_match_pair_some:
     (\<exists>a b l1 l2. t = Pair_Term a b \<and> view_match p a = Some l1 \<and> view_match q b = Some l2 \<and> l = l1 @ l2)"
   by (cases t) (auto split: option.splits)
 
-lemma ex_list_length_Suc: "(\<exists>vs. length vs = Suc n \<and> P vs) \<longleftrightarrow> (\<exists>v vs. length vs = n \<and> P (v # vs))"
-  by (auto simp: length_Suc_conv)
-
-lemma ex_list_length_0: "(\<exists>vs. length vs = 0 \<and> P vs) \<longleftrightarrow> P []"
-  by auto
-
 lemmas view_values_simps = ex_list_length_Suc ex_list_length_0 numeral_eq_Suc
 
 lemma resolution_view_term_values:
@@ -1130,11 +1124,6 @@ theorem socket_framed_listed:
     and listed: "socket_listed M S s keep Vp Vh c0 cs d \<sigma>"
   shows "socket_framed M S s keep Vp Vh (carried_variables S s Vp cs)"
   by (rule socket_framed_carried[OF socket_carried_listed[OF answers formed producer listed]])
-
-text \<open>The rows of a finite relation at a key, read over its listed rows (the empty rows: @{thm [source] ffilter_empty_set}).\<close>
-
-lemma ffilter_finsert: "ffilter P (finsert a A) = (if P a then finsert a (ffilter P A) else ffilter P A)"
-  by transfer auto
 
 text \<open>
   A view named by a constant is read by the simplifier through its three parts, the constant kept, so that the facts

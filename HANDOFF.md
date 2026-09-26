@@ -54,32 +54,35 @@ into the briefs #522 and #523 corrected, or recorded superseded there.
 
 **The native evaluator's open line**, in chain order (what landed is under Delivered):
 - The declarations and their carrying (#585's addition; what landed is under Delivered): R6c's third part #681 (after
-  #601, #679 and #726, whose facts it consumes) and 48's #609 (after R5e, #607, #679, #726 and R5f1's production field)
-  → R6c's carrying #611 (also after B2b #747, B3b #751, #651 and #762) → rc's numbered forms #540 (after B2b and R5f2)
+  #601, #679 and #726, whose facts it consumes), 48's #609 having landed,
+  → R6c's carrying #611 (also after #651 and the fix #767) → rc's numbered forms #540 (after R5f2 and #767)
   and native form #661 (after V2b's (3) #738) → R7 #542 (the numbered course; #661 feeds its native part #707) and the
   request at the given #547 → #399. #725's correction (q126): 48's union is the narrowed sockets' production, a step of
-  R5's committed search, R3 and W4a untouched; R5f1 #734 and its fix #765 landed; R5f2 #736 (briefed by #727) before rc
-  #540 and V2b's (3) #738; #651 carries the narrowed record with R5f1's production field.
+  R5's committed search, R3 and W4a untouched; R5f1 #734 and its fix #765 landed; R5f2 #736 (briefed by #727), then its
+  fix #767 (q134: at a narrowed socket the test commits only where the production applies, the producing sub-search
+  barred at the produced state, #736's two premises discharged; a socket narrower than every answer declares a
+  production, a static premise #611 discharges at the given) before rc #540, V2b's (3) #738, F2c #701, #611 and #613;
+  #651 carries the narrowed record with R5f1's production field.
 - Correction (10) (#730's design from reviews 680 and 606, landed `746b3321`): the socket test at the socket's frame;
-  its builds, placed by plan-97 from #740's proposal: B1 #743, B3a #749, B3b #751 and B2a #745 landed; B2b #747 (forms,
-  transfer, controls; before rc
-  #540 and #611). B3b's liveness evaluation disagrees with the table on ten items and finds sockets dead in both
+  its builds, placed by plan-97 from #740's proposal — B1 #743, B2a #745, B2b #747, B3a #749 and B3b #751 — landed
+  (Delivered). B3b's liveness evaluation disagrees with the table on ten items and finds sockets dead in both
   readings: the design of correction (11) (plan-100) settles them before R7 #542. The fixes #731, #741, #732, #753 and
   #754 landed (Delivered); #754's review's follow-ups next-edits 285–287 given to #611, the `declarations_list` facts'
   move to #724. #733's builds (32's kept sockets, declared by no build before): #758 and the selection part #760 landed;
-  their carrying #762 before #611.
+  their carrying #762 landed.
 - The clause match (#642's addition, briefed by #643): M, V1, V2a and V3 (#653, #687, #655, #688, the control #657)
   landed (Delivered); V2b #651 and its (3) #738 remain — V2b's discharge takes `varied_narrowings_agree` and
   `production_values_carried` as premises (q133), #738 carrying them and #611 discharging them at the given's installed
   programs; #688's instances are consumed by R7's native part #707, #547
   and #399.
 - The resolver at the given's size (#683's addition to task 495's entry, from #644's attribution; briefed by #684,
-  placed by plan-90): F1, F3, F2a, F2a′ and F2b1 landed (Delivered); the waiting fix #757 (#742's figures; F2b1's
-  mirror of the default restated with it, review 700's 1; the `RBT.rbt :: equal` instance F2b1's code equation lacks,
-  q132) → F2b2 #755 (its class sets kept for the rule made
-  effective) → F2c #701 (R5's committed search over the shared state) → C #703 (a found derivation checked over its
-  graph; before #542, #547 and #399); #764's figures (F2b1 as landed) in F2b2's rewritten brief, which they decide
-  (plan-102); #757 also before R7 #542 and #613. Divided from R7 #542 (the numbered course) its
+  placed by plan-90): F1, F3, F2a, F2a′, F2b1 and the waiting fix #757 landed (Delivered); F2b2 divided at q135 (#768
+  writes it): (a) the shared state's foundation in #755 and (c) the kept fields and the listed union over F2b1's
+  indexed state side by side, (b) the shared search after both
+  → F2c #701 (R5's committed search over the shared state, also after the fix #767, whose corrected search it mirrors)
+  → C #703 (a found derivation checked over its
+  graph; before #542, #547 and #399); #764's figures (F2b1 as landed) decide (c)'s fields (plan-102).
+  Divided from R7 #542 (the numbered course) its
   native part #707 (after #542, #653, #688 and #661, before #399), from #399 its controls #709 (before #401, #403 and
   #553). Off the route: the lifting's consolidation #613, then #724 (review 677's follow-ups, words equal; after F3,
   R5e, C and #613, each of which changes `Factor_Resolution_Commitments` before it).
@@ -98,9 +101,9 @@ line, a row at a locus; the decomposition's schema and library; the digit layout
 **Word changes are serialized** (Decisions): none is queued. A word change's records are re-recorded after its landing
 by a task of their own (Open 100).
 
-**Shape.** No build waits on a review task. The route's longest chain runs the waiting fix #757 → F2b2 #755 → F2c #701 → C #703 →
-R7 #542 → #707 → #399 → #709 → the record #553 → #447 → #449 → #450; since B1 and B2a landed, B2b #747 → rc #540
-→ #542, R5f2 #736 → #540 and #609 → #611 → #542 have slack against it, the
+**Shape.** No build waits on a review task. The route's longest chain runs R5f2 #736 → its fix #767 → F2c #701 → C #703 →
+R7 #542 → #707 → #399 → #709 → the record #553 → #447 → #449 → #450, F2b2 (a) #755 → (b) → F2c as long; #767 → rc #540
+→ #542 and #609 → #611 → #542 have slack against it, the
 carryings more — past the
 limit through splices, so nothing is added after the route's tail until it shortens (the status line gives the depths).
 The approval build (Open 142) after #407 and #447 waits for it to shorten; the controls task #718 after C (depth 10)
@@ -109,8 +112,8 @@ was placed when #668 landed.
 **Order** (the queue holds it; the planner's choice, a residual until the native answer to the selection problem
 exists, Q2): the slots are one pool, each free slot going to the first task in the queue that can start and a review
 standing where its review task stands, so every review stands right after its build. By slack on the longest chain:
-the waiting fix #757, F2b2 #755, F2c #701 and C #703; B2b #747 and R5f2 #736; the design of
-correction (11) #766; #762, #609 and #681; V2b #651 and its (3) #738; rc #540 and #661; #611; R7 #542, its native part
+F2b2 #755 and its division #768, F2c #701 and C #703; R5f2 #736 and its fix #767; the design of
+correction (11) #766; #681; V2b #651 and its (3) #738; rc #540 and #661; #611; R7 #542, its native part
 #707, #399 and its controls #709, #547; the route in its chains'
 order (#551, #549, #553, #401, #403, #443, #447, #407, #445, #449); the controls #718 after C, and the lifting's
 consolidation #613, then #724 last.
@@ -479,6 +482,20 @@ follow-ups are in `PLANNING_LOG.md` and the earlier states (`HANDOFF-before-cond
   solved-node index; F4's None-cache), its projection R3's search; the selection and the search with their projection
   theorems, `indexed_goal_choice` and `indexed_waits` mirroring the default's classes; the code equation of
   `finite_resolution_search`, exercised by no code generation yet (review 700's 6, to #764).
+- **The waiting rule made effective** (#757, `49c35985`): F3's waiting rule applied before class (iii) and to nodes left
+  of the goal (classes (i) and (ii) still take a waiting ground call), F2b1's mirror of the default restated with it, the
+  positions through lexord, the `RBT.rbt :: equal` instance in `Factor_Indexed_Resolution` (next-edits 300, 304); 77/1
+  branches at 400 (4 cut, 79 refuted) and is unresolved by 1,000.
+- **The forms at framed declarations** (B2b #747, `4b631afa`): in `Factor_Resolution_Views` and
+  `Factor_Varied_Declarations` the committed forms at framed declarations and the frames' transfers (relocation with `g`
+  injective on `frame_sites`; agreement; the clause match, a frame carried only where its clause is the one the match
+  reaches, else tested at its default frame; unions); the controls in `Factor_Commitment_Controls`.
+- **32's kept-socket records at the given** (#762, `314eeed6`): #758's and #760's seven records in `given_declarations`,
+  their instances and installed sites; `Development_Socket_Liveness_Execution` extended with the seven sockets.
+- **48's union produced at its narrowed sockets** (#609, `2be3de4c`): `Factor_Union_Declarations` — 48's eight narrowed
+  sockets with the union's class and its production registered at 48.0's head variable (`union_narrowed`,
+  `union_produced`; the answers `union_registration_answers` from W2's `finite_family_collection_exact` and
+  `data_union_exact`), at the notions' systems; `union_registration_complete_sockets`' selection hypothesis left for #611.
 - **The shared patterns** (#683's F2): `Factor_Shared_Patterns` (F2a #697, `d19426d3`: patterns over the shared-term
   table, substitution and unification equal to R2's over the projection; ground leaves references, a ground pair a node
   until `share_node` makes it one); F2a′ #713 (`df24c463`: `share_collapse`, ground nodes collapsed into references
@@ -602,8 +619,9 @@ planner searches for a theory before briefing a task that edits it.
 
 ## Now
 
-- **The graph's width**: the declaration builds (#609, #651, #681, #762) and the design of correction (11) run beside
-  the route, which is (B2b; R5f2; #757 → F2b2 → F2c → C) → rc #540 and #611 → R7
+- **The graph's width**: the declaration builds (#651, #681), F2b2's (c) once #768 places it, and the design of
+  correction (11) run beside the route, which is (R5f2 → its fix #767; F2b2 (a) and (c) → (b) → F2c → C) → rc #540 and
+  #611 → R7
   #542 → #707 → #399. Nothing is invented to fill the gaps: the low-moves batch (next-edits 274, 276, 278, 281) moves
   statements out of theories B2a–B3b, #681 and #609 edit, so it waits until they have landed.
 - **Briefs written before their theories grew** may be refused at their start (#596 was; #607 was divided by #678):
@@ -611,7 +629,7 @@ planner searches for a theory before briefing a task that edits it.
   into (1) and (3), then (2) and (4)); #542 and #399 (84K and 70K of margin at proposal, before rc's, V3's and the fix's
   theories added to their relations); the samples build #551 (384K at proposal; a hand-back divides its corrected item
   (3), the planner's).
-- **What the next events ask**: #757's figures (77/1 by 1,000; the union's share if it branches); #766's builds; review 761's first verdict's follow-ups (but its first, next-edits 302) and
+- **What the next events ask**: #768's proposal (F2b2 divided); #736's result, then the fix #767; #766's builds; review 761's first verdict's follow-ups (but its first, next-edits 302) and
   review 608's first verdict's follow-ups 1–5, like review 602's, are held by no file (a review file keeps the last verdict
   only); the first one-session base's landing, after which probes start in about 3 s — not yet: the 754 batch's base
   still stands on the chain (25 theories over a parent), as #670's and #685's did (`PLANNING_LOG.md`, plan-92, plan-98).
@@ -673,7 +691,10 @@ planner searches for a theory before briefing a task that edits it.
   `export_code finite_resolution_search checking SML`; #738, #611 — q133's premises of V2b's discharge, #611
   discharging them at the given's installed programs; #724 — review 746's 1 (next-edits 301); #651, #652 — q133's
   answer; #755 — its brief rewritten from #764's figures; #757 — the union's share if 77/1 branches; #701 — the
-  outcome union listed (#764); #542 — #764's result.
+  outcome union listed (#764); #542 — #764's result. Plan-103: #736, #755 — q134's and q135's answers; #701 — q134,
+  q135 and review 757's 3; #540, #738, #613, #542 — q134; #611 — q134's static premise, review 748's 2, review 763's 3
+  and 4, review 610's 1 and 2; #767 — review 748's 3, review 610's 3; #766 — review 748's 1, 3 and 5, review 763's 2;
+  #681 — review 610's 2 (next-edits 307); #542 — review 610's 4.
 - **The harness's gaps met by this run's tasks** are owed to the owner and listed in `PLANNING_LOG.md` (2026-09-26,
   plan-86); new ones go there.
 - **Ledger entries that can leave** (the harness's `v2.py ledger`): Q7's and Q2's questions and answers, recorded in the

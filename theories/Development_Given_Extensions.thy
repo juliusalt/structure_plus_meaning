@@ -1,5 +1,5 @@
 theory Development_Given_Extensions
-  imports Development_Given_Installation Factor_Least_Witness_Registrations
+  imports Development_Given_Installation
 begin
 
 text \<open>
@@ -146,6 +146,14 @@ sublocale install: finite_mapped_native_extension given_environment finite_roote
     "snd given_readers_installed" "[]" given_readers_program given_readers_placement
   by (rule mapped_extension)
 
+text \<open>
+  The locale's predicate at the program, so that an interpretation reaches the locale's facts stated in theories not
+  below it (the placed course, \<open>Development_Rooted_Registrations\<close>) through their global forms.
+\<close>
+
+lemma readers_extension: "given_readers_extension Q"
+  by (rule given_readers_extension.intro[OF target agreement])
+
 lemma target_formed: "schema_system_formed (decode_finite_system Q)"
   using target by (simp only: finite_system_formed_correct)
 
@@ -291,51 +299,27 @@ proof -
     using image by blast
 qed
 
-section \<open>The placed course: a construction relocated to the placed program\<close>
+section \<open>The placed program\<close>
 
 text \<open>
   The program the installation places is the program renamed by the placement,
   @{term "finite_rename_system installed_placement Q"}; each definition means there what it means in the program, and
-  so what the installed package means at its placed site (@{thm [source] installed_meaning}). A construction complete
-  at the program is relocated by the placement (@{const finite_relocated_construction}) and is complete at the placed
-  program, every variable it registers naming a clause there: the mapped extension's relocation
-  (@{thm [source] install.relocated_construction_complete}, @{thm [source] install.relocated_registered_clause}),
-  stated once for every extension of the given's readers, and the exact forms at the relocated construction with its
-  formation carried from the construction's (@{thm [source] finite_relocated_construction_formed}). Each installation's
-  placed course is this one's instance.
+  so what the installed package means at its placed site (@{thm [source] installed_meaning}). A construction relocated
+  to it, the rest of the placed course, is stated with the registrations (\<open>Development_Rooted_Registrations\<close>), above
+  the resolver's line this theory stays below.
 \<close>
 
 lemma placed_meaning:
   assumes "d\<in>system_definitions (decode_finite_system Q)"
   shows "(installed_placement d,t)\<in>positive_meaning (decode_finite_system (finite_rename_system installed_placement Q))
     \<longleftrightarrow> (d,t)\<in>positive_meaning (decode_finite_system Q)"
-  unfolding finite_rename_system_correct by (rule renamed_meaning_at[OF target_formed installation(5) assms])
+  unfolding finite_rename_system_correct by (rule renamed_system_meaning_at[OF target_formed installation(5) assms])
 
 lemma placed_installed_meaning:
   assumes "d\<in>system_definitions (decode_finite_system Q)"
   shows "(installed_placement d,t)\<in>positive_meaning (decode_finite_system (finite_rename_system installed_placement Q))
     \<longleftrightarrow> (installed_placement d,t)\<in>positive_meaning installed_program"
   using placed_meaning[OF assms] installed_meaning[OF assms] by simp
-
-lemma relocated_complete:
-  assumes "finite_construction_complete \<kappa> Q"
-  shows "finite_construction_complete (finite_relocated_construction installed_placement Q \<kappa>)
-    (finite_rename_system installed_placement Q)"
-  unfolding installed_placement_def by (rule install.relocated_construction_complete[OF assms])
-
-lemma relocated_clause:
-  assumes "a |\<in>| witness_registered (finite_relocated_construction installed_placement Q \<kappa>) e T"
-  shows "\<exists>c. ((e,c),T) |\<in>| finite_system_clauses (finite_rename_system installed_placement Q)"
-  using assms unfolding installed_placement_def by (rule install.relocated_registered_clause)
-
-lemmas placed_resolution_refutation_exact =
-  finite_complete_resolution_refutation_exact[OF finite_relocated_construction_formed relocated_complete]
-
-lemmas placed_verdict_exact =
-  finite_complete_verdict_exact[OF finite_relocated_construction_formed relocated_complete]
-
-lemmas placed_demand_exact =
-  finite_complete_demand_exact[OF finite_relocated_construction_formed relocated_complete]
 
 end
 

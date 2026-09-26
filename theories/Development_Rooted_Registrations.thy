@@ -67,26 +67,24 @@ proof -
   have inclusion_step: "systems_agree_on artifact_inclusion_system environment_inclusion_system
       (system_definitions artifact_inclusion_system)"
     by (simp add: environment_inclusion_system_def systems_agree_on_added)
-  have to_guard: "systems_agree_on X guard_readers_system (system_definitions X)"
-    if "systems_agree_on X use_additions_system (system_definitions X)" for X :: "(nat,nat,nat,nat) schema_system"
-    by (rule whole_agreement_transitive[OF that additions_guard_agreement])
   have at: "d\<in>system_definitions guard_readers_system \<and>
       (((d,c),S)\<in>system_clauses guard_readers_system \<longleftrightarrow> ((d,c),S)\<in>system_clauses X)"
     if "systems_agree_on X guard_readers_system (system_definitions X)" "d\<in>system_definitions X"
     for X :: "(nat,nat,nat,nat) schema_system" and d c S
     using that whole_agreement_definitions[OF that(1)] unfolding systems_agree_on_def by blast
   have subset_guard: "systems_agree_on data_subset_system guard_readers_system (system_definitions data_subset_system)"
-    by (rule to_guard[OF whole_agreement_transitive[OF whole_agreement_transitive[OF row_values_subset_agreement
-      row_values_complete_data_agreement] complete_data_additions_agreement]])
+    by (rule whole_agreement_transitive[OF whole_agreement_transitive[OF whole_agreement_transitive[OF
+      row_values_subset_agreement row_values_complete_data_agreement] complete_data_additions_agreement]
+      additions_guard_agreement])
   have environment_guard: "systems_agree_on environment_inclusion_system guard_readers_system
-      (system_definitions environment_inclusion_system)" by (rule to_guard[OF given_reader_agreements(8)])
+      (system_definitions environment_inclusion_system)"
+    by (rule whole_agreement_transitive[OF given_reader_agreements(8) additions_guard_agreement])
   have artifact_guard: "systems_agree_on artifact_inclusion_system guard_readers_system
       (system_definitions artifact_inclusion_system)"
     by (rule whole_agreement_transitive[OF inclusion_step environment_guard])
   have lookup_guard: "systems_agree_on artifact_lookup_system guard_readers_system (system_definitions artifact_lookup_system)"
-    by (rule to_guard[OF whole_agreement_transitive[OF complete_data_lookup_agreement complete_data_additions_agreement]])
-  have edge_guard: "systems_agree_on definition_edge_reading_system guard_readers_system
-      (system_definitions definition_edge_reading_system)" by (rule to_guard[OF given_reader_agreements(6)])
+    by (rule whole_agreement_transitive[OF whole_agreement_transitive[OF complete_data_lookup_agreement
+      complete_data_additions_agreement] additions_guard_agreement])
   have c77: "((77,0),package_closure_admission_schema)\<in>system_clauses guard_readers_system"
     and g77: "77\<in>system_definitions guard_readers_system"
     using guard_closure_clause[of 0 package_closure_admission_schema] callee[of 77 0 package_closure_admission_schema]
@@ -116,7 +114,7 @@ proof -
     using at[OF lookup_guard, of 37 0 artifact_lookup_schema] at[OF lookup_guard, of 12 0 artifact_lookup_schema]
     by simp_all
   have g82: "82\<in>system_definitions guard_readers_system"
-    using at[OF edge_guard, of 82 0 package_closure_admission_schema] given_entry_members(6) by blast
+    using at[OF guard_edge_agreement, of 82 0 package_closure_admission_schema] given_entry_members(6) by blast
   have dep: "47\<in>schema_dependencies package_closure_admission_schema"
     "76\<in>schema_dependencies package_closure_admission_schema"
     "5\<in>schema_dependencies data_subset_cons_schema"

@@ -158,11 +158,7 @@ proof -
   have m12: "7 \<in> ?R" "11 \<in> ?R" using given_socket_reaches[OF sock(2) r(1)] call(3,4) by blast+
   have m7: "6 \<in> ?R" using given_socket_reaches[OF sock(3) m12(1)] call(5) by blast
   have m32: "21 \<in> ?R" "29 \<in> ?R" "31 \<in> ?R" using given_socket_reaches[OF sock(4) m79(1)] call(6,7,8) by blast+
-  have quotation: "systems_agree_on quotation_admission_system guard_readers_system
-      (system_definitions quotation_admission_system)"
-    by (rule whole_agreement_transitive[OF _ guard_binder_agreement])
-      (simp add: systems_agree_on_added binder_admission_system_def diagonal_rows_system_def
-        binding_admission_system_def row_keys_system_def)
+
   have m82: "65 \<in> ?R"
     by (rule given_rooted_clause_reaches[OF definition_edge_reading_system_formed guard_edge_agreement e(3), of definition_edge_reading_schema])
       (simp_all add: schema_dependencies_def rel_ran_image definition_edge_reading_schema_def)
@@ -185,7 +181,7 @@ proof -
         of instantiation_constant_schema])
       (auto simp: pattern_instantiation_clauses_def schema_dependencies_def rel_ran_image instantiation_constant_schema_def)
   have m50: "40 \<in> ?R" "45 \<in> ?R"
-    by (rule given_rooted_clause_reaches[OF quotation_admission_system_formed quotation m55, of quotation_target_schema];
+    by (rule given_rooted_clause_reaches[OF quotation_admission_system_formed guard_quotation_agreement m55, of quotation_target_schema];
       auto simp: quotation_admission_clauses_def schema_dependencies_def rel_ran_image quotation_target_schema_def)+
   have m42: "36 \<in> ?R"
     by (rule given_rooted_clause_reaches[OF citation_reading_system_formed guard_reading_agreement m57(2),

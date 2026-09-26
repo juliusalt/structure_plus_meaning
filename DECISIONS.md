@@ -17383,6 +17383,14 @@ relies on.
   [Corrected by task 615 (review 527's follow-up 5): `native_call_resolution` is R4's native form and takes no
   construction; the exact native form with the registrations is R5's `native_committed_resolution κ no_commitment`
   at the relocated construction (`relocated_construction_complete`, `native_registered_resolution_exact`).]
+  [Corrected by task 642 (review 638's follow-up 1): that form does not type. `finite_relocated_construction` moves
+  the definition coordinate alone, so the relocated construction is over the placed program
+  `finite_rename_system asked_placement finite_asked_program`, binders and sockets nat, where #635 states its finite
+  complete forms (`asked_placed_*_exact`); `native_committed_resolution` takes the installed package's finite
+  presentation, binders and sockets at local addresses, an alpha variant of the placed program. The native form is
+  R5's `native_committed_resolution` at that presentation, with the construction varied from the relocated one by the
+  clause match and the declarations relocated and varied likewise ("Registrations and declarations reach an installed
+  package by matching its clauses against the placed ones", below). The judgment's course is that native one.]
 - **#443, the first request**: 561 at the given, the support and the context — 80 at the given (77 registered), 122 at
   the context (through 80, 77), the two inclusions at the collected merge. Resolved: the request stands with its
   certificate; refuted: a conflict between the two environments, or a package that is not formed; unresolved otherwise.
@@ -17391,6 +17399,138 @@ relies on.
   the other refuted; a refutation at 77 is its registration's. An unresolved side is unavailable, never a row. S1's
   exact table holds: the resolver with complete registrations is exact.
 - **#401, #403, #445, #449** follow their predecessors, unchanged by this entry.
+
+### Registrations and declarations reach an installed package by matching its clauses against the placed ones
+
+[Added by task 642, a design, from q121 (implement-640, 2026-09-26, `.build/plans/plan-84/q121.md`) and review 638's
+follow-ups 1 and 2 (q118, #635, `.build/tasks/638/review.md`): the native forms take a construction and declarations
+over the installed package's own coordinates, while W4a's relocation and R5's transfer carry them along a renaming of
+definitions only, and the installed package is only an alpha variant of the placed program, so neither reaches it.
+#399's native course, #547's resolution at the installed entry 561, #605's carrying to the installed programs and rc
+#540's relocated native form all need them there. This section decides how they reach it, and the builds.]
+
+**What the statements show.**
+- The native forms (`native_committed_resolution κ K P R n`, and through it `native_registered_resolution_exact`) take
+  `P :: local_address option finite_native_system` and a construction and declarations over (local_address,
+  local_address, local_address option definition_site, local_address): binders, sockets and clause keys at local
+  addresses.
+- W4a's relocation (`finite_relocated_construction g P κ`) registers at `(g d, finite_rename_schema id id g S)`: it
+  moves the definition coordinate alone, so `relocated_construction_complete` gives completeness at the placed program
+  `goal = finite_rename_system placement Q`, binders and sockets nat. R5's `finite_committed_relocation_transfer`
+  compares a program with `finite_rename_system g P`; R5d's views extend that relocation to every declaration kind.
+- The installation states the installed package up to alpha variance only: `given_readers_extension.installation(7)`
+  (`first_request_installation(7)`, `asked_installation(7)`), `system_alpha_variant (rename_system installed_placement
+  (decode_finite_system Q)) installed_program` — per definition an interface renaming and a clause-family variant
+  (`schema_family_variant`), each clause renamed by binder and socket maps that exist (`schema_alpha_variant`) and are
+  not given. The compiler computes them (`finite_compile_schema`: T = `finite_rename_schema f h id S` with f =
+  `finite_binder_coordinates (finite_schema_variables S)` and h a rekeying of the template rows;
+  `finite_compile_definition`: clauses keyed by `family_ports` and renamed by `Cons 3`; `finite_install_code_rows_correct`
+  reads exactly the compiled clauses at the new definitions), but `finite_native_extension.correct` keeps only ∃T alpha
+  variant, and an installed package's old definitions — the given's readers at their installed sites, where 77 and 392
+  stand — read what the given's own installation compiled. `rooted_native_program_variant` has the same existential
+  form.
+- What reads a clause names it by its site and its schema compared as a value, never by its key: a registration
+  (`witness_registered κ d S`, this entry's rule) and a socket declaration (`declared_sockets`: site, schema, socket,
+  kept); producers and consumers name sites alone. `declarations_discharged M D corr` reads a meaning;
+  `finite_construction_complete κ P` reads P's clauses and, through `finite_value_complete`, the meaning at their
+  callees. Alpha variants have one meaning (`system_alpha_positive_meaning`), a clause and its renaming the same rule
+  instances (`schema_alpha_rule_instance`, `schema_instance_renaming`), and maps injective on a scope cancel there
+  (`rename_schema_cancels`).
+
+So what an installed package needs, at each clause a registration or a socket declaration names, is the binder and
+socket maps to its installed clause. No clause key map is needed, and nothing semantic needs carrying beyond the
+meaning equality alpha variance already gives.
+
+**The courses weighed.**
+- (a) Carried along the alpha variance, each named clause's maps found by matching the installed clause against the
+  placed one: reads the installed package as it stands, whatever compiled it; the match is a finite decision on two
+  clauses, exact against `schema_alpha_variant`, and its maps serve both inputs. Taken.
+- (b) The installation stating its compilation's renaming: stating it at an installed package exposes the compiled
+  readings through `finite_install_code_rows_correct`, `finite_native_extension.correct`, `finite_mapped_native_extension`
+  and `given_readers_extension`, and for the old definitions through the given's own installation, each clause's maps a
+  composition of the compiler's coordinates (binder coordinates, the forest's branch, `Cons 3`). It ties the resolver's
+  inputs to the compiled layout, which is to change ("The i-th position of compiled syntax is the library's digit code
+  of i"), and restates concretely what the installation's contract proves once existentially. Not taken.
+- (c) The native course resolved at the placed presentation, its meaning carried by the installed entry's contract: the
+  placed program is the numbered program under a renaming of definitions (review 638's follow-up 2), so that course
+  evaluates a presentation the loop does not hold — the posing's asked relation and the given are installed packages —
+  and whether it counts as the given's readers evaluated as installed would rest on the owner. Not taken as the route's
+  course; the numbered course's facts (#635's, #640's) stand as proved alternatives and cost references.
+- (d) Registrations and declarations written again at the installed clauses: every completeness and discharge proved
+  again at compiled schemas, a second statement of #528's, #635's and #640's discharges tied to the layout. Not taken.
+- (e) A registration or declaration naming its clause up to alpha variance: it changes W4a's construction and R5's
+  declarations (a schema compared as a value, this entry's rule) and still needs the variable maps. Not taken.
+
+**The decision: (a).** One clause match, stated once, read by both carryings:
+1. *The match (M).* `finite_schema_match S T` returns binder and socket maps (f, h), injective on S's scope, with T =
+   `finite_rename_schema f h id S`, exactly when the decoded schemas are alpha variants (`finite_schema_match_exact`).
+   Its search pairs call premises by callee and material premises by their fields, extending f and h injectively, and
+   backtracks, since premises of one callee may differ only in premise-only variables. It reads constructors, sites and
+   the identity of coordinates, as matching does. The clause facts both carryings use are stated once along a match:
+   the premises holding a variable, the clause's true instances (`clause_true`) and its rule instances correspond,
+   bindings carried by f and back by its inverse on the scope.
+2. *Constructions (V1).* `finite_varied_construction P N κ`: at a clause T of N and each clause S of P at the same site
+   that the match sends to T by (f, h), it registers the images under f of what κ registers at S; its value at f a is
+   κ's at S with the bindings carried back, produced over P; where several matched clauses give values, a value only
+   when they agree (the relocated construction's rule). It registers only at clauses of N, is formed, and is complete
+   at N wherever κ is complete at P and the two mean the same at the matched clauses' callees (`finite_value_complete`
+   along the match) — at alpha variants always. It composes after W4a's relocation: in `finite_mapped_native_extension`,
+   a construction complete at the numbered Q, relocated by the placement (`relocated_construction_complete`) and varied
+   to any finite program whose decoding the installed site reads (`native_package_at` at the installation's result), is
+   complete there; its exact forms are instances of `native_complete_resolution_exact` and the registered forms. The
+   relocation stays as it is: it carries along definitions, V1 along private coordinates.
+3. *Declarations (V2).* `declarations_varied P N D`: producers and consumers kept, sites not being renamed; each socket
+   declaration (d, S, s, kept) carried to every clause T of N at d the match sends S to, as (d, T, h s, kept);
+   discharged at N wherever D is discharged at P and the meanings agree (`socket_discharged` along the match, producers
+   and consumers by the meaning). It composes after R5d's relocation, with its views. The exchange and lift premises at
+   N are derived there — from the carried discharge through R5c″'s and R5c‴'s per-kind lemmas, from V1's completeness
+   through `finite_construction_complete_lifts` — not transferred. R5's transfer gains its variant,
+   `finite_committed_variant_transfer`: a program and its varied presentation give the same verdict where both give one.
+4. *The installed presentation (V3).* The native form resolves the finite program the native package reader returns at
+   the installed environment and site (`finite_native_package_readings`, exact to `native_package_at`; its decoding the
+   installed program by `native_package_unique`): the machinery's reading of the program it evaluates, which task 495's
+   entry keeps. It is stated once in `given_readers_extension`, for every extension of the given's readers (the asked
+   relation, the first request), and once for the given's own installation.
+5. *The route's course.* #399 judges at the installed guard's entry 526 read natively, #547 resolves 561 at the
+   request's installed entry, #447 samples the given's entries at the given's installed package: each with the
+   construction varied from the placed one and the declarations relocated and varied, under rc's native form at the
+   installed presentation. The numbered course (`committed_registered_resolution_exact` with `asked_entry_contract`)
+   stays a proved equal alternative; the placed course is the numbered one under a renaming of definitions, not a
+   course of its own.
+
+**The owner's answers to Q27 and Q28.** Kept. The resolver decides every entry of the installed package from its clauses
+as the environment holds them — the given's readers at their installed sites among them — and no counterpart or HOL
+function decides one; no clause is refined, restated, added or reordered, the match reading clauses and changing none.
+Every resolved call carries a certificate the finite proof checker accepts in the installed package's clauses. The least
+witnesses are produced beside the search, over the placed program (the relocated construction's queries resolved
+there), and the installed clauses check them: producing is not the checker's. The match and the carried registrations
+are read by the construction alone, the carried declarations by the search alone. The installation's alpha variance,
+proved once in Isabelle, is consumed as the verification that two native presentations agree, never in place of
+evaluating the installed one. Unresolved never refutes and never admits: a clause the match does not reach keeps no
+registration or commitment there and is searched plainly.
+
+**The builds**: rows M, V1, V2, V3 and R7b of this entry's table. R7 (#542) measures the numbered course alone; the
+native course is R7b's, measured once V3, #605's installed carrying and rc stand. The briefs' sentences they correct
+are in `.build/tasks/642/result.md`.
+
+**What the builds must respect**, beyond the entry's:
+- The match decides alpha variance exactly and returns maps injective on the scope; a registration or a socket
+  declaration reaches exactly the installed clauses it matches; no clause key is read or mapped; a verdict depends on
+  the clauses, the call, the registrations, the declarations and the bound, not on the installed coordinates.
+- W4a's relocation, R5's transfer and their statements are unchanged: V1 and V2 compose after them; the relocated
+  construction and declarations stay the placed presentations', where #635 and #640 state their finite forms.
+- The installed program is read, never written beside: the native form's program is the reader's output at the
+  installed site.
+- Nothing reads the bootstrap loop's datatypes, rows, loci or keys; sites are compared for equality; payloads inert; no
+  recorded word changes.
+
+**Open.**
+- The native course's added cost — the installed package read back once per evaluation, the match at the named
+  clauses — is R7b's to measure; past a held run it goes to the performance channel, and the numbered course meanwhile
+  is the planner's choice.
+- A clause a candidate adds has no placed clause to match: it stays unregistered, as this entry's Open records.
+
+[Recorded 2026-09-26 (task 642's decision; a design, no theory changes).]
 
 ### What it relies on
 
@@ -17414,12 +17554,20 @@ Task 376's test:
 | W2 | The least collection (`Factor_Least_Collections`): the resolver's all-answers of a query, complete when no branch is cut; the iteration of base and step queries with keys, identity and presentation; the justifications and their check; the contract for any program; a proposer's hand-in table consulted first | W1, R4 (#505) | about 220K |
 | W3 | The completeness facts (`Factor_Least_Witness_Facts`): at 77's clause, at the additions notion's clause for any list site, at 561's clause, the clause holds at some value of its variable exactly when it holds at the least, and the least is the collection its registration's queries give (82's, 5's and 12's exactness); stated over the given's readers' meanings | the named theories; independent of R1–R4 | about 180K |
 | W4 | The given's registrations (`Factor_Least_Witness_Registrations`) [Corrected by task 634: the four stand in `Factor_Reader_Witness_Registrations`, above the generic half]: the four, over the numbered given's readers, each proved complete by W3; the resolver with a construction whose registrations are complete exact (R4's lifting with the completeness) [Corrected by task 526: exact as R5's committed resolution at no commitment, its search barring at construction steps; R3's search sound only]; registrations relocated by an installation's placement; the controls in `Factor_Resolution_Controls` (77 at a two-definition package resolved, at a package with an unreadable callee refuted, 561 at compatible and at incompatible environments), one evaluation; REASONING_REUSE.md's row for producing a least witness beside the checker | W1, W2, W3, R4 | about 180K |
+| M | [Added by task 642.] The clause match (`Factor_Finite_Schema_Matching`, new; the name the builder's): `finite_schema_match`, exact against `schema_alpha_variant`, its maps injective with their inverses on the scope; the clause facts along a match (the premises holding a variable, `clause_true`, rule instances, bindings carried and carried back) | `Factor_Finite_Schema_Renaming`, `Factor_Alpha_Semantics`, `Factor_Schema_Renaming` | about 150K |
+| V1 | [Added by task 642.] Constructions carried by the match (a new theory above M and `Factor_Least_Witness_Registrations`, which it does not edit): `finite_varied_construction`, formed, registering only at clauses of N, complete at N from completeness at P and agreeing meanings; its exact forms; in `finite_mapped_native_extension`, relocation then variation complete at the finite program the installed site reads | M, W4a (#526), `Factor_System_Alpha`, `Factor_Executable_Packages` | about 180K |
+| V2 | [Added by task 642.] Declarations carried by the match: `declarations_varied` at R5d's views, discharged at N; `finite_committed_variant_transfer` | M, R5d's first part (#599) | about 120K |
+| V3 | [Added by task 642.] The native inputs at the installed packages, stated once in `given_readers_extension` and once for the given's installation: the installed package's finite presentation read natively; a construction complete at the numbered program, relocated and varied, complete there; the native exact form at the installed entry; instances at the asked relation (#635's construction, 526 at `asked_entry`), the first request (#640's, 561 at `first_request_entry`) and the given (#528's, relocated by `given_readers_placement`); one control in an execution theory: the match reaches the installed clauses at 77, 392, 525 and 561, the read-back timed | V1, #635, #640, #528 | about 150K |
+| R7b | [Added by task 642.] The native course measured: 526 at the installed guard read natively, with V3's construction and the declarations #605 carries — the read-back, the match, the resolution, held seconds and demanded calls — against R7's numbered course; a call past a held run to the performance channel | V3, #605, rc (#540), R7 (#542) | about 100K |
 
 W3 can start now. W1 goes with R3, as a correction of #503 or after it. W2 follows R4 and W1; W4 follows W1–W3 and R4.
 R5 and R6 (#507) are independent of W1–W4 and bound the cost of refusals at the presentation-free readers, 79's root
 lists among them, which a refused G3 or G4 would otherwise enumerate again; R7 measures the guard's calls through the
 construction, after W4. #399 and #443 then wait on R4 and W4, and on R6 for refusal controls at presentation-free
 readers; #447's entries reaching 77 wait on W4.
+[Added by task 642: M first; V1 after M; V2 after M and R5d's first part; V3 after V1, #635, #640 and #528; #605's
+installed part after V2 and V3; rc's native corollary after V1 and V2; R7b after V3, #605 and rc. #399, #547 and #447
+take the native course through V3, #605 and rc.]
 
 ### What the builds must respect
 

@@ -1,6 +1,6 @@
 {
- "base_receipt_sha256": "da80503317299ba8e3762f64514aa610f355f4bfaccae03259f399c287c48a36",
- "checked_content_sha256": "376bac6a629aa17622408ca08f2281e3fa0af53e43f0975acbf90bcdd5e2e391",
+ "base_receipt_sha256": "00f3de3e50f835ea155988e53e178808db5d096dc9c5f695267ff1f611e540e9",
+ "checked_content_sha256": "566bf0f51ed14322e2b5e030c331dbad4215bb4732ecdf66625183cebb905c17",
  "host_tests": {
   "kernel": {
    "exit_code": 0,
@@ -17,30 +17,45 @@
    "ran": 306,
    "skipped": 0,
    "tail": [
-    "{\"status\": \"failed\", \"error\": \"[Errno 2] No such file or directory: '/tmp/tmpzjrh28kc/no-project/theories/Development_Answer_a2d8d6490cc2.thy'\"}"
+    "{\"status\": \"failed\", \"error\": \"[Errno 2] No such file or directory: '/tmp/tmpzlsjg0dm/no-project/theories/Development_Answer_a2d8d6490cc2.thy'\"}"
    ]
   }
  },
  "phases": {
-  "base_and_impact": 0.34,
+  "base_and_impact": 0.35,
   "execution_impact": 0.0,
   "export": 0.0,
-  "proof": 70.1,
-  "recipe_impact": 0.42,
-  "recipes_and_host_tests": 11.45
+  "proof": 96.39,
+  "recipe_impact": 0.41,
+  "recipes_and_host_tests": 11.46
  },
  "rebuilt_theories": [
   "Development_Asked_Registrations",
   "Development_First_Request_Registrations",
+  "Development_Given_Declarations",
+  "Development_Given_Declarations_Execution",
   "Development_Given_Registrations",
   "Development_Installed_Presentations",
   "Development_Installed_Presentations_Execution",
   "Development_Rooted_Registrations",
+  "Factor_Artifact_Citation_Declarations",
   "Factor_Commitment_Controls",
+  "Factor_Construction_Holders",
+  "Factor_Instantiation_Declarations",
+  "Factor_Least_Collections",
   "Factor_Least_Witness_Registrations",
+  "Factor_Program_Resolution",
   "Factor_Reader_Witness_Registrations",
+  "Factor_Resolution_Acceptance",
+  "Factor_Resolution_Carriers",
+  "Factor_Resolution_Commitments",
+  "Factor_Resolution_Completeness",
   "Factor_Resolution_Controls",
+  "Factor_Resolution_Material_Discharge",
+  "Factor_Resolution_Producer_Discharge",
+  "Factor_Resolution_Socket_Discharges",
   "Factor_Resolution_Views",
+  "Factor_Root_Family_Declarations",
   "Factor_Varied_Constructions"
  ],
  "recipes": {
@@ -201,8 +216,8 @@
    "status": "unchanged"
   }
  },
- "reused_theories": 1923,
- "seconds": 94.16,
+ "reused_theories": 1908,
+ "seconds": 119.92,
  "source_checks": {
   "missing_theory_files": [],
   "proof_escape_matches": [],

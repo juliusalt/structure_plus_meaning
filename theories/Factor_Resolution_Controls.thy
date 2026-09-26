@@ -768,6 +768,60 @@ lemma given_registration_controls:
     merge_control_collected environment_reader_control_rooted registration_control_conflict = Some None"
   by eval
 
+text \<open>
+  The reuse control (F3 of the addition "The resolver at the given's size" to task 495's entry): site 1 calls site 0 at
+  one ground term at two sockets, and site 4 walks a list calling site 0 at each element, so both repeat one ground
+  subderivation (site 0 at [7] over site 2 at [8]). Each is resolved and refuted as R4 resolves and refutes it; the
+  found state holds each distinct node once — the second equal call closed by the first's derivation — while the
+  certificate is the unfolded derivation, counted by its nodes.
+\<close>
+
+definition reuse_control_program :: "(nat,nat,nat,nat) finite_schema_system" where
+  "reuse_control_program = \<lparr>finite_system_interfaces=
+      {|(0,Finite_Variable 0),(1,Finite_Variable 0),(2,Finite_Variable 0),(4,Finite_Variable 0)|},
+    finite_system_clauses={|
+      ((2,0),\<lparr>finite_schema_conclusion=Finite_Pattern_Payload [8], finite_schema_premises={||},
+        finite_schema_materials={||}\<rparr>),
+      ((0,0),\<lparr>finite_schema_conclusion=Finite_Pattern_Payload [7],
+        finite_schema_premises={|(0,(2,Finite_Pattern_Payload [8]))|}, finite_schema_materials={||}\<rparr>),
+      ((1,0),\<lparr>finite_schema_conclusion=Finite_Pattern_Payload [1],
+        finite_schema_premises={|(0,(0,Finite_Pattern_Payload [7])),(1,(0,Finite_Pattern_Payload [7]))|},
+        finite_schema_materials={||}\<rparr>),
+      ((4,0),\<lparr>finite_schema_conclusion=Finite_Pattern_Payload [], finite_schema_premises={||},
+        finite_schema_materials={||}\<rparr>),
+      ((4,1),\<lparr>finite_schema_conclusion=Finite_Pattern_Pair (Finite_Variable 0) (Finite_Variable 1),
+        finite_schema_premises={|(0,(0,Finite_Variable 0)),(1,(4,Finite_Variable 1))|},
+        finite_schema_materials={||}\<rparr>)|}\<rparr>"
+
+primrec control_proof_nodes :: "('a,'s,'c) finite_schema_proof \<Rightarrow> nat" where
+  "control_proof_nodes (Schema_Proof c V B) = Suc (sum snd (fset (fimage (map_prod id control_proof_nodes) B)))"
+
+definition reuse_control_found_nodes :: "nat \<Rightarrow> finite_factor_term \<Rightarrow> nat \<Rightarrow> nat fset" where
+  "reuse_control_found_nodes d t n = fimage (\<lambda>st. fcard (resolution_nodes st))
+    (resolution_found (finite_resolution_search no_witness_construction reuse_control_program n (finite_initial_state d t)))"
+
+definition reuse_control_certificate_nodes :: "nat \<Rightarrow> finite_factor_term \<Rightarrow> nat \<Rightarrow> nat fset" where
+  "reuse_control_certificate_nodes d t n = (case finite_program_resolution no_witness_construction reuse_control_program d t n of
+      Finite_Resolved C \<Rightarrow> fimage control_proof_nodes C | _ \<Rightarrow> {||})"
+
+abbreviation reuse_control_list :: "octets list \<Rightarrow> finite_factor_term" where
+  "reuse_control_list as \<equiv> foldr (\<lambda>a t. Finite_Pair (Finite_Payload a) t) as (Finite_Payload [])"
+
+lemma reuse_control:
+  "finite_resolution_verdict (finite_program_resolution no_witness_construction reuse_control_program 1
+      (Finite_Payload [1]) 20) = Some True \<and>
+    reuse_control_found_nodes 1 (Finite_Payload [1]) 20 = {|3|} \<and>
+    reuse_control_certificate_nodes 1 (Finite_Payload [1]) 20 = {|5|} \<and>
+    finite_resolution_verdict (finite_program_resolution no_witness_construction reuse_control_program 1
+      (Finite_Payload [2]) 20) = Some False \<and>
+    finite_resolution_verdict (finite_program_resolution no_witness_construction reuse_control_program 4
+      (reuse_control_list [[7],[7],[7]]) 40) = Some True \<and>
+    reuse_control_found_nodes 4 (reuse_control_list [[7],[7],[7]]) 40 = {|6|} \<and>
+    reuse_control_certificate_nodes 4 (reuse_control_list [[7],[7],[7]]) 40 = {|10|} \<and>
+    finite_resolution_verdict (finite_program_resolution no_witness_construction reuse_control_program 4
+      (reuse_control_list [[7],[9]]) 40) = Some False"
+  by eval
+
 corollary implemented_base_control_resolved:
   "native_call_evaluation implemented_base_control {|((None,[3]),Finite_Payload [])|}=(implemented_base_control_demand,None)"
   "((None,[3]),decode_finite_term (Finite_Payload [])) \<in> positive_meaning (decode_finite_system implemented_base_control)"

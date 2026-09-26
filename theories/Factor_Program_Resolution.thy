@@ -147,11 +147,114 @@ definition finite_material_successors ::
               (resolution_nodes st) (resolution_witnesses st))|})
       (finite_material_instance_pairs W M))) Ws))"
 
+text \<open>
+  A node is solved when no pending goal stands at or under its position (F3 of the addition "The resolver at the
+  given's size" to task 495's entry). A position stands left of another when the first socket at which they differ is
+  less in it, so neither is a prefix of the other. A ground call goal equal, in site and pattern, to the call of a solved
+  node standing left of it is closed by that node's derivation: its one successor removes the goal and substitutes
+  nothing, and no clause alternative is kept beside it. The target stands left of the goal, so a certificate's reuse
+  follows the order of positions and never returns to the node whose premise it closes; the waiting rule of the
+  selection solves the leftmost occurrence first.
+\<close>
+
+definition finite_solved_node :: "('a,'s,'d,'c) resolution_state \<Rightarrow> ('a,'s,'d,'c) resolution_node \<Rightarrow> bool" where
+  "finite_solved_node st nd \<longleftrightarrow> \<not> fBex (resolution_pending st) (\<lambda>g.
+    take (length (resolution_node_position nd)) (resolution_goal_position g) = resolution_node_position nd)"
+
+fun finite_position_left :: "'s::linorder list \<Rightarrow> 's list \<Rightarrow> bool" where
+  "finite_position_left (x#xs) (y#ys) = (x<y \<or> x=y \<and> finite_position_left xs ys)"
+| "finite_position_left xs ys = False"
+
+definition finite_reusable :: "('a,'s::linorder,'d,'c) resolution_state \<Rightarrow> ('a,'s,'d,'c) resolution_goal \<Rightarrow> bool" where
+  "finite_reusable st g = (case g of
+      Resolution_Call_Goal q r d p \<Rightarrow> finite_pattern_variables p={||} \<and> fBex (resolution_nodes st) (\<lambda>nd.
+        finite_position_left (resolution_node_position nd) q \<and> finite_solved_node st nd \<and>
+        resolution_node_site nd=d \<and> resolution_node_call nd=p)
+    | Resolution_Material_Goal q r M \<Rightarrow> False)"
+
+definition finite_goal_closed ::
+    "('a,'s,'d,'c) resolution_state \<Rightarrow> ('a,'s,'d,'c) resolution_goal \<Rightarrow> ('a,'s,'d,'c) resolution_state" where
+  "finite_goal_closed st g = Resolution_State (resolution_pending st |-| {|g|}) (resolution_nodes st) (resolution_witnesses st)"
+
 fun finite_goal_successors ::
-    "('a,'s,'d,'c) finite_schema_system \<Rightarrow> ('a,'s,'d,'c) resolution_state \<Rightarrow>
+    "('a,'s::linorder,'d,'c) finite_schema_system \<Rightarrow> ('a,'s,'d,'c) resolution_state \<Rightarrow>
       ('a,'s,'d,'c) resolution_goal \<Rightarrow> ('a,'s,'d,'c) resolution_state fset" where
-  "finite_goal_successors P st (Resolution_Call_Goal q r d p) = finite_call_successors P st q r d p"
+  "finite_goal_successors P st (Resolution_Call_Goal q r d p) = (if finite_reusable st (Resolution_Call_Goal q r d p)
+    then {|finite_goal_closed st (Resolution_Call_Goal q r d p)|} else finite_call_successors P st q r d p)"
 | "finite_goal_successors P st (Resolution_Material_Goal q r M) = finite_material_successors st q r M"
+
+lemma finite_reusable_successors:
+  "finite_reusable st g \<Longrightarrow> finite_goal_successors P st g = {|finite_goal_closed st g|}"
+  by (cases g) (simp_all add: finite_reusable_def)
+
+lemma finite_goal_successors_unreused:
+  "\<not> finite_reusable st g \<Longrightarrow> finite_goal_successors P st g = (case g of
+      Resolution_Call_Goal q r d p \<Rightarrow> finite_call_successors P st q r d p
+    | Resolution_Material_Goal q r M \<Rightarrow> finite_material_successors st q r M)"
+  by (cases g) simp_all
+
+subsection \<open>The order of positions\<close>
+
+text \<open>
+  Left of is irreflexive and transitive; a position left of a socket under q is left of q or under it; a position
+  under one left of another is left of it; neither of two positions one left of the other prefixes the other. The
+  order of positions is a strict total order, prefixes first.
+\<close>
+
+lemma finite_position_left_irrefl: "\<not> finite_position_left p p"
+  by (induction p) auto
+
+lemma finite_position_left_trans:
+  "finite_position_left p q \<Longrightarrow> finite_position_left q r \<Longrightarrow> finite_position_left p r"
+proof (induction p arbitrary: q r)
+  case Nil
+  then show ?case by simp
+next
+  case (Cons x xs)
+  obtain y ys where q: "q=y#ys" using Cons.prems(1) by (cases q) auto
+  obtain z zs where r: "r=z#zs" using Cons.prems(2) q by (cases r) auto
+  show ?case using Cons.prems Cons.IH[of ys zs] unfolding q r by auto
+qed
+
+lemma finite_position_left_socket:
+  "finite_position_left p (q@[s]) \<Longrightarrow> finite_position_left p q \<or> take (length q) p = q"
+proof (induction q arbitrary: p)
+  case Nil
+  then show ?case by simp
+next
+  case (Cons y ys)
+  obtain x xs where p: "p=x#xs" using Cons.prems by (cases p) auto
+  show ?case using Cons.prems Cons.IH[of xs] unfolding p by auto
+qed
+
+lemma finite_position_left_under:
+  "take (length t) x = t \<Longrightarrow> finite_position_left t z \<Longrightarrow> finite_position_left x z"
+proof (induction t arbitrary: x z)
+  case Nil
+  then show ?case by simp
+next
+  case (Cons a t)
+  obtain b x' where x: "x=b#x'" using Cons.prems(1) by (cases x) auto
+  obtain c z' where z: "z=c#z'" using Cons.prems(2) by (cases z) auto
+  show ?case using Cons.prems Cons.IH[of x' z'] unfolding x z by auto
+qed
+
+lemma finite_position_left_not_prefix:
+  "finite_position_left p q \<Longrightarrow> take (length p) q \<noteq> p"
+  "finite_position_left p q \<Longrightarrow> take (length q) p \<noteq> q"
+proof (induction p arbitrary: q)
+  case Nil
+  { case 1 then show ?case by simp }
+  { case 2 then show ?case by simp }
+next
+  case (Cons x xs)
+  { case 1
+    then obtain y ys where q: "q=y#ys" by (cases q) auto
+    show ?case using 1 Cons.IH(1)[of ys] unfolding q by auto }
+  { case 2
+    then obtain y ys where q: "q=y#ys" by (cases q) auto
+    show ?case using 2 Cons.IH(2)[of ys] unfolding q by auto }
+qed
 
 section \<open>The alternatives of a goal\<close>
 
@@ -233,23 +336,34 @@ proof -
   then show thesis by (rule that)
 qed
 
+text \<open>
+  The contract holds where the goal is not closed by reuse, which gives one successor whatever its alternatives.
+\<close>
+
 lemma finite_goal_alternatives_none:
-  "finite_goal_alternatives P g = 0 \<longleftrightarrow> finite_goal_successors P st g = {||}"
+  "\<not> finite_reusable st g \<Longrightarrow> finite_goal_alternatives P g = 0 \<longleftrightarrow> finite_goal_successors P st g = {||}"
   by (cases g) (simp_all add: finite_call_successors_alternatives finite_material_successors_alternatives)
 
 lemma finite_goal_alternatives_one:
   assumes "finite_goal_alternatives P g = 1"
   shows "\<exists>s. finite_goal_successors P st g = {|s|}"
+proof (cases "finite_reusable st g")
+  case True
+  then show ?thesis by (simp add: finite_reusable_successors)
+next
+  case False
+  then show ?thesis
 proof (cases g)
   case (Resolution_Call_Goal q r d p)
   have "fcard (finite_call_alternative_set P q d p) = 1" using assms Resolution_Call_Goal by simp
   then obtain a where "finite_call_alternative_set P q d p = {|a|}" by (rule fcard_one_singleton)
-  then show ?thesis by (simp add: Resolution_Call_Goal finite_call_successors_alternatives)
+  then show ?thesis using False by (simp add: Resolution_Call_Goal finite_call_successors_alternatives)
 next
   case (Resolution_Material_Goal q r M)
   have "fcard (finite_material_alternative_set M) = 1" using assms Resolution_Material_Goal by simp
   then obtain a where "finite_material_alternative_set M = {|a|}" by (rule fcard_one_singleton)
-  then show ?thesis by (simp add: Resolution_Material_Goal finite_material_successors_alternatives)
+  then show ?thesis using False by (simp add: Resolution_Material_Goal finite_material_successors_alternatives)
+qed
 qed
 
 section \<open>The witness construction\<close>
@@ -345,18 +459,54 @@ text \<open>
   A registered variable ready for its construction is constructed before any goal, and a goal holding a
   free registered variable is not selected. Among the other pending goals that are calls or material goals
   R1 can solve (the candidates), selection takes in order (F1 of the addition "The resolver at the given's
-  size" to task 495's entry): a goal with no alternative, which ends its branch at once; a goal a priority
-  names; a goal with one alternative; then R3's classes, reading a goal's groundness and where its variables
-  occur — a ground goal, a call goal whose free variables occur in no other pending goal, a material goal R1
-  can solve, a call goal with a ground part. Within the first nonempty class the goal at the least position
-  is taken: positions are socket paths, and the order of sockets orders which goal is worked first, never
-  which alternative is kept. R3's default is the selection at the empty priority.
+  size" to task 495's entry): a goal the search settles at once — with no alternative, pruned, or closed by reuse
+  (F3); a goal a priority names; a goal with one alternative; then R3's classes, reading a goal's groundness and
+  where its variables occur — a ground goal, a call goal whose free variables occur in no other pending goal, a
+  material goal R1 can solve, a call goal with a ground part — where a ground call equal to a pending goal at a lesser
+  position, or to the call of a node that is not its ancestor and whose subtree is not solved, waits while another
+  goal of these classes stands. Within the first nonempty class the goal at the least position is taken: positions
+  are socket paths, and the order of sockets orders which goal is worked first, never which alternative is kept.
+  R3's default is the selection at the empty priority.
 \<close>
 
 fun finite_position_less :: "'s::linorder list \<Rightarrow> 's list \<Rightarrow> bool" where
   "finite_position_less [] (y#ys) = True"
 | "finite_position_less (x#xs) (y#ys) = (x<y \<or> x=y \<and> finite_position_less xs ys)"
 | "finite_position_less xs ys = False"
+
+text \<open>The order of positions is a strict total order, prefixes first.\<close>
+
+lemma finite_position_less_irrefl: "\<not> finite_position_less p p"
+  by (induction p) auto
+
+lemma finite_position_less_trans:
+  "finite_position_less p q \<Longrightarrow> finite_position_less q r \<Longrightarrow> finite_position_less p r"
+proof (induction p arbitrary: q r)
+  case Nil
+  then obtain z zs where "r=z#zs" by (cases q; cases r) auto
+  then show ?case by simp
+next
+  case (Cons x xs)
+  obtain y ys where q: "q=y#ys" using Cons.prems(1) by (cases q) auto
+  obtain z zs where r: "r=z#zs" using Cons.prems(2) q by (cases r) auto
+  show ?case using Cons.prems Cons.IH[of ys zs] unfolding q r by auto
+qed
+
+lemma finite_position_less_total: "p\<noteq>q \<Longrightarrow> finite_position_less p q \<or> finite_position_less q p"
+proof (induction p arbitrary: q)
+  case Nil
+  then show ?case by (cases q) auto
+next
+  case (Cons x xs)
+  show ?case
+  proof (cases q)
+    case Nil
+    then show ?thesis by simp
+  next
+    case (Cons y ys)
+    show ?thesis using Cons.IH[of ys] Cons.prems unfolding Cons by (cases "x<y"; cases "y<x") auto
+  qed
+qed
 
 definition finite_first_goals ::
     "('a,'s::linorder,'d,'c) resolution_goal fset \<Rightarrow> ('a,'s,'d,'c) resolution_goal fset" where
@@ -401,14 +551,68 @@ definition finite_goal_selection ::
       c4 = ffilter finite_leaf_call_goal A in
     finite_first_goals (if c1\<noteq>{||} then c1 else if c2\<noteq>{||} then c2 else if c3\<noteq>{||} then c3 else c4))"
 
-fun finite_candidate_goal :: "('a,'s,'d,'c) resolution_goal \<Rightarrow> bool" where
-  "finite_candidate_goal (Resolution_Call_Goal q r d p) = True"
-| "finite_candidate_goal (Resolution_Material_Goal q r M) = (finite_material_resolution M \<noteq> Material_Waits)"
+fun resolution_is_call :: "('a,'s,'d,'c) resolution_goal \<Rightarrow> bool" where
+  "resolution_is_call (Resolution_Call_Goal q r d p) = True"
+| "resolution_is_call (Resolution_Material_Goal q r M) = False"
+
+definition finite_candidate_goal :: "('a,'s,'d,'c) resolution_goal \<Rightarrow> bool" where
+  "finite_candidate_goal g \<longleftrightarrow> resolution_is_call g \<or> finite_solvable_material_goal g"
+
+lemma finite_candidate_goal_simps [simp]:
+  "finite_candidate_goal (Resolution_Call_Goal q r d p)"
+  "finite_candidate_goal (Resolution_Material_Goal q' r' M) \<longleftrightarrow> finite_material_resolution M \<noteq> Material_Waits"
+  by (simp_all add: finite_candidate_goal_def)
 
 lemma finite_goal_selection_candidate:
   "g |\<in>| finite_goal_selection G A \<Longrightarrow> g |\<in>| A \<and> finite_candidate_goal g"
   unfolding finite_goal_selection_def Let_def finite_first_goals_def
   by (cases g) (auto simp: finite_independent_goal_def split: if_splits)
+
+text \<open>
+  A ground call goal equal to the call of an ancestor on its branch is pruned; the search ends its branch there.
+\<close>
+
+definition finite_pruned :: "('a,'s,'d,'c) resolution_state \<Rightarrow> ('a,'s,'d,'c) resolution_goal \<Rightarrow> bool" where
+  "finite_pruned st g = (case g of
+      Resolution_Call_Goal q r d p \<Rightarrow> finite_pattern_variables p={||} \<and> fBex (resolution_nodes st) (\<lambda>nd.
+        length (resolution_node_position nd)<length q \<and>
+        take (length (resolution_node_position nd)) q=resolution_node_position nd \<and>
+        resolution_node_site nd=d \<and> resolution_node_call nd=p)
+    | Resolution_Material_Goal q r M \<Rightarrow> False)"
+
+text \<open>
+  The waiting rule (F3): a ground call equal to a pending call at a lesser position, or to the call of a node that is
+  not its ancestor and whose subtree is not solved, waits, so that its equal occurrence is solved first and closes it.
+\<close>
+
+definition finite_goal_waits ::
+    "('a,'s::linorder,'d,'c) resolution_state \<Rightarrow> ('a,'s,'d,'c) resolution_goal \<Rightarrow> bool" where
+  "finite_goal_waits st g = (case g of
+      Resolution_Call_Goal q r d p \<Rightarrow> finite_pattern_variables p={||} \<and>
+        (fBex (resolution_pending st) (\<lambda>h. case h of
+            Resolution_Call_Goal q' r' d' p' \<Rightarrow> d'=d \<and> p'=p \<and> finite_position_less q' q
+          | Resolution_Material_Goal q' r' M \<Rightarrow> False) \<or>
+         fBex (resolution_nodes st) (\<lambda>nd. resolution_node_site nd=d \<and> resolution_node_call nd=p \<and>
+           take (length (resolution_node_position nd)) q \<noteq> resolution_node_position nd \<and> \<not> finite_solved_node st nd))
+    | Resolution_Material_Goal q r M \<Rightarrow> False)"
+
+definition finite_waiting_selection ::
+    "('a,'s::linorder,'d,'c) resolution_state \<Rightarrow> ('a,'s,'d,'c) resolution_goal fset \<Rightarrow>
+      ('a,'s,'d,'c) resolution_goal fset \<Rightarrow> ('a,'s,'d,'c) resolution_goal fset" where
+  "finite_waiting_selection st G A = (let W = finite_goal_selection G (ffilter (\<lambda>g. \<not> finite_goal_waits st g) A) in
+    if W \<noteq> {||} then W else finite_goal_selection G A)"
+
+lemma finite_waiting_selection_candidate:
+  "g |\<in>| finite_waiting_selection st G A \<Longrightarrow> g |\<in>| A \<and> finite_candidate_goal g"
+  using finite_goal_selection_candidate[of g G A]
+    finite_goal_selection_candidate[of g G "ffilter (\<lambda>g. \<not> finite_goal_waits st g) A"]
+  by (auto simp: finite_waiting_selection_def Let_def split: if_splits)
+
+text \<open>The waiting rule never empties the selection R3's classes make.\<close>
+
+lemma finite_waiting_selection_nonempty:
+  "finite_goal_selection G A \<noteq> {||} \<Longrightarrow> finite_waiting_selection st G A \<noteq> {||}"
+  by (simp add: finite_waiting_selection_def Let_def)
 
 text \<open>
   The choice among the unheld pending goals A of the pending goals G at a priority: the alternatives of each candidate
@@ -420,16 +624,17 @@ definition finite_goal_choice ::
       ('a,'s::linorder,'d,'c) finite_schema_system \<Rightarrow> ('a,'s,'d,'c) resolution_state \<Rightarrow>
       ('a,'s,'d,'c) resolution_goal fset \<Rightarrow> ('a,'s,'d,'c) resolution_goal fset \<Rightarrow> ('a,'s,'d,'c) resolution_goal fset" where
   "finite_goal_choice pr P st G A = (let C = ffilter finite_candidate_goal A;
-      K = fimage (\<lambda>g. (finite_goal_alternatives P g,g)) C; c0 = fimage snd (ffilter (\<lambda>z. fst z = 0) K) in
+      K = fimage (\<lambda>g. (finite_goal_alternatives P g,g)) C;
+      c0 = fimage snd (ffilter (\<lambda>z. fst z = 0 \<or> finite_pruned st (snd z) \<or> finite_reusable st (snd z)) K) in
     if c0 \<noteq> {||} then finite_first_goals c0
     else let cp = ffilter (pr st) C in if cp \<noteq> {||} then finite_first_goals cp
     else let c1 = fimage snd (ffilter (\<lambda>z. fst z = 1) K) in if c1 \<noteq> {||} then finite_first_goals c1
-    else finite_goal_selection G A)"
+    else finite_waiting_selection st G A)"
 
 lemma finite_goal_choice_candidate:
   "g |\<in>| finite_goal_choice pr P st G A \<Longrightarrow> g |\<in>| A \<and> finite_candidate_goal g"
   unfolding finite_goal_choice_def Let_def
-  using finite_goal_selection_candidate[of g G A]
+  using finite_waiting_selection_candidate[of g st G A]
   by (auto simp: finite_first_goals_def fimage.rep_eq ffilter.rep_eq split: if_splits)
 
 datatype ('a,'s,'d,'c) resolution_selection =
@@ -479,7 +684,8 @@ definition finite_plain_selection ::
 section \<open>The search\<close>
 
 text \<open>
-  A ground call goal equal to the call of an ancestor on its branch is pruned. A goal with no
+  A ground call goal equal to the call of an ancestor on its branch is pruned (@{const finite_pruned}), checked
+  before its successors, among which a ground call closed by reuse has one. A goal with no
   alternative ends its branch: a refutation of the branch, unless a construction supplied a value on
   it, when the branch is unresolved and its diagnosis names the values and the goal refuted at them.
   The bound cuts a branch whose goals are still pending; a branch whose pending goals none can be
@@ -518,17 +724,9 @@ definition finite_unconstructed ::
         (finite_free_registered \<kappa> nd)))
     (resolution_nodes st)))"
 
-definition finite_pruned :: "('a,'s,'d,'c) resolution_state \<Rightarrow> ('a,'s,'d,'c) resolution_goal \<Rightarrow> bool" where
-  "finite_pruned st g = (case g of
-      Resolution_Call_Goal q r d p \<Rightarrow> finite_pattern_variables p={||} \<and> fBex (resolution_nodes st) (\<lambda>nd.
-        length (resolution_node_position nd)<length q \<and>
-        take (length (resolution_node_position nd)) q=resolution_node_position nd \<and>
-        resolution_node_site nd=d \<and> resolution_node_call nd=p)
-    | Resolution_Material_Goal q r M \<Rightarrow> False)"
-
 definition finite_goal_outcome ::
     "(('a,'s,'d,'c) resolution_state \<Rightarrow> ('a,'s,'d,'c) resolution_outcome) \<Rightarrow>
-      ('a,'s,'d,'c) finite_schema_system \<Rightarrow> ('a,'s,'d,'c) resolution_state \<Rightarrow>
+      ('a,'s::linorder,'d,'c) finite_schema_system \<Rightarrow> ('a,'s,'d,'c) resolution_state \<Rightarrow>
       ('a,'s,'d,'c) resolution_goal \<Rightarrow> ('a,'s,'d,'c) resolution_outcome" where
   "finite_goal_outcome rec P st g = (if finite_pruned st g then Resolution_Outcome {||} {||} else
     let S = finite_goal_successors P st g in
@@ -537,7 +735,7 @@ definition finite_goal_outcome ::
     else finite_outcome_union (fimage rec S))"
 
 primrec finite_resolution_search_by ::
-    "(('a,'s,'d,'c) resolution_state \<Rightarrow> ('a,'s,'d,'c) resolution_selection) \<Rightarrow>
+    "(('a,'s::linorder,'d,'c) resolution_state \<Rightarrow> ('a,'s,'d,'c) resolution_selection) \<Rightarrow>
       ('a,'s,'d,'c) finite_witness_construction \<Rightarrow> ('a,'s,'d,'c) finite_schema_system \<Rightarrow> nat \<Rightarrow>
       ('a,'s,'d,'c) resolution_state \<Rightarrow> ('a,'s,'d,'c) resolution_outcome" where
   "finite_resolution_search_by sel \<kappa> P 0 st = (if resolution_pending st={||}
@@ -596,22 +794,95 @@ section \<open>The ground certificate and the result per call\<close>
 
 text \<open>
   A branch with no pending goal gives a certificate: at each node the clause key, the complete ground
-  bindings of the clause's own variables, residual variables at the empty payload, and the certificate
-  of the node at each premise socket's position.
+  bindings of the clause's own variables, residual variables at the empty payload, and at each premise socket
+  the certificate of the node at the socket's position or, where none stands (a ground call closed by reuse), of
+  the node at the least position left of the socket whose call is the premise's instance and whose site the
+  premise's: the certificate is the unfolded derivation, and its soundness the checker's.
 \<close>
 
 definition finite_node_values :: "('a,'s,'d,'c) resolution_node \<Rightarrow> ('a \<times> finite_factor_term) fset" where
   "finite_node_values nd = fimage (\<lambda>(a,p). (a,finite_residual_term p)) (resolution_node_bindings nd)"
 
+definition finite_premise_nodes ::
+    "('a,'s::linorder,'d,'c) resolution_node fset \<Rightarrow> ('a,'s,'d,'c) resolution_node \<Rightarrow> 's \<Rightarrow> 'd \<Rightarrow>
+      'a finite_term_pattern \<Rightarrow> ('a,'s,'d,'c) resolution_node fset" where
+  "finite_premise_nodes N nd s e p = (let q = resolution_node_position nd@[s];
+      F = ffilter (\<lambda>m. resolution_node_site m=e \<and>
+        finite_residual_term (resolution_node_call m) |\<in>| finite_pattern_instances (finite_node_values nd) p) N;
+      C = ffilter (\<lambda>m. resolution_node_position m=q) F in
+    if C \<noteq> {||} then C else finite_first_nodes (ffilter (\<lambda>m. finite_position_left (resolution_node_position m) q) F))"
+
 primrec finite_node_proof ::
-    "nat \<Rightarrow> ('a,'s,'d,'c) resolution_node fset \<Rightarrow> ('a,'s,'d,'c) resolution_node \<Rightarrow> ('a,'s,'c) finite_schema_proof" where
+    "nat \<Rightarrow> ('a,'s::linorder,'d,'c) resolution_node fset \<Rightarrow> ('a,'s,'d,'c) resolution_node \<Rightarrow> ('a,'s,'c) finite_schema_proof" where
   "finite_node_proof 0 N nd = Schema_Proof (resolution_node_clause nd) (finite_node_values nd) {||}"
 | "finite_node_proof (Suc k) N nd = Schema_Proof (resolution_node_clause nd) (finite_node_values nd)
-    (ffUnion (fimage (\<lambda>(s,e,p). fimage (\<lambda>m. (s,finite_node_proof k N m))
-        (ffilter (\<lambda>m. resolution_node_position m=resolution_node_position nd@[s]) N))
+    (ffUnion (fimage (\<lambda>(s,e,p). fimage (\<lambda>m. (s,finite_node_proof k N m)) (finite_premise_nodes N nd s e p))
       (finite_schema_premises (resolution_node_schema nd))))"
 
-definition finite_state_proofs :: "('a,'s,'d,'c) resolution_state \<Rightarrow> ('a,'s,'c) finite_schema_proof fset" where
+text \<open>
+  A nonempty set of nodes at distinct positions has one node at its least position.
+\<close>
+
+lemma finite_first_nodes_single:
+  assumes nonempty: "N \<noteq> {||}"
+    and distinct: "\<And>m m'. m |\<in>| N \<Longrightarrow> m' |\<in>| N \<Longrightarrow> resolution_node_position m=resolution_node_position m' \<Longrightarrow> m=m'"
+  shows "\<exists>m. finite_first_nodes N = {|m|}"
+proof -
+  have "\<forall>A. A |\<subseteq>| N \<longrightarrow> A \<noteq> {||} \<longrightarrow>
+      (\<exists>m. m |\<in>| A \<and> \<not> fBex A (\<lambda>m'. finite_position_less (resolution_node_position m') (resolution_node_position m)))"
+  proof (intro allI)
+    fix A show "A |\<subseteq>| N \<longrightarrow> A \<noteq> {||} \<longrightarrow>
+        (\<exists>m. m |\<in>| A \<and> \<not> fBex A (\<lambda>m'. finite_position_less (resolution_node_position m') (resolution_node_position m)))"
+    proof (induction A rule: fset_induct)
+      case empty
+      then show ?case by simp
+    next
+      case (insert x A)
+      show ?case
+      proof (intro impI)
+        assume sub: "finsert x A |\<subseteq>| N"
+        show "\<exists>m. m |\<in>| finsert x A \<and> \<not> fBex (finsert x A)
+            (\<lambda>m'. finite_position_less (resolution_node_position m') (resolution_node_position m))"
+        proof (cases "A={||}")
+          case True
+          then show ?thesis by (auto simp: finite_position_less_irrefl)
+        next
+          case False
+          then obtain m where m: "m |\<in>| A" and min: "\<not> fBex A (\<lambda>m'. finite_position_less
+              (resolution_node_position m') (resolution_node_position m))" using insert.IH sub by auto
+          show ?thesis
+          proof (cases "finite_position_less (resolution_node_position x) (resolution_node_position m)")
+            case True
+            have "\<not> finite_position_less (resolution_node_position y) (resolution_node_position x)" if "y |\<in>| A" for y
+              using min that finite_position_less_trans[OF _ True] by blast
+            then show ?thesis using finite_position_less_irrefl by auto
+          next
+            case False
+            then show ?thesis using m min by auto
+          qed
+        qed
+      qed
+    qed
+  qed
+  then obtain m where m: "m |\<in>| N"
+    and min: "\<not> fBex N (\<lambda>m'. finite_position_less (resolution_node_position m') (resolution_node_position m))"
+    using nonempty by blast
+  have "finite_first_nodes N = {|m|}"
+  proof (rule fset_eqI, rule iffI)
+    fix y assume y: "y |\<in>| finite_first_nodes N"
+    then have yN: "y |\<in>| N" and ymin: "\<not> finite_position_less (resolution_node_position m) (resolution_node_position y)"
+      using m by (auto simp: finite_first_nodes_def)
+    have "resolution_node_position y=resolution_node_position m"
+      using finite_position_less_total[of "resolution_node_position y" "resolution_node_position m"] min yN ymin by blast
+    then show "y |\<in>| {|m|}" using distinct[OF yN m] by simp
+  next
+    fix y assume "y |\<in>| {|m|}"
+    then show "y |\<in>| finite_first_nodes N" using m min by (simp add: finite_first_nodes_def)
+  qed
+  then show ?thesis by blast
+qed
+
+definition finite_state_proofs :: "('a,'s::linorder,'d,'c) resolution_state \<Rightarrow> ('a,'s,'c) finite_schema_proof fset" where
   "finite_state_proofs st = fimage (finite_node_proof (fcard (resolution_nodes st)) (resolution_nodes st))
     (ffilter (\<lambda>nd. resolution_node_position nd=[]) (resolution_nodes st))"
 

@@ -17041,7 +17041,8 @@ source) and the head's input (`head_kept` at either flag) — and a sibling hold
 - *#565's premise at those states*, per state and with its statement unchanged. The parent's instance under the support is
   true: its pending premises by the support; a closed call premise's ground instance by the subtree acceptance of the
   node at its position (`finite_node_proof_subtree_accepted`, sound by `schema_proof_sound`; after F3, of the solved node
-  it reuses); a closed material premise's by the parent's linkage (`resolution_node_linked`, a done material premise
+  it reuses) [Corrected (task 695): the acceptance is `finite_node_proof_solved_accepted`, over the solved nodes, and a
+  closed premise's truth `resolution_solved_node_true`]; a closed material premise's by the parent's linkage (`resolution_node_linked`, a done material premise
   satisfied) — so the obligation applies. Its new instance agrees with the old on the socket's inputs, so every closed
   sibling's instance, every premise-only variable among the inputs and every ground value they put into pending goals
   keep their values; the pending siblings are the new instance's premises (`finite_parent_exchange_holds`); the variables
@@ -17740,16 +17741,24 @@ inclusion quadratic, and #644's two-row depth shows its growth; deferring it wou
    it, `finite_committed_successors` through it, and `finite_committed_search_by_plain` stands. Pruning (an ancestor's
    equal call) is checked first, as now; in R5 the barred checks come first. No clause alternative is kept beside it.
 2. *The certificate.* `finite_node_proof` takes at a premise socket the node at the socket's position or, where none
-   stands, the solved node whose call is the premise's instance (the least position among them): the certificate is the
+   stands, the solved node whose call is the premise's instance (the least position among them) [Corrected (task 695,
+   q129): the least position among the solved nodes left of the socket (`finite_position_left`); the least position
+   among all solved nodes can cycle — a node at [0] reusing one at [2] whose premise reuses the first]: the certificate is the
    unfolded derivation, its soundness the checker's as now. `resolution_node_linked` gains a third disjunct: a premise's
    instance is the call of a solved node. The child-or-reuse relation stays acyclic — every node a solved node reaches is
    solved, and the node whose premise is closed is not, its goal pending under it — so the certificate's fuel, the number
-   of nodes, suffices.
+   of nodes, suffices. [Corrected (task 695, q129): acyclic because a reuse target stands left of the closed goal and a
+   child under it, so the child-or-reuse relation decreases in the position order; a solved node's reach through it holds
+   solved nodes only (`resolution_reach`, `finite_node_proof_solved_accepted`, which replaces the subtree acceptance).]
 3. *Exactness.* A support (`resolution_supported`, `_by`, `_at`) constrains each pending goal and node alone, so removing
    a goal keeps a support at any focus and barred set, and keeps the root value; R4's call lifting gains the case, and R5's
    lifting reads it through `resolution_goal_lifted_at`, `resolution_goal_step` and `resolution_registrations_goal_step`,
    their statements unchanged. No rank is read. With R5: a reuse target may be barred, soundness being the checker's; a
-   committed call's output holds a variable, so a commitment's answer node is never closed by reuse;
+   committed call's output holds a variable, so a commitment's answer node is never closed by reuse [Corrected (task 695,
+   q129 course (b)): a construction can ground a committed goal before its sub-search, and R5f1 grounds it by design, so
+   the focus is kept from reuse by construction: at the focus of a committed sub-search `finite_committed_successors` takes
+   the call's successors and never the reuse step, and the focus is solved in its own subtree as before F3; no committed
+   goal is cut for being reusable];
    `finite_children_instances` and `finite_siblings_pending` read pending goals, so a parent one of whose premises was
    closed by reuse does not commit, which is never a refutation; R5c′'s frame keeps its statements but the position-keeping
    one (`finite_committed_search_positions`), restated so that a pending call's position keeps a node, a pending call or

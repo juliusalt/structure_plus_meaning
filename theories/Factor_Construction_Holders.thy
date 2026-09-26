@@ -920,14 +920,39 @@ next
   show ?thesis using resolution_call_goal_no_node[OF I g m(1)] m(2) by simp
 qed
 
+text \<open>A ground call closed by reuse holds no variable: removing it keeps every registration.\<close>
+
+lemma resolution_registrations_close:
+  assumes H: "resolution_registrations_held \<kappa> st" and ground: "resolution_goal_variables g = {||}"
+  shows "resolution_registrations_held \<kappa> (finite_goal_closed st g)"
+proof -
+  let ?st = "finite_goal_closed st g"
+  have pend: "resolution_pending ?st = resolution_pending st |-| {|g|}"
+    and nodes: "resolution_nodes ?st = resolution_nodes st" by (simp_all add: finite_goal_closed_def)
+  have vars: "resolution_state_variables ?st = resolution_state_variables st"
+    unfolding resolution_state_variables_def pend nodes using ground by (auto simp: resolution_fset_simps)
+  have placed: "resolution_placed ?st z = resolution_placed st z" for z by (simp add: resolution_placed_def nodes)
+  have held: "resolution_variable_held ?st nd a" if "resolution_variable_held st nd a" for nd a
+    using that unfolding resolution_variable_held_def pend nodes by (auto simp: resolution_fset_simps)
+  show ?thesis using H held unfolding resolution_registrations_held_def vars placed nodes by blast
+qed
+
 theorem resolution_registrations_goal_step:
   assumes distinct: "resolution_positions_distinct st" and H: "resolution_registrations_held \<kappa> st"
     and g: "g |\<in>| resolution_pending st" and unheld: "\<not> finite_held \<kappa> st g"
     and st': "st' |\<in>| finite_goal_successors P st g"
   shows "resolution_registrations_held \<kappa> st'"
+proof (cases "finite_reusable st g")
+  case True
+  have "st' = finite_goal_closed st g" using st' by (simp add: finite_reusable_successors[OF True])
+  moreover have "resolution_goal_variables g = {||}" using True by (cases g) (simp_all add: finite_reusable_def)
+  ultimately show ?thesis using resolution_registrations_close[OF H] by simp
+next
+  case False
+  show ?thesis
 proof (cases g)
   case (Resolution_Call_Goal q r e p)
-  have s: "st' |\<in>| finite_call_successors P st q r e p" using st' Resolution_Call_Goal by simp
+  have s: "st' |\<in>| finite_call_successors P st q r e p" using st' Resolution_Call_Goal False by simp
   show ?thesis
     by (rule resolution_registrations_call_step[OF distinct H g[unfolded Resolution_Call_Goal]
       unheld[unfolded Resolution_Call_Goal] s])
@@ -937,6 +962,7 @@ next
   show ?thesis
     by (rule resolution_registrations_material_step[OF H g[unfolded Resolution_Material_Goal]
       unheld[unfolded Resolution_Material_Goal] s])
+qed
 qed
 
 text \<open>A variable's substitute stands inside the substituted pattern.\<close>

@@ -17198,6 +17198,24 @@ function's direction is discharged by its exact contract's preimage (51 from key
 are). A consumer is a carrier with no output (po the empty payload): R5's `consumer_discharged`, at a symmetric
 correspondence, is its instance. A carrier whose outputs no other goal holds (5's remainder, 42's interior at 44, 65's at
 69) consumes its input as far as its private outputs allow.
+
+[Corrected by task 722 (review 598, follow-ups 1 and 3): at the bag class a `presented_function_contract` relates an
+input to every presentation of its image, while 59 (in source order), 46, 53 and 63 give the one presentation that
+follows their input's order: they are function witnesses (`presented_function_witness`, its soundness and totality),
+not contracts. The carrier is discharged from the witness (`Factor_Resolution_Carriers.function_witness_carrier`), the
+contract form its instance through `presented_function_contract.witness` (`function_contract_carrier`, kept). 51 read
+from keys to rows ("the rows reordered as the keys are") changes its output with its input, so the preimage
+(`relation_contract_carrier_preimage`: one output at every corresponding input) does not discharge it: it is a witness
+along the keys — 51 forward a witness from rows to keys, every key list presenting a row bag's keys the keys of some
+presentation of the bag — discharged by `witness_along_carrier`; its instance at 51 is R6b's (#601).
+`carrier_discharged_mono` states a carrier at the correspondences an instance's classes give. `carrier_discharged` and
+`socket_discharged_carried` read no contract and stand as they are. The representation #597 built, which R6b and R6c
+instantiate: a socket's clause's carriers as a list in carrying order (`clause_carrier`: key, view, input and output
+correspondences; the carried variables derived, not supplied); each carrier's input correspondence a premise implied by
+the socket's and every earlier carrier's output correspondence, the rest of the valuation kept (`carrier_step`); the
+socket's and every carrier's output covered (`output_covered`, always at a variable output); the socket's producer
+discharged at its view's one hole with the correspondence that starts the chain; no material premise at the socket's
+key (`socket_carried`).]
 - *The search does not read carriers.* A carrier enters where a socket's clause-level obligation is discharged: at a
   clause and a socket, when the variables carried from the socket's output — through carriers' outputs — are held only by
   the socket, by carriers taking them in pi and giving fresh variables in po, each variable given once and in an acyclic

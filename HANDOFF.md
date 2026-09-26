@@ -139,6 +139,11 @@ Taken by the planning episodes, where they are not entries of `DECISIONS.md`.
   clause; the least witnesses are produced on the producing side (the evaluator's witness construction, a least
   fixpoint by iteration, or the proposer) and handed in with a certificate, checked by the given's clauses and the
   finite proof checker (#496's entry, "A checker does not produce").
+- **Q29–Q32** (answered 2026-09-26 09:40): the owner switched on the one-session base (`state/one-session-base`: every
+  check the harness runs may make its base one session over HOL by #624's trigger — half the library rebuilt, or the
+  chain's modeled start past 10 s) and the retirement of the chain it supersedes (`state/retire-superseded`, pruned
+  `SUPERSEDED_GRACE` after the re-rooting). The next check re-roots (the chain's modeled start was 39 s; a whole
+  one-session base took 934 s to build, #628); from then a probe starts in about 3 s.
 - **17:50, 18:12, 18:36**: the native notion of a problem is the loop's product, not a design's; #373's design (landed
   `93cae3bb`) was accepted and then withdrawn at the owner's question, its identity resting on HOL-assigned prefixes
   and keys. **A design is judged by what its identity rests on, not by what its contract avoids.** Every distinction a
@@ -225,10 +230,11 @@ a task):
   `probe.summary.json`. An edit to a base theory is probed from the tree, the unchanged theories between it and its
   changed dependents loaded as renamed copies; such a probe loads the copies first and does not finish within 60 s, so
   a brief asking for one names the theories it loads or accepts the repository's check for the combination (#398's
-  review). Above `Factor_Resolution_Commitments` a probe's start on the chain base is about 39 s (163 sessions, 15.7
-  GB; #666), so one theory fits the 60 s bound and a second stacked on it does not: a session develops in one theory
-  there, validates stacked combinations by the repository's check and takes a held probe only where the check cannot
-  replace it (Q29's addendum). A probe from a tree behind main whose base advanced is refused, naming
+  review). On a one-session base (on since the owner's answer to Q29–Q32) a probe starts in about 3 s; until the first
+  one lands, a probe on the chain base starts in about 39 s (163 sessions, 15.7 GB; #666), so above
+  `Factor_Resolution_Commitments` a second theory stacked on a first does not fit the 60 s bound and a session
+  validates such a combination by the repository's check. A probe from a tree behind main whose base advanced is
+  refused, naming
   what differs only because main advanced: `v2.py bring-main`, or `--base` at the heap the tree matches, or
   `--from-heap` for one theory; a changed theory's `export_code … checking` is blanked in the probe's copy and named
   skipped; a past base's own sources are read with `--base-sources`.
@@ -362,7 +368,7 @@ follow-ups are in `PLANNING_LOG.md` and the earlier states (`HANDOFF-before-cond
   `given_readers_extension`, `installed_construction` relocated and varied and complete there, `installed_entry_exact`
   the native exact form at the installed entry).
 - **The probe's start and the base** (Q29): a probe's start is the base's chain (#623, `.build/tasks/623/result.md`);
-  the one-session base landed inert (#624); the start estimated by the chain (#625); held at the library's scale, 3.33
+  the one-session base landed inert (#624) and switched on by the owner (Q29–Q32, 2026-09-26); the start estimated by the chain (#625); held at the library's scale, 3.33
   s against 37.68 s (#628); `Factor_Resolution_Commitments`' proof time (#629).
 - **The low moves** (#618): `map_relation_values`' and `socket_sum`'s laws in `Bootstrap_Relations`,
   `map_schema_patterns`, `requested_slots`' locality, the notions' elimination rules, `native_replay_closed_meaning`.
@@ -396,14 +402,7 @@ The owner's questions, a line each (their words and the provisional choices in f
 - **Q24** #376's four choices — provisional. **Q25** #381's split of the test — provisional. **Q26** #383's three
   choices — provisional (a use leaf in the term language the owner's to choose).
 - **Q27** answered 09:48, **Q28** answered 10:44 (Decisions; #495's and #496's entries).
-- **Q29** the proof base as one heap (#623) — provisional: #624's trigger (half the library rebuilt, or the chain's
-  modeled start past 10 s), landed inert behind `INCREMENTAL_CHECK_ONE_SESSION_BASE` (`fd17a213`); its addendum Q30
-  (`prune_bases` keeping the superseded levels, the switch at the landing check the harness's) and Q31 (#628, held: a
-  one-session base of the whole library built in 934 s, a probe starting in 3.33 s against the chain's 37.68 s, 2.45
-  against 14.36 GiB); the superseded heaps' retirement, `PROBE_GB` and the probe's cap the owner's. Further evidence:
-  reviews 622 and 632, follow-up 6 (probes above `Factor_Resolution_Commitments` past their 60 s bound), and #666's,
-  put to the owner by plan-90 as an addendum (a start of 39 s at 163 sessions and 15.7 GB; a second theory stacked
-  above Commitments times out; every build on the critical chain probes there).
+- **Q29–Q32** answered 2026-09-26 09:40 (Decisions): the proof base as one heap is on.
 
 **To plan, in the order expected** (numbers kept from earlier states):
 
@@ -510,7 +509,8 @@ planner searches for a theory before briefing a task that edits it.
   run side by side; beside the chain run the clause-match line (#645, #647, #653, #655) and #644. Nothing is invented to
   fill the gaps.
 - **What the next events ask**: #685's check (a changed recorded word would make it a word change, the planner's to
-  order); Q29's answer. V3's parts, #672, #674 (with #689), #601 and #613 grew or were divided against their relations:
+  order); the first one-session base's landing, after which probes start in about 3 s. V3's parts, #672, #674 (with
+  #689), #601 and #613 grew or were divided against their relations:
   a build refused at its start is divided then. The samples build #551 is the part of #544's division nearest its room
   (384K at proposal): a hand-back there divides corrected item (3), the planner's.
 - **Mailed, read by each task's first session** (open tasks only): #540 — q110, #506's 1 and 7, q105 (the barred

@@ -18544,6 +18544,209 @@ execution theories import the refinement theories of F2b, F2c and C.
 
 [Recorded 2026-09-26 (task 683's decision; a design, no theory changes).]
 
+### The given's calls are decided once: a table of certified calls every judgment closes, and the candidate's part each judgment derives
+
+[Added by task 831, a design, from investigation #829 (`.build/tasks/829/result.md`, its causes 2 and 5 and its two
+questions to the planner; figures in `.build/tasks/829/measurement.md`, §3) and #703's measurements
+(`.build/tasks/703/measurements.md`). Every call the route makes at the given carries the given's environment value,
+and the given's readers as installed admit it: 26 meets 11 at every artifact row, and 11's derivation at a row of k
+addresses is ≈ 4.54 k² + 75 k − 40 states (fitted exactly at k = 1, 5 and 18; site 8's atom lookup, a walk over the
+carrier rows, holds 87 % of them at 18 addresses), so ≈ 27.3 M states over the given's 261 rows (Σ k² = 5,546,709, the
+largest row 621 addresses), about 20,000 s at the least per-state cost measured (0.73 ms, #829's copy at 18 addresses;
+1.7 ms R5's own as compiled), whatever the search's per-state cost; 113's lookups walk the candidate's rows at every
+given row (#703: 113 over `sa_env` not returned at 20 rows, before K1); and the registered construction returns no 77
+bound at 77/1 within 400, W2's queries being resolved by R4's plain resolution at the same bound and cut. R7 #542, the
+request at the given #547, #707 and #399 resolve at the given; this section decides their course before they run, and
+task 496's entry, "77's least bound at the given and at a candidate", the least bound's. It changes no theory.]
+
+**What a judgment at a candidate meets that the given decides.** The guard's call at a pair (g, c) — the given's site
+value and a candidate's, whose environment includes the given's (G1) — calls the given's readers at arguments of two
+kinds. Some are built from the given's value alone. A candidate presented canonically (`finite_site_presented`, as
+`development_given_value` presents the given) presents each given artifact as the given's value does, an artifact's
+presentation being a function of the artifact, so its judgment meets those calls verbatim: *the given's part*. The
+others carry the candidate's value: *the candidate's part*. At the given as its own candidate (R7's (g, g)) every call
+is the given's. With R = 261 artifact rows and B ≈ 886 bindings (#485's least package environment of the given; GT5
+reads the given's own count), a candidate adding m rows and b bindings:
+
+| Call | Where the guard meets it | Part | States (figures and estimates) |
+|---|---|---|---|
+| 11 at an artifact's data | 26 at each row; 12's two calls in 37's clause | the given's at its 261 artifact presentations; the candidate's at added rows | 4.54 k² + 75 k − 40 at k addresses (#829): 27.3 M over the given's rows, 1.8 M at the largest |
+| 7 and 12 at an artifact with itself | 37 at each looked-up row (12 committed at 37.0/2, its input produced, I2) | the given's at its rows; the candidate's at added rows | 7's four bag checks at 13.6 states an entry (correction (14)'s remainder): ≈ 0.8 M over the given's rows |
+| 26 at an environment value | 113's first two sockets; 37's socket 0 at every lookup; 77's first premise | the given's at its value; the candidate's at c's | both tables traversed, their key uniqueness ((R² + B²)/2 key comparisons, each a data inequality of a few states), every binding's source, slot and target walked: ≈ 1–3 M at the given's size |
+| 156 at a site value | 392's and 525's first two premises | the given's at g; the candidate's at c | 26 at its environment, its use and address |
+| 83 at (g, d), with 79 at g and 82 at the given's environment beneath it (80, 77 at the given's package where they are read) | the additions notion's member check at each of c's members that is a given definition | the given's, at its 252 definitions | the given's package read from its roots, ≈ 20–30 states an address (#644): ≈ 0.6–0.9 M |
+| 113's lookups of the given's rows in c's environment, and its binding inclusion | 113 at (g's, c's) beyond its first sockets | the candidate's (the given's at (g, g)) | R walks of (R + m)/2 rows and as many past each row (37 at a non-ground focus, correction (14)'s remainder (3)): ≈ 0.07 M; B selections of (B + b)/2 bindings and as many past: ≈ 0.8 M |
+| 79, 47, 76 at c's package (77's bound at c) | 80 at c; the additions notion's bound (392, 525) | the candidate's | 76 reads every reached definition again in c's environment: ≤ 0.6–0.9 M at a reach of the whole given, and the added definitions |
+| 20 at an added member's use; 505 at an added definition | 393; 525's audit | the candidate's | R comparisons a member; the audit linear in the definition |
+
+**The decision: the given's part is decided once, a table of certified calls, and every judgment's search closes a
+goal equal to one of them.**
+1. *The table.* A finite map from ground calls — a site and a term — to certificates in the checked program. The
+   resolver's step closes a pending ground call goal equal to an entry: one successor, the goal removed, nothing
+   substituted, no clause alternative kept — F3's step with the entry in place of a solved node, the course #683's
+   addition named for F5 ("a table entry closing a goal as a solved node does — designed when measured"; #829 measured
+   it). Being one successor and no alternative, no join explores the entry's derivation again — a union at None or
+   below a focus whose call holds a variable (37 before 12's production), a first join below a ground focus — and F1
+   takes such a goal among those the search settles at once (its (i)). The focus of a committed sub-search is not closed
+   by an entry, as it is not by reuse (F3's course (b)), so an exchange still reads its answer node; its premises are.
+   The step and the search take the table as a parameter, today's step, search and forms their instances at the empty
+   table, every statement of R3, R4 and R5 kept by name and statement, as F1's priority was added.
+2. *The certificate.* A premise the table closed is discharged in the found state's derivation graph to an assertion
+   node, its claim the entry's call; C's graph reading reads it into the assumption boundary
+   (`Factor_Executable_Readings.finite_graph_reading`, `finite_graph_reading_conditional_sound`;
+   `Factor_Derivation_Graphs.schema_graph_conditional_sound`). A table is *valid* when each entry's certificate reads,
+   over its graph, with its assumptions among the calls of the entries before it — a table produced bottom-up — so every
+   entry's call is true by induction, and a judgment's root is true when its graph reads with its assumptions among a
+   valid table's calls. The unfolded certificate, each assertion replaced by its entry's certificate, is a closed
+   derivation the finite proof checker accepts in the checked program: its check is made in two times, the table's part
+   once and the judgment's part at every judgment.
+3. *Exactness.* A refutation is exact at every table: closing a goal removes it, and a support constrains each pending
+   goal alone, so a support is kept (R4's lifting gains the case as it gained F3's; R5's relation, frame, placement,
+   position and lifting lemmas gain it as they gained K1's join), and a refutation never rests on the table. A
+   resolution is sound at a valid table. A verdict does not depend on which valid table is chosen, as E1's answer does
+   not depend on its base (`implemented_base_evaluation_base_independent`); only which calls stay unresolved at a bound
+   does. The table is a cost choice.
+4. *A judgment's own entries, in two phases.* A judgment first resolves the candidate's calls that several of its
+   searches meet — 26 at the candidate's environment value, and what the registrations' queries meet at the candidate's
+   value — each as a root at the given's table, and adds them with their graphs (assumptions among the given's
+   entries); then it resolves the guard's call at that table. W2's queries (task 496's entry, "77's least bound …") then
+   close 26 at the candidate as any socket does: the repetition across queries F5 named, served with no flow of solved
+   calls out of a query's search. Which roots come first is the producer's schedule; the verdict is the same.
+5. *At another presentation of the given's readers.* The given's table is produced at the numbered readers
+   (`finite_rooted_given_readers`). At a numbered program agreeing with them on its calls' sites and their callee
+   closure — the asked program, the first request's program (`Development_Given_Extensions.rooted_intersection_agreement`)
+   — every entry's certificate reads the same clauses: the table is valid there as it stands. At an installed
+   presentation (#642's native course: the asked relation's and the first request's installations) the table's calls
+   are relocated by the installation's placement — the site mapped, the term unchanged — and each is true by the
+   installation's meaning correspondence (V3's `installed_presentation_exact`, `given_entry_meaning_at`,
+   `Factor_System_Relocation.renamed_system_positive_meaning`, `Factor_System_Alpha.system_alpha_positive_meaning`),
+   which is what conditional soundness asks; the unfolded certificate in the installed clauses is the entries'
+   certificates carried along the placement and the clause match, accepted node by node (`schema_alpha_rule_instance`,
+   `rename_schema_cancels`), built only where a consumer asks for it. No second production and no second check. This
+   rests an installed judgment's fixed part on the numbered certificates through a proved correspondence, which #642's
+   course (c) left to the owner for a whole judgment; confined to the fixed part it is the planner's (Questions of
+   `.build/tasks/831/result.md`).
+
+**Weighed and not taken.**
+- *E1's base* (`Factor_Implemented_Base_Evaluation`: `implemented_base_evaluation_exact`, `native_base_evaluation_exact`):
+  a base decides every call at its definitions and the bottom-up evaluator answers the rest; above a base at 11, 7, 12,
+  26 and 83, 37, 77, 113's lookups and the additions notion hold premise-only variables, at which the bottom-up
+  evaluator answers nothing (Q27's fact, task 460's attribution). E1 keeps what "What of the counterpart line stays"
+  gives it: R7's composition at 526 above its four sockets.
+- *The given's calls as ground clauses added to the searched program* (`Factor_Finite_Ground_Source`): each is a clause
+  alternative beside the reader's own clause, so every union — at None, below a focus whose call holds a variable —
+  explores the derivation again; and the program searched is not the given's readers.
+- *A proposer's hand-in of each judgment's whole certificate* (`finite_checks_schema_proof_exact`): checked whole at
+  every judgment, the given's 27.3 M nodes again each time.
+- *The table in the witness construction's record*: a construction gives a premise-only variable a value, a table
+  closes a goal; one record for both conflates them.
+- *A construction of 11's derivation handed in* (its certificate built from the artifact rather than searched): a
+  producer specific to one reader beside the generic resolver; it saves the search's per-state overhead and not the
+  check, which costs about as much a node (below). Should the search's cost at the largest rows make the production
+  unaffordable while the check's does not, it is the planner's to place, its certificates then entries like any.
+- *A flow of solved ground calls out of one W2 query's search into the next* (F5 as #683 left it): the two phases give
+  the same reuse without changing the construction's result.
+
+**The given's table, produced once.**
+- Bottom-up, each call its own root at K2's check forms at the table produced so far, at the moded selection with the
+  given's modes, declarations and registrations (as R7 #542's brief names them): 11 at the given's rows by ascending
+  size (the fit tested at the smallest first, #829's Remains); 7 and 12 at each row with itself; 26 at the given's
+  environment value (with the calls at its lists' suffixes) and 156 at its site value; 79, 82 and 83 at the given's
+  package (80 and 77 where 83 reads them); the four sockets and 526 at (g, g). A root's state is its own call's
+  derivation: 11's, 7's and 12's hold one artifact's data, never the given's environment, which only the
+  environment-level roots carry.
+- 11's, 7's and 12's roots are independent: they run through Isabelle's parallel list map with its exact map equation
+  (`Parallel_Assessment_Execution`), the wall time the largest row's or the total over the cores, memory permitting.
+- 77's bound at the given is handed in (task 496's entry, "77's least bound …"); the given's package is formed, so the
+  call resolves.
+- Each certificate is checked once over its graph (C) with its assumptions among the entries before it; C's linking of
+  nodes goes through an index (GT4): #703 found `finite_premise_nodes` filtering every node at each premise, quadratic —
+  0.63 s of the check's 1.01 s at 549 nodes — which at the 1.8 M nodes of 11 at the largest row is about 3×10¹²
+  comparisons.
+- The cost once, states times the per-step cost of the producer named. c_art is the cost of a state holding one
+  artifact's derivation — 0.73 ms in #829's copy at 18 addresses, 1.7 ms in R5's own as compiled, rising with the row;
+  c_env that of a state holding the given's (or a candidate's) environment value — 0.21–0.65 s a step in the shared
+  search at 113 over the given's pair today (#829's run sC), which #830 attributes; c_check that of a node of C's graph
+  check — about 0.7 ms at #703's 10 rows, the linking excluded.
+
+| Part | States | Producer | Once |
+|---|---|---|---|
+| 11 at the 261 rows | 27.3 M (1.8 M at the largest) | K2's check form over the shared committed search, c_art | 20,000–46,000 s of CPU; the largest row 1,300–3,100 s |
+| their checks over the graph | ≈ 27.3 M nodes | C with the linking indexed, c_check | ≈ 19,000 s of CPU |
+| 7 and 12 at the rows with themselves | ≈ 0.8 M | c_art, and their checks | ≈ 600–1,400 s, and about as much checked |
+| 26 and 156 at the given's value | ≈ 1–3 M | c_env | 0.2–2 M s today; 1,000–3,000 s at a millisecond a step |
+| 79, 82, 83 (80, 77) at the given's package | ≈ 0.6–0.9 M | c_env | as above, in proportion |
+| the four sockets and 526 at (g, g) | ≈ 1–1.5 M | c_env | as above, in proportion |
+
+  In all ≈ 31–34 M states, 11's 27.3 M of them: half a day to a day of CPU at the small-state costs measured, and weeks
+  at today's c_env for the environment-level roots. Beyond any held run and any repository check; the run's placement
+  is the planner's.
+- *Retention.* The table's calls are a function of the given's value (GT5 states them) and its certificates are
+  reproduced by the production. Retained: the calls' order, each entry's node count and graph digest, and the validity
+  check's outcome with the base and the resolver it ran on — the boundary that reproduces the table, not its 31–34 M
+  nodes (problems.txt, condition 3). A judgment computes the calls from the given and consumes the outcome: the route's
+  admission contract (#399) is conditional on the table's validity, discharged by that retained check.
+
+**The candidate's part, every judgment.** A judgment at a candidate adding m rows of k₁ … k_m addresses and b bindings
+derives, with the given's table: 11, 7 and 12 at the added rows (Σ 4.54 kᵢ² + 75 kᵢ − 40, ≈ 63 k states at 110
+addresses, the given's mean row); 26 at the candidate's environment (((R + m)² + (B + b)²)/2 key comparisons, ≈ 0.43 M
+at m = b = 0, each a data inequality of a few states, and the bindings' walks); 113's lookups and binding inclusion
+(≈ 0.07 M and ≈ 0.8 M); 76 at the candidate's bound in its environment (≤ 0.6–0.9 M, and the added definitions); 20 and
+505 at the added members. Of the order of 2–5 M states a judgment besides the added rows' 11s, every one at c_env: about
+an hour at a millisecond a step, weeks at today's 0.21–0.65 s. The check form's bound counts the selection's states, so
+a judgment's bound is of the order of 10⁷ (the production's of the order of 2×10⁶ at the largest 11 and 5×10⁶ at 26 at
+the given); a judgment past its bound is unresolved, never refuted. A candidate presented otherwise than canonically is
+judged the same, at the cost of the given's calls at its own presentations (27.3 M states and more): a cost of the
+presentation, never of the verdict. Where a candidate's lists keep a suffix of the given's (sorted by the same key, the
+added entries before it), the calls at those suffixes are the given's and the table holds them: a saving of the
+presentation, not counted above. Whether a judgment of this size is one the route can take depends on c_env: the
+planner's, with #830's figures.
+
+**What is the owner's.** This course changes no given reader and not the asked relation. Three courses that would cut
+the parts further change one or the other — Q28's reading, the given's readers as installed, and the owner's relation —
+and are brought to the planner with their costs, not decided here:
+- 8's lookup an index (10's and 8's clauses changed): 11 at a row linear, the fit's linear part, ≈ 2.15 M states over
+  the given's rows instead of 27.3 M, once (12.7× less), and the added rows' linear at every judgment.
+- 26's key uniqueness over a sorted presentation (the keyed-list readers changed): a judgment's ≈ 0.43 M key
+  comparisons at the given's size to R + B + m + b.
+- The asked relation reading a candidate as the given's value and its additions: the candidate's part linear in the
+  additions, every environment-level call at the given's value the given's.
+
+**What the builds must respect.**
+- The given's readers exactly as installed; the table is read by the resolver's step and C's graph reading alone, never
+  by a checker's clause; the finite proof checker and the graph reading are the checks, the table's validity their
+  outcome.
+- The closing is one successor, keeps no clause alternative and never closes a committed sub-search's focus; every
+  statement of R3, R4, R5, K2 and F2a–F2d kept by name and statement at the empty table; values change only where an
+  entry closes a goal.
+- Refutation exact at every table, resolution sound at a valid one; unresolved never refutes and never admits; a verdict
+  independent of the table.
+- No judgment consumes an entry the retained validity check did not accept; the table's calls computed from the given,
+  never supplied beside it.
+- Nothing reads the bootstrap loop's datatypes, rows, loci or keys; sites compared for equality; payloads inert but
+  where R1 reads addresses; no recorded word changes.
+
+**What it relies on** (task 376's test): the closing compares a ground goal with an entry's call for equality of the
+site and the shared term, as F3's reuse compares a solved node's; the table's calls are read from the given's value
+through its presentation, a function of the environment; the assumption boundary is the graph reading's own; a
+relocation reads the placement's site map.
+
+**The builds**: rows GT1–GT6 and W5 of the table below. What the route's builds then resolve and measure:
+- *R7 #542* (the numbered course): after GT6, the guard's calls at (g, g) at the given's table, and a control candidate
+  — the given with one added definition, canonically presented, in two phases — each call's outcome, states and held
+  seconds, the per-judgment part against this section's estimate; E1's composition at 526 above its four sockets as
+  briefed; GT6's production figures beside.
+- *#547*: 561 at the given at the table relocated to the first request's installation — 80 at the given the table's, 77
+  at the context handed in, the merge collected at R4's plain resolution (task 496's entry), the first phase at the
+  context's and the merge's environment values; outcome, states and seconds.
+- *#707*: 526 at (g, g) in the native course at the relocated table, against #542.
+- *#399*: its judgment in two phases at the given's table relocated to the asked relation's installation; its evidence
+  the judgment's graph with its assumptions among the table's calls and GT6's retained outcome; an admission through
+  77's hand-in; a refusal by socket through the check forms, at 80, 392 and 525 through W5's complete construction; its
+  admission contract conditional on the table's validity.
+
+Recorded 2026-09-27 (task 831's decision; a design, no theory changes).
+
 ### What of the counterpart line stays
 
 | Piece | Standing | Role and reason |
@@ -18589,6 +18792,13 @@ execution theories import the refinement theories of F2b, F2c and C.
 | K1 | [Added by task 794, correction (14).] The first join below a ground focus (`Factor_Resolution_Commitments`; `Factor_Shared_Commitments` if F2c #701 has landed): `finite_focus_ground F st` (F = Some q, the goal or node at q holding no variable under the state), `finite_determinate_key q s` (the goals of s under q, not at q, holding a variable), `finite_first_outcome` (the first block whose outcome finds, else every block's diagnoses) and `finite_search_join` (at a ground focus the first join over blocks by a key, else `finite_outcome_union`); `finite_committed_goal_outcome` reading it at a goal's successors (the determinate key) and at a committed goal's kept continuations (one block); the join laws (`finite_search_join_found`: a found state of a join is one of a part's; `_union` off a ground focus; `_lifted`: a part's keeping outcome carried to the join, a found state at the focus supported with every node barred); the join case of `finite_committed_search_relation`, `_frame`, `_placed` (stated at U), `_positions`, `_found`, `finite_committed_search_registered_unbound`, `finite_committed_kept_nonempty` and `finite_committed_lifting_by`, statements kept; `finite_committed_search_by_plain` kept; every proof that unfolds the committed step given the join laws; the committed controls evaluated again, a changed value reported with R4's beside; with F2c landed, the join in its shared committed search and its projection [Built by task 821, names as the row's, and beside them: `finite_key_blocks`; `finite_committed_goal_outcome_eq` and `_found` (the join case the lemmas read); the lifting's premise bundle gains the ground-founds conjunct at the first join below a ground focus (`finite_ground_founds_by`, q147: a found state of a block before the lifting's part is supported only through the relation's placement and the invariant's ground root, which the generic lifting does not hold), discharged where the bundle is built (`finite_committed_ground_founds_at`, stated beside `finite_committed_lifting_premises_at`, which moved below `finite_committed_search_by_placed` with its section, statements unchanged), every statement kept; R5f1's unfolding lemmas `finite_committed_goal_outcome_unproduced`, `finite_committed_search_by_unproduced` and `finite_committed_search_unproduced` read the join at a goal's successors; over the representation the ground test and the key are read through the access (`access_focus_ground`, `access_determinate_key`); O1's count is one traversal (`committed_counted_search`)] | none unlanded (the lander rule with O2 #802 and F2c #701) | about 180K (230K with F2c's representation) |
 | K2 | [Added by task 794, correction (14).] The check forms (`Factor_Resolution_Checks`, new, above `Factor_Committed_Registrations`, `Factor_Narrowed_Productions` and `Factor_Input_Productions`; `ROOT`, `THEORY_MAP.md`): the committed forms at a selection parameter started at the root's own focus — `finite_check_resolution_by`, `finite_check_verdict_by`, `finite_check_demand_by`, `native_check_resolution_by` (`finite_committed_search_by sel κ K P n (Some []) {||} (finite_initial_state d t)`), exact from the committed forms' premises through the lifting at Some []; `finite_check_root_focus` (Some [] focuses every goal: `finite_focus_pending (Some []) st = resolution_pending st`); the check instances of the forms R7 #542 and #547 call — rc's numbered and native forms at a priority (O3), R5f2's narrowed forms, the framed forms, I2's input-production forms — each from its form's premises; the control in `Factor_Check_Controls` (new, imported by no theory; one evaluation compiled once): 7 at an artifact of 27 and 23 entries with itself and with its fields reversed, states at the check form and the committed form, a pair with one entry changed refuted as by R4, R4's value beside | K1; O3 and I2 #813 for their instances | about 120K |
 | K3 | [Added by task 794, correction (14).] The given at the check forms (`Development_Given_Checks_Execution`, new, imported by no theory): 77/1, 77/2 and 113/7 at the check forms with O4's modes, I3a's production and RD1's target, against the committed forms at the same records — outcomes, states, dead ends at 5, the next cost named; 77 at one of the given's own definitions as far as the probe's bound reaches | K2, I3a #815, RD1 #808, O4 | about 60K |
+| GT1 | [Added by task 831.] The table in R3's step (`Factor_Program_Resolution`), R3b (`Factor_Resolution_Acceptance`) and R4 (`Factor_Resolution_Completeness`): a table of ground calls with certificates (a finite map from a site and a term to a certificate; the builder's names); the closing in `finite_goal_successors` — one successor, the goal removed, no alternative, after pruning and F3's reuse — and F1's settled-at-once class; the step, the search and the forms at a table, today's their instances at the empty table, statements kept by name and statement; the certificate at a closed premise the entry's (`finite_node_proof`'s case), acceptance at a valid table; R4's lifting's case, refutation exact at every table, resolution sound at a valid one; R3's and R4's controls evaluated again, and a control: a ground call closed by an entry, R4's value beside | none unlanded (the lander rule with #793 and #724) | about 250K |
+| GT2 | [Added by task 831.] The table in R5's committed search (`Factor_Resolution_Commitments`), K2's check forms (`Factor_Resolution_Checks`) and rc's forms at a priority (`Factor_Committed_Registrations`, `Factor_Native_Committed_Registrations`): the committed step and search at a table, a committed sub-search's focus never closed by an entry, a closing below a ground focus one block of K1's first join; the relation, frame, placement, position and lifting lemmas with the closing's case, the exchange's discharges unchanged, statements kept; the check forms and rc's forms at a table, exact from their premises and, for a resolution, the table's validity; a table relocated by a placement (its calls' sites mapped), its calls true at an installed presentation from the numbered table's validity and the installation's meaning correspondence | GT1, K3 #825 | about 250K |
+| GT3 | [Added by task 831.] The table in F2's shared representation (`Factor_Search_Representations`, `Factor_Shared_Search`, `Factor_Shared_Commitments`): the table indexed by a call's site and shared reference (a `Carrier_Indexes` instance), the closing test through the access, the shared searches' code equations at a table | GT2, #830's fix at its cause | about 200K |
+| GT4 | [Added by task 831.] C at a table (`Factor_Resolution_Graph_Checks`): a closed premise discharged to an assertion node, the check reading the assumption boundary among the table's calls (`finite_graph_reading_conditional_sound`); the nodes' linking through an index of the found state's nodes by position (#703's quadratic `finite_premise_nodes`); a table's validity (each entry's graph read with its assumptions among earlier entries) and its soundness; the result forms' code equations at a table | GT1 | about 200K |
+| GT5 | [Added by task 831.] The given's table (`Development_Given_Table`, new, beside `Development_Given_Registrations`): its calls from the given's value in their order — 11 at its artifact presentations, 7 and 12 at each with itself, 26 at its environment value and its lists' suffixes, 156 at its site value, 79, 82 and 83 (80, 77) at its package, the four sockets and 526 at (g, g) — and the binding count B; the table valid at every numbered program agreeing with the rooted readers on those calls' callee closure (the asked program, the first request's), and relocated to the asked relation's and the first request's installations (GT2's relocation) | GT2, #798 | about 120K |
+| GT6 | [Added by task 831.] The given's table produced (`Development_Given_Table_Execution`, new, imported by no theory): bottom-up at K2's check forms at the table so far with the given's modes, declarations and registrations, 77's bound at the given handed in, 7's, 11's and 12's roots through the parallel map, the fit tested at the smallest rows first; each certificate checked over its graph with GT4; the retained record (the calls' order, each entry's node count and graph digest, the validity outcome, the base and the resolver); states, seconds and memory by part | GT3, GT4, GT5 | about 100K, a run of hours placed by the planner |
+| W5 | [Added by task 831; task 496's entry, "77's least bound at the given and at a candidate …".] W2's queries resolved by R5's committed search at a table (`Factor_Least_Collections`: `finite_query_search`, `finite_query_answers` and `finite_identity_check` at the committed search with the given's declarations and selection, a statement change of W2's definitions; `Factor_Least_Witness_Registrations`, `Factor_Reader_Witness_Registrations`): a query's completeness from R5's lifting at its pattern root, every value outside a committed goal's output kept, and a valid table's closing keeping it; W4a's completeness carried; the given's four registrations complete there, at the rooted readers and by agreement at the asked and first request's programs; a control: 77 at a two-definition package with a missing callee refuted through the registration at a table, R4's value beside | GT2, I3a #815, #798 | about 250K |
 
 R1 and R2 are independent of each other; R3 follows both, R4 R3, R5 R4, R6 R5; R7 follows R4 and R6 [corrected by task 585: R5c follows R5b (#565), R5d R5c and R6, R5e R5d, R6b R5d, R6c
 R5e and R6b; rc (#540) follows R5e; R7 and #547 follow R6c] [corrected by task 725: R5f1 follows R5e and F3, and F2c, #613 and R5f2 follow it; rc (#540) and
@@ -18601,7 +18811,11 @@ constructor; I2 follows I1; I3 follows I2, #782 and O4; R7 #542 and #547 follow 
 or F2c #701, which edit or represent R5's committed step — whichever lands second carries the join case into the
 other's statements (O2's lemmas at any priority, F2c's shared committed search and its projection); K2 follows K1, and
 O3 and I2 #813 for its instances; K3 follows K2, I3a #815, RD1 #808 and O4; R7 #542 and #547 call the check forms and
-follow K2 and K3]. R8 is independent of
+follow K2 and K3] [corrected by task 831: GT1 waits on nothing unlanded (the lander rule with #793 and #724); GT4
+follows GT1; GT2 follows GT1 and K3 #825, whose figures stay the check forms' reference without a table; GT3 follows GT2
+and #830's fix at its cause, which edits the same step; W5 follows GT2, I3a #815 and #798; GT5 follows GT2 and #798;
+GT6 follows GT3, GT4 and GT5. R7 #542 follows GT6; #547 follows GT5 and GT6; #707 follows #542; #399 follows W5 and
+#707]. R8 is independent of
 R1–R7 and follows #483. The least witness's builds follow the planner's decision. The route:
 
 - #397 (the posing) evaluates no reader entry: unaffected.
@@ -18653,6 +18867,10 @@ same size. These are estimates; a demand past a held run's three minutes goes to
 an inclusion looks up every row, so without reuse the inclusion's branch at the given is the rows times the admission,
 of the order of 10⁸ steps; with each distinct ground call solved once per branch (F3), of the order of 10⁶; the per-step
 cost is F2's. Estimates; the builds measure the samples and R7 the given.]
+[Corrected by task 831 ("The given's calls are decided once: …", above): measured, 11 at the given's rows alone is
+≈ 27.3 M states (#829's fit, site 8's walk), about 20,000 s at the least per-state cost measured, in any judgment that
+derives it; decided once in a table of certified calls, it leaves each judgment its candidate's part, of the order of
+2–5 M states at the per-step cost of a state holding the candidate's environment, which #830 attributes.]
 
 ### What the builds must respect
 
@@ -19133,6 +19351,57 @@ given's readers exactly as installed; nothing reads the bootstrap loop's datatyp
 through 11); RD2 named, placed only where R7 attributes a ground-source enumeration.
 
 [Recorded 2026-09-27 (task 790's decision; a design, no theory changes).]
+
+### 77's least bound at the given and at a candidate: handed in for an admission, collected at the table for a refusal
+
+[Added by task 831, a design, from #829's second question to the planner (`.build/tasks/829/result.md`, cause 2): the
+registered construction (`given_witness_registrations`) returns no 77 bound at 77/1 within 400 — its value `None` at
+bounds 200 and 400, more than 10 s at 1000 — because W2's queries are resolved by R4's plain resolution at the same
+bound (`finite_query_answers` through `finite_program_resolution no_witness_construction P site t n`) and are cut; and at
+every state R3's selection computed the value again (the shared committed search keeps it in its state). Read with task
+495's entry, "The given's calls are decided once: …" (the given's table and the candidate's part).]
+
+- *What 77's queries derive as installed.* 77's step query is 82 at (x, (d, e)), e free: d's definition read in the
+  environment x through 37, which admits x at its socket 0 — 26 at the whole environment, 11 at every row — and whose
+  output artifact 12 compares with the row's. R4's plain search enumerates that presentation-free output (every
+  enumeration of a field, n! at n entries), where R5 commits 37 and I2 produces 12's input; and each query derives 26
+  again, F3's reuse not crossing queries. At the given: 252 queries, each of 27.3 M states and more.
+- *At the given: handed in, decided once.* The given's package is formed, so the reach of its roots — its 252
+  definitions, read by the machinery (`finite_native_source`) or #829's known bound — passes 77's clause as installed
+  (26 at x, 47, 76), and the call resolves at the check forms with the hand-in construction
+  (`finite_handin_construction`): an entry of the given's table. A hand-in never refutes, and at the given nothing is
+  refuted.
+- *At a candidate, for an admission: handed in.* The reach of the candidate's roots, computed on the producing side (the
+  machinery's reading of its package, or the executor), is handed in at 77's clause and at the additions notion's bound
+  (392, 525), and the check forms at the hand-in construction resolve the guard's call, the given's clauses checking it
+  as installed; 76's reading of every member in the candidate's environment is the candidate's part. A hand-in that
+  fails the check is discarded and the construction produces its own.
+- *At a candidate, for a refusal by socket: collected at the table.* A refusal at 80, 392 or 525 (a package not closed
+  or not formed, a member failing the boundary or the audit) is a refutation at a registered clause, which rests on the
+  registration's completeness and its queries' ("Refusal, and what stays unresolved"). Decided: W2's queries are
+  resolved by R5's committed search at a table — the given's table and the judgment's first-phase entries (26 at the
+  candidate's environment value) — with the given's declarations and selection (W5 of task 495's builds table).
+  `finite_query_search`, `finite_query_answers` and `finite_identity_check` change their resolution: a statement change
+  of W2's definitions, not of R3, R4 or R5. W4a's completeness is carried: a query's completeness rests on the lifting
+  at its pattern root (`finite_query_search_lifting`), which W5 proves of R5's committed search from its lifting — every
+  value outside a committed goal's output kept, and a registration's element (82's callee sites, 5's rows at 561) is
+  never one — and which a valid table's closing keeps. Its cost: 26 at the candidate once, then each reached definition
+  read once in the candidate's environment, ≈ 20–30 states an address (#644), the order of 76's own reading. Until W5, a
+  refusal at 80, 392 or 525 is unavailable (the hand-in fails and the queries are cut: unresolved, never refuted), and
+  an admission rests on the hand-in.
+- *561 (#547).* 561's registration selects rows (5 over the two environments' ground row lists) and admits no
+  environment; the given's rows in the context and in the given's environment are equal presentations, dropped as equal
+  without the identity query (`finite_collect_insert`), so the merge is collected at R4's plain resolution; 80 at the
+  given is the given's table's; 77 at the context is handed in (the context is the given's package, formed).
+- *Weighed.* The hand-in alone at every candidate, refusals at 80, 392 and 525 left unavailable: #399's refusal by socket
+  (task 378's route) would not hold there. W2's queries at R4's plain search with the given's table: 37's
+  presentation-free output is enumerated whatever the table closes. The machinery's reading of the candidate's package
+  as a refusal's witness: a refusal would rest on a HOL function's contract (Q27), where the registration's completeness
+  is a fact of the given's readers' meanings.
+- *What the builds must respect*: this entry's; a hand-in never refutes; a refusal at a registered clause only through
+  W5's complete construction at the check forms; the given's readers as installed.
+
+[Recorded 2026-09-27 (task 831's decision; a design, no theory changes).]
 
 ### What it relies on
 
@@ -19684,3 +19953,45 @@ under a site relocation, which is not stated (q138): the productions' discharge 
 stays a premise of the corollary, discharged at the installed program by the semantic lemma, for 48's registrations by
 `union_registration_answers_variant` (`Factor_Union_Declarations`), which reads only the head's view at an alpha
 variant of `union_schema` and the agreements at the site and at 5.
+
+## The given's production of 12's input: a produced record overridden at a socket's key, and a production the framed socket test does not meet at 77
+
+Task 815, I3's first part (correction (13) of "Committed choice, for refusals", task 495's entry; q144, q148).
+
+**The record.** #782's keyed join (`produced_join D PD`) overrides a *plain* record at a produced record's keys: outside
+them its class is every answer and its production none. The given's one record is already produced (48's eight
+narrowed sockets and `union_registration`), so joining it with the lookup socket's record by `produced_join` would drop
+48's classes and productions. The join is therefore stated once over a produced base, `produced_override PD PK`: PK's
+socket, class and production at PK's keys (`socket_keyed`), PD's elsewhere, with `produced_override_discharged`,
+`_frames` (over `frames_join`), `_productions`, `_declared`, each from the two parts' discharges; `produced_join D PD`
+is now `produced_override (unproduced (unnarrowed D)) PD`, its facts the override's corollaries at a base with no class
+and no production, every name and statement kept (q148: placed beside `produced` in `Factor_Narrowed_Productions`).
+The given's record with 12's input production is `given_input_declarations = produced_override given_declarations
+lookup_input_declarations`, the second the lookup socket (37, `lookup_socket_schema`, 2, False, `view_identity`,
+`lookup_view`) alone, class every answer, production `identity_input_registration`; its frames `given_input_frames =
+frames_join (its keys) given_narrowed_frames lookup_frames`. `given_declarations` and #782's statements are unchanged.
+
+**The discharge at the rooted readers.** The narrowed discharge, its plain part, the static premise, the frames and
+R5f2's exchange follow from #782's facts (`given_declarations_discharged`, `given_narrowed_frames_discharged`,
+`given_declarations_productions`) and the lookup socket's own: its plain discharge at the rooted readers (a socket of
+`given_plain_declarations`, `given_plain_declarations_discharged`), its frame (`given_frames_lookup`), and its
+production by I2's `input_productions_discharged` with 12's reflexivity carried to the rooted readers by
+`producer_reflexive_agree` along the agreement chain (`given_agreements` at `artifact_identity_system`).
+
+**The evaluation: the production is not met at 77.** 77/1 and 77/2 at the moded selection with O4's modes give the
+same verdicts, diagnoses and states with and without the production, at every bound evaluated (at 200, lookup socket's frame: 77/1 unresolved, cut and witnessed, 614 states; 77/2 unresolved, cut, 201
+states; at 400 neither search returns within about 150 s, shared runs at 8-9 % CPU). The trace of
+every goal at 12 the moded search meets (`productions_trace`) names why: 12(x4,x3) is reached at 2.0.1.2 under 37 at
+2.0.1, committed with its input ground and its output free, and the framed socket test R5f1's step reads before a
+production (`finite_socket_productions`) fails at one condition, `finite_children_framed {3}`: 37's other children, 26
+at 2.0.1.0 and 5 at 2.0.1.1, have their goals taken and their instantiated patterns ground, but goals still pending
+under them (their sub-derivations open). The moded order takes 12 as soon as its input is ground, before 26's and 5's
+sub-derivations close; the test asks every other child closed. #789's prototype coded the production at any goal at 12
+under (37, key 2) with a ground input, bypassing the framed test, so its prediction did not meet this. I2's control
+met the production because there 37's other children close before 12 is taken.
+
+**What this leaves (the planner's).** Either the selection closes a committed parent's other children before a goal
+whose socket declares a production (an order within O1's priority, read by the selection alone), or the framed test
+admits a sibling whose instantiated pattern is ground and whose variables lie outside the frame while goals are
+pending under it (R5's socket framing and #565's exchange proved again at that weaker premise). Nothing here is an
+outcome against the given's meaning: no call is refuted, and the unresolved calls are cut at the bound.

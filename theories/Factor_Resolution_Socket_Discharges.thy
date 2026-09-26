@@ -1296,7 +1296,7 @@ proof -
   show thesis by (rule that[OF gq vp nd(1) np ctxN])
 qed
 
-theorem finite_framed_socket_exchange:
+theorem finite_framed_socket_exchange_at:
   fixes P :: "('a,'s::linorder,'d,'c) finite_schema_system"
   assumes \<kappa>: "finite_witness_construction_formed \<kappa>" and I: "resolution_invariant P d t st"
     and sup: "resolution_supported_at (\<lambda>_. False) F B P st \<theta>" and gF: "g |\<in>| finite_focus_pending F st"
@@ -1306,9 +1306,8 @@ theorem finite_framed_socket_exchange:
     and socket: "\<not> finite_direct_commitment D F st g"
     and only: "finite_registrations_premise_only \<kappa> P" and H: "resolution_registrations_held \<kappa> st"
     and unheld: "\<not> finite_held \<kappa> st g"
-    and s0: "s0 |\<in>| resolution_found (finite_committed_search \<kappa> K P n (Some (resolution_goal_position g)) B st)"
-  shows "\<exists>s \<theta>'. s |\<in>| finite_kept (resolution_goal_position g) (resolution_found (finite_committed_search \<kappa>
-        K P n (Some (resolution_goal_position g)) B st)) \<and>
+    and s0: "s0 |\<in>| resolution_found (finite_committed_search_at pr \<kappa> K P n (Some (resolution_goal_position g)) B st)"
+  shows "\<exists>s \<theta>'. s |\<in>| finite_kept (resolution_goal_position g) (resolution_found (finite_committed_search_at pr \<kappa> K P n (Some (resolution_goal_position g)) B st)) \<and>
       resolution_supported_at (\<lambda>_. False) F (fimage resolution_node_position (resolution_nodes s)) P s \<theta>'"
 proof -
   let ?M = "positive_meaning (decode_finite_system P)"
@@ -1334,16 +1333,54 @@ proof -
   have parent': "finite_goal_premise st ?g" using parent gq by simp
   have unheld': "\<not> finite_held \<kappa> st ?g" using unheld gq by simp
   have gpos: "resolution_goal_position g = q" using gq by simp
-  have s0': "s0 |\<in>| resolution_found (finite_committed_search \<kappa> K P n (Some q) B st)"
+  have s0': "s0 |\<in>| resolution_found (finite_committed_search_at pr \<kappa> K P n (Some q) B st)"
     using s0 by (simp only: gpos)
   show ?thesis unfolding gpos
-    by (rule finite_committed_exchange_context[OF \<kappa> I sup g' parent' only H unheld' ctxE s0'])
+    by (rule finite_committed_exchange_context_at[OF \<kappa> I sup g' parent' only H unheld' ctxE s0'])
 qed
+
+theorem finite_framed_socket_exchange:
+  fixes P :: "('a,'s::linorder,'d,'c) finite_schema_system"
+  assumes \<kappa>: "finite_witness_construction_formed \<kappa>" and I: "resolution_invariant P d t st"
+    and sup: "resolution_supported_at (\<lambda>_. False) F B P st \<theta>" and gF: "g |\<in>| finite_focus_pending F st"
+    and discharged: "declarations_discharged (positive_meaning (decode_finite_system P)) D corr"
+    and frames: "frames_discharged (positive_meaning (decode_finite_system P)) D \<Phi>"
+    and cc: "commit_call (finite_framed_commitment D \<Phi>) F st g" and nf0: "F \<noteq> Some (resolution_goal_position g)"
+    and socket: "\<not> finite_direct_commitment D F st g"
+    and only: "finite_registrations_premise_only \<kappa> P" and H: "resolution_registrations_held \<kappa> st"
+    and unheld: "\<not> finite_held \<kappa> st g"
+    and s0: "s0 |\<in>| resolution_found (finite_committed_search \<kappa> K P n (Some (resolution_goal_position g)) B st)"
+  shows "\<exists>s \<theta>'. s |\<in>| finite_kept (resolution_goal_position g) (resolution_found (finite_committed_search \<kappa>
+        K P n (Some (resolution_goal_position g)) B st)) \<and>
+      resolution_supported_at (\<lambda>_. False) F (fimage resolution_node_position (resolution_nodes s)) P s \<theta>'"
+  using assms unfolding finite_committed_search_def by (rule finite_framed_socket_exchange_at)
 
 text \<open>
   Today's socket exchange is the framed one's instance at no frames: every call today's test commits the framed test
   commits (B1's containment, at the headed nodes the invariant gives).
 \<close>
+
+theorem finite_socket_commitment_exchange_at:
+  fixes P :: "('a,'s::linorder,'d,'c) finite_schema_system"
+  assumes \<kappa>: "finite_witness_construction_formed \<kappa>" and I: "resolution_invariant P d t st"
+    and sup: "resolution_supported_at (\<lambda>_. False) F B P st \<theta>" and gF: "g |\<in>| finite_focus_pending F st"
+    and discharged: "declarations_discharged (positive_meaning (decode_finite_system P)) D corr"
+    and committed: "finite_goal_committed (finite_declared_commitment D) F st g"
+    and socket: "\<not> finite_direct_commitment D F st g"
+    and only: "finite_registrations_premise_only \<kappa> P" and H: "resolution_registrations_held \<kappa> st"
+    and unheld: "\<not> finite_held \<kappa> st g"
+    and s0: "s0 |\<in>| resolution_found (finite_committed_search_at pr \<kappa> (finite_declared_commitment D) P n
+      (Some (resolution_goal_position g)) B st)"
+  shows "\<exists>s \<theta>'. s |\<in>| finite_kept (resolution_goal_position g) (resolution_found (finite_committed_search_at pr \<kappa> (finite_declared_commitment D) P n (Some (resolution_goal_position g)) B st)) \<and>
+      resolution_supported_at (\<lambda>_. False) F (fimage resolution_node_position (resolution_nodes s)) P s \<theta>'"
+proof -
+  have cc: "commit_call (finite_declared_commitment D) F st g" and nf0: "F \<noteq> Some (resolution_goal_position g)"
+    using committed by (simp_all add: finite_goal_committed_def)
+  have cc': "commit_call (finite_framed_commitment D {||}) F st g"
+    by (rule finite_framed_commitment_call[OF cc finite_invariant_headed[OF I]])
+  show ?thesis
+    by (rule finite_framed_socket_exchange_at[OF \<kappa> I sup gF discharged no_frames_discharged cc' nf0 socket only H unheld s0])
+qed
 
 theorem finite_socket_commitment_exchange:
   fixes P :: "('a,'s::linorder,'d,'c) finite_schema_system"
@@ -1359,14 +1396,7 @@ theorem finite_socket_commitment_exchange:
   shows "\<exists>s \<theta>'. s |\<in>| finite_kept (resolution_goal_position g) (resolution_found (finite_committed_search \<kappa>
         (finite_declared_commitment D) P n (Some (resolution_goal_position g)) B st)) \<and>
       resolution_supported_at (\<lambda>_. False) F (fimage resolution_node_position (resolution_nodes s)) P s \<theta>'"
-proof -
-  have cc: "commit_call (finite_declared_commitment D) F st g" and nf0: "F \<noteq> Some (resolution_goal_position g)"
-    using committed by (simp_all add: finite_goal_committed_def)
-  have cc': "commit_call (finite_framed_commitment D {||}) F st g"
-    by (rule finite_framed_commitment_call[OF cc finite_invariant_headed[OF I]])
-  show ?thesis
-    by (rule finite_framed_socket_exchange[OF \<kappa> I sup gF discharged no_frames_discharged cc' nf0 socket only H unheld s0])
-qed
+  using assms unfolding finite_committed_search_def by (rule finite_socket_commitment_exchange_at)
 
 text \<open>
   #565's exchange premise, its dispatch stated once: at any commitment with no production whose call and material
@@ -1377,6 +1407,49 @@ text \<open>
   discharge, a formed construction and premise-only registrations. The framed test is its instance, and today's
   declared test at no frames (B1's containment at the headed nodes the invariant gives).
 \<close>
+
+theorem finite_framed_contained_exchanges_at:
+  fixes P :: "('a,'s::linorder,'d,'c) finite_schema_system"
+  assumes \<kappa>: "finite_witness_construction_formed \<kappa>"
+    and discharged: "declarations_discharged (positive_meaning (decode_finite_system P)) D corr"
+    and frames: "frames_discharged (positive_meaning (decode_finite_system P)) D \<Phi>"
+    and only: "finite_registrations_premise_only \<kappa> P"
+    and none: "\<And>F st g. commit_production K F st g = None"
+    and calls: "\<And>d t st F g. resolution_invariant P d t st \<Longrightarrow> commit_call K F st g \<Longrightarrow>
+      commit_call (finite_framed_commitment D \<Phi>) F st g"
+    and materials: "\<And>d t st F g. resolution_invariant P d t st \<Longrightarrow> commit_material K F st g \<Longrightarrow>
+      commit_material (finite_framed_commitment D \<Phi>) F st g"
+  shows "finite_commitment_exchanges_at pr (\<lambda>_. False) \<kappa> K P"
+  unfolding finite_commitment_exchanges_at_unproduced[OF none]
+proof (intro allI impI conjI)
+  fix n F B st \<theta> g d t s0 B0 \<theta>0
+  assume I: "resolution_invariant P d t st" and sup: "resolution_supported_at (\<lambda>_. False) F B P st \<theta>"
+    and gF: "g |\<in>| finite_focus_pending F st" and committed: "finite_goal_committed K F st g"
+    and H: "resolution_registrations_held \<kappa> st" and unheld: "\<not> finite_held \<kappa> st g"
+    and s0: "s0 |\<in>| resolution_found (finite_committed_search_at pr \<kappa> K P n (Some (resolution_goal_position g)) B st)"
+    and "resolution_supported_at (\<lambda>_. False) (Some (resolution_goal_position g)) B0 P s0 \<theta>0"
+  have cc0: "commit_call K F st g" and nf0: "F \<noteq> Some (resolution_goal_position g)"
+    using committed by (simp_all add: finite_goal_committed_def)
+  have cc: "commit_call (finite_framed_commitment D \<Phi>) F st g" by (rule calls[OF I cc0])
+  show "\<exists>s \<theta>'. s |\<in>| finite_kept (resolution_goal_position g) (resolution_found (finite_committed_search_at pr \<kappa> K P n (Some (resolution_goal_position g)) B st)) \<and>
+      resolution_supported_at (\<lambda>_. False) F (fimage resolution_node_position (resolution_nodes s)) P s \<theta>'"
+  proof (cases "finite_direct_commitment D F st g")
+    case True
+    have parent: "finite_goal_premise st g" by (rule finite_framed_commitment_premise[OF cc])
+    show ?thesis by (rule finite_direct_exchange_at[OF \<kappa> I sup gF discharged True parent only H unheld s0])
+  next
+    case False
+    show ?thesis by (rule finite_framed_socket_exchange_at[OF \<kappa> I sup gF discharged frames cc nf0 False only H unheld s0])
+  qed
+next
+  fix n F B st \<theta> g d t q r M Ws
+  assume I: "resolution_invariant P d t st" and sup: "resolution_supported_at (\<lambda>_. False) F B P st \<theta>"
+    and gF: "g |\<in>| finite_focus_pending F st" and gq: "g = Resolution_Material_Goal q r M"
+    and Ws: "finite_canonical_solutions M = Some Ws" and cm: "commit_material K F st g"
+  show "\<exists>st' \<theta>'. st' |\<in>| finite_solution_successors st q r M Ws \<and>
+      resolution_supported_at (\<lambda>_. False) F (finite_committed_barring B st) P st' \<theta>'"
+    by (rule finite_framed_material_commitment_exchanges[OF discharged frames I sup gF gq Ws materials[OF I cm]])
+qed
 
 theorem finite_framed_contained_exchanges:
   fixes P :: "('a,'s::linorder,'d,'c) finite_schema_system"
@@ -1390,37 +1463,7 @@ theorem finite_framed_contained_exchanges:
     and materials: "\<And>d t st F g. resolution_invariant P d t st \<Longrightarrow> commit_material K F st g \<Longrightarrow>
       commit_material (finite_framed_commitment D \<Phi>) F st g"
   shows "finite_commitment_exchanges (\<lambda>_. False) \<kappa> K P"
-  unfolding finite_commitment_exchanges_unproduced[OF none]
-proof (intro allI impI conjI)
-  fix n F B st \<theta> g d t s0 B0 \<theta>0
-  assume I: "resolution_invariant P d t st" and sup: "resolution_supported_at (\<lambda>_. False) F B P st \<theta>"
-    and gF: "g |\<in>| finite_focus_pending F st" and committed: "finite_goal_committed K F st g"
-    and H: "resolution_registrations_held \<kappa> st" and unheld: "\<not> finite_held \<kappa> st g"
-    and s0: "s0 |\<in>| resolution_found (finite_committed_search \<kappa> K P n (Some (resolution_goal_position g)) B st)"
-    and "resolution_supported_at (\<lambda>_. False) (Some (resolution_goal_position g)) B0 P s0 \<theta>0"
-  have cc0: "commit_call K F st g" and nf0: "F \<noteq> Some (resolution_goal_position g)"
-    using committed by (simp_all add: finite_goal_committed_def)
-  have cc: "commit_call (finite_framed_commitment D \<Phi>) F st g" by (rule calls[OF I cc0])
-  show "\<exists>s \<theta>'. s |\<in>| finite_kept (resolution_goal_position g) (resolution_found (finite_committed_search \<kappa>
-        K P n (Some (resolution_goal_position g)) B st)) \<and>
-      resolution_supported_at (\<lambda>_. False) F (fimage resolution_node_position (resolution_nodes s)) P s \<theta>'"
-  proof (cases "finite_direct_commitment D F st g")
-    case True
-    have parent: "finite_goal_premise st g" by (rule finite_framed_commitment_premise[OF cc])
-    show ?thesis by (rule finite_direct_exchange[OF \<kappa> I sup gF discharged True parent only H unheld s0])
-  next
-    case False
-    show ?thesis by (rule finite_framed_socket_exchange[OF \<kappa> I sup gF discharged frames cc nf0 False only H unheld s0])
-  qed
-next
-  fix n F B st \<theta> g d t q r M Ws
-  assume I: "resolution_invariant P d t st" and sup: "resolution_supported_at (\<lambda>_. False) F B P st \<theta>"
-    and gF: "g |\<in>| finite_focus_pending F st" and gq: "g = Resolution_Material_Goal q r M"
-    and Ws: "finite_canonical_solutions M = Some Ws" and cm: "commit_material K F st g"
-  show "\<exists>st' \<theta>'. st' |\<in>| finite_solution_successors st q r M Ws \<and>
-      resolution_supported_at (\<lambda>_. False) F (finite_committed_barring B st) P st' \<theta>'"
-    by (rule finite_framed_material_commitment_exchanges[OF discharged frames I sup gF gq Ws materials[OF I cm]])
-qed
+  using assms unfolding finite_commitment_exchanges_priority by (rule finite_framed_contained_exchanges_at)
 
 text \<open>
   #565's exchange premise at the declared commitment, with no hypothesis on the state: the dispatch's instance at no
@@ -1428,13 +1471,13 @@ text \<open>
   invariant gives.
 \<close>
 
-theorem finite_declared_commitment_exchanges:
+theorem finite_declared_commitment_exchanges_at:
   fixes P :: "('a,'s::linorder,'d,'c) finite_schema_system"
   assumes \<kappa>: "finite_witness_construction_formed \<kappa>"
     and discharged: "declarations_discharged (positive_meaning (decode_finite_system P)) D corr"
     and only: "finite_registrations_premise_only \<kappa> P"
-  shows "finite_commitment_exchanges (\<lambda>_. False) \<kappa> (finite_declared_commitment D) P"
-proof (rule finite_framed_contained_exchanges[OF \<kappa> discharged no_frames_discharged only
+  shows "finite_commitment_exchanges_at pr (\<lambda>_. False) \<kappa> (finite_declared_commitment D) P"
+proof (rule finite_framed_contained_exchanges_at[OF \<kappa> discharged no_frames_discharged only
     finite_declared_commitment_production])
   fix d t st F g
   assume I: "resolution_invariant P d t st" and c: "commit_call (finite_declared_commitment D) F st g"
@@ -1447,11 +1490,28 @@ next
     by (rule finite_framed_commitment_material[OF c finite_invariant_headed[OF I]])
 qed
 
+theorem finite_declared_commitment_exchanges:
+  fixes P :: "('a,'s::linorder,'d,'c) finite_schema_system"
+  assumes \<kappa>: "finite_witness_construction_formed \<kappa>"
+    and discharged: "declarations_discharged (positive_meaning (decode_finite_system P)) D corr"
+    and only: "finite_registrations_premise_only \<kappa> P"
+  shows "finite_commitment_exchanges (\<lambda>_. False) \<kappa> (finite_declared_commitment D) P"
+  using assms unfolding finite_commitment_exchanges_priority by (rule finite_declared_commitment_exchanges_at)
+
 text \<open>
   #565's exchange premise at the framed test, with no hypothesis on the state (B2a of correction (10)): the dispatch's
   (@{text finite_framed_contained_exchanges}) instance at the framed test itself. What remains is the declarations' and
   the frames' discharge, a formed construction and a program whose registrations are premise-only.
 \<close>
+
+theorem finite_framed_commitment_exchanges_at:
+  fixes P :: "('a,'s::linorder,'d,'c) finite_schema_system"
+  assumes \<kappa>: "finite_witness_construction_formed \<kappa>"
+    and discharged: "declarations_discharged (positive_meaning (decode_finite_system P)) D corr"
+    and frames: "frames_discharged (positive_meaning (decode_finite_system P)) D \<Phi>"
+    and only: "finite_registrations_premise_only \<kappa> P"
+  shows "finite_commitment_exchanges_at pr (\<lambda>_. False) \<kappa> (finite_framed_commitment D \<Phi>) P"
+  by (rule finite_framed_contained_exchanges_at[OF \<kappa> discharged frames only finite_framed_commitment_production]) simp_all
 
 theorem finite_framed_commitment_exchanges:
   fixes P :: "('a,'s::linorder,'d,'c) finite_schema_system"
@@ -1460,6 +1520,6 @@ theorem finite_framed_commitment_exchanges:
     and frames: "frames_discharged (positive_meaning (decode_finite_system P)) D \<Phi>"
     and only: "finite_registrations_premise_only \<kappa> P"
   shows "finite_commitment_exchanges (\<lambda>_. False) \<kappa> (finite_framed_commitment D \<Phi>) P"
-  by (rule finite_framed_contained_exchanges[OF \<kappa> discharged frames only finite_framed_commitment_production]) simp_all
+  using assms unfolding finite_commitment_exchanges_priority by (rule finite_framed_commitment_exchanges_at)
 
 end

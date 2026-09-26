@@ -1333,6 +1333,7 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Factor_Resolution_Carriers
     Factor_Instantiation_Declarations
     Factor_Resolution_Views
+    Factor_Varied_Declarations
     Linear_Comparisons
     Prefix_Key_Comparisons
     Ordered_Artifact_Comparison
@@ -1873,6 +1874,7 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Development_Given_Registrations
     Development_Given_Program
     Development_Given_Declarations
+    Factor_Schema_Instantiation_Declarations
     Factor_Root_Family_Declarations
     Factor_Artifact_Citation_Declarations
     Development_Given_Declarations_Execution
@@ -1914,6 +1916,7 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Development_Given_Installation
     Development_Rooted_Registrations
     Development_Given_Extensions
+    Development_Given_Carried_Declarations
     Development_Installed_Presentations
     Development_Installed_Presentations_Execution
     Development_First_Problem_Asked

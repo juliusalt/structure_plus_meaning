@@ -1,6 +1,6 @@
 {
- "base_receipt_sha256": "b92d14368d1f77ec3125018208a4ceb5b7b4a1851e36cd1a79aad4d11267d66b",
- "checked_content_sha256": "cfccff329765bc5cc0c4511b2aa89a90087138b4b1591c0a84a31018253a56d7",
+ "base_receipt_sha256": "28430cd048ae5d7ed6fb2f5fc54d1c1ea1757b3f07d09867751b2e67d688adab",
+ "checked_content_sha256": "fd5f14d997d25e734945c642428e9bc35b0c37a063dba5486ebdce0e1150845f",
  "host_tests": {
   "kernel": {
    "exit_code": 0,
@@ -17,7 +17,7 @@
    "ran": 309,
    "skipped": 0,
    "tail": [
-    "{\"status\": \"failed\", \"error\": \"[Errno 2] No such file or directory: '/tmp/tmpuyue990b/no-project/theories/Development_Answer_a2d8d6490cc2.thy'\"}"
+    "{\"status\": \"failed\", \"error\": \"[Errno 2] No such file or directory: '/tmp/tmpq912_0nd/no-project/theories/Development_Answer_a2d8d6490cc2.thy'\"}"
    ]
   }
  },
@@ -25,12 +25,14 @@
   "base_and_impact": 0.36,
   "execution_impact": 0.0,
   "export": 0.0,
-  "proof": 24.7,
-  "recipe_impact": 0.42,
-  "recipes_and_host_tests": 11.3
+  "proof": 30.67,
+  "recipe_impact": 0.37,
+  "recipes_and_host_tests": 11.19
  },
  "rebuilt_theories": [
-  "Factor_Indexed_Resolution"
+  "Development_Socket_Liveness_Execution",
+  "Factor_Instantiation_Declarations",
+  "Factor_Schema_Instantiation_Declarations"
  ],
  "recipes": {
   "allocated-environments": {
@@ -190,19 +192,19 @@
    "status": "unchanged"
   }
  },
- "reused_theories": 1944,
- "seconds": 44.26,
+ "reused_theories": 1943,
+ "seconds": 50.17,
  "source_checks": {
   "missing_theory_files": [],
   "proof_escape_matches": [],
   "refusals": [],
-  "theory_count": 1945,
+  "theory_count": 1946,
   "unlisted_theories": []
  },
  "status": "accepted",
- "theories": 1945,
+ "theories": 1946,
  "validation_inputs": {
-  "ROOT": "811970c47ea2bcce6b00d9fb4b3092fd9fd07534be7ee1f30b019f6a414693aa",
+  "ROOT": "8880afd5857c75d98151fb39c055cd97839e3ff223c5416e7be2e18c902ff3c8",
   "tools/check.py": "71c91573138e10d317e5d920f5776af39687d313836a5552bbb0ec1d2d580381",
   "tools/incremental_check.py": "7f57110d9b4e04a7eb01215c21ea098fffcff71410454a248f6eb122909a1d98"
  }

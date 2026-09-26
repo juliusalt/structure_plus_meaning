@@ -14,7 +14,8 @@ text \<open>
   premise-only variables and the socket's variables.
 
   The test checks, where it commits at a socket, the three state conditions of correction (7) (DECISIONS.md, task 495's
-  entry): the parent's pending children are its clause's instances (\<open>finite_children_instances\<close>), no premise-only
+  entry), the first in correction (9)'s form: each premise of the parent pending as its instance or closed
+  (\<open>finite_children_closed\<close>), no premise-only
   variable of the parent stands in its call (\<open>finite_premise_only_unshared\<close>), and at a socket declared without the
   kept head the parent call's input and output, read at the head's view, share no variable
   (\<open>finite_input_output_apart\<close>); they are joined in \<open>finite_material_narrowed\<close> and \<open>finite_call_narrowed\<close>, each
@@ -503,7 +504,8 @@ definition finite_parent_context ::
 
 text \<open>
   At a socket commitment of the test the parent context holds, at the socket's views and key. This is the one lemma
-  that reads the test's conditions; a change of the test proves it again and nothing else.
+  that reads the test's conditions on the parent node; a change of those conditions proves it again. The exchanges
+  read the declaration and the holders from the test themselves.
 \<close>
 
 lemma finite_declared_socket_context:
@@ -516,11 +518,11 @@ proof -
   let ?q = "resolution_goal_position g"
   have dist: "resolution_positions_distinct st" using I by (simp add: resolution_invariant_def)
   have declared: "?q \<noteq> [] \<and> (\<exists>nd'. nd' |\<in>| resolution_nodes st \<and> resolution_node_position nd' = butlast ?q \<and>
-      finite_siblings_pending st ?q (resolution_node_schema nd') \<and> finite_premise_only_free st nd')"
+      finite_premise_only_inputs Vp Vh st nd' (last ?q))"
     if "finite_socket_declared D Vp Vh F st ?q Y g" for Y
     using that unfolding finite_socket_declared_def finite_socket_kept_def finite_socket_free_def by blast
   have narrowed: "\<exists>nd. nd |\<in>| resolution_nodes st \<and> resolution_node_position nd = butlast ?q \<and>
-      finite_children_instances st nd \<and> finite_premise_only_unshared nd"
+      finite_children_closed Vp Vh st nd (last ?q) \<and> finite_premise_only_unshared nd"
   proof (cases g)
     case (Resolution_Call_Goal q r e p)
     obtain x y where v: "resolution_view_pattern Vp p = Some (x,y)"
@@ -540,14 +542,14 @@ proof -
   qed
   obtain Y where dY: "finite_socket_declared D Vp Vh F st ?q Y g" using decl by blast
   obtain nd' where qne: "?q \<noteq> []" and nd': "nd' |\<in>| resolution_nodes st" "resolution_node_position nd' = butlast ?q"
-    and sib: "finite_siblings_pending st ?q (resolution_node_schema nd')" and pof: "finite_premise_only_free st nd'"
+    and poi: "finite_premise_only_inputs Vp Vh st nd' (last ?q)"
     using declared[OF dY] by blast
   obtain nd where nd: "nd |\<in>| resolution_nodes st" "resolution_node_position nd = butlast ?q"
-    and inst: "finite_children_instances st nd" and unsh: "finite_premise_only_unshared nd"
+    and closed: "finite_children_closed Vp Vh st nd (last ?q)" and unsh: "finite_premise_only_unshared nd"
     using narrowed by blast
   have "nd' = nd" using dist nd'(1) nd(1) nd'(2) nd(2) unfolding resolution_positions_distinct_def by auto
   then have "finite_parent_context P Vp Vh st nd (last ?q)"
-    using nd(1) I inst unsh finite_children_instances_closed[OF inst] finite_premise_only_free_inputs[OF sib pof]
+    using nd(1) I closed unsh poi
     unfolding finite_parent_context_def resolution_invariant_def resolution_nodes_placed_def by blast
   then show thesis using that nd qne by blast
 qed

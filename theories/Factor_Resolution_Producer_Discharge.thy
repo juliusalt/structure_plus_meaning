@@ -53,10 +53,6 @@ definition finite_exchange_context ::
       (\<forall>h. h |\<in>| finite_focus_pending F st \<longrightarrow> \<not> resolution_focused (Some q) (resolution_goal_position h) \<longrightarrow>
         finite_goal_holds M \<theta>1 h)))"
 
-lemma finite_pattern_substitute_origin:
-  "z |\<in>| finite_pattern_variables (finite_pattern_substitute \<sigma> p) \<Longrightarrow>
-    \<exists>w. w |\<in>| finite_pattern_variables p \<and> z |\<in>| finite_pattern_variables (\<sigma> w)"
-  by (induction p) auto
 
 lemma resolution_goal_substitute_origin:
   assumes "z |\<in>| resolution_goal_variables (resolution_goal_substitute \<sigma> g)"
@@ -498,65 +494,7 @@ text \<open>
 \<close>
 
 
-lemma resolution_view_hole_parts:
-  assumes formed: "view_formed V" and viewed: "resolution_view_pattern V c = Some (ci,co)"
-  shows "resolution_view_holes V hs (decode_finite_term (resolution_value \<theta> c)) =
-      Some (map (\<lambda>z. decode_finite_term (resolution_value \<theta> z)) (resolution_view_hole_patterns V hs c))"
-    and "z \<in> set (resolution_view_hole_patterns V hs c) \<Longrightarrow>
-      finite_pattern_variables z |\<subseteq>| finite_pattern_variables c"
-proof -
-  obtain vp vi vo where V: "V = (vp,vi,vo)" by (cases V rule: prod_cases3)
-  obtain l where m: "view_pattern_match vp c = Some l"
-    using viewed by (auto simp: V resolution_view_pattern_def split: option.splits)
-  have lin: "distinct (finite_pattern_occurrences vp)" using formed by (simp add: V view_formed_def)
-  let ?\<sigma> = "view_substitution l"
-  let ?h = "\<lambda>v. decode_finite_term (resolution_value \<theta> (?\<sigma> v))"
-  have ev: "decode_finite_term (resolution_value \<theta> (finite_pattern_substitute ?\<sigma> q)) =
-      evaluate_pattern ?h (decode_finite_pattern q)" for q
-    by (simp add: resolution_value_composes decode_resolution_value)
-  have c: "finite_pattern_substitute ?\<sigma> vp = c" by (rule view_pattern_match_sound[OF lin m])
-  obtain l' where m': "view_match vp (evaluate_pattern ?h (decode_finite_pattern vp)) = Some l'"
-    and a: "\<forall>v. v |\<in>| finite_pattern_variables vp \<longrightarrow> view_valuation l' v = ?h v"
-    using view_match_complete[OF lin, of ?h] by blast
-  have out: "?\<sigma> v = Finite_Pattern_Payload []" if "v |\<notin>| finite_pattern_variables vp" for v
-  proof -
-    have "map_of l v = None" using view_lookup_bound[OF view_pattern_match_domain[OF m]] that by blast
-    then show ?thesis by (simp add: view_lookup_def)
-  qed
-  have val: "view_valuation l' = ?h"
-  proof
-    fix v show "view_valuation l' v = ?h v"
-    proof (cases "v |\<in>| finite_pattern_variables vp")
-      case True
-      then show ?thesis using a by blast
-    next
-      case False
-      have "map_of l' v = None" using view_lookup_bound[OF view_match_domain[OF m']] False by blast
-      then show ?thesis using out[OF False] by (simp add: view_lookup_def resolution_value_def)
-    qed
-  qed
-  have t: "decode_finite_term (resolution_value \<theta> c) = evaluate_pattern ?h (decode_finite_pattern vp)"
-    using ev[of vp] c by simp
-  show "resolution_view_holes V hs (decode_finite_term (resolution_value \<theta> c)) =
-      Some (map (\<lambda>z. decode_finite_term (resolution_value \<theta> z)) (resolution_view_hole_patterns V hs c))"
-    by (simp add: resolution_view_holes_def resolution_view_hole_patterns_def V m t m' val ev comp_def)
-  show "finite_pattern_variables z |\<subseteq>| finite_pattern_variables c"
-    if z: "z \<in> set (resolution_view_hole_patterns V hs c)"
-  proof (rule fsubsetI)
-    fix u assume u: "u |\<in>| finite_pattern_variables z"
-    obtain h where zh: "z = finite_pattern_substitute ?\<sigma> h"
-      using z by (auto simp: resolution_view_hole_patterns_def V m)
-    obtain w where w: "w |\<in>| finite_pattern_variables h" "u |\<in>| finite_pattern_variables (?\<sigma> w)"
-      using finite_pattern_substitute_origin[OF u[unfolded zh]] by blast
-    have wv: "w |\<in>| finite_pattern_variables vp"
-    proof (rule ccontr)
-      assume "w |\<notin>| finite_pattern_variables vp"
-      then show False using w(2) out by simp
-    qed
-    show "u |\<in>| finite_pattern_variables c"
-      using finite_substitute_variables_subset[OF wv, of ?\<sigma>] w(2) c by (auto dest: fsubsetD)
-  qed
-qed
+
 
 theorem finite_direct_context:
   fixes H :: "('a,'s,'d,'c) resolution_goal set" and V :: "nat resolution_view"

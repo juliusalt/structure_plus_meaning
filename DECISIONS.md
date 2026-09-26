@@ -16995,7 +16995,7 @@ is read at the premise's view (`finite_socket_pair` at views; R5's pair is its i
 head variable's binding, whose values no kept head fixes" is withdrawn, and the pair condition is not among the
 conditions true wherever the search reaches: it is a static property of the clause, so a socket declared at a premise
 its view does not match never commits, and its declaration is refused by the obligation's first conjunct
-(`socket_discharged` at views); at a kept head the obligation's instance condition is vacuous there. The record, its
+(`socket_discharged` at views); the obligation's instance condition is vacuous there. The record, its
 obligations and the test are the viewed ones under the kept names (`resolution_declarations`, `declarations_discharged`
 with `declarations_formed`, `finite_declared_commitment`); R5's declarations are those of the identity and swap views
 (`pair_declarations`), and the discharges (#593's, #621's, #630's, #631's) and #595's forms are stated at them through the
@@ -17073,6 +17073,14 @@ source) and the head's input (`head_kept` at either flag) — and a sibling hold
   commitment through carriers — #585's (b) rejected it, the socket's clause-level obligation stating that exchange; the
   closed sibling required to be a committed producer (37) — narrower, and closedness is what the argument reads; the kept
   head's output among the inputs — kept at one flag only.
+[Marked by task 689: the built notions take the socket's views (#672), `socket_inputs Vp Vh S s`,
+`finite_children_closed Vp Vh st nd s` and `finite_premise_only_inputs Vp Vh st nd s`, the inputs read at them, and the
+test reads them at the declaration's views. Task 689 changed the test so (`finite_socket_kept`, `finite_socket_free`,
+`finite_call_narrowed`, `finite_material_narrowed`); `finite_siblings_pending`, `finite_children_instances` and
+`finite_premise_only_free` are retired, nothing citing them. The sockets' exchange (`finite_socket_commitment_exchange`)
+holds at every socket commitment of the changed test, at any discharged declarations and every focus, the parent context
+passed at the declaration's views; `Factor_Resolution_Controls.closed_sibling_control` resolves c(x) with one certificate
+(R4's two, two under the test before (9)) and refutes c(x2) as R4 does.]
 The builds (task 686's `result.md`): the notions, the parent context over them and the material discharge's closed case
 in #672; the socket kinds' closed case, the test's change and a control in #674; the instance at 79.0/1 in #601. No build
 is added and the chain is unchanged.]
@@ -17464,7 +17472,10 @@ at bounds 40 and 80). The course, if that repetition dominates: F3's reuse exten
 their certificates, carried by the collection from query to query, a table entry closing a goal as a solved node does —
 designed when measured.
 
-**A fact of R5's tests, for the planner.** A socket commits only with its input ground
+**A fact of R5's tests, for the planner.** [Corrected by task 686's correction (9) of "Committed choice, for refusals",
+built by task 689: a socket commits once every sibling resolved before it is closed with its variables among the
+socket's inputs, so 32 commits at 79.0/1 once 37 is closed; the paragraph states the test before that correction.]
+A socket commits only with its input ground
 (`finite_declared_commitment_input_ground`) while every sibling is pending, so a socket whose input a sibling binds never
 commits, under any selection. #585's table plans such sockets: 12 at 37.0/2 (its input the artifact 5 selects) and 32 at
 79.0/1 (its input the artifact 37 returns). 12 is committed directly in 37's focus, where no other pending goal holds its

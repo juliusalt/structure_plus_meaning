@@ -254,6 +254,63 @@ proof -
   qed
 qed
 
+text \<open>
+  At an argument that presents no environment, the callee check holds of no nonempty bound; elsewhere a closed bound
+  contains the reach, which passes. So the premises that hold a bound hold at the least whenever they hold at some
+  bound, whatever the argument; the clause forms below follow from this one argument.
+\<close>
+
+lemma callee_list_unsourced:
+  assumes bound: "\<And>t. (76,t)\<in>positive_meaning P \<longleftrightarrow> (76,t)\<in>positive_meaning definition_callee_list_system"
+    and held: "(76,Pair_Term (Pair_Term x b) (data_list_term ys))\<in>positive_meaning P"
+    and absent: "\<not>(\<exists>E. environment_value_presents E x)"
+  shows "ys=[]"
+proof (rule ccontr)
+  assume "ys\<noteq>[]"
+  then obtain w where w: "w \<in> set ys" by (cases ys) auto
+  have "definition_callee_list_result (Pair_Term (Pair_Term x b) (data_list_term ys))"
+    using held by (simp only: bound definition_callee_list_exact)
+  then have "definition_callee_inclusion_result (Pair_Term (Pair_Term x b) w)"
+    using w by (auto simp: data_list_term_injective)
+  then show False using absent by auto
+qed
+
+lemma closed_bound_least:
+  assumes selection: "\<And>t. (5,t)\<in>positive_meaning P \<longleftrightarrow> (5,t)\<in>positive_meaning bag_comparison_system"
+    and edges: "\<And>t. (82,t)\<in>positive_meaning P \<longleftrightarrow> (82,t)\<in>positive_meaning definition_edge_reading_system"
+    and subset: "\<And>t. (47,t)\<in>positive_meaning P \<longleftrightarrow> (47,t)\<in>positive_meaning data_subset_system"
+    and bound: "\<And>t. (76,t)\<in>positive_meaning P \<longleftrightarrow> (76,t)\<in>positive_meaning definition_callee_list_system"
+    and rows: "set zs=least_closure_bound (positive_meaning P) x y"
+    and roots: "(47,Pair_Term y b)\<in>positive_meaning P" and closed: "(76,Pair_Term (Pair_Term x b) b)\<in>positive_meaning P"
+  obtains ys where "b=data_list_term ys" "set zs\<subseteq>set ys"
+    "(47,Pair_Term y (data_list_term zs))\<in>positive_meaning P"
+    "(76,Pair_Term (Pair_Term x (data_list_term zs)) (data_list_term zs))\<in>positive_meaning P"
+proof (cases "\<exists>E. environment_value_presents E x")
+  case True
+  then obtain E where source: "environment_value_presents E x" by blast
+  obtain rs ys where parts: "y=data_list_term (map (\<lambda>d. definition_site_value d) rs)" "b=data_list_term ys"
+    "data_elements (map (\<lambda>d. definition_site_value d) rs)" "data_elements ys"
+    "native_package_formed E (set rs)"
+    "(\<lambda>d. definition_site_value d) ` native_definition_sites E (set rs)\<subseteq>set ys"
+    by (rule closed_bound_contains_reach[OF source iffD1[OF subset roots] iffD1[OF bound closed]])
+  have reach: "set zs=(\<lambda>d. definition_site_value d) ` native_definition_sites E (set rs)"
+    using rows unfolding parts(1) least_closure_bound_reach[OF selection edges source parts(3)] .
+  have passes: "(47,Pair_Term y (data_list_term zs))\<in>positive_meaning P"
+      "(76,Pair_Term (Pair_Term x (data_list_term zs)) (data_list_term zs))\<in>positive_meaning P"
+    using reach_bound_passes[OF source parts(3,5) reach] parts(1) by (simp_all add: subset bound)
+  show ?thesis by (rule that[OF parts(2) _ passes]) (use reach parts(6) in blast)
+next
+  case False
+  have edgeless: "edge_answers (positive_meaning P) x={}" by (rule edge_answers_absent[OF edges False])
+  obtain xs ys where lists: "y=data_list_term xs" "b=data_list_term ys" "data_elements xs" "set xs\<subseteq>set ys"
+    using iffD1[OF subset roots] by (auto simp: data_subset_exact)
+  have empty: "ys=[]" by (rule callee_list_unsourced[OF bound closed[unfolded lists(2)] False])
+  have same: "set zs=set xs"
+    using rows unfolding edgeless lists(1) selection_answers_exact[OF selection lists(3)] by simp
+  have none: "zs=[]" using lists(4) empty same by simp
+  show ?thesis by (rule that[OF lists(2)]) (use roots closed lists(2) empty none in simp_all)
+qed
+
 theorem closure_bound_least_witness:
   assumes environment: "\<And>t. (26,t)\<in>positive_meaning P \<longleftrightarrow> (\<exists>E. environment_value_presents E t)"
     and subset: "\<And>t. (47,t)\<in>positive_meaning P \<longleftrightarrow> (47,t)\<in>positive_meaning data_subset_system"
@@ -270,17 +327,13 @@ proof
     (76,Pair_Term (Pair_Term x z) z)\<in>positive_meaning P"
   then obtain z where held: "(26,x)\<in>positive_meaning P" "(47,Pair_Term y z)\<in>positive_meaning P"
     "(76,Pair_Term (Pair_Term x z) z)\<in>positive_meaning P" by blast
-  obtain E where source: "environment_value_presents E x" using held(1) environment by blast
-  obtain rs ys where parts: "y=data_list_term (map (\<lambda>d. definition_site_value d) rs)" "z=data_list_term ys"
-    "data_elements (map (\<lambda>d. definition_site_value d) rs)" "data_elements ys"
-    "native_package_formed E (set rs)"
-    "(\<lambda>d. definition_site_value d) ` native_definition_sites E (set rs)\<subseteq>set ys"
-    by (rule closed_bound_contains_reach[OF source iffD1[OF subset held(2)] iffD1[OF bound held(3)]])
-  have reach: "set zs=(\<lambda>d. definition_site_value d) ` native_definition_sites E (set rs)"
-    using rows unfolding parts(1) least_closure_bound_reach[OF selection edges source parts(3)] .
-  show "(26,x)\<in>positive_meaning P \<and> (47,Pair_Term y (data_list_term zs))\<in>positive_meaning P \<and>
+  obtain ys where "z=data_list_term ys" "set zs\<subseteq>set ys"
+      "(47,Pair_Term y (data_list_term zs))\<in>positive_meaning P"
+      "(76,Pair_Term (Pair_Term x (data_list_term zs)) (data_list_term zs))\<in>positive_meaning P"
+    by (rule closed_bound_least[OF selection edges subset bound rows held(2,3)])
+  then show "(26,x)\<in>positive_meaning P \<and> (47,Pair_Term y (data_list_term zs))\<in>positive_meaning P \<and>
     (76,Pair_Term (Pair_Term x (data_list_term zs)) (data_list_term zs))\<in>positive_meaning P"
-    using held(1) reach_bound_passes[OF source parts(3,5) reach] parts(1) by (simp add: subset bound)
+    using held(1) by blast
 next
   assume "(26,x)\<in>positive_meaning P \<and> (47,Pair_Term y (data_list_term zs))\<in>positive_meaning P \<and>
     (76,Pair_Term (Pair_Term x (data_list_term zs)) (data_list_term zs))\<in>positive_meaning P"
@@ -346,19 +399,16 @@ proof
     (list_site,Pair_Term c b)\<in>positive_meaning P"
   then obtain b where held: "(47,Pair_Term r b)\<in>positive_meaning P"
     "(76,Pair_Term (Pair_Term y b) b)\<in>positive_meaning P" "(list_site,Pair_Term c b)\<in>positive_meaning P" by blast
-  obtain rs ys where parts: "r=data_list_term (map (\<lambda>d. definition_site_value d) rs)" "b=data_list_term ys"
-    "data_elements (map (\<lambda>d. definition_site_value d) rs)" "data_elements ys"
-    "native_package_formed F (set rs)"
-    "(\<lambda>d. definition_site_value d) ` native_definition_sites F (set rs)\<subseteq>set ys"
-    by (rule closed_bound_contains_reach[OF source iffD1[OF subset_meaning held(1)] iffD1[OF bound_meaning held(2)]])
-  have reach: "set bs=(\<lambda>d. definition_site_value d) ` native_definition_sites F (set rs)"
-    using rows unfolding parts(1) least_closure_bound_reach[OF selection edges source parts(3)] .
+  obtain ys where least: "b=data_list_term ys" "set bs\<subseteq>set ys"
+      "(47,Pair_Term r (data_list_term bs))\<in>positive_meaning P"
+      "(76,Pair_Term (Pair_Term y (data_list_term bs)) (data_list_term bs))\<in>positive_meaning P"
+    by (rule closed_bound_least[OF selection edges subset_meaning bound_meaning rows held(1,2)])
   have listed: "(list_site,Pair_Term c (data_list_term bs))\<in>positive_meaning P"
-    by (rule listing.semantics.elements_antimono[OF held(3)[unfolded parts(2)]]) (use reach parts(6) in blast)
+    by (rule listing.semantics.elements_antimono[OF held(3)[unfolded least(1)] least(2)])
   show "(47,Pair_Term r (data_list_term bs))\<in>positive_meaning P \<and>
       (76,Pair_Term (Pair_Term y (data_list_term bs)) (data_list_term bs))\<in>positive_meaning P \<and>
       (list_site,Pair_Term c (data_list_term bs))\<in>positive_meaning P"
-    using reach_bound_passes[OF source parts(3,5) reach] parts(1) listed by (simp add: subset_meaning bound_meaning)
+    using least(3,4) listed by blast
 next
   assume "(47,Pair_Term r (data_list_term bs))\<in>positive_meaning P \<and>
       (76,Pair_Term (Pair_Term y (data_list_term bs)) (data_list_term bs))\<in>positive_meaning P \<and>

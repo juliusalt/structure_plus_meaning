@@ -64,10 +64,10 @@ into the briefs #522 and #523 corrected, or recorded superseded there.
 - The clause match (#642's addition, briefed by #643): M #645 → V1 #647; V2a #649 (after #597) and V2b #651 (after
   #599), divided so that #605 does not wait on #599; V3's parts #653 (the asked and request installations), #655 (the
   given's) and #657 (the control, off the route).
-- Beside them: the investigation #644 (the resolver over environment values, #636's escalation; Now) and the fix #660
-  (the registrations' code from the programs' clauses, review 639's 2), both before #542 and #547; the committed
-  lifting's consolidation #613, off the route. #399's and #542's briefs (#643's corrections, over a build's room) are
-  divided with #644's fix when it reports; #540's and #605's were divided by #659 (#661 and #663 their new parts).
+- Beside them: the investigation #644 (the resolver over environment values, #636's escalation; Now), before #542 and
+  #547; the committed lifting's consolidation #613, off the route. #399's and #542's briefs (#643's corrections, over a
+  build's room) are divided with #644's fix when it reports; #540's and #605's were divided by #659 (#661 and #663
+  their new parts).
 
 **Retired** on #376's and #378's entries (their tables): the decomposition line (#325–#334), N1a, N1b, N3a, N3b, N4a
 and N4b as briefed, #371, #377, the designation by locus (#169, #170), the index form's retirement (#92, #93) and the
@@ -91,7 +91,7 @@ approval build (Open 142) after #407 and #447 waits for the chain to shorten.
 **Order** (the queue holds it; the planner's choice, a residual until the native answer to the selection problem
 exists, Q2): the slots are one pool, each free slot going to the first task in the queue that can start and a review
 standing where its review task stands, so every review stands right after its build. By slack on the longest chain:
-the brief #665 first (it gates #597); M #645, V1 #647 and V3's parts in the slots the route leaves; #644 and #660;
+the brief #665 first (it gates #597); M #645, V1 #647 and V3's parts in the slots the route leaves; #644;
 #595; then #597, R6b's parts, R5e #599 and V2a #649; the carryings, rc and R6c; R7 #542 and #547; the route in its
 chains' order (#399, #551, #549, #553, #401, #403, #443, #447, #407, #445, #449); the consolidation #613 last.
 ## Decisions
@@ -315,7 +315,9 @@ follow-ups are in `PLANNING_LOG.md` and the earlier states (`HANDOFF-before-cond
   (#526, #615, #634: `finite_construction_complete`, `relocated_construction_complete`, the exact forms with
   registrations), W4b `Development_Given_Registrations` (#528: 77, 392 and 561 complete at `finite_given_readers`, 77's
   and 561's at `package_request_system`), `Development_Asked_Registrations` (#635: #399's two courses, placed) and
-  `Development_First_Request_Registrations` (#640: at the first request's program and its installation, placed).
+  `Development_First_Request_Registrations` (#640: at the first request's program and its installation, placed); the
+  three registrations' code from the programs' clauses (#660, `aa72ef2a`: `bound_witness_registration` and
+  `merge_witness_registration`, nullary values built at module load, review 660's 2).
 - **The probe's start and the base** (Q29): a probe's start is the base's chain (#623, `.build/tasks/623/result.md`);
   the one-session base landed inert (#624); the start estimated by the chain (#625); held at the library's scale, 3.33
   s against 37.68 s (#628); `Factor_Resolution_Commitments`' proof time (#629).
@@ -433,15 +435,17 @@ planner searches for a theory before briefing a task that edits it.
   remaining controls (77 and 113 at the package and the merge, through `given_control_verdict` and
   `merge_control_inclusions`), correction (7)'s three counterexample controls, the controls' literals onto the
   library's code (review 639's 1), and an evaluation of the commitment test's conjuncts at the state after construction
-  (review 632's 5). The library's code itself is #660.
+  (review 632's 5); it also drops `Factor_Resolution_Controls`' `control_registrations_code [code]` with
+  `finite_schema_of_literal`, `control_registration_schemas` and the three literal schemas, importing
+  `Development_First_Request_Registrations` for 561's (review 660, follow-up 3); the library's code landed with #660.
 - **#643's corrected briefs over a build's room**: #399 (260K beside 345K of relations) and #542 (190K beside 439K)
   keep their earlier briefs until #644 reports; then one brief divides them with its fix, and corrects #547 and #443
   where the fix changes them.
 - **V3's second part** (#655): the given's own installation is a closed installation, not a mapped extension; if W4a's
   relocation completeness stands only in `finite_mapped_native_extension`, #655 brings it to the planner.
 - **The graph's width**: the route is one chain — #595 → #665's record build → #597 → R5e and R6b's parts → R6c → R7 →
-  #399 — so between its landings little else can start; beside it run the clause-match line (#645, #647, #653, #655),
-  #644 and #660. Nothing is invented to fill the gaps.
+  #399 — so between its landings little else can start; beside it run the clause-match line (#645, #647, #653, #655)
+  and #644. Nothing is invented to fill the gaps.
 - **What the next events ask**: #665's proposal; #595's result (its division advice to #665, mailed if #665 has not
   proposed); #644's report (the fix, and the division of #399's and #542's briefs); Q29's answer. The samples build #551
   is the part of #544's division nearest its room (384K at proposal): a hand-back there divides corrected item (3),
@@ -463,7 +467,9 @@ planner searches for a theory before briefing a task that edits it.
   predecessors"); #399, #549, #551 — #398's 4 (`finite_program_entry_presented` moved at its second use); #551 — #506's
   6 (resolution at `criticism_calls` an exact S1 table); #407 — #433's 2 and 3, the frame as #432 and #433 leave it,
   #394's 3; #443 — #546's 2, review 527's 2; #447 — V3's given instance (`given_installed_exact`, #655); #665 —
-  plan-86's (review 632's Controls row and correction (8)'s words).
+  plan-86's (review 632's Controls row and correction (8)'s words); #644 — review 660's 2 (the nullary registrations
+  built at module load, the two `export_code … checking SML` lines' cost); #399, #542, #547 — review 660's 2 (that cost
+  measured where each first evaluates the registrations, unless #644 attributes it).
 - **The harness's gaps met by this run's tasks** are owed to the owner and listed in `PLANNING_LOG.md` (2026-09-26,
   plan-86); new ones go there.
 - **Ledger entries that can leave** (the harness's `v2.py ledger`): Q7's and Q2's questions and answers, recorded in the

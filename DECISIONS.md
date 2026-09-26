@@ -17172,6 +17172,8 @@ declared sockets from committing (the table below).
   57.0/2 and 119.0/3 does, so #726's drop stands. None of #679's six sockets at 63 and 64 holds a head output in its
   viewed input.
 
+[Restated on the guard's route by correction (11) below (task 766): the evaluation reads the callers the asked relation's
+entry reaches and a third reading of a direct commitment; the rows below stand as correction (10)'s prediction.]
 The declared sockets, their frames (the carried sets their theories state, clause variables by number; "own output" the
 socket's output variables alone), where their parents are committed on the route (the asked program's clauses,
 `.build/tasks/585/clauses.txt`; a kept socket at any focus), the holes callers fix by kind (E an equality hole, B a bag
@@ -17301,6 +17303,161 @@ narrowed socket at a frame: `Factor_Narrowed_Sockets.narrowed_socket_framed` (`n
 corollary), and beside a narrowed record `narrowed_frames_discharged` (`frames_discharged_unnarrowed`). The variant lemma
 `finite_variant_pairs_substitute` moved from `Factor_Resolution_Material_Discharge` to where the test reads it, its
 statement unchanged, beside `finite_variant_substitute_apart`.]
+[Marked by task 766, from review 748's follow-ups 1, 3 and 5 (plan-103). B2b (#747) made two choices provisionally, and
+they stand: `frames_varied` carries a frame along the clause match only where its clause is the one clause of the
+placed program at its site that the match reaches from the installed clause; otherwise the frame is dropped and the
+socket is tested at its default frame (sound, a dropped frame removing only a choice, and less committing); and
+relocating frames asks the relocation injective on `frame_sites Φ`, as relocating the sockets asks it on theirs. "A
+record with no frames is tested as today" above overstates: at no frames the test reads (iii) at the default frame, which
+the variant test implies and which admits more, so the framed test at no frames commits at least where correction (9)'s
+test does and possibly more. On the guard's route it commits no more in the strict and focused readings of correction
+(11); in the lenient reading it adds 62.0/0 and 63.1/0–1, 63.2/0–1 (at 64.0/2, where (iii) admits the structured head
+output of 63 that the variant test refuses).]
+
+[Corrected by task 766, a design, from B3b #751's evaluation (`.build/tasks/751/result.md`, its items 1–10 and question)
+and review 752's follow-ups 1 and 2. (11) Which declared sockets commit on the guard's route. #751 read the test's
+conditions at every caller of every socket's parent, a direct commitment in two readings, strict (its output kept out of
+the caller's head) and lenient (not), and found ten disagreements with correction (10)'s table, most of the
+instantiation family live only leniently. The runtime test is what commits; the static evaluation reads it as evidence.
+One draft evaluation (`.build/tasks/766/draft/Draft_766.thy`, compiled once, a 10 s probe) reproduces #751's names in
+both readings and reads them again with the two corrections below and every landed record (#758's, #760's, #609's).
+- *What the direct test reads.* `finite_producer_commits D F st g d V hs` asks the goal's viewed input ground and output
+  non-empty, and every pending goal of the focus (`finite_focus_pending F st`) other than g that holds a variable of the
+  output to be a declared consumer at the matching hole (`finite_output_consumer`). It reads no node: a caller's head is
+  a node's call and is never read, and `finite_direct_exchange` holds at every state the test takes, whatever the focus
+  (the kept state supported with every node barred, the pending goals of the focus holding by `finite_direct_context`).
+  A direct commitment whose output reaches the caller's head is therefore no static obstruction. It is a condition the
+  runtime test decides at the goals present: it commits exactly where no pending goal of the focus outside the caller's
+  subtree holds the output, other than a declared consumer.
+- *The reading that counts: focused.* Where the caller's site is itself committed — directly at its own caller, at a
+  free socket whose parent is committed, or at a kept socket — the caller's node is the root of the committed
+  sub-search, the focus holds the caller's subtree alone, and the caller's clause decides: the commitment is counted
+  there. Where the caller is not committed, the holders are goals of its ancestors' clauses, which no clause-level
+  reading sees: the runtime test decides, and no static reading counts the socket live. The strict reading is the case
+  the clause decides at any focus; the lenient reading counts every caller and over-counts. The evaluation reads all
+  three (the focused one a joint least fixpoint over committed sites and live sockets); R7 compares the focused one.
+- *Callers on the route.* A caller counts only in a clause the asked relation's entry reaches,
+  `finite_definition_closure finite_asked_program {|526|}` (94 of the program's 162 sites; 113, 80, 392, 525 and 505
+  among them). The clauses of 13, 16, 43, 58, 68, 84–94, 103–107, 110, 115, 118–122, 135, 147 and 148, which #751
+  read, stand in no search the guard makes; 54.0/1 (committed directly only at 104.0/2), 58.0/0 and 119.0/1 were live
+  there only.
+- *No widening.* Where the focused reading fails, the caller is uncommitted or a goal outside its clause holds the
+  output. Admitting such a holder needs its truth under the new answer, which only its invariance gives (a consumer
+  declaration, no widening) or a carrier chain (#585's (b) and correction (9) rejected a direct commitment through
+  carriers; the socket's clause-level obligation states that exchange). On the route no socket rests on one: the
+  lenient liveness of the instantiation family rests on 61's commitment at 62.0/0 and 63's at 64.0/2, whose callers
+  are committed only through 65 (below), and whose outputs, followed up the callers as the runtime test follows them,
+  meet 48 at 63.2/2 and 65.0/5, a producer and no consumer. No test changes; R4's and R5's forms stand.
+- *What the evaluation still does not read*: the order the search takes goals, and a caller variable ground by the
+  caller's own earlier premises. The latter decides 71.0/1 (kept, #758): its root x2 is 71's head output, ground at
+  72.0/3 once 34 at 72.0/1 has closed x8, and 71 has one clause where the record's successor reader 33 has three, so
+  the order is F1's. Reading the caller's siblings by the evaluation's first-holder rule was tried and rejected: it
+  takes a consumer for a feeder (77 at 80.0/1 would ground 79's roots x3, and 79.0/1 would read dead). 71.0/1 is
+  decided at run time.
+- *The ten items*, on the route. (1) 55.1/1: dead today and after, strict and focused; lenient after. 55 is committed
+  only at the sockets 55.2/2–3, 57.0/4, 60.1/0 and 65.0/3; its direct commitment meets a non-consumer holder of its
+  output at every reached caller (46, 48, 49) or, at 56.0/3, an unfed input (56's table). (2) 62.0/0: likewise; 62 is
+  committed only at 63.2/0 (103.1/0 is off the route). (3) 64.0/1–2: dead in every reading; 64 is committed only at
+  65.0/4, as its socket (65 uncommitted) or directly (48 at 65.0/5 holds x18; declared a consumer of 64 it would leave
+  x5 and x6 in 65's head and the table in 64's viewed input). (4) 65.0/3–4: dead in every reading; 65's viewed input
+  holds its substitution table, premise-only at each reached caller (69.0/0, 73.0/0, 82.0/1, 503.0/0; 68.0/0 is off the
+  route) and fed by no sibling. (5) 6.1/1: live today in the focused reading (6 committed directly at 7.0/0–3 in 7's
+  focus, 7 at 12.0/2 in 12's, 12 at 37.0/2 in 37's, 37 directly), strictly after: "commits both" holds, focused.
+  (6) 10.0/4: live today and after, focused only: 10 commits at 45.0/0 and 45.1/0 in 45's focus, 45 committed
+  directly at 500.1/0; its output reaches 45's head. (7) 45.1/2: dead in every reading; its material premise's source
+  x0 is premise-only and held only by 10 at 45.1/0 as its view's input, and a target leaf is atomic to patterns, so
+  nothing grounds it; the premise waits, and 45 at an occurrence target is unresolved, never refuted. (8) 29.0/7: "not
+  committable" stands; 32.0/0 fixes x7 to [], and at 36.3/1 and 50.0/1, which bind it to an open one-element list, 29
+  is uncommitted (36 and 50 never are on the route): lenient only. (9) 58.0/0: off the route (58 is not reached from
+  526). (10) 63.1/0–1, 63.2/0–1: dead today in every reading. At 64.0/2, the one caller where 63 is committed (leniently:
+  its output (x5,(x6,x7)) reaches 64's head), `liveness_detail False True` reads matched, ground, children and
+  premise-only true and outputs false: 63's head output at `premise_rows_view`, (((x4,(x7,x8)),x9),(x10,x11)), shares
+  the row key x4 with its input and is no variant of the call's output; at 63.1/1 and 63.2/1 the parent is committed only
+  through these sockets. After, (iii) admits 64.0/2 and they are live leniently; focused, 64 is never committed.
+- *The dead sockets.* 29.0/6 stays dead and leaves nothing: every reached caller of 29 fixes x6 to [], a check.
+  36.3/5 stays dead: 36's one caller, 42.0/1, holds 42's head output in 36's viewed input (review 604's rule); it
+  leaves 6's comparison of a two-element list, two orders. 45.1/2 stays dead (item 7) and leaves nothing: its premise
+  waits. 54.0/1 stays dead on the route: no reached caller commits 54. 65.0/3–4 and the family below them — 64.0/1–2,
+  63.1/0–1, 63.2/0–1, 62.0/0, 61.0/4, 60.1/0–1, 57.0/4, 55.1/1, 55.2/2–3, 50.2/2–3 and #609's eight sockets of 48 in
+  50, 55, 57, 60 and 63 — stay dead on the route. Every chain of their parents there passes through 65 at 69.0/0,
+  73.0/0, 82.0/1 and 503.0/0 (or 56 at 72.0/2), where the substitution table is the caller's existential:
+  premise-only, fed by no sibling, the facts those clauses read (admission, callee rows, stated leaves) holding at some
+  table. No direct commitment takes 65 with the table in its input; committed at #681's kept 73.0/0 and 82.0/1 with the
+  table in its output, 65 still leaves 65.0/3–4 uncommitted, the table standing in their viewed inputs (55's table,
+  64's context) and ground only once 55 has built it (B1's `finite_framed_open_input`). None of the constructions
+  named changes it: 48 declared a consumer of 64 at 65.0/5 leaves 64's input open; a frame reads no input's
+  groundness; #609's narrowed sockets need their parents committed. What makes them commit is a ground table at 65's
+  goal, and 56's: a table produced before 65 runs, the canonical complete substitution of the source's declared
+  binders, by a witness registration at the caller's premise-only table variable, complete where the caller's clause
+  holds at some table exactly when at the canonical one, checked by the given's clauses as installed (Q28). W4's
+  construction step does not take it: `finite_registration_ready` binds a registered variable only when the goals
+  holding it hold nothing else unbound, and 65's goal holds its free outputs; admitting it widens the construction's
+  readiness, with `finite_construction_lifts` proved for it and each caller's completeness (69, 73, 82, 503; 72 for
+  56). That is the planner's, a design after R7 measures what the dead leave. Until then their declarations and frames
+  stay, sound and carried by #611, and act off the route and wherever a table is ground.
+- *What the dead leave the guard's calls to enumerate.* A goal no commitment takes is resolved plainly: at a true call
+  the first answer the rest accepts, at a false call every answer, each followed by every goal after it. A committed
+  goal's sub-search enumerates its own subtree's answers once, to keep the least by the term key (R5), and spares only
+  their product with what fails downstream; inner commitments are what spare the enumeration itself. So at 80 (77, 76,
+  75, then 72, 71, 70, 69 and 74, 73), 392 and 525 (through 76, and 83, 82), 526, and 505 (504, 503), 65's answers —
+  every table 55 and 64 build and every presentation of their outputs the unions (48), appends (46) and comparisons
+  (6, 49) admit, 63's premise rows among them — are enumerated at every clause read on the path: with #681 once per
+  call at 73.0/0 and 82.0/1, at 69.0/0 and 503.0/0 multiplied on a false call; 56's likewise at 72.0/2. 113 reaches
+  none of them; 590 is the stated-leaves program, with no declared socket.
+- *Weighed and not taken*: the lenient reading as the count (it counts callers that are never focus roots); a widening
+  of the direct test to non-consumer holders (above); 48 declared a consumer of 64 at 65.0/5 (nothing changes on the
+  route); the caller's siblings read by the first-holder rule (above); the output followed statically up the callers
+  (it agrees with the focused reading on the route, the runtime test doing it at run time).
+- *What the builds must respect*: the runtime test commits and the evaluation is its evidence; a disagreement R7 finds
+  is reported, never settled by the table; the given's readers stay as installed; unresolved never refutes.
+
+The table, on the route: S, F and L the strict, focused and lenient readings; today correction (9)'s test
+(`finite_declared_commitment`), after the framed test with the declared frames (`finite_framed_commitment`); ✓ commits
+at some reached caller, – never.
+
+| Socket (parent.clause/key: goal; record) | Frame | Parent committed on the route at | Today S F L | After S F L | Note |
+|---|---|---|---|---|---|
+| 79.0/1: 32 (#601) | {3,5,6,7} | 79 directly at 80.0/0, 392.0/2, 525.0/2; kept at 83.0/1 | ✓ ✓ ✓ | ✓ ✓ ✓ | |
+| 83.0/1 kept: 79 (#601) | {4,5} | any focus: 83.1/0, 390.0/0, 523.0/0 | ✓ ✓ ✓ | ✓ ✓ ✓ | |
+| 32.0/0: 29 | {2} | 32 at 79.0/1; after also at 75.0/3, 505.0/4, 81.0/3 | ✓ ✓ ✓ | ✓ ✓ ✓ | |
+| 40.0/0: 39 (#603) | {3,4} | 40 directly at 50.1/1 | ✓ ✓ ✓ | ✓ ✓ ✓ | 43.0/1 off the route |
+| 37.0/2: 12 (#603) | own {3} | 37 directly at 16 reached callers (42.0/0, 50.0/0, …, 505.0/2); at 39.0/0, 39.1/1 in 39's focus | – – – | ✓ ✓ ✓ | its declared frame needed |
+| 12.0/2: 7 | own {1} | 12 at 37.0/2: directly, output in 37's head (today); the socket (after) | – ✓ ✓ | ✓ ✓ ✓ | (10): "never" today |
+| 7.0/0–3: 6 | {4}, {5}, {6}, {7} | 7 at 12.0/2: directly (today); the socket (after) | – ✓ ✓ | ✓ ✓ ✓ | (10): "never" today |
+| 6.1/1: 6 (R6) | default | 6 directly at 7.0/0–3 in 7's focus; after also at 29.0/5 in 29's | – ✓ ✓ | ✓ ✓ ✓ | item 5 |
+| 29.0/5: 6 | {5} | 29 free at 32.0/0 | – – – | ✓ ✓ ✓ | |
+| 29.0/6: 6 | {6} | — (x6 fixed [] at every reached caller) | – – – | – – – | a check |
+| 29.0/7: 6 | {7} | 29 at 32.0/0 (x7 fixed []); uncommitted at 36.3/1, 50.0/1 | – – – | – – ✓ | item 8 |
+| 36.3/5: 6 | {5} | nowhere (42.0/1 open) | – – – | – – – | |
+| 10.0/4 material (R6) | default | 10 directly at 45.0/0, 45.1/0, output in 45's head; 45 directly at 500.1/0 | – ✓ ✓ | – ✓ ✓ | item 6 |
+| 45.1/2 material (R6) | default | 45 directly at 500.1/0; source never ground | – – – | – – – | item 7 |
+| 54.0/1: 32 (#603) | {2,3} | nowhere (104.0/2 off the route; 46, and 64, 48, 49 hold its output at 56.0/2, 65.0/2) | – – – | – – – | (10): "commits" |
+| 50.2/2, 50.2/3 (#607) | {3,12,13,16,17}, {4,14,15,17} | 50 at 55.1/1 and its recursion | – – – | – – ✓ | the family |
+| 55.1/1 (#607) | {5,6,7} | 55 at the sockets 55.2/2–3, 57.0/4, 60.1/0, 65.0/3 | – – – | – – ✓ | item 1 |
+| 55.2/2, 55.2/3 (#607) | {5,15,17,19,21,22}, {6,16,18,20,22} | as 55.1/1 | – – – | – – ✓ | |
+| 57.0/4 (#607) | {6,7,16,19,21} | 57 at 63.1/0 (103.0/0 off the route) | – – – | – – ✓ | |
+| 58.0/0 (#607) | {3,4,5,6} | off the route | – – – | – – – | item 9 |
+| 60.1/0, 60.1/1 (#679) | {6,11,13,15,17}, {7,12,14,16,17} | 60 at 61.0/4 and its recursion | – – – | – – ✓ | |
+| 61.0/4 (#679) | {5,6,8,13,14} | 61 directly at 62.0/0, output in 62's head, 62 uncommitted | – – – | – – ✓ | |
+| 62.0/0 (#679) | {5,…,12} | 62 at 63.2/0 (103.1/0 off the route) | – – – | – – ✓ | item 2 |
+| 63.1/0–1, 63.2/0–1 (#679) | {7,8,12,14,15}, {9,10,13}, {10,…,15,17,18}, {7,8,16} | 63 directly at 64.0/2, output in 64's head, 64 uncommitted; its recursion | – – – | – – ✓ | item 10 |
+| 64.0/1, 64.0/2 (#679) | {5,6,7,9}, {5,6,7} | 64 at 65.0/4 only | – – – | – – – | item 3 |
+| 65.0/3, 65.0/4 (#679) | {4,15,16,17}, {5,6,18} | nowhere: 65's table premise-only at 69.0/0, 73.0/0, 82.0/1, 503.0/0 | – – – | – – – | item 4 |
+| 48 at 50.2/7, 55.2/7–8, 57.0/8, 60.1/4–5, 63.1/2, 63.2/2 (#609) | the union's output | their parents, as the family | – – – | – – ✓ | never on the route |
+| 71.0/1 kept: 32 (#758) | {4,5} | at 72.0/3 | – – – | – – – | run time (above) |
+| 75.0/3 kept: 32 (#758) | {10,11} | at 76.1/0 | – – – | ✓ ✓ ✓ | its declared frame needed |
+| 505.0/4 kept: 32 (#758) | {9,10} | at 522.0/0 | – – – | ✓ ✓ ✓ | its declared frame needed |
+| 81.0/3 kept: 32 (#760) | its carried set | at 82.0/0 | – – – | ✓ ✓ ✓ | its declared frame needed |
+| 104.1/3, 105.1/2, 119.0/1 kept: 32 (#760) | their carried sets | off the route | – – – | – – – | off it: 119.0/1 commits today, the others after |
+| 73.0/0, 82.0/1 kept: 65 (#681) | their carried sets | at 74.1/0, 83.1/1 | not declared | expected ✓ ✓ ✓ | 65's table in its output at #681's view |
+| 105.0/2 kept: 56, 587's (#681) | theirs | off the route | not declared | – | |
+
+The builds (`.build/tasks/766/result.md`): the evaluation restated over the route with the focused reading and every
+landed record's declarations and frames (L1), #681's records added when it lands (L2), and a control of a free socket
+committed at a declared frame strictly smaller than its default and refused at its default (C1): on the route every
+socket the framed test commits beyond correction (9)'s test commits only at such a frame — the evaluation at no frames
+commits none of them — and no control evaluates that case (B2b's fixed-output control declares the default frame and
+exercises (iii) alone). The table's production for 65 and 56 is a design for the planner, after R7 #542.]
 
 Presentation freedom makes a false call expensive: a true call is resolved at the first presentation its producer
 yields, a false one only after every presentation (n! root lists of n roots), so a refusal past a few elements reaches

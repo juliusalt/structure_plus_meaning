@@ -603,8 +603,8 @@ qed
 section \<open>The premises stated once, and the committed forms at the varied narrowed record\<close>
 
 text \<open>
-  The locale holds the source's discharged record, frames and productions, the meanings agreeing at the record's sites
-  and at the productions' sites, the sources' classes agreeing, and at N R5f2's premise, the productions' discharge
+  The locale holds the source's discharged record, frames and productions, the meanings agreeing at the record's sites,
+  the sources' classes agreeing, and at N R5f2's premise, the productions' discharge
   (@{const productions_discharged}; each consuming program discharges it by the semantic lemma, q138, and
   @{text productions_varied_at_values} derives it from @{const registration_values_carried}) and the varied record's
   static premise (@{const narrowed_productions_declared},
@@ -623,10 +623,6 @@ locale varied_narrowed_record =
   assumes Pf: "finite_system_formed P" and Nf: "finite_system_formed N"
     and at: "\<And>d x. d \<in> declared_sites (resolution_declarations.truncate PD) \<Longrightarrow>
       (d,x) \<in> positive_meaning (decode_finite_system N) \<longleftrightarrow> (d,x) \<in> positive_meaning (decode_finite_system P)"
-    and at_productions: "\<And>e S s keep Vp Vh R x. (e,S,s,keep,Vp,Vh) |\<in>| declared_sockets PD \<Longrightarrow>
-      declared_production PD e S s = Some R \<Longrightarrow>
-      (registration_site R,x) \<in> positive_meaning (decode_finite_system N) \<longleftrightarrow>
-        (registration_site R,x) \<in> positive_meaning (decode_finite_system P)"
     and agree: "varied_narrowings_agree P N PD"
     and discharged: "narrowed_declarations_discharged (positive_meaning (decode_finite_system P))
       (narrowed_declarations.truncate PD) corr"

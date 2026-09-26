@@ -19662,3 +19662,25 @@ along the chain every carrying reads (`given_agreements`, `given_narrowed_carrie
 `given_narrowed_commitment_exchanges`. The plain record keeps its facts under `given_plain_declarations*`; the plain
 installed carrying keeps its statements as `given_installed_plain_declarations*`. The carrying of the one record to the
 installed programs and `given_union_registration` are the follow-up task's (q144).
+
+## The produced record is relocated with its registrations' sites; nothing is claimed of their values there
+
+Task 796, from #782's Remains 1 (q144). `committed_registrations_relocated` took the relocated record `D'` as free data,
+with two premises: its truncation the source's relocated at some narrowing `ν`, and `ν` at each relocated socket the
+source's class. `produced_relocated g PD` (`Factor_Native_Committed_Registrations`) is that record, built once: the
+truncation `declarations_relocated g`, and at a key `(e',S',s)` the source's narrowing and production at
+`(inv_into X g e', finite_rename_schema id id (inv_into X g) S', s)`, X the record's declared sites. The first premise
+then holds by definition (`produced_relocated_truncate`) and the second wherever g is injective on X
+(`produced_relocated_keys`), through `finite_rename_schema_left_inverse`, the schema form of
+`push_structure_left_inverse`: a callee map with a left inverse on a schema's callees is undone by it. In the mapped
+extension the placement's injectivity on Q's definitions gives it (`committed_registrations_produced_relocated`).
+
+A production is data of the record's own type, so a relocated record's production is a registration at the relocated
+sites: `registration_relocated g` moves its site, renames its schema's callees and moves the sites its families'
+queries and identity ask (`query_relocated`, `identity_relocated`, `family_relocated`), the variable and patterns kept
+— as `finite_relocated_construction` places a construction's registrations at `(g d, finite_rename_schema id id g S)`.
+Whether its value at the relocated program is the source's value at the source program is the search's equivariance
+under a site relocation, which is not stated (q138): the productions' discharge at the program that reads the record
+stays a premise of the corollary, discharged at the installed program by the semantic lemma, for 48's registrations by
+`union_registration_answers_variant` (`Factor_Union_Declarations`), which reads only the head's view at an alpha
+variant of `union_schema` and the agreements at the site and at 5.

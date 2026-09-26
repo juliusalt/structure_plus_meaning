@@ -221,25 +221,41 @@ text \<open>
   is an enumeration pattern whose entries pair a payload, the atom's address, with an anchor pattern.
   An anchor of an incidence or an attachment is read when it is a ground occurrence, whose address it
   states, or a variable an atom's entry holds, whose address is that atom's; a variable no atom's entry
-  holds is open. The skeleton is read when every position is; it is open when some position holds a
-  variable or an unheld anchor variable; otherwise some position has no reading, and no binding
-  satisfies the premise.
+  holds is open. The skeleton has no reading when some position has none, whatever else is still open:
+  an entry with no reading has none under every substitution of the open parts, while every solution's
+  instance reads, so no binding satisfies the premise. Otherwise the skeleton is read when every
+  position is, and open when some position holds a variable or an unheld anchor variable.
 \<close>
 
 datatype 'x material_reading = Reading 'x | Unreadable | Open_Reading
 
 fun reading_pair :: "'x material_reading \<Rightarrow> 'y material_reading \<Rightarrow> ('x \<times> 'y) material_reading" where
-  "reading_pair Open_Reading r = Open_Reading"
-| "reading_pair r Open_Reading = Open_Reading"
-| "reading_pair (Reading x) (Reading y) = Reading (x,y)"
-| "reading_pair r s = Unreadable"
+  "reading_pair (Reading x) (Reading y) = Reading (x,y)"
+| "reading_pair Unreadable r = Unreadable"
+| "reading_pair r Unreadable = Unreadable"
+| "reading_pair r s = Open_Reading"
 
 lemma reading_pair_reading:
   "reading_pair r s = Reading z \<longleftrightarrow> (\<exists>x y. r = Reading x \<and> s = Reading y \<and> z = (x,y))"
   by (cases r; cases s) auto
 
+text \<open>
+  A pairing has no reading exactly when a part has none, whatever the other; it is open exactly when neither
+  part lacks a reading and one is open. Pairing an open part with one that has no reading is the one pairing
+  whose value this reading gives as unreadable rather than open.
+\<close>
+
+lemma reading_pair_unreadable_iff:
+  "reading_pair r s = Unreadable \<longleftrightarrow> r = Unreadable \<or> s = Unreadable"
+  by (cases r; cases s) auto
+
 lemma reading_pair_unreadable:
   "reading_pair r s = Unreadable \<Longrightarrow> r = Unreadable \<or> s = Unreadable"
+  by (simp add: reading_pair_unreadable_iff)
+
+lemma reading_pair_open:
+  "reading_pair r s = Open_Reading \<longleftrightarrow>
+    r \<noteq> Unreadable \<and> s \<noteq> Unreadable \<and> (r = Open_Reading \<or> s = Open_Reading)"
   by (cases r; cases s) auto
 
 lemma map_reading_cases:
@@ -560,6 +576,29 @@ proof -
   show thesis using that[OF es] rest A0 unfolding finite_atom_entries_read[OF es] by blast
 qed
 
+text \<open>
+  The skeleton has no reading exactly when one of its four fields has none: an entry with no reading, a
+  ground term where an anchor, an address or a formed attachment must stand, or a payload or a nonempty
+  target where a list continues, makes its field unreadable whatever the field's other entries hold, and the
+  field makes the skeleton unreadable whatever the other fields hold.
+\<close>
+
+lemma finite_enumeration_pattern_read_pair_unreadable:
+  "finite_enumeration_pattern_read rd (Finite_Pattern_Pair p q) = Unreadable \<longleftrightarrow>
+    rd p = Unreadable \<or> finite_enumeration_pattern_read rd q = Unreadable"
+  by (simp add: map_reading_cases reading_pair_unreadable_iff)
+
+lemma finite_material_skeleton_unreadable_iff:
+  "finite_material_skeleton M = Unreadable \<longleftrightarrow>
+    finite_enumeration_pattern_read finite_atom_entry (finite_material_atoms M) = Unreadable \<or>
+    finite_enumeration_pattern_read (finite_incidence_entry (finite_atom_entries (finite_material_atoms M)))
+      (finite_material_edges M) = Unreadable \<or>
+    finite_enumeration_pattern_read (finite_attachment_entry (finite_atom_entries (finite_material_atoms M)))
+      (finite_material_counts M) = Unreadable \<or>
+    finite_enumeration_pattern_read (finite_attachment_entry (finite_atom_entries (finite_material_atoms M)))
+      (finite_material_functions M) = Unreadable"
+  by (simp add: finite_material_skeleton_def Let_def map_reading_cases reading_pair_unreadable_iff)
+
 theorem finite_material_skeleton_determined:
   assumes skeleton: "finite_material_skeleton M = Reading (A0,E0,B0,F0)"
     and functional: "finite_relation_functional V"
@@ -799,6 +838,24 @@ theorem finite_material_resolution_waits:
   "finite_material_resolution M = Material_Waits \<longleftrightarrow>
     finite_material_skeleton M = Open_Reading \<and> finite_pattern_variables (finite_material_source M) \<noteq> {||}"
   by (auto simp: finite_material_resolution_def split: material_reading.splits prod.splits)
+
+text \<open>
+  Where a field of the skeleton has no reading the material premise has no solution, and its resolution says so
+  whatever the rest of the skeleton or the source still leaves open: this is where the reading above changes the
+  resolution's value, from @{const Material_Waits} (an open field beside it, the source open) to no solution.
+  Every other value is as it was.
+\<close>
+
+theorem finite_material_resolution_unreadable_field:
+  assumes "finite_enumeration_pattern_read finite_atom_entry (finite_material_atoms M) = Unreadable \<or>
+    finite_enumeration_pattern_read (finite_incidence_entry (finite_atom_entries (finite_material_atoms M)))
+      (finite_material_edges M) = Unreadable \<or>
+    finite_enumeration_pattern_read (finite_attachment_entry (finite_atom_entries (finite_material_atoms M)))
+      (finite_material_counts M) = Unreadable \<or>
+    finite_enumeration_pattern_read (finite_attachment_entry (finite_atom_entries (finite_material_atoms M)))
+      (finite_material_functions M) = Unreadable"
+  shows "finite_material_resolution M = Material_Solutions {||}"
+  using assms by (simp add: finite_material_resolution_def finite_material_skeleton_unreadable_iff[symmetric])
 
 theorem finite_material_resolution_sound:
   assumes res: "finite_material_resolution M = Material_Solutions S" and member: "W |\<in>| S"

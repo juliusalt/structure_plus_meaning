@@ -56,8 +56,8 @@ into the briefs #522 and #523 corrected, or recorded superseded there.
 - R5d: #595 landed (Delivered); then #665's builds (#585's
   builds (1), which the discharge line did not take; `.build/tasks/665/result.md`): the viewed record beside the old
   #666 and the switch to the kept names #668 landed → the discharges over a view, the pair their instance:
-  the direct producer #670 (landed) beside the material single solution with the parent context stated once #672 → the socket
-  kinds #674 → the declared exchanges, forms and transfer at views #676. Carriers #597 → R6b's parts #601 (the
+  the direct producer #670 and the material single solution with the parent context stated once #672 (both landed) → the socket
+  kinds #674 → the declared exchanges, forms and transfer at views #676. Carriers #597 (landed; restated from the function witness by the fix #722, review 598's 1) → R6b's parts #601 (the
   root family) and #603 (artifacts and citations), R6c's instantiation family in three parts #607 → #679 → #681
   (#678's division; #681 also after #601, whose carriers 59 and 51 it consumes); #676 and #597 → R5e #599 (narrowed
   sockets) → R6c's #609 (48; also after #607 and #679, whose views its sockets' parents take); R6b's numbered carrying
@@ -103,7 +103,7 @@ line, a row at a locus; the decomposition's schema and library; the digit layout
 **Word changes are serialized** (Decisions): none is queued. A word change's records are re-recorded after its landing
 by a task of their own (Open 100).
 
-**Shape.** No build waits on a review task. The route's longest chain, 16 deep, runs #672 → #674
+**Shape.** No build waits on a review task. The route's longest chain, 15 deep, runs #674
 → #689 → F1 #693 → F3 #695 → F2b #699 → F2c #701 → C #703 → R7 #542 → #707 → #399 → #709 → the record #553 → #447 →
 #449 → #450; #676 → #599 → #609 → #611 → #542 has one step of slack, #597's parts and the carryings more — past the
 limit through splices, so nothing is added after the route's tail until it shortens (the status line gives the depths).
@@ -113,8 +113,10 @@ was placed when #668 landed.
 **Order** (the queue holds it; the planner's choice, a residual until the native answer to the selection problem
 exists, Q2): the slots are one pool, each free slot going to the first task in the queue that can start and a review
 standing where its review task stands, so every review stands right after its build. By slack on the longest chain:
-#665's builds on the longest chain first (#672, #674, #689), F1 #693, #676,
-F3 #695, F2b #699, F2c #701, C #703; R5e #599 and R6c's #609; #597, the rooted reading's reuse row #720 (a fix continuing #716), R6c's instantiation family (#607, #679, #681) beside R6b's parts
+the carriers' fix #722 at the head (review 598's 1, before R6b's and R6c's carriers), then #665's builds on the
+longest chain (#674, #689), F1 #693, #676,
+F3 #695, F2b #699, F2c #701, C #703; R5e #599 and R6c's #609; the rooted reading's reuse row #720 (a fix continuing #716, its merge with main to resolve), R6c's
+instantiation family (#607, #679, #681) beside R6b's parts
 #601 and #603; V3's #653 and #687, then #655 and #688; the carryings #605 and #663 with V2a #649 and V2b #651; rc
 #540 and #661; #611; R7 #542, its native part #707, #399 and its controls #709, #547; the route in its chains' order
 (#551, #549, #553, #401, #403, #443, #447, #407, #445, #449); the controls #718 after C, and the lifting's
@@ -363,7 +365,12 @@ follow-ups are in `PLANNING_LOG.md` and the earlier states (`HANDOFF-before-cond
   notions under temporary `viewed_` names (#666, `900e0d97`), switched to the kept names by #668 (`01efa78e`: `pair_declarations` R5's pair,
   `declarations_formed` each view `view_formed` conjoined into `declarations_discharged`, the transfer at any views, every
   user migrated; its Remains by theory mailed to the views builds); the direct producer's discharge over a view, the pair
-  its instance, in `Factor_Resolution_Producer_Discharge` (#670, `5321062a`).
+  its instance, in `Factor_Resolution_Producer_Discharge` (#670, `5321062a`); correction (9)'s notions — the socket's
+  inputs and closed siblings beside the test, read at the socket's views — and the material single solution's discharge
+  over a view, the parent context stated once (#672, `7bc23ce5`: `finite_declared_socket_context`,
+  `finite_material_commitment_exchanges`); the carriers in `Factor_Resolution_Carriers` (#597, `5bd56f3b`:
+  `function_contract_carrier`, `carrier_discharged`, `socket_discharged_carried`; the control in
+  `Factor_Commitment_Controls`), restated from the function witness by #722.
 - **The least witnesses** (#496's entry): W2 `Factor_Least_Collections` (#524, #567, #634), W3
   `Factor_Least_Witness_Facts` (#513, #634), W4a `Factor_Construction_Holders` and `Factor_Least_Witness_Registrations`
   (#526, #615, #634: `finite_construction_complete`, `relocated_construction_complete`, the exact forms with
@@ -533,11 +540,12 @@ planner searches for a theory before briefing a task that edits it.
   `Development_First_Request_Registrations` imported for 561's).
 
 
-- **The graph's width**: the route is one chain — (#672 → #674 → #689, #597) → #676 → R5e, R6b's and R6c's parts →
-  the carryings → R7 → #399 — so between its landings little else of it can start; #672 and #597 run side by side,
-  and beside them the rooted reading's reuse row #720. Nothing is invented
-  to fill the gaps.
-- **What the next events ask**: the first one-session base's landing, after which probes start in about 3 s — not yet:
+- **The graph's width**: the route is one chain — (#674 → #689, the carriers' fix #722) → #676 → R5e, R6b's and R6c's
+  parts → the carryings → R7 → #399 — so between its landings little else of it can start; #674, #603 and #607 run
+  side by side, #603 and #607 parked for #722 once they reach their carriers (`v2.py after`), and #720 merges its row
+  with main. Nothing is invented to fill the gaps.
+- **What the next events ask**: #722's landing, which #603 and #607 park for at their carriers; the first one-session
+  base's landing, after which probes start in about 3 s — not yet:
   #685's and #670's landings stayed on the chain (`PLANNING_LOG.md`, plan-92). #674 (with #689), #601 and #613 grew or
   were divided against their relations: a build refused at its start is divided then. The samples build #551 is the
   part of #544's division nearest its room (384K at proposal): a hand-back there divides corrected item (3), the
@@ -575,7 +583,9 @@ planner searches for a theory before briefing a task that edits it.
   witness call (next-edits 254); #542, #547, #399, #707 — #715's attribution and #716 before them; #547 — 658's 1 and 3 (`first_request_installation_code` consumed);
   #399 — 658's 1 and `asked_installation_code`'s move to `Development_First_Problem_Asked`; #447 — 658's 1; #670, #672, #674, #676, #689 — #668's Remains by theory and review 669's 1, 3 and 4
   (`finite_direct_context` to several holes, #670's); the declaration builds (#597, #599, #601, #603, #605, #607, #609,
-  #611, #649, #651, #663, #679, #681) — review 669's 1 and 3; #689 — review 669's 2. Plan-92: #689 — review 685's 1 and review 671's 1 (next-edits 262, 264).
+  #611, #649, #651, #663, #679, #681) — review 669's 1 and 3; #689 — review 669's 2. Plan-92: #689 — review 685's 1, review 671's 1 (next-edits 262, 264) and review 673's 1, 2 and 4 (next-edits 270);
+  #603, #607, #601, #679, #681, #649, #599 — review 598's 1 (the carriers as function witnesses, stated by #722; #603 and
+  #607 told to park for it at their carriers), #601 also review 673's 2, #599 also review 598's 4; #674 — review 673's 3.
 - **The harness's gaps met by this run's tasks** are owed to the owner and listed in `PLANNING_LOG.md` (2026-09-26,
   plan-86); new ones go there.
 - **Ledger entries that can leave** (the harness's `v2.py ledger`): Q7's and Q2's questions and answers, recorded in the

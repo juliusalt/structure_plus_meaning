@@ -360,6 +360,48 @@ proof -
   then show ?thesis using view_match_sound[OF lin m] view_match_sound[OF lin m'] by simp
 qed
 
+text \<open>
+  A view reads a pattern's substitution instance as the substitution of its reading (#585's (a): a view commutes with
+  substitution), and a formed view's parts hold exactly the pattern's variables.
+\<close>
+
+lemma view_pattern_match_substitute:
+  "view_pattern_match p c = Some l \<Longrightarrow>
+    view_pattern_match p (finite_pattern_substitute \<sigma> c) = Some (map (\<lambda>(v,c). (v,finite_pattern_substitute \<sigma> c)) l)"
+proof (induction p arbitrary: c l)
+  case (Finite_Pattern_Pair p q)
+  obtain c1 c2 where c: "c = Finite_Pattern_Pair c1 c2" using Finite_Pattern_Pair.prems by (cases c) simp_all
+  from Finite_Pattern_Pair.prems obtain l1 l2 where m1: "view_pattern_match p c1 = Some l1"
+      and m2: "view_pattern_match q c2 = Some l2" and l: "l = l1 @ l2"
+    unfolding c by (auto split: option.splits)
+  show ?case using Finite_Pattern_Pair.IH(1)[OF m1] Finite_Pattern_Pair.IH(2)[OF m2] c l by simp
+qed (auto split: if_splits)
+
+lemma resolution_view_pattern_substitute:
+  assumes viewed: "resolution_view_pattern V c = Some (ci,co)"
+  shows "resolution_view_pattern V (finite_pattern_substitute \<sigma> c) =
+    Some (finite_pattern_substitute \<sigma> ci,finite_pattern_substitute \<sigma> co)"
+proof -
+  obtain p pi po where V: "V = (p,pi,po)" by (cases V)
+  obtain l where m: "view_pattern_match p c = Some l"
+      and ci: "ci = finite_pattern_substitute (view_substitution l) pi"
+      and co: "co = finite_pattern_substitute (view_substitution l) po"
+    using viewed V by (auto simp: resolution_view_pattern_def split: option.splits)
+  let ?l = "map (\<lambda>(v,c). (v,finite_pattern_substitute \<sigma> c)) l"
+  have sub: "view_substitution ?l = (\<lambda>v. finite_pattern_substitute \<sigma> (view_substitution l v))"
+    by (rule ext) (auto simp: view_lookup_def map_of_map split: option.splits)
+  have m': "view_pattern_match p (finite_pattern_substitute \<sigma> c) = Some ?l" by (rule view_pattern_match_substitute[OF m])
+  show ?thesis using m' V ci co sub by (simp add: resolution_view_pattern_def finite_pattern_substitute_composes)
+qed
+
+lemma resolution_view_pattern_variables:
+  assumes formed: "view_formed V" and viewed: "resolution_view_pattern V c = Some (ci,co)"
+  shows "finite_pattern_variables c = finite_pattern_variables ci |\<union>| finite_pattern_variables co"
+proof -
+  obtain p pi po where V: "V = (p,pi,po)" by (cases V)
+  show ?thesis using resolution_view_pattern_parts[of p pi po c ci co] formed viewed V by (simp add: finite_view_parts_def)
+qed
+
 subsection \<open>R5's pair and its swap are views\<close>
 
 definition identity_view :: "'v \<Rightarrow> 'v \<Rightarrow> 'v resolution_view" where
@@ -561,6 +603,234 @@ definition socket_discharged ::
         evaluate_pattern g (material_source N) = evaluate_pattern h (material_source N) \<longrightarrow>
         (\<exists>h'. clause_true M (decode_finite_schema S) h' \<and> head_kept keep Vh S h h' \<and>
           (\<forall>a\<in>material_variables N. h' a = g a))))"
+
+text \<open>
+  The socket's inputs (DECISIONS.md, task 495's entry, correction (9)): what the obligation keeps of the parent clause's
+  instance at every new answer. They are the variables of the socket premise's input read at the premise's view (a
+  material premise's source) and of the head's input read at the head's view (@{const head_kept}'s input at either flag,
+  the whole head where the view does not read it). The kept head's output is not among them: it is kept at one flag only,
+  and the set is read by a condition that reads no flag.
+\<close>
+
+definition head_inputs :: "nat resolution_view \<Rightarrow> ('a,'s,'d) finite_factor_schema \<Rightarrow> 'a set" where
+  "head_inputs Vh S = (case resolution_view_pattern Vh (finite_schema_conclusion S) of
+      Some v \<Rightarrow> pattern_variables (decode_finite_pattern (fst v))
+    | None \<Rightarrow> pattern_variables (decode_finite_pattern (finite_schema_conclusion S)))"
+
+definition socket_inputs ::
+    "nat resolution_view \<Rightarrow> nat resolution_view \<Rightarrow> ('a,'s,'d) finite_factor_schema \<Rightarrow> 's \<Rightarrow> 'a set" where
+  "socket_inputs Vp Vh S s =
+    {a. \<exists>d p xi yo. (s,d,p) |\<in>| finite_schema_premises S \<and> resolution_view_pattern Vp p = Some (xi,yo) \<and>
+      a \<in> pattern_variables (decode_finite_pattern xi)} \<union>
+    {a. \<exists>N. (s,N) |\<in>| finite_schema_materials S \<and> a \<in> pattern_variables (decode_finite_pattern (finite_material_source N))} \<union>
+    head_inputs Vh S"
+
+definition finite_socket_inputs ::
+    "nat resolution_view \<Rightarrow> nat resolution_view \<Rightarrow> ('a,'s,'d) finite_factor_schema \<Rightarrow> 's \<Rightarrow> 'a fset" where
+  "finite_socket_inputs Vp Vh S s =
+    ffUnion ((\<lambda>z. case resolution_view_pattern Vp (snd (snd z)) of Some v \<Rightarrow> finite_pattern_variables (fst v)
+        | None \<Rightarrow> {||}) |`| ffilter (\<lambda>z. fst z = s) (finite_schema_premises S)) |\<union>|
+    ffUnion ((\<lambda>z. finite_pattern_variables (finite_material_source (snd z))) |`|
+      ffilter (\<lambda>z. fst z = s) (finite_schema_materials S)) |\<union>|
+    (case resolution_view_pattern Vh (finite_schema_conclusion S) of
+        Some v \<Rightarrow> finite_pattern_variables (fst v)
+      | None \<Rightarrow> finite_pattern_variables (finite_schema_conclusion S))"
+
+lemma finite_socket_inputs_correct: "fset (finite_socket_inputs Vp Vh S s) = socket_inputs Vp Vh S s"
+proof (rule set_eqI)
+  fix a
+  have U: "a |\<in>| ffUnion (f |`| ffilter P A) \<longleftrightarrow> (\<exists>z. z |\<in>| A \<and> P z \<and> a |\<in>| f z)"
+    for f :: "'x \<Rightarrow> 'a fset" and P A by (auto simp: ffUnion.rep_eq)
+  have Pr: "(\<exists>z. z |\<in>| finite_schema_premises S \<and> fst z = s \<and>
+        a |\<in>| (case resolution_view_pattern Vp (snd (snd z)) of Some v \<Rightarrow> finite_pattern_variables (fst v) | None \<Rightarrow> {||})) \<longleftrightarrow>
+      (\<exists>d p xi yo. (s,d,p) |\<in>| finite_schema_premises S \<and> resolution_view_pattern Vp p = Some (xi,yo) \<and>
+        a \<in> pattern_variables (decode_finite_pattern xi))"
+  proof
+    assume "\<exists>z. z |\<in>| finite_schema_premises S \<and> fst z = s \<and>
+        a |\<in>| (case resolution_view_pattern Vp (snd (snd z)) of Some v \<Rightarrow> finite_pattern_variables (fst v) | None \<Rightarrow> {||})"
+    then obtain z where z: "z |\<in>| finite_schema_premises S" "fst z = s"
+      "a |\<in>| (case resolution_view_pattern Vp (snd (snd z)) of Some v \<Rightarrow> finite_pattern_variables (fst v) | None \<Rightarrow> {||})"
+      by blast
+    obtain s' d p where zs: "z = (s',d,p)" by (cases z)
+    obtain v where v: "resolution_view_pattern Vp p = Some v" "a |\<in>| finite_pattern_variables (fst v)"
+      using z(3) zs by (auto split: option.splits)
+    have "(s,d,p) |\<in>| finite_schema_premises S" using z(1,2) zs by simp
+    moreover have "resolution_view_pattern Vp p = Some (fst v,snd v)" using v(1) by simp
+    moreover have "a \<in> pattern_variables (decode_finite_pattern (fst v))"
+      using v(2) by (simp add: finite_pattern_variables_correct[symmetric])
+    ultimately show "\<exists>d p xi yo. (s,d,p) |\<in>| finite_schema_premises S \<and> resolution_view_pattern Vp p = Some (xi,yo) \<and>
+        a \<in> pattern_variables (decode_finite_pattern xi)" by blast
+  next
+    assume "\<exists>d p xi yo. (s,d,p) |\<in>| finite_schema_premises S \<and> resolution_view_pattern Vp p = Some (xi,yo) \<and>
+        a \<in> pattern_variables (decode_finite_pattern xi)"
+    then obtain d p xi yo where r: "(s,d,p) |\<in>| finite_schema_premises S" "resolution_view_pattern Vp p = Some (xi,yo)"
+      "a \<in> pattern_variables (decode_finite_pattern xi)" by blast
+    have "a |\<in>| (case resolution_view_pattern Vp (snd (snd (s,d,p))) of Some v \<Rightarrow> finite_pattern_variables (fst v) | None \<Rightarrow> {||})"
+      using r(2,3) by (simp add: finite_pattern_variables_correct[symmetric])
+    then show "\<exists>z. z |\<in>| finite_schema_premises S \<and> fst z = s \<and>
+        a |\<in>| (case resolution_view_pattern Vp (snd (snd z)) of Some v \<Rightarrow> finite_pattern_variables (fst v) | None \<Rightarrow> {||})"
+      using r(1) by (intro exI[of _ "(s,d,p)"]) simp
+  qed
+  have Ma: "(\<exists>z. z |\<in>| finite_schema_materials S \<and> fst z = s \<and> a |\<in>| finite_pattern_variables (finite_material_source (snd z))) \<longleftrightarrow>
+      (\<exists>N. (s,N) |\<in>| finite_schema_materials S \<and> a \<in> pattern_variables (decode_finite_pattern (finite_material_source N)))"
+  proof
+    assume "\<exists>z. z |\<in>| finite_schema_materials S \<and> fst z = s \<and> a |\<in>| finite_pattern_variables (finite_material_source (snd z))"
+    then obtain z where z: "z |\<in>| finite_schema_materials S" "fst z = s"
+      "a |\<in>| finite_pattern_variables (finite_material_source (snd z))" by blast
+    then show "\<exists>N. (s,N) |\<in>| finite_schema_materials S \<and> a \<in> pattern_variables (decode_finite_pattern (finite_material_source N))"
+      by (intro exI[of _ "snd z"]) (auto simp: finite_pattern_variables_correct[symmetric] prod_eq_iff)
+  next
+    assume "\<exists>N. (s,N) |\<in>| finite_schema_materials S \<and> a \<in> pattern_variables (decode_finite_pattern (finite_material_source N))"
+    then obtain N where N: "(s,N) |\<in>| finite_schema_materials S"
+      "a \<in> pattern_variables (decode_finite_pattern (finite_material_source N))" by blast
+    then show "\<exists>z. z |\<in>| finite_schema_materials S \<and> fst z = s \<and> a |\<in>| finite_pattern_variables (finite_material_source (snd z))"
+      by (intro exI[of _ "(s,N)"]) (simp add: finite_pattern_variables_correct[symmetric])
+  qed
+  have H: "a |\<in>| (case resolution_view_pattern Vh (finite_schema_conclusion S) of
+        Some v \<Rightarrow> finite_pattern_variables (fst v) | None \<Rightarrow> finite_pattern_variables (finite_schema_conclusion S)) \<longleftrightarrow>
+      a \<in> head_inputs Vh S"
+    by (cases "resolution_view_pattern Vh (finite_schema_conclusion S)")
+      (simp_all add: head_inputs_def finite_pattern_variables_correct[symmetric])
+  have "a |\<in>| finite_socket_inputs Vp Vh S s \<longleftrightarrow>
+      (\<exists>z. z |\<in>| finite_schema_premises S \<and> fst z = s \<and>
+        a |\<in>| (case resolution_view_pattern Vp (snd (snd z)) of Some v \<Rightarrow> finite_pattern_variables (fst v) | None \<Rightarrow> {||})) \<or>
+      (\<exists>z. z |\<in>| finite_schema_materials S \<and> fst z = s \<and> a |\<in>| finite_pattern_variables (finite_material_source (snd z))) \<or>
+      a |\<in>| (case resolution_view_pattern Vh (finite_schema_conclusion S) of
+        Some v \<Rightarrow> finite_pattern_variables (fst v) | None \<Rightarrow> finite_pattern_variables (finite_schema_conclusion S))"
+    unfolding finite_socket_inputs_def funion_iff U by simp
+  then show "a \<in> fset (finite_socket_inputs Vp Vh S s) \<longleftrightarrow> a \<in> socket_inputs Vp Vh S s"
+    unfolding Pr Ma H socket_inputs_def by blast
+qed
+
+lemma head_kept_head_inputs:
+  assumes kept: "head_kept keep Vh S h h'" and a: "a \<in> head_inputs Vh S"
+  shows "h' a = h a"
+proof (cases "resolution_view_pattern Vh (finite_schema_conclusion S)")
+  case None
+  then have "evaluate_pattern h' (decode_finite_pattern (finite_schema_conclusion S)) =
+      evaluate_pattern h (decode_finite_pattern (finite_schema_conclusion S))" using kept by (simp add: head_kept_def)
+  then show ?thesis by (rule evaluate_pattern_agree) (use a None in \<open>simp add: head_inputs_def\<close>)
+next
+  case (Some z)
+  obtain ci co where z: "z = (ci,co)" by (cases z)
+  have "evaluate_pattern h' (decode_finite_pattern ci) = evaluate_pattern h (decode_finite_pattern ci)"
+    using kept Some z by (simp add: head_kept_def)
+  moreover have "a \<in> pattern_variables (decode_finite_pattern ci)" using a Some z by (simp add: head_inputs_def)
+  ultimately show ?thesis by (rule evaluate_pattern_agree)
+qed
+
+
+text \<open>
+  The obligation's new instance agrees with the old one on the socket's inputs, at a call premise and at a material
+  premise: the premise at the socket is one, by the clause's formation, and its input and the head's input are kept.
+\<close>
+
+lemma socket_inputs_kept:
+  assumes obl: "socket_discharged M S s keep Vp Vh" and formed: "schema_formed (decode_finite_schema S)"
+    and h: "clause_true M (decode_finite_schema S) h"
+  shows "\<And>d p xi yo t y'. (s,d,p) |\<in>| finite_schema_premises S \<Longrightarrow> resolution_view_pattern Vp p = Some (xi,yo) \<Longrightarrow>
+      (d,t) \<in> M \<Longrightarrow> resolution_view_term Vp t = Some (evaluate_pattern h (decode_finite_pattern xi),y') \<Longrightarrow>
+      \<exists>h'. clause_true M (decode_finite_schema S) h' \<and> head_kept keep Vh S h h' \<and>
+        (\<forall>a\<in>socket_inputs Vp Vh S s. h' a = h a) \<and> evaluate_pattern h' (decode_finite_pattern yo) = y'"
+    and "\<And>N g. (s,N) \<in> schema_material_premises (decode_finite_schema S) \<Longrightarrow> evaluate_material_satisfaction g N \<Longrightarrow>
+      evaluate_pattern g (material_source N) = evaluate_pattern h (material_source N) \<Longrightarrow>
+      \<exists>h'. clause_true M (decode_finite_schema S) h' \<and> head_kept keep Vh S h h' \<and>
+        (\<forall>a\<in>socket_inputs Vp Vh S s. h' a = h a) \<and> (\<forall>a\<in>material_variables N. h' a = g a)"
+proof -
+  let ?D = "decode_finite_schema S"
+  have sv: "single_valued (schema_premises ?D)" and svm: "single_valued (schema_material_premises ?D)"
+    and dis: "rel_dom (schema_premises ?D) \<inter> rel_dom (schema_material_premises ?D) = {}"
+    using formed by (simp_all add: schema_formed_def)
+  have prem_dec: "(s',d,decode_finite_pattern p) \<in> schema_premises ?D" if "(s',d,p) |\<in>| finite_schema_premises S" for s' d p
+    using that by (force simp: decode_finite_call_pattern_def)
+  have mat_dec: "(s',decode_finite_material N) \<in> schema_material_premises ?D" if "(s',N) |\<in>| finite_schema_materials S" for s' N
+    using that by auto
+  have obl2: "\<forall>h. clause_true M ?D h \<longrightarrow>
+      (\<forall>d p xi yo t y'. (s,d,p) |\<in>| finite_schema_premises S \<longrightarrow> resolution_view_pattern Vp p = Some (xi,yo) \<longrightarrow>
+        (d,t) \<in> M \<longrightarrow> resolution_view_term Vp t = Some (evaluate_pattern h (decode_finite_pattern xi),y') \<longrightarrow>
+        (\<exists>h'. clause_true M ?D h' \<and> head_kept keep Vh S h h' \<and>
+          evaluate_pattern h' (decode_finite_pattern xi) = evaluate_pattern h (decode_finite_pattern xi) \<and>
+          evaluate_pattern h' (decode_finite_pattern yo) = y')) \<and>
+      (\<forall>N g. (s,N) \<in> schema_material_premises ?D \<longrightarrow> evaluate_material_satisfaction g N \<longrightarrow>
+        evaluate_pattern g (material_source N) = evaluate_pattern h (material_source N) \<longrightarrow>
+        (\<exists>h'. clause_true M ?D h' \<and> head_kept keep Vh S h h' \<and> (\<forall>a\<in>material_variables N. h' a = g a)))"
+    using obl unfolding socket_discharged_def by (rule conjunct2)
+  note O = mp[OF spec[OF obl2, of h] h]
+  show "\<exists>h'. clause_true M ?D h' \<and> head_kept keep Vh S h h' \<and>
+      (\<forall>a\<in>socket_inputs Vp Vh S s. h' a = h a) \<and> evaluate_pattern h' (decode_finite_pattern yo) = y'"
+    if p: "(s,d,p) |\<in>| finite_schema_premises S" and v: "resolution_view_pattern Vp p = Some (xi,yo)"
+      and t: "(d,t) \<in> M" and vt: "resolution_view_term Vp t = Some (evaluate_pattern h (decode_finite_pattern xi),y')"
+    for d p xi yo t y'
+  proof -
+    obtain h' where cl: "clause_true M ?D h'" and hk: "head_kept keep Vh S h h'"
+      and xi: "evaluate_pattern h' (decode_finite_pattern xi) = evaluate_pattern h (decode_finite_pattern xi)"
+      and yo: "evaluate_pattern h' (decode_finite_pattern yo) = y'"
+      using conjunct1[OF O, rule_format, OF p v t vt] by (elim exE conjE)
+    have inp: "h' a = h a" if a: "a \<in> socket_inputs Vp Vh S s" for a
+    proof -
+      from a consider (prem) d' p' xi' yo' where "(s,d',p') |\<in>| finite_schema_premises S"
+          "resolution_view_pattern Vp p' = Some (xi',yo')" "a \<in> pattern_variables (decode_finite_pattern xi')"
+        | (mat) N where "(s,N) |\<in>| finite_schema_materials S"
+        | (head) "a \<in> head_inputs Vh S"
+        unfolding socket_inputs_def by blast
+      then show ?thesis
+      proof cases
+        case prem
+        have "(d',decode_finite_pattern p') = (d,decode_finite_pattern p)"
+          by (rule single_valued_outputs[OF sv prem_dec[OF prem(1)] prem_dec[OF p]])
+        then have "p' = p" by simp
+        then have "xi' = xi" using prem(2) v by simp
+        then have "a \<in> pattern_variables (decode_finite_pattern xi)" using prem(3) by simp
+        then show ?thesis by (rule evaluate_pattern_agree[OF xi])
+      next
+        case mat
+        have "s \<in> rel_dom (schema_premises ?D)" using prem_dec[OF p] by auto
+        moreover have "s \<in> rel_dom (schema_material_premises ?D)" using mat_dec[OF mat] by auto
+        ultimately show ?thesis using dis by blast
+      next
+        case head
+        then show ?thesis by (rule head_kept_head_inputs[OF hk])
+      qed
+    qed
+    show ?thesis using cl hk inp yo by blast
+  qed
+  show "\<exists>h'. clause_true M ?D h' \<and> head_kept keep Vh S h h' \<and>
+      (\<forall>a\<in>socket_inputs Vp Vh S s. h' a = h a) \<and> (\<forall>a\<in>material_variables N. h' a = g a)"
+    if N: "(s,N) \<in> schema_material_premises ?D" and g: "evaluate_material_satisfaction g N"
+      and src: "evaluate_pattern g (material_source N) = evaluate_pattern h (material_source N)"
+    for N g
+  proof -
+    obtain h' where cl: "clause_true M ?D h'" and hk: "head_kept keep Vh S h h'"
+      and ag: "\<forall>a\<in>material_variables N. h' a = g a"
+      using conjunct2[OF O, rule_format, OF N g src] by (elim exE conjE)
+    have inp: "h' a = h a" if a: "a \<in> socket_inputs Vp Vh S s" for a
+    proof -
+      from a consider (prem) d' p' where "(s,d',p') |\<in>| finite_schema_premises S"
+        | (mat) N' where "(s,N') |\<in>| finite_schema_materials S"
+            "a \<in> pattern_variables (decode_finite_pattern (finite_material_source N'))"
+        | (head) "a \<in> head_inputs Vh S"
+        unfolding socket_inputs_def by blast
+      then show ?thesis
+      proof cases
+        case prem
+        have "s \<in> rel_dom (schema_premises ?D)" using prem_dec[OF prem] by auto
+        moreover have "s \<in> rel_dom (schema_material_premises ?D)" using N by auto
+        ultimately show ?thesis using dis by blast
+      next
+        case mat
+        have "decode_finite_material N' = N" by (rule single_valued_outputs[OF svm mat_dec[OF mat(1)] N])
+        then have as: "a \<in> pattern_variables (material_source N)" using mat(2) by (auto simp: decode_finite_material_def)
+        have "g a = h a" by (rule evaluate_pattern_agree[OF src as])
+        moreover have "h' a = g a" using ag as by (auto simp: material_variables_def material_fields_def)
+        ultimately show ?thesis by simp
+      next
+        case head
+        then show ?thesis by (rule head_kept_head_inputs[OF hk])
+      qed
+    qed
+    show ?thesis using cl hk inp ag by blast
+  qed
+qed
 
 text \<open>
   A socket's premise at its view (@{text finite_socket_pair}): every ordinary premise of the clause at the socket is one
@@ -1689,6 +1959,64 @@ definition finite_premise_only_unshared :: "('a,'s,'d,'c) resolution_node \<Righ
     fBall (finite_schema_variables (resolution_node_schema nd) |-|
         finite_pattern_variables (finite_schema_conclusion (resolution_node_schema nd))) (\<lambda>a.
       ((resolution_node_position nd,True),a) |\<notin>| finite_pattern_variables (resolution_node_call nd))"
+
+text \<open>
+  The narrowing of correction (9) (DECISIONS.md, task 495's entry): a socket may commit after siblings were resolved
+  when every such sibling is closed — nothing pending at or under its position (R3b's @{const resolution_pending_under})
+  — its instance under the parent's bindings ground and its variables among the socket's inputs, which the obligation
+  keeps. @{text finite_children_closed}: every premise and material premise of the parent clause is pending as its
+  instance, or, at a key other than the socket's, closed so; every pending goal under the parent is one of the
+  instances. @{text finite_premise_only_inputs}: every premise-only variable is free (bound to its own variable, held only
+  by the parent's children) or among the socket's inputs with a ground binding. The strict conditions imply them
+  (@{text finite_children_instances_closed}, @{text finite_premise_only_free_inputs}).
+\<close>
+
+definition finite_children_closed ::
+    "nat resolution_view \<Rightarrow> nat resolution_view \<Rightarrow> ('a,'s,'d,'c) resolution_state \<Rightarrow> ('a,'s,'d,'c) resolution_node \<Rightarrow>
+      's \<Rightarrow> bool" where
+  "finite_children_closed Vp Vh st nd s \<longleftrightarrow>
+    fBall (finite_schema_premises (resolution_node_schema nd)) (\<lambda>(s',e,p).
+      Resolution_Call_Goal (resolution_node_position nd@[s']) (Some (resolution_node_site nd,resolution_node_clause nd,s')) e
+        (finite_pattern_substitute (finite_node_binding nd) p) |\<in>| resolution_pending st \<or>
+      (s' \<noteq> s \<and> resolution_pending_under st (resolution_node_position nd@[s']) = {||} \<and>
+        finite_pattern_variables (finite_pattern_substitute (finite_node_binding nd) p) = {||} \<and>
+        finite_pattern_variables p |\<subseteq>| finite_socket_inputs Vp Vh (resolution_node_schema nd) s)) \<and>
+    fBall (finite_schema_materials (resolution_node_schema nd)) (\<lambda>(s',N).
+      Resolution_Material_Goal (resolution_node_position nd@[s']) (resolution_node_site nd,resolution_node_clause nd,s')
+        (finite_material_pattern_substitute (finite_node_binding nd) N) |\<in>| resolution_pending st \<or>
+      (s' \<noteq> s \<and> resolution_pending_under st (resolution_node_position nd@[s']) = {||} \<and>
+        finite_material_variables (finite_material_pattern_substitute (finite_node_binding nd) N) = {||} \<and>
+        finite_material_variables N |\<subseteq>| finite_socket_inputs Vp Vh (resolution_node_schema nd) s)) \<and>
+    fBall (resolution_pending st) (\<lambda>h. resolution_goal_position h \<noteq> [] \<longrightarrow>
+      butlast (resolution_goal_position h) = resolution_node_position nd \<longrightarrow>
+      fBex (finite_schema_premises (resolution_node_schema nd)) (\<lambda>(s,e,p).
+        h = Resolution_Call_Goal (resolution_node_position nd@[s]) (Some (resolution_node_site nd,resolution_node_clause nd,s)) e
+          (finite_pattern_substitute (finite_node_binding nd) p)) \<or>
+      fBex (finite_schema_materials (resolution_node_schema nd)) (\<lambda>(s,N).
+        h = Resolution_Material_Goal (resolution_node_position nd@[s]) (resolution_node_site nd,resolution_node_clause nd,s)
+          (finite_material_pattern_substitute (finite_node_binding nd) N)))"
+
+definition finite_premise_only_inputs ::
+    "nat resolution_view \<Rightarrow> nat resolution_view \<Rightarrow> ('a,'s,'d,'c) resolution_state \<Rightarrow> ('a,'s,'d,'c) resolution_node \<Rightarrow>
+      's \<Rightarrow> bool" where
+  "finite_premise_only_inputs Vp Vh st nd s \<longleftrightarrow>
+    fBall (finite_schema_variables (resolution_node_schema nd) |-|
+        finite_pattern_variables (finite_schema_conclusion (resolution_node_schema nd))) (\<lambda>a.
+      ((a,Finite_Variable ((resolution_node_position nd,True),a)) |\<in>| resolution_node_bindings nd \<and>
+        fBall (resolution_pending st) (\<lambda>h. ((resolution_node_position nd,True),a) |\<in>| resolution_goal_variables h \<longrightarrow>
+          resolution_goal_position h \<noteq> [] \<and> butlast (resolution_goal_position h) = resolution_node_position nd)) \<or>
+      (a |\<in>| finite_socket_inputs Vp Vh (resolution_node_schema nd) s \<and>
+        finite_pattern_variables (finite_node_binding nd a) = {||}))"
+
+lemma finite_children_instances_closed:
+  "finite_children_instances st nd \<Longrightarrow> finite_children_closed Vp Vh st nd s"
+  unfolding finite_children_instances_def finite_children_closed_def by auto
+
+lemma finite_premise_only_free_inputs:
+  "finite_siblings_pending st q S \<Longrightarrow> finite_premise_only_free st nd \<Longrightarrow> finite_premise_only_inputs Vp Vh st nd (last q)"
+  unfolding finite_premise_only_free_def finite_premise_only_inputs_def by auto
+
+export_code finite_children_closed finite_premise_only_inputs checking SML
 
 definition finite_output_consumer ::
     "('a,'s,'d) resolution_declarations \<Rightarrow> 'd \<Rightarrow> ('s,'a) resolution_variable finite_term_pattern list \<Rightarrow>

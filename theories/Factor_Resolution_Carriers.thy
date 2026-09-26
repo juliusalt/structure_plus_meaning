@@ -219,39 +219,6 @@ qed
 
 section \<open>A socket discharged along its carriers\<close>
 
-text \<open>
-  A view read at a call pattern gives the parts of the pattern's value under every valuation, and the pattern's
-  variables are its parts' variables.
-\<close>
-
-lemma resolution_view_pattern_evaluate:
-  assumes formed: "view_formed V" and viewed: "resolution_view_pattern V c = Some (ci,co)"
-  shows "resolution_view_term V (evaluate_pattern g (decode_finite_pattern c)) =
-    Some (evaluate_pattern g (decode_finite_pattern ci),evaluate_pattern g (decode_finite_pattern co))"
-proof -
-  obtain p pi po where V: "V = (p,pi,po)" by (cases V rule: prod_cases3)
-  have lin: "distinct (finite_pattern_occurrences p)" using formed V by (simp add: view_formed_def)
-  obtain l where m: "view_pattern_match p c = Some l"
-      and ci: "ci = finite_pattern_substitute (view_substitution l) pi"
-      and co: "co = finite_pattern_substitute (view_substitution l) po"
-    using viewed V by (auto simp: resolution_view_pattern_def split: option.splits)
-  define h where "h = (\<lambda>v. evaluate_pattern g (decode_finite_pattern (view_substitution l v)))"
-  have sub: "evaluate_pattern g (decode_finite_pattern (finite_pattern_substitute (view_substitution l) q)) =
-      evaluate_pattern h (decode_finite_pattern q)" for q
-    by (simp add: decode_finite_pattern_substitute h_def comp_def)
-  have c: "c = finite_pattern_substitute (view_substitution l) p" using view_pattern_match_sound[OF lin m] by simp
-  show ?thesis using resolution_view_evaluate[OF formed[unfolded V], of h] unfolding V c ci co sub .
-qed
-
-lemma resolution_view_pattern_variables:
-  assumes formed: "view_formed V" and viewed: "resolution_view_pattern V c = Some (ci,co)"
-  shows "finite_pattern_variables c = finite_pattern_variables ci |\<union>| finite_pattern_variables co"
-proof -
-  obtain p pi po where V: "V = (p,pi,po)" by (cases V rule: prod_cases3)
-  have "finite_view_parts (resolution_view_term (p,pi,po)) c ci co"
-    using resolution_view_pattern_parts formed viewed V by blast
-  then show ?thesis by (simp add: finite_view_parts_def)
-qed
 
 lemma finite_evaluate_cong:
   assumes "\<And>v. v |\<in>| finite_pattern_variables q \<Longrightarrow> g v = g' v"

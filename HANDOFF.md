@@ -85,20 +85,20 @@ into the briefs #522 and #523 corrected, or recorded superseded there.
   placed it): (c) #769 (the kept fields and the listed union over F2b1's indexed state) landed; (a) the
   shared state's foundation in #755 landed (Delivered); (b) #771, the shared search
   stated once over a representation (its candidates κ-free, review 770's 1; continued from its tree at its partial end,
-  handing over after #777, whose item (6) takes the three finite-set helpers it moved; its held measurements the
+  its finite-set helpers at #777's homes; its held measurements the
   investigation #788, before R7 #542)
   → F2c #701 (R5's committed search over the shared state, also after the fix #767, whose corrected search it mirrors)
   → C #703 (a found derivation checked over its
-  graph; before #542, #547 and #399). #779 found that the given's declarations do not cut the branching that leaves
-  77/1 unresolved (a declared producer, 12, taken before 5 binds its input): the design #787 of the producer-binder
-  order (modes at the binders' views read by the selection) and its builds precede R7 #542 and #547.
+  graph; before #542, #547 and #399). #787's correction (12) orders a declared producer after the goal binding its input (modes beside the
+  records, read by the selection; commitments before binders): its builds O1–O4, briefed by #791 (O2 after #613, O3
+  after O2), precede R7 #542 and #547. The order alone leaves 77/1 unresolved: the designs (a) #789, the production of
+  12's input at 37.0/2, and (b) #790, the registration of 11's premise-only target, precede them too.
   Divided from R7 #542 (the numbered course) its
   native part #707 (after #542, #653, #688 and #661, before #399), from #399 its controls #709 (before #401, #403 and
   #553). The lifting's consolidation #613 precedes the moded selection's builds (q142: the modes a priority of F1's selection at
   #613's parameter, the exchange discharges generalized at a priority after it) and so the route; off the route, #724 (review 677's follow-ups, words equal; after F3,
   R5e, C and #613, each of which changes `Factor_Resolution_Commitments` before it; its brief gains next-edits
-  306 and 312 when it is nearer, if they fit its room); the low-moves batch #777 (review
-  682's 1, review 770's 2 and next-edits 274–308's low items), heading the queue while it checks.
+  306 and 312 when it is nearer, if they fit its room).
 
 **Retired** on #376's and #378's entries (their tables): the decomposition line (#325–#334), N1a, N1b, N3a, N3b, N4a
 and N4b as briefed, #371, #377, the designation by locus (#169, #170), the index form's retirement (#92, #93) and the
@@ -116,7 +116,7 @@ by a task of their own (Open 100).
 
 **Shape.** No build waits on a review task. The route's longest chain runs F2b2 (b) #771 → F2c #701 → C #703 →
 R7 #542 → #707 → #399 → #709 → the record #553 → #447 → #449 → #450;
-#782 → #542 and the design #787 → #542 have slack against it, the
+#782 → #542, the designs #789 and #790 and the brief #791 → #542 have slack against it, the
 carryings more — past the
 limit through splices, so nothing is added after the route's tail until it shortens (the status line gives the depths).
 The approval build (Open 142) after #407 and #447 waits for it to shorten; the controls task #718 after C (depth 10)
@@ -124,9 +124,9 @@ was placed when #668 landed.
 
 **Order** (the queue holds it; the planner's choice, a residual until the native answer to the selection problem
 exists, Q2): the slots are one pool, each free slot going to the first task in the queue that can start and a review
-standing where its review task stands, so every review stands right after its build. After the low-moves batch #777,
-at the head while it rebuilds the library, by slack on the longest chain:
-F2b2 (b) #771, its measurements #788, F2c #701 and C #703; the design #787 and the consolidation #613 (q142);
+standing where its review task stands, so every review stands right after its build. By slack on the longest chain:
+the designs (a) #789 and (b) #790 and the brief #791 of O1–O4 (uncertainty first); F2b2 (b) #771, its measurements
+#788, F2c #701 and C #703; the consolidation #613 (q142);
 #782 and #784; R7 #542, its native part
 #707, #399 and its controls #709, #547; the route in its chains'
 order (#551, #549, #553, #401, #403, #443, #447, #407, #445, #449); the controls #718 after C, and #724 last.
@@ -155,8 +155,10 @@ Taken by the planning episodes, where they are not entries of `DECISIONS.md`.
 - **Q29–Q32** (answered 2026-09-26 09:40): the owner switched on the one-session base (`state/one-session-base`: every
   check the harness runs may make its base one session over HOL by #624's trigger — half the library rebuilt, or the
   chain's modeled start past 10 s) and the retirement of the chain it supersedes (`state/retire-superseded`, pruned
-  `SUPERSEDED_GRACE` after the re-rooting). No check has re-rooted yet, through #670's landing (the chain's modeled start was 39 s; a whole
-  one-session base took 934 s to build, #628); from then a probe starts in about 3 s.
+  `SUPERSEDED_GRACE` after the re-rooting). The base has re-rooted as one session three times since —
+  batch655 (10:03), train732 (15:35) and #777's check (22:15) — each superseded chain recorded in
+  `state/superseded-lineages.json`; between re-roots a base is a short chain of levels over its root (a whole
+  one-session build about 934 s, #628; a probe on the root starts in about 3 s).
 - **17:50, 18:12, 18:36**: the native notion of a problem is the loop's product, not a design's; #373's design (landed
   `93cae3bb`) was accepted and then withdrawn at the owner's question, its identity resting on HOL-assigned prefixes
   and keys. **A design is judged by what its identity rests on, not by what its contract avoids.** Every distinction a
@@ -246,10 +248,9 @@ a task):
   `probe.summary.json`. An edit to a base theory is probed from the tree, the unchanged theories between it and its
   changed dependents loaded as renamed copies; such a probe loads the copies first and does not finish within 60 s, so
   a brief asking for one names the theories it loads or accepts the repository's check for the combination (#398's
-  review). On a one-session base (on since the owner's answer to Q29–Q32) a probe starts in about 3 s; until the first
-  one lands, a probe on the chain base starts in about 39 s (163 sessions, 15.7 GB; #666), so above
-  `Factor_Resolution_Commitments` a second theory stacked on a first does not fit the 60 s bound and a session
-  validates such a combination by the repository's check. A probe from a tree behind main whose base advanced is
+  review). The base is one session over HOL with a short chain of levels
+  above it, re-rooted whenever the chain's modeled start passes 10 s (Q29–Q32), so a probe starts within about 10 s
+  and the 60 s bound leaves about 50 s to load, where the old chain's 39 s start left about 20 (#666). A probe from a tree behind main whose base advanced is
   refused, naming
   what differs only because main advanced: `v2.py bring-main`, or `--base` at the heap the tree matches, or
   `--from-heap` for one theory; a changed theory's `export_code … checking` is blanked in the probe's copy and named
@@ -699,7 +700,7 @@ The owner's questions, a line each (their words and the provisional choices in f
    check's load, attributed at a measured need of the check's cycle (#368's follow-ups 1, 2, 5).
 78. The probe tool (the reviews of #316, #286, #353, #432, #417, #457, #563 and #584): qualified ML structure paths
    renamed with the theory, the active base's unlanded theories taken from the heap, skipped code checks extended at
-   first use, a refusal naming `--from-heap`; probes past 60 s where the start is the base's chain (#623; Q29).
+   first use, a refusal naming `--from-heap`.
 29. `REASONING_REUSE.md`'s open comparisons (#280's follow-ups): the ordered comparison factored at its next use; the
    six grammars' retention theorems against one statement over `RRA_Read_Environment` (`problems.txt` condition 3); the
    known-predecessor refinements against `Established_Premises`; ordinary clause profiles against `native_rule_law`.
@@ -709,22 +710,25 @@ planner searches for a theory before briefing a task that edits it.
 
 ## Now
 
-- **The graph's width**: (b) #771 (continued from its tree, handing over after #777), the lifting's consolidation #613,
-  the design #787 and the low-moves batch #777 run; #782 can start. The route is ((b) #771 → F2c → C), #782 and #787's
-  builds → R7 #542 → #707 → #399, with #782 also before #547. #777 stands at the queue's head
-  (working rule "Rebuilds"); its landing check is the first since the owner's switch (Q29–Q32) to rebuild most of the
-  library.
+- **Not handled (plan-109's window ended)**: #771 landed (`914497c2`); review 772's follow-ups 1–5
+  (`.build/tasks/772/review.md`) are unplaced and unmailed: 1 the consolidation making F2b1 the access's instance
+  (q139), placed from #771's result, with its moves; 2 to F2c #701 and #788 (`clause_sockets_distinct` from formation,
+  the route's initial states `search_placeable`, the branch #788's fixtures take); 3 to #788 (the costs to measure); 4 a
+  next-edits item (the REASONING_REUSE.md row); 5 F2c #701's brief corrected (R5's committed sub-searches, barring and
+  productions are not among `resolution_representation`'s steps: the representation extended by them, or F2c's own
+  search over the access). When #791's proposal is placed, #724 is set after O2 (#787's verdict).
+- **The graph's width**: the lifting's consolidation #613 and #782 run; the designs #789 and
+  #790 and the brief #791 start as slots free; #784 follows #782, #788 follows (b). The route is ((b) #771 → F2c → C),
+  #782, #789's and #790's builds and O1–O4 → R7 #542 → #707 → #399, with #782 also before #547.
 - **Briefs written before their theories grew** may be refused at their start (#596 was; #607 was divided by #678):
   each is resized or divided then. Nearest their rooms: #613 (195K beside 264K of relations at the edit; divided there
   into (1) and (3), then (2) and (4)); #542 and #399 (84K and 70K of margin at proposal, before rc's, V3's and the fix's
   theories added to their relations); the samples build #551 (384K at proposal; a hand-back divides its corrected item
   (3), the planner's).
-- **What the next events ask**: #787's entry and builds table, its builds placed before R7 #542 and #547; (b) #771's
+- **What the next events ask**: #789's and #790's entries and builds and #791's proposal, placed before R7 #542 and #547; (b) #771's
   hand-over, then the consolidation making F2b1 an instance of its representation (q139, after #777), placed from its
   result; #613's hand-over, then the move of R4's and the committed lifting below Completeness (q141), placed from its
-  result after #777 and #701; #782's hand-over and #788's figures; the first one-session base's
-  landing (probes in about 3 s) — not yet: every base since the switch stands on the chain (`PLANNING_LOG.md`,
-  plan-92, plan-98, plan-105); if #777's landing does not re-root either, a harness gap for the owner.
+  result after #777 and #701; #782's hand-over and #788's figures.
 
 - **Mailed, read by each task's first session**: by task, in `.build/plans/mailed.md` (open tasks only). A task
   continuing in a new session is mailed its line again; a planner who mails a task adds to its line there, and a task

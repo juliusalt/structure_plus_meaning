@@ -17459,6 +17459,112 @@ socket the framed test commits beyond correction (9)'s test commits only at such
 commits none of them — and no control evaluates that case (B2b's fixed-output control declares the default frame and
 exercises (iii) alone). The table's production for 65 and 56 is a design for the planner, after R7 #542.]
 
+[Corrected by task 787, a design, from investigation #779 (`.build/tasks/779/result.md`, accepted; its draft
+`.build/tasks/779/draft/theories/Committed_Branching.thy`) and the planner's answer to q142. (12) The order of a declared
+producer and the goal binding its input. Under R5's committed search with the given's declarations and registrations,
+77/1 stays unresolved at every bound #779 reached: in 37's committed sub-search 12 (artifact identity, a declared
+producer, its socket 37.0/2) is taken at depth 165 before 5 (data selection, 37.0/1) has bound its input. F1's classes
+decide it: 12 has one clause (class (iii)), 5 at the use's row two alternatives (class (iv)), and the commitment's
+priority names 12 only once its input is ground. 12 then runs on a free input, 11 and 10 follow on free arguments, and
+9 and 8 generate observation terms that die. No declaration cuts this: nothing is to be exchanged; the order is wrong.
+- *A mode.* A site and a view — a producer declaration's view: a linear pattern of the site's argument, an input and an
+  output over its variables — declaring that where a goal's viewed input is ground, the goal binds its viewed output
+  with the alternatives a lookup has. Modes are a finite family `resolution_modes` of sites and views, declared beside
+  the records and in neither `resolution_declarations` nor `resolution_commitment` (q142: a declaration licenses a
+  commitment, a mode orders the search). A mode carries no obligation and needs no contract: exactness does not rest on
+  the order (F1's item 4), so a wrong mode costs work and never a verdict. Relocation maps a mode's site as a record's;
+  the clause match leaves a view as it is, a view reading the call and not the clause.
+- *The waiting variables and the binder.* At a state, for a goal g: the variables of the pending call goals other than g
+  that stand where R5's tests read a declaration — at a declared producer's site, or at a socket their parent's clause
+  declares at their key (`finite_declared_goal`, the socket read at its site, clause and key as the socket test reads
+  it). A *binder* is a pending call goal at a mode's site whose viewed input at the mode is ground and whose viewed output
+  holds a waiting variable (`finite_mode_binder`). A declared goal's variables wait whether input or output: a producer
+  waits for its input, and a producer the tests cannot commit — input ground, output held by a goal that is no consumer,
+  as 6 at 6.1/1 in a bag check — waits for its output rather than enumerating it.
+- *The moded priority.* `finite_moded_priority K D M st g` holds where `finite_commitment_priority K st g` does, or where
+  g is a binder and no pending goal passes `finite_commitment_priority K st`: commitments first, so F1's item 5 stands (a
+  goal is committed at the first state it is committable in) and a binder is taken, in F1's class (ii) at the least
+  position, only where nothing is committable. At no modes it is `finite_commitment_priority K`
+  (`finite_moded_priority_none`): the moded search at no modes is R5's default and every existing form keeps its value.
+  The moded selection is `finite_resolution_select_at (finite_moded_priority K D M) κ P`, a priority of F1's selection,
+  read on the focused state as R5's default reads its tests.
+- *Exactness.* F1's lemma at that priority (`finite_resolution_select_at_exact`) gives every selection premise of the
+  lifting; nothing about the selection is proved again. The lifting's other premise, the exchange, is not the
+  selection's: `finite_commitment_exchanges` quantifies over the found and kept states of a committed goal's sub-search,
+  which runs at the selection the search uses (#613's `finite_exchanges_by U J sel κ K P`), and its discharges — the
+  sub-search's frame and placement lemmas (`finite_committed_search_relation`, `_frame`, `_placed`, `_positions`,
+  `finite_committed_kept_nonempty`, `finite_committed_search_found`), `finite_committed_found_placed`,
+  `finite_committed_exchange_placed`, `finite_committed_exchange_context`, R5c″'s direct discharge, #630's socket kinds,
+  #631's material single solution, R5f2's narrowed exchange and the framed, declared and narrowed exchange theorems — are
+  stated at the default priority, their arguments reading the selection only through F1's facts. Decided (q142): each is
+  stated once at any priority of F1's selection, the default statement its instance by name and statement, no consumer
+  changed, after #613, whose lifting and forms at a selection parameter the moded forms instantiate; rc's numbered and
+  native forms likewise (O2, O3). A discharge that does not generalize to an arbitrary priority is reported by its build
+  with the condition it needs: a priority under which a socket kind's exchange fails is a finding, never a premise. R5's
+  committed forms stand unchanged; R7 #542 and #547 call the forms at the moded selection with the given's modes.
+- *The given's modes.* 5 (data selection, its argument (element, (list, rest))) at two views: the *row view*
+  ((k,v),(l,r)), input (k,l), output (v,r) — a keyed element's key and the list in, its value and the rest out — and the
+  *whole view* (e,(l,r)), input (e,l), output r. The producers of the given's record that 77's and 113's searches meet
+  (#779's tables and the prototype's), each with the goal that binds its input and the mode that orders them:
+
+| Producer (socket) | Where met | Its input at its view | The goal binding it | The mode |
+|---|---|---|---|---|
+| 37 artifact lookup (75.0/1 at 77; 112.0/0 at 113) | 77: depth 98, committed; 113: a check | the environment and the use | the caller's head: ground when met | none |
+| 12 artifact identity (37.0/2) | 77 and 113, in 37's clause | the artifact 37.0/1 selects | 5 at 37.0/1: the use's row selected from the environment's artifact rows | 5 at the row view (the use and the rows ground at 37, the artifact and the rest bound) |
+| 7 four-field comparison (12.0/2) | in 12's clause | 12's input, its head's | none: ground once 12 is taken | none: committed in 12's focus (class (ii)) before 11 at 12.0/1 (class (iii)) |
+| 6 bag comparison (7.0/0–3) | in 7's clause | 7's input fields, its head's | none: ground | none |
+| 6 (6.1/1, its recursion) | in 6's clause | 6's tail, its head's; in a check its output is bound by 5 at 6.0/0 | 5 at 6.0/0 | 5 at the whole view (element and list ground in a check, the rest bound); producing (list free) neither view applies and 6.1/1 commits at its socket |
+| 10 artifact projection (11.0/0) | 11's clause (8 occurrences at 77/1) | the target, 11's premise-only variable | no goal: 10's own material premise from ground data, or a registration of 11's target (task 496's construction) | none: a mode orders goals; the target is produced |
+
+- *113's 6* (#779: met with its input ground and its output held by 5 and 0, neither a consumer): no consumer declaration
+  is added. 5 at 6.0/0 is no consumer of the bag class — the rest it returns follows the list's order: a carrier, which
+  the direct test does not admit (correction (11), "No widening") — and 113/7 is resolved at R3's least bound 230 with no
+  6 committed. In a check the whole-view mode binds 6.1/1's output. 113/9's cost is the abstract state's per state
+  (#779: 5–27× R3's indexed seconds), F2c's.
+- *The prediction, checked* (`.build/tasks/787/draft/theories/Moded_Branching.thy`, #779's draft with the moded priority,
+  checked equal to the library's search, `cb_check`; the given's records before R6c's parts, which have no code, as #779
+  measured; counts shared, CPU 16–42 % busy, no CPU wait): #779's control at the same records, 77/1 at 400, cut and
+  witnessed in 5.8 s (#779: 1,535 states, 5.4 s held). The order is taken as predicted: 5 at 37.0/1 before 12, then 12,
+  7 and 6 committed (19 commitments of 6 at bound 200), 11 a check and no branching at 9 or 8 — #779's blow-up from depth
+  504 is gone. 113/7 is found at 230 in 491 states (R5 today 638). 77/1 is not resolved by the order alone:
+
+| Variant | 77/1 | 77/2 |
+|---|---|---|
+| row view (v = 4) | 151 states at 150; 592 at 200, cut; not returned in 20 s at 400 (≥ 5,906, deepest 242, 121 answers found in 6's sub-searches) | not returned in 20 s at 400 (≥ 3,834) |
+| row and whole views, the waiting variables of the decision (v = 6) | 592 at 200; not returned in 15 s at 300 (≥ 4,851) | — |
+| v = 6 and a production at 37.0/2 whose value is 12's input (v = 7, beyond this correction) | 219 at 200, 334 at 300, 828 at 400 (5.6 s), cut; not returned in 20 s at 600; ≥ 3,228 in 25 s at 800, deepest 799 | 429 at 400, cut; ≥ 1,402 in 25 s at 800 |
+
+  Two further costs follow, neither an order. (a) With 12 committed, its sub-search keeps the least presentation of the
+  looked-up artifact, which the nested commitments of 7 and 6 compute by enumerating insertion positions: O(n²) answers
+  over a field of n entries, O(n³) states (the carrier holds 38 addresses at 77/1). A production at 37.0/2 whose value is
+  12's input — an answer wherever 12 has one, artifact identity being reflexive on the artifacts it admits
+  (`artifact_identity_exact`) — replaces that search by a check (v = 7). (b) Then the check: 7 and 6 compare the artifact
+  with itself (5's dead "later" walks, O(n²) states a field), and 11 meets ground data whose target, 11's premise-only
+  variable, no goal binds, 10's material premise waiting for it: 9 and 8 invert the data conversion, two or three
+  alternatives an entry, the dead failing at 1 and 8 (from depth about 505 at bound 800, v = 7's trace). Its binder is a
+  registration at 11's premise-only target, the artifact its data present (task 496's construction). Both are designs of
+  their own; the order is their prerequisite, the goal holding the value being taken where the value can bind it.
+- *The registration experiment's non-return at 11* (#779: bound 100, 40–47 GiB, its timeout not delivered): the design
+  of (b)'s registration takes it up first, diagnosing it at 77/1 under the moded order, where 11 meets ground data; no
+  other build does.
+- *Weighed and not taken*: #779's naive widening (every goal holding a pending producer's input first: 5 pulled forward
+  where its element is free, branching 90–102 times) — a mode's ground input is what makes a binder a lookup; a mode as a
+  commitment (5 declared a producer at 37.0/1: a cut whose obligation holds only where 26 has admitted a functional
+  environment, its sub-search walking the same rows, a cut the search does not need); demoting 12 (F1's classes promote
+  only through the priority; a demotion changes R3's selection); binders before committable goals (a binder at a lesser
+  position ends a committable producer's commitment, against F1's item 5); modes computed from the clauses (a lookup's
+  determination is a functional dependency of the site's meaning, which no clause shape states; declared as producers
+  are, a wrong mode costs only work); binders of inputs only (the prototype's v = 4: a bag check's 6.1/1 enumerates its
+  output).
+- *What the builds must respect*: the given's readers exactly as installed; modes read by the selection alone, never by
+  a test, a discharge or a construction; a mode is never a premise of exactness; at no modes every form's value is
+  today's; commitments before binders; unresolved never refutes and never admits; results independent of positions but
+  for ties; nothing reads the bootstrap loop's datatypes; every control keeps R4's value beside its own.
+- *What it relies on* (task 376's test): a mode's view reads a call's shape and where its variables occur, as a
+  producer's view does; the binder test reads the groundness and the shared variables of pending goals and compares
+  sites for equality; no payload is read.
+- *The builds*: rows O1–O4 of the builds table below, their theories named there.]
+
 Presentation freedom makes a false call expensive: a true call is resolved at the first presentation its producer
 yields, a false one only after every presentation (n! root lists of n roots), so a refusal past a few elements reaches
 the bound and is unresolved. The commitment (R5): a site declared *functional up to a presentation class* at its
@@ -17965,7 +18071,10 @@ rate; the builds measure the samples and R7 the given.
    still end another's committability. The narrowing is unchanged, and a socket reached after a sibling is searched
    plainly, exact by R4. The controls are evaluated again under F1: the order control's socket, committable when c's
    clause is resolved, is predicted to commit, keep a and end at the barred cut — unresolved where R3's order resolved
-   it, never refuted. Every control keeps R4's value beside its own, and no true call becomes refuted.
+   it, never refuted. Every control keeps R4's value beside its own, and no true call becomes refuted. [Corrected by
+   task 787, correction (12) of "Committed choice, for refusals": where a declared producer's input or output is bound
+   by a goal with a declared mode, the order is the moded priority — commitments first, then binders — a priority of this
+   selection passed at #613's selection parameter; this item stands.]
 6. *Weighed.* A selection each consumer names, R3's kept: a second, dominated selection, every form twinned or given a
    parameter. Counting successor states: the state substituted per alternative, the cost #644 measured. The priority
    before (i): a goal with no alternative ends its branch at no cost. The priority's coverage made a theorem: exactness
@@ -18158,10 +18267,16 @@ execution theories import the refinement theories of F2b, F2c and C.
 | F2b | [Added by task 683.] The refined state and R3's refined search: the holder index, ground goals and nodes apart, the class caches, F4's values, formation established by the constructors, the projection theorem, the code equation of `finite_resolution_search` | F3, F2a | about 380K |
 | F2c | [Added by task 683.] R5's committed search refined, the commitment tests read on projections at declared sites; the code equation of `finite_committed_search` | F2b | about 350K |
 | C | [Added by task 683.] The check of a found derivation over its graph by the existing graph reading, over shared terms, equivalent to the tree check of the unfolded certificate; certificates built once per node; code equations of the result forms | F3, F2c | about 330K |
+| O1 | [Added by task 787, correction (12).] Modes (`Factor_Resolution_Modes`, new, above `Factor_Resolution_Commitments`; `ROOT`, `THEORY_MAP.md`): `resolution_modes`, `finite_declared_goal`, `finite_waiting_variables`, `finite_mode_binder`, `finite_moded_priority`, `finite_moded_select`; `finite_moded_priority_none`, the selection facts at the moded selection as instances of F1's lemma, modes relocated; a control in `Factor_Mode_Controls` (new, imported by no theory): a keyed lookup beside an identity producer in small, the true call resolved at the moded selection in fewer states than at R5's default, R4's value beside | F1 (landed) | about 150K |
+| O2 | [Added by task 787, correction (12).] The exchange at any priority (`Factor_Resolution_Commitments`, `Factor_Resolution_Producer_Discharge`, `Factor_Resolution_Socket_Discharges`, `Factor_Resolution_Material_Discharge`, `Factor_Narrowed_Productions`, `Factor_Resolution_Views`): the committed sub-search's frame and placement lemmas and every discharge of the exchange stated at any priority of F1's selection in #613's `finite_exchanges_by`, the default statements their instances by name and statement; the committed forms at the moded selection as instances of #613's forms at a selection; O1's control's false call refuted there | #613 (its changes after #777's and #786's) | about 250K, divided at its brief if its relations exceed the room |
+| O3 | [Added by task 787, correction (12).] rc at a priority (`Factor_Committed_Registrations`, `Factor_Native_Committed_Registrations`): rc's numbered and native forms at a priority of F1's selection, the default their instance | O2 | about 100K |
+| O4 | [Added by task 787, correction (12).] The given's modes (`Development_Given_Modes`, new, beside `Development_Given_Declarations`; `Development_Given_Modes_Execution`, new, imported by no theory): `given_modes` (5 at the row and whole views) and their relocations to the rooted readers, the asked and first request's programs and their installations (sites mapped as the records'); 77/1–2 and 113/7 at the moded selection against R5's default, outcomes and states, the next cost named | O1 (O2 for a refutation) | about 100K |
 
 R1 and R2 are independent of each other; R3 follows both, R4 R3, R5 R4, R6 R5; R7 follows R4 and R6 [corrected by task 585: R5c follows R5b (#565), R5d R5c and R6, R5e R5d, R6b R5d, R6c
 R5e and R6b; rc (#540) follows R5e; R7 and #547 follow R6c] [corrected by task 725: R5f1 follows R5e and F3, and F2c, #613 and R5f2 follow it; rc (#540) and
-V2b (#651) follow R5f2]. R8 is independent of
+V2b (#651) follow R5f2] [corrected by task 787: O1 and O4 wait on nothing unlanded, O2 follows #613, O3 follows O2, and
+R7 #542 and #547 follow O3 and O4; F2c #701 and C #703 are independent of them, F2c refining at any priority, the moded
+one among them; O2's order against #724 is the planner's]. R8 is independent of
 R1–R7 and follows #483. The least witness's builds follow the planner's decision. The route:
 
 - #397 (the posing) evaluates no reader entry: unaffected.
@@ -19047,3 +19162,26 @@ stalls), run 1's heavy (13 % memory stalls), and the two agree at the posing wit
 gate in its own terms; the planner decides whether it is needed. One run each; no theory changed; no recipe reached.
 
 Recorded 2026-09-26 (task 583).
+
+## The committed lifting is stated once over the selection parameter, at an invariant of the searched states
+
+Task 613, from #566's review (follow-ups 2, 3, 6), after F1 #693 and F3 #695.
+
+- `finite_committed_lifting_by` (`Factor_Resolution_Commitments`) lifts `finite_committed_search_by sel κ K P` at any
+  selection and any invariant J of the searched states, under `finite_lifting_premises`: R4's selection facts (a
+  nonempty set of pending goals, none a waiting material premise), J a pattern-root invariant kept by every committed
+  successor of a selected goal, and the exchange and construction premise read at the selection and J
+  (`finite_exchanges_by`, `finite_constructions_by`, J kept at the produced, kept and constructed states). The invariant
+  is a parameter rather than the ground call's invariant with the holders invariant because the holders invariant holds
+  at no pattern root (#527's review): at the committed selection J is that pair (`finite_committed_lifting_premises`, F1's
+  `finite_resolution_select_lifts` and `finite_resolution_select_unheld` its discharge), at no commitment the pattern-root
+  invariant, so the H-over-U change #527's review proposed is not needed.
+- The conclusion (`finite_keeping_outcome`) keeps the barring and the root's value only where the search commits nothing
+  and never constructs (`finite_commits_nothing`), a condition on the commitment and the selection, not per branch: a
+  committed step's exchange chooses a new support and bars the nodes present, so neither is kept there.
+- The forms at a selection parameter (`finite_committed_resolution_by`, `_demand_by`, `native_committed_resolution_by`)
+  are exact under `finite_committed_exact_premises` (the lifting's premises for each call's invariant, holding at the
+  call's initial state); the committed forms are their instances at the committed selection.
+- R4's `finite_resolution_lifting_by` keeps its induction (the planner, q141): deriving it from the committed lifting
+  needs the committed search below Completeness, a move of Commitments' views and committed-search sections that #611,
+  #777, #779 and #701 meet; it is the follow-up task 613's result states.

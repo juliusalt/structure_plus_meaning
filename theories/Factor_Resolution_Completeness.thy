@@ -455,6 +455,24 @@ text \<open>
 definition resolution_focused :: "'s list option \<Rightarrow> 's list \<Rightarrow> bool" where
   "resolution_focused Fo q \<longleftrightarrow> (case Fo of None \<Rightarrow> True | Some f \<Rightarrow> take (length f) q = f)"
 
+lemma resolution_focused_some [simp]: "resolution_focused (Some f) q \<longleftrightarrow> take (length f) q = f"
+  by (simp add: resolution_focused_def)
+
+lemma resolution_focused_within:
+  assumes focus: "resolution_focused F q" and within: "take (length q) q' = q"
+  shows "resolution_focused F q'"
+proof (cases F)
+  case None
+  then show ?thesis by (simp add: resolution_focused_def)
+next
+  case (Some f)
+  with focus have f: "take (length f) q = f" by simp
+  then have le: "length f \<le> length q" by (metis length_take min.cobounded1)
+  have "take (length f) q' = take (length f) (take (length q) q')" using le by (simp add: min.absorb1)
+  also have "\<dots> = f" using within f by simp
+  finally show ?thesis using Some by simp
+qed
+
 lemma resolution_focused_none [simp]: "resolution_focused None q"
   by (simp add: resolution_focused_def)
 
@@ -778,8 +796,17 @@ proof -
   have member: "st' |\<in>| finite_call_successors P st q r e p"
     unfolding st'_def by (rule finite_call_successors_intro[where st=st and r=r, OF iface(1) clause u'])
   have placed': "\<And>z. resolution_placed st' z \<longleftrightarrow> resolution_placed st z \<or> fst (fst z) = q"
-    unfolding st'_def resolution_placed_substitute resolution_placed_state resolution_placed_def
-    by (auto simp: finite_clause_node_def)
+  proof -
+    fix z
+    have pos: "resolution_node_position (finite_clause_node q e c S) = q" by (simp add: finite_clause_node_def)
+    have "resolution_placed st' z \<longleftrightarrow>
+        (\<exists>nd. nd |\<in>| finsert (finite_clause_node q e c S) (resolution_nodes st) \<and>
+          resolution_node_position nd = fst (fst z))"
+      unfolding st'_def resolution_placed_substitute resolution_placed_state by (rule refl)
+    also have "\<dots> \<longleftrightarrow> resolution_placed st z \<or> fst (fst z) = q"
+      unfolding resolution_placed_def using pos by auto
+    finally show "resolution_placed st' z \<longleftrightarrow> resolution_placed st z \<or> fst (fst z) = q" .
+  qed
   have new_goals: "\<And>g0. g0 |\<in>| finite_clause_goals q e c S \<Longrightarrow>
       (\<exists>s e' p2. (s,e',p2) |\<in>| finite_schema_premises S \<and>
         g0 = Resolution_Call_Goal (q@[s]) (Some (e,c,s)) e' (finite_rename_apart (q,True) p2)) \<or>

@@ -350,6 +350,65 @@ lemma material_control:
       (Finite_Payload []) 20) = None"
   by eval
 
+text \<open>
+  The premise-only control (task 630, review 622's follow-up 1): c(X) :- prod(Pair X Y), mat(Z;A,E,B,F), over prod's
+  facts prod([1],[2]) and prod([1],[3]), the material premise's fields the canonical rows of an artifact of two atoms,
+  prod's socket declared with the kept head. With a literal source the socket commits at c([1]) and keeps one of prod's
+  two answers: one certificate against R4's two. With the source a variable Z registered with that artifact's value, Z
+  is constructed first; Z is then premise-only and bound, so the socket's test fails
+  (@{const finite_premise_only_free}) and the search does not commit: both answers stay, two certificates.
+\<close>
+
+definition premise_only_material :: "nat finite_term_pattern \<Rightarrow> nat finite_material_pattern" where
+  "premise_only_material src = (case finite_artifact_rows material_control_artifact of (A,E,B,F) \<Rightarrow>
+    \<lparr>finite_material_source=src,
+      finite_material_atoms=finite_exact_term_pattern
+        (finite_enumeration_term (map (finite_atom_term material_control_artifact) A)),
+      finite_material_edges=finite_exact_term_pattern
+        (finite_enumeration_term (map (finite_incidence_term material_control_artifact) E)),
+      finite_material_counts=finite_exact_term_pattern
+        (finite_enumeration_term (map (finite_attachment_term material_control_artifact) B)),
+      finite_material_functions=finite_exact_term_pattern
+        (finite_enumeration_term (map (finite_attachment_term material_control_artifact) F))\<rparr>)"
+
+definition premise_only_clause :: "nat finite_term_pattern \<Rightarrow> (nat,nat,nat) finite_factor_schema" where
+  "premise_only_clause src = \<lparr>finite_schema_conclusion=Finite_Variable 0,
+    finite_schema_premises={|(0,(0,Finite_Pattern_Pair (Finite_Variable 0) (Finite_Variable 1)))|},
+    finite_schema_materials={|(1,premise_only_material src)|}\<rparr>"
+
+definition premise_only_program :: "nat finite_term_pattern \<Rightarrow> (nat,nat,nat,nat) finite_schema_system" where
+  "premise_only_program src = \<lparr>finite_system_interfaces={|(0,Finite_Variable 0),(1,Finite_Variable 0)|},
+    finite_system_clauses={|
+      ((0,0),commitment_fact (Finite_Pattern_Pair (Finite_Pattern_Payload [1]) (Finite_Pattern_Payload [2]))),
+      ((0,1),commitment_fact (Finite_Pattern_Pair (Finite_Pattern_Payload [1]) (Finite_Pattern_Payload [3]))),
+      ((1,0),premise_only_clause src)|}\<rparr>"
+
+definition premise_only_declarations :: "nat finite_term_pattern \<Rightarrow> (nat,nat,nat) resolution_declarations" where
+  "premise_only_declarations src = \<lparr>declared_producers={||}, declared_consumers={||},
+    declared_sockets={|(1,premise_only_clause src,0,True)|}\<rparr>"
+
+abbreviation premise_only_literal :: "nat finite_term_pattern" where
+  "premise_only_literal \<equiv> Finite_Pattern_Target (Finite_Whole material_control_artifact)"
+
+definition premise_only_construction :: "(nat,nat,nat,nat) finite_witness_construction" where
+  "premise_only_construction = \<lparr>witness_registered=(\<lambda>d S.
+      if d = 1 \<and> S = premise_only_clause (Finite_Variable 2) then {|2|} else {||}),
+    witness_value=(\<lambda>P d S B a. if d = 1 \<and> a = 2
+      then Some (Finite_Target (Finite_Whole material_control_artifact)) else None)\<rparr>"
+
+lemma premise_only_control:
+  "commitment_certificates (finite_program_resolution no_witness_construction
+      (premise_only_program premise_only_literal) 1 (Finite_Payload [1]) 20) = 2 \<and>
+    commitment_certificates (finite_committed_resolution no_witness_construction
+      (finite_declared_commitment (premise_only_declarations premise_only_literal))
+      (premise_only_program premise_only_literal) 1 (Finite_Payload [1]) 20) = 1 \<and>
+    commitment_certificates (finite_program_resolution premise_only_construction
+      (premise_only_program (Finite_Variable 2)) 1 (Finite_Payload [1]) 20) = 2 \<and>
+    commitment_certificates (finite_committed_resolution premise_only_construction
+      (finite_declared_commitment (premise_only_declarations (Finite_Variable 2)))
+      (premise_only_program (Finite_Variable 2)) 1 (Finite_Payload [1]) 20) = 2"
+  by eval
+
 lemma site_one_material_controls:
   "finite_material_resolution (site_one_material [[1],[2]]) = Material_Solutions
       {|{|(2,Finite_Target (Finite_Whole (finite_enumerated_artifact [[1],[2]] [] [] []))),

@@ -16793,6 +16793,39 @@ branch, and exactness rests on another branch of the sibling, whose sub-search k
 unbarred ancestors inside it does not depend on the branch. The premise's discharge from R5's declarations, with the
 condition this needs or its counterexample, and the control's false call are the task continuing 565.]
 
+[Corrected by task 526 (W4a1), the planner's answers to q110 and q111. `finite_construction_lifts` as first stated
+(every supported state's selected construction keeps a support at the same barred set) is not what a construction
+gives: pruning rests on ranks, which do not carry across a construction step (the value bound is the construction's,
+not the support's), and R3's search with a registered construction is sound and not exact — pruning after a
+construction step can remove a true call (`.build/tasks/526/result.md`). The committed search therefore bars every node
+present at a construction step, as at a commitment (the barred set joined with those nodes' positions), and constructs
+at the selected nodes in the focus alone; a selected node outside the focus is not constructed and its branch stops
+stuck, unresolved. This settles review 590's follow-up 1: selection reads the focus and the step the whole state, and
+at a node in the focus the holders invariant (`Factor_Construction_Holders.resolution_registrations_held`: every goal
+holding a free registered premise-only variable of a node stands at one of its premises) makes both read the same
+holders. `finite_construction_lifts` asks the step's successor supported at the larger barred set, at a state keeping
+the holders invariant and at a selected node in the focus; every step of the committed search keeps the invariant
+(`finite_committed_search_found_held`), which `finite_committed_lifting` now carries; a complete construction gives the
+premise (`Factor_Least_Witness_Registrations.finite_construction_complete_lifts`). The exact per-call, demand and native
+forms over a construction are R5's committed forms at no commitment (`finite_complete_resolution_refutation_exact`,
+`finite_complete_verdict_exact`, `finite_complete_demand_exact`, `native_complete_resolution_exact`, and at complete
+distinct registrations their `finite_registered_` and `native_registered_` instances); R3's `finite_program_resolution`
+is claimed exact only where the selection never constructs (`finite_committed_search_plain`,
+`finite_committed_resolution_plain`, `finite_declared_none_exact`, `finite_resolution_lifting_committed` restated so).
+#565's exchange premise and R5c′'s frame and kept states stand as stated. #593's hypothesis (b),
+`finite_registrations_confined`, is not a fact of the states the search reaches (the planner's answer to q113): with
+h(Y) :- p1(X,Y), p2(pair(t,Y)), X registered and premise-only, from the call h(Y0) the goal p1(x,y) holds x and y, so it
+is neither ready nor selectable, while p2 is selected and committed at no focus — a goal outside the committed position
+holds x, registered at the root node; this is the least-witness pattern itself, and a commitment test checking (b)
+would refuse exactly the commitments the given's least witnesses need. Its course is (b′): a committed sub-search at a
+position constructs only at nodes under it, so every found state keeps the confinement (`finite_focus_confined`,
+`finite_committed_search_confined`: a variable a node already places and no focused goal holds keeps every holder
+outside the focus and gains none), and at a commitment the search makes every registered variable of a node present
+that a goal outside the position holds stays at that goal's position (`finite_committed_search_registered_unbound`),
+over (ii) `Factor_Construction_Holders.finite_call_goal_no_node_under` and `finite_call_goal_alone_under` (nothing
+stands under a pending call but itself) and (iii) `resolution_registrations_held_focused` (a goal holding a node's
+registered premise-only variable stands in every focus the node stands in). #621 restates #593's hypothesis over it.]
+
 [Corrected by task 586 (R5c), the planner's answer to q108. (4) #565's exchange premise, quantified over every
 supported state, fails at every socket kind — the kept head, the free socket, the inner commitment, the material
 single solution: c(X) :- r(Z), prod(Pair X Y), cons(Pair Z Y) over r(z1), r(z2), prod(x,a), prod(x,b), cons(z1,a),
@@ -16825,7 +16858,9 @@ registered variable bound to a ground value; goals and nodes outside the focus c
 position a node or a pending call holds keeps one, placement is preserved, and the kept states of a sub-search with a
 found state are not empty. A construction step reads every pending goal, the focus's and the rest
 (`finite_registration_ready` over the whole pending set), so the variable it binds may be held outside the focus by
-goals holding it alone: the frame names those bindings rather than excluding them. A committed call's input is ground under the state (`finite_declared_commitment_input_ground`, `_value`): R5's direct and
+goals holding it alone: the frame names those bindings rather than excluding them. [Corrected by task 526: the
+committed search constructs at selected nodes in the focus alone, where under the holders invariant every goal holding
+the variable stands at one of the node's premises, in the focus; the frame's statement stands.] A committed call's input is ground under the state (`finite_declared_commitment_input_ground`, `_value`): R5's direct and
 socket tests demand it, so the premise's quantification over every supported state meets no input the sub-search binds
 otherwise than the support, and output equivalence at one input suffices there. Until the premise is discharged the
 control's false call is refuted by R4 (`commitment_control_refuted`).]
@@ -17056,7 +17091,7 @@ the case each kind's control is checked against, and each control refutes a fals
 | R4 | Completeness and exactness (`Factor_Resolution_Completeness`): the lifting of derivations, pruning and goals resolved once kept, material completeness; `finite_program_resolution_exact`; the demand-level form and its equation with `finite_program_evaluation`; `native_call_resolution` and `native_call_resolution_exact`; controls: E1's control program (plain evaluation unavailable, resolved) and site 1, in one evaluation; REASONING_REUSE.md's row | R3, `Factor_Finite_Program_Evaluation`, `Factor_Finite_Native_Evaluation` | about 220K |
 | R5 | Committed choice (`Factor_Resolution_Commitments`): a class declared at a site's outputs and invariance at its consumers, the committed search, exactness kept | R4, `Presentation_Transport`, `Factor_Presentation_Classes` | about 180K |
 | R6 | The given's declarations: 79, 32, 6, 10, 45, 48 and the consumers their outputs reach in the given's readers, each from its notion's contract [corrected by task 585: R6 (#520, q107's answer) declares 32, 6 with 5 inside it, 10, 45, their material sockets and the consumers a contract states invariant, discharged at the notions' systems and not carried; the rest is R6b's and R6c's] | R5 | about 150K |
-| R5d | [Added by task 585.] Views and carriers (`Factor_Resolution_Commitments`, or a theory above it): the view of a term and of a pattern (a linear pattern and its pair rearrangement) with its laws; the declarations' record at views, R5's and R6's declarations restated at the identity and swap views; every test and obligation read through views, R5c's per-kind discharge instantiated at any view; `carrier_discharged`, the consumer its instance, a carrier from a presented function contract, `socket_discharged_carried`; in `Factor_Resolution_Controls`, a producer at a view with a free socket carried to its head (79's clause in small), a false call refuted and a true one resolved at five elements; REASONING_REUSE.md's committed-choice row | R5c (#586), R6 (#520) | about 200K |
+| R5d | [Added by task 585.] [Corrected by task 526 (review 590, follow-up 3): R5c's per-kind discharges are R5c″'s (#593, the direct producer) and R5c‴'s (#621, the socket kinds), and the forms' construction premise is W4a1's (#526); R5d consumes those, not R5c (#586).] Views and carriers (`Factor_Resolution_Commitments`, or a theory above it): the view of a term and of a pattern (a linear pattern and its pair rearrangement) with its laws; the declarations' record at views, R5's and R6's declarations restated at the identity and swap views; every test and obligation read through views, R5c's per-kind discharge instantiated at any view; `carrier_discharged`, the consumer its instance, a carrier from a presented function contract, `socket_discharged_carried`; in `Factor_Resolution_Controls`, a producer at a view with a free socket carried to its head (79's clause in small), a false call refuted and a true one resolved at five elements; REASONING_REUSE.md's committed-choice row | R5c (#586), R6 (#520) | about 200K |
 | R5e | [Added by task 585.] Narrowed sockets: `socket_discharged` with a class predicate N, R5's the instance at N = ⊤; a registration of a variable free after head unification, complete at a caller clause where its goal is a narrowed socket; the control: a 48-shaped union beside a distinctness consumer, a false call refuted and a true one resolved | R5d, W4a | about 150K |
 | R6b | [Added by task 585.] The given's declarations beyond R6's and the instantiation family's (79, 37, 12, 7, 39, 40, 29, 36, 42, 54; their sockets, consumers and the carriers 59, 51, 53 and 5), each discharged at its notion's system from its contract; all the given's declarations, R6's included, carried through #565's transfer to `given_program_system`, `given_rooted_readers_system`, `given_readers_program` and `given_program`; the control at the given's readers (79 at five roots, a false call refuted) | R5d, R6, #565 | about 200K |
 | R6c | [Added by task 585.] The instantiation family's declarations (50, 52, 55–65, 69, 72, 587; the carriers 46, 63, 55 at its scope, 584 and 586) and 48's (the registration at 48.0, the narrowed sockets at its eight uses), carried by the same transfer; the control (a pattern whose slots are unioned, a false call refuted) | R5e, R6b | about 220K |
@@ -17268,6 +17303,13 @@ relies on.
   collection's value refutes the call, and R4's exactness holds for the search with that construction. Elsewhere a
   failed check at a witness leaves the call unresolved, its diagnosis naming the registration, the witness and the goal
   refuted at it. A handed-in witness never refutes.
+  [Corrected by task 526 (W4a1, q110): with a construction, R3's search is sound and not exact — its pruning after a
+  construction step can remove a true call. The exact forms over a complete construction are R5's committed forms at no
+  commitment, whose search bars every node present at a construction step
+  (`Factor_Least_Witness_Registrations.finite_complete_resolution_refutation_exact`, `finite_complete_verdict_exact`,
+  `finite_complete_demand_exact`, `native_complete_resolution_exact`; at complete distinct registrations
+  `finite_registered_resolution_refutation_exact`, `finite_registered_verdict_exact`, `finite_registered_demand_exact`,
+  `native_registered_resolution_exact`).]
 - **A refused call's record** holds the registration, the witness with its justification, and the goal refuted at it (a
   refutation of a ground call, exact by R4).
 - **Unresolved** stay: a call whose construction's queries are cut at the bound; a clause whose registration is not
@@ -17315,7 +17357,7 @@ Task 376's test:
 | W1 | The call site: R3's search takes a witness construction, keeps goals holding a registered variable unselected while it is free, calls the construction once their other variables are ground, binds the value and resolves them; a witnessed failure counts toward no refutation; the empty construction is task 495's evaluator | R3 (#503): a correction of its brief before it starts (a parameter and its rule), or a build after R3 stating the search with the parameter | about 30K in #503, or about 150K alone |
 | W2 | The least collection (`Factor_Least_Collections`): the resolver's all-answers of a query, complete when no branch is cut; the iteration of base and step queries with keys, identity and presentation; the justifications and their check; the contract for any program; a proposer's hand-in table consulted first | W1, R4 (#505) | about 220K |
 | W3 | The completeness facts (`Factor_Least_Witness_Facts`): at 77's clause, at the additions notion's clause for any list site, at 561's clause, the clause holds at some value of its variable exactly when it holds at the least, and the least is the collection its registration's queries give (82's, 5's and 12's exactness); stated over the given's readers' meanings | the named theories; independent of R1–R4 | about 180K |
-| W4 | The given's registrations (`Factor_Least_Witness_Registrations`): the four, over the numbered given's readers, each proved complete by W3; the resolver with a construction whose registrations are complete exact (R4's lifting with the completeness); registrations relocated by an installation's placement; the controls in `Factor_Resolution_Controls` (77 at a two-definition package resolved, at a package with an unreadable callee refuted, 561 at compatible and at incompatible environments), one evaluation; REASONING_REUSE.md's row for producing a least witness beside the checker | W1, W2, W3, R4 | about 180K |
+| W4 | The given's registrations (`Factor_Least_Witness_Registrations`): the four, over the numbered given's readers, each proved complete by W3; the resolver with a construction whose registrations are complete exact (R4's lifting with the completeness) [Corrected by task 526: exact as R5's committed resolution at no commitment, its search barring at construction steps; R3's search sound only]; registrations relocated by an installation's placement; the controls in `Factor_Resolution_Controls` (77 at a two-definition package resolved, at a package with an unreadable callee refuted, 561 at compatible and at incompatible environments), one evaluation; REASONING_REUSE.md's row for producing a least witness beside the checker | W1, W2, W3, R4 | about 180K |
 
 W3 can start now. W1 goes with R3, as a correction of #503 or after it. W2 follows R4 and W1; W4 follows W1–W3 and R4.
 R5 and R6 (#507) are independent of W1–W4 and bound the cost of refusals at the presentation-free readers, 79's root

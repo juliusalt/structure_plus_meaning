@@ -1106,6 +1106,7 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Factor_Program_Resolution
     Factor_Resolution_Acceptance
     Factor_Resolution_Completeness
+    Factor_Construction_Holders
     Factor_Finite_Proof_Inspection
     Factor_Finite_Source_Computation
     Factor_Native_Derivation_Assessment
@@ -1332,6 +1333,7 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Right_Ordered_Terms
     Finite_Presented_Collections
     Factor_Least_Collections
+    Factor_Least_Witness_Registrations
     Finite_Presented_Coordinates
     Finite_Presented_Structures
     Finite_Presented_Investigations

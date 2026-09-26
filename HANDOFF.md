@@ -73,8 +73,8 @@ into the briefs #522 and #523 corrected, or recorded superseded there.
 - The resolver at the given's size (#644's attribution and #683's addition to task 495's entry, "The resolver at the
   given's size", both accepted), briefed by #684 (`.build/tasks/684/result.md`) and placed by plan-90: F1 #693 (R3's
   default selection at a priority reading the commitment's tests; after #689 and #670), F3 #695 (a solved ground call
-  reused; after F1 and #676, before #613), F2a #697 (patterns over the shared-term table; landed) and F2a′ #713 (its
-  ground nodes collapsed into references, the keyed constructors; before F2b), F2b #699 and F2c #701
+  reused; after F1 and #676, before #613), F2a #697 and F2a′ #713 (patterns over the shared-term table, ground nodes
+  collapsed into references, the keyed constructors; landed), F2b #699 and F2c #701
   (R3's and R5's searches over the refined shared state), C #703 (a found derivation checked over its graph; before
   #542, #547 and #399), each with its review; divided from R7 the stated-leaves program's presentation #705 (landed) and 526's native course #707 (after #542, #653, #688 and #661, before #399), from #399 its controls #709
   (after #399, before #401, #403 and #553); #542, #399, #547 and #443 rewritten from #684's corrected briefs (#542 the
@@ -112,7 +112,7 @@ The approval build (Open 142) after #407 and #447, and the controls task (Open 1
 exists, Q2): the slots are one pool, each free slot going to the first task in the queue that can start and a review
 standing where its review task stands, so every review stands right after its build. By slack on the longest chain:
 #665's builds on the longest chain first (#666, #668, the tuple's move #685, #672, #670, #674, #689), F1 #693, #676,
-F3 #695, F2b #699, F2c #701, C #703; F2a′ #713 (at once, in a slot the chain leaves); R5e #599 and R6c's #609; #597, R6c's instantiation family (#607, #679, #681) beside R6b's parts
+F3 #695, F2b #699, F2c #701, C #703; R5e #599 and R6c's #609; #597, R6c's instantiation family (#607, #679, #681) beside R6b's parts
 #601 and #603; V3's #653 and #687, then #655 and #688; the carryings #605 and #663 with V2a #649 and V2b #651; rc
 #540 and #661; #611; R7 #542, its native part #707, #399 and its controls #709, #547; the route in its chains' order
 (#551, #549, #553, #401, #403, #443, #447, #407, #445, #449); the registrations' consolidation #711 (off the route,
@@ -361,7 +361,9 @@ follow-ups are in `PLANNING_LOG.md` and the earlier states (`HANDOFF-before-cond
   `merge_witness_registration`, nullary values built at module load, review 660's 2).
 - **The shared patterns** (#683's F2): `Factor_Shared_Patterns` (F2a #697, `d19426d3`: patterns over the shared-term
   table, substitution and unification equal to R2's over the projection; ground leaves references, a ground pair a node
-  until `share_node` makes it one).
+  until `share_node` makes it one); F2a′ #713 (`df24c463`: `share_collapse`, ground nodes collapsed into references
+  with its exactness, `shared_collapsed`; the keyed constructors with their equations to `share_node` and
+  `share_pattern`).
 - **The clause match** (#642's addition): M `Factor_Finite_Schema_Matching` (#645, `2139dfe2`: `finite_schema_match`
   deciding alpha variance of two finite clauses with their binder and socket maps, `finite_schema_matched` and the
   clause facts along it; its socket types read as linearly ordered, review 646's 1); V1 `Factor_Varied_Constructions`
@@ -555,7 +557,9 @@ planner searches for a theory before briefing a task that edits it.
   at the head of `Development_Installed_Presentations`); #663, #447 — 656's 2 (`Factor_Varied_Constructions`' facts at
   `finite_mapped_native_extension` consumed through `given_readers_mapped_extension`, not derived again); #699 — 698's 1
   (the table read by an index by position) and 4 (the share cost per search beside the per-step saving); #542 — 698's 4;
-  #711 — 692's 2 (`asked_mapped_extension` re-cited as `asked_extension.mapped_extension`).
+  #711 — 692's 2 (`asked_mapped_extension` re-cited as `asked_extension.mapped_extension`); #699 — 714's 1 (the
+  substitution rebuilding through the keyed `share_node`, collapsed states kept) and 2 (the keyed constructors' and the
+  collapse's costs): F2b's load grew by these mails, so a refusal at its start divides it.
 - **The harness's gaps met by this run's tasks** are owed to the owner and listed in `PLANNING_LOG.md` (2026-09-26,
   plan-86); new ones go there.
 - **Ledger entries that can leave** (the harness's `v2.py ledger`): Q7's and Q2's questions and answers, recorded in the

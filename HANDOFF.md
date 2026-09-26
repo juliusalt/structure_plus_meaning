@@ -77,8 +77,9 @@ into the briefs #522 and #523 corrected, or recorded superseded there.
   that and review 731's words) → the fix #741 (landed `feb80f30`: the root-family and
   artifact-citation sockets through the shape, `socket_discharged_along` and `_direct` retired); the fix #732 (landed `d047f171`: one
   transfer over the sites the obligations read, `declarations_agree_read_discharged`, with review 664's 2), then its
-  review's consolidation #753 (the one-step guard agreements once in `Development_Given_Readers`; before #611; the
-  `declarations_list` facts' move into `Factor_Resolution_Commitments` given to #724);
+  review's consolidation #753 (landed `2f4cdab1`: the one-step guard agreements once in `Development_Given_Readers`)
+  and its own review's #754 (the subset and lookup agreements likewise; before #611); the `declarations_list` facts'
+  move into `Factor_Resolution_Commitments` given to #724;
   the brief #733 (32's kept sockets at 71, 75, 81, 104.1, 105.1, 119 and 505, declared by no build; now after #740,
   before #611 and #542; its builds after #741). Correction (10) (#730, landed `746b3321`): the socket test at the socket's frame; B1 #743 (after F3 and #741; before F2c, B2a, B3a, B3b,
   #681, #609, #733, and R5f1 #734, which plan-97 put after it, both editing `Factor_Resolution_Commitments`), B2a #745
@@ -138,7 +139,7 @@ was placed when #668 landed.
 **Order** (the queue holds it; the planner's choice, a residual until the native answer to the selection problem
 exists, Q2): the slots are one pool, each free slot going to the first task in the queue that can start and a review
 standing where its review task stands, so every review stands right after its build. By slack on the longest chain:
-F3 #695 with the fix #753 beside it; B1 #743, F2b #699, B2a #745 and B3a #749; R5f1 #734 and the
+F3 #695 with the fix #754 beside it; B1 #743, F2b #699, B2a #745 and B3a #749; R5f1 #734 and the
 measurement #742; B2b #747, B3b #751 and R5f2 #736; F2c #701 and C #703; the brief #733; V2b #651 and its (3) #738;
 R6c's #609 and #681; rc #540 and #661; #611; R7 #542, its native part #707, #399 and its controls #709, #547; the route in its chains'
 order (#551, #549, #553, #401, #403, #443, #447, #407, #445, #449); the controls #718 after C, and the lifting's

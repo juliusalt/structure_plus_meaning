@@ -133,13 +133,22 @@ proof -
     by (simp only: option.case)
 qed
 
-theorem finite_collection_construction_complete:
-  assumes complete: "\<And>R. R \<in> set Rs \<Longrightarrow> finite_registration_complete P n R"
+text \<open>
+  The construction reads a registration only at a clause of the program: it is complete when every registration
+  naming a clause of the program is complete there, whatever the others (task 528: the given's readers hold no clause
+  at 525 or 561, the request's program none at 392 or 525).
+\<close>
+
+theorem finite_collection_construction_complete_at:
+  assumes complete: "\<And>R c. R \<in> set Rs \<Longrightarrow>
+      ((registration_site R,c),registration_schema R) |\<in>| finite_system_clauses P \<Longrightarrow>
+      finite_registration_complete P n R"
   shows "finite_construction_complete (finite_collection_construction Rs n) P"
   unfolding finite_construction_complete_def
 proof (intro allI impI)
   fix d c S a
-  assume "a |\<in>| witness_registered (finite_collection_construction Rs n) d S"
+  assume clause: "((d,c),S) |\<in>| finite_system_clauses P"
+    and "a |\<in>| witness_registered (finite_collection_construction Rs n) d S"
   then have "\<exists>R\<in>set Rs. finite_registration_matches d S R \<and> registration_variable R = a"
     by (simp only: finite_collection_construction_registered)
   then have "find (\<lambda>R. finite_registration_matches d S R \<and> registration_variable R = a) Rs \<noteq> None"
@@ -148,7 +157,8 @@ proof (intro allI impI)
     by auto
   have R: "R \<in> set Rs" "finite_registration_matches d S R" "registration_variable R = a"
     using f by (auto simp: find_Some_iff)
-  have S: "registration_schema R = S" using R(2) by (simp add: finite_registration_matches_def)
+  have S: "registration_schema R = S" and site: "registration_site R = d"
+    using R(2) by (simp_all add: finite_registration_matches_def)
   have "\<And>B. witness_value (finite_collection_construction Rs n) P d S B a = finite_registration_value P n R B"
   proof -
     fix B show "witness_value (finite_collection_construction Rs n) P d S B a = finite_registration_value P n R B"
@@ -156,10 +166,16 @@ proof (intro allI impI)
   qed
   then have eq: "(\<lambda>B. witness_value (finite_collection_construction Rs n) P d S B a) = finite_registration_value P n R"
     by (rule ext)
-  show "a |\<notin>| finite_pattern_variables (finite_schema_conclusion S) \<and>
+  have "finite_registration_complete P n R" using complete[OF R(1)] clause S site by simp
+  then show "a |\<notin>| finite_pattern_variables (finite_schema_conclusion S) \<and>
       finite_value_complete P S a (\<lambda>B. witness_value (finite_collection_construction Rs n) P d S B a)"
-    using complete[OF R(1)] S R(3) unfolding eq by (simp add: finite_registration_complete_def)
+    using S R(3) unfolding eq by (simp add: finite_registration_complete_def)
 qed
+
+theorem finite_collection_construction_complete:
+  assumes complete: "\<And>R. R \<in> set Rs \<Longrightarrow> finite_registration_complete P n R"
+  shows "finite_construction_complete (finite_collection_construction Rs n) P"
+  by (rule finite_collection_construction_complete_at) (rule complete)
 
 section \<open>An unconstructed registration\<close>
 

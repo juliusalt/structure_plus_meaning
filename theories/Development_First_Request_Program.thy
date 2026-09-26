@@ -220,6 +220,23 @@ definition first_request_program :: "local_address option native_system" where
 definition first_request_entry :: "local_address option definition_site" where
   "first_request_entry=first_request_placement 561"
 
+text \<open>
+  The installation's constants are defined through the interpretation of @{text given_readers_extension}; their code
+  equations are the locale's definitions at the first request's program.
+\<close>
+
+lemma first_request_installation_code [code]:
+  "first_request_environment=fst (the (finite_extend_mapped_native given_environment finite_rooted_given_readers
+    finite_first_request_program given_readers_placement))"
+  "first_request_use=snd (the (finite_extend_mapped_native given_environment finite_rooted_given_readers
+    finite_first_request_program given_readers_placement))"
+  "first_request_placement=finite_program_coordinates given_environment
+    (finite_system_definitions finite_rooted_given_readers) (finite_system_definitions finite_first_request_program)
+    given_readers_placement"
+  by (simp_all only: first_request_environment_def first_request_use_def first_request_placement_def
+    first_request_extension.installed_environment_def first_request_extension.installed_use_def
+    first_request_extension.installed_def first_request_extension.installed_placement_def)
+
 lemmas first_request_built=first_request_extension.built
 
 lemmas first_request_installation=first_request_extension.installation[folded first_request_placement_def

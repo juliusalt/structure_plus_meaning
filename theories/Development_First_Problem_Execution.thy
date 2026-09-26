@@ -30,20 +30,6 @@ definition first_problem_owner_directions :: "finite_factor_term list" where
 definition first_problem_owner_record_read_back :: "finite_factor_term \<Rightarrow> bool option" where
   "first_problem_owner_record_read_back t=development_owner_record_read_back t (development_owner_record t)"
 
-text \<open>
-  The asked installation's constants are defined through the interpretation of @{text given_readers_extension}; their
-  code equations are the locale's definitions at the asked program.
-\<close>
-
-lemma asked_installation_code [code]:
-  "asked_environment=fst (the (finite_extend_mapped_native given_environment finite_rooted_given_readers
-    finite_asked_program given_readers_placement))"
-  "asked_use=snd (the (finite_extend_mapped_native given_environment finite_rooted_given_readers
-    finite_asked_program given_readers_placement))"
-  "asked_placement=finite_program_coordinates given_environment (finite_system_definitions finite_rooted_given_readers)
-    (finite_system_definitions finite_asked_program) given_readers_placement"
-  by (simp_all only: asked_environment_def asked_use_def asked_placement_def asked_extension.installed_environment_def
-    asked_extension.installed_use_def asked_extension.installed_def asked_extension.installed_placement_def)
 
 lemma first_problem_posing_recording:
   "development_first_problem_posing=

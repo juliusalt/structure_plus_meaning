@@ -121,10 +121,13 @@ package by matching its clauses against the placed ones" — one computed clause
 sockets with the registration's completeness at the socket, after #599; divided by plan-85 so that #605 does not wait
 on #599) to the installed package's finite presentation read natively (V3: #653 the asked and request installations,
 #655 the given's, #657 the control, off the route); #399's course is the native one; R7 measures both courses at 526;
-briefed by #643, whose corrected briefs #547 and #611 carry (#540's and #605's, over a build's room, divided by a
-brief of plan-85; #399's and #542's, over it too, divided with #644's fix when #644 reports). #640 and #635 state the placed
-course. #399 and R7 wait on #635 and #653, #547 on #640, #653 and rc; #605 on #649, #653 and #655; #611 on #651; rc on
-#647, #649 and #651; #542 and #547 also on the investigation #644 (the resolver over environment values); #549 and
+briefed by #643, whose corrected briefs #547 and #611 carry (#540's and #605's, over a build's room, divided by
+#659 into #540 and #661, rc's numbered and native forms, and #605 and #663, R6b's numbered and installed carrying;
+#399's and #542's, over it too, divided with #644's fix when #644 reports). #640 and #635 state the placed
+course. #399 and R7 wait on #635 and #653, #547 on #640, #653 and #661; #663 on #649, #653 and #655; #611 on #651 and
+#663; #661 on #540 and
+#647, #649 and #651; #542 and #547 also on #661, the investigation #644 (the resolver over environment values) and
+the registrations' code #660; #549 and
 #551 wait on R7, #403 and #553 through #399.
 
 **Retired** on #376's and #378's entries (their tables): the decomposition line (#325–#334), N1a, N1b, N3a, N3b, N4a
@@ -144,7 +147,8 @@ programs' law (`Native_Collection_Programs`; #173–#275, #295, #374); the share
 by a task of their own (Open 100).
 
 **Shape.** No build waits on a review task. The evaluator's chain is the route's longest (R5c‴ #621 landed):
-its remainder #630 → R5d's views #595 → carriers #597 → R5e #599 → R6c's 48 #609 or V2b #651 → the carrying #611 → R7 #542 → #399 →
+its remainder #630 → R5d's views #595 → carriers #597 → R6b's parts #601, #603 → the numbered carrying #605 → the
+installed carrying #663 → #611 → R7 #542 → #399 →
 #401, #403 and the record #553 → … — past the limit through splices (q108, #588, q112, q115), so nothing is added after
 #408, #446, #448, #449 or #450 until they shorten (the status line gives the depths). Off the route,
 nothing waiting on them: the consolidation #613. The approval build (Open 142) after #407 and #447 waits for the chain to shorten.
@@ -154,7 +158,7 @@ exists, Q2): the slots are one pool since 14:06, each free slot going to the fir
 and a review standing where its review task stands, so every review stands right after its build. By slack on the
 longest chain (plan-78): #630 continued and the investigation #644; M #645 at once, V1 #647 and V3's parts #653, #655 in
 the slots the route leaves (V3's control #657 off the route); R5d's views #595 and carriers #597; R5e #599, V2a #649 and
-R6b's parts #601, #603 (no slack); R6c's 48 #609 and V2b #651, R6b's carrying #605, rc #540 and R6c's instantiation family #607; the carrying #611; R7 #542 and #547; the route in its chains' order (#399, the
+R6b's parts #601, #603 (no slack); R6b's numbered carrying #605, R6c's 48 #609 and V2b #651; the installed carrying #663, rc #540 and its native form #661, R6c's instantiation family #607; the carrying #611; R7 #542 and #547; the route in its chains' order (#399, the
 samples #551, the observations #549, the record #553, #401, #403, #443, #447, #407, #445, #449); the consolidation #613 last, off the route.
 
 ## Decisions
@@ -509,6 +513,10 @@ What landed that open work builds on, a line each; how it went and each review's
   request's program and relocated at its installation (the placed course); the installation predicate and the placed
   meanings once in `given_readers_extension` (review 638's 3). Review 641's follow-ups: 1 next-edits 244, 2 offered to
   V3's first part (#643), 3 answered (plan-84 placed review 638's 3 with #640).
+- **W4b's controls** (#636, `c0864a4a`): `Factor_Resolution_Controls.given_registration_controls` (561's merge
+  collected and its conflict found at `finite_given_readers`, bound 80; the registrations' code over literal schemas
+  there), REASONING_REUSE.md's row "Produce a least witness beside the checker". Review 639's follow-ups: 1 to #644 and
+  the controls task after its fix, 2 plan-85's fix (the code equations from the programs' clauses).
 - **R5c⁗b** (#631, `e994a1de`): `Factor_Resolution_Material_Discharge.finite_material_commitment_exchanges`, the
   material single solution's discharge of the exchange premise under q116's conditions; task 495's entry's correction
   (7) with its three counterexamples. Review 633's follow-ups: the test's conjunction with `finite_material_narrowed`,
@@ -664,12 +672,15 @@ searches for a theory before briefing a task that edits it.
   level per row and address — 113 at two one-row environments unresolved at bound 80 (6 s, every diagnosis
   `Resolution_Cut`), no return at 200 within 130 s; 77's bound collection at a two-definition installation `None` at
   bound 40, no return at 120 or 250 (`.build/tasks/636/result.md`, drafts, runs 4, 6, 10); 561's merge in seconds. R7,
-  #547 and #399 resolve 113 and 77 at the given, so plan-85 made its attribution an investigation (the cause, the fix
-  at it and its builds; #542 and #547 wait on it). #636 hands over the rest; its four remaining controls (77 and 113
-  at the package and the merge) and correction (7)'s three counterexample controls go to one controls task after the fix.
+  #547 and #399 resolve 113 and 77 at the given, so plan-85 made its attribution the investigation #644 (the cause,
+  the fix at it and its builds; #542 and #547 wait on it). #636 landed the rest (`c0864a4a`); its four remaining
+  controls (77 and 113 at the package and the merge, through `given_control_verdict` and `merge_control_inclusions`),
+  correction (7)'s three counterexample controls and the controls' literals retired onto the library's code (review
+  639's 1 and 2) go to one controls task after the fix; the library's code itself is plan-85's fix of review 639's 2.
 - **#643's corrected briefs over a build's room**: #399 (260K beside 345K of relations) and #542 (190K beside 439K)
   keep their earlier briefs until #644 reports; then one brief divides them with its fix (and corrects #547 and #443
-  where the fix changes them; #542 and #547 wait on #644). #540's and #605's are divided now by plan-85's brief.
+  where the fix changes them; #542 and #547 wait on #644). #540's and #605's divided by #659 (#661 and #663 their new
+  parts; #540's margin about 43K: short of room, its (2) divides from (1) and (4)).
 - **V3's second part at the given's own installation** (#655): a closed installation, not a mapped extension; if W4a's
   relocation completeness stands only in `finite_mapped_native_extension`, #655 brings it to the planner (#643's
   question).

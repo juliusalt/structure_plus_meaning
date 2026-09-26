@@ -1,6 +1,6 @@
 {
- "base_receipt_sha256": "b3529afb7fc9eee95b2778bd84d1508e9de549b5b69be29a04157fc6bdda185e",
- "checked_content_sha256": "b3cbd128014c76e191637191293dfe9f2aa3dc9dca15af21dc705984985c3a92",
+ "base_receipt_sha256": "ce0242fed2760fb26703d38d26382fb4da159f607d218cdfb5ca11ca365163d1",
+ "checked_content_sha256": "002ced089953ac866c314e6e2f8af8c62489662df469cd74398e2fd1aa687521",
  "host_tests": {
   "kernel": {
    "exit_code": 0,
@@ -17,20 +17,31 @@
    "ran": 306,
    "skipped": 0,
    "tail": [
-    "{\"status\": \"failed\", \"error\": \"[Errno 2] No such file or directory: '/tmp/tmpeoy90qy_/no-project/theories/Development_Answer_a2d8d6490cc2.thy'\"}"
+    "{\"status\": \"failed\", \"error\": \"[Errno 2] No such file or directory: '/tmp/tmpo2yge6s0/no-project/theories/Development_Answer_a2d8d6490cc2.thy'\"}"
    ]
   }
  },
  "phases": {
-  "base_and_impact": 0.49,
+  "base_and_impact": 0.53,
   "execution_impact": 0.0,
   "export": 0.0,
-  "proof": 292.82,
+  "proof": 371.3,
   "recipe_impact": 0.44,
-  "recipes_and_host_tests": 11.22
+  "recipes_and_host_tests": 11.36
  },
  "rebuilt_theories": [
-  "Factor_Resolution_Controls"
+  "Development_Asked_Registrations",
+  "Development_First_Request_Registrations",
+  "Development_Given_Declarations",
+  "Development_Given_Declarations_Execution",
+  "Development_Given_Registrations",
+  "Factor_Least_Witness_Registrations",
+  "Factor_Reader_Witness_Registrations",
+  "Factor_Resolution_Commitments",
+  "Factor_Resolution_Controls",
+  "Factor_Resolution_Material_Discharge",
+  "Factor_Resolution_Producer_Discharge",
+  "Factor_Resolution_Socket_Discharges"
  ],
  "recipes": {
   "allocated-environments": {
@@ -190,19 +201,19 @@
    "status": "unchanged"
   }
  },
- "reused_theories": 1919,
- "seconds": 387.21,
+ "reused_theories": 1909,
+ "seconds": 468.48,
  "source_checks": {
   "missing_theory_files": [],
   "proof_escape_matches": [],
   "refusals": [],
-  "theory_count": 1920,
+  "theory_count": 1921,
   "unlisted_theories": []
  },
  "status": "accepted",
- "theories": 1920,
+ "theories": 1921,
  "validation_inputs": {
-  "ROOT": "eeb0b1b11558a064e1724e54ce6db8d53ad88dce8df329b8e869fe71703a032d",
+  "ROOT": "0b20f5601dcbeec4ca09af512c812303039467ba649bac550326652006a69bbe",
   "tools/check.py": "71c91573138e10d317e5d920f5776af39687d313836a5552bbb0ec1d2d580381",
   "tools/incremental_check.py": "7f57110d9b4e04a7eb01215c21ea098fffcff71410454a248f6eb122909a1d98"
  }

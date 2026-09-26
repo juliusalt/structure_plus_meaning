@@ -1,6 +1,6 @@
 theory Factor_Finite_System_Presentations
   imports Factor_Finite_System_Unions Factor_Finite_View_Installation Factor_System_Restriction
-    Bootstrap_Finite_Closure
+    Bootstrap_Finite_Closure Finite_Demanded_Closures
 begin
 
 section \<open>A program's finite presentation is derived from its parts'\<close>
@@ -166,6 +166,88 @@ theorem finite_system_of_rooted:
     finite_system_restriction (finite_system_of P) (finite_definition_closure (finite_system_of P) R)"
   by (simp only: rooted_system_def finite_system_of_restriction[OF formed, symmetric]
     finite_definition_closure_correct decode_finite_system_of[OF formed])
+
+section \<open>The definition closure is read from its roots\<close>
+
+text \<open>
+  The definition closure is a rooted reading (@{text Finite_Demanded_Closures}): its sites are the
+  definitions, its rows at a definition the clauses of its clause family, a row's successors the callees
+  of its schema, and its universe the definitions that have a clause. Every definition with a clause is
+  in that universe, formed program or not, so the reading's premise holds for every program, and the
+  closure is the notion's rooted sites. Its code is the notion's frontier traversal of the sites alone: a
+  definition's clauses are read once, and only once a root has reached it, where the closure of every
+  definition's edges was computed before only the roots' reach was kept.
+\<close>
+
+definition finite_clause_definitions :: "('a,'s,'d,'c) finite_schema_system \<Rightarrow> 'd fset" where
+  "finite_clause_definitions P=fimage (\<lambda>z. fst (fst z)) (finite_system_clauses P)"
+
+definition finite_clause_dependencies :: "'c\<times>('a,'s,'d) finite_factor_schema \<Rightarrow> 'd fset" where
+  "finite_clause_dependencies z=finite_schema_dependencies (snd z)"
+
+lemma finite_system_clause_family_member:
+  "(c,S) |\<in>| finite_system_clause_family P d \<longleftrightarrow> ((d,c),S) |\<in>| finite_system_clauses P"
+  by (auto simp: finite_system_clause_family_def fimage.rep_eq ffilter.rep_eq image_iff; force)
+
+lemma finite_clause_family_universe:
+  assumes nonempty: "finite_system_clause_family P d\<noteq>{||}"
+  shows "d |\<in>| finite_clause_definitions P"
+proof -
+  obtain c S where "(c,S) |\<in>| finite_system_clause_family P d" using nonempty by fast
+  then have "((d,c),S) |\<in>| finite_system_clauses P" by (simp add: finite_system_clause_family_member)
+  then show ?thesis by (force simp: finite_clause_definitions_def fimage.rep_eq)
+qed
+
+lemma finite_dependency_edges_row_edges:
+  fixes P :: "('a,'s,'d,'c) finite_schema_system"
+  shows "finite_dependency_edges P=
+    finite_row_edges (finite_system_clause_family P) finite_clause_dependencies (finite_clause_definitions P)"
+proof (rule fset_eqI)
+  fix z :: "'d\<times>'d"
+  obtain d e where shape: "z=(d,e)" by (cases z) auto
+  have left: "(d,e) |\<in>| finite_dependency_edges P \<longleftrightarrow>
+      (\<exists>c S. ((d,c),S) |\<in>| finite_system_clauses P \<and> e |\<in>| finite_schema_dependencies S)"
+    by (auto simp: finite_dependency_edges_def ffUnion.rep_eq fimage.rep_eq; force)
+  have right: "(d,e) |\<in>| finite_row_edges (finite_system_clause_family P) finite_clause_dependencies
+      (finite_clause_definitions P) \<longleftrightarrow>
+      (\<exists>c S. ((d,c),S) |\<in>| finite_system_clauses P \<and> e |\<in>| finite_schema_dependencies S)"
+  proof
+    assume "(d,e) |\<in>| finite_row_edges (finite_system_clause_family P) finite_clause_dependencies
+      (finite_clause_definitions P)"
+    then obtain x where "x |\<in>| finite_system_clause_family P d" "e |\<in>| finite_clause_dependencies x"
+      by (auto simp: finite_row_edges_member)
+    then show "\<exists>c S. ((d,c),S) |\<in>| finite_system_clauses P \<and> e |\<in>| finite_schema_dependencies S"
+      by (cases x) (auto simp: finite_system_clause_family_member finite_clause_dependencies_def)
+  next
+    assume "\<exists>c S. ((d,c),S) |\<in>| finite_system_clauses P \<and> e |\<in>| finite_schema_dependencies S"
+    then obtain c S where clause: "((d,c),S) |\<in>| finite_system_clauses P"
+      and callee: "e |\<in>| finite_schema_dependencies S" by blast
+    have row: "(c,S) |\<in>| finite_system_clause_family P d"
+      using clause by (simp add: finite_system_clause_family_member)
+    have universe: "d |\<in>| finite_clause_definitions P"
+      using row by (intro finite_clause_family_universe) auto
+    show "(d,e) |\<in>| finite_row_edges (finite_system_clause_family P) finite_clause_dependencies
+      (finite_clause_definitions P)"
+      using universe row callee by (auto simp: finite_row_edges_member finite_clause_dependencies_def)
+  qed
+  show "z |\<in>| finite_dependency_edges P \<longleftrightarrow> z |\<in>| finite_row_edges (finite_system_clause_family P)
+      finite_clause_dependencies (finite_clause_definitions P)"
+    by (simp only: shape left right)
+qed
+
+theorem finite_definition_closure_rooted:
+  "finite_definition_closure P R=
+    finite_rooted_sites (finite_system_clause_family P) finite_clause_dependencies (finite_clause_definitions P) R"
+  unfolding finite_definition_closure_def finite_rooted_sites_def finite_dependency_edges_row_edges
+  by (simp add: split_def)
+
+declare finite_definition_closure_def[code del]
+
+lemma finite_definition_closure_demanded_code [code]:
+  "finite_definition_closure P R=
+    the (finite_demanded_sites (finite_system_clause_family P) finite_clause_dependencies R)"
+  by (simp add: finite_demanded_sites_readings finite_definition_closure_rooted
+    finite_demanded_readings_exact[OF finite_clause_family_universe])
 
 section \<open>The material premises an entry's closure reaches\<close>
 

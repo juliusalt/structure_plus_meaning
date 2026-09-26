@@ -341,6 +341,7 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Factor_Encoding_Order_Audit
     Factor_Construction_Order_Audit
     Factor_Rule_Instances
+    Finite_Pattern_Tuples
     SK_Reduction
     Factor_SK_Program
     Factor_SK

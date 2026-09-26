@@ -1188,7 +1188,7 @@ proof (intro allI impI conjI)
     case True
     have "commit_call (finite_declared_commitment D) F st g" using committed by (simp add: finite_goal_committed_def)
     then have parent: "finite_goal_premise st g" by (rule finite_declared_commitment_premise)
-    show ?thesis by (rule finite_direct_exchange[OF \<kappa> I sup gF pairs discharged True parent only H unheld s0])
+    show ?thesis by (rule finite_direct_exchange[OF \<kappa> I sup gF discharged True parent only H unheld s0])
   next
     case False
     show ?thesis by (rule finite_socket_commitment_exchange[OF \<kappa> I sup gF pairs discharged committed False only H unheld s0])

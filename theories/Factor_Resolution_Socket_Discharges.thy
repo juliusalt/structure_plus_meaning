@@ -1321,7 +1321,7 @@ theorem finite_declared_commitment_exchanges:
     and discharged: "declarations_discharged (positive_meaning (decode_finite_system P)) D corr"
     and only: "finite_registrations_premise_only \<kappa> P"
   shows "finite_commitment_exchanges (\<lambda>_. False) \<kappa> (finite_declared_commitment D) P"
-  unfolding finite_commitment_exchanges_def
+  unfolding finite_commitment_exchanges_unproduced[OF finite_declared_commitment_production]
 proof (intro allI impI conjI)
   fix n F B st \<theta> g d t s0 B0 \<theta>0
   assume I: "resolution_invariant P d t st" and sup: "resolution_supported_at (\<lambda>_. False) F B P st \<theta>"

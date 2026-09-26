@@ -64,7 +64,7 @@ into the briefs #522 and #523 corrected, or recorded superseded there.
   review 604's: the view term once, the dead free sockets dropped — which runs beside #679); #676 and #597 → R5e #599
   (narrowed sockets) → R6c's #609 (48; also after #607, #679, #726 and R5f1, which states the production field, #727 its stand-in); #725's correction (q126): the union is the
   narrowed sockets' production, a step of R5's committed search, R3 and W4a untouched — R5f1 #734 landed (`c88d10c2`, Delivered),
-  its fix #765 (the productions at the committing socket's own views; before R5f2, F2c and #613) and R5f2 #736 (before rc #540 and V2b's (3) #738), briefed by #727, #651
+  its fix #765 landed (`7357cac5`: the productions at the committing socket's own views) and R5f2 #736 (before rc #540 and V2b's (3) #738), briefed by #727, #651
   carrying the narrowed record with R5f1's production field after R5f1; R6b's numbered carrying
   #605 (landed) → its installed carrying #663 → R6c's carrying
   #611 → rc's numbered forms #540 (after #676) and native form #661 → R7 #542 (the numbered course; #661 feeds its
@@ -133,7 +133,7 @@ by a task of their own (Open 100).
 
 **Shape.** No build waits on a review task. The route's longest chain runs F2b1 #699 → F2b2 #755 → F2c #701 → C #703 →
 R7 #542 → #707 → #399 → #709 → the record #553 → #447 → #449 → #450; since B1 landed, B2a #745 → B2b #747 → rc #540
-→ #542, the fix #765 → R5f2 #736 → #540, B3b #751 → #611 → #542 and #609 → #611 are one shorter, the
+→ #542, R5f2 #736 → #540, B3b #751 → #611 → #542 and #609 → #611 are one shorter, the
 carryings more — past the
 limit through splices, so nothing is added after the route's tail until it shortens (the status line gives the depths).
 The approval build (Open 142) after #407 and #447 waits for it to shorten; the controls task #718 after C (depth 10)
@@ -142,7 +142,7 @@ was placed when #668 landed.
 **Order** (the queue holds it; the planner's choice, a residual until the native answer to the selection problem
 exists, Q2): the slots are one pool, each free slot going to the first task in the queue that can start and a review
 standing where its review task stands, so every review stands right after its build. By slack on the longest chain:
-F2b1 #699, B2a #745, R5f1's fix #765, F2b2 #755, the measurement #764, F2c #701 and C #703; the
+F2b1 #699, B2a #745, F2b2 #755, the measurement #764, F2c #701 and C #703; the
 waiting fix #757; B2b #747, B3b #751 and R5f2 #736; #733's builds #758, #760 and #762; V2b #651 and its (3) #738;
 R6c's #609 and #681; rc #540 and #661; #611; R7 #542, its native part #707, #399 and its controls #709, #547; the route in its chains'
 order (#551, #549, #553, #401, #403, #443, #447, #407, #445, #449); the controls #718 after C, and the lifting's
@@ -460,7 +460,8 @@ follow-ups are in `PLANNING_LOG.md` and the earlier states (`HANDOFF-before-cond
   `Factor_Narrowed_Commitments` the committed step's production (`finite_narrowed_production` over
   `finite_socket_productions`, the value `finite_registration_production`), the sub-search from the produced state
   (`finite_produced_state`, `_invariant`, `_held`, `_confined`), the narrowed record's production field; today's search
-  at no production. Its productions restricted to the committing socket's own views by the fix #765 (review 735's 1).
+  at no production. Its productions restricted to the committing socket's own views by the fix #765 (`7357cac5`:
+  `finite_socket_productions_committed`).
 - **32's kept sockets carried by 59** (#758, `f4eff9f9`): in `Factor_Row_Value_Socket_Declarations` 71.0/1, 75.0/3 and
   505.0/4 kept and framed at their notions' systems, the list consumer stated once (70, 74 and 504 its instances),
   `family_rows_producer_at`.
@@ -614,8 +615,8 @@ planner searches for a theory before briefing a task that edits it.
 
 ## Now
 
-- **The graph's width**: the declaration builds (#609, #651, #681, #751, #760) run beside the route, which is (B2a → B2b; R5f1's
-  fix → R5f2; B3b; F2b1 → F2b2 → F2c → C) → rc #540 and #611 → R7
+- **The graph's width**: the declaration builds (#609, #651, #681, #751, #760) run beside the route, which is (B2a → B2b; B2a →
+  R5f2; B3b; F2b1 → F2b2 → F2c → C) → rc #540 and #611 → R7
   #542 → #707 → #399. Nothing is invented to fill the gaps: the low-moves batch (next-edits 274, 276, 278, 281) moves
   statements out of theories B2a–B3b, #681 and #609 edit, so it waits until they have landed.
 - **Briefs written before their theories grew** may be refused at their start (#596 was; #607 was divided by #678):
@@ -676,8 +677,7 @@ planner searches for a theory before briefing a task that edits it.
   two statements F3 restated beyond its result's list; #701 — F2b's division at q130, its search over F2b2 #755's state;
   #701, #755 — the priority parameter; #542 — F5's re-measurement (#742). Plan-99: #745 — B1's Remains
   (`finite_nodes_headed` derived from `resolution_invariant`, today's exchange its instance), the free socket's
-  containment confirmed, review 744's 4; #765 — review 744's 2 and 5's row with review 735's 1 and 2
-  (in its brief); #724 — review 744's 3 and 5's blank lines; #681, #609 —
+  containment confirmed, review 744's 4;  #724 — review 744's 3 and 5's blank lines; #681, #609 —
   B1's names; #751 — review 750's 1 (correction (10)'s table's two missing rows, added by it) and 2; #609 — review
   750's 2 (consume `socket_framed_at_carried`); #681 — review 750's 2 (its equation form in
   `Factor_Resolution_Carriers`, every use moved, the old fact retired); #755 — F2b1's measurements divided off to #764,
@@ -685,7 +685,8 @@ planner searches for a theory before briefing a task that edits it.
   imports the resolver's refinement theories); #736 — review 735's 3 (the committed search's facts read at
   `finite_produced_state`, stated once), after #765; #609 — review 735's 4 (the bridge of review 600's 2, which R5f1
   left); #724 — #745's follow-up (`finite_socket_free_framed_default` citing `finite_variant_absorbs`, moved into
-  `Factor_Resolution_Commitments`); #760 — review 759's 1 and 2; #762 — review 759's 3 and 4.
+  `Factor_Resolution_Commitments`); #760 — review 759's 1 and 2; #762 — review 759's 3 and 4; #736 — review 765's 1–3; #701 —
+  next-edits 297.
 - **The harness's gaps met by this run's tasks** are owed to the owner and listed in `PLANNING_LOG.md` (2026-09-26,
   plan-86); new ones go there.
 - **Ledger entries that can leave** (the harness's `v2.py ledger`): Q7's and Q2's questions and answers, recorded in the

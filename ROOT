@@ -1684,6 +1684,7 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Factor_Demanded_Program_Calls
     Keyed_Demanded_Sites
     Shared_Term_Tables
+    Factor_Shared_Patterns
     Factor_Demanded_Package_Readings
     Factor_Shared_Package_Readings
     Factor_Demanded_Graph_Readings

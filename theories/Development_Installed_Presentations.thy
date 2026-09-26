@@ -1,5 +1,6 @@
 theory Development_Installed_Presentations
   imports Development_Given_Extensions Factor_Varied_Constructions Development_Rooted_Registrations
+    Development_Asked_Registrations Development_First_Request_Registrations
 begin
 
 text \<open>
@@ -13,8 +14,49 @@ text \<open>
   by matching clauses (V1), and is complete there; completeness is discharged at the numbered program from its
   meanings and carried only by relocation and variation. The installation's alpha variance, proved once, is consumed
   as the verification that the placed and the installed presentations agree, never in place of evaluating the
-  installed one: the native exact form resolves the presentation itself.
+  installed one: the native exact form resolves the presentation itself. Its instances (task 688) are the asked
+  relation's installed guard, whose entry 526 stands at @{const asked_entry}, and the first request's installed
+  program, whose entry 561 stands at @{const first_request_entry}.
 \<close>
+
+section \<open>A package's presentation as the native reader returns it\<close>
+
+text \<open>
+  Wherever a package is read, at any environment, use and root, the native package reader returns exactly one
+  finite program there, and it decodes to the package read. Every installation's presentation below is this
+  lemma's instance.
+\<close>
+
+lemma package_presentation_exact:
+  assumes read: "native_package_at (decode_finite_environment E) u r P"
+  shows "(THE R. R |\<in>| finite_native_package_readings E u r) |\<in>| finite_native_package_readings E u r"
+    "\<And>R. R |\<in>| finite_native_package_readings E u r \<Longrightarrow> R=(THE R. R |\<in>| finite_native_package_readings E u r)"
+    "decode_finite_system (THE R. R |\<in>| finite_native_package_readings E u r)=P"
+    "native_package_at (decode_finite_environment E) u r
+      (decode_finite_system (THE R. R |\<in>| finite_native_package_readings E u r))"
+proof -
+  obtain F where F: "F |\<in>| finite_native_package_readings E u r" "decode_finite_system F=P"
+    using finite_native_package_readings_complete[OF read] by blast
+  have unique: "\<And>R. R |\<in>| finite_native_package_readings E u r \<Longrightarrow> R=F"
+    by (rule finite_native_package_readings_unique[OF _ F(1)])
+  have same: "(THE R. R |\<in>| finite_native_package_readings E u r)=F"
+    by (rule the_equality[where P="\<lambda>R. R |\<in>| finite_native_package_readings E u r", OF F(1) unique])
+  show "(THE R. R |\<in>| finite_native_package_readings E u r) |\<in>| finite_native_package_readings E u r"
+    using F(1) same by simp
+  show "\<And>R. R |\<in>| finite_native_package_readings E u r \<Longrightarrow> R=(THE R. R |\<in>| finite_native_package_readings E u r)"
+    using unique same by simp
+  show "decode_finite_system (THE R. R |\<in>| finite_native_package_readings E u r)=P" using F(2) same by simp
+  show "native_package_at (decode_finite_environment E) u r
+      (decode_finite_system (THE R. R |\<in>| finite_native_package_readings E u r))"
+    using read F(2) same by simp
+qed
+
+text \<open>Both programs of an alpha variance are formed, as its definition states.\<close>
+
+lemma alpha_variant_finite_formed:
+  assumes "system_alpha_variant (decode_finite_system A) (decode_finite_system B)"
+  shows "finite_system_formed B" "finite_system_formed A"
+  using assms unfolding system_alpha_variant_def finite_system_formed_correct by simp_all
 
 context given_readers_extension
 begin
@@ -36,35 +78,25 @@ theorem installed_presentation_exact:
   "\<And>R. R |\<in>| finite_native_package_readings installed_environment installed_use [] \<Longrightarrow> R=installed_presentation"
   "decode_finite_system installed_presentation=installed_program"
 proof -
-  obtain F where F: "F |\<in>| finite_native_package_readings installed_environment installed_use []"
-      "decode_finite_system F=installed_program"
-    using finite_native_package_readings_complete[OF installation(6)] by blast
-  have unique: "\<And>R. R |\<in>| finite_native_package_readings installed_environment installed_use [] \<Longrightarrow> R=F"
-    by (rule finite_native_package_readings_unique[OF _ F(1)])
-  have same: "installed_presentation=F" unfolding installed_presentation_def
-    by (rule the_equality[where P="\<lambda>R. R |\<in>| finite_native_package_readings installed_environment installed_use []",
-      OF F(1) unique])
+  note p=package_presentation_exact[OF installation(6), folded installed_presentation_def]
   show "installed_presentation |\<in>| finite_native_package_readings installed_environment installed_use []"
-    using F(1) same by simp
+    by (rule p(1))
   show "\<And>R. R |\<in>| finite_native_package_readings installed_environment installed_use [] \<Longrightarrow> R=installed_presentation"
-    using unique same by simp
-  show "decode_finite_system installed_presentation=installed_program" using F(2) same by simp
+    by (rule p(2))
+  show "decode_finite_system installed_presentation=installed_program" by (rule p(3))
 qed
 
 lemma installed_presentation_read:
   "native_package_at (decode_finite_environment installed_environment) installed_use []
     (decode_finite_system installed_presentation)"
-  using installation(6) by (simp only: installed_presentation_exact(3))
+  by (rule package_presentation_exact(4)[OF installation(6), folded installed_presentation_def])
 
 lemma installed_presentation_variant:
   "system_alpha_variant (decode_finite_system (finite_rename_system installed_placement Q))
     (decode_finite_system installed_presentation)"
   by (rule install.installed_variant[OF installed_built installed_presentation_read, folded installed_placement_def])
 
-lemma installed_presentation_formed:
-  "finite_system_formed installed_presentation"
-  "finite_system_formed (finite_rename_system installed_placement Q)"
-  using installed_presentation_variant unfolding system_alpha_variant_def finite_system_formed_correct by simp_all
+lemmas installed_presentation_formed=alpha_variant_finite_formed[OF installed_presentation_variant]
 
 section \<open>A complete construction, relocated and varied to the presentation\<close>
 
@@ -225,28 +257,20 @@ theorem given_installed_presentation_exact:
     R=given_installed_presentation"
   "decode_finite_system given_installed_presentation=given_readers_program"
 proof -
-  obtain F where F: "F |\<in>| finite_native_package_readings (fst given_readers_installed) (snd given_readers_installed) []"
-      "decode_finite_system F=given_readers_program"
-    using finite_native_package_readings_complete[OF given_readers_compilation(1)] by blast
-  have unique: "\<And>R. R |\<in>| finite_native_package_readings (fst given_readers_installed) (snd given_readers_installed) [] \<Longrightarrow>
-      R=F"
-    by (rule finite_native_package_readings_unique[OF _ F(1)])
-  have same: "given_installed_presentation=F" unfolding given_installed_presentation_def
-    by (rule the_equality[where P="\<lambda>R. R |\<in>| finite_native_package_readings (fst given_readers_installed)
-      (snd given_readers_installed) []", OF F(1) unique])
+  note p=package_presentation_exact[OF given_readers_compilation(1), folded given_installed_presentation_def]
   show "given_installed_presentation |\<in>| finite_native_package_readings (fst given_readers_installed)
       (snd given_readers_installed) []"
-    using F(1) same by simp
+    by (rule p(1))
   show "\<And>R. R |\<in>| finite_native_package_readings (fst given_readers_installed) (snd given_readers_installed) [] \<Longrightarrow>
       R=given_installed_presentation"
-    using unique same by simp
-  show "decode_finite_system given_installed_presentation=given_readers_program" using F(2) same by simp
+    by (rule p(2))
+  show "decode_finite_system given_installed_presentation=given_readers_program" by (rule p(3))
 qed
 
 lemma given_installed_presentation_read:
   "native_package_at (decode_finite_environment (fst given_readers_installed)) (snd given_readers_installed) []
     (decode_finite_system given_installed_presentation)"
-  using given_readers_compilation(1) by (simp only: given_installed_presentation_exact(3))
+  by (rule package_presentation_exact(4)[OF given_readers_compilation(1), folded given_installed_presentation_def])
 
 lemma given_installed_presentation_variant:
   "system_alpha_variant (decode_finite_system (finite_rename_system given_readers_placement finite_rooted_given_readers))
@@ -254,10 +278,7 @@ lemma given_installed_presentation_variant:
   by (rule finite_mapped_native_extension.installed_variant[OF given_readers_mapped_extension given_readers_built_pair
     given_installed_presentation_read, unfolded given_install_placement])
 
-lemma given_installed_presentation_formed:
-  "finite_system_formed given_installed_presentation"
-  "finite_system_formed (finite_rename_system given_readers_placement finite_rooted_given_readers)"
-  using given_installed_presentation_variant unfolding system_alpha_variant_def finite_system_formed_correct by simp_all
+lemmas given_installed_presentation_formed=alpha_variant_finite_formed[OF given_installed_presentation_variant]
 
 section \<open>The given's construction, relocated and varied to its presentation\<close>
 
@@ -346,5 +367,149 @@ corollary given_installed_entry_exact:
       (d,decode_finite_term t)\<notin>positive_meaning given_program_system"
   using given_installed_exact[OF result given_entry_rooted[OF entry]]
     given_installed_meaning[OF given_entry_rooted[OF entry]] given_installed_entry_meaning[OF entry] by blast+
+
+section \<open>The asked relation's installed guard\<close>
+
+text \<open>
+  V3's instance at the asked relation (task 688): the asked program extends the given's readers
+  (@{text asked_extension}), and its installed guard is the program the native package reader returns at
+  @{const asked_environment} and @{const asked_use}. #635's relocated construction, complete at the placed program,
+  varied to that presentation, is the locale's installed construction of the given's registrations, complete there
+  from @{thm [source] asked_construction_complete}, discharged at the asked program from its meanings. The premises
+  V3's general part names are the programs' own facts: the asked program's formation, its agreement with the rooted
+  readers, the construction's formation and its completeness.
+\<close>
+
+definition asked_installed_presentation :: "local_address option finite_native_system" where
+  "asked_installed_presentation=given_readers_extension.installed_presentation finite_asked_program"
+
+theorem asked_installed_presentation_exact:
+  "asked_installed_presentation |\<in>| finite_native_package_readings asked_environment asked_use []"
+  "\<And>R. R |\<in>| finite_native_package_readings asked_environment asked_use [] \<Longrightarrow> R=asked_installed_presentation"
+  "decode_finite_system asked_installed_presentation=asked_program"
+  using asked_extension.installed_presentation_exact
+  unfolding asked_installed_presentation_def asked_environment_def asked_use_def asked_program_def by blast+
+
+definition asked_installed_construction where
+  "asked_installed_construction n=finite_varied_construction asked_placed_program asked_installed_presentation
+    (asked_relocated_construction n)"
+
+lemma asked_installed_construction_locale:
+  "asked_installed_construction n=given_readers_extension.installed_construction finite_asked_program
+    (finite_collection_construction given_witness_registrations n)"
+  by (simp only: asked_installed_construction_def asked_placed_program_def asked_relocated_construction_def
+    asked_installed_presentation_def asked_placement_def asked_extension.installed_construction_def)
+
+lemma asked_installed_construction_formed: "finite_witness_construction_formed (asked_installed_construction n)"
+  unfolding asked_installed_construction_def by (rule finite_varied_construction_formed[OF asked_relocated_formed])
+
+theorem asked_installed_construction_complete:
+  "finite_construction_complete (asked_installed_construction n) asked_installed_presentation"
+  unfolding asked_installed_construction_locale asked_installed_presentation_def
+  by (rule asked_extension.installed_construction_complete[OF asked_construction_complete])
+
+theorem asked_installed_resolution_exact:
+  assumes result: "native_committed_resolution (asked_installed_construction n) no_commitment
+      asked_installed_presentation R m=(T,A)"
+  shows "fimage fst T=R"
+    and "(q,Finite_Resolved C) |\<in>| T \<Longrightarrow> C\<noteq>{||} \<and>
+      fBall C (\<lambda>p. finite_checks_schema_proof asked_installed_presentation p (fst q) (snd q)) \<and>
+      decode_finite_call_term q\<in>positive_meaning asked_program"
+    and "(q,r) |\<in>| T \<Longrightarrow> finite_resolution_refutes r \<Longrightarrow> decode_finite_call_term q\<notin>positive_meaning asked_program"
+    and "A=Some B \<Longrightarrow> schema_system_formed asked_program \<and>
+      fset B={q\<in>fset R. decode_finite_call_term q\<in>positive_meaning asked_program}"
+  using asked_extension.installed_resolution_exact[OF finite_collection_construction_formed asked_construction_complete
+    result[unfolded asked_installed_construction_locale asked_installed_presentation_def],
+    folded asked_installed_presentation_def asked_program_def]
+  by blast+
+
+text \<open>
+  At the installed entry the answer is 526's meaning in the asked program, read from the locale's entry form
+  (@{text installed_entry_exact}) at the asked program's own entry.
+\<close>
+
+corollary asked_installed_exact:
+  assumes result: "native_committed_resolution (asked_installed_construction n) no_commitment
+      asked_installed_presentation R m=(T,A)"
+  shows "((asked_entry,t),Finite_Resolved C) |\<in>| T \<Longrightarrow> (526,decode_finite_term t)\<in>positive_meaning asked_program_system"
+    and "((asked_entry,t),r) |\<in>| T \<Longrightarrow> finite_resolution_refutes r \<Longrightarrow>
+      (526,decode_finite_term t)\<notin>positive_meaning asked_program_system"
+  using asked_extension.installed_entry_exact[OF finite_collection_construction_formed asked_construction_complete
+    result[unfolded asked_installed_construction_locale asked_installed_presentation_def]
+    asked_entry_member[folded finite_asked_program_exact],
+    unfolded finite_asked_program_exact, folded asked_placement_def, folded asked_entry_def]
+  by blast+
+
+section \<open>The first request's installed program\<close>
+
+text \<open>
+  The instance at the first request (task 688): #640's relocated construction, complete at the placed program,
+  varied to the program the native package reader returns at @{const first_request_environment} and
+  @{const first_request_use}, and complete there from @{thm [source] first_request_construction_complete}.
+\<close>
+
+definition first_request_installed_presentation :: "local_address option finite_native_system" where
+  "first_request_installed_presentation=given_readers_extension.installed_presentation finite_first_request_program"
+
+theorem first_request_installed_presentation_exact:
+  "first_request_installed_presentation |\<in>| finite_native_package_readings first_request_environment first_request_use []"
+  "\<And>R. R |\<in>| finite_native_package_readings first_request_environment first_request_use [] \<Longrightarrow>
+    R=first_request_installed_presentation"
+  "decode_finite_system first_request_installed_presentation=first_request_program"
+  using first_request_extension.installed_presentation_exact
+  unfolding first_request_installed_presentation_def first_request_environment_def first_request_use_def
+    first_request_program_def
+  by blast+
+
+definition first_request_installed_construction where
+  "first_request_installed_construction n=finite_varied_construction first_request_placed
+    first_request_installed_presentation (first_request_relocated n)"
+
+lemma first_request_installed_construction_locale:
+  "first_request_installed_construction n=given_readers_extension.installed_construction finite_first_request_program
+    (finite_collection_construction given_witness_registrations n)"
+  by (simp only: first_request_installed_construction_def first_request_installed_presentation_def
+    first_request_placement_def first_request_extension.installed_construction_def)
+
+lemma first_request_installed_construction_formed:
+  "finite_witness_construction_formed (first_request_installed_construction n)"
+  unfolding first_request_installed_construction_def
+  by (rule finite_varied_construction_formed[OF first_request_relocated_formed])
+
+theorem first_request_installed_construction_complete:
+  "finite_construction_complete (first_request_installed_construction n) first_request_installed_presentation"
+  unfolding first_request_installed_construction_locale first_request_installed_presentation_def
+  by (rule first_request_extension.installed_construction_complete[OF first_request_construction_complete])
+
+theorem first_request_installed_resolution_exact:
+  assumes result: "native_committed_resolution (first_request_installed_construction n) no_commitment
+      first_request_installed_presentation R m=(T,A)"
+  shows "fimage fst T=R"
+    and "(q,Finite_Resolved C) |\<in>| T \<Longrightarrow> C\<noteq>{||} \<and>
+      fBall C (\<lambda>p. finite_checks_schema_proof first_request_installed_presentation p (fst q) (snd q)) \<and>
+      decode_finite_call_term q\<in>positive_meaning first_request_program"
+    and "(q,r) |\<in>| T \<Longrightarrow> finite_resolution_refutes r \<Longrightarrow>
+      decode_finite_call_term q\<notin>positive_meaning first_request_program"
+    and "A=Some B \<Longrightarrow> schema_system_formed first_request_program \<and>
+      fset B={q\<in>fset R. decode_finite_call_term q\<in>positive_meaning first_request_program}"
+  using first_request_extension.installed_resolution_exact[OF finite_collection_construction_formed
+    first_request_construction_complete
+    result[unfolded first_request_installed_construction_locale first_request_installed_presentation_def],
+    folded first_request_installed_presentation_def first_request_program_def]
+  by blast+
+
+corollary first_request_installed_exact:
+  assumes result: "native_committed_resolution (first_request_installed_construction n) no_commitment
+      first_request_installed_presentation R m=(T,A)"
+  shows "((first_request_entry,t),Finite_Resolved C) |\<in>| T \<Longrightarrow>
+      (561,decode_finite_term t)\<in>positive_meaning first_request_program_system"
+    and "((first_request_entry,t),r) |\<in>| T \<Longrightarrow> finite_resolution_refutes r \<Longrightarrow>
+      (561,decode_finite_term t)\<notin>positive_meaning first_request_program_system"
+  using first_request_extension.installed_entry_exact[OF finite_collection_construction_formed
+    first_request_construction_complete
+    result[unfolded first_request_installed_construction_locale first_request_installed_presentation_def]
+    first_request_entry_member[folded finite_first_request_program_exact],
+    unfolded finite_first_request_program_exact, folded first_request_placement_def, folded first_request_entry_def]
+  by blast+
 
 end

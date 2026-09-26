@@ -7,10 +7,9 @@ from compression import zstd
 import hashlib
 import json
 from pathlib import Path
-import sqlite3
 
 from observation_contracts import parse_yxml
-from proof_timings import command_timings, source_line
+from proof_timings import checked_sources, command_timings, read_only, source_line
 
 
 def digest(path):
@@ -41,7 +40,7 @@ def diagnose(database, proof, source_map=None):
     assert all(digest(sources[name]) == sha for name, sha in expected.items()), "Changed diagnostic source."
     source_texts = {name: path.read_text() for name, path in sources.items()}
     initial_digest = digest(database)
-    with sqlite3.connect("file:" + str(database.resolve()) + "?mode=ro", uri=True) as connection:
+    with read_only(database) as connection:
         session_rows = connection.execute(
             "select session_name,return_code,length(theory_timings),length(command_timings),errors "
             "from isabelle_session_info").fetchall()
@@ -49,22 +48,14 @@ def diagnose(database, proof, source_map=None):
         exports = connection.execute(
             "select theory_name,compressed,body from isabelle_exports "
             "where name=? order by theory_name", ("PIDE/messages",)).fetchall()
-        stored_sources = connection.execute(
-            "select name,compressed,body from isabelle_sources where session_name=?",
-            (session_rows[0][0],)).fetchall()
     error_blob = session_rows[0][4]
     error_yxml = zstd.decompress(error_blob).decode() if error_blob else ""
     error_nodes = yxml_elements(error_yxml)
     assert all(node["tag"] == ":" and not node["attributes"] for node in error_nodes), "Malformed session error list."
     session_errors = [{"tree": node, "text": text_content(node)} for node in error_nodes]
-    database_sources = {}
-    for name, compressed, body in stored_sources:
-        path = Path(name)
-        if path.suffix != ".thy" or path.stem not in expected:
-            continue
-        assert path.stem not in database_sources, "Ambiguous retained theory source."
-        raw = zstd.decompress(body) if compressed else body
-        database_sources[path.stem] = {"name": name, "sha256": hashlib.sha256(raw).hexdigest()}
+    checked = checked_sources(database)
+    database_sources = {name: {"sha256": hashlib.sha256(text.encode()).hexdigest()}
+                        for name, text in checked.items() if name in expected}
     assert database_sources.keys() == expected.keys(), "The database must retain the complete rebuilt source context."
     assert all(database_sources[name]["sha256"] == sha for name, sha in expected.items()), "Database source differs from proof source."
 

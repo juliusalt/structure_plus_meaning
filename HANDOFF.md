@@ -128,7 +128,7 @@ programs' law (`Native_Collection_Programs`; #173–#275, #295, #374); the share
 **Word changes are serialized** (Decisions): none is queued. A word change's records are re-recorded after its landing
 by a task of their own (Open 100).
 
-**Shape.** No build waits on a review task. The evaluator's chain is the route's longest: W4a1 #526 →
+**Shape.** No build waits on a review task. The evaluator's chain is the route's longest (W4a1 #526 landed):
 R5c‴ #621 → R5d's views #595 → carriers #597 → R5e #599 → R6c's 48 #609 → the carrying #611 → R7 #542 → #399 →
 #401, #403 and the record #553 → … — past the limit through splices (q108, #588, q112), so nothing is added after
 #408, #446, #448, #449 or #450 until they shorten (the status line gives the depths). Off the route,
@@ -137,8 +137,7 @@ nothing waiting on them: #623's tools build #624 (the base as one heap) and the 
 **Order** (the queue holds it; the planner's choice, a residual until the native answer to the selection problem
 exists, Q2): the slots are one pool since 14:06, each free slot going to the first task in the queue that can start
 and a review standing where its review task stands, so every review stands right after its build. By slack on the
-longest chain (plan-78): W4a1
-#526; R5c‴ #621; W4a2 #615 (it feeds W4b); the tools build #624 (off the route, #623's course A); R5d's views #595 and carriers #597; R5e #599 and R6b's parts #601, #603
+longest chain (plan-78): R5c‴ #621; W4a2 #615 (it feeds W4b); the tools build #624 (off the route, #623's course A); R5d's views #595 and carriers #597; R5e #599 and R6b's parts #601, #603
 (no slack); R6c's 48 #609, R6b's carrying #605, rc #540 and R6c's instantiation family #607; the carrying #611; W4b
 #528; R7 #542 and #547; the route in its chains' order (#399, the
 samples #551, the observations #549, the record #553, #401, #403, #443, #447, #407, #445, #449); the consolidation #613 last, off the route.
@@ -452,6 +451,12 @@ What landed that open work builds on, a line each; how it went and each review's
   Placed: A, the base as one heap at an advance (#624, provisional under Q29); B, the estimate by the chain, landed
   (#625, `c7c7dadd`: `load_estimate` by the model, its constants named with their runs; review 627's follow-ups
   next-edits 230 and 231); F (the cap) and the heaps' retirement the owner's.
+- **W4a1** (#526, `21c3468a`): `Factor_Construction_Holders` (q111's holders invariant `resolution_registrations_held`,
+  kept by every step); `Factor_Least_Witness_Registrations` (completeness `finite_construction_complete`, distinctness,
+  `finite_complete_construction_supported`, relocation `relocated_construction_complete`, the exact forms with
+  registrations `finite_registered_resolution_refutation_exact` and `native_registered_resolution_exact`); in
+  `Factor_Resolution_Commitments` every node present at a construction step barred, `finite_construction_lifts` under
+  the holders invariant, and (b′) for #621 (q113). Review 527's follow-ups: Now.
 
 ## Open
 
@@ -564,6 +569,24 @@ searches for a theory before briefing a task that edits it.
 
 ## Now
 
+- **Not handled at plan-81's end.** (1) Review 527's follow-ups (#526, `.build/tasks/527/review.md`), to route: 1 (the
+  holders invariant fails at a pattern root: state H over U where a consumer needs the committed lifting at a pattern
+  goal) to #613 and #540; 2 (W2's `finite_handin_resolution` runs R3's plain search, not exact with a construction:
+  restate it over `finite_committed_resolution κ no_commitment`, exact by
+  `finite_registered_resolution_refutation_exact`) to #540, and #399, #443, #547, #542 told that a refusal goes through
+  the committed form; 3 (completeness is premise-level: W4a2 derives the premise form from W3's whole-clause facts and
+  marks task 496's entry's completeness sentence corrected) to #615, now running, whose Deliverable then gains
+  `DECISIONS.md` (rewrite `task:615`); 4 (distinctness is not needed by `finite_collection_construction_complete`),
+  the planner's provisional course: drop it from the complete and registered forms' premises, kept defined as a
+  formation fact — to #615 and #528; 5 (task 496's entry, "The route", names R4's native form; the exact native form
+  with registrations is `native_committed_resolution κ no_commitment` at the relocated construction) to #399 and #542,
+  #399 marking the entry; 6 (the construction's and the commitment's barring two forms of one rule) to #621; 7
+  (`Factor_Resolution_Commitments`, 205K, probes in about 100 s, and #621, #595 and #613 edit it) — an investigation
+  of its proof time from the check's timing (the slowest commands; the frame, kept states and (b′) block moved above
+  the lifting, or local repairs), off the route, its finding mailed to #621 and #595. (2) q114 (#624), answered
+  (`.build/plans/plan-81/q114.md`): the trigger lands inert behind `INCREMENTAL_CHECK_ONE_SESSION_BASE`; the harness's
+  part (prune_bases keeping the superseded levels until the owner retires them, the switch at the landing check, or
+  the chain retired at the first triggered landing) is to be put in the ledger as an addendum to Q29.
 - **The committed search narrowed where it commits** (q109, plan-78, `.build/plans/plan-78/q109.md`; q110, plan-79,
   `.build/plans/plan-79/q110.md`; q112, plan-80, `.build/plans/plan-80/q112.md`; q113, plan-81, `.build/plans/plan-81/q113.md`): a
   commitment or construction the
@@ -579,7 +602,7 @@ searches for a theory before briefing a task that edits it.
   goal outside q holds — and #621 restates #593's (b) over the nodes under q, discharging from (b′). Whether the
   given's sockets commit under R3's selection is #605's control's and R7's to report; one that does not
   moves the selection parameter (#613) onto the route.
-- **The graph's width** (plan-78, plan-81): the route is one chain — W4a1 #526 → R5c‴ #621 → R5d #595,
+- **The graph's width** (plan-78, plan-81): the route is one chain — R5c‴ #621 → R5d #595,
   #597 → R5e #599 and R6b's parts → R6c → R7 #542 → #399 — so between its landings little else can start; the side
   chains have landed (P, #617, X′, the low moves #618), W4a2 → W4b runs beside the route after #526, R6b's and R6c's
   parts after #597. Nothing is invented to fill the gaps: what is open beside the route rests on its results or is
@@ -589,9 +612,7 @@ searches for a theory before briefing a task that edits it.
   build (Open 142) and the first answer (Open 148) are planned when #447, #407, #445 and #401 are nearer. The samples
   build #551 is the part of #544's division nearest its room (384K at proposal, rc's theory added at its start): a
   hand-back there divides corrected item (3), the planner's.
-- **Mailed, read by each task's first session** (by task, open tasks only): #526 — carried into its rewritten brief (plan-81),
-  those of the registrations' instances (#525's 6, #564's, #514's 2) #615's and #528's; #593's landing, #594's 3;
-  #527 — q112; #528 — q110, W4a's division (the four registrations #615's), the
+- **Mailed, read by each task's first session** (by task, open tasks only):  #528 — q110, W4a's division (the four registrations #615's), the
   generator row #563's, #514's 2; #540 — q110, #506's 1 and 7, q105 (the barred lifting over #563's), q112; #542 —
   q110, review 590's 4, #567's 1 (each ready variable's registered value computed several times per node and step,
   next-edits 217), #588's Remains (the carried `given_declarations` and `given_union_registration`; the order at 79's

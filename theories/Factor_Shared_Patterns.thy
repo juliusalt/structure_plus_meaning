@@ -1,5 +1,5 @@
 theory Factor_Shared_Patterns
-  imports Factor_Pattern_Unification Shared_Term_Tables
+  imports Factor_Pattern_Unification Shared_Term_Tables "HOL-Library.IArray"
 begin
 
 section \<open>Patterns whose ground subterms are references into a shared-term table\<close>
@@ -74,6 +74,52 @@ lemma shared_node_fields [simp]:
     Finite_Pattern_Pair (shared_pattern_project T p) (shared_pattern_project T q)"
   "shared_pattern_formed T (shared_node p q) \<longleftrightarrow> shared_pattern_formed T p \<and> shared_pattern_formed T q"
   by (simp_all add: shared_node_def)
+
+subsection \<open>A decode reads the table by position through an immutable array\<close>
+
+text \<open>
+  A reference decodes by reading the table at its position, and at every node of the term it holds: read on the list,
+  each read walks the list to that position, so a decode costs its nodes times the table's length (#788: 61--82 \<mu>s a
+  node at the given's table of 58,745 shapes). Read on an immutable array of the table, each read is one access. The
+  array's decode is the list's at every table and position (@{text array_reference_term}), so it is the code of the
+  decode and of a pattern's projection; the array is made once for the pattern it projects.
+\<close>
+
+function array_reference_term :: "shape iarray \<Rightarrow> nat \<Rightarrow> finite_factor_term option" where
+  "array_reference_term A i = (if i < IArray.length A then (case IArray.sub A i of
+      Leaf_Shape l \<Rightarrow> Some (leaf_term l)
+    | Pair_Shape j k \<Rightarrow> (if j < i \<and> k < i then pair_decoded (array_reference_term A j) (array_reference_term A k) else None))
+    else None)"
+  by pat_completeness auto
+termination by (relation "measure snd") auto
+
+declare array_reference_term.simps [simp del]
+
+lemma array_reference_term: "array_reference_term (IArray T) i = reference_term T i"
+proof (induction i rule: less_induct)
+  case (less i)
+  show ?case
+    by (auto simp: array_reference_term.simps[of "IArray T" i] reference_term.simps[of T i] value_reference_read_def
+      less.IH split: shape.split)
+qed
+
+fun array_pattern_project :: "shape iarray \<Rightarrow> 'a shared_pattern \<Rightarrow> 'a finite_term_pattern" where
+  "array_pattern_project A (Shared_Variable a) = Finite_Variable a"
+| "array_pattern_project A (Shared_Ground i) =
+    (case array_reference_term A i of Some t \<Rightarrow> finite_exact_term_pattern t | None \<Rightarrow> Finite_Pattern_Payload [])"
+| "array_pattern_project A (Shared_Node B p q) =
+    Finite_Pattern_Pair (array_pattern_project A p) (array_pattern_project A q)"
+
+lemma array_pattern_project: "array_pattern_project (IArray T) p = shared_pattern_project T p"
+  by (induction p) (simp_all add: array_reference_term)
+
+declare reference_term.simps [code del] shared_pattern_project.simps [code del]
+
+lemma reference_term_array_code [code]: "reference_term T i = array_reference_term (IArray T) i"
+  by (simp add: array_reference_term)
+
+lemma shared_pattern_project_array_code [code]: "shared_pattern_project T p = array_pattern_project (IArray T) p"
+  by (simp add: array_pattern_project)
 
 section \<open>Substitution stops at what it does not bind\<close>
 

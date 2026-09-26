@@ -17310,6 +17310,18 @@ relies on.
   `finite_complete_demand_exact`, `native_complete_resolution_exact`; at complete distinct registrations
   `finite_registered_resolution_refutation_exact`, `finite_registered_verdict_exact`, `finite_registered_demand_exact`,
   `native_registered_resolution_exact`).]
+  [Corrected by task 615 (W4a2, review 527's follow-ups 3 and 4): completeness is premise-level. A registration is
+  complete when, at every formed binding of the clause's other variables that covers the premises holding the
+  variable, those premises hold at some formed value exactly when they hold at the collection's value
+  (`finite_value_complete`); the clause's other premises are not asked, so the equivalence holds also where one of
+  them fails — at 77's clause 26 at x, which W3's clause form (`package_closure_least_witness`) keeps on both sides.
+  The four registrations are proved complete in this form from W3's facts
+  (`Factor_Least_Witness_Registrations.bound_witness_registration_complete`, `additions_witness_registration_complete`,
+  `merge_witness_registration_complete`, `given_witness_registrations_complete`), at an argument presenting no
+  environment through `callee_list_unsourced`: 76 then holds of the empty bound alone. The complete and registered
+  forms no longer ask distinct registrations: the construction reads the first registration naming the variable, a
+  member of the list (`finite_collection_construction_complete`); distinctness stays the formation fact under which
+  the value is that one registration's (`finite_collection_construction_value_at`).]
 - **A refused call's record** holds the registration, the witness with its justification, and the goal refuted at it (a
   refutation of a ground call, exact by R4).
 - **Unresolved** stay: a call whose construction's queries are cut at the bound; a clause whose registration is not
@@ -17327,6 +17339,9 @@ relies on.
   bindings — a judgment of the given, with nothing to carry across. Refuted: a refusal naming the socket whose call is
   refuted, at a registered clause through its registration's completeness. Unresolved: an unavailable judgment with its
   diagnosis.
+  [Corrected by task 615 (review 527's follow-up 5): `native_call_resolution` is R4's native form and takes no
+  construction; the exact native form with the registrations is R5's `native_committed_resolution κ no_commitment`
+  at the relocated construction (`relocated_construction_complete`, `native_registered_resolution_exact`).]
 - **#443, the first request**: 561 at the given, the support and the context — 80 at the given (77 registered), 122 at
   the context (through 80, 77), the two inclusions at the collected merge. Resolved: the request stands with its
   certificate; refuted: a conflict between the two environments, or a package that is not formed; unresolved otherwise.

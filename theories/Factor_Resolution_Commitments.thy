@@ -829,11 +829,27 @@ text \<open>
   premise: the premise at the socket is one, by the clause's formation, and its input and the head's input are kept.
 \<close>
 
-lemma socket_inputs_kept:
-  assumes obl: "socket_discharged M S s keep Vp Vh" and formed: "schema_formed (decode_finite_schema S)"
+text \<open>
+  The socket's inputs are kept by every new instance its obligation gives, over any class @{text Nc} of the socket's
+  output (the narrowed socket's class, R5's at every term, below).
+\<close>
+
+lemma socket_inputs_kept_class:
+  assumes obl: "\<forall>h. clause_true M (decode_finite_schema S) h \<longrightarrow>
+      (\<forall>d p xi yo t y'. (s,d,p) |\<in>| finite_schema_premises S \<longrightarrow> resolution_view_pattern Vp p = Some (xi,yo) \<longrightarrow>
+        (d,t) \<in> M \<longrightarrow> resolution_view_term Vp t = Some (evaluate_pattern h (decode_finite_pattern xi),y') \<longrightarrow>
+        Nc y' \<longrightarrow>
+        (\<exists>h'. clause_true M (decode_finite_schema S) h' \<and> head_kept keep Vh S h h' \<and>
+          evaluate_pattern h' (decode_finite_pattern xi) = evaluate_pattern h (decode_finite_pattern xi) \<and>
+          evaluate_pattern h' (decode_finite_pattern yo) = y')) \<and>
+      (\<forall>N g. (s,N) \<in> schema_material_premises (decode_finite_schema S) \<longrightarrow> evaluate_material_satisfaction g N \<longrightarrow>
+        evaluate_pattern g (material_source N) = evaluate_pattern h (material_source N) \<longrightarrow>
+        (\<exists>h'. clause_true M (decode_finite_schema S) h' \<and> head_kept keep Vh S h h' \<and>
+          (\<forall>a\<in>material_variables N. h' a = g a)))"
+    and formed: "schema_formed (decode_finite_schema S)"
     and h: "clause_true M (decode_finite_schema S) h"
   shows "\<And>d p xi yo t y'. (s,d,p) |\<in>| finite_schema_premises S \<Longrightarrow> resolution_view_pattern Vp p = Some (xi,yo) \<Longrightarrow>
-      (d,t) \<in> M \<Longrightarrow> resolution_view_term Vp t = Some (evaluate_pattern h (decode_finite_pattern xi),y') \<Longrightarrow>
+      (d,t) \<in> M \<Longrightarrow> resolution_view_term Vp t = Some (evaluate_pattern h (decode_finite_pattern xi),y') \<Longrightarrow> Nc y' \<Longrightarrow>
       \<exists>h'. clause_true M (decode_finite_schema S) h' \<and> head_kept keep Vh S h h' \<and>
         (\<forall>a\<in>socket_inputs Vp Vh S s. h' a = h a) \<and> evaluate_pattern h' (decode_finite_pattern yo) = y'"
     and "\<And>N g. (s,N) \<in> schema_material_premises (decode_finite_schema S) \<Longrightarrow> evaluate_material_satisfaction g N \<Longrightarrow>
@@ -852,24 +868,26 @@ proof -
   have obl2: "\<forall>h. clause_true M ?D h \<longrightarrow>
       (\<forall>d p xi yo t y'. (s,d,p) |\<in>| finite_schema_premises S \<longrightarrow> resolution_view_pattern Vp p = Some (xi,yo) \<longrightarrow>
         (d,t) \<in> M \<longrightarrow> resolution_view_term Vp t = Some (evaluate_pattern h (decode_finite_pattern xi),y') \<longrightarrow>
+        Nc y' \<longrightarrow>
         (\<exists>h'. clause_true M ?D h' \<and> head_kept keep Vh S h h' \<and>
           evaluate_pattern h' (decode_finite_pattern xi) = evaluate_pattern h (decode_finite_pattern xi) \<and>
           evaluate_pattern h' (decode_finite_pattern yo) = y')) \<and>
       (\<forall>N g. (s,N) \<in> schema_material_premises ?D \<longrightarrow> evaluate_material_satisfaction g N \<longrightarrow>
         evaluate_pattern g (material_source N) = evaluate_pattern h (material_source N) \<longrightarrow>
         (\<exists>h'. clause_true M ?D h' \<and> head_kept keep Vh S h h' \<and> (\<forall>a\<in>material_variables N. h' a = g a)))"
-    using obl unfolding socket_discharged_def by (rule conjunct2)
+    by (rule obl)
   note O = mp[OF spec[OF obl2, of h] h]
   show "\<exists>h'. clause_true M ?D h' \<and> head_kept keep Vh S h h' \<and>
       (\<forall>a\<in>socket_inputs Vp Vh S s. h' a = h a) \<and> evaluate_pattern h' (decode_finite_pattern yo) = y'"
     if p: "(s,d,p) |\<in>| finite_schema_premises S" and v: "resolution_view_pattern Vp p = Some (xi,yo)"
       and t: "(d,t) \<in> M" and vt: "resolution_view_term Vp t = Some (evaluate_pattern h (decode_finite_pattern xi),y')"
+      and n: "Nc y'"
     for d p xi yo t y'
   proof -
     obtain h' where cl: "clause_true M ?D h'" and hk: "head_kept keep Vh S h h'"
       and xi: "evaluate_pattern h' (decode_finite_pattern xi) = evaluate_pattern h (decode_finite_pattern xi)"
       and yo: "evaluate_pattern h' (decode_finite_pattern yo) = y'"
-      using conjunct1[OF O, rule_format, OF p v t vt] by (elim exE conjE)
+      using conjunct1[OF O, rule_format, OF p v t vt n] by (elim exE conjE)
     have inp: "h' a = h a" if a: "a \<in> socket_inputs Vp Vh S s" for a
     proof -
       from a consider (prem) d' p' xi' yo' where "(s,d',p') |\<in>| finite_schema_premises S"
@@ -934,6 +952,42 @@ proof -
     qed
     show ?thesis using cl hk inp ag by blast
   qed
+qed
+
+lemma socket_inputs_kept:
+  assumes obl: "socket_discharged M S s keep Vp Vh" and formed: "schema_formed (decode_finite_schema S)"
+    and h: "clause_true M (decode_finite_schema S) h"
+  shows "\<And>d p xi yo t y'. (s,d,p) |\<in>| finite_schema_premises S \<Longrightarrow> resolution_view_pattern Vp p = Some (xi,yo) \<Longrightarrow>
+      (d,t) \<in> M \<Longrightarrow> resolution_view_term Vp t = Some (evaluate_pattern h (decode_finite_pattern xi),y') \<Longrightarrow>
+      \<exists>h'. clause_true M (decode_finite_schema S) h' \<and> head_kept keep Vh S h h' \<and>
+        (\<forall>a\<in>socket_inputs Vp Vh S s. h' a = h a) \<and> evaluate_pattern h' (decode_finite_pattern yo) = y'"
+    and "\<And>N g. (s,N) \<in> schema_material_premises (decode_finite_schema S) \<Longrightarrow> evaluate_material_satisfaction g N \<Longrightarrow>
+      evaluate_pattern g (material_source N) = evaluate_pattern h (material_source N) \<Longrightarrow>
+      \<exists>h'. clause_true M (decode_finite_schema S) h' \<and> head_kept keep Vh S h h' \<and>
+        (\<forall>a\<in>socket_inputs Vp Vh S s. h' a = h a) \<and> (\<forall>a\<in>material_variables N. h' a = g a)"
+proof -
+  have obl': "\<forall>h. clause_true M (decode_finite_schema S) h \<longrightarrow>
+      (\<forall>d p xi yo t y'. (s,d,p) |\<in>| finite_schema_premises S \<longrightarrow> resolution_view_pattern Vp p = Some (xi,yo) \<longrightarrow>
+        (d,t) \<in> M \<longrightarrow> resolution_view_term Vp t = Some (evaluate_pattern h (decode_finite_pattern xi),y') \<longrightarrow>
+        True \<longrightarrow>
+        (\<exists>h'. clause_true M (decode_finite_schema S) h' \<and> head_kept keep Vh S h h' \<and>
+          evaluate_pattern h' (decode_finite_pattern xi) = evaluate_pattern h (decode_finite_pattern xi) \<and>
+          evaluate_pattern h' (decode_finite_pattern yo) = y')) \<and>
+      (\<forall>N g. (s,N) \<in> schema_material_premises (decode_finite_schema S) \<longrightarrow> evaluate_material_satisfaction g N \<longrightarrow>
+        evaluate_pattern g (material_source N) = evaluate_pattern h (material_source N) \<longrightarrow>
+        (\<exists>h'. clause_true M (decode_finite_schema S) h' \<and> head_kept keep Vh S h h' \<and>
+          (\<forall>a\<in>material_variables N. h' a = g a)))"
+    using conjunct2[OF obl[unfolded socket_discharged_def]] by (simp only: simp_thms)
+  show "\<exists>h'. clause_true M (decode_finite_schema S) h' \<and> head_kept keep Vh S h h' \<and>
+      (\<forall>a\<in>socket_inputs Vp Vh S s. h' a = h a) \<and> evaluate_pattern h' (decode_finite_pattern yo) = y'"
+    if "(s,d,p) |\<in>| finite_schema_premises S" "resolution_view_pattern Vp p = Some (xi,yo)" "(d,t) \<in> M"
+      "resolution_view_term Vp t = Some (evaluate_pattern h (decode_finite_pattern xi),y')" for d p xi yo t y'
+    by (rule socket_inputs_kept_class(1)[where Nc="\<lambda>_. True", OF obl' formed h that]) simp
+  show "\<exists>h'. clause_true M (decode_finite_schema S) h' \<and> head_kept keep Vh S h h' \<and>
+      (\<forall>a\<in>socket_inputs Vp Vh S s. h' a = h a) \<and> (\<forall>a\<in>material_variables N. h' a = g a)"
+    if "(s,N) \<in> schema_material_premises (decode_finite_schema S)" "evaluate_material_satisfaction g N"
+      "evaluate_pattern g (material_source N) = evaluate_pattern h (material_source N)" for N g
+    by (rule socket_inputs_kept_class(2)[where Nc="\<lambda>_. True", OF obl' formed h that])
 qed
 
 text \<open>

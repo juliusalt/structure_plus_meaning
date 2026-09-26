@@ -187,10 +187,15 @@ qed
 
 subsection \<open>Every found state of the sub-search is supported with its nodes barred\<close>
 
-theorem finite_committed_found_supported:
+text \<open>
+  The argument reads of the state's support its placement alone; it is stated at the placement, so that it serves a
+  state reached by a step that keeps placement (R5f1's produced state), and the support's form is its instance.
+\<close>
+
+theorem finite_committed_found_placed:
   fixes P :: "('a,'s::linorder,'d,'c) finite_schema_system"
   assumes \<kappa>: "finite_witness_construction_formed \<kappa>" and I: "resolution_invariant P d t st"
-    and sup: "resolution_supported_at (\<lambda>_. False) F B P st \<theta>"
+    and placed: "finite_state_placed (\<lambda>_. False) st"
     and g: "Resolution_Call_Goal q r e p |\<in>| resolution_pending st"
     and parent: "finite_goal_premise st (Resolution_Call_Goal q r e p)"
     and only: "finite_registrations_premise_only \<kappa> P" and H: "resolution_registrations_held \<kappa> st"
@@ -204,7 +209,7 @@ proof -
   let ?V = "finite_focus_variables q st"
   have Is: "resolution_invariant P d t s" and closed: "finite_focus_pending (Some q) s = {||}"
     using finite_committed_search_found[OF \<kappa> I found] by blast+
-  have placed_st: "finite_state_placed (\<lambda>_. False) st" by (rule resolution_supported_at_placed[OF sup])
+  have placed_st: "finite_state_placed (\<lambda>_. False) st" by (rule placed)
   have placed_s: "finite_state_placed (\<lambda>_. False) s" by (rule finite_committed_search_placed[OF \<kappa> I found placed_st])
   have in_s: "\<not> resolution_focused (Some q) (resolution_goal_position h)" if "h |\<in>| resolution_pending s" for h
   proof
@@ -479,10 +484,23 @@ proof -
   qed
 qed
 
-corollary finite_committed_exchange_context:
+corollary finite_committed_found_supported:
   fixes P :: "('a,'s::linorder,'d,'c) finite_schema_system"
   assumes \<kappa>: "finite_witness_construction_formed \<kappa>" and I: "resolution_invariant P d t st"
     and sup: "resolution_supported_at (\<lambda>_. False) F B P st \<theta>"
+    and g: "Resolution_Call_Goal q r e p |\<in>| resolution_pending st"
+    and parent: "finite_goal_premise st (Resolution_Call_Goal q r e p)"
+    and only: "finite_registrations_premise_only \<kappa> P" and H: "resolution_registrations_held \<kappa> st"
+    and unheld: "\<not> finite_held \<kappa> st (Resolution_Call_Goal q r e p)"
+    and ctx: "finite_exchange_context (positive_meaning (decode_finite_system P)) F q st e p"
+    and found: "s |\<in>| resolution_found (finite_committed_search_by (finite_committed_select \<kappa> K P) \<kappa> K P n (Some q) B st)"
+  shows "\<exists>\<theta>'. resolution_supported_at (\<lambda>_. False) F (fimage resolution_node_position (resolution_nodes s)) P s \<theta>'"
+  by (rule finite_committed_found_placed[OF \<kappa> I resolution_supported_at_placed[OF sup] g parent only H unheld ctx found])
+
+corollary finite_committed_exchange_placed:
+  fixes P :: "('a,'s::linorder,'d,'c) finite_schema_system"
+  assumes \<kappa>: "finite_witness_construction_formed \<kappa>" and I: "resolution_invariant P d t st"
+    and placed: "finite_state_placed (\<lambda>_. False) st"
     and g: "Resolution_Call_Goal q r e p |\<in>| resolution_pending st"
     and parent: "finite_goal_premise st (Resolution_Call_Goal q r e p)"
     and only: "finite_registrations_premise_only \<kappa> P" and H: "resolution_registrations_held \<kappa> st"
@@ -505,9 +523,23 @@ proof -
   then obtain s where s: "s |\<in>| finite_kept q ?R" by auto
   have found: "s |\<in>| ?R" using finite_kept_subset s by blast
   obtain \<theta>' where "resolution_supported_at (\<lambda>_. False) F (fimage resolution_node_position (resolution_nodes s)) P s \<theta>'"
-    using finite_committed_found_supported[OF \<kappa> I sup g parent only H unheld ctx found] by blast
+    using finite_committed_found_placed[OF \<kappa> I placed g parent only H unheld ctx found] by blast
   then show ?thesis using s by (auto simp: finite_committed_search_def)
 qed
+
+corollary finite_committed_exchange_context:
+  fixes P :: "('a,'s::linorder,'d,'c) finite_schema_system"
+  assumes \<kappa>: "finite_witness_construction_formed \<kappa>" and I: "resolution_invariant P d t st"
+    and sup: "resolution_supported_at (\<lambda>_. False) F B P st \<theta>"
+    and g: "Resolution_Call_Goal q r e p |\<in>| resolution_pending st"
+    and parent: "finite_goal_premise st (Resolution_Call_Goal q r e p)"
+    and only: "finite_registrations_premise_only \<kappa> P" and H: "resolution_registrations_held \<kappa> st"
+    and unheld: "\<not> finite_held \<kappa> st (Resolution_Call_Goal q r e p)"
+    and ctx: "finite_exchange_context (positive_meaning (decode_finite_system P)) F q st e p"
+    and s0: "s0 |\<in>| resolution_found (finite_committed_search \<kappa> K P n (Some q) B st)"
+  shows "\<exists>s \<theta>'. s |\<in>| finite_kept q (resolution_found (finite_committed_search \<kappa> K P n (Some q) B st)) \<and>
+    resolution_supported_at (\<lambda>_. False) F (fimage resolution_node_position (resolution_nodes s)) P s \<theta>'"
+  by (rule finite_committed_exchange_placed[OF \<kappa> I resolution_supported_at_placed[OF sup] g parent only H unheld ctx s0])
 
 section \<open>The direct producer, over a view\<close>
 

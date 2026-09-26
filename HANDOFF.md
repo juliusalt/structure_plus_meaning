@@ -108,11 +108,20 @@ values, the resolution with hand-ins, W2a's premise discharged for every program
 answer-preserving lifting, item 5's goal-level generator, tight), W4a1 #526 and W4a2 #615 (landed, Delivered), and W4b,
 divided by plan-83 when its relations left too little room: #634 (landed `78a85a60`; review 616's 1, 3, 4, 622's 3: the
 argument once at W3, the query facts at W2, the four registrations into `Factor_Reader_Witness_Registrations` above a
-generic half free of the package readers) → W4b1 #528 (`Development_Given_Registrations`: complete at the given's
-readers and 561's at `package_request_system`, the finite clauses at 77, 392 and 525 matched, the exact resolver there)
+generic half free of the package readers) → W4b1 #528 (landed `0022a374`: complete at the given's readers and 561's
+at `package_request_system`)
 → W4b2 #635 (`Development_Asked_Registrations`: #399's two courses, at the asked program and its installation; 525's
 discharge, since 523–525 stand in the guard's goals program, q117) ∥ the
-controls and the reuse row #636, each with its review. #399 and R7 wait on #635, #547 on #528 and rc; #549 and #551
+controls and the reuse row #636 ∥ W4b3 #640 (`Development_First_Request_Registrations`: the registrations complete at
+the first request's program, which does not present `package_request_system`, and relocated at its installation;
+review 529's 1), each with its review; #635 committed `05cfa9b1`. The resolver's inputs at an installed program (q118,
+q121; review 638's 1 and 2): task 496's entry's addition by #642, "Registrations and declarations reach an installed
+package by matching its clauses against the placed ones" — one computed clause match (M) carries the construction (V1,
+after W4a's relocation) and the declarations (V2, after R5d's) to the installed package's finite presentation read
+natively (V3, the native exact forms at the asked, request and given installations); #399's course is the native one;
+R7 measures both courses at 526 (no R7b); rc waits on V1 and V2 unsplit; briefed by #643, on which #605, #540, #542,
+#547 and #399 wait until its proposals are placed. #640 and #635 state the placed course.
+#399 and R7 wait on #635, #547 on #640 and rc; #549 and #551
 wait on R7, #403 and #553 through #399.
 
 **Retired** on #376's and #378's entries (their tables): the decomposition line (#325–#334), N1a, N1b, N3a, N3b, N4a
@@ -140,8 +149,8 @@ nothing waiting on them: the consolidation #613. The approval build (Open 142) a
 **Order** (the queue holds it; the planner's choice, a residual until the native answer to the selection problem
 exists, Q2): the slots are one pool since 14:06, each free slot going to the first task in the queue that can start
 and a review standing where its review task stands, so every review stands right after its build. By slack on the
-longest chain (plan-78): #621's remainder #630, #631 (side by side); #634 → W4b1 #528 → W4b2 #635 and the controls
-#636 in the slots the route leaves (they feed #547, R7 and #399 with slack); R5d's views #595 and carriers #597; R5e #599 and R6b's parts #601, #603
+longest chain (plan-78): #621's remainder #630, #631 (side by side); the controls #636 and W4b3 #640, the brief #643 and its builds
+(M and V1 at once, V2 after R5e, V3 after V1 and #640) in the slots the route leaves (they feed #547, R7 and #399 with slack); R5d's views #595 and carriers #597; R5e #599 and R6b's parts #601, #603
 (no slack); R6c's 48 #609, R6b's carrying #605, rc #540 and R6c's instantiation family #607; the carrying #611; R7 #542 and #547; the route in its chains' order (#399, the
 samples #551, the observations #549, the record #553, #401, #403, #443, #447, #407, #445, #449); the consolidation #613 last, off the route.
 
@@ -304,7 +313,8 @@ What landed that open work builds on, a line each; how it went and each review's
 - **The entries**: #378 (`cbf0c7e9`), #376 (`47a67cfe`), #381 (`2d97747c`), #383 (`7b23938c`), #428 (`631429e6`, the
   payload audit's reliances), #460 (`584c3a76`, its decision withdrawn by Q27), #482 (`e2b239ac`), #495 (`3e8049be`, the
   resolving evaluator, with the plan's record of Q27 and the marked corrections of #460's, #376's and #482's entries); #496 (`e9c4b54b`, the least witnesses, with
-  the plan's record of Q28 and a marked correction of #495's least-witness section);
+  the plan's record of Q28 and a marked correction of #495's least-witness section); #642 (`6bb79246`, #496's entry's
+  addition: the resolver's inputs carried to an installed package by a computed clause match);
   #481's attribution of the recording
   (`.build/tasks/481/result.md`: the cause a quotation of a quotation, 30.4 times the payload's addresses; one generation
   at the given's size 45–65 min, about 9 GB; the cuts and probes I3 and #494 use).
@@ -482,6 +492,16 @@ What landed that open work builds on, a line each; how it went and each review's
   `Factor_Reader_Witness_Registrations`, the generic half importing no package reader;
   `finite_complete_construction_supported` over `finite_committed_barring`. Review 637's follow-ups: 1 to #630, 2
   next-edits 236.
+- **W4b1** (#528, `0022a374`): `Development_Given_Registrations`, the registrations of 77, 392 (391 over 390) and 561
+  complete by discharge from the programs' meanings — at `finite_given_readers` (`given_readers_registrations_complete`,
+  the clauses at 77 and 392 matched, none at 525 or 561, the complete exact forms `given_readers_*_exact`), and 77's
+  and 561's at `package_request_system` (`request_registrations_complete`, which no route program presents);
+  `finite_collection_construction_complete_at` in `Factor_Least_Witness_Registrations`. Review 529's follow-ups: 1
+  W4b3 #640 and #547 rewritten; 2 to #640, #635 and #540, next-edits 237–238; 3 and 4 next-edits 239–240.
+- **W4b2** (#635, `05cfa9b1`): `Development_Asked_Registrations`, #399's two courses for the least witnesses at the
+  asked program and at the asked placement (`asked_mapped_extension`); the native form at `asked_environment` and
+  `asked_entry` not stated, since it does not type with W4a's relocation (q118). Review 638's follow-ups: 1 and 2 to
+  #642, 3 to #640 and next-edits 241.
 
 ## Open
 
@@ -622,10 +642,14 @@ searches for a theory before briefing a task that edits it.
   linked instances, (ii) no premise-only image in the parent's call, (iii) a free socket's input and output disjoint);
   #630 narrows the test to check them after #631 lands (`after 630 631`). Whether the
   given's sockets commit under R3's selection is #605's control's and R7's to report; one that does not
-  moves the selection parameter (#613) onto the route.
+  moves the selection parameter (#613) onto the route. q119, q120 (plan-84): #630's socket discharges stand
+  (`Factor_Resolution_Socket_Discharges`: `finite_socket_kept_context`, `finite_socket_free_context`); the rest reads
+  #631's definitions, so #630 parks on q120 until #631 lands: answer q120 then, beside the `after 630 631`. q118 (#635) and
+  q121 (#640), the native form at an installation, answered by plan-84: the placed course at both installations,
+  design #642 for the native forms.
 - **The graph's width** (plan-78, plan-81, plan-83): the route is one chain — #630, #631 → R5d #595, #597 → R5e #599
-  and R6b's parts → R6c → R7 #542 → #399 — so between its landings little else can start; beside it runs #634 → #528
-  → #635 ∥ #636, and R6b's and R6c's parts after #597. Nothing is invented to fill the gaps: what is open beside the
+  and R6b's parts → R6c → R7 #542 → #399 — so between its landings little else can start; beside it run #635, #636 and
+  #640, and R6b's and R6c's parts after #597. Nothing is invented to fill the gaps: what is open beside the
   route rests on its results or is machinery that waits behind it (Open 29's comparisons).
 - **What the next events ask**: Q29's answer (#624's trigger and the harness's part of its addendum, the heaps' retirement, `PROBE_GB`, the cap). R7
   (#542) measures #399's two courses at 526 and #399 chooses by it; the approval
@@ -651,7 +675,7 @@ searches for a theory before briefing a task that edits it.
   socket kinds' discharges from #630 and #631), #599 (premise-only registrations at its head-variable registration); #599 — #621's Remains, last bullet (a
   head-variable registration fails the premise-only condition by definition: R5e states its own). Plan-83: #630 —
   review 622's 1, 2 and 3's first half, 637's 1 (the lifts' proof in `Factor_Least_Witness_Registrations`); #599 — 622's 4 and #634's moves; #540, #541, #542, #399 — #634's moves and
-  W4b's division; #547 — W4b's division, the clause's equality at 561 its own (review 616's 2). The route's earlier mails are carried into
+  W4b's division; #547 — rewritten by plan-84 (review 529's 1: its registrations #640's; plan-83's mail on 561's clause superseded). Plan-84: #640 — q121's answer and review 638's 3; #540 — the committed forms at a construction complete at the program, their formation premise discharged (review 529's 2). The route's earlier mails are carried into
   their corrected briefs or recorded superseded (`.build/tasks/522/result.md`, `.build/tasks/523/result.md`).
 - **The harness's, met by this run's tasks** (owed to the owner: each landing check's phases and per-recipe comparison;
   earlier gaps in `PLANNING_LOG.md`, 2026-09-24): `v2.py read check:167` raises a TypeError in `check_text`;

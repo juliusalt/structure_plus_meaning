@@ -17085,6 +17085,175 @@ The builds (task 686's `result.md`): the notions, the parent context over them a
 in #672; the socket kinds' closed case, the test's change and a control in #674; the instance at 79.0/1 in #601. No build
 is added and the chain is unchanged.]
 
+[Corrected by task 730, a design, from review 680's follow-up 1 (`.build/tasks/680/review.md`), with the planner's
+mails of 2026-09-26 (review 606's follow-up 5, 32's kept sockets; review 726's follow-up 2, the dead-socket rule).
+(10) The socket test reads the socket's frame. R5's socket test reads the socket's obligation as `socket_discharged`
+states it — the new instance keeps the socket's inputs (the premise's input at the premise's view, the head's input at
+the head's view), and nothing else is said of it — so (9) lets a closed sibling hold only those inputs and a
+premise-only variable be only free or such an input, and the free socket asks every head output at the parent's call to
+be a fresh variable (`finite_parent_output`, a variant). Both are stricter than the exchange, and together they keep most
+declared sockets from committing (the table below).
+- *61.0/4 fails twice.* 62.0/0 calls 61 with its term — hole 0 of `instantiation_view`, an equality hole — fixed to a
+  five-element list, so 61's call output is not a variant of its head output (review 680's finding); and 60's input
+  ((x0,x1),(x12,(x2,x3))) is ground only once 37, 34 and 59 at 61.0/0, /1 and /3 are closed, and they hold the record's
+  artifact x9 and ports x10, premise-only and no input of 60. The second alone keeps 61.0/4 uncommitted whatever the
+  parent-output test says. The same closed upstream sibling holding a private variable — 5's remainder at 37.0/1 and
+  29.0/1, 37's artifact and 34's ports at 50.2, 55.2, 57.0, 61.0, 64.0, 65.0, 75, 81, 104.1, 105 and 505, 72's, 54's and
+  81's outputs — keeps from committing most sockets of #603, #607 and #679 and most of 32's kept sockets, and every one of
+  48's eight narrowed sockets (their inputs are outputs of siblings closed before them, which hold those siblings' other
+  outputs), so R5f1's production would never run; a caller fixing a head output the socket keeps (32.0/0 fixes 29's other
+  two field lists to [], the material path fixes 60's remaining term) keeps the rest.
+- *What the exchange changes.* The carrying lemma builds the new instance carrier by carrier and keeps every variable
+  outside the carried set — the socket's output and every carrier's output (`carried_variables S s Vp cs`, the `offC` of
+  `socket_discharged_carried`) — but `socket_discharged` does not say so. The *frame* of a socket is a set C of its
+  clause's variables outside which the obligation's new instance agrees with the old: `socket_framed M S s keep Vp Vh C`,
+  `socket_discharged` with that conjunct in both branches (at the clause's variables). The carrying gives it at the
+  carried set (`socket_framed_carried`, `socket_discharged_carried` its corollary); `socket_discharged` gives it at the
+  socket's *default frame*, the clause's variables outside the socket's inputs (`socket_inputs_kept`). At 61.0/4 the
+  carried set is {x5, x6, x8, x13, x14} (`record_fields_carried`): the interior x7 is not in it (6 at 61.0/6 compares
+  bags, so the old interior stands), nor are x9–x12.
+- *Frames are declared; the test cannot compute them.* The carried set reads the carriers' views — which inputs of a
+  carrier are carried and which are fixed parts — and carriers are read by the discharge alone (#585's (b)). The clause's
+  syntax does not show them: connectivity from the socket's output through the premises closes at 61.0 over 46 (its
+  fixed part x11) → 51 → 34 → 37, and at 60.1 over 48 (its fixed part x12) → 60.1/1, exactly the siblings the frame must
+  leave out. A frame is declared per socket beside the records, a finite family of (site, clause, key, frame) (Φ),
+  discharged by `frames_discharged M D Φ`: every declared frame framed at every socket D declares at that site, clause and
+  key. A socket with no declared frame is tested at its default frame, so a record with no frames is tested as today and
+  the records stand as they are: no field is added, no kind changed. The declared commitment reads both,
+  `finite_framed_commitment D Φ`, today's `finite_declared_commitment D` its instance at no frames.
+- *The test at a frame.* At a socket commitment the test chooses one frame C — a declared frame of the socket or its
+  default — and reads three conditions at it, in place of the socket's inputs: (i) every other premise and material
+  premise of the parent is pending as its instance or closed, its instance ground and its variables outside C
+  (`finite_children_closed` at C); (ii) every premise-only variable of the parent is free, or outside C with a ground
+  binding (`finite_premise_only_inputs` at C); (iii) at a free socket, the parent absorbs the frame
+  (`finite_parent_absorbs Vp Vh C nd s`, read in place of `finite_parent_output`): with ho the head's output at Vh, O the
+  socket's own variables (its premise's output at Vp, or a material premise's variables) and β the parent's bindings,
+  every variable of ho in C and not in O is bound to a variable occurring in the binding of no other variable of ho, and
+  the bindings of the variables of ho outside C share no variable with those of the variables in C; the holders' set
+  gains the variables bound at the first kind (in place of the whole output's). At the default frame (i) and (ii) are
+  (9)'s conditions and (iii) is implied by the variant test, so every commitment the test made it still makes. Apartness
+  (`finite_input_output_apart`), the pair (`finite_socket_pair`), `finite_premise_only_unshared`, the input's groundness
+  and the goal-premise condition stand. One condition for call and material sockets, kept and free ((iii) the free
+  socket's only).
+- *The parent-output condition (the question of review 680).* Neither the bag holes nor another kind. The exchange reads
+  no correspondence: a head output the socket's own output holds takes the new answer's value through its binding,
+  whatever the caller fixed there — the goal's pattern carries the caller's constraint and every answer the committed
+  sub-search finds satisfies it (at 62.0/0 the term, 60's own output at 61.0/4, keeps its list shape; that it is an
+  equality hole is not needed); a head output outside the frame keeps its value, whatever its binding; only the frame's
+  other head outputs — computed by carriers from the socket's output — take values no pattern of the call can hold, so
+  each must be a fresh variable (correction (1)'s variant control, rs carried and bound to [[1]|W], stays refused). A test
+  at the bag holes would read the correspondences, which are the discharge's (`corr`) and not the declarations', would
+  admit a caller fixing a carried bag hole (that counterexample) and refuse one fixing a bag hole the socket keeps (32.0/0
+  fixes 29's other two field lists, which 29.0/5 keeps, to []). Another kind does not
+  help: the kept head is false at 61.0/4 (its interior's and slots' presentations change with 60's answer), and the
+  kinds' obligations are not what fails — only the state conditions, which now read the frame.
+- *#565's premise at those states*, per state, its statement unchanged. The parent's instance under the support is true,
+  as (9) argues (pending premises by the support, closed ones by the subtree acceptance or the linkage, after F3 a reused
+  solved node by its third disjunct). The framed obligation gives a true new instance h' with the new answer, agreeing
+  with the old outside C: every closed sibling's instance and every premise-only variable outside C keep their values
+  (their variables are outside C), the head's input keeps its, and the premise-only variables in C are free, held only by
+  pending children, which are the new instance's premises (`finite_parent_exchange_holds`). At a kept socket the head is
+  kept. At a free socket the valuation is set head output by head output: one in O through the goal's own variables (the
+  new valuation agrees with the answer's on the goal's output, which holds its binding: `hy_agree`), one in C outside O on
+  the fresh variable its binding is (the node's, held only where the holders' set allows), one outside C unchanged (its
+  binding's variables are no changed one's, by (iii)); apartness keeps the call's input. So `finite_exchange_context`
+  holds and `finite_committed_found_supported` gives a kept state supported with every node barred; at a material socket
+  the same over #631's canonical successor. `finite_socket_kept_context`, `finite_socket_free_context`,
+  `finite_declared_socket_context` and `finite_socket_commitment_exchange` are restated at a frame, today's their
+  instances at the default frame (names and statements kept), and `finite_declared_commitment_exchanges` extends to
+  `finite_framed_commitment_exchanges` under `declarations_discharged` and `frames_discharged`. Nothing fails.
+- *Review 604's rule.* A variable of the parent's head output that the socket's viewed input holds is in no frame (the
+  carrying keeps the premise's input out of the carried set; the default frame leaves the inputs out), so (iii) admits
+  any binding of it, and the input's groundness asks it ground. Such a socket commits exactly at a caller that grounds
+  that head output: "never commits" stands at every caller leaving it non-ground, as a consequence of the input's
+  groundness and no longer of the variant test (the lemma review 726's follow-up 2 asks, in B1 below). 36 at 42.0/1, the
+  one such socket declared, would commit only where a caller grounds 42's citation; none of 44.0/0, 50.1/0, 55.0/1,
+  57.0/2 and 119.0/3 does, so #726's drop stands. None of #679's six sockets at 63 and 64 holds a head output in its
+  viewed input.
+
+The declared sockets, their frames (the carried sets their theories state, clause variables by number; "own output" the
+socket's output variables alone), where their parents are committed on the route (the asked program's clauses,
+`.build/tasks/585/clauses.txt`; a kept socket at any focus), the holes callers fix by kind (E an equality hole, B a bag
+hole, I an input), and whether each commits under the test as it stands (now) and at its frame (after). "Closed x…": the
+siblings closed before the socket's input is ground hold those variables, outside its inputs.
+
+| Socket (parent.clause/key: site; premise view / head view) | Frame | Parent committed at | Fixed by callers | Now | After |
+|---|---|---|---|---|---|
+| 79.0/1: 32; identity / root_family_view (#601) | {3,5,6,7} | directly at 80, 392, 525; kept at 83.0/1 | none | commits (37 holds inputs; 32 before 78 by F1's priority) | commits; no frame needed |
+| 83.0/1 kept: 79; root_family_view / identity (#601) | {4,5} | any focus | — | commits | commits |
+| 37.0/2: 12; identity / lookup_view (#603) | own output {3} | directly at its artifact holders (29, 32, 34, 35, 36, 54); free at 39.0/0, 39.1/1 | none | never: closed 5 at 37.0/1, x5 | commits |
+| 12.0/2: 7; identity / identity | own output {1} | at 37.0/2 only | none | never (parent never committed) | commits |
+| 7.0/0–3: 6; identity / identity | {4}, {5}, {6}, {7} | at 12.0/2 only | none | never (parent never committed; were it, the first taken only) | all four |
+| 29.0/5: 6; identity / headed_fields_view | {5} | free at 32.0/0 | 32.0/0: x6, x7 (B, kept here) = [] | never: not a variant (and closed 5 at 29.0/1, x11, where taken first) | commits at 32.0/0 |
+| 29.0/6, 29.0/7 | {6}, {7} | free at 32.0/0 | own outputs = [] | not committable (ground output: checks) | the same |
+| 32.0/0: 29; headed_incidence_view / identity | {2} | free at 54.0/1, 64.0/1, 79.0/1; kept at #733's | none | commits | commits |
+| 36.3/5: 6; identity / inner_right_view | {5} | nowhere (42.0/1 dropped, #726) | — | never | never at present callers |
+| 50.2/2, 50.2/3: 50; quotation_view / quotation_view (#607) | {3,12,13,16,17}, {4,14,15,17} | free at 55.1/1 and in 50's recursion | none | never: closed 37, 34, x7–x9, x11 | commit |
+| 55.1/1: 50; quotation_view / instantiation_view | {5,6,7} | free at 55.2/2–3, 57.0/4, 60.1/0, 65.0/3 | none (its head's used variables are []) | commits where 55 is committed | commits |
+| 55.2/2, 55.2/3: 55; instantiation_view / instantiation_view | {5,15,17,19,21,22}, {6,16,18,20,22} | as 55.1/1 | none | never: closed 37, 34, x10–x14 | commit |
+| 57.0/4: 55; instantiation_view / prospective_view | {6,7,16,19,21} | free at 63.1/0 | none | never: closed 37, 34, 42, 41, x10–x18 | commits |
+| 60.1/0: 55; instantiation_view / instantiation_view (#679) | {6,11,13,15,17} | free at 61.0/4 and in 60's recursion | material path: the term (E) element by element, x6 an element (own output), x7 the remaining list (kept) | never there (x7 no variable); never once 60.1/1 is closed | commits |
+| 60.1/1: 60; instantiation_view / instantiation_view | {7,12,14,16,17} | as 60.1/0 | material path: x7 (own output), x6 (kept) | never there; never once 60.1/0 is closed | commits |
+| 61.0/4: 60; instantiation_view / instantiation_view | {5,6,8,13,14} | free at 62.0/0 (291.0/1–2 and 348.0/1–2, outside the asked program, commit no 61) | 62.0/0: the term (E, own output) a five-element list; 291, 348: the used variables (B, own output) = the scope (I) | never: not a variant; closed 37, 34, 59, x9, x10 | commits at 62.0/0 |
+| 62.0/0: 61; record_material_view / material_view | {5,…,12} | free at 63.2/0 (103.1/0 commits no 62) | none | commits where 62 is committed | commits |
+| 63.1/0, 63.1/1: 57, 63; prospective_view, premise_rows_view / premise_rows_view | {7,8,12,14,15}, {9,10,13} | free at 64.0/2 and in 63's recursion | none | the first taken only (the other then has it closed, holding its outputs) | both |
+| 63.2/0, 63.2/1: 62, 63; material_view, premise_rows_view / premise_rows_view | {10,…,15,17,18}, {7,8,16} | as 63.1 | none | the first taken only | both |
+| 64.0/1: 32; identity / premise_rows_view | {5,6,7,9} | free at 65.0/4 | none | commits (37 holds inputs) | commits |
+| 64.0/2: 63; premise_rows_view / premise_rows_view | {5,6,7} | free at 65.0/4 | none | never: closed 37, 32, x8 | commits |
+| 65.0/3, 65.0/4: 55, 64; instantiation_view, premise_rows_view / schema_view | {4,15,16,17}, {5,6,18} | directly at 69.0/0, 503.0/0; kept at 73.0/0, 82.0/1 (#681) | none | never: closed 37, 34, 54, x7–x13 | commit |
+| 73.0/0 kept: 65 (#681) | its carried set | any focus | — | commits | commits |
+| 82.0/1 kept: 65; 105.0/2 kept: 56 (#681) | their carried sets | any focus | — | never: closed 81 at 82.0/0, x4; closed 37, 34 at 105.0 | commit |
+| 587's free sockets (#681) | declared with them | at 587's view | per #681 | — | at their frames |
+| 71.0/1, 119.0/1 kept: 32 (#733) | the rows and what they carry | any focus | — | commit (37 holds inputs) | commit |
+| 75.0/3, 81.0/3, 104.1/3, 105.1/2, 505.0/4 kept: 32 (#733) | the rows and what 59 and 5 carry | any focus | — | never: closed 72, 34, 54, 500 with private outputs | commit |
+| 48 at 50.2/7, 55.2/7, 55.2/8, 57.0/8, 60.1/4, 60.1/5, 63.1/2, 63.2/2, narrowed (#609) | the union's output (60.1/4 {10}, 60.1/5 {8}, …) | its parent committed at χ | material path at 60.1: the term (kept) | never: its inputs' producers closed with their other outputs | commit (R5f1's production then runs) |
+| 6.1/1; 10.0/4 and 45.1/2, material (R6, #520) | default | as R6 | none | commit | commit |
+
+The builds (edges and sizes in `.build/tasks/730/result.md`): **B1** (`Factor_Resolution_Commitments`,
+`Factor_Resolution_Carriers`; after F3 #695; before F2c #701, B2a, B3a, B3b, #681, #609, #733): `socket_framed` with
+its default (`socket_discharged` ⟹ framed at the default frame) and `socket_framed_carried`; frame families and
+`frames_discharged`; the three conditions at a frame, `finite_parent_absorbs` with its holders' variables, the test
+reading one frame per socket commitment (`finite_socket_kept`, `finite_socket_free`, `finite_call_narrowed`,
+`finite_material_narrowed`, `finite_framed_commitment`); today's definitions their instances (lemmas), the input-ground,
+goal-premise and no-declaration facts at frames; the narrowed socket's obligation at a frame where #599 stands; review
+726's lemma (a socket whose viewed input holds a head output variable the parent binds to a non-ground pattern is not
+committed); every control's value unchanged or named. **B2a** (`Factor_Resolution_Material_Discharge`,
+`Factor_Resolution_Socket_Discharges`; after B1 and #599; before B2b and R5f2): the parent context and
+`finite_declared_socket_context` at a frame, the material discharge's closed case at a frame, `finite_socket_new_instance`
+from the framed obligation, the kept and free contexts at a frame (the free one head output by head output, as above),
+`finite_socket_commitment_exchange`, `finite_framed_commitment_exchanges`; today's the instances; stated over a class N
+at a kept answer in N at once, R5f2's restatement of #630's contexts moving here so that they are restated once.
+**B2b** (`Factor_Resolution_Views`, `Factor_Commitment_Controls`; after B2a; before rc #540, #605, #611): #676's forms at
+framed declarations, the frames' transfer (relocation maps their sites as the sockets'; agreement keeps them), and two
+controls — a socket whose closed upstream sibling holds a private remainder (one certificate at its frame, R4's n!
+without), a caller fixing a head output the socket's own output holds (committed; (1)'s variant control still refused),
+each with R4's values. **B3a** (`Factor_Artifact_Citation_Declarations`; after B1; before #605): #603's frames, from the
+sockets' carried sets, and their discharge. **B3b** (`Factor_Instantiation_Declarations`,
+`Factor_Schema_Instantiation_Declarations`, and `Development_Socket_Liveness_Execution`, new, imported by no theory; after
+B1 and B3a; before #611): #607's and #679's frames from their `*_carried` facts and their discharge; one evaluation over
+the asked program — every declared socket at every present caller of its parent, the static conditions of the test as it
+stands and at the frame — its lemma naming the live and the dead (review 726's follow-up 2). #681, #609 and #733 declare
+their sockets' frames with them; #605, #663, #611 and V2b #651 carry the frames with the records (sites mapped as the
+sockets', the variables by V1's binder map along the match); rc #540 and R7 #542 take `frames_discharged` beside
+`declarations_discharged`. With R5f1: its step reads `commit_call` as it stands and runs where the framed test commits
+(order the landers'). With F2c: it refines the framed test (B1 before F2c; otherwise F2c's lander carries B1's change).
+With F3: B1 follows it, the closed-premise truth lemma as F3 leaves it.
+- *Weighed and not taken*: the test at the bag holes (above); another kind (above); frames computed by the search —
+  from the clause's connectivity, or through the unbound variables of the state (it closes over the upstream siblings,
+  and the bare obligation justifies no frame smaller than what it closes over); frames as a field of the declarations
+  record or of the socket tuple (every record literal of the landed theories and of every later declaration build
+  would change; held beside the records, as registrations are beside the construction, a record without frames is
+  today's); per-socket head views moving kept head outputs into the head's input (29.0/5 read at
+  `headed_incidence_view`, as 32.0/0 reads 29: it serves a kept head output at one caller, not an upstream sibling, whose
+  premise-only variables no view holds, and a socket's own output cannot move, the carried set holding it); a frame
+  leaving an equality hole of the socket's own output out (allowed, since a frame is any set the framed obligation holds
+  at, and not needed: (iii) admits the socket's own output at any binding).
+- *What the builds must respect*, beyond the entry's: the given's readers stay exactly as installed; declarations and
+  frames are read by the search alone, carriers by the discharge alone; a frame is declared only where the framed
+  obligation is proved at it, from the carrying, never supplied without it; at no frames the test is today's but for
+  (iii), which only admits; unresolved is never refuted and never admits; #519's counterexample and (1)'s variant
+  control stay refused.]
+
 Presentation freedom makes a false call expensive: a true call is resolved at the first presentation its producer
 yields, a false one only after every presentation (n! root lists of n roots), so a refusal past a few elements reaches
 the bound and is unresolved. The commitment (R5): a site declared *functional up to a presentation class* at its
@@ -17183,12 +17352,17 @@ correspondence is a product, one per hole, and a consumer names the hole it hold
 - *Discharge*: the notion's exact contract, read at the view, gives the answers at one input and their correspondence (79:
   `root_family_reading_exact` with `family_at_unique` and `located_at_unique` — two answers at one ((e,u),r) list the one
   family's destinations over two distinct enumerations, one bag of definition sites; 37: `artifact_lookup_exact`, every
-  presentation of the stored artifact; the instantiation family: its `*_exact` and `*_orders` contracts) — a lemma where
+  presentation of the stored artifact; the instantiation family: its `*_exact` and `*_orders` contracts [corrected by task 730, review 680's follow-up 6: its
+  `*_exact` and `*_result_unique` contracts — two answers at one viewed input correspond, which a producer's obligation
+  reads; `*_orders`, every reordering of an answer an answer, is the converse closure, which no producer obligation
+  reads]) — a lemma where
   the notion stands, its meaning not proved again.
 - *The search*: matches p against the call pattern and reads Pair pi po. A goal is committed directly when its viewed
   input is ground and its output holds a variable, and every other pending goal in the focus holding one is a declared
   consumer holding one hole's pattern at its own view, its other part sharing none; a socket's premise and its parent's
-  head are read at their views, the free socket's variant test at the parent's viewed output. The tests read a pattern's
+  head are read at their views, the free socket's variant test at the parent's viewed output [corrected by task 730, correction (10) of "Committed choice,
+  for refusals": the free socket's parent-output test, its closed siblings and its premise-only variables are read at
+  the socket's frame, a fresh variable asked only at the frame's head outputs other than the socket's own output]. The tests read a pattern's
   shape, positions and where variables occur, as R5's do.
 - *Sound under R5's barred pruning*: a view is a bijection between the terms p matches and their views, commuting with
   evaluation and substitution; the program, its derivations and certificates are untouched, and the barred pruning reads
@@ -17279,7 +17453,8 @@ orders of the distinct union — every holder is invariant.
   a counterpart's work.
 
 **What stays unresolved, never refuted.** A use of 48 with its output free and no narrowed socket at its clause; an
-output whose producer is called with it partly constrained (not a variant at its view), searched plainly; the least
+output whose producer is called with it partly constrained (not a variant at its view), searched plainly [corrected by task 730, correction (10): partly
+constrained at a head output of the socket's frame that the socket's own output does not hold]; the least
 witnesses until task 496's builds; existential operands, by the residual rule. Nothing is refuted outside a discharged
 declaration, and nothing admits unresolved.
 

@@ -26,9 +26,10 @@ text \<open>
   alone, never by the search, and stands here as every term. The committed resolution produces the distinct union,
   resolves the true call (length 2) and refutes the false one (length 3), at site 7 and at site 11, where the second
   union is committed and produced once the first is. Site 9 declares no socket: its false call (length 1) is searched
-  plainly and left unresolved, never refuted. At bound 0 the production's value is none: R5f1's test still commits the
-  goal, its sub-search runs from the state as it is, and at bound 30 the true call is left unresolved (the gap of
-  q134, corrected by task 767).
+  plainly and left unresolved, never refuted. At bound 0 the production's value is none, so the production does not
+  apply: the test corrected by task 767 (q134) does not commit the goal, which is searched plainly; at bound 30 the
+  plain search resolves the true call (where R5f1's test committed it and its sub-search, from the state as it was,
+  left it unresolved) and leaves the false call unresolved, never refuted.
 \<close>
 
 definition narrowed_control_union :: "(nat,nat,nat) finite_factor_schema" where
@@ -193,7 +194,8 @@ lemma narrowed_controls:
       (narrowed_control_length 2))) 20 90 = Some True \<and>
     narrowed_search_verdict 11 (Finite_Pair narrowed_control_x (Finite_Pair narrowed_search_y
       (narrowed_control_length 3))) 20 90 = Some False \<and>
-    narrowed_search_verdict 7 (Finite_Pair narrowed_control_x (narrowed_control_length 2)) 0 30 = None"
+    narrowed_search_verdict 7 (Finite_Pair narrowed_control_x (narrowed_control_length 2)) 0 30 = Some True \<and>
+    narrowed_search_verdict 7 (Finite_Pair narrowed_control_x (narrowed_control_length 3)) 0 30 = None"
   by eval
 
 end

@@ -15,6 +15,13 @@ text \<open>
   the view's input matched against the goal's pattern. The value is read by the committed step
   (@{const finite_produced_state}) and checked there by the given's clauses; no checker produces it. At a record
   declaring no production the narrowed commitment is the framed commitment of its truncation.
+
+  Corrected by task 767 (q134): the production is defined only where it applies — its registration stands at the
+  goal's callee, the registered head's input at the matched bindings is the goal's input, its value is defined at the
+  bound and the goal's viewed output matches it (@{const finite_production_substitution}) — and the call test commits a
+  goal meeting a declared production only where the production is defined. Elsewhere at such a socket the goal is not
+  committed: it is searched plainly, unresolved at the bound, never refuted. At a goal meeting no production the test
+  is the framed test.
 \<close>
 
 section \<open>The production field\<close>
@@ -114,6 +121,45 @@ qed
 
 text \<open>A production met is one at whose views the goal is committed as at a socket, and so a call goal.\<close>
 
+text \<open>A declared production at the goal's parent socket at whose views the framed test commits is met.\<close>
+
+lemma finite_socket_productions_memberI:
+  assumes g: "g = Resolution_Call_Goal q r e p" and qne: "q \<noteq> []"
+    and nd: "nd |\<in>| resolution_nodes st" "resolution_node_position nd = butlast q"
+    and tup: "(resolution_node_site nd,resolution_node_schema nd,last q,keep,Vp,Vh) |\<in>| declared_sockets D"
+    and R: "declared_production D (resolution_node_site nd) (resolution_node_schema nd) (last q) = Some R"
+    and ch: "ch |\<in>| finite_frame_choices \<Phi>"
+    and sc: "finite_socket_commitment_framed (resolution_declarations.truncate D) \<Phi> Vp Vh ch F st g"
+    and cn: "finite_call_framed (resolution_declarations.truncate D) \<Phi> Vp Vh ch F st g"
+  shows "(Vp,R) |\<in>| finite_socket_productions D \<Phi> F st g"
+proof -
+  let ?t = "(resolution_node_site nd,resolution_node_schema nd,last q,keep,Vp,Vh)"
+  have "fBex (resolution_nodes st) (\<lambda>nd'. resolution_node_position nd' = butlast q \<and>
+      resolution_node_site nd' = resolution_node_site nd \<and> resolution_node_schema nd' = resolution_node_schema nd)"
+    using nd unfolding fBex_member_iff by blast
+  moreover have "fBex (finite_frame_choices \<Phi>) (\<lambda>ch.
+      finite_socket_commitment_framed (resolution_declarations.truncate D) \<Phi> Vp Vh ch F st g \<and>
+      finite_call_framed (resolution_declarations.truncate D) \<Phi> Vp Vh ch F st g)"
+    using ch sc cn unfolding fBex_member_iff by blast
+  ultimately have "?t |\<in>| ffilter (\<lambda>(e',S,s,keep,Vp,Vh). q \<noteq> [] \<and> s = last q \<and> declared_production D e' S s \<noteq> None \<and>
+      fBex (resolution_nodes st) (\<lambda>nd. resolution_node_position nd = butlast q \<and>
+        resolution_node_site nd = e' \<and> resolution_node_schema nd = S) \<and>
+      fBex (finite_frame_choices \<Phi>) (\<lambda>ch.
+        finite_socket_commitment_framed (resolution_declarations.truncate D) \<Phi> Vp Vh ch F st g \<and>
+        finite_call_framed (resolution_declarations.truncate D) \<Phi> Vp Vh ch F st g)) (declared_sockets D)"
+    using tup qne R by simp
+  then have "(\<lambda>(e',S,s,keep,Vp,Vh). (Vp,the (declared_production D e' S s))) ?t |\<in>|
+      (\<lambda>(e',S,s,keep,Vp,Vh). (Vp,the (declared_production D e' S s))) |`| ffilter (\<lambda>(e',S,s,keep,Vp,Vh). q \<noteq> [] \<and>
+        s = last q \<and> declared_production D e' S s \<noteq> None \<and>
+        fBex (resolution_nodes st) (\<lambda>nd. resolution_node_position nd = butlast q \<and>
+          resolution_node_site nd = e' \<and> resolution_node_schema nd = S) \<and>
+        fBex (finite_frame_choices \<Phi>) (\<lambda>ch.
+          finite_socket_commitment_framed (resolution_declarations.truncate D) \<Phi> Vp Vh ch F st g \<and>
+          finite_call_framed (resolution_declarations.truncate D) \<Phi> Vp Vh ch F st g)) (declared_sockets D)"
+    by (rule fimageI)
+  then show ?thesis using R by (simp add: finite_socket_productions_def g)
+qed
+
 lemma finite_socket_productions_committed:
   assumes "VR |\<in>| finite_socket_productions D \<Phi> F st g"
   shows "resolution_is_call g \<and> (\<exists>Vh ch. ch |\<in>| finite_frame_choices \<Phi> \<and>
@@ -156,6 +202,19 @@ definition finite_registration_production ::
     | Some xy \<Rightarrow> (case resolution_view_pattern V (finite_schema_conclusion (registration_schema R)) of None \<Rightarrow> None
       | Some cc \<Rightarrow> finite_registration_value P n R (finite_matching_bindings (fst cc) (finite_residual_term (fst xy)))))"
 
+text \<open>
+  A registration applies at a call goal (task 767) when it stands at the goal's callee and the registered head's input
+  at the view, read at the bindings matched against the goal's viewed input, is that input.
+\<close>
+
+definition finite_registration_applies ::
+    "nat resolution_view \<Rightarrow> ('a,'s,'d,'v) collection_registration \<Rightarrow> 'd \<Rightarrow>
+      ('s,'a) resolution_variable finite_term_pattern \<Rightarrow> bool" where
+  "finite_registration_applies V R e p \<longleftrightarrow> registration_site R = e \<and> (case resolution_view_pattern V p of None \<Rightarrow> False
+    | Some xy \<Rightarrow> (case resolution_view_pattern V (finite_schema_conclusion (registration_schema R)) of None \<Rightarrow> False
+      | Some cc \<Rightarrow> resolution_value (finite_binding_valuation (finite_matching_bindings (fst cc) (finite_residual_term (fst xy))))
+          (fst cc) = finite_residual_term (fst xy)))"
+
 definition finite_narrowed_production ::
     "('a,'s::linorder,'d,'c) finite_schema_system \<Rightarrow> nat \<Rightarrow> ('a,'s,'d,'v) produced_declarations \<Rightarrow>
       ('a,'s,'d) resolution_frames \<Rightarrow> 's list option \<Rightarrow> ('a,'s,'d,'c) resolution_state \<Rightarrow>
@@ -164,7 +223,10 @@ definition finite_narrowed_production ::
       Resolution_Call_Goal q r e p \<Rightarrow>
         if commit_call (finite_framed_commitment (resolution_declarations.truncate D) \<Phi>) F st g then
           (case finite_singleton_option (finite_socket_productions D \<Phi> F st g) of None \<Rightarrow> None
-          | Some VR \<Rightarrow> map_option (\<lambda>v. (fst VR,v)) (finite_registration_production P n (fst VR) (snd VR) p))
+          | Some VR \<Rightarrow> if finite_registration_applies (fst VR) (snd VR) e p then
+              (case finite_registration_production P n (fst VR) (snd VR) p of None \<Rightarrow> None
+              | Some v \<Rightarrow> if finite_production_substitution (fst VR) p v = None then None else Some (fst VR,v))
+            else None)
         else None
     | Resolution_Material_Goal q r M \<Rightarrow> None)"
 
@@ -172,10 +234,14 @@ definition finite_narrowed_commitment ::
     "('a,'s::linorder,'d,'c) finite_schema_system \<Rightarrow> nat \<Rightarrow> ('a,'s,'d,'v) produced_declarations \<Rightarrow>
       ('a,'s,'d) resolution_frames \<Rightarrow> ('a,'s,'d,'c) resolution_commitment" where
   "finite_narrowed_commitment P n D \<Phi> = (finite_framed_commitment (resolution_declarations.truncate D) \<Phi>)
-    \<lparr>commit_production := finite_narrowed_production P n D \<Phi>\<rparr>"
+    \<lparr>commit_call := (\<lambda>F st g. commit_call (finite_framed_commitment (resolution_declarations.truncate D) \<Phi>) F st g \<and>
+       (finite_socket_productions D \<Phi> F st g = {||} \<or> finite_narrowed_production P n D \<Phi> F st g \<noteq> None)),
+     commit_production := finite_narrowed_production P n D \<Phi>\<rparr>"
 
 lemma finite_narrowed_commitment_fields [simp]:
-  "commit_call (finite_narrowed_commitment P n D \<Phi>) = commit_call (finite_framed_commitment (resolution_declarations.truncate D) \<Phi>)"
+  "commit_call (finite_narrowed_commitment P n D \<Phi>) = (\<lambda>F st g.
+    commit_call (finite_framed_commitment (resolution_declarations.truncate D) \<Phi>) F st g \<and>
+    (finite_socket_productions D \<Phi> F st g = {||} \<or> finite_narrowed_production P n D \<Phi> F st g \<noteq> None))"
   "commit_material (finite_narrowed_commitment P n D \<Phi>) =
     commit_material (finite_framed_commitment (resolution_declarations.truncate D) \<Phi>)"
   "commit_production (finite_narrowed_commitment P n D \<Phi>) = finite_narrowed_production P n D \<Phi>"
@@ -187,6 +253,47 @@ lemma finite_narrowed_production_committed:
   assumes "finite_narrowed_production P n D \<Phi> F st g \<noteq> None"
   shows "commit_call (finite_narrowed_commitment P n D \<Phi>) F st g" "resolution_is_call g"
   using assms by (auto simp: finite_narrowed_production_def split: resolution_goal.splits if_splits)
+
+text \<open>
+  Where the production is defined it applies: the goal is a call the framed test commits, the production met is one,
+  its registration applies at the goal, its value is defined at the bound and the goal's viewed output matches it.
+\<close>
+
+lemma finite_narrowed_production_some:
+  assumes "finite_narrowed_production P n D \<Phi> F st g = Some Vv"
+  obtains q r e p VR v where "g = Resolution_Call_Goal q r e p"
+    "commit_call (finite_framed_commitment (resolution_declarations.truncate D) \<Phi>) F st g"
+    "finite_singleton_option (finite_socket_productions D \<Phi> F st g) = Some VR"
+    "finite_registration_applies (fst VR) (snd VR) e p"
+    "finite_registration_production P n (fst VR) (snd VR) p = Some v" "Vv = (fst VR,v)"
+    "finite_production_substitution (fst VR) p v \<noteq> None"
+proof (cases g)
+  case (Resolution_Call_Goal q r e p)
+  show thesis
+  proof (cases "finite_singleton_option (finite_socket_productions D \<Phi> F st g)")
+    case None
+    then show thesis using assms Resolution_Call_Goal by (simp add: finite_narrowed_production_def split: if_splits)
+  next
+    case (Some VR)
+    show thesis
+    proof (cases "finite_registration_production P n (fst VR) (snd VR) p")
+      case None
+      then show thesis using assms Resolution_Call_Goal Some
+        by (simp add: finite_narrowed_production_def split: if_splits)
+    next
+      case (Some v)
+      have "commit_call (finite_framed_commitment (resolution_declarations.truncate D) \<Phi>) F st g"
+        "finite_registration_applies (fst VR) (snd VR) e p" "Vv = (fst VR,v)"
+        "finite_production_substitution (fst VR) p v \<noteq> None"
+        using assms Resolution_Call_Goal \<open>finite_singleton_option _ = Some VR\<close> Some
+        by (simp_all add: finite_narrowed_production_def split: if_splits)
+      then show thesis using that Resolution_Call_Goal \<open>finite_singleton_option _ = Some VR\<close> Some by blast
+    qed
+  qed
+next
+  case (Resolution_Material_Goal q r M)
+  then show thesis using assms by (simp add: finite_narrowed_production_def)
+qed
 
 section \<open>At a record declaring no production\<close>
 
@@ -214,7 +321,8 @@ theorem finite_narrowed_commitment_unproduced:
 proof -
   have prod: "finite_narrowed_production P n D \<Phi> = (\<lambda>F st g. None)"
     by (intro ext) (rule finite_narrowed_production_none[OF none])
-  show ?thesis by (simp add: finite_narrowed_commitment_def finite_framed_commitment_def prod)
+  show ?thesis
+    by (simp add: finite_narrowed_commitment_def finite_framed_commitment_def prod finite_socket_productions_none[OF none])
 qed
 
 corollary finite_unproduced_commitment:

@@ -1,5 +1,5 @@
 theory Development_Rooted_Registrations
-  imports Development_Given_Installation Development_Given_Registrations
+  imports Development_Given_Extensions Development_Given_Registrations
 begin
 
 text \<open>
@@ -12,7 +12,11 @@ text \<open>
   mean there what the given's readers mean (@{thm [source] given_readers_meanings}, @{thm [source] given_readers_listing}): 82 and 113, guard
   entries, through @{thm [source] given_rooted_guard_meaning}, the others through the agreement. The clauses at 77
   and 392 are the given's readers' there, matched as @{thm [source] given_readers_registered_clauses} matches them; no
-  clause stands at 525 or 561. No completeness is carried from another program.
+  clause stands at 525 or 561. The registrations' completeness is discharged once, by agreement with the given's
+  readers (@{text readers_agreement_registrations_complete}), of which the rooted readers, the asked program and the
+  first request's program are instances. The placed course of every extension of the given's readers, a construction
+  relocated to its placed program, is stated here, in @{text given_readers_extension}, so that
+  \<open>Development_Given_Extensions\<close> stays below the resolver's line.
 \<close>
 
 section \<open>The rooted readers agree with the given's readers\<close>
@@ -20,17 +24,7 @@ section \<open>The rooted readers agree with the given's readers\<close>
 lemma given_rooted_guard_agreement:
   "systems_agree_on guard_readers_system given_rooted_readers_system
     (system_definitions guard_readers_system\<inter>system_definitions given_rooted_readers_system)"
-proof -
-  let ?U="system_definitions guard_readers_system\<inter>system_definitions given_rooted_readers_system"
-  have rooted: "systems_agree_on given_program_system given_rooted_readers_system
-      (system_definitions given_rooted_readers_system)"
-    unfolding given_rooted_readers_system_def by (rule rooted_system_agreement)
-  have "systems_agree_on guard_readers_system given_program_system ?U"
-    by (rule systems_agree_on_subdomain[OF guard_program_agreement]) blast
-  moreover have "systems_agree_on given_program_system given_rooted_readers_system ?U"
-    by (rule systems_agree_on_subdomain[OF rooted]) blast
-  ultimately show ?thesis by (rule systems_agree_on_transitive)
-qed
+  unfolding given_rooted_readers_system_def by (rule rooted_intersection_agreement[OF guard_program_agreement])
 
 lemma given_rooted_readers_meaning_at:
   assumes "d\<in>system_definitions guard_readers_system" "d\<in>system_definitions given_rooted_readers_system"
@@ -39,28 +33,6 @@ lemma given_rooted_readers_meaning_at:
     given_rooted_guard_agreement assms] by simp
 
 section \<open>The sites the registrations read stand in the rooted readers\<close>
-
-text \<open>The given's readers' single clauses at 77 and 392, read from the readers' own systems.\<close>
-
-lemma guard_closure_clause:
-  "((77,c),T)\<in>system_clauses guard_readers_system \<longleftrightarrow> c=0 \<and> T=package_closure_admission_schema"
-proof -
-  have "77\<in>system_definitions package_closure_admission_system" by simp
-  then have "((77,c),T)\<in>system_clauses package_closure_admission_system \<longleftrightarrow>
-      ((77,c),T)\<in>system_clauses guard_readers_system"
-    using whole_agreement_transitive[OF given_reader_agreements(2) additions_guard_agreement]
-    unfolding systems_agree_on_def by blast
-  then show ?thesis by simp
-qed
-
-lemma guard_additions_clause:
-  "((392,c),T)\<in>system_clauses guard_readers_system \<longleftrightarrow> c=0 \<and> T=package_additions_schema 391"
-proof -
-  have "392\<in>system_definitions use_additions_system" by simp
-  then have "((392,c),T)\<in>system_clauses use_additions_system \<longleftrightarrow> ((392,c),T)\<in>system_clauses guard_readers_system"
-    using additions_guard_agreement unfolding systems_agree_on_def by blast
-  then show ?thesis by (simp only: use_additions_families(3))
-qed
 
 text \<open>
   A callee of a clause the given's rooted readers hold is one of their definitions (their formation); there, their
@@ -231,13 +203,40 @@ lemma given_rooted_readers_meanings:
   by simp_all
 
 lemma given_rooted_readers_listing: "context_list_rule_relation (positive_meaning given_rooted_readers_system) 390 391"
+  by (rule read_meanings_listing, rule given_rooted_read_meaning) auto
+
+section \<open>The registrations complete by agreement\<close>
+
+text \<open>
+  The one discharge by agreement: a finite program agreeing with the given's readers on their common definitions
+  (which are closed under their callees, @{thm [source] systems_agree_on_intersection_closed}) and holding the read
+  sites means there what the given's readers mean (@{thm [source] positive_meaning_shared_definitions}), so the
+  registrations are complete at it by their discharge at the given's readers
+  (@{thm [source] read_meanings_registrations_complete}). The read sites stand in the given's readers
+  (@{thm [source] given_rooted_read_sites}). Every program extending the given's readers is an instance: the rooted
+  readers below, the asked program and the first request's program.
+\<close>
+
+theorem readers_agreement_registrations_complete:
+  fixes P :: "(nat,nat,nat,nat) finite_schema_system"
+  assumes formed: "schema_system_formed (decode_finite_system P)"
+    and agree: "systems_agree_on guard_readers_system (decode_finite_system P)
+      (system_definitions guard_readers_system\<inter>system_definitions (decode_finite_system P))"
+    and sites: "{5,12,47,76,82,113,390,391}\<subseteq>system_definitions (decode_finite_system P)"
+  shows "finite_registration_complete P n bound_witness_registration"
+    and "finite_registration_complete P n (additions_witness_registration 392 391)"
+    and "finite_registration_complete P n merge_witness_registration"
 proof -
-  have e: "(390,t)\<in>positive_meaning given_rooted_readers_system \<longleftrightarrow> (390,t)\<in>positive_meaning guard_readers_system"
-    "(391,t)\<in>positive_meaning given_rooted_readers_system \<longleftrightarrow> (391,t)\<in>positive_meaning guard_readers_system" for t
-    using given_rooted_read_meaning[of 390 t] given_rooted_read_meaning[of 391 t]
-    by simp_all
-  show ?thesis
-    by (rule context_list_rule_relation.intro) (unfold e, rule context_list_rule_relation.equation[OF given_readers_listing])
+  have read: "(d,t)\<in>positive_meaning (decode_finite_system P) \<longleftrightarrow> (d,t)\<in>positive_meaning guard_readers_system"
+    if "d\<in>{5,12,47,76,82,113,390,391}" for d t
+    using positive_meaning_shared_definitions[OF guard_readers_formed formed agree
+      given_rooted_read_sites(2)[OF that] subsetD[OF sites that]] by simp
+  show "finite_registration_complete P n bound_witness_registration"
+    by (rule read_meanings_registrations_complete(1)) (rule read, auto)
+  show "finite_registration_complete P n (additions_witness_registration 392 391)"
+    by (rule read_meanings_registrations_complete(3)[OF _ read_meanings_listing]; rule read; auto)
+  show "finite_registration_complete P n merge_witness_registration"
+    by (rule read_meanings_registrations_complete(2)) (rule read, auto)
 qed
 
 section \<open>The registrations complete there\<close>
@@ -246,12 +245,14 @@ theorem given_rooted_registrations_complete:
   "finite_registration_complete finite_rooted_given_readers n bound_witness_registration"
   "finite_registration_complete finite_rooted_given_readers n (additions_witness_registration 392 391)"
 proof -
+  have sites: "{5,12,47,76,82,113,390,391}\<subseteq>system_definitions given_rooted_readers_system"
+    using given_rooted_read_sites(1) by blast
+  note by_agreement=readers_agreement_registrations_complete[where P=finite_rooted_given_readers,
+    unfolded finite_rooted_given_readers_exact, OF given_rooted_readers_formed given_rooted_guard_agreement sites]
   show "finite_registration_complete finite_rooted_given_readers n bound_witness_registration"
-    by (rule bound_witness_registration_complete)
-      (simp_all only: finite_rooted_given_readers_exact given_rooted_readers_meanings)
+    by (rule by_agreement(1))
   show "finite_registration_complete finite_rooted_given_readers n (additions_witness_registration 392 391)"
-    by (rule additions_witness_registration_complete[where element_site=390])
-      (simp_all only: finite_rooted_given_readers_exact given_rooted_readers_meanings given_rooted_readers_listing)
+    by (rule by_agreement(2))
 qed
 
 section \<open>The clauses the registrations name\<close>
@@ -260,13 +261,8 @@ lemma given_rooted_finite_clauses:
   assumes "d\<in>system_definitions guard_readers_system" "d\<in>system_definitions given_rooted_readers_system"
   shows "((d,c),S) |\<in>| finite_system_clauses finite_rooted_given_readers \<longleftrightarrow>
     ((d,c),S) |\<in>| finite_system_clauses finite_given_readers"
-proof -
-  have "((d,c),decode_finite_schema S)\<in>system_clauses given_rooted_readers_system \<longleftrightarrow>
-      ((d,c),decode_finite_schema S)\<in>system_clauses guard_readers_system"
-    using given_rooted_guard_agreement assms unfolding systems_agree_on_def by blast
-  then show ?thesis
-    by (simp only: finite_system_clause_decoded finite_rooted_given_readers_exact finite_given_readers_exact)
-qed
+  by (rule readers_agreement_finite_clauses[where P=finite_rooted_given_readers,
+    unfolded finite_rooted_given_readers_exact, OF given_rooted_guard_agreement assms])
 
 theorem given_rooted_registered_clauses:
   "((77,c),S) |\<in>| finite_system_clauses finite_rooted_given_readers \<longleftrightarrow>
@@ -323,5 +319,44 @@ lemmas given_rooted_verdict_exact =
 
 lemmas given_rooted_demand_exact =
   finite_complete_demand_exact[OF finite_collection_construction_formed given_rooted_construction_complete]
+
+section \<open>The placed course of every extension of the given's readers\<close>
+
+text \<open>
+  A construction complete at the program is relocated by the placement (@{const finite_relocated_construction}) and is
+  complete at the placed program, every variable it registers naming a clause there: the mapped extension's relocation
+  (@{thm [source] finite_mapped_native_extension.relocated_construction_complete},
+  @{thm [source] finite_mapped_native_extension.relocated_registered_clause}) at the installation
+  (@{thm [source] given_readers_extension.mapped_extension}), stated once for every extension of the given's readers,
+  and the exact forms at the relocated construction with its formation carried from the construction's
+  (@{thm [source] finite_relocated_construction_formed}). Each installation's placed course is this one's instance.
+\<close>
+
+context given_readers_extension
+begin
+
+lemma relocated_complete:
+  assumes "finite_construction_complete \<kappa> Q"
+  shows "finite_construction_complete (finite_relocated_construction installed_placement Q \<kappa>)
+    (finite_rename_system installed_placement Q)"
+  unfolding installed_placement_def
+  by (rule finite_mapped_native_extension.relocated_construction_complete[OF mapped_extension assms])
+
+lemma relocated_clause:
+  assumes "a |\<in>| witness_registered (finite_relocated_construction installed_placement Q \<kappa>) e T"
+  shows "\<exists>c. ((e,c),T) |\<in>| finite_system_clauses (finite_rename_system installed_placement Q)"
+  using assms unfolding installed_placement_def
+  by (rule finite_mapped_native_extension.relocated_registered_clause[OF mapped_extension])
+
+lemmas placed_resolution_refutation_exact =
+  finite_complete_resolution_refutation_exact[OF finite_relocated_construction_formed relocated_complete]
+
+lemmas placed_verdict_exact =
+  finite_complete_verdict_exact[OF finite_relocated_construction_formed relocated_complete]
+
+lemmas placed_demand_exact =
+  finite_complete_demand_exact[OF finite_relocated_construction_formed relocated_complete]
+
+end
 
 end

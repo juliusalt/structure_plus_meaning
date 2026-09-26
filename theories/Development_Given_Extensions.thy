@@ -61,6 +61,22 @@ proof -
     by (rule systems_agree_on_transitive[OF rooted_agreement_transfer[OF agreement] right])
 qed
 
+text \<open>
+  A program agreeing with another on its whole domain agrees with every rooting of the other on their common
+  definitions: the rooted program agrees with its source on everything it holds (@{thm [source] rooted_system_agreement}).
+\<close>
+
+lemma rooted_intersection_agreement:
+  assumes agreement: "systems_agree_on P J (system_definitions P)"
+  shows "systems_agree_on P (rooted_system J R) (system_definitions P\<inter>system_definitions (rooted_system J R))"
+proof -
+  have "systems_agree_on P J (system_definitions P\<inter>system_definitions (rooted_system J R))"
+    by (rule systems_agree_on_subdomain[OF agreement]) blast
+  moreover have "systems_agree_on J (rooted_system J R) (system_definitions P\<inter>system_definitions (rooted_system J R))"
+    by (rule systems_agree_on_subdomain[OF rooted_system_agreement]) blast
+  ultimately show ?thesis by (rule systems_agree_on_transitive)
+qed
+
 text \<open>The same view added at a definition fresh in two programs keeps their agreement, and extends it to the view.\<close>
 
 lemma view_extension_agreement:
@@ -129,6 +145,14 @@ lemma mapped_extension:
 sublocale install: finite_mapped_native_extension given_environment finite_rooted_given_readers Q
     "snd given_readers_installed" "[]" given_readers_program given_readers_placement
   by (rule mapped_extension)
+
+text \<open>
+  The locale's predicate at the program, so that an interpretation reaches the locale's facts stated in theories not
+  below it (the placed course, \<open>Development_Rooted_Registrations\<close>) through their global forms.
+\<close>
+
+lemma readers_extension: "given_readers_extension Q"
+  by (rule given_readers_extension.intro[OF target agreement])
 
 lemma target_formed: "schema_system_formed (decode_finite_system Q)"
   using target by (simp only: finite_system_formed_correct)
@@ -274,6 +298,28 @@ proof -
       installed_placement d\<in>environment_positions (decode_finite_environment installed_environment)"
     using image by blast
 qed
+
+section \<open>The placed program\<close>
+
+text \<open>
+  The program the installation places is the program renamed by the placement,
+  @{term "finite_rename_system installed_placement Q"}; each definition means there what it means in the program, and
+  so what the installed package means at its placed site (@{thm [source] installed_meaning}). A construction relocated
+  to it, the rest of the placed course, is stated with the registrations (\<open>Development_Rooted_Registrations\<close>), above
+  the resolver's line this theory stays below.
+\<close>
+
+lemma placed_meaning:
+  assumes "d\<in>system_definitions (decode_finite_system Q)"
+  shows "(installed_placement d,t)\<in>positive_meaning (decode_finite_system (finite_rename_system installed_placement Q))
+    \<longleftrightarrow> (d,t)\<in>positive_meaning (decode_finite_system Q)"
+  unfolding finite_rename_system_correct by (rule renamed_system_meaning_at[OF target_formed installation(5) assms])
+
+lemma placed_installed_meaning:
+  assumes "d\<in>system_definitions (decode_finite_system Q)"
+  shows "(installed_placement d,t)\<in>positive_meaning (decode_finite_system (finite_rename_system installed_placement Q))
+    \<longleftrightarrow> (installed_placement d,t)\<in>positive_meaning installed_program"
+  using placed_meaning[OF assms] installed_meaning[OF assms] by simp
 
 end
 

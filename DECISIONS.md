@@ -16985,6 +16985,81 @@ source the socket commits and keeps one answer (one certificate, R4's two); with
 is premise-only and bound, the test refuses the commitment, and both answers stay (two). Correction (7)'s three
 counterexamples are not yet controls: a later controls task takes them.]
 
+[Corrected by task 686, a design, from #683's "A fact of R5's tests" and the planner's decision that the route needs
+#585's 32 committed at 79.0/1. (9) R5c′'s narrowing (#589) asks more than the exchange needs, and it keeps a socket whose
+input a sibling binds from ever committing: a socket commits only with its input ground
+(`finite_declared_commitment_input_ground`) while every other premise and material premise of its parent clause is
+pending (`finite_siblings_pending`, `finite_children_instances`), so under any selection such a socket is searched
+plainly. At the given it is 32 at 79.0/1: 79.0 ((x0,x1),(x2,x3)) :- 37(x0,(x1,x4)), 32((x4,x2),x5), 59(x5,x6),
+78((x0,x1),x7), 51(x7,x6), 59(x7,x3), premise-only x4–x7. 32's input holds the artifact x4 that 37 returns, and its rows
+x5 are held by 59, a carrier and no consumer, so neither the socket test nor the direct test commits it, and 79's
+committed sub-search enumerates the orders of 47 root rows at a refusal (47! ≈ 2.6×10⁵⁹). What R5c′'s counterexamples
+change is a variable a resolved sibling fixed and the socket's obligation does not keep: at c(X) :- r(Z), prod(Pair X Y),
+cons(Pair Z Y), r fixes Z, which prod's obligation, keeping X alone, may change. The obligation (`socket_discharged`)
+keeps two parts of the parent's instance at every new answer — the socket premise's input (xi; a material premise's
+source) and the head's input (`head_kept` at either flag) — and a sibling holding only those is fixed by it too.
+- *The socket's inputs*: the variables of its premise's input read at the premise's view (a call premise's pi part, xi
+  at the identity view; a material premise's source) and of the head's input read at the head's view (what `head_kept`
+  keeps at either flag: ci at the identity view, the whole conclusion where it is no pair): `socket_inputs S s` at the
+  clause, `finite_socket_inputs S s` at a finite schema, equal under decoding; `socket_inputs_kept`: the instance the
+  obligation gives agrees with the old one on them (`socket_discharged`, `head_kept_input`, `evaluate_pattern_agree`).
+  The kept head's output is not among them: `head_kept` keeps it at one flag only, and the set is read by a condition
+  that reads no flag.
+- *Closed*: a premise or material premise of the parent node at key s′ is closed when nothing is pending at or under its
+  position (`resolution_pending_under st (resolution_node_position nd @ [s′]) = {||}`, R3b's): a node stands there with
+  its subtree closed, or, after F3, its ground call was reused from a solved node. ("Closed", not "settled": F1's class
+  (i) is "settled at once".)
+- *The test*: at a socket at key s of node nd, β = `finite_node_binding nd`, two conditions take the place of the three it
+  read. `finite_children_closed st nd s` replaces `finite_children_instances` in `finite_call_narrowed` and
+  `finite_material_narrowed`: every premise and material premise of nd's clause is pending as its instance under β, or —
+  at a key other than s — is closed, its instance under β ground and its variables among the socket's inputs; every
+  pending goal whose parent position is nd's is one of those instances. `finite_premise_only_inputs st nd s` replaces
+  `finite_siblings_pending ∧ finite_premise_only_free` in `finite_socket_kept` and `finite_socket_free`: every
+  premise-only variable is free (bound to its own variable, held only by nd's pending children) or is among the socket's
+  inputs with a ground binding; the sibling condition is `finite_children_closed`'s alone. The strict conditions imply
+  them (every closed disjunct unused), so every commitment the test made it still makes, and no declaration still commits
+  nothing (`finite_declared_commitment_none`); what it adds is a socket whose closed siblings hold only its inputs.
+  `finite_declared_commitment_input_ground` stands. One kind, call and material sockets alike: the condition is read by
+  both parts of the test and discharged over the one parent context.
+- *#565's premise at those states*, per state and with its statement unchanged. The parent's instance under the support is
+  true: its pending premises by the support; a closed call premise's ground instance by the subtree acceptance of the
+  node at its position (`finite_node_proof_subtree_accepted`, sound by `schema_proof_sound`; after F3, of the solved node
+  it reuses); a closed material premise's by the parent's linkage (`resolution_node_linked`, a done material premise
+  satisfied) — so the obligation applies. Its new instance agrees with the old on the socket's inputs, so every closed
+  sibling's instance, every premise-only variable among the inputs and every ground value they put into pending goals
+  keep their values; the pending siblings are the new instance's premises (`finite_parent_exchange_holds`); the variables
+  the exchange changes are the free premise-only variables, held only by the pending children, and at a free socket the
+  parent's output, held as `finite_socket_holders` says; nothing is pending under a closed sibling. So
+  `finite_exchange_context` holds as at R5c′'s states, and `finite_committed_found_supported` gives a kept state supported
+  with every node barred. #565's note (exactness resting on another branch of an earlier-resolved sibling) does not arise:
+  the only siblings resolved before the commitment are those the obligation fixes.
+- *Still refused*: R5c's sibling control and R5c′'s order control (r closed, Z not among prod's inputs {X}); #593's (ii)
+  and the premise-only control (Z constructed or bound, premise-only and not among prod's inputs); correction (7)'s three
+  (the pending children's instances, `finite_premise_only_unshared` and `finite_input_output_apart` are still checked). A
+  closed sibling with a non-ground instance (at a kept socket whose head input its caller leaves open) is refused: its
+  truth would need acceptance at every grounding of an inner node, which the subtree acceptance does not state, and no use
+  asks it.
+- *At 79.0/1*: 37's variables x0, x1, x4 are among 32's premise input (x4,x2) and 79's head input ((x0,x1),x2). Once 37 is
+  closed — committed directly, its sub-search closing its subtree, or searched plainly to its end — 32((A,r),x5) commits
+  at the free socket, 79's node the focus root wherever 79 is committed (directly at 80, 392 and 525, as a kept socket at
+  83.0/1), its siblings 59, 78, 51 and 59 pending; the obligation, carried by 59 and 51 and consumed by 78 up to w, is
+  #585's and #601's, unchanged. 32's other sockets whose input is the artifact a sibling 37 returns commit the same way
+  where that sibling holds only the head's input; 12 at 37.0/2 stays committed directly.
+- *With F1 and F3* (#683): F1's priority reads `commit_call` and `commit_material`, so a socket whose closed siblings hold
+  only its inputs is a priority goal from the state they close in, and nothing of F1 changes; a sibling holding more,
+  resolved first, still forecloses the socket (searched plainly, exact by R4), and the priority keeps the socket first
+  wherever its test holds. F3's reuse closes a ground sibling with no node at its position; the truth of its instance is
+  F3's linkage's, and F3, landing after, extends the closed-premise truth lemma to its third disjunct, its statement
+  unchanged.
+- *Weighed and not taken*: a second socket kind for a resolved input — the obligation and the exchange are the socket's,
+  only the state condition differs; 59 declared a consumer — it carries the class and is not invariant; a direct
+  commitment through carriers — #585's (b) rejected it, the socket's clause-level obligation stating that exchange; the
+  closed sibling required to be a committed producer (37) — narrower, and closedness is what the argument reads; the kept
+  head's output among the inputs — kept at one flag only.
+The builds (task 686's `result.md`): the notions, the parent context over them and the material discharge's closed case
+in #672; the socket kinds' closed case, the test's change and a control in #674; the instance at 79.0/1 in #601. No build
+is added and the chain is unchanged.]
+
 Presentation freedom makes a false call expensive: a true call is resolved at the first presentation its producer
 yields, a false one only after every presentation (n! root lists of n roots), so a refusal past a few elements reaches
 the bound and is unresolved. The commitment (R5): a site declared *functional up to a presentation class* at its

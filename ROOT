@@ -1902,6 +1902,7 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Development_Given_Extensions
     Development_First_Problem_Asked
     Development_First_Request_Program
+    Development_First_Request_Registrations
     Development_Native_State
     Development_First_Problem
     Development_Bounded_Recording_Execution

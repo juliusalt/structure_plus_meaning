@@ -1,6 +1,6 @@
 theory Development_Given_Carried_Declarations
-  imports Factor_Artifact_Citation_Declarations Development_Given_Declarations Development_Given_Extensions
-    Development_Given_Registrations
+  imports Factor_Artifact_Citation_Declarations Factor_Row_Selection_Socket_Declarations
+    Development_Given_Declarations Development_Given_Extensions Development_Given_Registrations
 begin
 
 text \<open>
@@ -14,7 +14,10 @@ text \<open>
   the one transfer by agreement (@{text declarations_agree_read_discharged}) at their common definitions (its instance
   @{text declarations_shared_discharged}): a consumer record's producer site need not stand in the consumer's own
   system (37 above 34, 35 and 54 on the lineage, 42 above 41, 54 above 6 and 48), and the transfer reads only the sites
-  the obligations read. No record is discharged again, and no clause of any program changes.
+  the obligations read. No record is discharged again, and no clause of any program changes. 32's kept sockets
+  (@{text Factor_Row_Value_Socket_Declarations} at 71, 75 and 505; @{text Factor_Row_Selection_Socket_Declarations} at
+  81, 104, 105 and 119) are carried the same way from the systems where their clauses stand: the payload audit's,
+  a part of the given's readers, and views of the package and replay readers the given's readers extend.
 \<close>
 
 section \<open>Each notion's system agrees with the given's readers on its whole domain\<close>
@@ -178,6 +181,45 @@ lemmas guard_admission_agreement = whole_agreement_transitive[OF lineage_segment
 lemmas guard_artifact_agreement = whole_agreement_transitive[OF lineage_segments(3) guard_admission_agreement]
 lemmas guard_comparison_agreement = whole_agreement_transitive[OF lineage_segments(2) guard_artifact_agreement]
 lemmas guard_bag_agreement = whole_agreement_transitive[OF lineage_segments(1) guard_comparison_agreement]
+
+text \<open>
+  The systems of 32's kept sockets: the payload audit is a part of the given's readers
+  (@{thm [source] readers_agreement}); the clause reading and the retention admission agree with the additions'
+  system (@{thm [source] given_reader_agreements}); the package slot reading and its list lie below the retention
+  admission, the definition slot reading below the package slot reading
+  (@{thm [source] judgment_retention_slot_agreement}) and the schema slot reading below the definition slot reading,
+  each a chain of views.
+\<close>
+
+lemma guard_audit_agreement:
+  "systems_agree_on payload_audit_system guard_readers_system (system_definitions payload_audit_system)"
+  unfolding guard_readers_system_def
+  by (rule system_union_agree_right[OF use_additions_system_formed readers_agreement])
+
+lemma reader_segments:
+  "systems_agree_on package_slot_reading_system package_retention_admission_system
+    (system_definitions package_slot_reading_system)"
+  "systems_agree_on package_slot_list_system package_retention_admission_system
+    (system_definitions package_slot_list_system)"
+  "systems_agree_on schema_slot_reading_system definition_slot_reading_system
+    (system_definitions schema_slot_reading_system)"
+  subgoal by (simp add: systems_agree_on_added package_retention_admission_system_def package_slot_list_system_def
+    package_source_list_system_def)
+  subgoal by (simp add: systems_agree_on_added package_retention_admission_system_def)
+  subgoal by (simp add: systems_agree_on_added definition_slot_reading_system_def)
+  done
+
+lemmas guard_clause_reading_agreement =
+  whole_agreement_transitive[OF given_reader_agreements(5) additions_guard_agreement]
+lemmas guard_package_retention_agreement =
+  whole_agreement_transitive[OF given_reader_agreements(9) additions_guard_agreement]
+lemmas guard_package_slot_agreement =
+  whole_agreement_transitive[OF reader_segments(1) guard_package_retention_agreement]
+lemmas guard_package_slot_list_agreement =
+  whole_agreement_transitive[OF reader_segments(2) guard_package_retention_agreement]
+lemmas guard_definition_slot_agreement =
+  whole_agreement_transitive[OF judgment_retention_slot_agreement guard_package_slot_agreement]
+lemmas guard_schema_slot_agreement = whole_agreement_transitive[OF reader_segments(3) guard_definition_slot_agreement]
 
 section \<open>A record discharged at its notion's system, carried to the given's programs\<close>
 
@@ -519,6 +561,67 @@ lemma given_notion_instantiation_binder: "given_notion_discharged instantiation_
   apply (auto simp: instantiation_binder_declarations_def )
   done
 
+text \<open>
+  32's kept sockets: each record holds one socket and no producer or consumer, discharged at the system where its
+  clause stands.
+\<close>
+
+lemma given_notion_schema_family_socket:
+  "given_notion_discharged schema_family_socket_record given_declarations_correspondence"
+  apply (rule given_notion_dischargedI[OF schema_family_admission_system_formed guard_schema_family_agreement _ _
+    schema_family_socket_record_discharged])
+  apply (auto simp: schema_family_socket_record_def)[4]
+  apply (auto simp: schema_family_socket_record_def schema_family_socket_decoded)
+  done
+
+lemma given_notion_callee_inclusion_socket:
+  "given_notion_discharged callee_inclusion_socket_record given_declarations_correspondence"
+  apply (rule given_notion_dischargedI[OF definition_callee_inclusion_system_formed
+    guard_definition_callee_inclusion_agreement _ _ callee_inclusion_socket_record_discharged])
+  apply (auto simp: callee_inclusion_socket_record_def)[4]
+  apply (auto simp: callee_inclusion_socket_record_def callee_inclusion_socket_decoded)
+  done
+
+lemma given_notion_payload_audit_socket:
+  "given_notion_discharged payload_audit_socket_record given_declarations_correspondence"
+  apply (rule given_notion_dischargedI[OF payload_audit_system_formed guard_audit_agreement _ _
+    payload_audit_socket_record_discharged])
+  apply (auto simp: payload_audit_socket_record_def)[4]
+  apply (auto simp: payload_audit_socket_record_def payload_audit_socket_decoded)
+  done
+
+lemma given_notion_clause_reading_row:
+  "given_notion_discharged clause_reading_row_record given_declarations_correspondence"
+  apply (rule given_notion_dischargedI[OF definition_clause_reading_system_formed guard_clause_reading_agreement _ _
+    clause_reading_row_record_discharged])
+  apply (auto simp: clause_reading_row_record_def)[4]
+  apply (auto simp: clause_reading_row_record_def clause_reading_row_decoded)
+  done
+
+lemma given_notion_premise_slot_row:
+  "given_notion_discharged premise_slot_row_record given_declarations_correspondence"
+  apply (rule given_notion_dischargedI[OF schema_slot_reading_system_formed guard_schema_slot_agreement _ _
+    premise_slot_row_record_discharged])
+  apply (auto simp: premise_slot_row_record_def)[4]
+  apply (auto simp: premise_slot_row_record_def premise_slot_row_decoded schema_slot_reading_clauses_def)
+  done
+
+lemma given_notion_schema_slot_row:
+  "given_notion_discharged schema_slot_row_record given_declarations_correspondence"
+  apply (rule given_notion_dischargedI[OF definition_slot_reading_system_formed guard_definition_slot_agreement _ _
+    schema_slot_row_record_discharged])
+  apply (auto simp: schema_slot_row_record_def)[4]
+  apply (auto simp: schema_slot_row_record_def schema_slot_row_decoded definition_slot_reading_clauses_def)
+  done
+
+lemma given_notion_root_slot_row:
+  "given_notion_discharged root_slot_row_record given_declarations_correspondence"
+  apply (rule given_notion_dischargedI[OF package_slot_reading_system_formed guard_package_slot_agreement _ _
+    root_slot_row_record_discharged])
+  apply (auto simp: root_slot_row_record_def)[4]
+  apply (auto simp: root_slot_row_record_def root_slot_row_decoded package_slot_reading_clauses_def)
+  done
+
 lemmas given_records_discharged =
   given_notion_given_bag
   given_notion_given_artifact
@@ -548,10 +651,18 @@ lemmas given_records_discharged =
   given_notion_bag_binder
   given_notion_union_binder
   given_notion_instantiation_binder
+  given_notion_schema_family_socket
+  given_notion_callee_inclusion_socket
+  given_notion_payload_audit_socket
+  given_notion_clause_reading_row
+  given_notion_premise_slot_row
+  given_notion_schema_slot_row
+  given_notion_root_slot_row
 
 text \<open>
-  The given's record: R6's six pieces and R6b's records of the root family and of the artifacts and citations, one
-  union read by the committed search over the given's rooted readers.
+  The given's record: R6's six pieces, R6b's records of the root family and of the artifacts and citations, and 32's
+  kept sockets at 71, 75, 505, 81, 104, 105 and 119, one union read by the committed search over the given's rooted
+  readers.
 \<close>
 
 definition given_declarations :: "(nat,nat,nat) resolution_declarations" where
@@ -562,7 +673,9 @@ definition given_declarations :: "(nat,nat,nat) resolution_declarations" where
     headed_declarations, family_rows_declarations, record_artifact_declarations, target_artifact_declarations,
     admission_declarations, reading_declarations, location_declarations, resolution_site_declarations,
     interpretation_declarations, projection_target_declarations, binder_declarations, bag_binder_declarations,
-    union_binder_declarations, instantiation_binder_declarations]"
+    union_binder_declarations, instantiation_binder_declarations, schema_family_socket_record,
+    callee_inclusion_socket_record, payload_audit_socket_record, clause_reading_row_record, premise_slot_row_record,
+    schema_slot_row_record, root_slot_row_record]"
 
 theorem given_declarations_discharged:
   "declarations_discharged (positive_meaning given_program_system) given_declarations given_declarations_correspondence"

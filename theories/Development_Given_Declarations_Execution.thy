@@ -1,15 +1,19 @@
 theory Development_Given_Declarations_Execution
-  imports Development_Given_Carried_Declarations Native_Execution_Refinements
+  imports Development_Given_Frames Native_Execution_Refinements
 begin
 
 text \<open>
   The controls of the given's record (\<open>Development_Given_Carried_Declarations\<close>), each by one evaluation over the
   given's rooted readers, in a thin theory that no library theory imports.
 
-  The first lemma evaluates three calls under the committed resolution with the record: at 500 on a whole
-  artifact of five atoms it is resolved; at 10 on that artifact beside the list of its atoms in reverse order it is
-  resolved; at 10 beside a list missing one atom it is refuted. It states these three verdicts and nothing about
-  other calls.
+  The first lemma evaluates, in one evaluation, calls under the committed resolution with the record, its frames
+  (@{const given_narrowed_frames}) and a positive production bound: at 500 on a whole artifact of five atoms it is
+  resolved; at 10 on that artifact beside the list of its atoms in reverse order it is resolved; at 10 beside a list
+  missing one atom it is refuted. It states these verdicts and nothing about other calls.
+
+  The same evaluation checks the join's claim (DECISIONS.md, "The given's one record is a keyed join"): no socket of
+  the plain record stands at a key of 48's narrowed sockets, so the keyed filter keeps the plain record whole
+  (@{text given_plain_declarations_unkeyed}).
 
   The second evaluates, at 79 over a root family of five sites, the state R3's search reaches when it expands 79's one
   clause: each pending premise with its position, its callee, and whether it is a ground call, an independent goal
@@ -33,17 +37,31 @@ definition given_control_rows :: "local_address list \<Rightarrow> finite_factor
   "given_control_rows A = Finite_Pair (finite_data_list (map Finite_Payload A))
     (Finite_Pair (finite_data_list []) (Finite_Pair (finite_data_list []) (finite_data_list [])))"
 
-abbreviation given_control_resolution :: "nat \<Rightarrow> finite_factor_term \<Rightarrow> bool option" where
-  "given_control_resolution d t \<equiv> finite_resolution_verdict (finite_committed_resolution no_witness_construction
-    (finite_narrowed_commitment finite_rooted_given_readers 0 given_declarations {||}) finite_rooted_given_readers d t 40)"
+abbreviation given_control_resolution :: "nat \<Rightarrow> nat \<Rightarrow> finite_factor_term \<Rightarrow> bool option" where
+  "given_control_resolution n d t \<equiv> finite_resolution_verdict (finite_committed_resolution no_witness_construction
+    (finite_narrowed_commitment finite_rooted_given_readers 20 given_declarations given_narrowed_frames)
+    finite_rooted_given_readers d t n)"
 
 lemma given_declarations_control:
-  "given_control_resolution 500 (Finite_Target (Finite_Whole given_control_artifact)) = Some True \<and>
-   given_control_resolution 10 (Finite_Pair (Finite_Target (Finite_Whole given_control_artifact))
+  "given_control_resolution 40 500 (Finite_Target (Finite_Whole given_control_artifact)) = Some True \<and>
+   given_control_resolution 40 10 (Finite_Pair (Finite_Target (Finite_Whole given_control_artifact))
     (given_control_rows [[5],[4],[3],[2],[1]])) = Some True \<and>
-   given_control_resolution 10 (Finite_Pair (Finite_Target (Finite_Whole given_control_artifact))
-    (given_control_rows [[1],[2],[3],[4]])) = Some False"
+   given_control_resolution 40 10 (Finite_Pair (Finite_Target (Finite_Whole given_control_artifact))
+    (given_control_rows [[1],[2],[3],[4]])) = Some False \<and>
+   fBall (declared_sockets given_plain_declarations) (\<lambda>(e,S,s,rest).
+    \<not> socket_keyed (resolution_declarations.truncate (union_produced given_union_sockets)) e S s)"
   by eval
+
+lemma given_plain_declarations_unkeyed:
+  "unkeyed_declarations (resolution_declarations.truncate (union_produced given_union_sockets)) given_plain_declarations =
+    given_plain_declarations"
+proof -
+  have keep: "ffilter (\<lambda>(e,S,s,rest). \<not> socket_keyed (resolution_declarations.truncate (union_produced given_union_sockets))
+      e S s) (declared_sockets given_plain_declarations) = declared_sockets given_plain_declarations"
+    using conjunct2[OF conjunct2[OF conjunct2[OF given_declarations_control]]]
+    by (auto intro!: fset_eqI)
+  show ?thesis unfolding unkeyed_declarations_def keep by simp
+qed
 
 section \<open>79's clause at a root family of five sites\<close>
 

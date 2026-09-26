@@ -857,11 +857,6 @@ theorem given_declarations_productions:
     finite_rooted_given_readers m given_declarations"
   unfolding given_declarations_def by (rule produced_join_productions[OF given_union_productions])
 
-lemma produced_join_sites:
-  "declared_sites (resolution_declarations.truncate (produced_join D PD)) \<subseteq>
-    declared_sites D \<union> declared_sites (resolution_declarations.truncate PD)"
-  by (auto simp: declared_sites_def produced_join_truncate declarations_union_def unkeyed_declarations_def)
-
 theorem given_declarations_sites:
   "declared_sites (resolution_declarations.truncate given_declarations) \<subseteq> system_definitions given_rooted_readers_system"
 proof

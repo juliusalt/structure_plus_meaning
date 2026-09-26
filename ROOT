@@ -1889,12 +1889,15 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Development_Given_Readers
     Development_Given_Registrations
     Development_Given_Program
+    Factor_Material_Reading_Controls
     Development_Given_Declarations
     Factor_Schema_Instantiation_Declarations
     Factor_Definition_Reading_Declarations
     Factor_Union_Declarations
     Factor_Root_Family_Declarations
     Factor_Artifact_Citation_Declarations
+    Factor_Input_Productions
+    Factor_Input_Production_Controls
     Factor_Row_Value_Socket_Declarations
     Factor_Row_Selection_Socket_Declarations
     Development_Given_Declarations_Execution

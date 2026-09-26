@@ -34,6 +34,16 @@ lemma headed_material_lists:
   by (simp add: headed_material_presents_def data_list_term_injective
     injective_mapped_lists[OF address_pair_data_injective] injective_mapped_lists[OF payload_term_inj])
 
+text \<open>The fields of a local presentation, read out: its three listings and what each lists.\<close>
+
+lemma headed_material_presentsE:
+  assumes "headed_material_presents R r e b f"
+  obtains E B F where "e=data_list_term (map address_pair_data E)" "b=data_list_term (map Payload_Term B)"
+    "f=data_list_term (map Payload_Term F)" "distinct E" "set E=headed_incidence (object_structure R) r"
+    "count_list B=(\<lambda>v. bag_count (object_data R) (r,v))"
+    "distinct F" "set F={v. (r,v)\<in>functional_bindings (object_data R)}"
+  using assms unfolding headed_material_presents_def by blast
+
 lemma headed_material_enumeration:
   assumes enumeration: "artifact_enumeration R A E B F"
   shows "headed_material_presents R r e b f \<longleftrightarrow>

@@ -19,10 +19,6 @@ text \<open>
   carrier's outputs are data lists permuted (@{text term_bag_transport}).
 \<close>
 
-lemma data_bag_function:
-  "data_bag_presents (\<lambda>a t. t = f a) N t \<longleftrightarrow> (\<exists>xs. mset xs = N \<and> t = data_list_term (map f xs))"
-  by (auto simp: data_bag_presents_def data_sequence_presents_def list_all2_function)
-
 abbreviation site_bag_presents :: "local_address option definition_site multiset \<Rightarrow> factor_term \<Rightarrow> bool" where
   "site_bag_presents \<equiv> data_bag_presents (\<lambda>d t. t = definition_site_value d)"
 
@@ -47,16 +43,6 @@ definition root_family_correspondences :: "nat \<Rightarrow> nat \<Rightarrow> f
 
 lemma root_family_correspondences_root: "root_family_correspondences 79 = (\<lambda>i. root_family_correspondence)"
   by (simp add: root_family_correspondences_def)
-
-abbreviation term_bag_presents :: "factor_term multiset \<Rightarrow> factor_term \<Rightarrow> bool" where
-  "term_bag_presents \<equiv> data_bag_presents (\<lambda>a t. t = a)"
-
-lemma term_bag_presents_terms: "term_bag_presents N t \<longleftrightarrow> (\<exists>ys. mset ys = N \<and> t = data_list_term ys)"
-  using data_bag_function[of "\<lambda>a. a"] by simp
-
-lemma term_bag_presentation_class:
-  "presentation_class term_bag_presents (\<lambda>_. True) (\<lambda>t. \<exists>N. term_bag_presents N t)"
-  using presentation_class.recovered_admission[OF data_bag_presentation_class[OF identity_presentation_class]] by simp
 
 abbreviation rows_formed :: "(factor_term \<times> factor_term) multiset \<Rightarrow> bool" where
   "rows_formed N \<equiv> \<forall>z\<in>#N. term_formed (fst z) \<and> term_formed (snd z)"
@@ -88,29 +74,6 @@ qed
 
 abbreviation row_bag_transport :: "factor_term \<Rightarrow> factor_term \<Rightarrow> bool" where
   "row_bag_transport \<equiv> presentation_transport row_bag_presents row_bag_presents"
-
-abbreviation term_bag_transport :: "factor_term \<Rightarrow> factor_term \<Rightarrow> bool" where
-  "term_bag_transport \<equiv> presentation_transport term_bag_presents term_bag_presents"
-
-lemma term_bag_transport_iff:
-  "term_bag_transport t t' \<longleftrightarrow> (\<exists>xs xs'. t = data_list_term xs \<and> t' = data_list_term xs' \<and> mset xs = mset xs')"
-proof
-  assume "term_bag_transport t t'"
-  then obtain ys ys' where "t = data_list_term ys" "t' = data_list_term ys'" "mset ys = mset ys'"
-    by (auto simp: presentation_transport_def term_bag_presents_terms)
-  then show "\<exists>xs xs'. t = data_list_term xs \<and> t' = data_list_term xs' \<and> mset xs = mset xs'" by blast
-next
-  assume "\<exists>xs xs'. t = data_list_term xs \<and> t' = data_list_term xs' \<and> mset xs = mset xs'"
-  then obtain xs xs' where "t = data_list_term xs" "t' = data_list_term xs'" "mset xs = mset xs'" by blast
-  then show "term_bag_transport t t'" unfolding presentation_transport_def term_bag_presents_terms by blast
-qed
-
-lemma term_bag_transport_lists:
-  "term_bag_transport (data_list_term xs) (data_list_term ys) \<longleftrightarrow> mset xs = mset ys"
-  by (auto simp: term_bag_transport_iff data_list_term_injective)
-
-lemma term_bag_transport_sym: "symp term_bag_transport"
-  unfolding symp_def term_bag_transport_iff by metis
 
 lemma root_family_correspondence_sites:
   assumes "root_family_correspondence y y'"
@@ -181,7 +144,6 @@ lemma root_family_view_pattern:
   "resolution_view_pattern root_family_view (Finite_Pattern_Pair (Finite_Pattern_Pair a b) (Finite_Pattern_Pair c d)) =
     Some (Finite_Pattern_Pair (Finite_Pattern_Pair a b) c,d)"
   by (simp add: resolution_view_pattern_def root_family_view_def view_lookup_def)
-
 
 section \<open>(1) 79 a producer at its view\<close>
 

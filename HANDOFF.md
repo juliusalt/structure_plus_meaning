@@ -64,7 +64,7 @@ into the briefs #522 and #523 corrected, or recorded superseded there.
   #605 → its installed carrying #663 → R6c's carrying
   #611 → rc's numbered forms #540 (after #676) and native form #661 → R7 #542 (the numbered course; #661 feeds its
   native part #707) and the request at the given #547 → #399.
-- The clause match (#642's addition, briefed by #643; M #645 and V1 #647 landed): V2a #649 (after #597 and the forms
+- The clause match (#642's addition, briefed by #643; M #645, V1 #647 and V3's general part #653 landed): V2a #649 (after #597 and the forms
   #676) and V2b #651 (after #599), divided so that #605 does not wait on #599; V3, divided by plan-89 by the room its
   relations leave, in one theory edited in turn: #653 (the general statement in `given_readers_extension`) beside #687
   (the given's registrations complete at the rooted readers, `Development_Rooted_Registrations`), then #655 (the given's
@@ -225,7 +225,10 @@ a task):
   `probe.summary.json`. An edit to a base theory is probed from the tree, the unchanged theories between it and its
   changed dependents loaded as renamed copies; such a probe loads the copies first and does not finish within 60 s, so
   a brief asking for one names the theories it loads or accepts the repository's check for the combination (#398's
-  review). A probe from a tree behind main whose base advanced is refused, naming
+  review). Above `Factor_Resolution_Commitments` a probe's start on the chain base is about 39 s (163 sessions, 15.7
+  GB; #666), so one theory fits the 60 s bound and a second stacked on it does not: a session develops in one theory
+  there, validates stacked combinations by the repository's check and takes a held probe only where the check cannot
+  replace it (Q29's addendum). A probe from a tree behind main whose base advanced is refused, naming
   what differs only because main advanced: `v2.py bring-main`, or `--base` at the heap the tree matches, or
   `--from-heap` for one theory; a changed theory's `export_code … checking` is blanked in the probe's copy and named
   skipped; a past base's own sources are read with `--base-sources`.
@@ -354,7 +357,10 @@ follow-ups are in `PLANNING_LOG.md` and the earlier states (`HANDOFF-before-cond
   (#647, `95b03407`: `finite_varied_construction`, a construction carried along the match to an alpha-variant program,
   `varied_construction_complete` under agreeing meanings, `varied_relocated_complete` after W4a's relocation in a finite
   mapped extension; where the placed program holds two distinct alpha-equal clauses at one site with differing values
-  the variation gives no value there — unresolved, never wrong, review 648).
+  the variation gives no value there — unresolved, never wrong, review 648); V3's general part #653 (`75d1aff1`,
+  `Development_Installed_Presentations`: an extension's installed package read natively through
+  `given_readers_extension`, `installed_construction` relocated and varied and complete there, `installed_entry_exact`
+  the native exact form at the installed entry).
 - **The probe's start and the base** (Q29): a probe's start is the base's chain (#623, `.build/tasks/623/result.md`);
   the one-session base landed inert (#624); the start estimated by the chain (#625); held at the library's scale, 3.33
   s against 37.68 s (#628); `Factor_Resolution_Commitments`' proof time (#629).
@@ -395,7 +401,9 @@ The owner's questions, a line each (their words and the provisional choices in f
   (`prune_bases` keeping the superseded levels, the switch at the landing check the harness's) and Q31 (#628, held: a
   one-session base of the whole library built in 934 s, a probe starting in 3.33 s against the chain's 37.68 s, 2.45
   against 14.36 GiB); the superseded heaps' retirement, `PROBE_GB` and the probe's cap the owner's. Further evidence:
-  reviews 622 and 632, follow-up 6 (probes above `Factor_Resolution_Commitments` past their 60 s bound).
+  reviews 622 and 632, follow-up 6 (probes above `Factor_Resolution_Commitments` past their 60 s bound), and #666's,
+  put to the owner by plan-90 as an addendum (a start of 39 s at 163 sessions and 15.7 GB; a second theory stacked
+  above Commitments times out; every build on the critical chain probes there).
 
 **To plan, in the order expected** (numbers kept from earlier states):
 
@@ -531,7 +539,10 @@ planner searches for a theory before briefing a task that edits it.
   re-review of #595's fix round, follow-ups 2 and 3 (the matchers' lemmas once, the layout). Plan-89: #657 — review
   648's follow-ups (the merge over alpha-equal clauses stated at the registered sites; the match's cost at every
   construction call measured beside the read-backs) and V3's division; #605, #547 — 32 committed at 79.0/1 under #689's
-  test (#686). #684's mails are carried into its proposal's briefs and the four rewrites.
+  test (#686). #684's mails are carried into its proposal's briefs and the four rewrites. Plan-90: #655 — review 654's
+  1 and 2 (`installed_entry_exact` at `(d,decode_finite_term t)`; V1's `installed_variant` and
+  `native_varied_relocated_resolution_exact` consumed, no second route); #688 — 654's 1; #657 — 654's 3 (no alpha-equal
+  clauses with differing values at 77, 392, 525 and 561's installed clauses; the match's cost #707's).
 - **The harness's gaps met by this run's tasks** are owed to the owner and listed in `PLANNING_LOG.md` (2026-09-26,
   plan-86); new ones go there.
 - **Ledger entries that can leave** (the harness's `v2.py ledger`): Q7's and Q2's questions and answers, recorded in the

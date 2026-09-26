@@ -55,7 +55,7 @@ into the briefs #522 and #523 corrected, or recorded superseded there.
 **The native evaluator's open line**, in chain order (what landed is under Delivered):
 - R5d: #595 landed (Delivered); then #665's builds (#585's
   builds (1), which the discharge line did not take; `.build/tasks/665/result.md`): the viewed record beside the old
-  #666 → the switch to the kept names, every use migrated #668 → the discharges over a view, the pair their instance:
+  #666 (landed) → the switch to the kept names, every use migrated #668 → the discharges over a view, the pair their instance:
   the direct producer #670 beside the material single solution with the parent context stated once #672 → the socket
   kinds #674 → the declared exchanges, forms and transfer at views #676. #668 → carriers #597 → R6b's parts #601 (the
   root family) and #603 (artifacts and citations), R6c's instantiation family in three parts #607 → #679 → #681
@@ -102,7 +102,7 @@ line, a row at a locus; the decomposition's schema and library; the digit layout
 **Word changes are serialized** (Decisions): none is queued. A word change's records are re-recorded after its landing
 by a task of their own (Open 100).
 
-**Shape.** No build waits on a review task. The route's longest chain, 19 deep, runs #666 → #668 → #685 → #672 → #674
+**Shape.** No build waits on a review task. The route's longest chain, 18 deep, runs #668 → #685 → #672 → #674
 → #689 → F1 #693 → F3 #695 → F2b #699 → F2c #701 → C #703 → R7 #542 → #707 → #399 → #709 → the record #553 → #447 →
 #449 → #450; #676 → #599 → #609 → #611 → #542 has one step of slack, #597's parts and the carryings more — past the
 limit through splices, so nothing is added after the route's tail until it shortens (the status line gives the depths).
@@ -111,7 +111,7 @@ The approval build (Open 142) after #407 and #447, and the controls task (Open 1
 **Order** (the queue holds it; the planner's choice, a residual until the native answer to the selection problem
 exists, Q2): the slots are one pool, each free slot going to the first task in the queue that can start and a review
 standing where its review task stands, so every review stands right after its build. By slack on the longest chain:
-#665's builds on the longest chain first (#666, #668, the tuple's move #685, #672, #670, #674, #689), F1 #693, #676,
+#665's builds on the longest chain first (#668, the tuple's move #685, #672, #670, #674, #689), F1 #693, #676,
 F3 #695, F2b #699, F2c #701, C #703; R5e #599 and R6c's #609; #597, R6c's instantiation family (#607, #679, #681) beside R6b's parts
 #601 and #603; V3's #653 and #687, then #655 and #688; the carryings #605 and #663 with V2a #649 and V2b #651; rc
 #540 and #661; #611; R7 #542, its native part #707, #399 and its controls #709, #547; the route in its chains' order
@@ -349,7 +349,8 @@ follow-ups are in `PLANNING_LOG.md` and the earlier states (`HANDOFF-before-cond
   (`resolution_view_pattern`, `view_pattern_match`, `view_lookup`, `finite_pattern_tuple_variables` over the library's
   `finite_pattern_tuple`) and `Factor_Resolution_Views` (the committed forms under discharged declarations; the
   transfer: `declarations_relocated`, `declarations_relocated_discharged`, `declarations_agree_discharged`,
-  `finite_commitment_exchanges_relocated`, `finite_construction_lifts_relocated`); names in `.build/tasks/595/result.md`.
+  `finite_commitment_exchanges_relocated`, `finite_construction_lifts_relocated`); names in `.build/tasks/595/result.md`; the record at views beside the old
+  notions under temporary `viewed_` names (#666, `900e0d97`; the switch #668 gives them the kept names).
 - **The least witnesses** (#496's entry): W2 `Factor_Least_Collections` (#524, #567, #634), W3
   `Factor_Least_Witness_Facts` (#513, #634), W4a `Factor_Construction_Holders` and `Factor_Least_Witness_Registrations`
   (#526, #615, #634: `finite_construction_complete`, `relocated_construction_complete`, the exact forms with
@@ -559,7 +560,10 @@ planner searches for a theory before briefing a task that edits it.
   (the table read by an index by position) and 4 (the share cost per search beside the per-step saving); #542 — 698's 4;
   #711 — 692's 2 (`asked_mapped_extension` re-cited as `asked_extension.mapped_extension`); #699 — 714's 1 (the
   substitution rebuilding through the keyed `share_node`, collapsed states kept) and 2 (the keyed constructors' and the
-  collapse's costs): F2b's load grew by these mails, so a refusal at its start divides it.
+  collapse's costs): F2b's load grew by these mails, so a refusal at its start divides it; #668 — 667's 1 (the conjunct
+  `finite_socket_pair [s] S` per declared socket, confirmed), 2 (`viewed_declarations_formed` a notion of its own,
+  conjoined into the discharge at views) and 3 (the merge); #674, #676, #689 — 667's 4 (one matcher, the matcher's
+  completeness, where their test at views needs them).
 - **The harness's gaps met by this run's tasks** are owed to the owner and listed in `PLANNING_LOG.md` (2026-09-26,
   plan-86); new ones go there.
 - **Ledger entries that can leave** (the harness's `v2.py ledger`): Q7's and Q2's questions and answers, recorded in the

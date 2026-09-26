@@ -184,28 +184,6 @@ lemma selection_view_pattern:
     Some (Finite_Pattern_Pair a b,c)"
   by (simp add: resolution_view_pattern_def selection_view_def view_lookup_def)
 
-section \<open>Obligations read a meaning at their own site only\<close>
-
-lemma producer_discharged_site:
-  assumes "\<And>t. (d,t) \<in> M \<longleftrightarrow> (d,t) \<in> M'"
-  shows "producer_discharged M d V hs c \<longleftrightarrow> producer_discharged M' d V hs c"
-  using assms by (simp add: producer_discharged_def)
-
-lemma consumer_discharged_site:
-  assumes "\<And>t. (e,t) \<in> M \<longleftrightarrow> (e,t) \<in> M'"
-  shows "consumer_discharged M e V c \<longleftrightarrow> consumer_discharged M' e V c"
-  using assms by (simp add: consumer_discharged_def)
-
-lemma carrier_discharged_site:
-  assumes "\<And>t. (d,t) \<in> M \<longleftrightarrow> (d,t) \<in> M'"
-  shows "carrier_discharged M d V cin cout \<longleftrightarrow> carrier_discharged M' d V cin cout"
-  using assms by (simp add: carrier_discharged_def)
-
-lemma meaning_answers_formed: "\<forall>e t. (e,t) \<in> positive_meaning P \<longrightarrow> term_formed t"
-proof (intro allI impI)
-  fix e t assume holds: "(e,t) \<in> positive_meaning P"
-  show "term_formed t" using schema_call_formed_target[OF positive_meaning_formed[OF holds]] by (rule conjunct2)
-qed
 
 section \<open>(1) 79 a producer at its view\<close>
 
@@ -724,8 +702,6 @@ lemma consumer_input_pair: "corr v v' \<Longrightarrow> consumer_input view_iden
   unfolding consumer_input_def view_identity_term
   by (intro exI[of _ u] exI[of _ v] exI[of _ v'] exI[of _ "Pair_Term u v'"]) (simp add: pair_view_def)
 
-lemma consumer_carrier_covered: "output_covered M e (consumer_carrier_view V) (Finite_Pattern_Payload [])"
-  by (auto simp: output_covered_def consumer_carrier_view_term)
 
 lemma root_family_socket_views:
   "resolution_view_pattern view_identity (Finite_Pattern_Pair (Finite_Pattern_Pair (Finite_Variable (4::nat)) (Finite_Variable 2))

@@ -245,6 +245,89 @@ lemma decoded_premiseE:
   obtains pf where "(q,e,pf) |\<in>| finite_schema_premises S" "pp = decode_finite_pattern pf"
   using assms by (auto simp: decode_finite_call_pattern_def)
 
+text \<open>
+  A formed view reads a term exactly when the term is a value of its pattern, its parts that valuation's values of
+  the input and output patterns.
+\<close>
+
+lemma resolution_view_term_valuation:
+  assumes formed: "view_formed (p,pi,po)"
+  shows "resolution_view_term (p,pi,po) t = Some (x,y) \<longleftrightarrow> (\<exists>h. t = evaluate_pattern h (decode_finite_pattern p) \<and>
+    x = evaluate_pattern h (decode_finite_pattern pi) \<and> y = evaluate_pattern h (decode_finite_pattern po))"
+proof
+  assume viewed: "resolution_view_term (p,pi,po) t = Some (x,y)"
+  have lin: "distinct (finite_pattern_occurrences p)" using formed by (simp add: view_formed_def)
+  obtain l where m: "view_match p t = Some l" and x: "x = evaluate_pattern (view_valuation l) (decode_finite_pattern pi)"
+      and y: "y = evaluate_pattern (view_valuation l) (decode_finite_pattern po)"
+    using viewed by (auto simp: resolution_view_term_def split: option.splits)
+  have "t = evaluate_pattern (view_valuation l) (decode_finite_pattern p)" using view_match_sound[OF lin m] by simp
+  then show "\<exists>h. t = evaluate_pattern h (decode_finite_pattern p) \<and>
+      x = evaluate_pattern h (decode_finite_pattern pi) \<and> y = evaluate_pattern h (decode_finite_pattern po)"
+    using x y by blast
+next
+  assume "\<exists>h. t = evaluate_pattern h (decode_finite_pattern p) \<and>
+      x = evaluate_pattern h (decode_finite_pattern pi) \<and> y = evaluate_pattern h (decode_finite_pattern po)"
+  then show "resolution_view_term (p,pi,po) t = Some (x,y)" using resolution_view_evaluate[OF formed] by blast
+qed
+
+text \<open>
+  The view of a binary operation's result: its argument (a,(b,c)) read with the pair (a,b) in and c out, as a carrier
+  reads a concatenation or a key-to-row map.
+\<close>
+
+definition join_view :: "nat resolution_view" where
+  "join_view = (Finite_Pattern_Pair (Finite_Variable 0) (Finite_Pattern_Pair (Finite_Variable 1) (Finite_Variable 2)),
+    Finite_Pattern_Pair (Finite_Variable 0) (Finite_Variable 1),Finite_Variable 2)"
+
+lemma join_view_formed: "view_formed join_view"
+  by (auto simp: view_formed_def join_view_def fset_eq_iff)
+
+lemma join_view_term:
+  "resolution_view_term join_view t = Some (x,y) \<longleftrightarrow> (\<exists>a b. t = Pair_Term a (Pair_Term b y) \<and> x = Pair_Term a b)"
+proof -
+  have "resolution_view_term join_view t = Some (x,y) \<longleftrightarrow>
+      (\<exists>h::nat \<Rightarrow> factor_term. t = Pair_Term (h 0) (Pair_Term (h 1) (h 2)) \<and> x = Pair_Term (h 0) (h 1) \<and> y = h 2)"
+    using resolution_view_term_valuation[OF join_view_formed[unfolded join_view_def]] by (simp add: join_view_def)
+  also have "\<dots> \<longleftrightarrow> (\<exists>a b. t = Pair_Term a (Pair_Term b y) \<and> x = Pair_Term a b)"
+  proof
+    assume "\<exists>h::nat \<Rightarrow> factor_term. t = Pair_Term (h 0) (Pair_Term (h 1) (h 2)) \<and> x = Pair_Term (h 0) (h 1) \<and> y = h 2"
+    then show "\<exists>a b. t = Pair_Term a (Pair_Term b y) \<and> x = Pair_Term a b" by auto
+  next
+    assume "\<exists>a b. t = Pair_Term a (Pair_Term b y) \<and> x = Pair_Term a b"
+    then obtain a b where "t = Pair_Term a (Pair_Term b y)" "x = Pair_Term a b" by blast
+    then show "\<exists>h::nat \<Rightarrow> factor_term. t = Pair_Term (h 0) (Pair_Term (h 1) (h 2)) \<and> x = Pair_Term (h 0) (h 1) \<and> y = h 2"
+      by (intro exI[of _ "\<lambda>v. if v = 0 then a else if v = 1 then b else y"]) simp
+  qed
+  finally show ?thesis .
+qed
+
+text \<open>
+  An obligation read at one site depends on the meaning at that site alone (@{text output_covered_site} beside
+  @{text output_covered} below); every answer of a positive meaning is a formed term.
+\<close>
+
+lemma producer_discharged_site:
+  assumes "\<And>t. (d,t) \<in> M \<longleftrightarrow> (d,t) \<in> M'"
+  shows "producer_discharged M d V hs c \<longleftrightarrow> producer_discharged M' d V hs c"
+  using assms by (simp add: producer_discharged_def)
+
+lemma consumer_discharged_site:
+  assumes "\<And>t. (e,t) \<in> M \<longleftrightarrow> (e,t) \<in> M'"
+  shows "consumer_discharged M e V c \<longleftrightarrow> consumer_discharged M' e V c"
+  using assms by (simp add: consumer_discharged_def)
+
+lemma carrier_discharged_site:
+  assumes "\<And>t. (d,t) \<in> M \<longleftrightarrow> (d,t) \<in> M'"
+  shows "carrier_discharged M d V cin cout \<longleftrightarrow> carrier_discharged M' d V cin cout"
+  using assms by (simp add: carrier_discharged_def)
+
+
+lemma meaning_answers_formed: "\<forall>e t. (e,t) \<in> positive_meaning P \<longrightarrow> term_formed t"
+proof (intro allI impI)
+  fix e t assume holds: "(e,t) \<in> positive_meaning P"
+  show "term_formed t" using schema_call_formed_target[OF positive_meaning_formed[OF holds]] by (rule conjunct2)
+qed
+
 subsection \<open>The parts a socket's clause carries\<close>
 
 text \<open>
@@ -351,6 +434,14 @@ definition output_covered :: "('d \<times> factor_term) set \<Rightarrow> 'd \<R
 
 lemma output_covered_variable: "output_covered M d V (Finite_Variable w)"
   unfolding output_covered_def by (auto intro: exI[of _ "\<lambda>_. _"])
+
+lemma output_covered_site:
+  assumes "\<And>t. (d,t) \<in> M \<longleftrightarrow> (d,t) \<in> M'"
+  shows "output_covered M d V out \<longleftrightarrow> output_covered M' d V out"
+  using assms by (simp add: output_covered_def)
+
+lemma consumer_carrier_covered: "output_covered M e (consumer_carrier_view V) (Finite_Pattern_Payload [])"
+  by (auto simp: output_covered_def consumer_carrier_view_term)
 
 text \<open>
   The i-th carrier of a socket's clause, in the carrying order: its key holds one premise its view reads, it is

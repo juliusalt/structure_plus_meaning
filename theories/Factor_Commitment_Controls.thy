@@ -18,9 +18,6 @@ text \<open>
   commitment control.
 \<close>
 
-definition carrier_control_view :: "nat resolution_view" where
-  "carrier_control_view = (Finite_Pattern_Pair (Finite_Variable 0) (Finite_Pattern_Pair (Finite_Variable 1) (Finite_Variable 2)),
-    Finite_Pattern_Pair (Finite_Variable 0) (Finite_Variable 1),Finite_Variable 2)"
 
 definition carrier_keys_cons :: "(nat,nat,nat) finite_factor_schema" where
   "carrier_keys_cons = \<lparr>finite_schema_conclusion=Finite_Pattern_Pair
@@ -94,9 +91,9 @@ definition carrier_control_program :: "(nat,nat,nat,nat) finite_schema_system" w
       ((6,0),carrier_read),((7,0),carrier_family),((8,0),carrier_root)|}\<rparr>"
 
 definition carrier_control_declarations :: "(nat,nat,nat) resolution_declarations" where
-  "carrier_control_declarations = \<lparr>declared_producers={|(7,carrier_control_view,[Finite_Variable 2])|},
+  "carrier_control_declarations = \<lparr>declared_producers={|(7,join_view,[Finite_Variable 2])|},
     declared_consumers={||},
-    declared_sockets={|(7,carrier_family,0,False,view_identity,carrier_control_view),
+    declared_sockets={|(7,carrier_family,0,False,view_identity,join_view),
       (1,commitment_permutation_cons,0,False,view_identity,view_identity)|}\<rparr>"
 
 definition carrier_control_call :: "octets \<Rightarrow> finite_factor_term" where

@@ -1,6 +1,6 @@
 {
- "base_receipt_sha256": "4626737e2b41d5f903ba115835fac796923fc45530aec1ff46b6e78ca5ecae6d",
- "checked_content_sha256": "c25b8c5bdba166dd3c757c3efd092a42b7ce3a542b6e3390993f300a9126a8cd",
+ "base_receipt_sha256": "b953538213820682501bbfe966f6e4bb8144fc0c38013b50f85385fa69f2ace4",
+ "checked_content_sha256": "b60314370ac233a461d65911a995722d5a7d3562e1f69538704d5fd45505d992",
  "host_tests": {
   "kernel": {
    "exit_code": 0,
@@ -17,20 +17,20 @@
    "ran": 306,
    "skipped": 0,
    "tail": [
-    "{\"status\": \"failed\", \"error\": \"[Errno 2] No such file or directory: '/tmp/tmp6shbu32k/no-project/theories/Development_Answer_a2d8d6490cc2.thy'\"}"
+    "{\"status\": \"failed\", \"error\": \"[Errno 2] No such file or directory: '/tmp/tmpisn5go8y/no-project/theories/Development_Answer_a2d8d6490cc2.thy'\"}"
    ]
   }
  },
  "phases": {
-  "base_and_impact": 0.56,
+  "base_and_impact": 0.45,
   "execution_impact": 0.0,
   "export": 0.0,
-  "proof": 1124.06,
-  "recipe_impact": 0.71,
-  "recipes_and_host_tests": 12.88
+  "proof": 18.8,
+  "recipe_impact": 0.42,
+  "recipes_and_host_tests": 11.21
  },
  "rebuilt_theories": [
-  "Development_Installed_Presentations"
+  "Factor_Shared_Patterns"
  ],
  "recipes": {
   "allocated-environments": {
@@ -190,19 +190,19 @@
    "status": "unchanged"
   }
  },
- "reused_theories": 1926,
- "seconds": 1187.88,
+ "reused_theories": 1927,
+ "seconds": 36.15,
  "source_checks": {
   "missing_theory_files": [],
   "proof_escape_matches": [],
   "refusals": [],
-  "theory_count": 1927,
+  "theory_count": 1928,
   "unlisted_theories": []
  },
  "status": "accepted",
- "theories": 1927,
+ "theories": 1928,
  "validation_inputs": {
-  "ROOT": "e2f048fe053626890463c3882c62b2a618587baf1879e5711b0219d5ad020b41",
+  "ROOT": "8660ef2f0b031cf6c71412b29db34988c3178d3cd48826f430240005184cfaae",
   "tools/check.py": "71c91573138e10d317e5d920f5776af39687d313836a5552bbb0ec1d2d580381",
   "tools/incremental_check.py": "7f57110d9b4e04a7eb01215c21ea098fffcff71410454a248f6eb122909a1d98"
  }

@@ -64,7 +64,7 @@ into the briefs #522 and #523 corrected, or recorded superseded there.
   #605 → its installed carrying #663 → R6c's carrying
   #611 → rc's numbered forms #540 (after #676) and native form #661 → R7 #542 (the numbered course; #661 feeds its
   native part #707) and the request at the given #547 → #399.
-- The clause match (#642's addition, briefed by #643; M #645, V1 #647, V3's general part #653 and #687 landed): V2a #649 (after #597 and the forms
+- The clause match (#642's addition, briefed by #643; M #645, V1 #647, V3's #653, #687 and #655 landed): V2a #649 (after #597 and the forms
   #676) and V2b #651 (after #599), divided so that #605 does not wait on #599; V3, divided by plan-89 by the room its
   relations leave, in one theory edited in turn: #653 (the general statement in `given_readers_extension`) beside #687
   (the given's registrations complete at the rooted readers, `Development_Rooted_Registrations`), then #655 (the given's
@@ -367,7 +367,8 @@ follow-ups are in `PLANNING_LOG.md` and the earlier states (`HANDOFF-before-cond
   the variation gives no value there — unresolved, never wrong, review 648); V3's general part #653 (`75d1aff1`,
   `Development_Installed_Presentations`: an extension's installed package read natively through
   `given_readers_extension`, `installed_construction` relocated and varied and complete there, `installed_entry_exact`
-  the native exact form at the installed entry).
+  the native exact form at the installed entry); V3's given part #655 (`9deb810e`: the given's installation read
+  natively, the construction complete at the rooted readers relocated and varied, `given_installed_presentation_exact`).
 - **The probe's start and the base** (Q29): a probe's start is the base's chain (#623, `.build/tasks/623/result.md`);
   the one-session base landed inert (#624) and switched on by the owner (Q29–Q32, 2026-09-26); the start estimated by the chain (#625); held at the library's scale, 3.33
   s against 37.68 s (#628); `Factor_Resolution_Commitments`' proof time (#629).
@@ -503,8 +504,7 @@ planner searches for a theory before briefing a task that edits it.
   and review 660's 3 (`control_registrations_code [code]` dropped with its literal schemas,
   `Development_First_Request_Registrations` imported for 561's).
 
-- **V3's second part** (#655): the given's own installation is a closed installation, not a mapped extension; if W4a's
-  relocation completeness stands only in `finite_mapped_native_extension`, #655 brings it to the planner.
+
 - **The graph's width**: the route is one chain — #595 → #666 → #668 → (#672 → #674, #670, #597) → #676 → R5e, R6b's
   and R6c's parts → the carryings → R7 → #399 — so between its landings little else can start; after #668 three builds
   run side by side; beside the chain run the clause-match line (#645, #647, #653, #655) and #644. Nothing is invented to
@@ -544,7 +544,10 @@ planner searches for a theory before briefing a task that edits it.
   1 and 2 (`installed_entry_exact` at `(d,decode_finite_term t)`; V1's `installed_variant` and
   `native_varied_relocated_resolution_exact` consumed, no second route); #688 — 654's 1; #657 — 654's 3 (no alpha-equal
   clauses with differing values at 77, 392, 525 and 561's installed clauses; the match's cost #707's); #542 — 706's 1
-  (the stated-leaves program's three facts; 590 measured with `finite_call_admission_program_code`'s share apart).
+  (the stated-leaves program's three facts; 590 measured with `finite_call_admission_program_code`'s share apart);
+  #688 — 656's 1 (one lemma over any site at which a package is read, the two presentations' exactness its instances,
+  at the head of `Development_Installed_Presentations`); #663, #447 — 656's 2 (`Factor_Varied_Constructions`' facts at
+  `finite_mapped_native_extension` consumed through `given_readers_mapped_extension`, not derived again).
 - **The harness's gaps met by this run's tasks** are owed to the owner and listed in `PLANNING_LOG.md` (2026-09-26,
   plan-86); new ones go there.
 - **Ledger entries that can leave** (the harness's `v2.py ledger`): Q7's and Q2's questions and answers, recorded in the

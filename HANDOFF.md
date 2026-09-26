@@ -54,8 +54,9 @@ into the briefs #522 and #523 corrected, or recorded superseded there.
 
 **The native evaluator's open line**, in chain order (what landed is under Delivered):
 - The declarations and their carrying (#585's addition; what landed is under Delivered): R6c's third part #681 and 48's #609
-  having landed, → R6c's carrying #611 → rc's numbered forms #540 (its commit waited on #774)
-  and native form #661 (after V2b's (3) #738) → R7 #542 (the numbered course; #661 feeds its native part #707) and the
+  having landed, → R6c's carrying, divided at q140 (#611 the plain records and frames → #782 48's narrowed record and
+  `given_union_registration`, after V2b's (4) #780 → #784 the control) → rc's numbered forms #540 (landed)
+  and native form #661 (after #780) → R7 #542 (the numbered course; #661 feeds its native part #707) and the
   request at the given #547 → #399. #725's correction (q126): 48's union is the narrowed sockets' production, a step of
   R5's committed search, R3 and W4a untouched; R5f1 #734 and its fix #765 landed; R5f2 #736 (briefed by #727) and its
   fix #767 (q134: the production applies only at its registration's site and head input, the producing sub-search
@@ -75,8 +76,8 @@ into the briefs #522 and #523 corrected, or recorded superseded there.
   move to #724. #733's builds (32's kept sockets, declared by no build before): #758 and the selection part #760 landed;
   their carrying #762 landed.
 - The clause match (#642's addition, briefed by #643): M, V1, V2a and V3 (#653, #687, #655, #688, the control #657)
-  landed (Delivered), and V2b #651 (Delivered); its (3) #738 remains — V2b's discharge takes `varied_narrowings_agree` and
-  `production_values_carried` as premises (q133), #738 carrying them and #611 discharging them at the given's installed
+  landed (Delivered), and V2b #651 and its (3) #738 (Delivered); its (4) #780 remains — V2b's discharge takes `varied_narrowings_agree` and
+  `production_values_carried` as premises (q133), #738 carrying them and #782 discharging them at the given's installed
   programs; #688's instances are consumed by R7's native part #707, #547
   and #399.
 - The resolver at the given's size (#683's addition to task 495's entry, from #644's attribution; briefed by #684,
@@ -112,7 +113,7 @@ by a task of their own (Open 100).
 
 **Shape.** No build waits on a review task. The route's longest chain runs F2b2 (b) #771 → F2c #701 → C #703 →
 R7 #542 → #707 → #399 → #709 → the record #553 → #447 → #449 → #450;
-rc #540 → #542 and #611 → #542 have slack against it, the
+#611 → #782 → #542, #780 → #782 and #780 → #661 → #707 have slack against it, the
 carryings more — past the
 limit through splices, so nothing is added after the route's tail until it shortens (the status line gives the depths).
 The approval build (Open 142) after #407 and #447 waits for it to shorten; the controls task #718 after C (depth 10)
@@ -120,9 +121,10 @@ was placed when #668 landed.
 
 **Order** (the queue holds it; the planner's choice, a residual until the native answer to the selection problem
 exists, Q2): the slots are one pool, each free slot going to the first task in the queue that can start and a review
-standing where its review task stands, so every review stands right after its build. By slack on the longest chain:
+standing where its review task stands, so every review stands right after its build. After the low-moves batch #777,
+at the head while it rebuilds the library, by slack on the longest chain:
 F2b2 (b) #771, F2c #701 and C #703; the investigation #779;
-the low-moves batch #777; V2b's (3) #738; rc #540 and #661; #611; R7 #542, its native part
+R6c's carrying #611, V2b's (4) #780, #782 and #784; rc's native form #661; R7 #542, its native part
 #707, #399 and its controls #709, #547; the route in its chains'
 order (#551, #549, #553, #401, #403, #443, #447, #407, #445, #449); the controls #718 after C, and the lifting's
 consolidation #613, then #724 last.
@@ -533,6 +535,15 @@ follow-ups are in `PLANNING_LOG.md` and the earlier states (`HANDOFF-before-cond
   the relocation and agreement transfers (`finite_narrowed_relocation_transfer`, `finite_narrowed_agreement_transfer`;
   the other side's productions and narrowed frames their premises until #774), the search control in
   `Factor_Narrowed_Controls`.
+- **rc's numbered forms** (#540, `e7fdc902`): `Factor_Committed_Registrations` — the locale `registered_commitment`
+  (the contract over any commitment that exchanges: `committed_registered_resolution_exact`,
+  `committed_registered_verdict_exact`, `committed_registered_demand_exact`) and `committed_registrations` (R5f2's
+  premises, a sublocale at `finite_narrowed_commitment`), the collection instances, and (4) at no declaration
+  (`committed_registered_empty_construction_exact`, R5's; `committed_registered_no_declaration_exact`, W4a's).
+- **V2b's (3)** (#738, `16b6af0d`): `Factor_Varied_Narrowed_Transfer` — R5f2's forms and transfer at the varied narrowed
+  declarations (`finite_varied_narrowed_forms_exact`, `finite_committed_variant_transfer_narrowed`, the relocated
+  forms), under three premises its (4) #780 derives or names: the narrowed frames at N, the varied record's static
+  premise, the values carried at R5f2's own construction.
 - **The shared state** (F2b2 (a) #755, `ea4a9049`): `Factor_Shared_Resolution` — goals and nodes over one shared-term
   table, one per position under `resolution_positions_distinct`, their formation and projection to R3's state, the
   constructor from an R3 state, the substitution at the holders through the keyed `share_node`; call patterns collapsed
@@ -679,9 +690,9 @@ planner searches for a theory before briefing a task that edits it.
 
 ## Now
 
-- **The graph's width**: V2b's (3) #738 runs, and rc #540 is in its review; the route's (b) #771, the investigation
-  #779 and the low-moves batch #777 can start. The route is ((b) #771 → F2c → C) → rc #540
-  and #611 → R7 #542 → #707 → #399. #777 goes to the queue's head when it checks
+- **The graph's width**: (b) #771, R6c's carrying #611, the investigation #779 and the low-moves batch #777 run;
+  V2b's (4) #780 can start. The route is ((b) #771 → F2c → C) and (#611 → #782) → R7 #542 → #707 → #399, with #780
+  before #782 and before rc's native form #661 → #707. #777 stands at the queue's head
   (working rule "Rebuilds"); its landing check is the first since the owner's switch (Q29–Q32) to rebuild most of the
   library.
 - **Briefs written before their theories grew** may be refused at their start (#596 was; #607 was divided by #678):
@@ -690,10 +701,13 @@ planner searches for a theory before briefing a task that edits it.
   theories added to their relations); the samples build #551 (384K at proposal; a hand-back divides its corrected item
   (3), the planner's).
 - **What the next events ask**: #779's figures — if R5's committed search does not cut 77/1's branching, a design of
-  it before R7 #542; (b) #771's hand-over; #540's review (its commit waited on #774, landed), then rc's native
-  form #661 after #738; #777 to the queue's head when it checks; the first one-session base's
+  it before R7 #542; (b) #771's hand-over, then the consolidation making F2b1 an instance of its representation (q139, after #777),
+  placed from its result; #611's, #780's and #782's hand-overs; the first one-session base's
   landing (probes in about 3 s) — not yet: every base since the switch stands on the chain (`PLANNING_LOG.md`,
   plan-92, plan-98, plan-105); if #777's landing does not re-root either, a harness gap for the owner.
+- **Left by plan-106 at its window's end**: #771's brief to be rewritten to the answer to q139 (Deliverable
+  `theories/Factor_Search_Representations.thy` added and the edit of `Factor_Indexed_Resolution.thy` dropped; F2b1's
+  instance moved to the consolidation after #771 and #777); the ids of #780–#785, predicted in their briefs, checked.
 - **Mailed, read by each task's first session**: by task, in `.build/plans/mailed.md` (open tasks only). A task
   continuing in a new session is mailed its line again; a planner who mails a task adds to its line there, and a task
   that lands leaves it.

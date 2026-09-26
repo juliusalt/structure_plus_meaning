@@ -103,7 +103,9 @@ definition carrier_control_call :: "octets \<Rightarrow> finite_factor_term" whe
 text \<open>
   At five rows the committed resolution resolves root(e,[3]) and refutes root(e,[9]), each verdict R4's: P committed at
   its view, the permutation committed at its free socket, its least answer carried through keys, back, rd and vals to
-  w, one certificate where R4 keeps one per permutation (120). The false call is refuted, not left unresolved, and the
+  w, one certificate where R4 keeps one per permutation (120). R4 resolves root(e,[3]) at bound 60 and refutes
+  root(e,[9]) at 90; under F1's selection (task 693) its search of the false call at 60 is cut, unresolved, where R3's
+  former selection refuted it there. The false call is refuted, not left unresolved, and the
   true one resolved: #519's counterexample, a commitment refuting a true call, does not arise at a socket its carriers
   discharge (@{thm [source] socket_discharged_carried}).
 \<close>
@@ -118,7 +120,9 @@ lemma carrier_controls:
       (finite_declared_commitment carrier_control_declarations) carrier_control_program 8 (carrier_control_call [9]) 60) =
       Some False \<and>
     finite_resolution_verdict (finite_program_resolution no_witness_construction carrier_control_program 8
-      (carrier_control_call [9]) 60) = Some False \<and>
+      (carrier_control_call [9]) 60) = None \<and>
+    finite_resolution_verdict (finite_program_resolution no_witness_construction carrier_control_program 8
+      (carrier_control_call [9]) 90) = Some False \<and>
     commitment_certificates (finite_committed_resolution no_witness_construction
       (finite_declared_commitment carrier_control_declarations) carrier_control_program 8 (carrier_control_call [3]) 60) = 1 \<and>
     commitment_certificates (finite_program_resolution no_witness_construction carrier_control_program 8

@@ -1463,20 +1463,21 @@ proof -
       resolution_diagnoses (finite_resolution_search_by sel \<kappa> P n st) \<noteq> {||}" by auto
 qed
 
-section \<open>The plain selection meets the lifting's conditions\<close>
+section \<open>The selection meets the lifting's conditions\<close>
 
 lemma finite_goal_selection_member:
   "g |\<in>| finite_goal_selection G A \<Longrightarrow> g |\<in>| A \<and> (resolution_is_call g \<or> finite_solvable_material_goal g)"
   unfolding finite_goal_selection_def Let_def finite_first_goals_def
   by (cases g) (auto simp: finite_independent_goal_def split: if_splits)
 
-lemma finite_plain_selection_goals:
-  "finite_plain_selection G = Select_Goals S \<Longrightarrow> S \<noteq> {||} \<and>
-    (\<forall>g. g |\<in>| S \<longrightarrow> g |\<in>| G \<and> (resolution_is_call g \<or> finite_solvable_material_goal g))"
-  unfolding finite_plain_selection_def Let_def using finite_goal_selection_member by (auto split: if_splits)
+lemma finite_candidate_goal_kind: "finite_candidate_goal g \<longleftrightarrow> resolution_is_call g \<or> finite_solvable_material_goal g"
+  by (cases g) simp_all
 
-lemma finite_plain_selection_construction: "finite_plain_selection G \<noteq> Select_Construction N"
-  by (simp add: finite_plain_selection_def Let_def)
+lemma finite_resolution_select_lifts:
+  assumes sel: "finite_resolution_select_at pr \<kappa> P st = Select_Goals G"
+  shows "G \<noteq> {||} \<and>
+    (\<forall>g. g |\<in>| G \<longrightarrow> g |\<in>| resolution_pending st \<and> (resolution_is_call g \<or> finite_solvable_material_goal g))"
+  using finite_resolution_select_at_exact(1)[OF sel] by (simp add: finite_candidate_goal_kind)
 
 section \<open>Exactness of the per-call result\<close>
 
@@ -1490,15 +1491,16 @@ proof
   have tf: "finite_term_formed t"
     using positive_meaning_formed[OF holds]
     by (auto simp: schema_call_formed_def pattern_accepts_def finite_term_formed_correct)
-  let ?sel = "\<lambda>st. finite_plain_selection (resolution_pending st)"
+  let ?sel = "finite_resolution_select no_witness_construction P"
   let ?R = "finite_resolution_search no_witness_construction P n (finite_initial_state d t)"
   have R: "?R = finite_resolution_search_by ?sel no_witness_construction P n (finite_initial_state d t)"
-    by (simp add: no_witness_search)
+    by (simp add: finite_resolution_search_def)
   have I0: "resolution_invariant P d t (finite_initial_state d t)" by (rule resolution_initial_invariant[OF Pf tf])
   have S0: "resolution_supported P (finite_initial_state d t) (\<lambda>_. Finite_Payload [])"
     using holds by (simp add: resolution_supported_def finite_initial_state_def resolution_value_ground)
   have "resolution_found ?R \<noteq> {||} \<or> resolution_diagnoses ?R \<noteq> {||}"
-    unfolding R by (rule finite_resolution_lifting[OF finite_plain_selection_goals finite_plain_selection_construction I0 S0])
+    unfolding R
+    by (rule finite_resolution_lifting[OF finite_resolution_select_lifts finite_resolution_select_none_construction I0 S0])
   moreover have diag: "resolution_diagnoses ?R = {||}"
     and C: "ffUnion (fimage finite_state_proofs (resolution_found ?R)) = {||}"
     using refuted finite_program_resolution_certificates[OF Pf tf no_witness_construction_formed, of d n]
@@ -1613,10 +1615,10 @@ theorem finite_resolution_pattern_lifting:
       resolution_node_call nd = finite_pattern_substitute \<rho> \<pi> \<and>
       resolution_value \<theta>' (resolution_node_call nd) = resolution_value \<theta> \<pi>)"
 proof -
-  let ?sel = "\<lambda>st. finite_plain_selection (resolution_pending st)"
+  let ?sel = "finite_resolution_select no_witness_construction P"
   let ?st0 = "finite_pattern_state d \<pi> :: ('a,'b,'c,'d) resolution_state"
   let ?R = "finite_resolution_search no_witness_construction P n ?st0"
-  have R: "?R = finite_resolution_search_by ?sel no_witness_construction P n ?st0" by (simp add: no_witness_search)
+  have R: "?R = finite_resolution_search_by ?sel no_witness_construction P n ?st0" by (simp add: finite_resolution_search_def)
   have I0: "resolution_pattern_invariant P d \<pi> ?st0" by (rule resolution_pattern_initial_invariant[OF Pf \<pi>f])
   have S0: "resolution_supported_by (\<lambda>z. snd z |\<notin>| finite_program_variables P) P ?st0 \<theta>"
     unfolding resolution_supported_by_def using holds foreign by (auto simp: finite_pattern_state_def)
@@ -1628,8 +1630,8 @@ proof -
     resolution_diagnoses ?R \<noteq> {||}"
   proof -
     have F0: "\<And>z. snd z |\<notin>| finite_program_variables P \<Longrightarrow> snd z |\<notin>| finite_program_variables P" by simp
-    note L = finite_resolution_lifting_by[where sel="\<lambda>st. finite_plain_selection (resolution_pending st)",
-      OF finite_plain_selection_goals finite_plain_selection_construction F0 I0 S0]
+    note L = finite_resolution_lifting_by[where sel="finite_resolution_select no_witness_construction P",
+      OF finite_resolution_select_lifts finite_resolution_select_none_construction F0 I0 S0]
     show ?thesis unfolding R by (rule L) simp_all
   qed
   from lifted show ?thesis

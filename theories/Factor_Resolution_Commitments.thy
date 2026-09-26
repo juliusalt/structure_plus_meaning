@@ -1273,6 +1273,31 @@ record ('a,'s,'d,'c) resolution_commitment =
 definition no_commitment :: "('a,'s,'d,'c) resolution_commitment" where
   "no_commitment = \<lparr>commit_call=(\<lambda>F st g. False), commit_material=(\<lambda>F st g. False)\<rparr>"
 
+text \<open>
+  The committed search selects at the commitment's own tests (F1 of the addition "The resolver at the given's size" to
+  task 495's entry): a goal the call or material test accepts on the state the selection reads, at no focus or with
+  the goal's parent position as the focus, is taken before a goal with one alternative, so a goal is committed at the
+  first state it is committable in. At no commitment the priority is empty and the selection is R3's.
+\<close>
+
+definition finite_commitment_priority ::
+    "('a,'s,'d,'c) resolution_commitment \<Rightarrow> ('a,'s,'d,'c) resolution_state \<Rightarrow> ('a,'s,'d,'c) resolution_goal \<Rightarrow> bool" where
+  "finite_commitment_priority K st g = (let F = Some (butlast (resolution_goal_position g)) in
+    case g of Resolution_Call_Goal q r d p \<Rightarrow> commit_call K None st g \<or> commit_call K F st g
+    | Resolution_Material_Goal q r M \<Rightarrow> commit_material K None st g \<or> commit_material K F st g)"
+
+lemma finite_commitment_priority_none [simp]: "finite_commitment_priority no_commitment = (\<lambda>st g. False)"
+proof (rule ext, rule ext)
+  fix st g
+  show "finite_commitment_priority no_commitment st g = False"
+    by (cases g) (simp_all add: finite_commitment_priority_def no_commitment_def)
+qed
+
+abbreviation finite_committed_select ::
+    "('a,'s::linorder,'d,'c) finite_witness_construction \<Rightarrow> ('a,'s,'d,'c) resolution_commitment \<Rightarrow>
+      ('a,'s,'d,'c) finite_schema_system \<Rightarrow> ('a,'s,'d,'c) resolution_state \<Rightarrow> ('a,'s,'d,'c) resolution_selection" where
+  "finite_committed_select \<kappa> K P \<equiv> finite_resolution_select_at (finite_commitment_priority K) \<kappa> P"
+
 definition finite_focus_pending ::
     "'s list option \<Rightarrow> ('a,'s,'d,'c) resolution_state \<Rightarrow> ('a,'s,'d,'c) resolution_goal fset" where
   "finite_focus_pending F st = (case F of None \<Rightarrow> resolution_pending st
@@ -1495,7 +1520,7 @@ definition finite_committed_search ::
     "('a,'s::linorder,'d,'c) finite_witness_construction \<Rightarrow> ('a,'s,'d,'c) resolution_commitment \<Rightarrow>
       ('a,'s,'d,'c) finite_schema_system \<Rightarrow> nat \<Rightarrow> 's list option \<Rightarrow> 's list fset \<Rightarrow>
       ('a,'s,'d,'c) resolution_state \<Rightarrow> ('a,'s,'d,'c) resolution_outcome" where
-  "finite_committed_search \<kappa> K P = finite_committed_search_by (finite_resolution_select \<kappa> P) \<kappa> K P"
+  "finite_committed_search \<kappa> K P = finite_committed_search_by (finite_committed_select \<kappa> K P) \<kappa> K P"
 
 section \<open>At no commitment and no construction the search is R3's\<close>
 
@@ -1523,23 +1548,20 @@ corollary finite_committed_search_plain:
   shows "finite_committed_search \<kappa> no_commitment P n None {||} = finite_resolution_search \<kappa> P n"
   by (simp add: finite_committed_search_def finite_resolution_search_def finite_committed_search_by_plain[OF free])
 
-lemma finite_resolution_select_none_construction:
-  "finite_resolution_select no_witness_construction P st \<noteq> Select_Construction N"
-  by (simp add: no_witness_selection finite_plain_selection_construction)
 
 section \<open>Every found state keeps the invariant\<close>
 
 lemma finite_committed_search_found:
   assumes \<kappa>: "finite_witness_construction_formed \<kappa>"
   shows "resolution_invariant P d t st \<Longrightarrow>
-    st' |\<in>| resolution_found (finite_committed_search_by (finite_resolution_select \<kappa> P) \<kappa> K P n F B st) \<Longrightarrow>
+    st' |\<in>| resolution_found (finite_committed_search_by (finite_committed_select \<kappa> K P) \<kappa> K P n F B st) \<Longrightarrow>
     resolution_invariant P d t st' \<and> finite_focus_pending F st'={||}"
 proof (induction n arbitrary: F B st st')
   case 0
   then show ?case by (auto simp: resolution_fset_simps split: if_splits)
 next
   case (Suc n)
-  let ?rec = "finite_committed_search_by (finite_resolution_select \<kappa> P) \<kappa> K P n"
+  let ?rec = "finite_committed_search_by (finite_committed_select \<kappa> K P) \<kappa> K P n"
   show ?case
   proof (cases "finite_focus_pending F st={||}")
     case True
@@ -1547,7 +1569,7 @@ next
   next
     case False
     show ?thesis
-    proof (cases "finite_resolution_select \<kappa> P (finite_focused F st)")
+    proof (cases "finite_committed_select \<kappa> K P (finite_focused F st)")
       case (Select_Construction N)
       with Suc.prems False obtain nd where
         "st' |\<in>| resolution_found (?rec F (finite_committed_barring B st)
@@ -1593,29 +1615,21 @@ text \<open>
 \<close>
 
 lemma finite_resolution_select_unheld:
-  assumes sel: "finite_resolution_select \<kappa> P (finite_focused F st) = Select_Goals G" and g: "g |\<in>| G"
+  assumes sel: "finite_resolution_select_at pr \<kappa> P (finite_focused F st) = Select_Goals G" and g: "g |\<in>| G"
   shows "\<not> finite_held \<kappa> st g"
-proof -
-  let ?st = "finite_focused F st"
-  let ?A = "ffilter (\<lambda>g. \<not> finite_held \<kappa> ?st g) (resolution_pending ?st)"
-  have G: "G = finite_goal_selection (resolution_pending ?st) ?A"
-    using sel by (auto simp: finite_resolution_select_def Let_def split: if_splits)
-  have "g |\<in>| ?A"
-    using G g finite_goal_selection_member[where G="resolution_pending ?st" and A="?A"] by (auto simp: resolution_fset_simps)
-  then show ?thesis by (auto simp: finite_held_def finite_focused_def resolution_fset_simps)
-qed
+  using finite_resolution_select_at_exact(1)[OF sel] g by (auto simp: finite_held_def finite_focused_def)
 
 lemma finite_committed_search_found_held:
   assumes \<kappa>: "finite_witness_construction_formed \<kappa>"
   shows "resolution_invariant P d t st \<Longrightarrow> resolution_registrations_held \<kappa> st \<Longrightarrow>
-    st' |\<in>| resolution_found (finite_committed_search_by (finite_resolution_select \<kappa> P) \<kappa> K P n F B st) \<Longrightarrow>
+    st' |\<in>| resolution_found (finite_committed_search_by (finite_committed_select \<kappa> K P) \<kappa> K P n F B st) \<Longrightarrow>
     resolution_registrations_held \<kappa> st'"
 proof (induction n arbitrary: F B st st')
   case 0
   then show ?case by (auto simp: resolution_fset_simps split: if_splits)
 next
   case (Suc n)
-  let ?rec = "finite_committed_search_by (finite_resolution_select \<kappa> P) \<kappa> K P n"
+  let ?rec = "finite_committed_search_by (finite_committed_select \<kappa> K P) \<kappa> K P n"
   have distinct: "resolution_positions_distinct st" using Suc.prems(1) unfolding resolution_invariant_def by blast
   show ?case
   proof (cases "finite_focus_pending F st={||}")
@@ -1624,7 +1638,7 @@ next
   next
     case False
     show ?thesis
-    proof (cases "finite_resolution_select \<kappa> P (finite_focused F st)")
+    proof (cases "finite_committed_select \<kappa> K P (finite_focused F st)")
       case (Select_Construction N)
       with Suc.prems False obtain nd where
         "st' |\<in>| resolution_found (?rec F (finite_committed_barring B st)
@@ -1764,7 +1778,7 @@ proof -
   let ?C = "ffUnion (fimage finite_state_proofs (resolution_found ?R))"
   have closed: "resolution_invariant P d t s \<and> resolution_pending s={||}" if s: "s |\<in>| resolution_found ?R" for s
   proof -
-    have "s |\<in>| resolution_found (finite_committed_search_by (finite_resolution_select \<kappa> P) \<kappa> K P n None {||}
+    have "s |\<in>| resolution_found (finite_committed_search_by (finite_committed_select \<kappa> K P) \<kappa> K P n None {||}
         (finite_initial_state d t))"
       using s by (simp add: finite_committed_search_def)
     from finite_committed_search_found[OF \<kappa> resolution_initial_invariant[OF Pf tf] this] show ?thesis by simp
@@ -2614,18 +2628,6 @@ proof
   with nd(4,5) show False by simp
 qed
 
-lemma finite_resolution_select_lifts:
-  assumes sel: "finite_resolution_select \<kappa> P st = Select_Goals G"
-  shows "G \<noteq> {||} \<and>
-    (\<forall>g. g |\<in>| G \<longrightarrow> g |\<in>| resolution_pending st \<and> (resolution_is_call g \<or> finite_solvable_material_goal g))"
-proof -
-  let ?A = "ffilter (\<lambda>g. \<not> finite_held \<kappa> st g) (resolution_pending st)"
-  have G: "G = finite_goal_selection (resolution_pending st) ?A \<and> G \<noteq> {||}"
-    using sel by (auto simp: finite_resolution_select_def Let_def split: if_splits)
-  show ?thesis
-    using G finite_goal_selection_member[where G="resolution_pending st" and A="?A"]
-    by (auto simp: resolution_fset_simps)
-qed
 
 text \<open>
   At a committed call the premise asks for a kept state only where the lifting applies it (task 621, q115): at a state
@@ -2726,7 +2728,7 @@ proof (induction n arbitrary: F B st \<theta>)
   qed
 next
   case (Suc n)
-  let ?sel = "finite_resolution_select \<kappa> P"
+  let ?sel = "finite_committed_select \<kappa> K P"
   let ?rec = "finite_committed_search \<kappa> K P n"
   have I: "resolution_invariant P d t st" and H: "resolution_registrations_held \<kappa> st"
     and sup: "resolution_supported_at U F B P st \<theta>" by (rule Suc.prems)+
@@ -2759,7 +2761,7 @@ next
         then have nd: "nd |\<in>| N" and focus: "resolution_focused F (resolution_node_position nd)"
           by (auto simp: resolution_fset_simps)
         obtain \<theta>' where sup': "resolution_supported_at U F ?B' P (finite_construction_step \<kappa> P st nd) \<theta>'"
-          using constructions I H sup Select_Construction nd focus
+          using constructions I H sup finite_resolution_select_at_exact(2)[THEN iffD1, OF Select_Construction] nd focus
           unfolding finite_construction_lifts_def finite_committed_barring_def by blast
         have I': "resolution_invariant P d t (finite_construction_step \<kappa> P st nd)"
           by (rule resolution_construction_step[OF I \<kappa>])
@@ -3252,8 +3254,8 @@ lemma finite_committed_successors_material:
     split: option.splits if_splits finite_material_outcome.splits)
 
 lemma finite_resolution_select_construction:
-  "finite_resolution_select \<kappa> P st = Select_Construction N \<Longrightarrow> N |\<subseteq>| resolution_nodes st"
-  by (auto simp: finite_resolution_select_def finite_first_nodes_def Let_def resolution_fset_simps split: if_splits)
+  "finite_resolution_select_at pr \<kappa> P st = Select_Construction N \<Longrightarrow> N |\<subseteq>| resolution_nodes st"
+  by (auto simp: finite_resolution_select_at_def finite_first_nodes_def Let_def resolution_fset_simps split: if_splits)
 
 subsection \<open>A substitution step\<close>
 
@@ -3822,14 +3824,14 @@ lemma finite_committed_search_relation:
     and weaken: "\<And>q q' st s. R q' st s \<Longrightarrow> take (length q) q' = q \<Longrightarrow> R q st s"
     and step: "\<And>q st st'. resolution_invariant P d t st \<Longrightarrow> finite_substitution_step \<kappa> q st st' \<Longrightarrow> R q st st'"
   shows "resolution_invariant P d t st \<Longrightarrow>
-    s' |\<in>| resolution_found (finite_committed_search_by (finite_resolution_select \<kappa> P) \<kappa> K P n (Some q) B st) \<Longrightarrow>
+    s' |\<in>| resolution_found (finite_committed_search_by (finite_committed_select \<kappa> K P) \<kappa> K P n (Some q) B st) \<Longrightarrow>
     R q st s'"
 proof (induction n arbitrary: q B st s')
   case 0
   then show ?case using refl by (auto simp: resolution_fset_simps split: if_splits)
 next
   case (Suc n)
-  let ?rec = "finite_committed_search_by (finite_resolution_select \<kappa> P) \<kappa> K P n"
+  let ?rec = "finite_committed_search_by (finite_committed_select \<kappa> K P) \<kappa> K P n"
   show ?case
   proof (cases "finite_focus_pending (Some q) st={||}")
     case True
@@ -3837,7 +3839,7 @@ next
   next
     case False
     show ?thesis
-    proof (cases "finite_resolution_select \<kappa> P (finite_focused (Some q) st)")
+    proof (cases "finite_committed_select \<kappa> K P (finite_focused (Some q) st)")
       case (Select_Construction N)
       with Suc.prems False obtain nd where nd: "nd |\<in>| N"
         and found: "s' |\<in>| resolution_found (?rec (Some q) (finite_committed_barring B st)
@@ -4212,14 +4214,14 @@ theorem finite_committed_search_confined:
     and only: "\<And>e c S a. ((e,c),S) |\<in>| finite_system_clauses P \<Longrightarrow> a |\<in>| witness_registered \<kappa> e S \<Longrightarrow>
       a |\<notin>| finite_pattern_variables (finite_schema_conclusion S)"
   shows "resolution_invariant P d t st \<Longrightarrow> resolution_registrations_held \<kappa> st \<Longrightarrow>
-    s' |\<in>| resolution_found (finite_committed_search_by (finite_resolution_select \<kappa> P) \<kappa> K P n (Some q) B st) \<Longrightarrow>
+    s' |\<in>| resolution_found (finite_committed_search_by (finite_committed_select \<kappa> K P) \<kappa> K P n (Some q) B st) \<Longrightarrow>
     finite_focus_confined q st s'"
 proof (induction n arbitrary: q B st s')
   case 0
   then show ?case using finite_focus_confined_refl by (auto simp: resolution_fset_simps split: if_splits)
 next
   case (Suc n)
-  let ?rec = "finite_committed_search_by (finite_resolution_select \<kappa> P) \<kappa> K P n"
+  let ?rec = "finite_committed_search_by (finite_committed_select \<kappa> K P) \<kappa> K P n"
   have I: "resolution_invariant P d t st" and H: "resolution_registrations_held \<kappa> st" by (rule Suc.prems)+
   have distinct: "resolution_positions_distinct st" using I unfolding resolution_invariant_def by blast
   show ?case
@@ -4229,7 +4231,7 @@ next
   next
     case False
     show ?thesis
-    proof (cases "finite_resolution_select \<kappa> P (finite_focused (Some q) st)")
+    proof (cases "finite_committed_select \<kappa> K P (finite_focused (Some q) st)")
       case (Select_Construction N)
       with Suc.prems False obtain nd where nd: "nd |\<in>| N"
         and focus: "resolution_focused (Some q) (resolution_node_position nd)"
@@ -4314,7 +4316,7 @@ corollary finite_committed_search_registered_unbound:
       a |\<notin>| finite_pattern_variables (finite_schema_conclusion S)"
     and I: "resolution_invariant P d t st" and H: "resolution_registrations_held \<kappa> st"
     and g: "g |\<in>| resolution_pending st" "resolution_is_call g" and unheld: "\<not> finite_held \<kappa> st g"
-    and found: "s' |\<in>| resolution_found (finite_committed_search_by (finite_resolution_select \<kappa> P) \<kappa> K P n
+    and found: "s' |\<in>| resolution_found (finite_committed_search_by (finite_committed_select \<kappa> K P) \<kappa> K P n
       (Some (resolution_goal_position g)) B st)"
     and h0: "h0 |\<in>| resolution_pending st" "\<not> resolution_focused (Some (resolution_goal_position g)) (resolution_goal_position h0)"
     and z: "z |\<in>| resolution_goal_variables h0" and reg: "finite_registered_at \<kappa> st z"
@@ -4351,7 +4353,7 @@ qed
 
 theorem finite_committed_search_frame:
   assumes \<kappa>: "finite_witness_construction_formed \<kappa>" and I: "resolution_invariant P d t st"
-    and found: "s' |\<in>| resolution_found (finite_committed_search_by (finite_resolution_select \<kappa> P) \<kappa> K P n (Some q) B st)"
+    and found: "s' |\<in>| resolution_found (finite_committed_search_by (finite_committed_select \<kappa> K P) \<kappa> K P n (Some q) B st)"
   shows "finite_focus_frame \<kappa> q st s'"
 proof (rule finite_committed_search_relation[where R="finite_focus_frame \<kappa>", OF \<kappa> _ _ _ _ I found])
   show "finite_focus_frame \<kappa> q st st" for q st by (rule finite_focus_frame_refl)
@@ -4413,7 +4415,7 @@ qed
 
 theorem finite_committed_search_positions:
   assumes \<kappa>: "finite_witness_construction_formed \<kappa>" and I: "resolution_invariant P d t st"
-    and found: "s' |\<in>| resolution_found (finite_committed_search_by (finite_resolution_select \<kappa> P) \<kappa> K P n (Some q) B st)"
+    and found: "s' |\<in>| resolution_found (finite_committed_search_by (finite_committed_select \<kappa> K P) \<kappa> K P n (Some q) B st)"
   shows "finite_positions_kept st s'"
 proof (rule finite_committed_search_relation[where R="\<lambda>q. finite_positions_kept", OF \<kappa> _ _ _ _ I found])
   show "finite_positions_kept st st" for q st unfolding finite_positions_kept_def by blast
@@ -4514,7 +4516,7 @@ qed
 
 theorem finite_committed_search_placed:
   assumes \<kappa>: "finite_witness_construction_formed \<kappa>" and I: "resolution_invariant P d t st"
-    and found: "s' |\<in>| resolution_found (finite_committed_search_by (finite_resolution_select \<kappa> P) \<kappa> K P n (Some q) B st)"
+    and found: "s' |\<in>| resolution_found (finite_committed_search_by (finite_committed_select \<kappa> K P) \<kappa> K P n (Some q) B st)"
     and placed: "finite_state_placed U st"
   shows "finite_state_placed U s'"
 proof -
@@ -4560,10 +4562,10 @@ qed
 theorem finite_committed_kept_nonempty:
   assumes \<kappa>: "finite_witness_construction_formed \<kappa>" and I: "resolution_invariant P d t st"
     and g: "g |\<in>| resolution_pending st" "resolution_is_call g"
-    and s0: "s0 |\<in>| resolution_found (finite_committed_search_by (finite_resolution_select \<kappa> P) \<kappa> K P n
+    and s0: "s0 |\<in>| resolution_found (finite_committed_search_by (finite_committed_select \<kappa> K P) \<kappa> K P n
       (Some (resolution_goal_position g)) B st)"
   shows "finite_kept (resolution_goal_position g) (resolution_found (finite_committed_search_by
-      (finite_resolution_select \<kappa> P) \<kappa> K P n (Some (resolution_goal_position g)) B st)) \<noteq> {||}"
+      (finite_committed_select \<kappa> K P) \<kappa> K P n (Some (resolution_goal_position g)) B st)) \<noteq> {||}"
 proof -
   have kept: "finite_positions_kept st s0" by (rule finite_committed_search_positions[OF \<kappa> I s0])
   have closed: "finite_focus_pending (Some (resolution_goal_position g)) s0 = {||}"

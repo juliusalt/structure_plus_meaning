@@ -129,36 +129,114 @@ text \<open>
   states and computes no outcome of its own; it is how the moded selection and R5's default are compared.
 \<close>
 
+text \<open>
+  The count of the states a committed search visits is the count of one traversal that returns the search's outcome
+  beside it (task 821, K1): a committed goal's sub-search is traversed once and its kept states are read from the
+  outcome it returns, and at a first join below a ground focus a block the join does not evaluate counts nothing. Its
+  outcome is the committed search's at every selection (@{text committed_counted_search_outcome}).
+\<close>
+
+fun committed_first_counted ::
+    "('x \<Rightarrow> ('a,'s,'d,'c) resolution_outcome \<times> nat) \<Rightarrow> 'x fset list \<Rightarrow> ('a,'s,'d,'c) resolution_outcome \<times> nat" where
+  "committed_first_counted f [] = (Resolution_Outcome {||} {||}, 0)"
+| "committed_first_counted f (X # Xs) = (let Q = fimage (\<lambda>x. (x, f x)) X;
+      R = finite_outcome_union (fimage (\<lambda>z. fst (snd z)) Q); c = sum (\<lambda>z. snd (snd z)) (fset Q) in
+    if resolution_found R \<noteq> {||} then (R, c)
+    else let R' = committed_first_counted f Xs in
+      (Resolution_Outcome (resolution_found (fst R')) (resolution_diagnoses R |\<union>| resolution_diagnoses (fst R')),
+        c + snd R'))"
+
+definition committed_counted_join ::
+    "'s list option \<Rightarrow> ('a,'s,'d,'c) resolution_state \<Rightarrow> ('x \<Rightarrow> nat) \<Rightarrow>
+      ('x \<Rightarrow> ('a,'s,'d,'c) resolution_outcome \<times> nat) \<Rightarrow> 'x fset \<Rightarrow> ('a,'s,'d,'c) resolution_outcome \<times> nat" where
+  "committed_counted_join F st key f X = (if finite_focus_ground F st
+    then committed_first_counted f (finite_key_blocks key X)
+    else let Q = fimage (\<lambda>x. (x, f x)) X in
+      (finite_outcome_union (fimage (\<lambda>z. fst (snd z)) Q), sum (\<lambda>z. snd (snd z)) (fset Q)))"
+
+lemma committed_first_counted_outcome:
+  "fst (committed_first_counted f Ys) = finite_first_outcome (\<lambda>x. fst (f x)) Ys"
+  by (induction Ys) (auto simp: Let_def fset.map_comp comp_def split: if_split)
+
+lemma committed_counted_join_outcome:
+  "fst (committed_counted_join F st key f X) = finite_search_join F st key (\<lambda>x. fst (f x)) X"
+  by (simp add: committed_counted_join_def finite_search_join_def committed_first_counted_outcome Let_def
+    fset.map_comp comp_def)
+
+definition committed_counted_goal ::
+    "('s::linorder list option \<Rightarrow> 's list fset \<Rightarrow> ('a,'s,'d,'c) resolution_state \<Rightarrow>
+        ('a,'s,'d,'c) resolution_outcome \<times> nat) \<Rightarrow>
+      ('a,'s,'d,'c) resolution_commitment \<Rightarrow> ('a,'s,'d,'c) finite_schema_system \<Rightarrow> 's list option \<Rightarrow>
+      's list fset \<Rightarrow> ('a,'s,'d,'c) resolution_state \<Rightarrow> ('a,'s,'d,'c) resolution_goal \<Rightarrow>
+      ('a,'s,'d,'c) resolution_outcome \<times> nat" where
+  "committed_counted_goal rec K P F B st g =
+    (if finite_pruned (finite_unbarred B st) g then (Resolution_Outcome {||} {||}, 0)
+     else if finite_pruned (finite_barred B st) g then (Resolution_Outcome {||} {|Resolution_Cut {|g|}|}, 0)
+     else if finite_goal_committing K F st g then
+       (let q = resolution_goal_position g;
+          sub = rec (Some q) (finite_goal_sub_barring K F B st g) (finite_produced_state K F st g);
+          C = committed_counted_join F st (\<lambda>_. 0) (\<lambda>s. rec F (finite_committed_barring B s) s)
+            (finite_kept q (resolution_found (fst sub))) in
+        (finite_outcome_union {|Resolution_Outcome {||} (resolution_diagnoses (fst sub)), fst C|}, snd sub + snd C))
+     else let S = finite_committed_successors K P F st g in
+       if S={||} then (if resolution_witnesses st={||} then (Resolution_Outcome {||} {||}, 0)
+         else (Resolution_Outcome {||} {|Resolution_Witnessed (resolution_witnesses st) g|}, 0))
+       else committed_counted_join F st (finite_determinate_key (resolution_goal_position g))
+         (rec F (finite_goal_barring K F B st g)) S)"
+
+lemma committed_counted_goal_outcome:
+  assumes rec: "\<And>F' B' s. fst (rec F' B' s) = rec' F' B' s"
+  shows "fst (committed_counted_goal rec K P F B st g) = finite_committed_goal_outcome rec' K P F B st g"
+  unfolding committed_counted_goal_def finite_committed_goal_outcome_def Let_def
+  by (simp add: rec committed_counted_join_outcome split: if_split)
+
 definition committed_goal_states ::
     "('s::linorder list option \<Rightarrow> 's list fset \<Rightarrow> ('a,'s,'d,'c) resolution_state \<Rightarrow> nat) \<Rightarrow>
       ('s list option \<Rightarrow> 's list fset \<Rightarrow> ('a,'s,'d,'c) resolution_state \<Rightarrow> ('a,'s,'d,'c) resolution_outcome) \<Rightarrow>
       ('a,'s,'d,'c) resolution_commitment \<Rightarrow> ('a,'s,'d,'c) finite_schema_system \<Rightarrow> 's list option \<Rightarrow>
       's list fset \<Rightarrow> ('a,'s,'d,'c) resolution_state \<Rightarrow> ('a,'s,'d,'c) resolution_goal \<Rightarrow> nat" where
   "committed_goal_states cnt rec K P F B st g =
-    (if finite_pruned (finite_unbarred B st) g then 0
-     else if finite_pruned (finite_barred B st) g then 0
-     else if finite_goal_committing K F st g then
-       (let q = resolution_goal_position g; B' = finite_goal_sub_barring K F B st g;
-          s0 = finite_produced_state K F st g in
-        cnt (Some q) B' s0 +
-          sum (\<lambda>s. cnt F (finite_committed_barring B s) s) (fset (finite_kept q (resolution_found (rec (Some q) B' s0)))))
-     else sum (cnt F (finite_goal_barring K F B st g)) (fset (finite_committed_successors K P F st g)))"
+    snd (committed_counted_goal (\<lambda>F' B' s. (rec F' B' s, cnt F' B' s)) K P F B st g)"
 
-primrec committed_search_states ::
+primrec committed_counted_search ::
+    "(('a,'s::linorder,'d,'c) resolution_state \<Rightarrow> ('a,'s,'d,'c) resolution_selection) \<Rightarrow>
+      ('a,'s,'d,'c) finite_witness_construction \<Rightarrow> ('a,'s,'d,'c) resolution_commitment \<Rightarrow>
+      ('a,'s,'d,'c) finite_schema_system \<Rightarrow> nat \<Rightarrow> 's list option \<Rightarrow> 's list fset \<Rightarrow>
+      ('a,'s,'d,'c) resolution_state \<Rightarrow> ('a,'s,'d,'c) resolution_outcome \<times> nat" where
+  "committed_counted_search sel \<kappa> K P 0 F B st = (finite_committed_search_by sel \<kappa> K P 0 F B st, 1)"
+| "committed_counted_search sel \<kappa> K P (Suc n) F B st = (if finite_focus_pending F st={||}
+    then (Resolution_Outcome {|st|} {||}, 1) else (case sel (finite_focused F st) of
+      Select_Construction N \<Rightarrow> (let M = ffilter (\<lambda>nd. resolution_focused F (resolution_node_position nd)) N in
+        if M = {||} then (Resolution_Outcome {||} {|Resolution_Stuck (finite_focus_pending F st)|}, 1)
+        else let Q = fimage (\<lambda>s. (s, committed_counted_search sel \<kappa> K P n F (finite_committed_barring B st) s))
+            (fimage (finite_construction_step \<kappa> P st) M) in
+          (finite_outcome_union (fimage (\<lambda>z. fst (snd z)) Q), Suc (sum (\<lambda>z. snd (snd z)) (fset Q))))
+    | Select_Goals G \<Rightarrow> (let Q = fimage (\<lambda>g. (g, committed_counted_goal (committed_counted_search sel \<kappa> K P n)
+          K P F B st g)) G in
+        (finite_outcome_union (fimage (\<lambda>z. fst (snd z)) Q), Suc (sum (\<lambda>z. snd (snd z)) (fset Q))))
+    | Select_None \<Rightarrow> (Resolution_Outcome {||}
+        (finsert (Resolution_Stuck (finite_focus_pending F st)) (finite_unconstructed \<kappa> P st)), 1)))"
+
+theorem committed_counted_search_outcome:
+  "fst (committed_counted_search sel \<kappa> K P n F B st) = finite_committed_search_by sel \<kappa> K P n F B st"
+proof (induction n arbitrary: F B st)
+  case 0
+  show ?case by simp
+next
+  case (Suc n)
+  have g: "fst (committed_counted_goal (committed_counted_search sel \<kappa> K P n) K P F' B' s g) =
+      finite_committed_goal_outcome (finite_committed_search_by sel \<kappa> K P n) K P F' B' s g" for F' B' s g
+    by (rule committed_counted_goal_outcome) (rule Suc.IH)
+  show ?case
+    by (simp add: g Suc.IH Let_def fset.map_comp comp_def split: if_split resolution_selection.split)
+qed
+
+definition committed_search_states ::
     "(('a,'s::linorder,'d,'c) resolution_state \<Rightarrow> ('a,'s,'d,'c) resolution_selection) \<Rightarrow>
       ('a,'s,'d,'c) finite_witness_construction \<Rightarrow> ('a,'s,'d,'c) resolution_commitment \<Rightarrow>
       ('a,'s,'d,'c) finite_schema_system \<Rightarrow> nat \<Rightarrow> 's list option \<Rightarrow> 's list fset \<Rightarrow>
       ('a,'s,'d,'c) resolution_state \<Rightarrow> nat" where
-  "committed_search_states sel \<kappa> K P 0 F B st = 1"
-| "committed_search_states sel \<kappa> K P (Suc n) F B st = (if finite_focus_pending F st={||} then 1
-    else (case sel (finite_focused F st) of
-      Select_Construction N \<Rightarrow> (let M = ffilter (\<lambda>nd. resolution_focused F (resolution_node_position nd)) N in
-        if M = {||} then 1
-        else Suc (sum (committed_search_states sel \<kappa> K P n F (finite_committed_barring B st))
-          (fset (fimage (finite_construction_step \<kappa> P st) M))))
-    | Select_Goals G \<Rightarrow> Suc (sum (committed_goal_states (committed_search_states sel \<kappa> K P n)
-        (finite_committed_search_by sel \<kappa> K P n) K P F B st) (fset G))
-    | Select_None \<Rightarrow> 1))"
+  "committed_search_states sel \<kappa> K P n F B st = snd (committed_counted_search sel \<kappa> K P n F B st)"
 
 abbreviation committed_resolution_states ::
     "(('a,'s::linorder,'d,'c) resolution_state \<Rightarrow> ('a,'s,'d,'c) resolution_selection) \<Rightarrow>

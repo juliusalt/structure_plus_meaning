@@ -53,11 +53,13 @@ through B2's recording, citing `development_citing_row_generation_certified`; th
 into the briefs #522 and #523 corrected, or recorded superseded there.
 
 **The native evaluator's open line**, in chain order (what landed is under Delivered; each build's review follows it):
-- The resolver at the given's size (#683's addition): F2c landed; C #703 (a found derivation checked over its graph) and
-  F2d #810 ((c) the positional index in one pass and (d) every decode through an immutable array: `search_of` at the
-  given 0.29 s against 57.1 s, a decode 0.013 µs a node; (a) and (b) not wanted; R7 takes the shared equation;
-  re-planned to hand over as delivered) → R7 #542 and #547. q145's (a) with review 702's 1–3 is K1–K3's (correction
-  (14)). Off the route: #792 (F2b1 the access's instance, review 772's 1, q139; review 702's 4), after F2d and C.
+- The resolver at the given's size (#683's addition): F2c and F2d landed (F2d: the positional index in one pass and
+  every decode through an immutable array, `search_of` at the given 0.29 s against 57.1 s; R7 takes the shared
+  equation); C #703 (a found derivation checked over its graph) → R7 #542 and #547. A shared search step at the given's
+  size is not yet measured (review 810's 1: the table copied twice an access, up to about 1 ms): #829 measures one;
+  holding the table's array in the search's state is a statement change, the planner's, from its figures. q145's (a)
+  with review 702's 1–3 is K1–K3's (correction (14)). Off the route: #792 (F2b1 the access's instance, review 772's 1,
+  q139; review 702's 4), after C.
 - 77/1's cost at main, the investigation #829, first: R5's own committed search at 77/1 (400) at the given's
   commitment past 45 s where #701's landing measured 7.3 s (F2d's second question), and 11 after RD1 at every artifact
   row of 77/1 (2,782 states and 10.6 s at one 18-address artifact, 45 % garbage collection: review 809's 3); K3 #825
@@ -190,7 +192,9 @@ certificate path (about 160 s a cycle), which needs a round-by-round corresponde
   name and statement, as R5f1's and K1's do; a control whose figure changes is reported with both and R4's beside
   (#794's verdict). R5's `_def`s may become instances of their generalizations, statements kept (review 803's 1).
   A premise bundle of the lifting (`finite_lifting_premises`) may gain a conjunct discharged where the bundle is built,
-  every theorem outside it keeping its statement and meaning (q147, K1's join).
+  every theorem outside it keeping its statement and meaning (q147, K1's join). An unfolding lemma that spells a
+  changed definition's body changes with the body, its meaning kept, where no theory outside the definition's cites it
+  (q149).
 - A route selection that is not a priority of F1's must meet `finite_selection_unheld` for the committed search's
   held, confined and registered-unbound facts (review 803's 2); none is planned.
 - A free socket whose viewed input holds a variable of the parent's head output at its view never commits under R5's
@@ -346,8 +350,9 @@ under `.build/plans/plan-69/`, `plan-81/` and `plan-86/`.
   `Factor_Indexed_Resolution` (#699; (c) #769), F2b2 (a) `Factor_Shared_Resolution` (#755) and (b)
   `Factor_Search_Representations` with `Factor_Shared_Search` (#771: the search once over a representation, the shared
   instance's code equation); F2c `Factor_Shared_Commitments` (#701: R5's committed search over that representation, its
-  projection R5's at every priority, the code equation admitting every goal); the measurements #742, #764, #779 and
-  #788 in their `result.md`.
+  projection R5's at every priority, the code equation admitting every goal); F2d (#810: `position_index_extend_code`,
+  the decodes through an immutable array, `reference_term_array_code`); the measurements #742, #764, #779, #788 and
+  #810 in their `result.md` and `measurement.md`.
 - **The given's declarations**: R6 `Development_Given_Declarations` (#520); R6b `Factor_Root_Family_Declarations`
   (#601), `Factor_Artifact_Citation_Declarations` (#603, its frames #749); R6c `Factor_Instantiation_Declarations`
   (#607), `Factor_Schema_Instantiation_Declarations` (#679), `Factor_Definition_Reading_Declarations` (#681),
@@ -476,11 +481,11 @@ planner searches for a theory before briefing a task that edits it.
 
 ## Now
 
-- **Under way**: C #703, #798, K1 #821 and I3a #815 build; F2d #810 hands over as delivered; the investigation #829
-  (77/1's cost at main) first in the queue.
+- **Under way**: C #703, #798, K1 #821 and I3a #815 build; the investigation #829 (77/1's cost at main, and a shared
+  search step at the given's size) runs first.
 - **What the next events ask**: #829's result — a fix at each cause spliced before K3 #825 where it reaches the moded
   selection or the check forms; the hand-overs of K1 (O1's count one traversal with the search: review 801's 1 and 2,
-  O4's figure 11.8 s against 1.2 s at 77/1 moded, and O4's execution lemma evaluated again), F2d, C, #798 and I3a (77/1-2
+  O4's figure 11.8 s against 1.2 s at 77/1 moded, and O4's execution lemma evaluated again), C, #798 and I3a (77/1-2
   at the moded selection with and without the production, held at 400); then K2 and K3 before #542 and #547.
 - **Briefs written before their theories grew** may be refused at their start (#596 was; #607 was divided by #678):
   each is resized or divided then. Nearest their rooms: #542 (its brief now also takes corrections (12)–(14) and

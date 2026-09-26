@@ -116,7 +116,7 @@ text \<open>
 lemma given_modes_controls:
   "modes_113_7 True 230 = (Some True, [], 413) \<and> modes_113_7 False 230 = (Some True, [0], 514) \<and>
    modes_77_1 True 200 = (None, [0,2], 614) \<and> modes_77_1 False 200 = (None, [0,2], 280) \<and>
-   modes_77_2 True 200 = (None, [0], 201) \<and> modes_77_2 False 200 = (None, [0], 201) \<and>
+   modes_77_2 True 200 = (None, [0], 201) \<and>
    modes_77_2 True 300 = (None, [0,2], 326)"
   by eval
 

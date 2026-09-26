@@ -19684,3 +19684,45 @@ under a site relocation, which is not stated (q138): the productions' discharge 
 stays a premise of the corollary, discharged at the installed program by the semantic lemma, for 48's registrations by
 `union_registration_answers_variant` (`Factor_Union_Declarations`), which reads only the head's view at an alpha
 variant of `union_schema` and the agreements at the site and at 5.
+
+## The given's production of 12's input: a produced record overridden at a socket's key, and a production the framed socket test does not meet at 77
+
+Task 815, I3's first part (correction (13) of "Committed choice, for refusals", task 495's entry; q144, q148).
+
+**The record.** #782's keyed join (`produced_join D PD`) overrides a *plain* record at a produced record's keys: outside
+them its class is every answer and its production none. The given's one record is already produced (48's eight
+narrowed sockets and `union_registration`), so joining it with the lookup socket's record by `produced_join` would drop
+48's classes and productions. The join is therefore stated once over a produced base, `produced_override PD PK`: PK's
+socket, class and production at PK's keys (`socket_keyed`), PD's elsewhere, with `produced_override_discharged`,
+`_frames` (over `frames_join`), `_productions`, `_declared`, each from the two parts' discharges; `produced_join D PD`
+is now `produced_override (unproduced (unnarrowed D)) PD`, its facts the override's corollaries at a base with no class
+and no production, every name and statement kept (q148: placed beside `produced` in `Factor_Narrowed_Productions`).
+The given's record with 12's input production is `given_input_declarations = produced_override given_declarations
+lookup_input_declarations`, the second the lookup socket (37, `lookup_socket_schema`, 2, False, `view_identity`,
+`lookup_view`) alone, class every answer, production `identity_input_registration`; its frames `given_input_frames =
+frames_join (its keys) given_narrowed_frames lookup_frames`. `given_declarations` and #782's statements are unchanged.
+
+**The discharge at the rooted readers.** The narrowed discharge, its plain part, the static premise, the frames and
+R5f2's exchange follow from #782's facts (`given_declarations_discharged`, `given_narrowed_frames_discharged`,
+`given_declarations_productions`) and the lookup socket's own: its plain discharge at the rooted readers (a socket of
+`given_plain_declarations`, `given_plain_declarations_discharged`), its frame (`given_frames_lookup`), and its
+production by I2's `input_productions_discharged` with 12's reflexivity carried to the rooted readers by
+`producer_reflexive_agree` along the agreement chain (`given_agreements` at `artifact_identity_system`).
+
+**The evaluation: the production is not met at 77.** 77/1 and 77/2 at the moded selection with O4's modes give the
+same verdicts, diagnoses and states with and without the production, at every bound evaluated (at 200, lookup socket's frame: 77/1 unresolved, cut and witnessed, 614 states; 77/2 unresolved, cut, 201
+states; at 400 neither search returns within about 150 s, shared runs at 8-9 % CPU). The trace of
+every goal at 12 the moded search meets (`productions_trace`) names why: 12(x4,x3) is reached at 2.0.1.2 under 37 at
+2.0.1, committed with its input ground and its output free, and the framed socket test R5f1's step reads before a
+production (`finite_socket_productions`) fails at one condition, `finite_children_framed {3}`: 37's other children, 26
+at 2.0.1.0 and 5 at 2.0.1.1, have their goals taken and their instantiated patterns ground, but goals still pending
+under them (their sub-derivations open). The moded order takes 12 as soon as its input is ground, before 26's and 5's
+sub-derivations close; the test asks every other child closed. #789's prototype coded the production at any goal at 12
+under (37, key 2) with a ground input, bypassing the framed test, so its prediction did not meet this. I2's control
+met the production because there 37's other children close before 12 is taken.
+
+**What this leaves (the planner's).** Either the selection closes a committed parent's other children before a goal
+whose socket declares a production (an order within O1's priority, read by the selection alone), or the framed test
+admits a sibling whose instantiated pattern is ground and whose variables lie outside the frame while goals are
+pending under it (R5's socket framing and #565's exchange proved again at that weaker premise). Nothing here is an
+outcome against the given's meaning: no call is refuted, and the unresolved calls are cut at the bound.

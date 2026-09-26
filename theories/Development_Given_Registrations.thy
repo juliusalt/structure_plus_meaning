@@ -182,6 +182,66 @@ lemmas given_readers_verdict_exact =
 lemmas given_readers_demand_exact =
   finite_complete_demand_exact[OF _ given_readers_construction_complete]
 
+subsection \<open>The registrations' code, from the given's readers' own clauses\<close>
+
+text \<open>
+  A registration names its clause by @{const finite_schema_of} of its HOL schema, which has no code (the targets'
+  artifacts are chosen by a description). Its code is the schema the program itself holds at the clause, read
+  through the program's functional clause relation (@{const finite_relation_option}, the index notion's instance
+  @{text functional_option_index}). 77's registration reads the given's readers'
+  clause at 77; the additions notion's reads their clause at 392, whose list site is 391, with that callee moved to
+  the registration's list site (@{const finite_rename_schema}, whose decoding is @{const rename_schema}). Each code
+  equation is proved equal to the registration's definition; no schema is written out.
+\<close>
+
+
+lemma package_additions_schema_formed: "schema_formed (package_additions_schema l)"
+  by (auto simp: package_additions_schema_def schema_formed_def schema_dependencies_def
+    single_valued_def rel_dom_def rel_ran_def octets_formed_def)
+
+lemma package_additions_schema_callee:
+  "finite_rename_schema id id (\<lambda>d. if d=391 then l else d) (finite_schema_of (package_additions_schema 391))=
+    finite_schema_of (package_additions_schema l)"
+proof -
+  have "rename_schema id id (\<lambda>d. if d=391 then l else d) (package_additions_schema 391)=package_additions_schema l"
+    by (simp add: rename_schema_def map_socket_graph_def package_additions_schema_def rename_pattern_identity)
+  then have "decode_finite_schema (finite_rename_schema id id (\<lambda>d. if d=391 then l else d)
+      (finite_schema_of (package_additions_schema 391)))=decode_finite_schema (finite_schema_of (package_additions_schema l))"
+    by (simp only: finite_rename_schema_correct decode_finite_schema_of[OF package_additions_schema_formed])
+  then show ?thesis by (simp only: decode_finite_schema_injective)
+qed
+
+lemma given_readers_registration_schemas:
+  "finite_relation_option (finite_system_clauses finite_given_readers) (77,0)=
+    Some (finite_schema_of package_closure_admission_schema)"
+  "finite_relation_option (finite_system_clauses finite_given_readers) (392,0)=
+    Some (finite_schema_of (package_additions_schema 391))"
+proof -
+  have functional: "finite_relation_functional (finite_system_clauses finite_given_readers)"
+    using finite_given_readers_formed by (simp add: finite_system_formed_def)
+  show "finite_relation_option (finite_system_clauses finite_given_readers) (77,0)=
+      Some (finite_schema_of package_closure_admission_schema)"
+    "finite_relation_option (finite_system_clauses finite_given_readers) (392,0)=
+      Some (finite_schema_of (package_additions_schema 391))"
+    by (simp_all only: finite_relation_option_correct[OF functional])
+      (simp_all add: given_readers_registered_clauses finite_registration_matches_def
+        bound_witness_registration_def additions_witness_registration_def closure_witness_registration_def)
+qed
+
+lemma given_readers_registrations_code [code]:
+  "bound_witness_registration=\<lparr>registration_site=77,
+    registration_schema=the (finite_relation_option (finite_system_clauses finite_given_readers) (77,0)),
+    registration_variable=2,
+    registration_families=Single_Family (closure_witness_family 0 1)\<rparr>"
+  "additions_witness_registration e l=\<lparr>registration_site=e,
+    registration_schema=finite_rename_schema id id (\<lambda>d. if d=391 then l else d)
+      (the (finite_relation_option (finite_system_clauses finite_given_readers) (392,0))),registration_variable=5,
+    registration_families=Single_Family (closure_witness_family 1 4)\<rparr>"
+  by (simp_all only: given_readers_registration_schemas package_additions_schema_callee option.sel
+    bound_witness_registration_def additions_witness_registration_def closure_witness_registration_def)
+
+export_code bound_witness_registration additions_witness_registration finite_given_readers checking SML
+
 section \<open>The native request's program\<close>
 
 text \<open>

@@ -413,4 +413,34 @@ lemma first_request_placed_entry_meaning:
   unfolding first_request_entry_def first_request_placement_def first_request_program_def finite_first_request_program_exact
   by simp
 
+subsection \<open>561's registration's code, from the program's own clause\<close>
+
+text \<open>
+  As 77's and the additions notion's (@{thm [source] given_readers_registrations_code}): 561's registration's schema
+  is the schema the first request's program holds at 561, read through its functional clause relation
+  (@{const finite_relation_option}), proved equal to its definition from the program's clause
+  (@{thm [source] first_request_registered_clauses}).
+\<close>
+
+lemma first_request_registration_schema:
+  "finite_relation_option (finite_system_clauses finite_first_request_program) (561,0)=
+    Some (finite_schema_of package_request_schema)"
+proof -
+  have functional: "finite_relation_functional (finite_system_clauses finite_first_request_program)"
+    using finite_first_request_program_formed by (simp add: finite_system_formed_def)
+  show ?thesis
+    by (simp only: finite_relation_option_correct[OF functional])
+      (simp add: first_request_registered_clauses finite_registration_matches_def merge_witness_registration_def)
+qed
+
+lemma first_request_registration_code [code]:
+  "merge_witness_registration=\<lparr>registration_site=561,
+    registration_schema=the (finite_relation_option (finite_system_clauses finite_first_request_program) (561,0)),
+    registration_variable=7,
+    registration_families=Paired_Families
+      (row_witness_family 0 4 0 (Some artifact_row_witness_identity)) (row_witness_family 0 4 1 None)\<rparr>"
+  by (simp only: first_request_registration_schema option.sel merge_witness_registration_def)
+
+export_code merge_witness_registration finite_first_request_program checking SML
+
 end

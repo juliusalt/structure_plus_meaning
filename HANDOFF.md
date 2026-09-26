@@ -313,7 +313,8 @@ What landed that open work builds on, a line each; how it went and each review's
 - **The entries**: #378 (`cbf0c7e9`), #376 (`47a67cfe`), #381 (`2d97747c`), #383 (`7b23938c`), #428 (`631429e6`, the
   payload audit's reliances), #460 (`584c3a76`, its decision withdrawn by Q27), #482 (`e2b239ac`), #495 (`3e8049be`, the
   resolving evaluator, with the plan's record of Q27 and the marked corrections of #460's, #376's and #482's entries); #496 (`e9c4b54b`, the least witnesses, with
-  the plan's record of Q28 and a marked correction of #495's least-witness section);
+  the plan's record of Q28 and a marked correction of #495's least-witness section); #642 (`6bb79246`, #496's entry's
+  addition: the resolver's inputs carried to an installed package by a computed clause match);
   #481's attribution of the recording
   (`.build/tasks/481/result.md`: the cause a quotation of a quotation, 30.4 times the payload's addresses; one generation
   at the given's size 45–65 min, about 9 GB; the cuts and probes I3 and #494 use).

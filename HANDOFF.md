@@ -53,12 +53,13 @@ through B2's recording, citing `development_citing_row_generation_certified`; th
 into the briefs #522 and #523 corrected, or recorded superseded there.
 
 **The native evaluator's open line**, in chain order (what landed is under Delivered; each build's review follows it):
-- The resolver at the given's size (#683's addition): F2c #701 (R5's committed search over #771's representation at
-  every priority, review 772's 2 and 5; landing as built, q145) → C #703 (a found derivation checked over its graph) and
-  F2d #810 (#788's follow-ups (a)–(d) and q145's (b), the committed search's per-step projection: decodes and the
-  quadratic index removed at their cause, continuing F2c; its held figures say which equation R7 takes and whether
-  F2c's option (a), a guard from the declarations, is needed) → R7 #542 and #547. Off the route after F2d: #792 (F2b1
-  the access's instance, review 772's 1, q139).
+- The resolver at the given's size (#683's addition): F2c landed; C #703 (a found derivation checked over its graph) and
+  F2d #810 (#788's follow-ups (a)–(d), q145's (b) and review 702's 6: the shared search's and the committed
+  projection's decodes, the quadratic index and the kept states' re-encoding removed at their cause; its held figures
+  say which equation R7 takes) → R7 #542 and #547. q145's (a) taken with review 702's 1–3 — the guard from the
+  declarations, the focused state once per step, the route's forms as constants with code equations through the shared
+  search — placed by the brief of K1–K3 before #542, #547, #707 and #399. Off the route: #792 (F2b1 the access's
+  instance, review 772's 1, q139; review 702's 4), after F2d and C.
 - Correction (12) (#787): O1–O3 landed; O4 #806 (the given's modes; the state count timed against the search) → #542
   and #547. rc's relocated premise block once (review 805's 1, a fix continuing O3, after #796) → #798, K2 and #547.
 - Correction (13) (#789, q143): I1 landed; I2 #813 (the input production, 12's instance) → I3a #815 (the given's input
@@ -332,7 +333,9 @@ under `.build/plans/plan-69/`, `plan-81/` and `plan-86/`.
 - **The resolver's states** (#683's addition): F2a `Factor_Shared_Patterns` (#697, #713), F2b1
   `Factor_Indexed_Resolution` (#699; (c) #769), F2b2 (a) `Factor_Shared_Resolution` (#755) and (b)
   `Factor_Search_Representations` with `Factor_Shared_Search` (#771: the search once over a representation, the shared
-  instance's code equation); the measurements #742, #764, #779 and #788 in their `result.md`.
+  instance's code equation); F2c `Factor_Shared_Commitments` (#701: R5's committed search over that representation, its
+  projection R5's at every priority, the code equation admitting every goal); the measurements #742, #764, #779 and
+  #788 in their `result.md`.
 - **The given's declarations**: R6 `Development_Given_Declarations` (#520); R6b `Factor_Root_Family_Declarations`
   (#601), `Factor_Artifact_Citation_Declarations` (#603, its frames #749); R6c `Factor_Instantiation_Declarations`
   (#607), `Factor_Schema_Instantiation_Declarations` (#679), `Factor_Definition_Reading_Declarations` (#681),
@@ -455,12 +458,12 @@ planner searches for a theory before briefing a task that edits it.
 
 ## Now
 
-- **Under way**: F2c #701 (landing as built, q145), O4 #806, #796 and #784; the brief of correction (14)'s K1–K3 once
-  #794 lands.
+- **Under way**: O4 #806, #796, #784, I2 #813, RD1 #808; the brief of correction (14)'s K1–K3 (#819), carrying q145's
+  (a) and review 702's 1–3.
 - **What the next events ask**: the brief's proposal (K1 after F2c; K2 and K3 before #542 and #547; #542, #547, #724
-  and #718 re-pointed off the stand-in); F2c's landing, then F2d #810 continuing it; O4's figures (the state count
+  and #718 re-pointed off the stand-in); F2d #810; O4's figures (the state count
   against the search, the moded selection's share: review 801's 1 and 4, placed from them); the hand-overs of O3, I2–I3
-  and RD1; F2d's figures (which equation R7 takes; whether F2c's option (a) is needed).
+  and RD1; F2d's figures (which equation R7 takes).
 - **Briefs written before their theories grew** may be refused at their start (#596 was; #607 was divided by #678):
   each is resized or divided then. Nearest their rooms: #542 (its brief now also takes corrections (12) and (13) and
   RD1) and #399; the samples build #551 (384K at proposal; a hand-back divides its corrected item (3), the planner's).

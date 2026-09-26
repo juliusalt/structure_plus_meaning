@@ -197,6 +197,72 @@ definition framed_fixed_program :: "octets \<Rightarrow> (nat,nat,nat,nat) finit
 definition framed_permutation_frames :: "(nat,nat,nat) resolution_frames" where
   "framed_permutation_frames = {|(1,commitment_permutation_cons,0,{|1,2,3|})|}"
 
+text \<open>
+  The free control (C1 of correction (11)): a free socket committed at a declared frame strictly smaller than its
+  default, and refused at the default. Site 3, c(X,Y) :- r(Pair X (Pair Z R)), prod(Pair Z (Pair Y W)), chk(Y), over
+  the remainder control's r, prod(z1,(a,w1)), prod(z1,(a,w2)), prod(z2,(c,w3)), prod(z2,(d,w4)) and chk(a), chk(b)
+  (w1 to w4 = [11] to [14]); site 4, q(X) :- c(Pair X Y). c is declared a producer at its view, so it is committed
+  at q's clause and its node is the focus the free socket asks; prod's socket is free (its keep flag False) at the
+  views reading Z and X as inputs. Its default frame is the clause's variables outside those inputs, {Y,R,W}; the
+  closed upstream sibling r holds the private remainder R, premise-only and no input of prod, so at the default frame
+  prod stays uncommitted, under correction (9)'s test and under the framed test at no frames alike: c's kept answer a
+  has its two derivations, R4's two certificates. At the declared frame {Y,W}, strictly smaller, r's variables lie
+  outside it, R is bound ground, and c absorbs Y, prod's own output: prod commits, one certificate. q(x2) is refuted,
+  as by R4: both of c's candidate answers fail chk.
+\<close>
+
+definition free_remainder_clause :: "(nat,nat,nat) finite_factor_schema" where
+  "free_remainder_clause = \<lparr>finite_schema_conclusion=Finite_Pattern_Pair (Finite_Variable 0) (Finite_Variable 2),
+    finite_schema_premises={|(0,(0,Finite_Pattern_Pair (Finite_Variable 0)
+        (Finite_Pattern_Pair (Finite_Variable 1) (Finite_Variable 3)))),
+      (1,(1,Finite_Pattern_Pair (Finite_Variable 1) (Finite_Pattern_Pair (Finite_Variable 2) (Finite_Variable 4)))),
+      (2,(2,Finite_Variable 2))|},
+    finite_schema_materials={||}\<rparr>"
+
+definition free_remainder_root :: "(nat,nat,nat) finite_factor_schema" where
+  "free_remainder_root = \<lparr>finite_schema_conclusion=Finite_Variable 0,
+    finite_schema_premises={|(0,(3,Finite_Pattern_Pair (Finite_Variable 0) (Finite_Variable 1)))|},
+    finite_schema_materials={||}\<rparr>"
+
+definition free_remainder_program :: "(nat,nat,nat,nat) finite_schema_system" where
+  "free_remainder_program = \<lparr>finite_system_interfaces={|(0,Finite_Variable 0),(1,Finite_Variable 0),
+      (2,Finite_Variable 0),(3,Finite_Variable 0),(4,Finite_Variable 0)|},
+    finite_system_clauses={|((0,0),framed_remainder_fact [1] [3] [9]),((0,1),framed_remainder_fact [2] [4] [10]),
+      ((1,0),framed_remainder_fact [3] [5] [11]),((1,1),framed_remainder_fact [3] [5] [12]),
+      ((1,2),framed_remainder_fact [4] [7] [13]),((1,3),framed_remainder_fact [4] [8] [14]),
+      ((2,0),commitment_fact (Finite_Pattern_Payload [5])),((2,1),commitment_fact (Finite_Pattern_Payload [6])),
+      ((3,0),free_remainder_clause),((4,0),free_remainder_root)|}\<rparr>"
+
+definition free_remainder_declarations :: "(nat,nat,nat) resolution_declarations" where
+  "free_remainder_declarations = \<lparr>declared_producers={|(3,view_identity,[view_output])|}, declared_consumers={||},
+    declared_sockets={|(3,free_remainder_clause,1,False,view_identity,view_identity)|}\<rparr>"
+
+definition free_remainder_frames :: "(nat,nat,nat) resolution_frames" where
+  "free_remainder_frames = {|(3,free_remainder_clause,1,{|2,4|})|}"
+
+lemma free_framed_control:
+  "finite_default_frame view_identity view_identity free_remainder_clause 1 = {|2,3,4|} \<and>
+    commitment_certificates (finite_program_resolution no_witness_construction free_remainder_program 4
+      (Finite_Payload [1]) 20) = 2 \<and>
+    commitment_certificates (finite_committed_resolution no_witness_construction
+      (finite_declared_commitment free_remainder_declarations) free_remainder_program 4 (Finite_Payload [1]) 20) = 2 \<and>
+    commitment_certificates (finite_committed_resolution no_witness_construction
+      (finite_framed_commitment free_remainder_declarations {||}) free_remainder_program 4 (Finite_Payload [1]) 20) = 2 \<and>
+    commitment_certificates (finite_committed_resolution no_witness_construction
+      (finite_framed_commitment free_remainder_declarations free_remainder_frames) free_remainder_program 4
+      (Finite_Payload [1]) 20) = 1 \<and>
+    finite_resolution_verdict (finite_committed_resolution no_witness_construction
+      (finite_framed_commitment free_remainder_declarations free_remainder_frames) free_remainder_program 4
+      (Finite_Payload [1]) 20) = Some True \<and>
+    finite_resolution_verdict (finite_program_resolution no_witness_construction free_remainder_program 4
+      (Finite_Payload [1]) 20) = Some True \<and>
+    finite_resolution_verdict (finite_committed_resolution no_witness_construction
+      (finite_framed_commitment free_remainder_declarations free_remainder_frames) free_remainder_program 4
+      (Finite_Payload [2]) 20) = Some False \<and>
+    finite_resolution_verdict (finite_program_resolution no_witness_construction free_remainder_program 4
+      (Finite_Payload [2]) 20) = Some False"
+  by eval
+
 lemma framed_controls:
   "commitment_certificates (finite_program_resolution no_witness_construction framed_remainder_program 3
       (Finite_Payload [1]) 20) = 2 \<and>

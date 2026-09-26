@@ -121,7 +121,7 @@ was placed when #668 landed.
 **Order** (the queue holds it; the planner's choice, a residual until the native answer to the selection problem
 exists, Q2): the slots are one pool, each free slot going to the first task in the queue that can start and a review
 standing where its review task stands, so every review stands right after its build. By slack on the longest chain:
-F3 #695; the tools fix #728 (a check's session database read from the sandbox); the parked R5e #599 and V2a #649; the brief #727 (R5f1, R5f2, #651's division) and the fix #726
+F3 #695; R5e #599 and V2a #649 in their merge rounds; the brief #727 (R5f1, R5f2, #651's division) and the fix #726
 before #681 and #609; F2b #699, F2c #701, C #703; R6c's #609, #679 and #681; the carryings #605 and #663 with V2b
 #651; rc #540 and #661; #611; R7 #542, its native part #707, #399 and its controls #709, #547; the route in its chains'
 order (#551, #549, #553, #401, #403, #443, #447, #407, #445, #449); the controls #718 after C, and the lifting's
@@ -550,7 +550,8 @@ planner searches for a theory before briefing a task that edits it.
   branch re-solves the ground goals pending beside it (113 at one row: 5,715 states for a branch of 208) — and at scale
   per-step size (the state grows with the depth, quadratic in the branch); R6's declarations engage no commitment on
   these paths. #683 decided the fix (Graph); R7 #542, #547 and #399 wait on C #703, and through it on F1, F3 and F2.
-  The controls task #718, after C:
+  The controls task #718, after C: #605's control at 79 at five roots against R4 (q127: unresolved to 3000 steps, every
+  cut inside 37's artifact lookup, which admits the whole environment value);
   #636's four remaining controls (77 and 113 at the package and the merge, through `given_control_verdict` and
   `merge_control_inclusions`), correction (7)'s three counterexample controls, the controls' literals onto the
   library's code (review 639's 1), the commitment test's conjuncts at the state after construction (review 632's 5),
@@ -569,8 +570,13 @@ planner searches for a theory before briefing a task that edits it.
   and divides #651 at its (3) (after R5f2, before #661), standing in meanwhile before #540, #609, #613, #651 and F2c;
   #725's Decided lines mailed to #609, #540, #613,
   #699, #701, #611 and #542.
-- **What the next events ask**: #727's proposal, to be placed (R5f1, R5f2, #651's division); the tools fix #728 (a
-  check's session database read from the sandbox, review 694's 5); #726's landing before
+- **Unhandled at plan-95's end**: (1) #600's `Reviews:` line names `r5e`: rewrite it to 599 (as #650's was,
+  `.build/plans/plan-95/b650.md`), else #599's merge round is not reviewed; (2) #728 landed (`63647433`), its review's
+  follow-ups: 1 a tools task (`tools/proof_diagnostics.py` and `tools/proof_contexts.py` opening a finished session
+  database the way `tools/proof_timings.py` now does, reusing its `read_only` and `checked_sources`), 2 the checking
+  lines' costs — 3.3 s and 11.0 s of #693's check (review 660's 2 answered: mail #542, #547 and #399), 3 a `--theory`
+  run retaining only its rows, and #728's two identical 5.36 MB timings files retired.
+- **What the next events ask**: #727's proposal, to be placed (R5f1, R5f2, #651's division); #726's landing before
   #681 and #609 (review 604's follow-ups; #605, #679, #681 and #609 told the dead free socket's pattern); review 604's
   low moves (2's bag class, 4, 6) with #601's bag transports wait for the next low-moves batch (next-edits 274); review
   608's first verdict's follow-ups 1–5 are held by no file (the review file keeps the last verdict only), as review

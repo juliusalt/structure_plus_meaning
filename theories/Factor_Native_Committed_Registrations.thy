@@ -216,11 +216,20 @@ text \<open>
   the installed one being the one evaluated.
 \<close>
 
-context finite_mapped_native_extension
-begin
+text \<open>
+  The corollary's premises are one block, stated once as the assumptions of @{text relocated_registrations} (task 820,
+  from review 805's follow-up 1): the installation's result and the installed site's reading, the numbered program's
+  committed registrations with their declared and frame sites among its definitions, the relocation of the record and
+  of its classes, and at the installed program the sources' classes agreeing, the productions' discharge and the
+  varied record's static premise. The five forms are proved inside it; the statements in
+  @{text finite_mapped_native_extension} are its instances by one interpretation each, and a consumer (the given's
+  produced record, the check instances of rc's forms, the first request) instantiates it by one interpretation.
+\<close>
 
-lemma committed_registrations_relocated:
+locale relocated_registrations = finite_mapped_native_extension E P Q pu pr N g
+  for E P Q pu pr N g +
   fixes Inst :: "local_address option finite_native_system"
+    and F u \<kappa> m ND \<Phi> corr D' \<nu> m'
   assumes result: "finite_extend_mapped_native E P Q g = Some (F,u)"
     and read: "native_package_at (decode_finite_environment F) u [] (decode_finite_system Inst)"
     and registered: "committed_registrations \<kappa> Q m ND \<Phi> corr"
@@ -234,7 +243,10 @@ lemma committed_registrations_relocated:
     and productions: "productions_discharged (positive_meaning (decode_finite_system Inst)) Inst m'
       (produced_declarations_varied goal Inst D')"
     and declared: "narrowed_productions_declared (produced_declarations_varied goal Inst D')"
-  shows "committed_registrations (finite_varied_construction goal Inst (finite_relocated_construction placement Q \<kappa>))
+begin
+
+lemma registrations_installed:
+  "committed_registrations (finite_varied_construction goal Inst (finite_relocated_construction placement Q \<kappa>))
     Inst m' (produced_declarations_varied goal Inst D') (frames_varied goal Inst (frames_relocated placement \<Phi>))
     (corr \<circ> inv_into (declared_sites (resolution_declarations.truncate ND)) placement)"
 proof -
@@ -289,6 +301,90 @@ proof -
       varied_relocated_complete[OF result read Qr(2)] dN fN productions declared])
 qed
 
+lemma registered_installed_at:
+  "registered_commitment_at prio (finite_varied_construction goal Inst (finite_relocated_construction placement Q \<kappa>))
+    Inst (finite_narrowed_commitment Inst m' (produced_declarations_varied goal Inst D')
+      (frames_varied goal Inst (frames_relocated placement \<Phi>)))"
+  by (rule committed_registrations.registered_at[OF registrations_installed])
+
+theorem native_installed_at:
+  assumes resolution: "native_committed_resolution_by
+      (finite_resolution_select_at prio (finite_varied_construction goal Inst (finite_relocated_construction placement Q \<kappa>)) Inst)
+      (finite_varied_construction goal Inst (finite_relocated_construction placement Q \<kappa>))
+      (finite_narrowed_commitment Inst m' (produced_declarations_varied goal Inst D')
+        (frames_varied goal Inst (frames_relocated placement \<Phi>))) Inst R n = (T,A)"
+  shows "fimage fst T = R"
+    and "(q,Finite_Resolved C) |\<in>| T \<Longrightarrow> C \<noteq> {||} \<and> fBall C (\<lambda>p. finite_checks_schema_proof Inst p (fst q) (snd q)) \<and>
+      decode_finite_call_term q \<in> positive_meaning (decode_finite_system Inst)"
+    and "(q,r) |\<in>| T \<Longrightarrow> finite_resolution_refutes r \<Longrightarrow>
+      decode_finite_call_term q \<notin> positive_meaning (decode_finite_system Inst)"
+    and "A = Some B \<Longrightarrow> schema_system_formed (decode_finite_system Inst) \<and>
+      fset B = {q\<in>fset R. decode_finite_call_term q \<in> positive_meaning (decode_finite_system Inst)}"
+  using native_committed_registered_exact_at[OF registered_installed_at resolution] by blast+
+
+theorem native_installed:
+  assumes resolution: "native_committed_resolution (finite_varied_construction goal Inst (finite_relocated_construction placement Q \<kappa>))
+      (finite_narrowed_commitment Inst m' (produced_declarations_varied goal Inst D')
+        (frames_varied goal Inst (frames_relocated placement \<Phi>))) Inst R n = (T,A)"
+  shows "fimage fst T = R"
+    and "(q,Finite_Resolved C) |\<in>| T \<Longrightarrow> C \<noteq> {||} \<and> fBall C (\<lambda>p. finite_checks_schema_proof Inst p (fst q) (snd q)) \<and>
+      decode_finite_call_term q \<in> positive_meaning (decode_finite_system Inst)"
+    and "(q,r) |\<in>| T \<Longrightarrow> finite_resolution_refutes r \<Longrightarrow>
+      decode_finite_call_term q \<notin> positive_meaning (decode_finite_system Inst)"
+    and "A = Some B \<Longrightarrow> schema_system_formed (decode_finite_system Inst) \<and>
+      fset B = {q\<in>fset R. decode_finite_call_term q \<in> positive_meaning (decode_finite_system Inst)}"
+  using native_installed_at[OF resolution[unfolded native_committed_resolution_select]] by blast+
+
+theorem native_installed_moded:
+  assumes resolution: "native_committed_resolution_by
+      (finite_moded_select (finite_varied_construction goal Inst (finite_relocated_construction placement Q \<kappa>))
+        (finite_narrowed_commitment Inst m' (produced_declarations_varied goal Inst D')
+          (frames_varied goal Inst (frames_relocated placement \<Phi>))) Dm (modes_relocated placement M) Inst)
+      (finite_varied_construction goal Inst (finite_relocated_construction placement Q \<kappa>))
+      (finite_narrowed_commitment Inst m' (produced_declarations_varied goal Inst D')
+        (frames_varied goal Inst (frames_relocated placement \<Phi>))) Inst R n = (T,A)"
+  shows "fimage fst T = R"
+    and "(q,Finite_Resolved C) |\<in>| T \<Longrightarrow> C \<noteq> {||} \<and> fBall C (\<lambda>p. finite_checks_schema_proof Inst p (fst q) (snd q)) \<and>
+      decode_finite_call_term q \<in> positive_meaning (decode_finite_system Inst)"
+    and "(q,r) |\<in>| T \<Longrightarrow> finite_resolution_refutes r \<Longrightarrow>
+      decode_finite_call_term q \<notin> positive_meaning (decode_finite_system Inst)"
+    and "A = Some B \<Longrightarrow> schema_system_formed (decode_finite_system Inst) \<and>
+      fset B = {q\<in>fset R. decode_finite_call_term q \<in> positive_meaning (decode_finite_system Inst)}"
+  using native_installed_at[OF resolution] by blast+
+
+end
+
+text \<open>The forms in @{text finite_mapped_native_extension}, each the locale's instance by one interpretation.\<close>
+
+context finite_mapped_native_extension
+begin
+
+lemma committed_registrations_relocated:
+  fixes Inst :: "local_address option finite_native_system"
+  assumes result: "finite_extend_mapped_native E P Q g = Some (F,u)"
+    and read: "native_package_at (decode_finite_environment F) u [] (decode_finite_system Inst)"
+    and registered: "committed_registrations \<kappa> Q m ND \<Phi> corr"
+    and sites: "declared_sites (resolution_declarations.truncate ND) \<subseteq> system_definitions (decode_finite_system Q)"
+    and frame_sites: "frame_sites \<Phi> \<subseteq> system_definitions (decode_finite_system Q)"
+    and relocated: "narrowed_declarations.truncate (D' :: (_,_,_,'v) produced_declarations) =
+      narrowed (declarations_relocated placement (resolution_declarations.truncate ND)) \<nu>"
+    and relocates: "\<And>e S s keep Vp Vh. (e,S,s,keep,Vp,Vh) |\<in>| declared_sockets ND \<Longrightarrow>
+      \<nu> (placement e) (finite_rename_schema id id placement S) s = declared_narrowing ND e S s"
+    and agree: "varied_narrowings_agree goal Inst D'"
+    and productions: "productions_discharged (positive_meaning (decode_finite_system Inst)) Inst m'
+      (produced_declarations_varied goal Inst D')"
+    and declared: "narrowed_productions_declared (produced_declarations_varied goal Inst D')"
+  shows "committed_registrations (finite_varied_construction goal Inst (finite_relocated_construction placement Q \<kappa>))
+    Inst m' (produced_declarations_varied goal Inst D') (frames_varied goal Inst (frames_relocated placement \<Phi>))
+    (corr \<circ> inv_into (declared_sites (resolution_declarations.truncate ND)) placement)"
+proof -
+  interpret L: relocated_registrations E P Q pu pr N g Inst F u \<kappa> m ND \<Phi> corr D' \<nu> m'
+    by (rule relocated_registrations.intro[OF finite_mapped_native_extension_axioms],
+      rule relocated_registrations_axioms.intro[OF result read registered sites frame_sites relocated _ agree
+        productions declared], rule relocates)
+  show ?thesis by (rule L.registrations_installed)
+qed
+
 text \<open>At a priority of the installed program: the varied record's exchange holds at every one (O2).\<close>
 
 lemma committed_registrations_relocated_at:
@@ -309,8 +405,13 @@ lemma committed_registrations_relocated_at:
   shows "registered_commitment_at prio (finite_varied_construction goal Inst (finite_relocated_construction placement Q \<kappa>))
     Inst (finite_narrowed_commitment Inst m' (produced_declarations_varied goal Inst D')
       (frames_varied goal Inst (frames_relocated placement \<Phi>)))"
-  by (rule committed_registrations.registered_at[OF committed_registrations_relocated[OF result read registered
-    sites frame_sites relocated relocates agree productions declared]])
+proof -
+  interpret L: relocated_registrations E P Q pu pr N g Inst F u \<kappa> m ND \<Phi> corr D' \<nu> m'
+    by (rule relocated_registrations.intro[OF finite_mapped_native_extension_axioms],
+      rule relocated_registrations_axioms.intro[OF result read registered sites frame_sites relocated _ agree
+        productions declared], rule relocates)
+  show ?thesis by (rule L.registered_installed_at)
+qed
 
 theorem native_committed_registered_relocated_at:
   fixes Inst :: "local_address option finite_native_system"
@@ -340,8 +441,11 @@ theorem native_committed_registered_relocated_at:
     and "A = Some B \<Longrightarrow> schema_system_formed (decode_finite_system Inst) \<and>
       fset B = {q\<in>fset R. decode_finite_call_term q \<in> positive_meaning (decode_finite_system Inst)}"
 proof -
-  note exact = native_committed_registered_exact_at[OF committed_registrations_relocated_at[OF result read registered
-    sites frame_sites relocated relocates agree productions declared] resolution]
+  interpret L: relocated_registrations E P Q pu pr N g Inst F u \<kappa> m ND \<Phi> corr D' \<nu> m'
+    by (rule relocated_registrations.intro[OF finite_mapped_native_extension_axioms],
+      rule relocated_registrations_axioms.intro[OF result read registered sites frame_sites relocated _ agree
+        productions declared], rule relocates)
+  note exact = L.native_installed_at[OF resolution]
   show "fimage fst T = R" by (rule exact(1))
   show "(q,Finite_Resolved C) |\<in>| T \<Longrightarrow> C \<noteq> {||} \<and> fBall C (\<lambda>p. finite_checks_schema_proof Inst p (fst q) (snd q)) \<and>
       decode_finite_call_term q \<in> positive_meaning (decode_finite_system Inst)" by (rule exact(2))
@@ -372,9 +476,12 @@ lemma committed_registrations_produced_relocated:
 proof -
   have inj: "inj_on placement (declared_sites (resolution_declarations.truncate ND))"
     by (rule inj_on_subset[OF maps.injective sites])
-  show ?thesis
-    by (rule committed_registrations_relocated[OF result read registered sites frame_sites produced_relocated_truncate
-      produced_relocated_keys(1)[OF inj] agree productions declared])
+  interpret L: relocated_registrations E P Q pu pr N g Inst F u \<kappa> m ND \<Phi> corr "produced_relocated placement ND"
+      "declared_narrowing (produced_relocated placement ND)" m'
+    by (rule relocated_registrations.intro[OF finite_mapped_native_extension_axioms],
+      rule relocated_registrations_axioms.intro[OF result read registered sites frame_sites produced_relocated_truncate _
+        agree productions declared], rule produced_relocated_keys(1)[OF inj])
+  show ?thesis by (rule L.registrations_installed)
 qed
 
 theorem native_committed_registered_relocated:
@@ -403,8 +510,11 @@ theorem native_committed_registered_relocated:
     and "A = Some B \<Longrightarrow> schema_system_formed (decode_finite_system Inst) \<and>
       fset B = {q\<in>fset R. decode_finite_call_term q \<in> positive_meaning (decode_finite_system Inst)}"
 proof -
-  note exact = native_committed_registered_relocated_at[OF result read registered sites frame_sites relocated relocates
-    agree productions declared resolution[unfolded native_committed_resolution_select]]
+  interpret L: relocated_registrations E P Q pu pr N g Inst F u \<kappa> m ND \<Phi> corr D' \<nu> m'
+    by (rule relocated_registrations.intro[OF finite_mapped_native_extension_axioms],
+      rule relocated_registrations_axioms.intro[OF result read registered sites frame_sites relocated _ agree
+        productions declared], rule relocates)
+  note exact = L.native_installed[OF resolution]
   show "fimage fst T = R" by (rule exact(1))
   show "(q,Finite_Resolved C) |\<in>| T \<Longrightarrow> C \<noteq> {||} \<and> fBall C (\<lambda>p. finite_checks_schema_proof Inst p (fst q) (snd q)) \<and>
       decode_finite_call_term q \<in> positive_meaning (decode_finite_system Inst)" by (rule exact(2))
@@ -449,8 +559,11 @@ theorem native_committed_moded_relocated:
     and "A = Some B \<Longrightarrow> schema_system_formed (decode_finite_system Inst) \<and>
       fset B = {q\<in>fset R. decode_finite_call_term q \<in> positive_meaning (decode_finite_system Inst)}"
 proof -
-  note exact = native_committed_registered_relocated_at[OF result read registered sites frame_sites relocated relocates
-    agree productions declared resolution]
+  interpret L: relocated_registrations E P Q pu pr N g Inst F u \<kappa> m ND \<Phi> corr D' \<nu> m'
+    by (rule relocated_registrations.intro[OF finite_mapped_native_extension_axioms],
+      rule relocated_registrations_axioms.intro[OF result read registered sites frame_sites relocated _ agree
+        productions declared], rule relocates)
+  note exact = L.native_installed_moded[OF resolution]
   show "fimage fst T = R" by (rule exact(1))
   show "(q,Finite_Resolved C) |\<in>| T \<Longrightarrow> C \<noteq> {||} \<and> fBall C (\<lambda>p. finite_checks_schema_proof Inst p (fst q) (snd q)) \<and>
       decode_finite_call_term q \<in> positive_meaning (decode_finite_system Inst)" by (rule exact(2))

@@ -126,15 +126,16 @@ abbreviation input_control_plain :: "nat \<Rightarrow> finite_factor_term \<Righ
     input_control_program d t 30)"
 
 text \<open>
-  At bound 30 the value is the stored artifact; the true call is resolved in 26 states with the production against 53
-  without it, one certificate each; the false call is refuted in 6 states and the lookup of another artifact in 23. R4
+  At bound 30 the value is the stored artifact; the true call is resolved in 25 states with the production against 53
+  without it, one certificate each (26 before the first join below a ground focus, task 821: the produced goal's
+  sub-search, ground, keeps its first found state); the false call is refuted in 6 states and the lookup of another artifact in 23. R4
   gives the same three verdicts.
 \<close>
 
 lemma input_production_controls:
   "witness_value (finite_collection_construction [identity_input_registration] 0) input_control_program 12
       identity_socket_schema {|(0,input_control_artifact)|} 1 = Some input_control_artifact \<and>
-    input_control_row input_control_produced 40 (input_control_call [5]) 30 = (Some True,1,26) \<and>
+    input_control_row input_control_produced 40 (input_control_call [5]) 30 = (Some True,1,25) \<and>
     input_control_row input_control_committed 40 (input_control_call [5]) 30 = (Some True,1,53) \<and>
     input_control_plain 40 (input_control_call [5]) = Some True \<and>
     input_control_row input_control_produced 40 (input_control_call [7]) 30 = (Some False,0,6) \<and>

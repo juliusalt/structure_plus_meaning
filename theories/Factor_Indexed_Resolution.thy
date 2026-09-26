@@ -1,5 +1,5 @@
 theory Factor_Indexed_Resolution
-  imports Factor_Resolution_Acceptance Tree_Map_Indexes Ordered_Finite_Terms
+  imports Factor_Resolution_Acceptance Tree_Map_Indexes Ordered_Finite_Terms Listed_Set_Unions
 begin
 
 section \<open>A tree of finite sets by key\<close>
@@ -9,9 +9,14 @@ text \<open>
   R3's search (@{const finite_resolution_search}) keeps its pending goals and its nodes as finite sets and substitutes
   each step's unifier into all of them. The indexed state keeps R3's own patterns, holds the goals and the nodes by
   position in red-black trees, caches every goal's and node's variables, and indexes from the position part of each
-  variable to the positions of the goals and nodes holding a variable there, so a step visits only the holders of the
-  variables it binds. Its projection forgets the trees, the caches and the indexes, and every indexed step projects to
+  variable to the positions of the goals and nodes holding or having held a variable there, so a step visits only
+  those positions. Its projection forgets the trees, the caches and the indexes, and every indexed step projects to
   R3's step; the indexed search is therefore R3's search, and enters as its code equation.
+
+  Build F2b2 (c) adds what the steps keep rather than the selection recomputing it at every step: the positions of the
+  registered variables of the pending goals, kept by the goal positions contributing each, and every value the
+  construction returned, kept beside its node from the one computation that found it. The pending goals are listed
+  bucket after bucket, and the outcomes of a search are joined by listing, never compared.
 
   A bucket tree is a red-black tree from keys to nonempty finite sets; a key the tree does not hold has the empty
   bucket.
@@ -48,6 +53,14 @@ next
   then have "(q, G) \<in> set (RBT.entries t)" "x |\<in>| G" by (simp_all add: RBT.lookup_in_tree)
   then show "x |\<in>| tree_buckets t" by (force simp: tree_buckets_def ffUnion.rep_eq fset_of_list.rep_eq)
 qed
+
+text \<open>
+  The buckets of distinct keys are listed one after another: the union is read, never iterated, so its listing
+  need not be kept free of repetitions (@{thm [source] finite_listed_union_code}).
+\<close>
+
+lemma tree_buckets_code [code]: "tree_buckets t = finite_listed_union (map snd (RBT.entries t))"
+  by (simp add: tree_buckets_def finite_listed_union_def)
 
 lemma tree_buckets_ex: "tree_buckets_ex t F \<longleftrightarrow> fBex (tree_buckets t) F"
 proof -
@@ -111,20 +124,33 @@ next
 qed
 
 text \<open>
-  A key's own set grows by an element at each key of a finite set of keys; the keys are visited in their order.
+  An element moves between the keys of a tree: it joins the bucket of every key of the set it enters and leaves the
+  bucket of every other key of the set it left, every other bucket unchanged. A bucket left empty is deleted.
 \<close>
 
-definition tree_add :: "'q \<Rightarrow> 'k::linorder fset \<Rightarrow> ('k,'q fset) rbt \<Rightarrow> ('k,'q fset) rbt" where
-  "tree_add q K h = fold (\<lambda>p h. RBT.insert p (finsert q (tree_bucket h p)) h) (sorted_list_of_fset K) h"
+definition tree_move :: "'q \<Rightarrow> 'k::linorder fset \<Rightarrow> 'k fset \<Rightarrow> ('k,'q fset) rbt \<Rightarrow> ('k,'q fset) rbt" where
+  "tree_move q A B t = fold (\<lambda>p t. tree_bucket_put t p
+      (if p |\<in>| B then finsert q (tree_bucket t p) else tree_bucket t p |-| {|q|}))
+    (sorted_list_of_fset (A |\<union>| B)) t"
 
-lemma tree_add_fold:
-  "tree_bucket (fold (\<lambda>p h. RBT.insert p (finsert q (tree_bucket h p)) h) ps h) p' =
-    (if p' \<in> set ps then finsert q (tree_bucket h p') else tree_bucket h p')"
-  by (induction ps arbitrary: h) auto
+lemma tree_move_fold:
+  "distinct ps \<Longrightarrow> tree_bucket (fold (\<lambda>p t. tree_bucket_put t p
+      (if p |\<in>| B then finsert q (tree_bucket t p) else tree_bucket t p |-| {|q|})) ps t) p' =
+    (if p' \<in> set ps then (if p' |\<in>| B then finsert q (tree_bucket t p') else tree_bucket t p' |-| {|q|})
+     else tree_bucket t p')"
+  by (induction ps arbitrary: t) auto
 
-lemma tree_add [simp]:
-  "tree_bucket (tree_add q K h) p = (if p |\<in>| K then finsert q (tree_bucket h p) else tree_bucket h p)"
-  by (simp add: tree_add_def tree_add_fold)
+lemma tree_move:
+  "tree_bucket (tree_move q A B t) p = (if p |\<in>| A |\<union>| B then
+      (if p |\<in>| B then finsert q (tree_bucket t p) else tree_bucket t p |-| {|q|}) else tree_bucket t p)"
+  by (simp add: tree_move_def tree_move_fold)
+
+lemma tree_buckets_nonempty_fold:
+  "tree_buckets_nonempty t \<Longrightarrow> tree_buckets_nonempty (fold (\<lambda>p t. tree_bucket_put t p (F p t)) ps t)"
+  by (induction ps arbitrary: t) (auto intro: tree_buckets_nonempty_put)
+
+lemma tree_move_nonempty: "tree_buckets_nonempty t \<Longrightarrow> tree_buckets_nonempty (tree_move q A B t)"
+  unfolding tree_move_def by (rule tree_buckets_nonempty_fold)
 
 subsection \<open>A bucket tree is an index of its rows\<close>
 
@@ -133,7 +159,7 @@ text \<open>
   is its index, searched by the bucket at a key and keyed by the identity. Inserting one row is the notion's update:
   it adds the value at its key and keeps every other key. The holder index of the resolver's state is this index at
   positions: its rows pair the position part of a variable with the position of a goal or node holding a variable
-  there, and @{const tree_add} is the update at each key of a set (the lemma tree_add_updates below).
+  there, and tree_add below is the update at each key of a set (the lemma tree_add_updates).
 \<close>
 
 definition tree_bucket_add :: "('k::linorder,'q fset) rbt \<Rightarrow> 'k \<Rightarrow> 'q \<Rightarrow> ('k,'q fset) rbt" where
@@ -150,6 +176,28 @@ proof (induction rows arbitrary: T)
   obtain a b where z: "z = (a,b)" by (cases z)
   show ?case unfolding z using Cons.IH[of "tree_bucket_add T a b"] by (simp add: tree_bucket_add_def) blast
 qed simp
+
+text \<open>
+  A key's own set grows by an element at each key of a finite set of keys: the rows pairing each key, in its order,
+  with the element, inserted one after another. The fold of any list of keys is the same fold of rows.
+\<close>
+
+definition tree_add :: "'q \<Rightarrow> 'k::linorder fset \<Rightarrow> ('k,'q fset) rbt \<Rightarrow> ('k,'q fset) rbt" where
+  "tree_add q K h = fold (\<lambda>z T. tree_bucket_add T (fst z) (snd z)) (map (\<lambda>p. (p,q)) (sorted_list_of_fset K)) h"
+
+lemma tree_add_fold:
+  "tree_bucket (fold (\<lambda>p h. RBT.insert p (finsert q (tree_bucket h p)) h) ps h) p' =
+    (if p' \<in> set ps then finsert q (tree_bucket h p') else tree_bucket h p')"
+proof -
+  have "fold (\<lambda>p h. RBT.insert p (finsert q (tree_bucket h p)) h) ps h =
+      fold (\<lambda>z T. tree_bucket_add T (fst z) (snd z)) (map (\<lambda>p. (p,q)) ps) h"
+    by (simp add: fold_map comp_def tree_bucket_add_def)
+  then show ?thesis by (auto simp: fset_eq_iff bucket_tree_fold)
+qed
+
+lemma tree_add [simp]:
+  "tree_bucket (tree_add q K h) p = (if p |\<in>| K then finsert q (tree_bucket h p) else tree_bucket h p)"
+  by (auto simp: tree_add_def fset_eq_iff bucket_tree_fold)
 
 lemma bucket_tree_carrier_index:
   "carrier_index (\<lambda>rows p q. (p,q)\<in>set rows) (\<lambda>_. True) (UNIV::'k::linorder set) id bucket_tree
@@ -176,7 +224,7 @@ proof (rule updated_carrier_index.intro[OF bucket_tree_carrier_index], rule upda
 qed
 
 lemma tree_add_updates: "tree_add q K h = fold (\<lambda>p T. tree_bucket_add T p q) (sorted_list_of_fset K) h"
-  by (simp add: tree_add_def tree_bucket_add_def)
+  by (simp add: tree_add_def fold_map comp_def)
 
 lemma ffUnion_fimage_member: "y |\<in>| G \<Longrightarrow> x |\<in>| f y \<Longrightarrow> x |\<in>| ffUnion (fimage f G)"
   by (force simp: ffUnion.rep_eq fimage.rep_eq)
@@ -319,6 +367,20 @@ definition indexed_node_formed :: "('a,'s,'d,'c) finite_witness_construction \<R
 lemma index_node_formed [simp]: "indexed_node_formed \<kappa> P (index_node nd)"
   by (simp add: indexed_node_formed_def)
 
+text \<open>
+  The positions of the registered variables of a family of goals: the position part of every variable a goal holds
+  flagged for construction.
+\<close>
+
+definition goal_registered_positions :: "('a,'s,'d,'c) indexed_goal fset \<Rightarrow> 's list fset" where
+  "goal_registered_positions G = fimage (\<lambda>x. fst (fst x))
+    (ffilter (\<lambda>x. snd (fst x)) (ffUnion (fimage indexed_goal_variables G)))"
+
+lemma goal_registered_positions_member:
+  "p |\<in>| goal_registered_positions G \<longleftrightarrow>
+    (\<exists>hg x. hg |\<in>| G \<and> x |\<in>| indexed_goal_variables hg \<and> snd (fst x) \<and> fst (fst x) = p)"
+  by (force simp: goal_registered_positions_def fimage.rep_eq ffilter.rep_eq ffUnion.rep_eq)
+
 subsection \<open>The keys of ground calls\<close>
 
 text \<open>
@@ -373,9 +435,7 @@ end
 lemma equal_rbt_code [code]: "HOL.equal t u \<longleftrightarrow> RBT.impl_of t = RBT.impl_of u"
   by (simp add: equal_eq equal_rbt_def RBT.impl_of_inject)
 
-declare [[typedef_overloaded]]
-
-record ('a,'s::linorder,'d,'c) indexed_state =
+record (overloaded) ('a,'s::linorder,'d,'c) indexed_state =
   indexed_goals :: "('s list, ('a,'s,'d,'c) indexed_goal fset) rbt"
   indexed_nodes :: "('s list, ('a,'s,'d,'c) indexed_node fset) rbt"
   indexed_witnesses :: "(('s,'a) resolution_variable \<times> finite_factor_term) fset"
@@ -384,6 +444,8 @@ record ('a,'s::linorder,'d,'c) indexed_state =
   indexed_goal_calls :: "(ordered_factor_term, 's list fset) rbt"
   indexed_node_calls :: "(ordered_factor_term, 's list fset) rbt"
   indexed_unconstructed :: "('s list, 'a fset) rbt"
+  indexed_registered :: "('s list, 's list fset) rbt"
+  indexed_values :: "('s list, (('a,'s,'d,'c) resolution_node \<times> 'a \<times> finite_factor_term) fset) rbt"
 
 definition indexed_pending :: "('a,'s::linorder,'d,'c) indexed_state \<Rightarrow> ('a,'s,'d,'c) resolution_goal fset" where
   "indexed_pending r = fimage indexed_goal_value (tree_buckets (indexed_goals r))"
@@ -450,11 +512,29 @@ definition indexed_unconstructed_formed :: "('a,'s,'d,'c) finite_witness_constru
   "indexed_unconstructed_formed \<kappa> P r \<longleftrightarrow> (\<forall>q a hn. a |\<in>| tree_bucket (indexed_unconstructed r) q \<longrightarrow>
     hn |\<in>| tree_bucket (indexed_nodes r) q \<longrightarrow> finite_registered_value \<kappa> P (indexed_node_value hn) a = None)"
 
+text \<open>
+  The registered positions are kept exactly: the bucket of a position holds the goal positions whose goals hold a
+  registered variable there, and no bucket is empty, so the positions are the tree's keys. Every value the
+  construction returned is kept beside its node, at the node's position; a kept value is the construction's value at
+  its node, whatever else changes, so nothing drops it.
+\<close>
+
+definition indexed_registered_formed :: "('a,'s::linorder,'d,'c) indexed_state \<Rightarrow> bool" where
+  "indexed_registered_formed r \<longleftrightarrow> tree_buckets_nonempty (indexed_registered r) \<and>
+    (\<forall>p q. q |\<in>| tree_bucket (indexed_registered r) p \<longleftrightarrow>
+      p |\<in>| goal_registered_positions (tree_bucket (indexed_goals r) q))"
+
+definition indexed_values_formed :: "('a,'s,'d,'c) finite_witness_construction \<Rightarrow>
+    ('a,'s,'d,'c) finite_schema_system \<Rightarrow> ('a,'s::linorder,'d,'c) indexed_state \<Rightarrow> bool" where
+  "indexed_values_formed \<kappa> P r \<longleftrightarrow> (\<forall>q z. z |\<in>| tree_bucket (indexed_values r) q \<longrightarrow>
+    finite_registered_value \<kappa> P (fst z) (fst (snd z)) = Some (snd (snd z)))"
+
 definition indexed_formed :: "('a,'s,'d,'c) finite_witness_construction \<Rightarrow>
     ('a,'s,'d,'c) finite_schema_system \<Rightarrow> ('a,'s::linorder,'d,'c) indexed_state \<Rightarrow> bool" where
   "indexed_formed \<kappa> P r \<longleftrightarrow> tree_buckets_formed (indexed_goals r) (indexed_goal_formed_at P) \<and>
     tree_buckets_formed (indexed_nodes r) (indexed_node_formed_at \<kappa> P) \<and>
-    (\<forall>q. indexed_recorded_at r q) \<and> indexed_open_formed r \<and> indexed_unconstructed_formed \<kappa> P r"
+    (\<forall>q. indexed_recorded_at r q) \<and> indexed_open_formed r \<and> indexed_unconstructed_formed \<kappa> P r \<and>
+    indexed_registered_formed r \<and> indexed_values_formed \<kappa> P r"
 
 lemma indexed_goal_at:
   assumes "indexed_formed \<kappa> P r" "hg |\<in>| tree_bucket (indexed_goals r) q"
@@ -630,12 +710,19 @@ definition indexed_replace :: "'s::linorder list \<Rightarrow> ('a,'s,'d,'c) ind
   "indexed_replace q G N r = indexed_record_at q (r\<lparr>indexed_goals := tree_bucket_put (indexed_goals r) q G,
     indexed_nodes := tree_bucket_put (indexed_nodes r) q N,
     indexed_open := tree_bucket_count_put (indexed_goals r) (indexed_open r) q G,
-    indexed_unconstructed := RBT.delete q (indexed_unconstructed r)\<rparr>)"
+    indexed_unconstructed := RBT.delete q (indexed_unconstructed r),
+    indexed_registered := tree_move q (goal_registered_positions (tree_bucket (indexed_goals r) q))
+      (goal_registered_positions G) (indexed_registered r)\<rparr>)"
 
 lemma indexed_record_at_fields [simp]:
   "indexed_goals (indexed_record_at q r) = indexed_goals r" "indexed_nodes (indexed_record_at q r) = indexed_nodes r"
   "indexed_witnesses (indexed_record_at q r) = indexed_witnesses r" "indexed_open (indexed_record_at q r) = indexed_open r"
   "indexed_unconstructed (indexed_record_at q r) = indexed_unconstructed r"
+  by (simp_all add: indexed_record_at_def)
+
+lemma indexed_record_at_kept [simp]:
+  "indexed_registered (indexed_record_at q r) = indexed_registered r"
+  "indexed_values (indexed_record_at q r) = indexed_values r"
   by (simp_all add: indexed_record_at_def)
 
 lemma indexed_record_at_recorded: "indexed_recorded_at (indexed_record_at q r) q"
@@ -676,6 +763,12 @@ lemma indexed_replace_fields [simp]:
     (if p = q then {||} else tree_bucket (indexed_unconstructed r) p)"
   by (simp_all add: indexed_replace_def indexed_record_at_def)
 
+lemma indexed_replace_kept [simp]:
+  "indexed_registered (indexed_replace q G N r) = tree_move q (goal_registered_positions (tree_bucket (indexed_goals r) q))
+    (goal_registered_positions G) (indexed_registered r)"
+  "indexed_values (indexed_replace q G N r) = indexed_values r"
+  by (simp_all add: indexed_replace_def indexed_record_at_def)
+
 theorem indexed_replace_formed:
   assumes r: "indexed_formed \<kappa> P r" and G: "\<And>hg. hg |\<in>| G \<Longrightarrow> indexed_goal_formed_at P q hg"
     and N: "\<And>hn. hn |\<in>| N \<Longrightarrow> indexed_node_formed_at \<kappa> P q hn"
@@ -711,7 +804,14 @@ proof -
     then show "finite_registered_value \<kappa> P (indexed_node_value hn) a = None"
       using r by (simp add: indexed_formed_def indexed_unconstructed_formed_def)
   qed
-  show ?thesis using goals nodes opened recorded unconstructed by (simp add: indexed_formed_def)
+  have registered: "indexed_registered_formed ?r"
+  proof -
+    have old: "indexed_registered_formed r" using r by (simp add: indexed_formed_def)
+    show ?thesis using old tree_move_nonempty[of "indexed_registered r"]
+      by (auto simp: indexed_registered_formed_def tree_move split: if_splits)
+  qed
+  have valued: "indexed_values_formed \<kappa> P ?r" using r by (simp add: indexed_formed_def indexed_values_formed_def)
+  show ?thesis using goals nodes opened recorded unconstructed registered valued by (simp add: indexed_formed_def)
 qed
 
 lemma indexed_replace_same_nodes:
@@ -945,14 +1045,16 @@ definition indexed_empty :: "(('s,'a) resolution_variable \<times> finite_factor
     ('a,'s::linorder,'d,'c) indexed_state" where
   "indexed_empty W = \<lparr>indexed_goals = RBT.empty, indexed_nodes = RBT.empty, indexed_witnesses = W,
     indexed_holders = RBT.empty, indexed_open = RBT.empty, indexed_goal_calls = RBT.empty,
-    indexed_node_calls = RBT.empty, indexed_unconstructed = RBT.empty\<rparr>"
+    indexed_node_calls = RBT.empty, indexed_unconstructed = RBT.empty, indexed_registered = RBT.empty,
+    indexed_values = RBT.empty\<rparr>"
 
 lemma indexed_empty:
   "indexed_formed \<kappa> P (indexed_empty W)" "indexed_pending (indexed_empty W) = {||}"
   "indexed_node_set (indexed_empty W) = {||}" "indexed_witnesses (indexed_empty W) = W"
   by (simp_all add: indexed_empty_def indexed_formed_def indexed_recorded_at_def indexed_open_formed_def
       tree_keys_under_def indexed_pending_def indexed_node_set_def goal_call_keys_def node_call_keys_def
-      indexed_unconstructed_formed_def)
+      indexed_unconstructed_formed_def indexed_registered_formed_def indexed_values_formed_def tree_buckets_nonempty_def
+      goal_registered_positions_def)
 
 definition index_state :: "('a,'s,'d,'c) finite_schema_system \<Rightarrow> ('a,'s::linorder,'d,'c) resolution_state \<Rightarrow>
     ('a,'s,'d,'c) indexed_state" where
@@ -1632,10 +1734,53 @@ proof -
   show ?thesis unfolding indexed_ready_def finite_registration_ready_def Let_def H e b by simp
 qed
 
+text \<open>
+  F4: a value the construction returned is read beside its node, and asked of the construction only where none is
+  kept. The kept values of a node and variable are one term, which the ordered terms list at once.
+\<close>
+
+definition indexed_kept_value :: "('a,'s::linorder,'d,'c) indexed_state \<Rightarrow> ('a,'s,'d,'c) resolution_node \<Rightarrow> 'a \<Rightarrow>
+    finite_factor_term option" where
+  "indexed_kept_value r nd a = (case sorted_list_of_fset (fimage (\<lambda>z. Ordered_Factor_Term (snd (snd z)))
+      (ffilter (\<lambda>z. fst z = nd \<and> fst (snd z) = a) (tree_bucket (indexed_values r) (resolution_node_position nd)))) of
+    [] \<Rightarrow> None | t # ts \<Rightarrow> Some (case t of Ordered_Factor_Term v \<Rightarrow> v))"
+
+definition indexed_value :: "('a,'s,'d,'c) finite_witness_construction \<Rightarrow> ('a,'s,'d,'c) finite_schema_system \<Rightarrow>
+    ('a,'s::linorder,'d,'c) indexed_state \<Rightarrow> ('a,'s,'d,'c) resolution_node \<Rightarrow> 'a \<Rightarrow> finite_factor_term option" where
+  "indexed_value \<kappa> P r nd a = (case indexed_kept_value r nd a of Some v \<Rightarrow> Some v
+    | None \<Rightarrow> finite_registered_value \<kappa> P nd a)"
+
+lemma indexed_value:
+  assumes r: "indexed_formed \<kappa> P r"
+  shows "indexed_value \<kappa> P r nd a = finite_registered_value \<kappa> P nd a"
+proof -
+  let ?E = "ffilter (\<lambda>z. fst z = nd \<and> fst (snd z) = a) (tree_bucket (indexed_values r) (resolution_node_position nd))"
+  have vf: "\<forall>q z. z |\<in>| tree_bucket (indexed_values r) q \<longrightarrow>
+      finite_registered_value \<kappa> P (fst z) (fst (snd z)) = Some (snd (snd z))"
+    using r by (simp add: indexed_formed_def indexed_values_formed_def)
+  have E: "finite_registered_value \<kappa> P nd a = Some (snd (snd z))" if "z |\<in>| ?E" for z
+  proof -
+    have z: "z |\<in>| tree_bucket (indexed_values r) (resolution_node_position nd)" "fst z = nd" "fst (snd z) = a"
+      using that by auto
+    show ?thesis using vf z by auto
+  qed
+  show ?thesis
+  proof (cases "sorted_list_of_fset (fimage (\<lambda>z. Ordered_Factor_Term (snd (snd z))) ?E)")
+    case Nil
+    then show ?thesis unfolding indexed_value_def indexed_kept_value_def by simp
+  next
+    case (Cons t ts)
+    have "t \<in> set (sorted_list_of_fset (fimage (\<lambda>z. Ordered_Factor_Term (snd (snd z))) ?E))" using Cons by simp
+    then have "t |\<in>| fimage (\<lambda>z. Ordered_Factor_Term (snd (snd z))) ?E" by (simp add: sorted_list_of_fset.rep_eq)
+    then obtain z where z: "z |\<in>| ?E" and t: "t = Ordered_Factor_Term (snd (snd z))" by (auto elim!: fimageE)
+    show ?thesis unfolding indexed_value_def indexed_kept_value_def Cons using E[OF z] t by simp
+  qed
+qed
+
 definition indexed_value_none :: "('a,'s,'d,'c) finite_witness_construction \<Rightarrow> ('a,'s,'d,'c) finite_schema_system \<Rightarrow>
     ('a,'s::linorder,'d,'c) indexed_state \<Rightarrow> ('a,'s,'d,'c) resolution_node \<Rightarrow> 'a \<Rightarrow> bool" where
   "indexed_value_none \<kappa> P r nd a \<longleftrightarrow> a |\<in>| tree_bucket (indexed_unconstructed r) (resolution_node_position nd) \<or>
-    finite_registered_value \<kappa> P nd a = None"
+    indexed_value \<kappa> P r nd a = None"
 
 lemma indexed_value_none:
   assumes r: "indexed_formed \<kappa> P r" and nd: "nd |\<in>| indexed_node_set r"
@@ -1643,7 +1788,9 @@ lemma indexed_value_none:
 proof -
   obtain hn where hn: "hn |\<in>| tree_bucket (indexed_nodes r) (resolution_node_position nd)" "indexed_node_value hn = nd"
     by (rule indexed_node_set_at[OF r nd])
-  show ?thesis using r hn by (auto simp: indexed_value_none_def indexed_formed_def indexed_unconstructed_formed_def)
+  have u0: "indexed_unconstructed_formed \<kappa> P r" using r by (simp add: indexed_formed_def)
+  show ?thesis using u0 hn indexed_value[OF r, of nd a]
+    by (auto simp: indexed_value_none_def indexed_unconstructed_formed_def)
 qed
 
 definition indexed_constructed :: "('a,'s,'d,'c) finite_witness_construction \<Rightarrow> ('a,'s,'d,'c) finite_schema_system \<Rightarrow>
@@ -1658,8 +1805,24 @@ lemma indexed_constructed:
       indexed_value_none[OF r nd])
 
 definition indexed_registered_positions :: "('a,'s::linorder,'d,'c) indexed_state \<Rightarrow> 's list fset" where
-  "indexed_registered_positions r = fimage (\<lambda>x. fst (fst x))
-    (ffilter (\<lambda>x. snd (fst x)) (ffUnion (fimage indexed_goal_variables (tree_buckets (indexed_goals r)))))"
+  "indexed_registered_positions r = fset_of_list (RBT.keys (indexed_registered r))"
+
+lemma indexed_registered_positions_member:
+  assumes r: "indexed_formed \<kappa> P r"
+  shows "p |\<in>| indexed_registered_positions r \<longleftrightarrow>
+    (\<exists>q. p |\<in>| goal_registered_positions (tree_bucket (indexed_goals r) q))"
+proof -
+  have f: "indexed_registered_formed r" using r by (simp add: indexed_formed_def)
+  have keys: "p |\<in>| indexed_registered_positions r \<longleftrightarrow> RBT.lookup (indexed_registered r) p \<noteq> None"
+    by (simp add: indexed_registered_positions_def fset_of_list.rep_eq flip: RBT.lookup_keys) auto
+  have ne: "RBT.lookup (indexed_registered r) p \<noteq> None \<longleftrightarrow> (\<exists>q. q |\<in>| tree_bucket (indexed_registered r) p)"
+  proof (cases "RBT.lookup (indexed_registered r) p")
+    case (Some G)
+    then have "G \<noteq> {||}" using f by (auto simp: indexed_registered_formed_def tree_buckets_nonempty_def)
+    then show ?thesis using Some by (auto simp: tree_bucket_def fset_eq_iff)
+  qed (simp add: tree_bucket_def)
+  show ?thesis using keys ne f by (simp add: indexed_registered_formed_def)
+qed
 
 definition indexed_construction_nodes :: "('a,'s,'d,'c) finite_witness_construction \<Rightarrow>
     ('a,'s,'d,'c) finite_schema_system \<Rightarrow> ('a,'s::linorder,'d,'c) indexed_state \<Rightarrow> ('a,'s,'d,'c) indexed_node fset" where
@@ -1696,11 +1859,10 @@ proof -
     obtain h where h: "h |\<in>| tree_bucket (indexed_goals r) (resolution_goal_position g)" "indexed_goal_value h = g"
       by (rule indexed_pending_at[OF r g(1)])
     have xh: "?x |\<in>| indexed_goal_variables h" using g(2) h indexed_goal_variables_at(1)[OF r h(1)] by simp
-    have "?x |\<in>| ffUnion (fimage indexed_goal_variables (tree_buckets (indexed_goals r)))"
-      using ffUnion_fimage_member[of h "tree_buckets (indexed_goals r)" ?x indexed_goal_variables] h(1) xh
-      by (auto simp: tree_buckets_member)
+    have "resolution_node_position nd |\<in>| goal_registered_positions (tree_bucket (indexed_goals r) (resolution_goal_position g))"
+      unfolding goal_registered_positions_member using h(1) xh by force
     then have pos: "resolution_node_position nd |\<in>| indexed_registered_positions r"
-      by (force simp: indexed_registered_positions_def fimage.rep_eq ffilter.rep_eq)
+      unfolding indexed_registered_positions_member[OF r] by blast
     obtain hn where hn: "hn |\<in>| tree_bucket (indexed_nodes r) (resolution_node_position nd)" "indexed_node_value hn = nd"
       by (rule indexed_node_set_at[OF r conjunct1[OF a]])
     have "indexed_constructed \<kappa> P r nd \<noteq> {||}" using a indexed_constructed[OF r] by simp
@@ -1716,27 +1878,28 @@ qed
 subsection \<open>The construction step\<close>
 
 definition indexed_construction_substitution :: "('a,'s,'d,'c) finite_witness_construction \<Rightarrow>
-    ('a,'s,'d,'c) finite_schema_system \<Rightarrow> ('a,'s,'d,'c) resolution_node \<Rightarrow> 'a fset \<Rightarrow>
+    ('a,'s,'d,'c) finite_schema_system \<Rightarrow> ('a,'s::linorder,'d,'c) indexed_state \<Rightarrow>
+    ('a,'s,'d,'c) resolution_node \<Rightarrow> 'a fset \<Rightarrow>
     ('s,'a) resolution_variable \<Rightarrow> ('s,'a) resolution_variable finite_term_pattern" where
-  "indexed_construction_substitution \<kappa> P nd C z = (case z of ((q,b),a) \<Rightarrow>
+  "indexed_construction_substitution \<kappa> P r nd C z = (case z of ((q,b),a) \<Rightarrow>
     if b \<and> q = resolution_node_position nd \<and> a |\<in>| C then
-      (case finite_registered_value \<kappa> P nd a of Some v \<Rightarrow> finite_exact_term_pattern v | None \<Rightarrow> Finite_Variable z)
+      (case indexed_value \<kappa> P r nd a of Some v \<Rightarrow> finite_exact_term_pattern v | None \<Rightarrow> Finite_Variable z)
     else Finite_Variable z)"
 
 definition indexed_construction_step :: "('a,'s,'d,'c) finite_witness_construction \<Rightarrow>
     ('a,'s,'d,'c) finite_schema_system \<Rightarrow> ('a,'s::linorder,'d,'c) indexed_state \<Rightarrow> ('a,'s,'d,'c) indexed_node \<Rightarrow>
     ('a,'s,'d,'c) indexed_state" where
   "indexed_construction_step \<kappa> P r hn = (let nd = indexed_node_value hn; C = indexed_constructed \<kappa> P r nd in
-    indexed_substitute P (indexed_construction_substitution \<kappa> P nd C)
+    indexed_substitute P (indexed_construction_substitution \<kappa> P r nd C)
       (fimage (\<lambda>a. ((resolution_node_position nd,True),a)) C)
-      (r\<lparr>indexed_witnesses := indexed_witnesses r |\<union>| ffUnion (fimage (\<lambda>a. case finite_registered_value \<kappa> P nd a of
+      (r\<lparr>indexed_witnesses := indexed_witnesses r |\<union>| ffUnion (fimage (\<lambda>a. case indexed_value \<kappa> P r nd a of
           Some v \<Rightarrow> {|(((resolution_node_position nd,True),a),v)|} | None \<Rightarrow> {||}) C)\<rparr>))"
 
 lemma indexed_witnesses_update:
   "indexed_formed \<kappa> P (r\<lparr>indexed_witnesses := W\<rparr>) \<longleftrightarrow> indexed_formed \<kappa> P r"
   "indexed_project (r\<lparr>indexed_witnesses := W\<rparr>) = Resolution_State (indexed_pending r) (indexed_node_set r) W"
   by (simp_all add: indexed_formed_def indexed_recorded_at_def indexed_open_formed_def indexed_unconstructed_formed_def
-      indexed_project_def indexed_pending_def indexed_node_set_def)
+      indexed_registered_formed_def indexed_values_formed_def indexed_project_def indexed_pending_def indexed_node_set_def)
 
 theorem indexed_construction_step:
   assumes r: "indexed_formed \<kappa> P r" and hn: "hn |\<in>| tree_bucket (indexed_nodes r) q0"
@@ -1748,38 +1911,58 @@ proof -
   let ?G = "indexed_pending r"
   let ?C = "indexed_constructed \<kappa> P r ?nd"
   have C: "?C = finite_constructed \<kappa> P ?G ?nd" by (rule indexed_constructed[OF r indexed_node_in_set[OF hn]])
-  let ?W = "indexed_witnesses r |\<union>| ffUnion (fimage (\<lambda>a. case finite_registered_value \<kappa> P ?nd a of
+  let ?W = "indexed_witnesses r |\<union>| ffUnion (fimage (\<lambda>a. case indexed_value \<kappa> P r ?nd a of
           Some v \<Rightarrow> {|(((resolution_node_position ?nd,True),a),v)|} | None \<Rightarrow> {||}) ?C)"
   let ?r = "r\<lparr>indexed_witnesses := ?W\<rparr>"
   have fr: "indexed_formed \<kappa> P ?r" using r by (simp add: indexed_witnesses_update)
-  have out: "indexed_construction_substitution \<kappa> P ?nd ?C z = Finite_Variable z"
+  have out: "indexed_construction_substitution \<kappa> P r ?nd ?C z = Finite_Variable z"
     if "z |\<notin>| fimage (\<lambda>a. ((resolution_node_position ?nd,True),a)) ?C" for z
     using that by (auto simp: indexed_construction_substitution_def fimage.rep_eq split: prod.splits)
-  have sub: "indexed_construction_substitution \<kappa> P ?nd (finite_constructed \<kappa> P ?G ?nd) =
+  have sub: "indexed_construction_substitution \<kappa> P r ?nd (finite_constructed \<kappa> P ?G ?nd) =
       finite_construction_substitution \<kappa> P ?G ?nd"
     by (auto simp: fun_eq_iff indexed_construction_substitution_def finite_construction_substitution_def
-        split: prod.splits)
+        indexed_value[OF r] split: prod.splits)
   show "indexed_formed \<kappa> P (indexed_construction_step \<kappa> P r hn)"
     unfolding indexed_construction_step_def Let_def by (rule indexed_substitute(1)[OF fr out])
   have "indexed_project (indexed_construction_step \<kappa> P r hn) =
-      resolution_state_substitute (indexed_construction_substitution \<kappa> P ?nd ?C) (indexed_project ?r)"
+      resolution_state_substitute (indexed_construction_substitution \<kappa> P r ?nd ?C) (indexed_project ?r)"
     unfolding indexed_construction_step_def Let_def by (rule indexed_substitute(2)[OF fr out])
   then show "indexed_project (indexed_construction_step \<kappa> P r hn) =
       finite_construction_step \<kappa> P (indexed_project r) (indexed_node_value hn)"
-    by (simp add: indexed_witnesses_update sub C finite_construction_step_def Let_def)
+    by (simp add: indexed_witnesses_update sub C finite_construction_step_def Let_def indexed_value[OF r])
 qed
 
-subsection \<open>F4: the constructions that returned nothing are kept\<close>
+subsection \<open>F4: every value the construction returned is kept, computed once\<close>
+
+text \<open>
+  At a registered position the construction is asked, once, of every ready registered variable of each node there
+  that has neither a kept value nor a place among the variables for which it returned nothing: a returned value is
+  kept beside its node, and a variable for which it returned nothing at every node of the position is kept among
+  those.
+\<close>
+
+definition indexed_refresh_rows :: "('a,'s,'d,'c) finite_witness_construction \<Rightarrow> ('a,'s,'d,'c) finite_schema_system \<Rightarrow>
+    's::linorder list \<Rightarrow> ('a,'s,'d,'c) indexed_state \<Rightarrow> ('a,'s,'d,'c) indexed_node \<Rightarrow>
+    ('a \<times> finite_factor_term option) fset" where
+  "indexed_refresh_rows \<kappa> P q r hn = fimage (\<lambda>a. (a, finite_registered_value \<kappa> P (indexed_node_value hn) a))
+    (ffilter (\<lambda>a. indexed_ready r (indexed_node_value hn) a \<and> a |\<notin>| tree_bucket (indexed_unconstructed r) q \<and>
+        \<not> fBex (tree_bucket (indexed_values r) q) (\<lambda>z. fst z = indexed_node_value hn \<and> fst (snd z) = a))
+      (finite_free_registered \<kappa> (indexed_node_value hn)))"
+
+lemma indexed_refresh_rows: "w |\<in>| indexed_refresh_rows \<kappa> P q r hn \<Longrightarrow>
+    snd w = finite_registered_value \<kappa> P (indexed_node_value hn) (fst w)"
+  by (auto simp: indexed_refresh_rows_def fimage.rep_eq)
 
 definition indexed_refresh_at :: "('a,'s,'d,'c) finite_witness_construction \<Rightarrow> ('a,'s,'d,'c) finite_schema_system \<Rightarrow>
     's::linorder list \<Rightarrow> ('a,'s,'d,'c) indexed_state \<Rightarrow> ('a,'s,'d,'c) indexed_state" where
-  "indexed_refresh_at \<kappa> P q r = (let N = tree_bucket (indexed_nodes r) q;
-      U = ffilter (\<lambda>a. a |\<notin>| tree_bucket (indexed_unconstructed r) q \<and>
-          fBall N (\<lambda>hn. finite_registered_value \<kappa> P (indexed_node_value hn) a = None))
-        (ffUnion (fimage (\<lambda>hn. ffilter (indexed_ready r (indexed_node_value hn))
-          (finite_free_registered \<kappa> (indexed_node_value hn))) N)) in
-    if U = {||} then r else r\<lparr>indexed_unconstructed :=
-      RBT.insert q (tree_bucket (indexed_unconstructed r) q |\<union>| U) (indexed_unconstructed r)\<rparr>)"
+  "indexed_refresh_at \<kappa> P q r = (let W = fimage (\<lambda>hn. (hn, indexed_refresh_rows \<kappa> P q r hn)) (tree_bucket (indexed_nodes r) q);
+      S = ffUnion (fimage (\<lambda>y. fimage (\<lambda>w. (indexed_node_value (fst y), fst w, the (snd w)))
+          (ffilter (\<lambda>w. snd w \<noteq> None) (snd y))) W);
+      U = ffilter (\<lambda>a. fBall W (\<lambda>y. (a,None) |\<in>| snd y)) (ffUnion (fimage (\<lambda>y. fimage fst (snd y)) W)) in
+    r\<lparr>indexed_unconstructed := (if U = {||} then indexed_unconstructed r
+        else RBT.insert q (tree_bucket (indexed_unconstructed r) q |\<union>| U) (indexed_unconstructed r)),
+      indexed_values := (if S = {||} then indexed_values r
+        else RBT.insert q (tree_bucket (indexed_values r) q |\<union>| S) (indexed_values r))\<rparr>)"
 
 definition indexed_refresh :: "('a,'s,'d,'c) finite_witness_construction \<Rightarrow> ('a,'s,'d,'c) finite_schema_system \<Rightarrow>
     ('a,'s::linorder,'d,'c) indexed_state \<Rightarrow> ('a,'s,'d,'c) indexed_state" where
@@ -1808,7 +1991,9 @@ proof -
       then show ?thesis using r hn by (simp add: indexed_formed_def indexed_unconstructed_formed_def)
     qed
   qed
-  show "indexed_formed \<kappa> P ?r" using r u by (simp add: indexed_formed_def indexed_recorded_at_def indexed_open_formed_def)
+  show "indexed_formed \<kappa> P ?r" using r u
+    by (simp add: indexed_formed_def indexed_recorded_at_def indexed_open_formed_def indexed_registered_formed_def
+      indexed_values_formed_def)
   show "indexed_project (r\<lparr>indexed_unconstructed := t\<rparr>) = indexed_project r"
     by (simp add: indexed_project_def indexed_pending_def indexed_node_set_def)
 qed
@@ -1817,23 +2002,42 @@ lemma indexed_refresh_at:
   assumes r: "indexed_formed \<kappa> P r"
   shows "indexed_formed \<kappa> P (indexed_refresh_at \<kappa> P q r) \<and> indexed_project (indexed_refresh_at \<kappa> P q r) = indexed_project r"
 proof -
-  let ?N = "tree_bucket (indexed_nodes r) q"
-  let ?U = "ffilter (\<lambda>a. a |\<notin>| tree_bucket (indexed_unconstructed r) q \<and>
-          fBall ?N (\<lambda>hn. finite_registered_value \<kappa> P (indexed_node_value hn) a = None))
-        (ffUnion (fimage (\<lambda>hn. ffilter (indexed_ready r (indexed_node_value hn))
-          (finite_free_registered \<kappa> (indexed_node_value hn))) ?N))"
-  note upd = indexed_unconstructed_update[OF r, where U="?U" and q=q]
-  have f: "indexed_formed \<kappa> P (r\<lparr>indexed_unconstructed :=
-      RBT.insert q (tree_bucket (indexed_unconstructed r) q |\<union>| ?U) (indexed_unconstructed r)\<rparr>)"
-    by (rule upd(1)) (auto simp: ffilter.rep_eq)
-  show ?thesis
-  proof (cases "?U = {||}")
-    case True
-    then show ?thesis using r by (simp add: indexed_refresh_at_def Let_def)
-  next
-    case False
-    then show ?thesis using f upd(2) by (simp add: indexed_refresh_at_def Let_def)
+  define W where "W = fimage (\<lambda>hn. (hn, indexed_refresh_rows \<kappa> P q r hn)) (tree_bucket (indexed_nodes r) q)"
+  define S where "S = ffUnion (fimage (\<lambda>y. fimage (\<lambda>w. (indexed_node_value (fst y), fst w, the (snd w)))
+          (ffilter (\<lambda>w. snd w \<noteq> None) (snd y))) W)"
+  define U where "U = ffilter (\<lambda>a. fBall W (\<lambda>y. (a,None) |\<in>| snd y)) (ffUnion (fimage (\<lambda>y. fimage fst (snd y)) W))"
+  define Z where "Z = (if U = {||} then indexed_unconstructed r
+        else RBT.insert q (tree_bucket (indexed_unconstructed r) q |\<union>| U) (indexed_unconstructed r))"
+  define V where "V = (if S = {||} then indexed_values r
+        else RBT.insert q (tree_bucket (indexed_values r) q |\<union>| S) (indexed_values r))"
+  have e: "indexed_refresh_at \<kappa> P q r = r\<lparr>indexed_unconstructed := Z, indexed_values := V\<rparr>"
+    unfolding Z_def V_def U_def S_def W_def by (simp add: indexed_refresh_at_def Let_def)
+  have Ua: "finite_registered_value \<kappa> P (indexed_node_value hn) a = None"
+    if "a |\<in>| U" "hn |\<in>| tree_bucket (indexed_nodes r) q" for a hn
+  proof -
+    have "(hn, indexed_refresh_rows \<kappa> P q r hn) |\<in>| W" using that(2) by (simp add: W_def fimage.rep_eq)
+    then have "(a,None) |\<in>| indexed_refresh_rows \<kappa> P q r hn" using that(1) by (auto simp: U_def ffilter.rep_eq)
+    then show ?thesis using indexed_refresh_rows by fastforce
   qed
+  have Sz: "finite_registered_value \<kappa> P (fst z) (fst (snd z)) = Some (snd (snd z))" if zS: "z |\<in>| S" for z
+  proof -
+    obtain hn a v where hn: "hn |\<in>| tree_bucket (indexed_nodes r) q"
+      and w: "(a, Some v) |\<in>| indexed_refresh_rows \<kappa> P q r hn" and z: "z = (indexed_node_value hn, a, v)"
+      using zS by (auto simp: S_def W_def ffUnion.rep_eq fimage.rep_eq ffilter.rep_eq)
+    show ?thesis using indexed_refresh_rows[OF w] z by simp
+  qed
+  have u0: "indexed_unconstructed_formed \<kappa> P r" and v0: "indexed_values_formed \<kappa> P r"
+    using r by (simp_all add: indexed_formed_def)
+  have uf: "indexed_unconstructed_formed \<kappa> P (r\<lparr>indexed_unconstructed := Z, indexed_values := V\<rparr>)"
+    using u0 Ua unfolding indexed_unconstructed_formed_def Z_def by (auto split: if_splits)
+  have vf: "indexed_values_formed \<kappa> P (r\<lparr>indexed_unconstructed := Z, indexed_values := V\<rparr>)"
+    using v0 Sz unfolding indexed_values_formed_def V_def by (auto split: if_splits)
+  have f: "indexed_formed \<kappa> P (r\<lparr>indexed_unconstructed := Z, indexed_values := V\<rparr>)"
+    using r uf vf by (simp add: indexed_formed_def indexed_recorded_at_def indexed_open_formed_def
+      indexed_registered_formed_def)
+  have p: "indexed_project (r\<lparr>indexed_unconstructed := Z, indexed_values := V\<rparr>) = indexed_project r"
+    by (simp add: indexed_project_def indexed_pending_def indexed_node_set_def)
+  show ?thesis using e f p by simp
 qed
 
 lemma indexed_refresh:
@@ -2322,6 +2526,24 @@ next
     qed
   qed
 qed
+
+text \<open>
+  The outcomes of the alternatives are joined by listing their found states and their diagnoses one after another:
+  the joined outcome is read, never iterated, so no found state or diagnosis is compared with another on the search's
+  path.
+\<close>
+
+definition listed_fimage_union :: "('a \<Rightarrow> 'b fset) \<Rightarrow> 'a fset \<Rightarrow> 'b fset" where
+  "listed_fimage_union f A = ffUnion (fimage f A)"
+
+lemma listed_fimage_union_code [code abstract]:
+  "fset (listed_fimage_union f A) = listed_image_union (\<lambda>x. fset (f x)) (fset A)"
+  by (simp add: listed_fimage_union_def listed_image_union_def ffUnion.rep_eq fimage.rep_eq image_image)
+
+lemma finite_outcome_union_code [code]:
+  "finite_outcome_union Os = Resolution_Outcome (listed_fimage_union resolution_found Os)
+    (listed_fimage_union resolution_diagnoses Os)"
+  by (simp add: finite_outcome_union_def listed_fimage_union_def)
 
 text \<open>
   At the default priority the indexed search from the indexed state of an abstract state is R3's search from that

@@ -89,9 +89,10 @@ into the briefs #522 and #523 corrected, or recorded superseded there.
   investigation #788, before R7 #542)
   → F2c #701 (R5's committed search over the shared state, also after the fix #767, whose corrected search it mirrors)
   → C #703 (a found derivation checked over its
-  graph; before #542, #547 and #399). #779 found that the given's declarations do not cut the branching that leaves
-  77/1 unresolved (a declared producer, 12, taken before 5 binds its input): the design #787 of the producer-binder
-  order (modes at the binders' views read by the selection) and its builds precede R7 #542 and #547.
+  graph; before #542, #547 and #399). #787's correction (12) orders a declared producer after the goal binding its input (modes beside the
+  records, read by the selection; commitments before binders): its builds O1–O4, briefed by #791 (O2 after #613, O3
+  after O2), precede R7 #542 and #547. The order alone leaves 77/1 unresolved: the designs (a) #789, the production of
+  12's input at 37.0/2, and (b) #790, the registration of 11's premise-only target, precede them too.
   Divided from R7 #542 (the numbered course) its
   native part #707 (after #542, #653, #688 and #661, before #399), from #399 its controls #709 (before #401, #403 and
   #553). The lifting's consolidation #613 precedes the moded selection's builds (q142: the modes a priority of F1's selection at
@@ -115,7 +116,7 @@ by a task of their own (Open 100).
 
 **Shape.** No build waits on a review task. The route's longest chain runs F2b2 (b) #771 → F2c #701 → C #703 →
 R7 #542 → #707 → #399 → #709 → the record #553 → #447 → #449 → #450;
-#782 → #542 and the design #787 → #542 have slack against it, the
+#782 → #542, the designs #789 and #790 and the brief #791 → #542 have slack against it, the
 carryings more — past the
 limit through splices, so nothing is added after the route's tail until it shortens (the status line gives the depths).
 The approval build (Open 142) after #407 and #447 waits for it to shorten; the controls task #718 after C (depth 10)
@@ -124,7 +125,8 @@ was placed when #668 landed.
 **Order** (the queue holds it; the planner's choice, a residual until the native answer to the selection problem
 exists, Q2): the slots are one pool, each free slot going to the first task in the queue that can start and a review
 standing where its review task stands, so every review stands right after its build. By slack on the longest chain:
-F2b2 (b) #771, its measurements #788, F2c #701 and C #703; the design #787 and the consolidation #613 (q142);
+the designs (a) #789 and (b) #790 and the brief #791 of O1–O4 (uncertainty first); F2b2 (b) #771, its measurements
+#788, F2c #701 and C #703; the consolidation #613 (q142);
 #782 and #784; R7 #542, its native part
 #707, #399 and its controls #709, #547; the route in its chains'
 order (#551, #549, #553, #401, #403, #443, #447, #407, #445, #449); the controls #718 after C, and #724 last.
@@ -708,15 +710,15 @@ planner searches for a theory before briefing a task that edits it.
 
 ## Now
 
-- **The graph's width**: (b) #771 (handing over), the lifting's consolidation #613, the design #787 and #782 run; #784
-  follows #782, #788 follows (b). The route is ((b) #771 → F2c → C), #782 and #787's builds → R7 #542 → #707 → #399,
-  with #782 also before #547.
+- **The graph's width**: (b) #771 (handing over), the lifting's consolidation #613 and #782 run; the designs #789 and
+  #790 and the brief #791 start as slots free; #784 follows #782, #788 follows (b). The route is ((b) #771 → F2c → C),
+  #782, #789's and #790's builds and O1–O4 → R7 #542 → #707 → #399, with #782 also before #547.
 - **Briefs written before their theories grew** may be refused at their start (#596 was; #607 was divided by #678):
   each is resized or divided then. Nearest their rooms: #613 (195K beside 264K of relations at the edit; divided there
   into (1) and (3), then (2) and (4)); #542 and #399 (84K and 70K of margin at proposal, before rc's, V3's and the fix's
   theories added to their relations); the samples build #551 (384K at proposal; a hand-back divides its corrected item
   (3), the planner's).
-- **What the next events ask**: #787's entry and builds table, its builds placed before R7 #542 and #547; (b) #771's
+- **What the next events ask**: #789's and #790's entries and builds and #791's proposal, placed before R7 #542 and #547; (b) #771's
   hand-over, then the consolidation making F2b1 an instance of its representation (q139, after #777), placed from its
   result; #613's hand-over, then the move of R4's and the committed lifting below Completeness (q141), placed from its
   result after #777 and #701; #782's hand-over and #788's figures.

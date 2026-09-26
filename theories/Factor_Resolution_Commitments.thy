@@ -1885,6 +1885,28 @@ lemma finite_committed_barring_subset: "B |\<subseteq>| finite_committed_barring
 lemma no_commitment_barring [simp]: "finite_goal_barring no_commitment F B st g = B"
   by (simp add: finite_goal_barring_def finite_material_committed_def no_commitment_def split: resolution_goal.split)
 
+text \<open>
+  The barring of a committing goal's sub-search (task 767, q134's (G2)). A producing goal's sub-search starts at the
+  produced state with every node present there barred, by the one barring rule of every committed step: the ranks
+  that justify pruning do not carry across the production, which changes the goal's output. A goal committed without
+  a production keeps the parent's barring.
+\<close>
+
+definition finite_goal_sub_barring ::
+    "('a,'s,'d,'c) resolution_commitment \<Rightarrow> 's list option \<Rightarrow> 's list fset \<Rightarrow> ('a,'s,'d,'c) resolution_state \<Rightarrow>
+      ('a,'s,'d,'c) resolution_goal \<Rightarrow> 's list fset" where
+  "finite_goal_sub_barring K F B st g = (if commit_production K F st g = None then B
+    else finite_committed_barring B (finite_produced_state K F st g))"
+
+lemma finite_goal_sub_barring_unproduced [simp]:
+  "commit_production K F st g = None \<Longrightarrow> finite_goal_sub_barring K F B st g = B"
+  by (simp add: finite_goal_sub_barring_def)
+
+lemma finite_goal_sub_barring_produced:
+  assumes "commit_production K F st g \<noteq> None"
+  shows "finite_goal_sub_barring K F B st g = finite_committed_barring B (finite_produced_state K F st g)"
+  unfolding finite_goal_sub_barring_def by (rule if_not_P[OF assms])
+
 definition finite_committed_goal_outcome ::
     "('s::linorder list option \<Rightarrow> 's list fset \<Rightarrow> ('a,'s,'d,'c) resolution_state \<Rightarrow> ('a,'s,'d,'c) resolution_outcome) \<Rightarrow>
       ('a,'s,'d,'c) resolution_commitment \<Rightarrow> ('a,'s,'d,'c) finite_schema_system \<Rightarrow> 's list option \<Rightarrow>
@@ -1894,7 +1916,8 @@ definition finite_committed_goal_outcome ::
     (if finite_pruned (finite_unbarred B st) g then Resolution_Outcome {||} {||}
      else if finite_pruned (finite_barred B st) g then Resolution_Outcome {||} {|Resolution_Cut {|g|}|}
      else if finite_goal_committing K F st g then
-       (let q = resolution_goal_position g; sub = rec (Some q) B (finite_produced_state K F st g) in
+       (let q = resolution_goal_position g;
+          sub = rec (Some q) (finite_goal_sub_barring K F B st g) (finite_produced_state K F st g) in
         finite_outcome_union (finsert (Resolution_Outcome {||} (resolution_diagnoses sub))
           (fimage (\<lambda>s. rec F (finite_committed_barring B s) s)
             (finite_kept q (resolution_found sub)))))
@@ -2104,7 +2127,8 @@ next
       proof (cases "finite_goal_committing K F st g")
         case True
         from found True obtain s where
-          s: "s |\<in>| resolution_found (?rec (Some (resolution_goal_position g)) B (finite_produced_state K F st g))"
+          s: "s |\<in>| resolution_found (?rec (Some (resolution_goal_position g)) (finite_goal_sub_barring K F B st g)
+            (finite_produced_state K F st g))"
           and st': "st' |\<in>| resolution_found (?rec F (finite_committed_barring B s) s)"
           using finite_kept_subset
           by (auto simp: finite_committed_goal_outcome_def Let_def resolution_fset_simps split: if_splits)
@@ -2177,7 +2201,8 @@ next
       proof (cases "finite_goal_committing K F st g")
         case True
         from found True obtain s where
-          s: "s |\<in>| resolution_found (?rec (Some (resolution_goal_position g)) B (finite_produced_state K F st g))"
+          s: "s |\<in>| resolution_found (?rec (Some (resolution_goal_position g)) (finite_goal_sub_barring K F B st g)
+            (finite_produced_state K F st g))"
           and st': "st' |\<in>| resolution_found (?rec F (finite_committed_barring B s) s)"
           using finite_kept_subset
           by (auto simp: finite_committed_goal_outcome_def Let_def resolution_fset_simps split: if_splits)
@@ -3178,19 +3203,21 @@ definition finite_commitment_exchanges ::
         (\<exists>st' \<theta>'. st' |\<in>| finite_solution_successors st q r M Ws \<and>
           resolution_supported_at U F (finite_committed_barring B st) P st' \<theta>')) \<and>
       (finite_goal_producing K F st g \<longrightarrow> resolution_registrations_held \<kappa> st \<longrightarrow> \<not> finite_held \<kappa> st g \<longrightarrow>
-        (\<exists>\<theta>1. resolution_supported_at U (Some (resolution_goal_position g)) B P (finite_produced_state K F st g) \<theta>1) \<and>
-        (\<forall>s0 B0 \<theta>0. s0 |\<in>| resolution_found (finite_committed_search \<kappa> K P n (Some (resolution_goal_position g)) B
-            (finite_produced_state K F st g)) \<longrightarrow>
+        (\<exists>\<theta>1. resolution_supported_at U (Some (resolution_goal_position g))
+          (finite_committed_barring B (finite_produced_state K F st g)) P (finite_produced_state K F st g) \<theta>1) \<and>
+        (\<forall>s0 B0 \<theta>0. s0 |\<in>| resolution_found (finite_committed_search \<kappa> K P n (Some (resolution_goal_position g))
+            (finite_committed_barring B (finite_produced_state K F st g)) (finite_produced_state K F st g)) \<longrightarrow>
           resolution_supported_at U (Some (resolution_goal_position g)) B0 P s0 \<theta>0 \<longrightarrow>
           (\<exists>s \<theta>'. s |\<in>| finite_kept (resolution_goal_position g)
-              (resolution_found (finite_committed_search \<kappa> K P n (Some (resolution_goal_position g)) B
-                (finite_produced_state K F st g))) \<and>
+              (resolution_found (finite_committed_search \<kappa> K P n (Some (resolution_goal_position g))
+                (finite_committed_barring B (finite_produced_state K F st g)) (finite_produced_state K F st g))) \<and>
             resolution_supported_at U F (fimage resolution_node_position (resolution_nodes s)) P s \<theta>'))))"
 
 text \<open>
-  At a producing goal the exchange is read at the produced state (R5f1): a support of the focus gives a support of the
-  goal's position at the produced state, and a supported found state of the sub-search from it a kept state supported
-  with every node barred. At a commitment that produces nothing it is the exchange before the production.
+  At a producing goal the exchange is read at the produced state (R5f1), every node present there barred (task 767):
+  a support of the focus gives a support of the goal's position at the produced state, and a supported found state of
+  the sub-search from it a kept state supported with every node barred. At a commitment that produces nothing it is
+  the exchange before the production.
 \<close>
 
 text \<open>
@@ -3255,18 +3282,21 @@ lemma finite_commitment_exchanges_support:
     and sup: "resolution_supported_at U F B P st \<theta>" and gF: "g |\<in>| finite_focus_pending F st"
     and committing: "finite_goal_committing K F st g"
     and H: "resolution_registrations_held \<kappa> st" and unheld: "\<not> finite_held \<kappa> st g"
-  obtains \<theta>1 where
-    "resolution_supported_at U (Some (resolution_goal_position g)) B P (finite_produced_state K F st g) \<theta>1"
+  obtains \<theta>1 where "resolution_supported_at U (Some (resolution_goal_position g)) (finite_goal_sub_barring K F B st g) P
+    (finite_produced_state K F st g) \<theta>1"
 proof (cases "commit_production K F st g")
   case none: None
   have focus: "resolution_focused F (resolution_goal_position g)" using gF by (simp add: finite_focus_pending_focused)
   have eq: "finite_produced_state K F st g = st" by (rule finite_produced_state_unproduced[OF none])
-  show thesis by (rule that[of \<theta>]) (simp only: eq, rule resolution_supported_at_narrow[OF sup focus])
+  show thesis by (rule that[of \<theta>]) (simp only: eq finite_goal_sub_barring_unproduced[OF none],
+    rule resolution_supported_at_narrow[OF sup focus])
 next
   case (Some x)
   then have producing: "finite_goal_producing K F st g"
     using committing by (simp add: finite_goal_producing_def finite_goal_committing_def)
-  show thesis using ex I sup gF producing H unheld that unfolding finite_commitment_exchanges_def by blast
+  have sb: "finite_goal_sub_barring K F B st g = finite_committed_barring B (finite_produced_state K F st g)"
+    using Some by (simp add: finite_goal_sub_barring_def)
+  show thesis using ex I sup gF producing H unheld that unfolding finite_commitment_exchanges_def sb by blast
 qed
 
 lemma finite_commitment_exchanges_kept:
@@ -3274,16 +3304,17 @@ lemma finite_commitment_exchanges_kept:
     and sup: "resolution_supported_at U F B P st \<theta>" and gF: "g |\<in>| finite_focus_pending F st"
     and committing: "finite_goal_committing K F st g"
     and H: "resolution_registrations_held \<kappa> st" and unheld: "\<not> finite_held \<kappa> st g"
-    and s0: "s0 |\<in>| resolution_found (finite_committed_search \<kappa> K P n (Some (resolution_goal_position g)) B
-      (finite_produced_state K F st g))"
+    and s0: "s0 |\<in>| resolution_found (finite_committed_search \<kappa> K P n (Some (resolution_goal_position g))
+      (finite_goal_sub_barring K F B st g) (finite_produced_state K F st g))"
     and s0sup: "resolution_supported_at U (Some (resolution_goal_position g)) B0 P s0 \<theta>0"
   obtains s \<theta>' where "s |\<in>| finite_kept (resolution_goal_position g)
-      (resolution_found (finite_committed_search \<kappa> K P n (Some (resolution_goal_position g)) B
-        (finite_produced_state K F st g)))"
+      (resolution_found (finite_committed_search \<kappa> K P n (Some (resolution_goal_position g))
+        (finite_goal_sub_barring K F B st g) (finite_produced_state K F st g)))"
     "resolution_supported_at U F (fimage resolution_node_position (resolution_nodes s)) P s \<theta>'"
 proof (cases "commit_production K F st g")
   case none: None
-  have eq: "finite_produced_state K F st g = st" by (rule finite_produced_state_unproduced[OF none])
+  have eq: "finite_produced_state K F st g = st" "finite_goal_sub_barring K F B st g = B"
+    by (rule finite_produced_state_unproduced[OF none], rule finite_goal_sub_barring_unproduced[OF none])
   have committed: "finite_goal_committed K F st g"
     using committing none by (simp add: finite_goal_committed_def finite_goal_committing_def)
   obtain s \<theta>' where "s |\<in>| finite_kept (resolution_goal_position g)
@@ -3295,7 +3326,9 @@ next
   case (Some x)
   then have producing: "finite_goal_producing K F st g"
     using committing by (simp add: finite_goal_producing_def finite_goal_committing_def)
-  show thesis using ex I sup gF producing H unheld s0 s0sup that unfolding finite_commitment_exchanges_def by blast
+  have sb: "finite_goal_sub_barring K F B st g = finite_committed_barring B (finite_produced_state K F st g)"
+    using Some by (simp add: finite_goal_sub_barring_def)
+  show thesis using ex I sup gF producing H unheld s0 s0sup that unfolding finite_commitment_exchanges_def sb by blast
 qed
 
 lemma finite_construction_lifts_free:
@@ -3426,7 +3459,7 @@ next
           case True
           define q where "q = resolution_goal_position g"
           define st0 where "st0 = finite_produced_state K F st g"
-          define sub where "sub = ?rec (Some q) B st0"
+          define sub where "sub = ?rec (Some q) (finite_goal_sub_barring K F B st g) st0"
           have Og: "Og = finite_outcome_union (finsert (Resolution_Outcome {||} (resolution_diagnoses sub))
               (fimage (\<lambda>s. ?rec F (finite_committed_barring B s) s)
                 (finite_kept q (resolution_found sub))))"
@@ -3434,7 +3467,7 @@ next
             by (simp add: Let_def)
           have I0: "resolution_invariant P d t st0" unfolding st0_def by (rule finite_produced_state_invariant[OF I])
           have H0: "resolution_registrations_held \<kappa> st0" unfolding st0_def by (rule finite_produced_state_held[OF H])
-          obtain \<theta>q where supq: "resolution_supported_at U (Some q) B P st0 \<theta>q"
+          obtain \<theta>q where supq: "resolution_supported_at U (Some q) (finite_goal_sub_barring K F B st g) P st0 \<theta>q"
             unfolding q_def st0_def by (rule finite_commitment_exchanges_support[OF exchanges I sup gp True H unheld])
           have "finite_lifted_outcome U (Some q) P sub" unfolding sub_def by (rule Suc.IH[OF I0 H0 supq])
           then consider (found) s0 B0 \<theta>0 where "s0 |\<in>| resolution_found sub"
@@ -3458,7 +3491,8 @@ next
               unfolding sub_def q_def st0_def
               by (rule finite_commitment_exchanges_kept[OF exchanges I sup gp True H unheld
                 found(1)[unfolded sub_def q_def st0_def] found(2)[unfolded q_def]])
-            have sf: "s |\<in>| resolution_found (finite_committed_search_by ?sel \<kappa> K P n (Some q) B st0)"
+            have sf: "s |\<in>| resolution_found (finite_committed_search_by ?sel \<kappa> K P n (Some q)
+                (finite_goal_sub_barring K F B st g) st0)"
               using s finite_kept_subset unfolding sub_def finite_committed_search_def by blast
             have Is: "resolution_invariant P d t s"
               using finite_committed_search_found[OF \<kappa> I0 sf] by blast
@@ -4609,7 +4643,8 @@ next
       proof (cases "finite_goal_committing K (Some q) st g")
         case True
         from found True obtain s where
-          s: "s |\<in>| resolution_found (?rec (Some (resolution_goal_position g)) B (finite_produced_state K (Some q) st g))"
+          s: "s |\<in>| resolution_found (?rec (Some (resolution_goal_position g)) (finite_goal_sub_barring K (Some q) B st g)
+            (finite_produced_state K (Some q) st g))"
           and s': "s' |\<in>| resolution_found (?rec (Some q) (finite_committed_barring B s) s)"
           using finite_kept_subset
           by (auto simp: finite_committed_goal_outcome_def Let_def resolution_fset_simps split: if_splits)
@@ -5044,7 +5079,8 @@ next
       proof (cases "finite_goal_committing K (Some q) st g")
         case True
         from found True obtain s where
-          s: "s |\<in>| resolution_found (?rec (Some (resolution_goal_position g)) B (finite_produced_state K (Some q) st g))"
+          s: "s |\<in>| resolution_found (?rec (Some (resolution_goal_position g)) (finite_goal_sub_barring K (Some q) B st g)
+            (finite_produced_state K (Some q) st g))"
           and s': "s' |\<in>| resolution_found (?rec (Some q) (finite_committed_barring B s) s)"
           using finite_kept_subset
           by (auto simp: finite_committed_goal_outcome_def Let_def resolution_fset_simps split: if_splits)

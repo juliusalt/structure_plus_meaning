@@ -17856,6 +17856,33 @@ committed goal's output variables, to ground values; the names #630 gave the soc
 (`finite_call_narrowed`, `finite_material_narrowed`) stay apart from the narrowed socket's class; unresolved is never
 refuted and never admits; #519's counterexample is the control's case.
 
+*[Corrected by task 767 (q134, the planner's decision in `.build/plans/plan-103/q134.md`), after R5f2 #736 found three
+conditions its exchange at a narrowed socket needs that R5f1's definitions did not meet. (G1) A goal committed at a
+narrowed socket without producing — no production declared, the production met not one, its value undefined at the
+bound, the view undefined — kept the least answer, which can lie outside N, so a true call could be refuted. (G3) A
+production met whose output substitution is undefined left the state as it was, the kept answer again free. (G2) The
+producing sub-search ran at the parent's barring, so the support at the produced state compared ranks the production
+changed. The corrections: the production (`finite_narrowed_production`) is defined only where it applies — the one
+production met, its registration at the goal's callee and the registered head's input, at the bindings matched against
+the goal's viewed input, that input (`finite_registration_applies`: the two conditions beyond q134's list that the
+production's answers need, `head_registration_answers` reading an answer at the registration's site and input), its
+value defined at the bound and the goal's viewed output matching it — and the call test commits a goal meeting a
+declared production only where the production is defined (`finite_narrowed_commitment`); elsewhere at such a socket the
+goal is searched plainly, unresolved at the bound, never refuted. At a goal meeting none, and at a record declaring no
+production, the test is R5f1's (`finite_narrowed_commitment_unproduced`, `finite_unproduced_commitment`, statements
+kept). The producing sub-search runs at `finite_committed_barring` of the produced state, the one barring rule of every
+committed step (task 621); a goal committed without a production keeps the parent's barring (`finite_goal_sub_barring`),
+so R5's statements at no production stand; the exchange premise's producing clause is read at that barring. #736's two
+named premises are discharged: `finite_narrowed_committed_applies` under the static premise that a socket whose class
+is narrower than every answer declares a production (`narrowed_productions_declared`, a named premise, vacuous at
+records declaring no narrowing, discharged at the given's records by #611), and `finite_narrowed_productions_supports`
+from the production's discharge (its answer at the registration's input makes the produced goal true; with every node
+barred the ranks are vacuous). The exchange, #736's forms and its transfers carry beyond #736's other premises only the
+static premise. #609's route to 48's answers (`union_registration_answers`, from W2's `finite_family_collection_exact`
+and `data_union_exact`) differs from (A) step 4's citation of W4a's `finite_value_complete` for (iii) and is sound:
+(iii) is `head_registration_answers`, however it is proved. Control: at bound 0, where the production's value is none,
+the goal is searched plainly — the true call resolved at bound 30, the false one unresolved, never refuted.]*
+
 ### The resolver at the given's size: the selection, a solved ground call reused, the shared state and the construction once
 
 [Added by task 683, a design, from investigation #644 (`.build/tasks/644/result.md`, accepted; its figures in

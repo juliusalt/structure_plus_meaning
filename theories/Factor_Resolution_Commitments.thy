@@ -541,8 +541,6 @@ lemma resolution_view_holes_single:
   "resolution_view_holes V [snd (snd V)] t = map_option (\<lambda>z. [snd z]) (resolution_view_term V t)"
   by (cases V rule: prod_cases3) (simp add: resolution_view_holes_def resolution_view_term_def split: option.split)
 
-text \<open>The identity view's one hole, its output variable.\<close>
-
 lemma finite_pattern_substitute_origin:
   "z |\<in>| finite_pattern_variables (finite_pattern_substitute \<sigma> p) \<Longrightarrow>
     \<exists>w. w |\<in>| finite_pattern_variables p \<and> z |\<in>| finite_pattern_variables (\<sigma> w)"
@@ -612,6 +610,8 @@ proof -
       using finite_substitute_variables_subset[OF wv, of ?\<sigma>] w(2) c by (auto dest: fsubsetD)
   qed
 qed
+
+text \<open>The identity view's one hole, its output variable.\<close>
 
 definition view_output :: "nat finite_term_pattern" where
   "view_output = Finite_Variable 1"
@@ -2505,24 +2505,6 @@ theorem finite_declared_commitment_none: "finite_declared_commitment no_declarat
 lemma resolution_value_variable: "resolution_value \<theta> (Finite_Variable z) = \<theta> z"
   by (simp add: resolution_value_def)
 
-text \<open>
-  A committed call's input, read at the view it is committed at, has one value under every valuation, at any
-  declarations.
-\<close>
-
-corollary finite_declared_commitment_input_value:
-  assumes committed: "commit_call (finite_declared_commitment D) F st (Resolution_Call_Goal q r d p)"
-  obtains V x y where "resolution_view_pattern (V :: nat resolution_view) p = Some (x,y)"
-    "\<And>\<theta> \<theta>'. resolution_value \<theta> x = resolution_value \<theta>' x"
-proof -
-  obtain q' r' d' p' V x y where g: "Resolution_Call_Goal q r d p = Resolution_Call_Goal q' r' d' p'"
-      and vp: "resolution_view_pattern (V :: nat resolution_view) p' = Some (x,y)"
-      and ground: "finite_pattern_variables x = {||}"
-    by (rule finite_declared_commitment_input_ground[OF committed])
-  have "resolution_value \<theta> x = resolution_value \<theta>' x" for \<theta> \<theta>'
-    using ground by (auto intro: resolution_value_cong)
-  then show thesis using that vp g by simp
-qed
 
 corollary finite_declared_resolution_none:
   "(\<And>st N. finite_resolution_select \<kappa> P st \<noteq> Select_Construction N) \<Longrightarrow>

@@ -22,7 +22,10 @@ text \<open>
   (@{text finite_declared_socket_context}), so the exchange premise holds with no hypothesis on the state
   (@{text finite_declared_commitment_exchanges}); the sockets' exchange holds at any discharged declarations, the
   contexts taken at the socket's declared views, and at every socket commitment of the test, including a socket whose
-  closed siblings hold only its inputs (correction (9)).
+  closed siblings hold only its inputs (correction (9)). Both socket contexts read the parent context through one pair
+  of lemmas (@{text finite_socket_parent_premise}, @{text finite_socket_parent_parts}) and build the exchanged valuation's
+  conclusion through one (@{text finite_socket_exchange_valuation}); what differs between them is only the new valuation
+  at the head's variables.
 \<close>
 
 section \<open>Values of decoded patterns\<close>
@@ -74,7 +77,6 @@ proof -
     using material_observation_formed[OF sat] p(1) by (auto simp: material_fields_def)
   then show ?thesis using p(2) by (rule evaluate_pattern_variables_formed)
 qed
-
 
 section \<open>A parent clause's instance is true from its pending and closed premises\<close>
 
@@ -599,6 +601,223 @@ proof -
   show thesis by (rule that[OF tr' hk ins]) (erule hy_agree, erule formed')
 qed
 
+section \<open>The parent context read at the socket\<close>
+
+text \<open>
+  What both socket contexts read of the parent context, stated once. A premise-only variable is free
+  (@{text finite_free_premise_only}) when the node binds it to its own renamed-apart variable and only the parent's
+  goals hold that variable; its renamed variable (@{text finite_free_premise_variable}) is not held by the parent's call.
+  The parts (@{text finite_socket_parent_parts}): the socket's premise read at its view, its output's variables among the
+  clause's with their values the support's, and every premise-only variable free or a ground input of the socket. The
+  exchange (@{text finite_socket_exchange_valuation}): a new valuation that agrees with the new answer on the goal's
+  viewed output, gives the new instance at the clause's variables, and keeps the support's values outside a set the
+  holders test covers and outside the free premise-only variables, holds every goal outside the socket's focus.
+\<close>
+
+definition finite_free_premise_only where
+  "finite_free_premise_only st np a \<longleftrightarrow>
+    finite_node_binding np a = Finite_Variable ((resolution_node_position np,True),a) \<and>
+    (\<forall>h. h |\<in>| resolution_pending st \<longrightarrow> ((resolution_node_position np,True),a) |\<in>| resolution_goal_variables h \<longrightarrow>
+      resolution_goal_position h \<noteq> [] \<and> butlast (resolution_goal_position h) = resolution_node_position np)"
+
+definition finite_free_premise_variable where
+  "finite_free_premise_variable st np z \<longleftrightarrow> fst z = (resolution_node_position np,True) \<and>
+    snd z |\<in>| finite_schema_variables (resolution_node_schema np) \<and>
+    snd z |\<notin>| finite_pattern_variables (finite_schema_conclusion (resolution_node_schema np)) \<and>
+    finite_free_premise_only st np (snd z)"
+
+lemma finite_free_premise_variable_call:
+  assumes ctx: "finite_parent_context P Vp Vh st np k" and Z: "finite_free_premise_variable st np z"
+  shows "z |\<notin>| finite_pattern_variables (resolution_node_call np)"
+proof -
+  have unsh: "finite_premise_only_unshared np" using ctx by (simp add: finite_parent_context_def)
+  have z: "z = ((resolution_node_position np,True),snd z)"
+    and s: "snd z |\<in>| finite_schema_variables (resolution_node_schema np)"
+    and c: "snd z |\<notin>| finite_pattern_variables (finite_schema_conclusion (resolution_node_schema np))"
+    using Z by (auto simp: finite_free_premise_variable_def prod_eq_iff)
+  have "((resolution_node_position np,True),snd z) |\<notin>| finite_pattern_variables (resolution_node_call np)"
+    using unsh s c unfolding finite_premise_only_unshared_def by auto
+  then show ?thesis using z by metis
+qed
+
+lemma finite_socket_parent_premise:
+  assumes gF: "Resolution_Call_Goal q r e p |\<in>| finite_focus_pending F st"
+    and q: "q \<noteq> []" and np: "resolution_node_position np = butlast q"
+    and vp: "resolution_view_pattern Vp p = Some (x,y)"
+    and ctx: "finite_parent_context P Vp Vh st np (last q)"
+    and obl: "socket_discharged M (resolution_node_schema np) (last q) keep Vp Vh"
+  obtains p0 xi0 yo0 where "(last q,e,p0) |\<in>| finite_schema_premises (resolution_node_schema np)"
+    and "p = finite_pattern_substitute (finite_node_binding np) p0"
+    and "resolution_view_pattern Vp p0 = Some (xi0,yo0)"
+    and "x = finite_pattern_substitute (finite_node_binding np) xi0"
+    and "y = finite_pattern_substitute (finite_node_binding np) yo0"
+proof -
+  let ?g = "Resolution_Call_Goal q r e p"
+  have closed: "finite_children_closed Vp Vh st np (last q)" using ctx by (simp add: finite_parent_context_def)
+  note children = finite_children_closed_children[OF closed]
+  have gp: "?g |\<in>| resolution_pending st" using gF by (simp add: finite_focus_pending_focused)
+  have gchild: "resolution_goal_position ?g \<noteq> []" "butlast (resolution_goal_position ?g) = resolution_node_position np"
+    using q np by simp_all
+  have viewed: "\<forall>e0 p0. (last q,e0,p0) |\<in>| finite_schema_premises (resolution_node_schema np) \<longrightarrow>
+      resolution_view_pattern Vp p0 \<noteq> None"
+    using obl unfolding socket_discharged_def by blast
+  obtain p0 xi0 yo0 where "(last q,e,p0) |\<in>| finite_schema_premises (resolution_node_schema np)"
+    and "p = finite_pattern_substitute (finite_node_binding np) p0"
+    and "resolution_view_pattern Vp p0 = Some (xi0,yo0)"
+    and "x = finite_pattern_substitute (finite_node_binding np) xi0"
+    and "y = finite_pattern_substitute (finite_node_binding np) yo0"
+    by (rule finite_socket_premise[OF children[OF gp gchild] vp viewed])
+  then show thesis by (rule that)
+qed
+
+lemma finite_socket_parent_parts:
+  assumes I: "resolution_invariant P d t st" and sup: "resolution_supported_at (\<lambda>_. False) F B P st \<theta>"
+    and gF: "Resolution_Call_Goal q r e p |\<in>| finite_focus_pending F st"
+    and nf: "F \<noteq> Some q" and q: "q \<noteq> []" and np: "resolution_node_position np = butlast q"
+    and ctx: "finite_parent_context P Vp Vh st np (last q)" and Vp: "view_formed Vp"
+    and prem0: "(last q,e,p0) |\<in>| finite_schema_premises (resolution_node_schema np)"
+    and vp0: "resolution_view_pattern Vp p0 = Some (xi0,yo0)"
+  shows "c |\<in>| finite_pattern_variables yo0 \<Longrightarrow> c |\<in>| finite_schema_variables (resolution_node_schema np)"
+    and "c |\<in>| finite_pattern_variables yo0 \<Longrightarrow> finite_instance_valuation \<theta> (finite_node_binding np) c =
+      decode_finite_term (resolution_value \<theta> (finite_node_binding np c))"
+    and "c |\<in>| finite_schema_variables (resolution_node_schema np) \<Longrightarrow>
+      c |\<notin>| finite_pattern_variables (finite_schema_conclusion (resolution_node_schema np)) \<Longrightarrow>
+      finite_free_premise_only st np c \<or> (c |\<in>| finite_socket_inputs Vp Vh (resolution_node_schema np) (last q) \<and>
+        finite_pattern_variables (finite_node_binding np c) = {||})"
+    and "c |\<in>| finite_schema_variables (resolution_node_schema np) \<Longrightarrow>
+      c |\<notin>| finite_pattern_variables (finite_schema_conclusion (resolution_node_schema np)) \<Longrightarrow>
+      ((resolution_node_position np,True),c) |\<notin>| finite_pattern_variables (resolution_node_call np)"
+proof -
+  let ?g = "Resolution_Call_Goal q r e p"
+  let ?S = "resolution_node_schema np"
+  let ?\<beta> = "finite_node_binding np"
+  have nd: "np |\<in>| resolution_nodes st" and poi: "finite_premise_only_inputs Vp Vh st np (last q)"
+    and unsh: "finite_premise_only_unshared np"
+    using ctx by (simp_all add: finite_parent_context_def)
+  note linked = finite_node_binding_linked[OF I nd]
+  have sv: "single_valued (fset (resolution_node_bindings np))" unfolding linked(1) by (auto simp: single_valued_def)
+  have nf': "F \<noteq> Some (resolution_goal_position ?g)" and q': "resolution_goal_position ?g \<noteq> []"
+    and np': "resolution_node_position np = butlast (resolution_goal_position ?g)" using nf q np by simp_all
+  have pvars: "finite_pattern_variables p0 = finite_pattern_variables xi0 |\<union>| finite_pattern_variables yo0"
+    by (rule resolution_view_pattern_variables[OF Vp vp0])
+  show "c |\<in>| finite_schema_variables ?S" if "c |\<in>| finite_pattern_variables yo0"
+    by (rule finite_schema_variables_members(2)[OF prem0]) (simp add: pvars that)
+  show "finite_instance_valuation \<theta> ?\<beta> c = decode_finite_term (resolution_value \<theta> (?\<beta> c))"
+    if "c |\<in>| finite_pattern_variables yo0"
+    by (rule finite_parent_instance_true(2)[OF I sup gF nf' q' np' ctx prem0]) (simp add: pvars that)
+  show "finite_free_premise_only st np c \<or>
+      (c |\<in>| finite_socket_inputs Vp Vh ?S (last q) \<and> finite_pattern_variables (?\<beta> c) = {||})"
+    if "c |\<in>| finite_schema_variables ?S" "c |\<notin>| finite_pattern_variables (finite_schema_conclusion ?S)"
+    unfolding finite_free_premise_only_def by (rule finite_premise_only_bound[OF poi sv that])
+  show "((resolution_node_position np,True),c) |\<notin>| finite_pattern_variables (resolution_node_call np)"
+    if "c |\<in>| finite_schema_variables ?S" "c |\<notin>| finite_pattern_variables (finite_schema_conclusion ?S)"
+    using unsh that unfolding finite_premise_only_unshared_def by auto
+qed
+
+lemma finite_socket_exchange_valuation:
+  assumes I: "resolution_invariant P d t st" and sup: "resolution_supported_at (\<lambda>_. False) F B P st \<theta>"
+    and gF: "Resolution_Call_Goal q r e p |\<in>| finite_focus_pending F st"
+    and nf: "F \<noteq> Some q" and q: "q \<noteq> []" and np: "resolution_node_position np = butlast q"
+    and ctx: "finite_parent_context P Vp Vh st np (last q)"
+    and vp: "resolution_view_pattern Vp p = Some (x,y)" and ground: "finite_pattern_variables x = {||}"
+    and Vp: "view_formed Vp"
+    and tr': "clause_true (positive_meaning (decode_finite_system P)) (decode_finite_schema (resolution_node_schema np)) h'"
+    and K: "\<And>c. c |\<in>| finite_schema_variables (resolution_node_schema np) \<Longrightarrow>
+      finite_instance_valuation \<theta> (finite_node_binding np) c =
+        decode_finite_term (resolution_value \<theta> (finite_node_binding np c)) \<Longrightarrow>
+      decode_finite_term (resolution_value \<theta>1 (finite_node_binding np c)) = h' c"
+    and holders: "finite_socket_holders F st q Y (Resolution_Call_Goal q r e p)"
+    and new: "\<And>z. z |\<in>| finite_pattern_variables y \<Longrightarrow> \<theta>1 z = \<theta>2 z"
+    and old: "\<And>z. z |\<notin>| Y \<Longrightarrow> \<not> finite_free_premise_variable st np z \<Longrightarrow> \<theta>1 z = \<theta> z"
+  shows "(\<forall>z. z |\<in>| finite_pattern_variables p \<longrightarrow> \<theta>1 z = \<theta>2 z) \<and>
+    (\<forall>h. h |\<in>| finite_focus_pending F st \<longrightarrow> \<not> resolution_focused (Some q) (resolution_goal_position h) \<longrightarrow>
+      finite_goal_holds (positive_meaning (decode_finite_system P)) \<theta>1 h)"
+proof -
+  let ?M = "positive_meaning (decode_finite_system P)"
+  let ?g = "Resolution_Call_Goal q r e p"
+  let ?S = "resolution_node_schema np"
+  let ?\<beta> = "finite_node_binding np"
+  let ?h = "finite_instance_valuation \<theta> ?\<beta>"
+  have closed: "finite_children_closed Vp Vh st np (last q)" using ctx by (simp add: finite_parent_context_def)
+  note children = finite_children_closed_children[OF closed]
+  have gchild: "resolution_goal_position ?g \<noteq> []" "butlast (resolution_goal_position ?g) = resolution_node_position np"
+    using q np by simp_all
+  have nf': "F \<noteq> Some (resolution_goal_position ?g)" and q': "resolution_goal_position ?g \<noteq> []"
+    and np': "resolution_node_position np = butlast (resolution_goal_position ?g)" using nf q np by simp_all
+  have parent2: "?h c = decode_finite_term (resolution_value \<theta> (?\<beta> c))"
+    if "(s,e',p') |\<in>| finite_schema_premises ?S" "c |\<in>| finite_pattern_variables p'" for s e' p' c
+    by (rule finite_parent_instance_true(2)[OF I sup gF nf' q' np' ctx that])
+  have parent3: "?h c = decode_finite_term (resolution_value \<theta> (?\<beta> c))"
+    if "(s,N) |\<in>| finite_schema_materials ?S" "c |\<in>| finite_material_variables N" for s N c
+    by (rule finite_parent_instance_true(3)[OF I sup gF nf' q' np' ctx that])
+  have unchanged: "\<And>h0 z. h0 |\<in>| finite_focus_pending F st \<Longrightarrow>
+      \<not> (resolution_goal_position h0 \<noteq> [] \<and> butlast (resolution_goal_position h0) = resolution_node_position np) \<Longrightarrow>
+      z |\<in>| resolution_goal_variables h0 \<Longrightarrow> \<theta>1 z = \<theta> z"
+  proof -
+    fix h0 z assume h0: "h0 |\<in>| finite_focus_pending F st"
+      and nc: "\<not> (resolution_goal_position h0 \<noteq> [] \<and> butlast (resolution_goal_position h0) = resolution_node_position np)"
+      and z: "z |\<in>| resolution_goal_variables h0"
+    have ny: "z |\<notin>| Y"
+    proof
+      assume zy: "z |\<in>| Y"
+      have "h0 = ?g \<or> resolution_goal_variables h0 |\<inter>| Y = {||} \<or>
+          (resolution_goal_position h0 \<noteq> [] \<and> butlast (resolution_goal_position h0) = butlast q)"
+        using holders h0 unfolding finite_socket_holders_def by auto
+      then show False
+      proof (elim disjE)
+        assume "h0 = ?g" then show False using nc gchild by simp
+      next
+        assume d: "resolution_goal_variables h0 |\<inter>| Y = {||}"
+        have "z |\<in>| resolution_goal_variables h0 |\<inter>| Y" using z zy by simp
+        then show False using d by simp
+      next
+        assume "resolution_goal_position h0 \<noteq> [] \<and> butlast (resolution_goal_position h0) = butlast q"
+        then show False using nc np by simp
+      qed
+    qed
+    have nZ: "\<not> finite_free_premise_variable st np z"
+    proof
+      assume Z: "finite_free_premise_variable st np z"
+      have h0p: "h0 |\<in>| resolution_pending st" using h0 by (simp add: finite_focus_pending_focused)
+      have z1: "fst z = (resolution_node_position np,True)" and f: "finite_free_premise_only st np (snd z)"
+        using Z by (simp_all add: finite_free_premise_variable_def)
+      have zz: "((resolution_node_position np,True),snd z) |\<in>| resolution_goal_variables h0"
+        using z z1 by (metis prod.collapse)
+      have "resolution_goal_position h0 \<noteq> [] \<and> butlast (resolution_goal_position h0) = resolution_node_position np"
+        using f h0p zz unfolding finite_free_premise_only_def by blast
+      with nc show False by blast
+    qed
+    show "\<theta>1 z = \<theta> z" by (rule old[OF ny nZ])
+  qed
+  have holds: "finite_goal_holds ?M \<theta>1 h" if "h |\<in>| finite_focus_pending F st" for h
+  proof (rule finite_parent_exchange_holds[OF sup children tr' _ _ _ that])
+    fix s e' p' c assume m: "(s,e',p') |\<in>| finite_schema_premises ?S" and c: "c |\<in>| finite_pattern_variables p'"
+    show "decode_finite_term (resolution_value \<theta>1 (?\<beta> c)) = h' c"
+      by (rule K) (use m c parent2[OF m c] in \<open>auto intro: finite_schema_variables_members(2)\<close>)
+  next
+    fix s N c assume m: "(s,N) |\<in>| finite_schema_materials ?S" and c: "c |\<in>| finite_material_variables N"
+    show "decode_finite_term (resolution_value \<theta>1 (?\<beta> c)) = h' c"
+      by (rule K) (use m c parent3[OF m c] in \<open>auto intro: finite_schema_variables_members(3)\<close>)
+  next
+    fix h0 z assume "h0 |\<in>| finite_focus_pending F st"
+      "\<not> (resolution_goal_position h0 \<noteq> [] \<and> butlast (resolution_goal_position h0) = resolution_node_position np)"
+      "z |\<in>| resolution_goal_variables h0"
+    then show "\<theta>1 z = \<theta> z" by (rule unchanged)
+  qed
+  have pv: "finite_pattern_variables p = finite_pattern_variables x |\<union>| finite_pattern_variables y"
+    by (rule resolution_view_pattern_variables[OF Vp vp])
+  show ?thesis
+  proof (intro conjI allI impI)
+    fix z assume z: "z |\<in>| finite_pattern_variables p"
+    have "z |\<in>| finite_pattern_variables y" using z pv ground by simp
+    then show "\<theta>1 z = \<theta>2 z" by (rule new)
+  next
+    fix h assume h: "h |\<in>| finite_focus_pending F st"
+      and "\<not> resolution_focused (Some q) (resolution_goal_position h)"
+    show "finite_goal_holds ?M \<theta>1 h" by (rule holds[OF h])
+  qed
+qed
+
 section \<open>The socket declared with the kept head\<close>
 
 text \<open>
@@ -622,57 +841,20 @@ theorem finite_socket_kept_context:
   shows "finite_exchange_context (positive_meaning (decode_finite_system P)) F q st e p"
 proof -
   let ?M = "positive_meaning (decode_finite_system P)"
-  let ?g = "Resolution_Call_Goal q r e p"
   let ?S = "resolution_node_schema np"
   let ?\<beta> = "finite_node_binding np"
   let ?h = "finite_instance_valuation \<theta> ?\<beta>"
   let ?z = "\<lambda>a. ((resolution_node_position np,True),a)"
   let ?SV = "finite_schema_variables ?S"
   let ?cv = "finite_pattern_variables (finite_schema_conclusion ?S)"
-  have nd: "np |\<in>| resolution_nodes st" and closed: "finite_children_closed Vp Vh st np (last q)"
-    and poi: "finite_premise_only_inputs Vp Vh st np (last q)" and unsh: "finite_premise_only_unshared np"
-    using ctx by (simp_all add: finite_parent_context_def)
+  have nd: "np |\<in>| resolution_nodes st" using ctx by (simp add: finite_parent_context_def)
   note linked = finite_node_binding_linked[OF I nd]
-  have sv: "single_valued (fset (resolution_node_bindings np))" unfolding linked(1) by (auto simp: single_valued_def)
-  have gp: "?g |\<in>| resolution_pending st" using gF by (simp add: finite_focus_pending_focused)
-  have gchild: "resolution_goal_position ?g \<noteq> []" "butlast (resolution_goal_position ?g) = resolution_node_position np"
-    using q np by simp_all
-  note children = finite_children_closed_children[OF closed]
-  have viewed: "\<forall>e0 p0. (last q,e0,p0) |\<in>| finite_schema_premises ?S \<longrightarrow> resolution_view_pattern Vp p0 \<noteq> None"
-    using obl unfolding socket_discharged_def by blast
   obtain p0 xi0 yo0 where prem0: "(last q,e,p0) |\<in>| finite_schema_premises ?S"
     and pp: "p = finite_pattern_substitute ?\<beta> p0" and vp0: "resolution_view_pattern Vp p0 = Some (xi0,yo0)"
     and xy: "x = finite_pattern_substitute ?\<beta> xi0" "y = finite_pattern_substitute ?\<beta> yo0"
-    by (rule finite_socket_premise[OF children[OF gp gchild] vp viewed])
-  have nf': "F \<noteq> Some (resolution_goal_position ?g)" and q': "resolution_goal_position ?g \<noteq> []"
-    and np': "resolution_node_position np = butlast (resolution_goal_position ?g)" using nf q np by simp_all
-  have parent2: "?h c = decode_finite_term (resolution_value \<theta> (?\<beta> c))"
-    if "(s,e',p') |\<in>| finite_schema_premises ?S" "c |\<in>| finite_pattern_variables p'" for s e' p' c
-    by (rule finite_parent_instance_true(2)[OF I sup gF nf' q' np' ctx that])
-  have parent3: "?h c = decode_finite_term (resolution_value \<theta> (?\<beta> c))"
-    if "(s,N) |\<in>| finite_schema_materials ?S" "c |\<in>| finite_material_variables N" for s N c
-    by (rule finite_parent_instance_true(3)[OF I sup gF nf' q' np' ctx that])
-  have pvars: "finite_pattern_variables p0 = finite_pattern_variables xi0 |\<union>| finite_pattern_variables yo0"
-    by (rule resolution_view_pattern_variables[OF Vp vp0])
-  have yo_S: "c |\<in>| ?SV" if "c |\<in>| finite_pattern_variables yo0" for c
-    by (rule finite_schema_variables_members(2)[OF prem0]) (simp add: pvars that)
-  have hyo: "?h c = decode_finite_term (resolution_value \<theta> (?\<beta> c))" if "c |\<in>| finite_pattern_variables yo0" for c
-    by (rule parent2[OF prem0]) (simp add: pvars that)
-  define fpo where "fpo = (\<lambda>a. ?\<beta> a = Finite_Variable (?z a) \<and> (\<forall>h. h |\<in>| resolution_pending st \<longrightarrow>
-      ?z a |\<in>| resolution_goal_variables h \<longrightarrow>
-      resolution_goal_position h \<noteq> [] \<and> butlast (resolution_goal_position h) = resolution_node_position np))"
-  have po_cases: "fpo a \<or> (a |\<in>| finite_socket_inputs Vp Vh ?S (last q) \<and> finite_pattern_variables (?\<beta> a) = {||})"
-    if "a |\<in>| ?SV" "a |\<notin>| ?cv" for a
-    unfolding fpo_def by (rule finite_premise_only_bound[OF poi sv that])
-  have po_call: "?z a |\<notin>| finite_pattern_variables (resolution_node_call np)" if "a |\<in>| ?SV" "a |\<notin>| ?cv" for a
-    using unsh that unfolding finite_premise_only_unshared_def by auto
-  define Zs where "Zs = (\<lambda>z. fst z = (resolution_node_position np,True) \<and> snd z |\<in>| ?SV \<and> snd z |\<notin>| ?cv \<and> fpo (snd z))"
-  have Zs_z: "z = ?z (snd z)" "snd z |\<in>| ?SV" "snd z |\<notin>| ?cv" "fpo (snd z)" if "Zs z" for z
-    using that by (auto simp: Zs_def prod_eq_iff)
-  have Zs_call: "z |\<notin>| finite_pattern_variables (resolution_node_call np)" if "Zs z" for z
-    using po_call[OF Zs_z(2)[OF that] Zs_z(3)[OF that]] Zs_z(1)[OF that] by metis
-  have pv: "finite_pattern_variables p = finite_pattern_variables x |\<union>| finite_pattern_variables y"
-    by (rule resolution_view_pattern_variables[OF Vp vp])
+    by (rule finite_socket_parent_premise[OF gF q np vp ctx obl])
+  note parts = finite_socket_parent_parts[OF I sup gF nf q np ctx Vp prem0 vp0]
+  note yo_S = parts(1) and hyo = parts(2) and po_cases = parts(3) and po_call = parts(4)
   have groundxi: "finite_pattern_variables (finite_pattern_substitute ?\<beta> xi0) = {||}" using ground xy(1) by simp
   show ?thesis unfolding finite_exchange_context_def
   proof (intro allI impI)
@@ -684,7 +866,7 @@ proof -
       and formed': "\<And>c. c |\<in>| ?SV \<Longrightarrow> term_formed (h' c)"
       by (rule finite_socket_new_instance[OF I sup gF nf q np ctx obl Vp prem0 vp0 pp groundxi new]) blast
     have kept_h: "h' c = ?h c" if "c |\<in>| ?cv" for c by (rule head_kept_variables[OF hk Vh that])
-    have ycases: "(\<exists>c. c |\<in>| finite_pattern_variables yo0 \<and> c |\<notin>| ?cv \<and> fpo c \<and> z = ?z c) \<or>
+    have ycases: "(\<exists>c. c |\<in>| finite_pattern_variables yo0 \<and> c |\<notin>| ?cv \<and> finite_free_premise_only st np c \<and> z = ?z c) \<or>
         (z |\<in>| finite_pattern_variables (resolution_node_call np) \<and> \<theta>2 z = \<theta> z)"
       if zy: "z |\<in>| finite_pattern_variables y" for z
     proof -
@@ -704,8 +886,8 @@ proof -
         case False
         from po_cases[OF yo_S[OF c(1)] False] show ?thesis
         proof
-          assume f: "fpo c"
-          have "z = ?z c" using c(2) f unfolding fpo_def by simp
+          assume f: "finite_free_premise_only st np c"
+          have "z = ?z c" using c(2) f unfolding finite_free_premise_only_def by simp
           then show ?thesis using c(1) False f by blast
         next
           assume "c |\<in>| finite_socket_inputs Vp Vh ?S (last q) \<and> finite_pattern_variables (?\<beta> c) = {||}"
@@ -714,7 +896,7 @@ proof -
       qed
     qed
     define \<theta>1 where "\<theta>1 = (\<lambda>z. if z |\<in>| finite_pattern_variables y then \<theta>2 z
-      else if Zs z then finite_term_of (h' (snd z)) else \<theta> z)"
+      else if finite_free_premise_variable st np z then finite_term_of (h' (snd z)) else \<theta> z)"
     have K: "decode_finite_term (resolution_value \<theta>1 (?\<beta> c)) = h' c"
       if cS: "c |\<in>| ?SV" and hc: "?h c = decode_finite_term (resolution_value \<theta> (?\<beta> c))" for c
     proof (cases "c |\<in>| ?cv")
@@ -728,7 +910,8 @@ proof -
           case zy: True
           from ycases[OF zy] show ?thesis
           proof (elim disjE exE conjE)
-            fix c' assume c': "c' |\<in>| finite_pattern_variables yo0" "c' |\<notin>| ?cv" "fpo c'" "z = ?z c'"
+            fix c' assume c': "c' |\<in>| finite_pattern_variables yo0" "c' |\<notin>| ?cv" "finite_free_premise_only st np c'"
+              "z = ?z c'"
             have "z |\<notin>| finite_pattern_variables (resolution_node_call np)"
               using po_call[OF yo_S[OF c'(1)] c'(2)] c'(4) by simp
             with zc show ?thesis by simp
@@ -738,7 +921,7 @@ proof -
           qed
         next
           case ny: False
-          have "\<not> Zs z" using Zs_call zc by blast
+          have "\<not> finite_free_premise_variable st np z" using finite_free_premise_variable_call[OF ctx] zc by blast
           then show ?thesis using ny by (simp add: \<theta>1_def)
         qed
       qed
@@ -748,14 +931,15 @@ proof -
       case nconcl: False
       from po_cases[OF cS nconcl] show ?thesis
       proof
-        assume f: "fpo c"
-        have bc: "?\<beta> c = Finite_Variable (?z c)" using f unfolding fpo_def by blast
+        assume f: "finite_free_premise_only st np c"
+        have bc: "?\<beta> c = Finite_Variable (?z c)" using f unfolding finite_free_premise_only_def by blast
         show ?thesis
         proof (cases "?z c |\<in>| finite_pattern_variables y")
           case zy: True
           from ycases[OF zy] show ?thesis
           proof (elim disjE exE conjE)
-            fix c' assume c': "c' |\<in>| finite_pattern_variables yo0" "c' |\<notin>| ?cv" "fpo c'" "?z c = ?z c'"
+            fix c' assume c': "c' |\<in>| finite_pattern_variables yo0" "c' |\<notin>| ?cv" "finite_free_premise_only st np c'"
+              "?z c = ?z c'"
             then have cc: "c' = c" by simp
             show ?thesis using hy_agree[OF c'(1)] zy bc cc by (simp add: \<theta>1_def)
           next
@@ -764,7 +948,7 @@ proof -
           qed
         next
           case ny: False
-          have "Zs (?z c)" using cS nconcl f by (simp add: Zs_def)
+          have "finite_free_premise_variable st np (?z c)" using cS nconcl f by (simp add: finite_free_premise_variable_def)
           then show ?thesis using ny bc decode_finite_term_of[OF formed'[OF cS]] by (simp add: \<theta>1_def)
         qed
       next
@@ -775,61 +959,11 @@ proof -
         ultimately show ?thesis using hc by simp
       qed
     qed
-    have unchanged: "\<And>h0 z. h0 |\<in>| finite_focus_pending F st \<Longrightarrow>
-        \<not> (resolution_goal_position h0 \<noteq> [] \<and> butlast (resolution_goal_position h0) = resolution_node_position np) \<Longrightarrow>
-        z |\<in>| resolution_goal_variables h0 \<Longrightarrow> \<theta>1 z = \<theta> z"
-    proof -
-      fix h0 z assume h0: "h0 |\<in>| finite_focus_pending F st"
-        and nc: "\<not> (resolution_goal_position h0 \<noteq> [] \<and> butlast (resolution_goal_position h0) = resolution_node_position np)"
-        and z: "z |\<in>| resolution_goal_variables h0"
-      have ny: "z |\<notin>| finite_pattern_variables y"
-      proof
-        assume zy: "z |\<in>| finite_pattern_variables y"
-        have "h0 = ?g \<or> resolution_goal_variables h0 |\<inter>| finite_pattern_variables y = {||} \<or>
-            (resolution_goal_position h0 \<noteq> [] \<and> butlast (resolution_goal_position h0) = butlast q)"
-          using holders h0 unfolding finite_socket_holders_def by auto
-        then show False
-        proof (elim disjE)
-          assume "h0 = ?g" then show False using nc gchild by simp
-        next
-          assume d: "resolution_goal_variables h0 |\<inter>| finite_pattern_variables y = {||}"
-          have "z |\<in>| resolution_goal_variables h0 |\<inter>| finite_pattern_variables y" using z zy by simp
-          then show False using d by simp
-        next
-          assume "resolution_goal_position h0 \<noteq> [] \<and> butlast (resolution_goal_position h0) = butlast q"
-          then show False using nc np by simp
-        qed
-      qed
-      have nZ: "\<not> Zs z"
-      proof
-        assume Z: "Zs z"
-        have h0p: "h0 |\<in>| resolution_pending st" using h0 by (simp add: finite_focus_pending_focused)
-        have zz: "?z (snd z) |\<in>| resolution_goal_variables h0" using z Zs_z(1)[OF Z] by metis
-        have "resolution_goal_position h0 \<noteq> [] \<and> butlast (resolution_goal_position h0) = resolution_node_position np"
-          using Zs_z(4)[OF Z] h0p zz unfolding fpo_def by blast
-        with nc show False by blast
-      qed
-      show "\<theta>1 z = \<theta> z" using ny nZ by (simp add: \<theta>1_def)
-    qed
-    have holds: "finite_goal_holds ?M \<theta>1 h" if "h |\<in>| finite_focus_pending F st" for h
-    proof (rule finite_parent_exchange_holds[OF sup children tr' _ _ _ that])
-      fix s e' p' c assume m: "(s,e',p') |\<in>| finite_schema_premises ?S" and c: "c |\<in>| finite_pattern_variables p'"
-      show "decode_finite_term (resolution_value \<theta>1 (?\<beta> c)) = h' c"
-        by (rule K) (use m c parent2[OF m c] in \<open>auto intro: finite_schema_variables_members(2)\<close>)
-    next
-      fix s N c assume m: "(s,N) |\<in>| finite_schema_materials ?S" and c: "c |\<in>| finite_material_variables N"
-      show "decode_finite_term (resolution_value \<theta>1 (?\<beta> c)) = h' c"
-        by (rule K) (use m c parent3[OF m c] in \<open>auto intro: finite_schema_variables_members(3)\<close>)
-    next
-      fix h0 z assume "h0 |\<in>| finite_focus_pending F st"
-        "\<not> (resolution_goal_position h0 \<noteq> [] \<and> butlast (resolution_goal_position h0) = resolution_node_position np)"
-        "z |\<in>| resolution_goal_variables h0"
-      then show "\<theta>1 z = \<theta> z" by (rule unchanged)
-    qed
     show "\<exists>\<theta>1. (\<forall>z. z |\<in>| finite_pattern_variables p \<longrightarrow> \<theta>1 z = \<theta>2 z) \<and>
         (\<forall>h. h |\<in>| finite_focus_pending F st \<longrightarrow> \<not> resolution_focused (Some q) (resolution_goal_position h) \<longrightarrow>
           finite_goal_holds ?M \<theta>1 h)"
-      using holds ground pv by (intro exI[of _ \<theta>1]) (auto simp: \<theta>1_def)
+      by (rule exI[of _ \<theta>1], rule finite_socket_exchange_valuation[OF I sup gF nf q np ctx vp ground Vp tr' K holders])
+        (simp_all add: \<theta>1_def)
   qed
 qed
 
@@ -857,7 +991,6 @@ theorem finite_socket_free_context:
   shows "finite_exchange_context (positive_meaning (decode_finite_system P)) F q st e p"
 proof -
   let ?M = "positive_meaning (decode_finite_system P)"
-  let ?g = "Resolution_Call_Goal q r e p"
   let ?S = "resolution_node_schema np"
   let ?\<beta> = "finite_node_binding np"
   let ?h = "finite_instance_valuation \<theta> ?\<beta>"
@@ -867,48 +1000,19 @@ proof -
   have "length (butlast q) \<noteq> length q" using q by (cases q) simp_all
   then have "butlast q \<noteq> q" by metis
   then have nf: "F \<noteq> Some q" using root by simp
-  have nd: "np |\<in>| resolution_nodes st" and closed: "finite_children_closed Vp Vh st np (last q)"
-    and poi: "finite_premise_only_inputs Vp Vh st np (last q)" and unsh: "finite_premise_only_unshared np"
-    using ctx by (simp_all add: finite_parent_context_def)
+  have nd: "np |\<in>| resolution_nodes st" using ctx by (simp add: finite_parent_context_def)
   note linked = finite_node_binding_linked[OF I nd]
-  have sv: "single_valued (fset (resolution_node_bindings np))" unfolding linked(1) by (auto simp: single_valued_def)
-  have gp: "?g |\<in>| resolution_pending st" using gF by (simp add: finite_focus_pending_focused)
-  have gchild: "resolution_goal_position ?g \<noteq> []" "butlast (resolution_goal_position ?g) = resolution_node_position np"
-    using q np by simp_all
-  note children = finite_children_closed_children[OF closed]
-  have viewed: "\<forall>e0 p0. (last q,e0,p0) |\<in>| finite_schema_premises ?S \<longrightarrow> resolution_view_pattern Vp p0 \<noteq> None"
-    using obl unfolding socket_discharged_def by blast
   obtain p0 xi0 yo0 where prem0: "(last q,e,p0) |\<in>| finite_schema_premises ?S"
     and pp: "p = finite_pattern_substitute ?\<beta> p0" and vp0: "resolution_view_pattern Vp p0 = Some (xi0,yo0)"
     and xy: "x = finite_pattern_substitute ?\<beta> xi0" "y = finite_pattern_substitute ?\<beta> yo0"
-    by (rule finite_socket_premise[OF children[OF gp gchild] vp viewed])
+    by (rule finite_socket_parent_premise[OF gF q np vp ctx obl])
+  note parts = finite_socket_parent_parts[OF I sup gF nf q np ctx Vp prem0 vp0]
+  note yo_S = parts(1) and hyo = parts(2) and po_cases = parts(3) and po_call = parts(4)
   obtain hi ho where vc: "resolution_view_pattern Vh (finite_schema_conclusion ?S) = Some (hi,ho)"
     and vk: "resolution_view_pattern Vh (resolution_node_call np) = Some (finite_pattern_substitute ?\<beta> hi,out)"
     and xo: "out = finite_pattern_substitute ?\<beta> ho" and variant: "finite_variant ho out"
     by (rule finite_parent_output_parts[OF po linked(2)])
   let ?xc = "finite_pattern_substitute ?\<beta> hi"
-  have nf': "F \<noteq> Some (resolution_goal_position ?g)" and q': "resolution_goal_position ?g \<noteq> []"
-    and np': "resolution_node_position np = butlast (resolution_goal_position ?g)" using nf q np by simp_all
-  have parent2: "?h c = decode_finite_term (resolution_value \<theta> (?\<beta> c))"
-    if "(s,e',p') |\<in>| finite_schema_premises ?S" "c |\<in>| finite_pattern_variables p'" for s e' p' c
-    by (rule finite_parent_instance_true(2)[OF I sup gF nf' q' np' ctx that])
-  have parent3: "?h c = decode_finite_term (resolution_value \<theta> (?\<beta> c))"
-    if "(s,N) |\<in>| finite_schema_materials ?S" "c |\<in>| finite_material_variables N" for s N c
-    by (rule finite_parent_instance_true(3)[OF I sup gF nf' q' np' ctx that])
-  have pvars: "finite_pattern_variables p0 = finite_pattern_variables xi0 |\<union>| finite_pattern_variables yo0"
-    by (rule resolution_view_pattern_variables[OF Vp vp0])
-  have yo_S: "c |\<in>| ?SV" if "c |\<in>| finite_pattern_variables yo0" for c
-    by (rule finite_schema_variables_members(2)[OF prem0]) (simp add: pvars that)
-  have hyo: "?h c = decode_finite_term (resolution_value \<theta> (?\<beta> c))" if "c |\<in>| finite_pattern_variables yo0" for c
-    by (rule parent2[OF prem0]) (simp add: pvars that)
-  define fpo where "fpo = (\<lambda>a. ?\<beta> a = Finite_Variable (?z a) \<and> (\<forall>h. h |\<in>| resolution_pending st \<longrightarrow>
-      ?z a |\<in>| resolution_goal_variables h \<longrightarrow>
-      resolution_goal_position h \<noteq> [] \<and> butlast (resolution_goal_position h) = resolution_node_position np))"
-  have po_cases: "fpo a \<or> (a |\<in>| finite_socket_inputs Vp Vh ?S (last q) \<and> finite_pattern_variables (?\<beta> a) = {||})"
-    if "a |\<in>| ?SV" "a |\<notin>| ?cv" for a
-    unfolding fpo_def by (rule finite_premise_only_bound[OF poi sv that])
-  have po_call: "?z a |\<notin>| finite_pattern_variables (resolution_node_call np)" if "a |\<in>| ?SV" "a |\<notin>| ?cv" for a
-    using unsh that unfolding finite_premise_only_unshared_def by auto
   have cvs: "?cv = finite_pattern_variables hi |\<union>| finite_pattern_variables ho"
     by (rule resolution_view_pattern_variables[OF Vh vc])
   have callv: "finite_pattern_variables (resolution_node_call np) =
@@ -923,13 +1027,6 @@ proof -
     if "c |\<in>| finite_pattern_variables ho" "z |\<in>| finite_pattern_variables (?\<beta> c)" for c z
     unfolding xo by (rule finite_pattern_substitute_variable[where \<sigma>="finite_node_binding np", OF that])
   have variant': "finite_variant ho (finite_pattern_substitute ?\<beta> ho)" using variant xo by simp
-  define Zs where "Zs = (\<lambda>z. fst z = (resolution_node_position np,True) \<and> snd z |\<in>| ?SV \<and> snd z |\<notin>| ?cv \<and> fpo (snd z))"
-  have Zs_z: "z = ?z (snd z)" "snd z |\<in>| ?SV" "snd z |\<notin>| ?cv" "fpo (snd z)" if "Zs z" for z
-    using that by (auto simp: Zs_def prod_eq_iff)
-  have Zs_call: "z |\<notin>| finite_pattern_variables (resolution_node_call np)" if "Zs z" for z
-    using po_call[OF Zs_z(2)[OF that] Zs_z(3)[OF that]] Zs_z(1)[OF that] by metis
-  have pv: "finite_pattern_variables p = finite_pattern_variables x |\<union>| finite_pattern_variables y"
-    by (rule resolution_view_pattern_variables[OF Vp vp])
   have groundxi: "finite_pattern_variables (finite_pattern_substitute ?\<beta> xi0) = {||}" using ground xy(1) by simp
   show ?thesis unfolding finite_exchange_context_def
   proof (intro allI impI)
@@ -942,7 +1039,7 @@ proof -
       by (rule finite_socket_new_instance[OF I sup gF nf q np ctx obl Vp prem0 vp0 pp groundxi new]) blast
     have input_h: "h' c = ?h c" if "c |\<in>| finite_pattern_variables hi" for c
       by (rule evaluate_pattern_agree[OF head_kept_input[OF hk vc]]) (simp add: that finite_pattern_variables_correct[symmetric])
-    have ycases: "(\<exists>c. c |\<in>| finite_pattern_variables yo0 \<and> c |\<notin>| ?cv \<and> fpo c \<and> z = ?z c) \<or>
+    have ycases: "(\<exists>c. c |\<in>| finite_pattern_variables yo0 \<and> c |\<notin>| ?cv \<and> finite_free_premise_only st np c \<and> z = ?z c) \<or>
         (\<exists>c. c |\<in>| finite_pattern_variables yo0 \<and> c |\<in>| finite_pattern_variables ho \<and> z |\<in>| finite_pattern_variables (?\<beta> c)) \<or>
         (z |\<in>| finite_pattern_variables ?xc \<and> \<theta>2 z = \<theta> z)"
       if zy: "z |\<in>| finite_pattern_variables y" for z
@@ -968,8 +1065,8 @@ proof -
           have nc: "c |\<notin>| ?cv" using False notho cvs by simp
           from po_cases[OF yo_S[OF c(1)] nc] show ?thesis
           proof
-            assume f: "fpo c"
-            have "z = ?z c" using c(2) f unfolding fpo_def by simp
+            assume f: "finite_free_premise_only st np c"
+            have "z = ?z c" using c(2) f unfolding finite_free_premise_only_def by simp
             then show ?thesis using c(1) nc f by blast
           next
             assume "c |\<in>| finite_socket_inputs Vp Vh ?S (last q) \<and> finite_pattern_variables (?\<beta> c) = {||}"
@@ -979,7 +1076,7 @@ proof -
       qed
     qed
     define \<theta>1 where "\<theta>1 = (\<lambda>z. if z |\<in>| finite_pattern_variables y then \<theta>2 z
-      else if Zs z then finite_term_of (h' (snd z))
+      else if finite_free_premise_variable st np z then finite_term_of (h' (snd z))
       else if z |\<in>| finite_pattern_variables out
         then finite_term_of (h' (SOME b. b |\<in>| finite_pattern_variables ho \<and> ?\<beta> b = Finite_Variable z))
       else \<theta> z)"
@@ -997,7 +1094,8 @@ proof -
         case wy: True
         from ycases[OF wy] show ?thesis
         proof (elim disjE exE conjE)
-          fix c' assume c': "c' |\<in>| finite_pattern_variables yo0" "c' |\<notin>| ?cv" "fpo c'" "w = ?z c'"
+          fix c' assume c': "c' |\<in>| finite_pattern_variables yo0" "c' |\<notin>| ?cv" "finite_free_premise_only st np c'"
+            "w = ?z c'"
           have "w |\<notin>| finite_pattern_variables (resolution_node_call np)"
             using po_call[OF yo_S[OF c'(1)] c'(2)] c'(4) by simp
           with wcall show ?thesis by simp
@@ -1016,7 +1114,7 @@ proof -
         qed
       next
         case wny: False
-        have "\<not> Zs w" using Zs_call wcall by blast
+        have "\<not> finite_free_premise_variable st np w" using finite_free_premise_variable_call[OF ctx] wcall by blast
         moreover have "(SOME b. b |\<in>| finite_pattern_variables ho \<and> ?\<beta> b = Finite_Variable w) = c"
           by (rule some_equality) (use inho bw wu in blast)+
         ultimately show ?thesis using wny wout bw decode_finite_term_of[OF formed'[OF cS]] by (simp add: \<theta>1_def)
@@ -1041,7 +1139,8 @@ proof -
             case zy: True
             from ycases[OF zy] show ?thesis
             proof (elim disjE exE conjE)
-              fix c' assume c': "c' |\<in>| finite_pattern_variables yo0" "c' |\<notin>| ?cv" "fpo c'" "z = ?z c'"
+              fix c' assume c': "c' |\<in>| finite_pattern_variables yo0" "c' |\<notin>| ?cv" "finite_free_premise_only st np c'"
+                "z = ?z c'"
               have "z |\<notin>| finite_pattern_variables (resolution_node_call np)"
                 using po_call[OF yo_S[OF c'(1)] c'(2)] c'(4) by simp
               with zc show ?thesis by simp
@@ -1056,7 +1155,7 @@ proof -
             qed
           next
             case ny: False
-            have "\<not> Zs z" using Zs_call zc by blast
+            have "\<not> finite_free_premise_variable st np z" using finite_free_premise_variable_call[OF ctx] zc by blast
             then show ?thesis using ny nout by (simp add: \<theta>1_def)
           qed
         qed
@@ -1067,15 +1166,16 @@ proof -
         have nconcl: "c |\<notin>| ?cv" using notin notho cvs by simp
         from po_cases[OF cS nconcl] show ?thesis
         proof
-          assume f: "fpo c"
-          have bc: "?\<beta> c = Finite_Variable (?z c)" using f unfolding fpo_def by blast
+          assume f: "finite_free_premise_only st np c"
+          have bc: "?\<beta> c = Finite_Variable (?z c)" using f unfolding finite_free_premise_only_def by blast
           have zcall: "?z c |\<notin>| finite_pattern_variables (resolution_node_call np)" by (rule po_call[OF cS nconcl])
           show ?thesis
           proof (cases "?z c |\<in>| finite_pattern_variables y")
             case zy: True
             from ycases[OF zy] show ?thesis
             proof (elim disjE exE conjE)
-              fix c' assume c': "c' |\<in>| finite_pattern_variables yo0" "c' |\<notin>| ?cv" "fpo c'" "?z c = ?z c'"
+              fix c' assume c': "c' |\<in>| finite_pattern_variables yo0" "c' |\<notin>| ?cv" "finite_free_premise_only st np c'"
+                "?z c = ?z c'"
               then have cc: "c' = c" by simp
               show ?thesis using hy_agree[OF c'(1)] zy bc cc by (simp add: \<theta>1_def)
             next
@@ -1089,7 +1189,7 @@ proof -
             qed
           next
             case ny: False
-            have "Zs (?z c)" using cS nconcl f by (simp add: Zs_def)
+            have "finite_free_premise_variable st np (?z c)" using cS nconcl f by (simp add: finite_free_premise_variable_def)
             then show ?thesis using ny bc decode_finite_term_of[OF formed'[OF cS]] by (simp add: \<theta>1_def)
           qed
         next
@@ -1101,62 +1201,11 @@ proof -
         qed
       qed
     qed
-    have unchanged: "\<And>h0 z. h0 |\<in>| finite_focus_pending F st \<Longrightarrow>
-        \<not> (resolution_goal_position h0 \<noteq> [] \<and> butlast (resolution_goal_position h0) = resolution_node_position np) \<Longrightarrow>
-        z |\<in>| resolution_goal_variables h0 \<Longrightarrow> \<theta>1 z = \<theta> z"
-    proof -
-      fix h0 z assume h0: "h0 |\<in>| finite_focus_pending F st"
-        and nc: "\<not> (resolution_goal_position h0 \<noteq> [] \<and> butlast (resolution_goal_position h0) = resolution_node_position np)"
-        and z: "z |\<in>| resolution_goal_variables h0"
-      have nyo: "z |\<notin>| finite_pattern_variables y |\<union>| finite_pattern_variables out"
-      proof
-        assume zy: "z |\<in>| finite_pattern_variables y |\<union>| finite_pattern_variables out"
-        have "h0 = ?g \<or> resolution_goal_variables h0 |\<inter>| (finite_pattern_variables y |\<union>| finite_pattern_variables out) = {||} \<or>
-            (resolution_goal_position h0 \<noteq> [] \<and> butlast (resolution_goal_position h0) = butlast q)"
-          using holders h0 unfolding finite_socket_holders_def by auto
-        then show False
-        proof (elim disjE)
-          assume "h0 = ?g" then show False using nc gchild by simp
-        next
-          assume d: "resolution_goal_variables h0 |\<inter>| (finite_pattern_variables y |\<union>| finite_pattern_variables out) = {||}"
-          have "z |\<in>| resolution_goal_variables h0 |\<inter>| (finite_pattern_variables y |\<union>| finite_pattern_variables out)"
-            using z zy by simp
-          then show False using d by simp
-        next
-          assume "resolution_goal_position h0 \<noteq> [] \<and> butlast (resolution_goal_position h0) = butlast q"
-          then show False using nc np by simp
-        qed
-      qed
-      have nZ: "\<not> Zs z"
-      proof
-        assume Z: "Zs z"
-        have h0p: "h0 |\<in>| resolution_pending st" using h0 by (simp add: finite_focus_pending_focused)
-        have zz: "?z (snd z) |\<in>| resolution_goal_variables h0" using z Zs_z(1)[OF Z] by metis
-        have "resolution_goal_position h0 \<noteq> [] \<and> butlast (resolution_goal_position h0) = resolution_node_position np"
-          using Zs_z(4)[OF Z] h0p zz unfolding fpo_def by blast
-        with nc show False by blast
-      qed
-      show "\<theta>1 z = \<theta> z" using nyo nZ by (simp add: \<theta>1_def)
-    qed
-    have holds: "finite_goal_holds ?M \<theta>1 h" if "h |\<in>| finite_focus_pending F st" for h
-    proof (rule finite_parent_exchange_holds[OF sup children tr' _ _ _ that])
-      fix s e' p' c assume m: "(s,e',p') |\<in>| finite_schema_premises ?S" and c: "c |\<in>| finite_pattern_variables p'"
-      show "decode_finite_term (resolution_value \<theta>1 (?\<beta> c)) = h' c"
-        by (rule K) (use m c parent2[OF m c] in \<open>auto intro: finite_schema_variables_members(2)\<close>)
-    next
-      fix s N c assume m: "(s,N) |\<in>| finite_schema_materials ?S" and c: "c |\<in>| finite_material_variables N"
-      show "decode_finite_term (resolution_value \<theta>1 (?\<beta> c)) = h' c"
-        by (rule K) (use m c parent3[OF m c] in \<open>auto intro: finite_schema_variables_members(3)\<close>)
-    next
-      fix h0 z assume "h0 |\<in>| finite_focus_pending F st"
-        "\<not> (resolution_goal_position h0 \<noteq> [] \<and> butlast (resolution_goal_position h0) = resolution_node_position np)"
-        "z |\<in>| resolution_goal_variables h0"
-      then show "\<theta>1 z = \<theta> z" by (rule unchanged)
-    qed
     show "\<exists>\<theta>1. (\<forall>z. z |\<in>| finite_pattern_variables p \<longrightarrow> \<theta>1 z = \<theta>2 z) \<and>
         (\<forall>h. h |\<in>| finite_focus_pending F st \<longrightarrow> \<not> resolution_focused (Some q) (resolution_goal_position h) \<longrightarrow>
           finite_goal_holds ?M \<theta>1 h)"
-      using holds ground pv by (intro exI[of _ \<theta>1]) (auto simp: \<theta>1_def)
+      by (rule exI[of _ \<theta>1], rule finite_socket_exchange_valuation[OF I sup gF nf q np ctx vp ground Vp tr' K holders])
+        (simp_all add: \<theta>1_def)
   qed
 qed
 
@@ -1262,13 +1311,13 @@ text \<open>
   #565's exchange premise at the declared commitment, with no hypothesis on the state: the direct producer's discharge
   (@{text finite_direct_exchange}), the sockets' (@{text finite_socket_commitment_exchange}, at every focus, so at an inner
   commitment too) and the material single solution's (@{text finite_material_commitment_exchanges}), each from the state
-  conditions the test checks where it commits. What remains is the declarations' discharge, a formed construction and a
-  program whose registrations are premise-only.
+  conditions the test checks where it commits. What remains is the declarations' discharge, at any views, a formed
+  construction and a program whose registrations are premise-only.
 \<close>
 
 theorem finite_declared_commitment_exchanges:
   fixes P :: "('a,'s::linorder,'d,'c) finite_schema_system"
-  assumes \<kappa>: "finite_witness_construction_formed \<kappa>" and pairs: "pair_declarations D"
+  assumes \<kappa>: "finite_witness_construction_formed \<kappa>"
     and discharged: "declarations_discharged (positive_meaning (decode_finite_system P)) D corr"
     and only: "finite_registrations_premise_only \<kappa> P"
   shows "finite_commitment_exchanges (\<lambda>_. False) \<kappa> (finite_declared_commitment D) P"

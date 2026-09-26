@@ -55,9 +55,9 @@ into the briefs #522 and #523 corrected, or recorded superseded there.
 **The native evaluator's open line**, in chain order (what landed is under Delivered):
 - R5d: #595 landed (Delivered); then #665's builds (#585's
   builds (1), which the discharge line did not take; `.build/tasks/665/result.md`): the viewed record beside the old
-  #666 (landed) → the switch to the kept names, every use migrated #668 → the discharges over a view, the pair their instance:
+  #666 and the switch to the kept names #668 landed → the discharges over a view, the pair their instance:
   the direct producer #670 beside the material single solution with the parent context stated once #672 → the socket
-  kinds #674 → the declared exchanges, forms and transfer at views #676. #668 → carriers #597 → R6b's parts #601 (the
+  kinds #674 → the declared exchanges, forms and transfer at views #676. Carriers #597 → R6b's parts #601 (the
   root family) and #603 (artifacts and citations), R6c's instantiation family in three parts #607 → #679 → #681
   (#678's division; #681 also after #601, whose carriers 59 and 51 it consumes); #676 and #597 → R5e #599 (narrowed
   sockets) → R6c's #609 (48; also after #607 and #679, whose views its sockets' parents take); R6b's numbered carrying
@@ -103,21 +103,22 @@ line, a row at a locus; the decomposition's schema and library; the digit layout
 **Word changes are serialized** (Decisions): none is queued. A word change's records are re-recorded after its landing
 by a task of their own (Open 100).
 
-**Shape.** No build waits on a review task. The route's longest chain, 18 deep, runs #668 → #685 → #672 → #674
+**Shape.** No build waits on a review task. The route's longest chain, 17 deep, runs #685 → #672 → #674
 → #689 → F1 #693 → F3 #695 → F2b #699 → F2c #701 → C #703 → R7 #542 → #707 → #399 → #709 → the record #553 → #447 →
 #449 → #450; #676 → #599 → #609 → #611 → #542 has one step of slack, #597's parts and the carryings more — past the
 limit through splices, so nothing is added after the route's tail until it shortens (the status line gives the depths).
-The approval build (Open 142) after #407 and #447, and the controls task (Open 150) after C, wait for it to shorten.
+The approval build (Open 142) after #407 and #447 waits for it to shorten; the controls task #718 after C (depth 10)
+was placed when #668 landed.
 
 **Order** (the queue holds it; the planner's choice, a residual until the native answer to the selection problem
 exists, Q2): the slots are one pool, each free slot going to the first task in the queue that can start and a review
 standing where its review task stands, so every review stands right after its build. By slack on the longest chain:
-the definition closure read from its roots #716 with its review #717 (at once, beside #668), #665's builds on the longest chain first (#668, the tuple's move #685, #672, #670, #674, #689), F1 #693, #676,
+the definition closure read from its roots #716 with its review #717 (at once, beside #668), #665's builds on the longest chain first (the tuple's move #685, #672, #670, #674, #689), F1 #693, #676,
 F3 #695, F2b #699, F2c #701, C #703; R5e #599 and R6c's #609; #597, R6c's instantiation family (#607, #679, #681) beside R6b's parts
 #601 and #603; V3's #653 and #687, then #655 and #688; the carryings #605 and #663 with V2a #649 and V2b #651; rc
 #540 and #661; #611; R7 #542, its native part #707, #399 and its controls #709, #547; the route in its chains' order
 (#551, #549, #553, #401, #403, #443, #447, #407, #445, #449); the registrations' consolidation #711 (off the route,
-after #668, filling the slots the chain leaves) and the lifting's consolidation #613 last.
+after #668, filling the slots the chain leaves), the controls #718 after C, and the lifting's consolidation #613 last.
 ## Decisions
 
 Taken by the planning episodes, where they are not entries of `DECISIONS.md`.
@@ -352,7 +353,9 @@ follow-ups are in `PLANNING_LOG.md` and the earlier states (`HANDOFF-before-cond
   `finite_pattern_tuple`) and `Factor_Resolution_Views` (the committed forms under discharged declarations; the
   transfer: `declarations_relocated`, `declarations_relocated_discharged`, `declarations_agree_discharged`,
   `finite_commitment_exchanges_relocated`, `finite_construction_lifts_relocated`); names in `.build/tasks/595/result.md`; the record at views beside the old
-  notions under temporary `viewed_` names (#666, `900e0d97`; the switch #668 gives them the kept names).
+  notions under temporary `viewed_` names (#666, `900e0d97`), switched to the kept names by #668 (`01efa78e`: `pair_declarations` R5's pair,
+  `declarations_formed` each view `view_formed` conjoined into `declarations_discharged`, the transfer at any views, every
+  user migrated; its Remains by theory mailed to the views builds).
 - **The least witnesses** (#496's entry): W2 `Factor_Least_Collections` (#524, #567, #634), W3
   `Factor_Least_Witness_Facts` (#513, #634), W4a `Factor_Construction_Holders` and `Factor_Least_Witness_Registrations`
   (#526, #615, #634: `finite_construction_complete`, `relocated_construction_complete`, the exact forms with
@@ -437,9 +440,6 @@ The owner's questions, a line each (their words and the provisional choices in f
 142. The owner's approval of the first answer: a build after #447 and #407, an owner record citing the admission, the
    criticism record and the verification record (`development_owner_approval`, Q23 (c)); publication after
    verification and the translation (Q18 (a), item 3). Briefed once #447 and #407 are nearer.
-150. The controls task of #684's proposal (`.build/tasks/684/brief/controls.txt`, the text after its `---` line; its
-   review's items in `brief/reviews.txt`, line `controls`): after C #703, spliced before nothing; placed once C's depth
-   is 9 or less, so that it ends a chain of 10 at most.
 148. The first answer itself: an executor given only the first request's packet (#445), answering through #401's
    command, judged by #399, criticized by #449, verified by #407 — the plan's stage 3 (Q4, provisional: no agent
    executor run yet); planned when #445 and #401 are nearer.
@@ -485,6 +485,16 @@ planner searches for a theory before briefing a task that edits it.
 
 ## Now
 
+- **Not handled (plan-91's window ended)**: #716 landed as `e66ded23` (11:27): `finite_definition_closure` an instance
+  of `Finite_Demanded_Closures`' rooted reading (`finite_definition_closure_rooted`, `_demanded_code`), its review
+  #717 correcting only `result.md` and `commit.md` (no recipe reaches the theory). To place, from review 717: (1) a
+  REASONING_REUSE.md row for the rooted reading (the premise, the exact equation, the sites traversal) with its three
+  instances (`Factor_Demanded_Package_Readings`, `Factor_Demanded_Graph_Readings`, the definition closure); (2)
+  `finite_system_clause_family_member` moved beside its definition in `Factor_Finite_System_Fields` at that theory's
+  next landing (a next-edits item); (3) the traversal's cost O(reached × clauses), 0.35–0.43 ms at about 270 clauses,
+  no index warranted; (4) the other rooted bases of `Development_Given_Program` now read their closures the same way,
+  and #542 and #707 confirm the saving at the theories (already mailed). Then Delivered gains #716 and #715's
+  attribution line, and the Graph's clause-match line and Open 99 drop "which #716 reads … before".
 - **#684's proposal placed** (plan-90): #693–#710 (Graph); #613 rewritten to take F1's selection lemma and restated R5
   selection facts and F3's reuse case and restated positions as instances (after #599 and F3 #695; 195K beside 264K of
   relations at the edit — refused at 220K —, so if its relations grow by its start it is divided there: (1) and (3),
@@ -515,7 +525,7 @@ planner searches for a theory before briefing a task that edits it.
   branch re-solves the ground goals pending beside it (113 at one row: 5,715 states for a branch of 208) — and at scale
   per-step size (the state grows with the depth, quadratic in the branch); R6's declarations engage no commitment on
   these paths. #683 decided the fix (Graph); R7 #542, #547 and #399 wait on C #703, and through it on F1, F3 and F2.
-  The controls task (Open 150), after C:
+  The controls task #718, after C:
   #636's four remaining controls (77 and 113 at the package and the merge, through `given_control_verdict` and
   `merge_control_inclusions`), correction (7)'s three counterexample controls, the controls' literals onto the
   library's code (review 639's 1), the commitment test's conjuncts at the state after construction (review 632's 5),
@@ -523,13 +533,12 @@ planner searches for a theory before briefing a task that edits it.
   `Development_First_Request_Registrations` imported for 561's).
 
 
-- **The graph's width**: the route is one chain — #668 → (#685 → #672 → #674 → #689, #670, #597) → #676 → R5e, R6b's
-  and R6c's parts → the carryings → R7 → #399 — so while #668 runs nothing else of it can start; beside it runs the
-  definition closure's refinement #716, and after #668 four builds run side by side (#685, #670, #597 and the registrations'
-  consolidation #711). Nothing is invented to fill the gaps.
+- **The graph's width**: the route is one chain — (#685 → #672 → #674 → #689, #670, #597) → #676 → R5e, R6b's
+  and R6c's parts → the carryings → R7 → #399 — so between its landings little else of it can start; #685, #670
+  and #597 run side by side, and beside them the definition closure's refinement #716 and the registrations'
+  consolidation #711. Nothing is invented to fill the gaps.
 - **What the next events ask**: #685's check (a changed recorded word would make it a word change, the planner's to
-  order); the first one-session base's landing, after which probes start in about 3 s; #668's landing, which brings C
-  #703 to depth 9, so the controls task (Open 150) is placed after C then; #716's landing (its held pair: the three
+  order); the first one-session base's landing, after which probes start in about 3 s; #716's landing (its held pair: the three
   programs' closures before and after). V3's parts, #672, #674 (with
   #689), #601 and #613 grew or were divided against their relations:
   a build refused at its start is divided then. The samples build #551 is the part of #544's division nearest its room
@@ -562,12 +571,12 @@ planner searches for a theory before briefing a task that edits it.
   (the table read by an index by position) and 4 (the share cost per search beside the per-step saving); #542 — 698's 4;
   #711 — 692's 2 (`asked_mapped_extension` re-cited as `asked_extension.mapped_extension`); #699 — 714's 1 (the
   substitution rebuilding through the keyed `share_node`, collapsed states kept) and 2 (the keyed constructors' and the
-  collapse's costs): F2b's load grew by these mails, so a refusal at its start divides it; #668 — 667's 1 (the conjunct
-  `finite_socket_pair [s] S` per declared socket, confirmed), 2 (`viewed_declarations_formed` a notion of its own,
-  conjoined into the discharge at views) and 3 (the merge); #674, #676, #689 — 667's 4 (one matcher, the matcher's
+  collapse's costs): F2b's load grew by these mails, so a refusal at its start divides it; #674, #676, #689 — 667's 4 (one matcher, the matcher's
   completeness, where their test at views needs them). Plan-91: #707 — review 658's 1 and 2 and the match's cost per
   witness call (next-edits 254); #542, #547, #399, #707 — #715's attribution and #716 before them; #547 — 658's 1 and 3 (`first_request_installation_code` consumed);
-  #399 — 658's 1 and `asked_installation_code`'s move to `Development_First_Problem_Asked`; #447 — 658's 1.
+  #399 — 658's 1 and `asked_installation_code`'s move to `Development_First_Problem_Asked`; #447 — 658's 1; #670, #672, #674, #676, #689 — #668's Remains by theory and review 669's 1, 3 and 4
+  (`finite_direct_context` to several holes, #670's); the declaration builds (#597, #599, #601, #603, #605, #607, #609,
+  #611, #649, #651, #663, #679, #681) — review 669's 1 and 3; #689 — review 669's 2.
 - **The harness's gaps met by this run's tasks** are owed to the owner and listed in `PLANNING_LOG.md` (2026-09-26,
   plan-86); new ones go there.
 - **Ledger entries that can leave** (the harness's `v2.py ledger`): Q7's and Q2's questions and answers, recorded in the

@@ -1,7 +1,7 @@
 theory Factor_Resolution_Commitments
   imports Factor_Resolution_Completeness Presentation_Contracts Ordered_Finite_Terms Factor_Rule_Instances
     Factor_Positive_Locality Factor_System_Relocation Factor_Finite_System_Fields Factor_Construction_Holders
-    Native_Collection_Programs
+    Finite_Pattern_Tuples
 begin
 
 text \<open>
@@ -399,10 +399,6 @@ text \<open>
 
 definition view_holes :: "'v resolution_view \<Rightarrow> 'v finite_term_pattern list \<Rightarrow> bool" where
   "view_holes V hs \<longleftrightarrow> snd (snd V) = finite_pattern_tuple hs"
-
-lemma finite_pattern_tuple_variables:
-  "fset (finite_pattern_variables (finite_pattern_tuple hs)) = (\<Union>h\<in>set hs. fset (finite_pattern_variables h))"
-  by (induction hs rule: finite_pattern_tuple.induct) auto
 
 section \<open>Declarations and their discharge\<close>
 

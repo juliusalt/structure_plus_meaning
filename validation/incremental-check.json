@@ -1,6 +1,6 @@
 {
- "base_receipt_sha256": "5ea101554ef7578545c4c2e5662f757f3d6ff489cf06bb114df56835c5236839",
- "checked_content_sha256": "f7a3100a7c56bea2aa60afa531551a2e33fbc6e8c1ae7f56d12be73fd3b3025e",
+ "base_receipt_sha256": "8c00dd7dd245cea8b92bbd16233b976c5f9856a3149feb7ba1294bd922e2c575",
+ "checked_content_sha256": "6bbc91aa53c9cbaa1567e35db92dfad4e7ad9326f454731131e0229b7ed7f7d2",
  "host_tests": {
   "kernel": {
    "exit_code": 0,
@@ -17,59 +17,23 @@
    "ran": 306,
    "skipped": 0,
    "tail": [
-    "{\"status\": \"failed\", \"error\": \"[Errno 2] No such file or directory: '/tmp/tmp0bxjn_f7/no-project/theories/Development_Answer_a2d8d6490cc2.thy'\"}"
+    "{\"status\": \"failed\", \"error\": \"[Errno 2] No such file or directory: '/tmp/tmp62m8ebgd/no-project/theories/Development_Answer_a2d8d6490cc2.thy'\"}"
    ]
   }
  },
  "phases": {
-  "base_and_impact": 0.35,
+  "base_and_impact": 0.34,
   "execution_impact": 0.0,
   "export": 0.0,
-  "proof": 106.03,
-  "recipe_impact": 0.68,
-  "recipes_and_host_tests": 13.06
+  "proof": 23.2,
+  "recipe_impact": 0.42,
+  "recipes_and_host_tests": 11.16
  },
  "rebuilt_theories": [
-  "Criticism_Octet_Samples",
-  "Development_Asked_Registrations",
-  "Development_Bounded_Recording",
-  "Development_Bounded_Recording_Execution",
-  "Development_First_Problem",
-  "Development_First_Problem_Asked",
-  "Development_First_Problem_Execution",
-  "Development_First_Request_Program",
-  "Development_First_Request_Registrations",
-  "Development_Given_Declarations",
-  "Development_Given_Declarations_Execution",
-  "Development_Given_Execution",
-  "Development_Given_Extensions",
-  "Development_Given_Installation",
-  "Development_Given_Program",
-  "Development_Given_Readers",
-  "Development_Given_Registrations",
-  "Development_Installed_Presentations",
-  "Development_Installed_Presentations_Execution",
-  "Development_Native_State",
-  "Development_Native_State_Execution",
-  "Development_Owner_Records",
-  "Development_Recording_Refinements",
-  "Development_Rooted_Registrations",
-  "Factor_Executed_Controls",
-  "Factor_Finite_System_Presentations",
-  "Factor_Resolution_Controls",
-  "Factor_Stated_Leaves_Program",
-  "Native_Control_Cause_Continuation",
-  "Native_Control_Cause_Review",
-  "Native_Control_Child_Review",
-  "Native_Control_Constructed_Source_View",
-  "Native_Control_Guard_Execution",
-  "Native_Control_Prepared_Cause_Review",
-  "Native_Control_Quotation_Code",
-  "Native_Control_Receiving_Controls",
-  "Native_Control_Receiving_Review",
-  "Native_Control_Reviewed_Receiving",
-  "Native_Control_Selected_Root",
-  "Native_Control_Source_Execution"
+  "Factor_Resolution_Material_Discharge",
+  "Factor_Resolution_Producer_Discharge",
+  "Factor_Resolution_Socket_Discharges",
+  "Factor_Resolution_Views"
  ],
  "recipes": {
   "allocated-environments": {
@@ -229,19 +193,19 @@
    "status": "unchanged"
   }
  },
- "reused_theories": 1889,
- "seconds": 129.38,
+ "reused_theories": 1926,
+ "seconds": 42.39,
  "source_checks": {
   "missing_theory_files": [],
   "proof_escape_matches": [],
   "refusals": [],
-  "theory_count": 1929,
+  "theory_count": 1930,
   "unlisted_theories": []
  },
  "status": "accepted",
- "theories": 1929,
+ "theories": 1930,
  "validation_inputs": {
-  "ROOT": "f891931c9bf114e0103b5e32784cf18a0f3d5dcd982272e7e32ac48912592acb",
+  "ROOT": "2d411cf1e335a02816759ac5f804645dc2c5b9eee504094afe098bb16391c7e0",
   "tools/check.py": "71c91573138e10d317e5d920f5776af39687d313836a5552bbb0ec1d2d580381",
   "tools/incremental_check.py": "7f57110d9b4e04a7eb01215c21ea098fffcff71410454a248f6eb122909a1d98"
  }

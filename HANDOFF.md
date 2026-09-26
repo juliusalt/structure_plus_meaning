@@ -114,15 +114,18 @@ at `package_request_system`)
 discharge, since 523–525 stand in the guard's goals program, q117) ∥ the
 controls and the reuse row #636 ∥ W4b3 #640 (`Development_First_Request_Registrations`: the registrations complete at
 the first request's program, which does not present `package_request_system`, and relocated at its installation;
-review 529's 1), each with its review; #635 committed `05cfa9b1`. The resolver's inputs at an installed program (q118,
+review 529's 1), each with its review; #635 and #640 landed (`05cfa9b1`, `570f91b4`). The resolver's inputs at an installed program (q118,
 q121; review 638's 1 and 2): task 496's entry's addition by #642, "Registrations and declarations reach an installed
-package by matching its clauses against the placed ones" — one computed clause match (M) carries the construction (V1,
-after W4a's relocation) and the declarations (V2, after R5d's) to the installed package's finite presentation read
-natively (V3, the native exact forms at the asked, request and given installations); #399's course is the native one;
-R7 measures both courses at 526 (no R7b); rc waits on V1 and V2 unsplit; briefed by #643, on which #605, #540, #542,
-#547 and #399 wait until its proposals are placed. #640 and #635 state the placed course.
-#399 and R7 wait on #635, #547 on #640 and rc; #549 and #551
-wait on R7, #403 and #553 through #399.
+package by matching its clauses against the placed ones" — one computed clause match M #645 carries the construction
+(V1 #647) and the declarations (V2a #649, the kinds of R5d's views and carriers, after #597; V2b #651, R5e's narrowed
+sockets with the registration's completeness at the socket, after #599; divided by plan-85 so that #605 does not wait
+on #599) to the installed package's finite presentation read natively (V3: #653 the asked and request installations,
+#655 the given's, #657 the control, off the route); #399's course is the native one; R7 measures both courses at 526;
+briefed by #643, whose corrected briefs #547 and #611 carry (#540's and #605's, over a build's room, divided by a
+brief of plan-85; #399's and #542's, over it too, divided with #644's fix when #644 reports). #640 and #635 state the placed
+course. #399 and R7 wait on #635 and #653, #547 on #640, #653 and rc; #605 on #649, #653 and #655; #611 on #651; rc on
+#647, #649 and #651; #542 and #547 also on the investigation #644 (the resolver over environment values); #549 and
+#551 wait on R7, #403 and #553 through #399.
 
 **Retired** on #376's and #378's entries (their tables): the decomposition line (#325–#334), N1a, N1b, N3a, N3b, N4a
 and N4b as briefed, #371, #377, the designation by locus (#169, #170), the index form's retirement (#92, #93) and the
@@ -141,7 +144,7 @@ programs' law (`Native_Collection_Programs`; #173–#275, #295, #374); the share
 by a task of their own (Open 100).
 
 **Shape.** No build waits on a review task. The evaluator's chain is the route's longest (R5c‴ #621 landed):
-its remainder #630 ∥ #631 → R5d's views #595 → carriers #597 → R5e #599 → R6c's 48 #609 → the carrying #611 → R7 #542 → #399 →
+its remainder #630 → R5d's views #595 → carriers #597 → R5e #599 → R6c's 48 #609 or V2b #651 → the carrying #611 → R7 #542 → #399 →
 #401, #403 and the record #553 → … — past the limit through splices (q108, #588, q112, q115), so nothing is added after
 #408, #446, #448, #449 or #450 until they shorten (the status line gives the depths). Off the route,
 nothing waiting on them: the consolidation #613. The approval build (Open 142) after #407 and #447 waits for the chain to shorten.
@@ -149,9 +152,9 @@ nothing waiting on them: the consolidation #613. The approval build (Open 142) a
 **Order** (the queue holds it; the planner's choice, a residual until the native answer to the selection problem
 exists, Q2): the slots are one pool since 14:06, each free slot going to the first task in the queue that can start
 and a review standing where its review task stands, so every review stands right after its build. By slack on the
-longest chain (plan-78): #621's remainder #630, #631 (side by side); the controls #636 and W4b3 #640, the brief #643 and its builds
-(M and V1 at once, V2 after R5e, V3 after V1 and #640) in the slots the route leaves (they feed #547, R7 and #399 with slack); R5d's views #595 and carriers #597; R5e #599 and R6b's parts #601, #603
-(no slack); R6c's 48 #609, R6b's carrying #605, rc #540 and R6c's instantiation family #607; the carrying #611; R7 #542 and #547; the route in its chains' order (#399, the
+longest chain (plan-78): #630 continued and the investigation #644; M #645 at once, V1 #647 and V3's parts #653, #655 in
+the slots the route leaves (V3's control #657 off the route); R5d's views #595 and carriers #597; R5e #599, V2a #649 and
+R6b's parts #601, #603 (no slack); R6c's 48 #609 and V2b #651, R6b's carrying #605, rc #540 and R6c's instantiation family #607; the carrying #611; R7 #542 and #547; the route in its chains' order (#399, the
 samples #551, the observations #549, the record #553, #401, #403, #443, #447, #407, #445, #449); the consolidation #613 last, off the route.
 
 ## Decisions
@@ -502,6 +505,10 @@ What landed that open work builds on, a line each; how it went and each review's
   asked program and at the asked placement (`asked_mapped_extension`); the native form at `asked_environment` and
   `asked_entry` not stated, since it does not type with W4a's relocation (q118). Review 638's follow-ups: 1 and 2 to
   #642, 3 to #640 and next-edits 241.
+- **W4b3** (#640, `570f91b4`): `Development_First_Request_Registrations`, the registrations complete at the first
+  request's program and relocated at its installation (the placed course); the installation predicate and the placed
+  meanings once in `given_readers_extension` (review 638's 3). Review 641's follow-ups: 1 next-edits 244, 2 offered to
+  V3's first part (#643), 3 answered (plan-84 placed review 638's 3 with #640).
 - **R5c⁗b** (#631, `e994a1de`): `Factor_Resolution_Material_Discharge.finite_material_commitment_exchanges`, the
   material single solution's discharge of the exchange premise under q116's conditions; task 495's entry's correction
   (7) with its three counterexamples. Review 633's follow-ups: the test's conjunction with `finite_material_narrowed`,
@@ -653,17 +660,21 @@ searches for a theory before briefing a task that edits it.
   #631's definitions, so #630 parked on q120 until #631 landed (`e994a1de`); q120 answered then. q118 (#635) and
   q121 (#640), the native form at an installation, answered by plan-84: the placed course at both installations,
   design #642 for the native forms.
-- **Not handled at plan-84's end.** (1) implement-636's performance problem (06:11, task 636, W4b's controls): the
-  given's readers resolved by R3/R4 over environment values go one level per row and address — 113 (environment
-  inclusion) at a pair (environment value, collected merge) of two one-row environments unresolved at bound 80 (6 s,
-  every diagnosis `Resolution_Cut`), no return at bound 200 within 130 s; 77's bound collection at a closed
-  installation of a two-definition program (4 artifacts, 55 positions) `None` at bound 40 (11 s), no return at 120 or
-  250 (drafts `.build/tasks/636/draft/`, runs 4, 6, 10). 561's merge collection and its conflict run in seconds. It lies
-  on the route (R7 #542, #547 and #399 resolve 113 and 77 at the given), so its attribution and fix at the cause is a
-  task ordered before R7, named for #636 (`v2.py after 636 FIXTASK`); #636 continues with what does not depend on it.
-  (2) Brief #643's proposals (M, V1, V2, V3 and the corrected briefs `corrected-605.md` … `corrected-399.md` in its
-  folder): place them (`v2.py accept 643`), apply the corrected briefs by rewrite, and take the stand-in edges of #605,
-  #540, #542, #547 and #399 on #643 out once the proposals are wired.
+- **The resolver over environment values** (#636's escalation, 06:11): the given's readers resolved by R3/R4 go one
+  level per row and address — 113 at two one-row environments unresolved at bound 80 (6 s, every diagnosis
+  `Resolution_Cut`), no return at 200 within 130 s; 77's bound collection at a two-definition installation `None` at
+  bound 40, no return at 120 or 250 (`.build/tasks/636/result.md`, drafts, runs 4, 6, 10); 561's merge in seconds. R7,
+  #547 and #399 resolve 113 and 77 at the given, so plan-85 made its attribution an investigation (the cause, the fix
+  at it and its builds; #542 and #547 wait on it). #636 hands over the rest; its four remaining controls (77 and 113
+  at the package and the merge) and correction (7)'s three counterexample controls go to one controls task after the fix.
+- **#643's corrected briefs over a build's room**: #399 (260K beside 345K of relations) and #542 (190K beside 439K)
+  keep their earlier briefs until #644 reports; then one brief divides them with its fix (and corrects #547 and #443
+  where the fix changes them; #542 and #547 wait on #644). #540's and #605's are divided now by plan-85's brief.
+- **V3's second part at the given's own installation** (#655): a closed installation, not a mapped extension; if W4a's
+  relocation completeness stands only in `finite_mapped_native_extension`, #655 brings it to the planner (#643's
+  question).
+- **#630** ended partial at its window's end (`.build/tasks/630/result.md`); plan-85 re-planned it to its Remains 1–5
+  (the test narrowed, the hypothesis-free declared exchanges, review 622's 1 and 3, correction (8)), in its tree.
 - **The graph's width** (plan-78, plan-81, plan-83): the route is one chain — #630, #631 → R5d #595, #597 → R5e #599
   and R6b's parts → R6c → R7 #542 → #399 — so between its landings little else can start; beside it run #635, #636 and
   #640, and R6b's and R6c's parts after #597. Nothing is invented to fill the gaps: what is open beside the
@@ -692,7 +703,7 @@ searches for a theory before briefing a task that edits it.
   socket kinds' discharges from #630 and #631), #599 (premise-only registrations at its head-variable registration); #599 — #621's Remains, last bullet (a
   head-variable registration fails the premise-only condition by definition: R5e states its own). Plan-83: #630 —
   review 622's 1, 2 and 3's first half, 637's 1 (the lifts' proof in `Factor_Least_Witness_Registrations`); #599 — 622's 4 and #634's moves; #540, #541, #542, #399 — #634's moves and
-  W4b's division; #547 — rewritten by plan-84 (review 529's 1: its registrations #640's; plan-83's mail on 561's clause superseded). Plan-84: #640 — q121's answer and review 638's 3; #540 — the committed forms at a construction complete at the program, their formation premise discharged (review 529's 2). The route's earlier mails are carried into
+  W4b's division; #547 — rewritten by plan-84 (review 529's 1: its registrations #640's; plan-83's mail on 561's clause superseded). Plan-84: #540 — the committed forms at a construction complete at the program, their formation premise discharged (review 529's 2). Plan-85: #447 — V3's given instance (`given_installed_exact`, #655); #599 — V2a #649 runs beside it and varies the socket declarations alone, R5e's kind added keeping the un-narrowed socket record or the later lander restating V2a's statements. The route's earlier mails are carried into
   their corrected briefs or recorded superseded (`.build/tasks/522/result.md`, `.build/tasks/523/result.md`).
 - **The harness's, met by this run's tasks** (owed to the owner: each landing check's phases and per-recipe comparison;
   earlier gaps in `PLANNING_LOG.md`, 2026-09-24): `v2.py read check:167` raises a TypeError in `check_text`;

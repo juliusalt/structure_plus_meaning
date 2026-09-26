@@ -1,5 +1,5 @@
 theory Development_Installed_Presentations
-  imports Development_Given_Extensions Factor_Varied_Constructions
+  imports Development_Given_Extensions Factor_Varied_Constructions Development_Rooted_Registrations
 begin
 
 text \<open>
@@ -59,7 +59,7 @@ lemma installed_presentation_read:
 lemma installed_presentation_variant:
   "system_alpha_variant (decode_finite_system (finite_rename_system installed_placement Q))
     (decode_finite_system installed_presentation)"
-  using installation(7) by (simp only: finite_rename_system_correct installed_presentation_exact(3))
+  by (rule install.installed_variant[OF installed_built installed_presentation_read, folded installed_placement_def])
 
 lemma installed_presentation_formed:
   "finite_system_formed installed_presentation"
@@ -142,8 +142,8 @@ theorem installed_resolution_exact:
     and "A=Some B \<Longrightarrow> schema_system_formed installed_program \<and>
       fset B={q\<in>fset R. decode_finite_call_term q\<in>positive_meaning installed_program}"
 proof -
-  note e=native_complete_resolution_exact[OF installed_construction_formed[OF formed]
-    installed_construction_complete[OF complete] result, unfolded installed_presentation_exact(3)]
+  note e=install.native_varied_relocated_resolution_exact[OF formed installed_built installed_presentation_read complete,
+    folded installed_placement_def, OF result[unfolded installed_construction_def], unfolded installed_presentation_exact(3)]
   show "fimage fst T=R" by (rule e(1))
   show "(q,Finite_Resolved C) |\<in>| T \<Longrightarrow> C\<noteq>{||} \<and>
       fBall C (\<lambda>p. finite_checks_schema_proof installed_presentation p (fst q) (snd q)) \<and>
@@ -166,21 +166,185 @@ corollary installed_entry_exact:
     and result: "native_committed_resolution (installed_construction \<kappa>) no_commitment installed_presentation R n=(T,A)"
     and defined: "d\<in>system_definitions (decode_finite_system Q)"
   shows "((installed_placement d,t),Finite_Resolved C) |\<in>| T \<Longrightarrow>
-      (d,snd (decode_finite_call_term (installed_placement d,t)))\<in>positive_meaning (decode_finite_system Q)"
+      (d,decode_finite_term t)\<in>positive_meaning (decode_finite_system Q)"
     and "((installed_placement d,t),r) |\<in>| T \<Longrightarrow> finite_resolution_refutes r \<Longrightarrow>
-      (d,snd (decode_finite_call_term (installed_placement d,t)))\<notin>positive_meaning (decode_finite_system Q)"
+      (d,decode_finite_term t)\<notin>positive_meaning (decode_finite_system Q)"
 proof -
-  have call: "decode_finite_call_term (installed_placement d,t)=
-      (installed_placement d,snd (decode_finite_call_term (installed_placement d,t)))"
+  have call: "decode_finite_call_term (installed_placement d,t)=(installed_placement d,decode_finite_term t)"
     by (simp add: decode_finite_call_term_fields)
   show "((installed_placement d,t),Finite_Resolved C) |\<in>| T \<Longrightarrow>
-      (d,snd (decode_finite_call_term (installed_placement d,t)))\<in>positive_meaning (decode_finite_system Q)"
+      (d,decode_finite_term t)\<in>positive_meaning (decode_finite_system Q)"
     using installed_resolution_exact(2)[OF formed complete result] installed_meaning[OF defined] call by metis
   show "((installed_placement d,t),r) |\<in>| T \<Longrightarrow> finite_resolution_refutes r \<Longrightarrow>
-      (d,snd (decode_finite_call_term (installed_placement d,t)))\<notin>positive_meaning (decode_finite_system Q)"
+      (d,decode_finite_term t)\<notin>positive_meaning (decode_finite_system Q)"
     using installed_resolution_exact(3)[OF formed complete result] installed_meaning[OF defined] call by metis
 qed
 
 end
+
+section \<open>The given's own installation\<close>
+
+text \<open>
+  V3's given part (task 655): the given's readers' own installation is the closed installation of the rooted readers
+  over the empty package (@{text given_installation}, a @{text closed_program_installation}), whose mapped extension
+  (@{text given_installation.install}) places them by @{const given_readers_placement}. Its presentation is the program
+  the native package reader returns at @{const given_readers_installed}, decoding to @{const given_readers_program}.
+  The construction complete at the rooted readers (@{thm [source] given_rooted_construction_complete}, discharged there
+  from their meanings) is relocated by the placement and varied to that presentation, and is complete there: nothing
+  is proved again at the placed or the installed program.
+\<close>
+
+lemma given_readers_built_pair:
+  "finite_extend_mapped_native (fst given_readers_source) empty_installation_program finite_rooted_given_readers
+    (\<lambda>_. (None,[]))=Some (fst given_readers_installed,snd given_readers_installed)"
+  using given_readers_built by simp
+
+text \<open>
+  The installation's mapped extension, as @{text closed_program_installation} proves it at the given's installation
+  (@{text given_installation.install}); the facts the varied constructions add to that locale are taken through it.
+\<close>
+
+lemma given_readers_mapped_extension:
+  "finite_mapped_native_extension (fst given_readers_source) empty_installation_program finite_rooted_given_readers
+    (snd given_readers_source) [] \<lparr>system_interfaces={},system_clauses={}\<rparr> (\<lambda>_. (None,[]))"
+  by (rule given_installation.install.finite_mapped_native_extension_axioms)
+
+lemma given_install_placement:
+  "finite_program_coordinates (fst given_readers_source) (finite_system_definitions empty_installation_program)
+    (finite_system_definitions finite_rooted_given_readers) (\<lambda>_. (None,[]))=given_readers_placement"
+  by (simp add: given_readers_placement_def)
+
+definition given_installed_presentation :: "local_address option finite_native_system" where
+  "given_installed_presentation=(THE R. R |\<in>| finite_native_package_readings (fst given_readers_installed)
+    (snd given_readers_installed) [])"
+
+theorem given_installed_presentation_exact:
+  "given_installed_presentation |\<in>| finite_native_package_readings (fst given_readers_installed)
+    (snd given_readers_installed) []"
+  "\<And>R. R |\<in>| finite_native_package_readings (fst given_readers_installed) (snd given_readers_installed) [] \<Longrightarrow>
+    R=given_installed_presentation"
+  "decode_finite_system given_installed_presentation=given_readers_program"
+proof -
+  obtain F where F: "F |\<in>| finite_native_package_readings (fst given_readers_installed) (snd given_readers_installed) []"
+      "decode_finite_system F=given_readers_program"
+    using finite_native_package_readings_complete[OF given_readers_compilation(1)] by blast
+  have unique: "\<And>R. R |\<in>| finite_native_package_readings (fst given_readers_installed) (snd given_readers_installed) [] \<Longrightarrow>
+      R=F"
+    by (rule finite_native_package_readings_unique[OF _ F(1)])
+  have same: "given_installed_presentation=F" unfolding given_installed_presentation_def
+    by (rule the_equality[where P="\<lambda>R. R |\<in>| finite_native_package_readings (fst given_readers_installed)
+      (snd given_readers_installed) []", OF F(1) unique])
+  show "given_installed_presentation |\<in>| finite_native_package_readings (fst given_readers_installed)
+      (snd given_readers_installed) []"
+    using F(1) same by simp
+  show "\<And>R. R |\<in>| finite_native_package_readings (fst given_readers_installed) (snd given_readers_installed) [] \<Longrightarrow>
+      R=given_installed_presentation"
+    using unique same by simp
+  show "decode_finite_system given_installed_presentation=given_readers_program" using F(2) same by simp
+qed
+
+lemma given_installed_presentation_read:
+  "native_package_at (decode_finite_environment (fst given_readers_installed)) (snd given_readers_installed) []
+    (decode_finite_system given_installed_presentation)"
+  using given_readers_compilation(1) by (simp only: given_installed_presentation_exact(3))
+
+lemma given_installed_presentation_variant:
+  "system_alpha_variant (decode_finite_system (finite_rename_system given_readers_placement finite_rooted_given_readers))
+    (decode_finite_system given_installed_presentation)"
+  by (rule finite_mapped_native_extension.installed_variant[OF given_readers_mapped_extension given_readers_built_pair
+    given_installed_presentation_read, unfolded given_install_placement])
+
+lemma given_installed_presentation_formed:
+  "finite_system_formed given_installed_presentation"
+  "finite_system_formed (finite_rename_system given_readers_placement finite_rooted_given_readers)"
+  using given_installed_presentation_variant unfolding system_alpha_variant_def finite_system_formed_correct by simp_all
+
+section \<open>The given's construction, relocated and varied to its presentation\<close>
+
+definition given_installed_construction where
+  "given_installed_construction n=finite_varied_construction
+    (finite_rename_system given_readers_placement finite_rooted_given_readers) given_installed_presentation
+    (finite_relocated_construction given_readers_placement finite_rooted_given_readers
+      (finite_collection_construction given_witness_registrations n))"
+
+lemma given_installed_construction_formed:
+  "finite_witness_construction_formed (given_installed_construction n)"
+  unfolding given_installed_construction_def
+  by (rule finite_varied_construction_formed[OF finite_relocated_construction_formed[OF
+    finite_collection_construction_formed]])
+
+theorem given_installed_construction_complete:
+  "finite_construction_complete (given_installed_construction n) given_installed_presentation"
+  unfolding given_installed_construction_def
+  by (rule finite_mapped_native_extension.varied_relocated_complete[OF given_readers_mapped_extension
+    given_readers_built_pair given_installed_presentation_read given_rooted_construction_complete,
+    unfolded given_install_placement])
+
+section \<open>The native exact form at the given's presentation\<close>
+
+theorem given_installed_resolution_exact:
+  assumes result: "native_committed_resolution (given_installed_construction n) no_commitment given_installed_presentation
+      R m=(T,A)"
+  shows "fimage fst T=R"
+    and "(q,Finite_Resolved C) |\<in>| T \<Longrightarrow> C\<noteq>{||} \<and>
+      fBall C (\<lambda>p. finite_checks_schema_proof given_installed_presentation p (fst q) (snd q)) \<and>
+      decode_finite_call_term q\<in>positive_meaning given_readers_program"
+    and "(q,r) |\<in>| T \<Longrightarrow> finite_resolution_refutes r \<Longrightarrow>
+      decode_finite_call_term q\<notin>positive_meaning given_readers_program"
+    and "A=Some B \<Longrightarrow> schema_system_formed given_readers_program \<and>
+      fset B={q\<in>fset R. decode_finite_call_term q\<in>positive_meaning given_readers_program}"
+proof -
+  note e=finite_mapped_native_extension.native_varied_relocated_resolution_exact[OF given_readers_mapped_extension
+    finite_collection_construction_formed given_readers_built_pair given_installed_presentation_read given_rooted_construction_complete,
+    unfolded given_install_placement, OF result[unfolded given_installed_construction_def],
+    unfolded given_installed_presentation_exact(3)]
+  show "fimage fst T=R" by (rule e(1))
+  show "(q,Finite_Resolved C) |\<in>| T \<Longrightarrow> C\<noteq>{||} \<and>
+      fBall C (\<lambda>p. finite_checks_schema_proof given_installed_presentation p (fst q) (snd q)) \<and>
+      decode_finite_call_term q\<in>positive_meaning given_readers_program"
+    by (rule e(2))
+  show "(q,r) |\<in>| T \<Longrightarrow> finite_resolution_refutes r \<Longrightarrow>
+      decode_finite_call_term q\<notin>positive_meaning given_readers_program"
+    by (rule e(3))
+  show "A=Some B \<Longrightarrow> schema_system_formed given_readers_program \<and>
+      fset B={q\<in>fset R. decode_finite_call_term q\<in>positive_meaning given_readers_program}"
+    by (rule e(4))
+qed
+
+text \<open>
+  At an installed reader, the placement of a rooted reader d, the answer is d's meaning in the rooted readers
+  (@{thm [source] given_installed_meaning}); at an entry, its meaning in the joined program
+  (@{thm [source] given_installed_entry_meaning}).
+\<close>
+
+corollary given_installed_exact:
+  assumes result: "native_committed_resolution (given_installed_construction n) no_commitment given_installed_presentation
+      R m=(T,A)"
+    and defined: "d\<in>system_definitions given_rooted_readers_system"
+  shows "((given_readers_placement d,t),Finite_Resolved C) |\<in>| T \<Longrightarrow>
+      (d,decode_finite_term t)\<in>positive_meaning given_rooted_readers_system"
+    and "((given_readers_placement d,t),r) |\<in>| T \<Longrightarrow> finite_resolution_refutes r \<Longrightarrow>
+      (d,decode_finite_term t)\<notin>positive_meaning given_rooted_readers_system"
+proof -
+  have call: "decode_finite_call_term (given_readers_placement d,t)=(given_readers_placement d,decode_finite_term t)"
+    by (simp add: decode_finite_call_term_fields)
+  show "((given_readers_placement d,t),Finite_Resolved C) |\<in>| T \<Longrightarrow>
+      (d,decode_finite_term t)\<in>positive_meaning given_rooted_readers_system"
+    using given_installed_resolution_exact(2)[OF result] given_installed_meaning[OF defined] call by metis
+  show "((given_readers_placement d,t),r) |\<in>| T \<Longrightarrow> finite_resolution_refutes r \<Longrightarrow>
+      (d,decode_finite_term t)\<notin>positive_meaning given_rooted_readers_system"
+    using given_installed_resolution_exact(3)[OF result] given_installed_meaning[OF defined] call by metis
+qed
+
+corollary given_installed_entry_exact:
+  assumes result: "native_committed_resolution (given_installed_construction n) no_commitment given_installed_presentation
+      R m=(T,A)"
+    and entry: "d|\<in>|given_reader_entries"
+  shows "((given_readers_placement d,t),Finite_Resolved C) |\<in>| T \<Longrightarrow>
+      (d,decode_finite_term t)\<in>positive_meaning given_program_system"
+    and "((given_readers_placement d,t),r) |\<in>| T \<Longrightarrow> finite_resolution_refutes r \<Longrightarrow>
+      (d,decode_finite_term t)\<notin>positive_meaning given_program_system"
+  using given_installed_exact[OF result given_entry_rooted[OF entry]]
+    given_installed_meaning[OF given_entry_rooted[OF entry]] given_installed_entry_meaning[OF entry] by blast+
 
 end

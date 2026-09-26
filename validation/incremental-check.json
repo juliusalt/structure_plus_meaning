@@ -1,6 +1,6 @@
 {
- "base_receipt_sha256": "b6063b46314c576bdc1cbcdff42abae48a2ae906ff992a962ddf6ca098cdd63a",
- "checked_content_sha256": "9b4c994f8ab4a14683f1e4487881ecfbedb950f561e2f3a2f907c22bd02f0891",
+ "base_receipt_sha256": "3e95643514e30fbeb872937af8fc831665f9d0bf7099f30bcf31afcc950f13f4",
+ "checked_content_sha256": "79b118c43d262effcb3caf0cdabb51a34caf2539a37164c08f9c07cc830461ed",
  "host_tests": {
   "kernel": {
    "exit_code": 0,
@@ -17,31 +17,44 @@
    "ran": 309,
    "skipped": 0,
    "tail": [
-    "{\"status\": \"failed\", \"error\": \"[Errno 2] No such file or directory: '/tmp/tmp4ezmyv1d/no-project/theories/Development_Answer_a2d8d6490cc2.thy'\"}"
+    "{\"status\": \"failed\", \"error\": \"[Errno 2] No such file or directory: '/tmp/tmpww1n4zw9/no-project/theories/Development_Answer_a2d8d6490cc2.thy'\"}"
    ]
   }
  },
  "phases": {
-  "base_and_impact": 0.7,
+  "base_and_impact": 0.38,
   "execution_impact": 0.0,
   "export": 0.0,
-  "proof": 73.66,
-  "recipe_impact": 0.41,
-  "recipes_and_host_tests": 12.32
+  "proof": 69.32,
+  "recipe_impact": 0.55,
+  "recipes_and_host_tests": 12.31
  },
  "rebuilt_theories": [
+  "Development_Asked_Registrations",
+  "Development_Bounded_Recording_Execution",
+  "Development_First_Problem",
+  "Development_First_Problem_Asked",
+  "Development_First_Problem_Execution",
+  "Development_First_Request_Program",
+  "Development_First_Request_Registrations",
   "Development_Given_Carried_Declarations",
+  "Development_Given_Declarations",
   "Development_Given_Declarations_Execution",
+  "Development_Given_Execution",
+  "Development_Given_Extensions",
+  "Development_Given_Installation",
   "Development_Given_Installed_Declarations",
-  "Factor_Artifact_Citation_Declarations",
+  "Development_Given_Program",
+  "Development_Given_Readers",
+  "Development_Given_Registrations",
+  "Development_Installed_Presentations",
+  "Development_Installed_Presentations_Execution",
+  "Development_Native_State",
+  "Development_Native_State_Execution",
+  "Development_Rooted_Registrations",
   "Factor_Commitment_Controls",
-  "Factor_Instantiation_Declarations",
   "Factor_Narrowed_Controls",
-  "Factor_Narrowed_Sockets",
-  "Factor_Resolution_Carriers",
-  "Factor_Root_Family_Declarations",
-  "Factor_Schema_Instantiation_Declarations",
-  "Factor_Varied_Declarations"
+  "Factor_Resolution_Controls"
  ],
  "recipes": {
   "allocated-environments": {
@@ -201,8 +214,8 @@
    "status": "unchanged"
   }
  },
- "reused_theories": 1930,
- "seconds": 102.93,
+ "reused_theories": 1917,
+ "seconds": 88.42,
  "source_checks": {
   "missing_theory_files": [],
   "proof_escape_matches": [],

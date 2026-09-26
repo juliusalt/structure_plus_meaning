@@ -158,63 +158,22 @@ proof -
   have m12: "7 \<in> ?R" "11 \<in> ?R" using given_socket_reaches[OF sock(2) r(1)] call(3,4) by blast+
   have m7: "6 \<in> ?R" using given_socket_reaches[OF sock(3) m12(1)] call(5) by blast
   have m32: "21 \<in> ?R" "29 \<in> ?R" "31 \<in> ?R" using given_socket_reaches[OF sock(4) m79(1)] call(6,7,8) by blast+
-  have to_guard: "systems_agree_on X guard_readers_system (system_definitions X)"
-    if "systems_agree_on X package_closure_admission_system (system_definitions X)" for X :: "(nat,nat,nat,nat) schema_system"
-    by (rule whole_agreement_transitive[OF that guard_closure_agreement])
-  have edge: "systems_agree_on definition_edge_reading_system guard_readers_system
-      (system_definitions definition_edge_reading_system)"
-    by (rule whole_agreement_transitive[OF given_reader_agreements(6) additions_guard_agreement])
-  have schema: "systems_agree_on schema_instantiation_system guard_readers_system
-      (system_definitions schema_instantiation_system)"
-    by (rule to_guard) (simp add: systems_agree_on_added package_closure_admission_system_def
-      definition_callee_list_system_def definition_callee_inclusion_system_def schema_callee_list_system_def
-      schema_callee_inclusion_system_def definition_call_admission_system_def schema_family_admission_system_def
-      schema_root_list_system_def schema_admission_system_def schema_material_checking_system_def
-      material_rows_checking_system_def material_checking_system_def)
-  have family: "systems_agree_on premise_family_instantiation_system guard_readers_system
-      (system_definitions premise_family_instantiation_system)"
-    by (rule to_guard) (simp add: systems_agree_on_added package_closure_admission_system_def
-      definition_callee_list_system_def definition_callee_inclusion_system_def schema_callee_list_system_def
-      schema_callee_inclusion_system_def definition_call_admission_system_def schema_family_admission_system_def
-      schema_root_list_system_def schema_admission_system_def schema_material_checking_system_def
-      material_rows_checking_system_def material_checking_system_def schema_instantiation_system_def)
-  have rows: "systems_agree_on premise_rows_system guard_readers_system (system_definitions premise_rows_system)"
-    by (rule to_guard) (simp add: systems_agree_on_added package_closure_admission_system_def
-      definition_callee_list_system_def definition_callee_inclusion_system_def schema_callee_list_system_def
-      schema_callee_inclusion_system_def definition_call_admission_system_def schema_family_admission_system_def
-      schema_root_list_system_def schema_admission_system_def schema_material_checking_system_def
-      material_rows_checking_system_def material_checking_system_def schema_instantiation_system_def
-      premise_family_instantiation_system_def)
-  have prospective: "systems_agree_on prospective_instantiation_system guard_readers_system
-      (system_definitions prospective_instantiation_system)"
-    by (rule to_guard) (simp add: systems_agree_on_added package_closure_admission_system_def
-      definition_callee_list_system_def definition_callee_inclusion_system_def schema_callee_list_system_def
-      schema_callee_inclusion_system_def definition_call_admission_system_def schema_family_admission_system_def
-      schema_root_list_system_def schema_admission_system_def schema_material_checking_system_def
-      material_rows_checking_system_def material_checking_system_def schema_instantiation_system_def
-      premise_family_instantiation_system_def premise_rows_system_def material_instantiation_system_def
-      record_instantiation_system_def vector_instantiation_system_def row_values_system_def
-      application_reading_system_def)
-  have quotation: "systems_agree_on quotation_admission_system guard_readers_system
-      (system_definitions quotation_admission_system)"
-    by (rule whole_agreement_transitive[OF _ guard_binder_agreement])
-      (simp add: systems_agree_on_added binder_admission_system_def diagonal_rows_system_def
-        binding_admission_system_def row_keys_system_def)
+
   have m82: "65 \<in> ?R"
-    by (rule given_rooted_clause_reaches[OF definition_edge_reading_system_formed edge e(3), of definition_edge_reading_schema])
+    by (rule given_rooted_clause_reaches[OF definition_edge_reading_system_formed guard_edge_agreement e(3), of definition_edge_reading_schema])
       (simp_all add: schema_dependencies_def rel_ran_image definition_edge_reading_schema_def)
   have m65: "34 \<in> ?R" "48 \<in> ?R" "49 \<in> ?R" "54 \<in> ?R" "55 \<in> ?R" "64 \<in> ?R"
-    by (rule given_rooted_clause_reaches[OF schema_instantiation_system_formed schema m82, of schema_instantiation_schema];
+    by (rule given_rooted_clause_reaches[OF schema_instantiation_system_formed guard_schema_instantiation_agreement m82, of schema_instantiation_schema];
       simp add: schema_dependencies_def rel_ran_image schema_instantiation_schema_def)+
   have m64: "63 \<in> ?R"
-    by (rule given_rooted_clause_reaches[OF premise_family_instantiation_system_formed family m65(6),
+    by (rule given_rooted_clause_reaches[OF premise_family_instantiation_system_formed guard_premise_family_agreement m65(6),
         of premise_family_instantiation_schema])
       (simp_all add: schema_dependencies_def rel_ran_image premise_family_instantiation_schema_def)
   have m63: "57 \<in> ?R"
-    by (rule given_rooted_clause_reaches[OF premise_rows_system_formed rows m64, of premise_rows_call_schema])
+    by (rule given_rooted_clause_reaches[OF premise_rows_system_formed guard_premise_rows_agreement m64, of premise_rows_call_schema])
       (auto simp: premise_rows_clauses_def schema_dependencies_def rel_ran_image premise_rows_call_schema_def)
   have m57: "41 \<in> ?R" "42 \<in> ?R"
-    by (rule given_rooted_clause_reaches[OF prospective_instantiation_system_formed prospective m63,
+    by (rule given_rooted_clause_reaches[OF prospective_instantiation_system_formed guard_prospective_agreement m63,
         of prospective_instantiation_schema];
       simp add: schema_dependencies_def rel_ran_image prospective_instantiation_schema_def)+
   have m55: "50 \<in> ?R"
@@ -222,7 +181,7 @@ proof -
         of instantiation_constant_schema])
       (auto simp: pattern_instantiation_clauses_def schema_dependencies_def rel_ran_image instantiation_constant_schema_def)
   have m50: "40 \<in> ?R" "45 \<in> ?R"
-    by (rule given_rooted_clause_reaches[OF quotation_admission_system_formed quotation m55, of quotation_target_schema];
+    by (rule given_rooted_clause_reaches[OF quotation_admission_system_formed guard_quotation_agreement m55, of quotation_target_schema];
       auto simp: quotation_admission_clauses_def schema_dependencies_def rel_ran_image quotation_target_schema_def)+
   have m42: "36 \<in> ?R"
     by (rule given_rooted_clause_reaches[OF citation_reading_system_formed guard_reading_agreement m57(2),

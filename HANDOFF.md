@@ -132,14 +132,13 @@ by a task of their own (Open 100).
 R5c‴ #621 → R5d's views #595 → carriers #597 → R5e #599 → R6c's 48 #609 → the carrying #611 → R7 #542 → #399 →
 #401, #403 and the record #553 → … — past the limit through splices (q108, #588, q112), so nothing is added after
 #408, #446, #448, #449 or #450 until they shorten (the status line gives the depths). Off the route,
-nothing waiting on them: #623's tools builds, #624 (the base as one heap) and #625 (the probe's estimate), and the
-consolidation #613. The approval build (Open 142) after #407 and #447 waits for the chain to shorten.
+nothing waiting on them: #623's tools build #624 (the base as one heap) and the consolidation #613. The approval build (Open 142) after #407 and #447 waits for the chain to shorten.
 
 **Order** (the queue holds it; the planner's choice, a residual until the native answer to the selection problem
 exists, Q2): the slots are one pool since 14:06, each free slot going to the first task in the queue that can start
 and a review standing where its review task stands, so every review stands right after its build. By slack on the
 longest chain (plan-78): W4a1
-#526; R5c‴ #621; W4a2 #615 (it feeds W4b); the tools builds #624 and #625 (off the route, #623's courses); R5d's views #595 and carriers #597; R5e #599 and R6b's parts #601, #603
+#526; R5c‴ #621; W4a2 #615 (it feeds W4b); the tools build #624 (off the route, #623's course A); R5d's views #595 and carriers #597; R5e #599 and R6b's parts #601, #603
 (no slack); R6c's 48 #609, R6b's carrying #605, rc #540 and R6c's instantiation family #607; the carrying #611; W4b
 #528; R7 #542 and #547; the route in its chains' order (#399, the
 samples #551, the observations #549, the record #553, #401, #403, #443, #447, #407, #445, #449); the consolidation #613 last, off the route.
@@ -450,8 +449,9 @@ What landed that open work builds on, a line each; how it went and each review's
 - **The probe's start** (#623, `.build/tasks/623/result.md`): 93 % of a probe's 38 s start is the base's chain of 150
   heaps (13.8 s of Isabelle/Scala session dependencies over 148 sessions, 20.9 s loading 147 incremental heaps of 13.9
   GB); about 14.4 GiB per probe; a one-heap base starts in about 3 s; start ≈ 1.6 s + 0.085 s × sessions + 1.5 s × GB.
-  Placed: A, the base as one heap at an advance (#624, provisional under Q29); B, the estimate by the chain (#625); F
-  (the cap) and the heaps' retirement the owner's.
+  Placed: A, the base as one heap at an advance (#624, provisional under Q29); B, the estimate by the chain, landed
+  (#625, `c7c7dadd`: `load_estimate` by the model, its constants named with their runs; review 627's follow-ups
+  next-edits 230 and 231); F (the cap) and the heaps' retirement the owner's.
 
 ## Open
 
@@ -554,7 +554,7 @@ The owner's questions, a line each (their words and the provisional choices in f
    dependents passes 60 s, and so does a change of both resolution theories, Acceptance and Completeness (about 120 s,
    #563, whose check of the combination is its probe) — a longer bound or an intermediate heap at a measured need; the
    start on the base heap, about 48 s of a probe against the tool's estimate of 10 (#584's follow-up 3), is the base's
-   chain (#623): #624 makes the base one heap at an advance (Q29), #625 estimates the start by the chain.
+   chain (#623): #624 makes the base one heap at an advance (Q29), #625 (landed) estimates the start by the chain.
 29. `REASONING_REUSE.md`'s open comparisons (#280's follow-ups): the ordered comparison factored at its next use; the
    six grammars' retention theorems against one statement over `RRA_Read_Environment` (`problems.txt` condition 3); the
    known-predecessor refinements against `Established_Premises`; ordinary clause profiles against `native_rule_law`.
@@ -583,8 +583,7 @@ searches for a theory before briefing a task that edits it.
   #597 → R5e #599 and R6b's parts → R6c → R7 #542 → #399 — so between its landings little else can start; the side
   chains have landed (P, #617, X′, the low moves #618), W4a2 → W4b runs beside the route after #526, R6b's and R6c's
   parts after #597. Nothing is invented to fill the gaps: what is open beside the route rests on its results or is
-  machinery that waits behind it (Open 29's comparisons); #623's tools builds #624 and #625 take slots the route leaves
-  idle.
+  machinery that waits behind it (Open 29's comparisons); #623's tools build #624 takes a slot the route leaves idle.
 - **What the next events ask**: Q29's answer (#624's trigger, the heaps' retirement, `PROBE_GB`, the cap). R7
   (#542) measures #399's two courses at 526 and #399 chooses by it; the approval
   build (Open 142) and the first answer (Open 148) are planned when #447, #407, #445 and #401 are nearer. The samples
@@ -626,7 +625,8 @@ searches for a theory before briefing a task that edits it.
   its start on the base heap takes 40–48 s under load, so a probe of a theory above Commitments checks only its first
   lines (#583, #593); #623 attributes the start to the base's chain (Q29). A probe on the chain holds about 14.4 GiB
   where `PROBE_GB` assumes 6.5, so about three fit where eight are admitted (16 GiB of swap in use at 02:19, #623);
-  `measuring --shared` wrote no `measurements.log` for a driver's children (#623).
+  `measuring --shared` wrote no `measurements.log` for a driver's children or a probe run in the claim's call (#623,
+  #625).
 - **Ledger entries that can leave** (the harness's `v2.py ledger`): Q7's and Q2's questions and answers, recorded in the
   plan (`4434635d`, `82a065cd`); the owner's words of 17:50, 18:12, 18:36 and 18:53, recorded by #378 (`cbf0c7e9`).
 - **Trees without a running task**: the retired #169's (thirty changed files and one commit, not to land), #325's,

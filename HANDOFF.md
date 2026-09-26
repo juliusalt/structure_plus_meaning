@@ -74,9 +74,8 @@ into the briefs #522 and #523 corrected, or recorded superseded there.
   declared socket tabulated; before #681, #609, #611, #540, #542, F2c #701 and #613); the fix #731 (continuing #679:
   the carried-socket proof once, `socket_carried_listed`, and the two instantiation theories' sockets through it, the
   row-set bag lemma once, 32's declaration below the Factor theories; narrowed by plan-97 at its second rejection to
-  that and review 731's words) → the fix #741 (continues 731, review 731's finding 2: the root-family and
-  artifact-citation sockets through the shape, `socket_discharged_along` and `_direct` retired; before #681, #609 and
-  correction (10)'s builds that edit `Factor_Resolution_Carriers` or a declaration theory); the fix #732 (continuing
+  that and review 731's words) → the fix #741 (landed `feb80f30`: the root-family and
+  artifact-citation sockets through the shape, `socket_discharged_along` and `_direct` retired); the fix #732 (continuing
   #605: one transfer over the sites the obligations read, with review 664's 2; after #731, beside #741, before #611);
   the brief #733 (32's kept sockets at 71, 75, 81, 104.1, 105.1, 119 and 505, declared by no build; now after #740,
   before #611 and #542; its builds after #741). Correction (10) (#730, landed `746b3321`): the socket test at the socket's frame; B1 #743 (after F3 and #741; before F2c, B2a, B3a, B3b,
@@ -129,7 +128,7 @@ by a task of their own (Open 100).
 
 **Shape.** No build waits on a review task. The route's longest chain, 13 deep, runs F3 #695 → B1 #743 → B2a #745 → B2b #747 →
 rc #540 → #661 → #707 → #399 → #709 → the record #553 → #447 → #449 → #450; F3 → B1 → R5f1 → R5f2 → #540, B1 → B3a →
-B3b → #611 → #542 and #741 → B1 have no slack, F3 → F2b → F2c → C → #542 one step, the carryings more — past the
+B3b → #611 → #542 have no slack, F3 → F2b → F2c → C → #542 one step, the carryings more — past the
 limit through splices, so nothing is added after the route's tail until it shortens (the status line gives the depths).
 The approval build (Open 142) after #407 and #447 waits for it to shorten; the controls task #718 after C (depth 10)
 was placed when #668 landed.
@@ -137,7 +136,7 @@ was placed when #668 landed.
 **Order** (the queue holds it; the planner's choice, a residual until the native answer to the selection problem
 exists, Q2): the slots are one pool, each free slot going to the first task in the queue that can start and a review
 standing where its review task stands, so every review stands right after its build. By slack on the longest chain:
-F3 #695 with the fixes #741 and #732 beside it; B1 #743, F2b #699, B2a #745 and B3a #749; R5f1 #734 and the
+F3 #695 with the fix #732 beside it; B1 #743, F2b #699, B2a #745 and B3a #749; R5f1 #734 and the
 measurement #742; B2b #747, B3b #751 and R5f2 #736; F2c #701 and C #703; the brief #733; V2b #651 and its (3) #738;
 R6c's #609 and #681; rc #540 and #661; #611; R7 #542, its native part #707, #399 and its controls #709, #547; the route in its chains'
 order (#551, #549, #553, #401, #403, #443, #447, #407, #445, #449); the controls #718 after C, and the lifting's
@@ -401,7 +400,8 @@ follow-ups are in `PLANNING_LOG.md` and the earlier states (`HANDOFF-before-cond
   `function_contract_carrier`, `carrier_discharged`, `socket_discharged_carried`; the control in
   `Factor_Commitment_Controls`), restated from the function witness by #722 (`dffa50b4`), the carried-socket shape stated once there by #731
   (`146bee44`: `socket_carried_listed`, the instantiation theories' sockets through it, the producers' classes in
-  `Factor_Producer_Correspondences`); the socket kinds over a view
+  `Factor_Producer_Correspondences`; #741, `feb80f30`: the root-family and artifact-citation sockets through it, the
+  variant forms retired); the socket kinds over a view
   in `Factor_Resolution_Socket_Discharges` (#674, `4188eef0`: the premise and head readings at views,
   `resolution_view_pattern_value`, the kept and free contexts over the parent context with correction (9)'s closed
   case, `finite_parent_instance_true`); R5's socket test read at the socket's inputs (#689, `b78942ea`:
@@ -616,8 +616,8 @@ planner searches for a theory before briefing a task that edits it.
   REASONING_REUSE.md additions in `.build/tasks/599/rows.md` for R5f1 #734). #728's review: 1 and 3 landed by #729
   (`820c4022`; its review's two follow-ups are next-edits 279 and 280), 2 mailed to #542, #547 and #399.
 - **#731's second rejection and review 664** (plan-97): the review's first way on — #731 narrowed to its done part
-  and review 731's finding 3, landed (`146bee44`); #741 (continues 731) takes finding 2, with its last verdict's
-  follow-ups (the REASONING_REUSE.md row naming `socket_carried_listed`, the per-socket timing). Review 664 (#663's): 2 folded into #732, 1 and 5 mailed
+  and review 731's finding 3, landed (`146bee44`); #741 took finding 2 and landed (`feb80f30`; its review's two
+  follow-ups next-edits 282 and 283). Review 664 (#663's): 2 folded into #732, 1 and 5 mailed
   to #611, 4 to #540, #547 and #399, 3 to #651; 6 (rc, only if asked) and 7 (minor) not taken.
 - **q129** (F3 #695, answered, `.build/plans/plan-97/q129.md`): reuse targets left of the closed goal, and R3b's
   acceptance restated over solved nodes (`finite_node_proof_solved_accepted`, `resolution_solved_node_true`), accepted;

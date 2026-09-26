@@ -1,5 +1,5 @@
 theory Factor_Resolution_Carriers
-  imports Factor_Resolution_Socket_Discharges Factor_Substitution
+  imports Factor_Resolution_Socket_Discharges Factor_Substitution Presentation_Function_Witnesses
 begin
 
 text \<open>
@@ -8,8 +8,11 @@ text \<open>
   a view Pair pi po, pi its carried inputs and fixed parts, po its outputs, and a correspondence on each; its
   obligation (@{text carrier_discharged}): every answer (x,y) and every x' corresponding to x give an answer (x',y')
   with y' corresponding to y, so the output's class is the image of the input's. A consumer is the carrier with no
-  output (@{text consumer_discharged_carrier}); a presented function contract discharges a carrier along its
-  direction (@{text function_contract_carrier}) and a presented relation contract against it, by its preimage
+  output (@{text consumer_discharged_carrier}); a presented function witness discharges a carrier along its direction
+  (@{text function_witness_carrier}), a presented function contract through its witness
+  (@{text function_contract_carrier}); a witness read against its direction discharges one along the input's
+  presentation, where every presentation of the image is reached from a presentation of the subject
+  (@{text witness_along_carrier}), and a presented relation contract one by its preimage
   (@{text relation_contract_carrier_preimage}). The search reads no carrier: carriers discharge a socket's
   clause-level obligation, the socket's class carried along the clause's acyclic dataflow to the head's output
   (@{text socket_discharged_carried}).
@@ -22,6 +25,17 @@ definition carrier_discharged ::
       (factor_term \<Rightarrow> factor_term \<Rightarrow> bool) \<Rightarrow> bool" where
   "carrier_discharged M d V cin cout \<longleftrightarrow> (\<forall>a x y x'. (d,a) \<in> M \<longrightarrow> resolution_view_term V a = Some (x,y) \<longrightarrow>
     cin x x' \<longrightarrow> (\<exists>b y'. (d,b) \<in> M \<and> resolution_view_term V b = Some (x',y') \<and> cout y y'))"
+
+text \<open>
+  A carrier discharged at two correspondences is discharged at a finer input correspondence and a coarser output
+  one: an instance states its carrier at the correspondences its classes give.
+\<close>
+
+lemma carrier_discharged_mono:
+  assumes "carrier_discharged M d V cin cout" "\<And>x x'. cin' x x' \<Longrightarrow> cin x x'"
+    "\<And>y y'. cout y y' \<Longrightarrow> cout' y y'"
+  shows "carrier_discharged M d V cin' cout'"
+  using assms unfolding carrier_discharged_def by blast
 
 lemma resolution_view_term_injective:
   assumes "view_formed V" "resolution_view_term V t = Some z" "resolution_view_term V t' = Some z"
@@ -108,37 +122,79 @@ next
   qed
 qed
 
-subsection \<open>Carriers from the notions' contracts\<close>
+subsection \<open>Carriers from the notions' witnesses and contracts\<close>
 
 text \<open>
-  Along a function's direction, a presented function contract discharges a carrier at the class correspondences:
-  its totality gives an output at every corresponding input, its output equivalence the output's correspondence.
-  Against it, a presented relation contract discharges one by its preimage: the same output answers every input
-  presenting the same subject. Each needs the view to read every pair the operation relates.
+  Along a function's direction, a presented function witness discharges a carrier at the class correspondences: its
+  totality gives an output at every corresponding input, its soundness the image's presentation at both outputs. A
+  witness relates an input to some presentations of its image, as an output following its input's order does at the
+  bag class; a presented function contract, which relates it to every one, discharges the carrier through its witness
+  (@{thm [source] presented_function_contract.witness}). Each needs the view to read every pair the operation relates.
 \<close>
 
-theorem function_contract_carrier:
-  assumes contract: "presented_function_contract R D A S E B f operation"
+theorem function_witness_carrier:
+  assumes witness: "presented_function_witness R D A S E B f operation"
     and reads: "\<And>t p q. resolution_view_term V t = Some (p,q) \<Longrightarrow> operation p q \<longleftrightarrow> (d,t) \<in> M"
     and realized: "\<And>p q. operation p q \<Longrightarrow> \<exists>t. resolution_view_term V t = Some (p,q)"
   shows "carrier_discharged M d V (presentation_transport R R) (presentation_transport S S)"
   unfolding carrier_discharged_def
 proof (intro allI impI)
-  interpret presented_function_contract R D A S E B f operation by (rule contract)
+  interpret w: presented_function_witness R D A S E B f operation by (rule witness)
   fix a x y x' assume holds: "(d,a) \<in> M" and va: "resolution_view_term V a = Some (x,y)"
     and t: "presentation_transport R R x x'"
   have o: "operation x y" using reads[OF va] holds by blast
   obtain c where c: "R c x" "R c x'" using t by (auto simp: presentation_transport_def)
-  obtain y' where o': "operation x' y'" using total left.presentation_boundary[OF c(2)] by blast
-  have "S (f c) y" "S (f c) y'"
-    using presented_function_contract.output[OF contract c(1)] presented_function_contract.output[OF contract c(2)] o o'
-    by blast+
+  obtain y' where o': "operation x' y'" using w.total w.left.presentation_boundary[OF c(2)] by blast
+  have "S (f c) y" "S (f c) y'" using w.sound[OF c(1) o] w.sound[OF c(2) o'] by blast+
   then have ty: "presentation_transport S S y y'" by (auto simp: presentation_transport_def)
   obtain b where vb: "resolution_view_term V b = Some (x',y')" using realized[OF o'] by blast
   have "(d,b) \<in> M" using reads[OF vb] o' by blast
   then show "\<exists>b y'. (d,b) \<in> M \<and> resolution_view_term V b = Some (x',y') \<and> presentation_transport S S y y'"
     using vb ty by blast
 qed
+
+theorem function_contract_carrier:
+  assumes contract: "presented_function_contract R D A S E B f operation"
+    and reads: "\<And>t p q. resolution_view_term V t = Some (p,q) \<Longrightarrow> operation p q \<longleftrightarrow> (d,t) \<in> M"
+    and realized: "\<And>p q. operation p q \<Longrightarrow> \<exists>t. resolution_view_term V t = Some (p,q)"
+  shows "carrier_discharged M d V (presentation_transport R R) (presentation_transport S S)"
+  by (rule function_witness_carrier[OF presented_function_contract.witness[OF contract] reads realized])
+
+text \<open>
+  Against a witness's direction, a carrier from its image's presentation to its subject's is discharged along the
+  input's presentation: the output changes with the input, which every presentation of the image reaches from some
+  presentation of the same subject (@{text along}), as a key list is the keys of some reordering of every row list
+  with the same keys. The witness's soundness identifies the image the input presents.
+\<close>
+
+theorem witness_along_carrier:
+  assumes witness: "presented_function_witness R D A S E B f operation"
+    and along: "\<And>a q p'. R a q \<Longrightarrow> S (f a) p' \<Longrightarrow> \<exists>q'. R a q' \<and> operation q' p'"
+    and reads: "\<And>t p q. resolution_view_term V t = Some (p,q) \<Longrightarrow> operation q p \<longleftrightarrow> (d,t) \<in> M"
+    and realized: "\<And>p q. operation q p \<Longrightarrow> \<exists>t. resolution_view_term V t = Some (p,q)"
+  shows "carrier_discharged M d V (presentation_transport S S) (presentation_transport R R)"
+  unfolding carrier_discharged_def
+proof (intro allI impI)
+  interpret w: presented_function_witness R D A S E B f operation by (rule witness)
+  fix a x y x' assume holds: "(d,a) \<in> M" and va: "resolution_view_term V a = Some (x,y)"
+    and t: "presentation_transport S S x x'"
+  have o: "operation y x" using reads[OF va] holds by blast
+  obtain c where c: "S c x" "S c x'" using t by (auto simp: presentation_transport_def)
+  obtain r where r: "R r y" using w.left.admitted[OF w.input_boundary[OF o]] by blast
+  have "S (f r) x" by (rule w.sound[OF r o])
+  then have fr: "c = f r" by (rule w.right.recovery[OF c(1)])
+  obtain q' where q': "R r q'" "operation q' x'" using along[OF r] c(2) fr by blast
+  obtain b where vb: "resolution_view_term V b = Some (x',q')" using realized[OF q'(2)] by blast
+  have "(d,b) \<in> M" using reads[OF vb] q'(2) by blast
+  moreover have "presentation_transport R R y q'" using r q'(1) by (auto simp: presentation_transport_def)
+  ultimately show "\<exists>b y'. (d,b) \<in> M \<and> resolution_view_term V b = Some (x',y') \<and> presentation_transport R R y y'"
+    using vb by blast
+qed
+
+text \<open>
+  Against a relation contract's direction, its preimage discharges a carrier: the same output answers every input
+  presenting the same subject. An output that changes with its input is a witness along it instead.
+\<close>
 
 theorem relation_contract_carrier_preimage:
   assumes contract: "presented_relation_contract R D A S E B L observe"

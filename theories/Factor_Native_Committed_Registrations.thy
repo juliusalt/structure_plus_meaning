@@ -62,6 +62,114 @@ proof (rule committed_registrations.intro[OF \<kappa> complete])
   show "narrowed_productions_declared (unproduced (unnarrowed D))" by (rule narrowed_productions_declared_unnarrowed)
 qed
 
+section \<open>The produced record relocated\<close>
+
+text \<open>
+  A produced record is relocated by a map g of its sites as its truncation is (@{const declarations_relocated}): each
+  socket at the site g e and the schema with its callees relocated. Its narrowing and production at a relocated key are
+  the source's at the key the relocation came from, recovered by the inverse of g on the record's declared sites, the
+  schema's callees mapped back by it; a production is its registration relocated as @{const finite_relocated_construction}
+  relocates a construction: at the site g d, the schema renamed, the variable kept, and its families' queries and
+  identity asked at the relocated sites. Nothing is claimed of the relocated registration's value at the relocated
+  program: the search's equivariance under a site relocation is not stated (q138), and the productions' discharge at
+  the program that reads the record stays a premise of its consumers. With g injective on the declared sites, the
+  relocated truncation is the relocated record's by definition (@{text produced_relocated_truncate}) and the narrowing
+  at a relocated socket is the source's (@{text produced_relocated_keys}), the two premises
+  @{text committed_registrations_relocated} takes of its record.
+\<close>
+
+text \<open>A callee map with a left inverse on a schema's callees is undone by it, as for structures
+  (@{thm [source] push_structure_left_inverse}).\<close>
+
+lemma finite_rename_schema_left_inverse:
+  assumes inverse: "\<And>d. d \<in> schema_dependencies (decode_finite_schema S) \<Longrightarrow> k (g d) = d"
+  shows "finite_rename_schema id id k (finite_rename_schema id id g S) = S"
+proof -
+  have same: "rename_schema id id (k \<circ> g) (decode_finite_schema S) = rename_schema id id id (decode_finite_schema S)"
+    by (rule rename_schema_agreement) (use inverse in auto)
+  have undone: "rename_schema id id (k \<circ> g) (decode_finite_schema S) = decode_finite_schema S" using same by simp
+  have "decode_finite_schema (finite_rename_schema id id k (finite_rename_schema id id g S)) =
+      rename_schema id id (k \<circ> g) (decode_finite_schema S)"
+    by (simp only: finite_rename_schema_correct rename_schema_composition id_comp)
+  from this undone have "decode_finite_schema (finite_rename_schema id id k (finite_rename_schema id id g S)) =
+      decode_finite_schema S" by (rule trans)
+  then show ?thesis by simp
+qed
+
+definition query_relocated :: "('d \<Rightarrow> 'e) \<Rightarrow> ('a,'d,'v) collection_query \<Rightarrow> ('a,'e,'v) collection_query" where
+  "query_relocated g q = \<lparr>query_equations = query_equations q, query_site = g (query_site q),
+    query_goal = query_goal q, query_element = query_element q\<rparr>"
+
+definition identity_relocated :: "('d \<Rightarrow> 'e) \<Rightarrow> ('d,'v) collection_identity \<Rightarrow> ('e,'v) collection_identity" where
+  "identity_relocated g I = \<lparr>identity_left = identity_left I, identity_right = identity_right I,
+    identity_site = g (identity_site I), identity_goal = identity_goal I\<rparr>"
+
+definition family_relocated :: "('d \<Rightarrow> 'e) \<Rightarrow> ('a,'d,'v) collection_family \<Rightarrow> ('a,'e,'v) collection_family" where
+  "family_relocated g F = \<lparr>family_base = map (query_relocated g) (family_base F),
+    family_step = map_option (\<lambda>(q,p). (query_relocated g q,p)) (family_step F),
+    family_key = family_key F, family_identity = map_option (identity_relocated g) (family_identity F)\<rparr>"
+
+fun families_relocated ::
+    "('d \<Rightarrow> 'e) \<Rightarrow> ('a,'d,'v) registration_families \<Rightarrow> ('a,'e,'v) registration_families" where
+  "families_relocated g (Single_Family F) = Single_Family (family_relocated g F)"
+| "families_relocated g (Paired_Families F G) = Paired_Families (family_relocated g F) (family_relocated g G)"
+
+definition registration_relocated ::
+    "('d \<Rightarrow> 'e) \<Rightarrow> ('a,'s,'d,'v) collection_registration \<Rightarrow> ('a,'s,'e,'v) collection_registration" where
+  "registration_relocated g R = \<lparr>registration_site = g (registration_site R),
+    registration_schema = finite_rename_schema id id g (registration_schema R),
+    registration_variable = registration_variable R,
+    registration_families = families_relocated g (registration_families R)\<rparr>"
+
+lemma registration_relocated_fields [simp]:
+  "registration_site (registration_relocated g R) = g (registration_site R)"
+  "registration_schema (registration_relocated g R) = finite_rename_schema id id g (registration_schema R)"
+  "registration_variable (registration_relocated g R) = registration_variable R"
+  "registration_families (registration_relocated g R) = families_relocated g (registration_families R)"
+  by (simp_all add: registration_relocated_def)
+
+abbreviation produced_site_back :: "('d \<Rightarrow> 'e) \<Rightarrow> ('a,'s,'d,'v) produced_declarations \<Rightarrow> 'e \<Rightarrow> 'd" where
+  "produced_site_back g PD \<equiv> inv_into (declared_sites (resolution_declarations.truncate PD)) g"
+
+definition produced_relocated ::
+    "('d \<Rightarrow> 'e) \<Rightarrow> ('a,'s,'d,'v) produced_declarations \<Rightarrow> ('a,'s,'e,'v) produced_declarations" where
+  "produced_relocated g PD = produced (narrowed (declarations_relocated g (resolution_declarations.truncate PD))
+      (\<lambda>e S s. declared_narrowing PD (produced_site_back g PD e)
+        (finite_rename_schema id id (produced_site_back g PD) S) s))
+    (\<lambda>e S s. map_option (registration_relocated g) (declared_production PD (produced_site_back g PD e)
+      (finite_rename_schema id id (produced_site_back g PD) S) s))"
+
+lemma produced_relocated_truncate:
+  "narrowed_declarations.truncate (produced_relocated g PD) =
+    narrowed (declarations_relocated g (resolution_declarations.truncate PD)) (declared_narrowing (produced_relocated g PD))"
+  by (simp add: produced_relocated_def)
+
+lemma produced_relocated_keys:
+  assumes injective: "inj_on g (declared_sites (resolution_declarations.truncate PD))"
+    and socket: "(e,S,s,keep,Vp,Vh) |\<in>| declared_sockets PD"
+  shows "declared_narrowing (produced_relocated g PD) (g e) (finite_rename_schema id id g S) s =
+      declared_narrowing PD e S s"
+    and "declared_production (produced_relocated g PD) (g e) (finite_rename_schema id id g S) s =
+      map_option (registration_relocated g) (declared_production PD e S s)"
+proof -
+  have m: "(e,S,s,keep,Vp,Vh) \<in> fset (declared_sockets (resolution_declarations.truncate PD))"
+    using socket by simp
+  have sites: "insert e (schema_dependencies (decode_finite_schema S)) \<subseteq>
+      declared_sites (resolution_declarations.truncate PD)"
+    unfolding declared_sites_def
+    by (rule subset_trans[OF _ Un_upper2], rule subset_trans[OF _ UN_upper[OF m]]) simp
+  have back_e: "produced_site_back g PD (g e) = e"
+    by (rule inv_into_f_f[OF injective]) (use sites in blast)
+  have back_S: "finite_rename_schema id id (produced_site_back g PD) (finite_rename_schema id id g S) = S"
+    by (rule finite_rename_schema_left_inverse, rule inv_into_f_f[OF injective]) (use sites in blast)
+  show "declared_narrowing (produced_relocated g PD) (g e) (finite_rename_schema id id g S) s =
+      declared_narrowing PD e S s"
+    by (simp add: produced_relocated_def back_e back_S)
+  show "declared_production (produced_relocated g PD) (g e) (finite_rename_schema id id g S) s =
+      map_option (registration_relocated g) (declared_production PD e S s)"
+    by (simp add: produced_relocated_def back_e back_S)
+qed
+
 section \<open>The corollary: relocated, carried by the clause match, at the program the installed site reads\<close>
 
 text \<open>
@@ -74,9 +182,9 @@ text \<open>
   narrowed_declarations_relocated_varied_discharged}); its frames are relocated and varied likewise (@{thm [source]
   narrowed_frames_relocated_varied_discharged}), the frames at the installed program the varied relocated frames. The
   installed program's own facts are the sources' classes agreeing there, the productions' discharge there (R5f2's
-  premise, which each consuming program discharges by the semantic lemma, q138: a production's head registration, its
-  produces and answers hypotheses carried by #651's lemmas along the producer's match, from which the completeness at a
-  narrowed socket is derived at the installed program) and the varied record's static premise (derived by
+  premise, a premise of the corollary, which each consuming program discharges by the semantic lemma, q138, or, where
+  the values are carried, by @{thm [source] productions_varied_at_values}; from it the completeness at a narrowed
+  socket is derived at the installed program) and the varied record's static premise (derived by
   @{thm [source] narrowed_productions_declared_varied} under unique sources and each production carrying to one
   registration). Nothing is proved again: the corollary composes the relocation, the variation and the native form, and
   the installation's alpha variance is consumed as the verification that the placed and installed presentations agree,
@@ -154,6 +262,32 @@ proof -
   show ?thesis
     by (rule committed_registrations.intro[OF finite_varied_construction_formed[OF finite_relocated_construction_formed[OF Qr(1)]]
       varied_relocated_complete[OF result read Qr(2)] dN fN productions declared])
+qed
+
+text \<open>At the produced record relocated by the placement, the relocation's two premises hold (the placement injective on
+  Q's definitions, among which the record's sites stand).\<close>
+
+lemma committed_registrations_produced_relocated:
+  fixes Inst :: "local_address option finite_native_system"
+  assumes result: "finite_extend_mapped_native E P Q g = Some (F,u)"
+    and read: "native_package_at (decode_finite_environment F) u [] (decode_finite_system Inst)"
+    and registered: "committed_registrations \<kappa> Q m ND \<Phi> corr"
+    and sites: "declared_sites (resolution_declarations.truncate ND) \<subseteq> system_definitions (decode_finite_system Q)"
+    and frame_sites: "frame_sites \<Phi> \<subseteq> system_definitions (decode_finite_system Q)"
+    and agree: "varied_narrowings_agree goal Inst (produced_relocated placement ND)"
+    and productions: "productions_discharged (positive_meaning (decode_finite_system Inst)) Inst m'
+      (produced_declarations_varied goal Inst (produced_relocated placement ND))"
+    and declared: "narrowed_productions_declared (produced_declarations_varied goal Inst (produced_relocated placement ND))"
+  shows "committed_registrations (finite_varied_construction goal Inst (finite_relocated_construction placement Q \<kappa>))
+    Inst m' (produced_declarations_varied goal Inst (produced_relocated placement ND))
+    (frames_varied goal Inst (frames_relocated placement \<Phi>))
+    (corr \<circ> inv_into (declared_sites (resolution_declarations.truncate ND)) placement)"
+proof -
+  have inj: "inj_on placement (declared_sites (resolution_declarations.truncate ND))"
+    by (rule inj_on_subset[OF maps.injective sites])
+  show ?thesis
+    by (rule committed_registrations_relocated[OF result read registered sites frame_sites produced_relocated_truncate
+      produced_relocated_keys(1)[OF inj] agree productions declared])
 qed
 
 theorem native_committed_registered_relocated:

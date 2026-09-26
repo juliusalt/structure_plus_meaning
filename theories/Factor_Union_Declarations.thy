@@ -1,5 +1,5 @@
 theory Factor_Union_Declarations
-  imports Factor_Narrowed_Commitments Factor_Schema_Instantiation_Declarations
+  imports Factor_Narrowed_Commitments Factor_Schema_Instantiation_Declarations Factor_Narrowed_Productions
 begin
 
 text \<open>
@@ -415,7 +415,63 @@ theorem union_registration_checked:
   using union_registration_union[OF selection valued first second] first(2) second(2)
   by (auto simp: data_union_lists)
 
-text \<open>The value is an answer of 48 wherever 48 has one at the same input.\<close>
+text \<open>
+  The value is an answer of 48 wherever 48 has one at the same input. The proof reads the head's view and the two
+  agreements alone, so it is stated once for a registration at any site d whose meaning there is 48's, at any
+  renaming of @{const union_schema}'s binders, sockets and callees (an alpha variant of it, relocated), whose
+  construction's value at bindings B is a value of @{const union_registration} at bindings agreeing with B at the
+  head's input variables (task 796, for the given's installed presentations); the statement at 48 is its instance.
+\<close>
+
+lemma finite_rename_schema_ident: "finite_rename_schema id id id S = S"
+proof -
+  have "decode_finite_schema (finite_rename_schema id id id S) = decode_finite_schema S"
+    by (simp add: finite_rename_schema_correct)
+  then show ?thesis by simp
+qed
+
+lemma union_variant_input:
+  "head_registration_input join_view (finite_rename_schema f h g union_schema) B =
+    Some (Pair_Term (decode_finite_term (finite_binding_valuation B (f 0)))
+      (decode_finite_term (finite_binding_valuation B (f 1))))"
+  by (simp add: head_registration_input_def finite_rename_schema_def union_schema_def socket_listed_simps)
+
+theorem union_registration_answers_variant:
+  fixes M :: "('d \<times> factor_term) set"
+  assumes union: "\<And>t. (d,t) \<in> M \<longleftrightarrow> (48,t) \<in> positive_meaning data_union_system"
+    and selection: "\<And>t. (5,t) \<in> positive_meaning (decode_finite_system P) \<longleftrightarrow>
+      (5,t) \<in> positive_meaning bag_comparison_system"
+    and carried: "\<And>B v. witness_value \<kappa> Q d (finite_rename_schema f h g union_schema) B a = Some v \<Longrightarrow>
+      \<exists>B0. finite_registration_value P n union_registration B0 = Some v \<and>
+        finite_binding_valuation B0 0 = finite_binding_valuation B (f 0) \<and>
+        finite_binding_valuation B0 1 = finite_binding_valuation B (f 1)"
+  shows "head_registration_answers M \<kappa> Q d (finite_rename_schema f h g union_schema) join_view a"
+  unfolding head_registration_answers_def
+proof (intro allI impI)
+  fix B v x t y
+  assume valued: "witness_value \<kappa> Q d (finite_rename_schema f h g union_schema) B a = Some v"
+    and input: "head_registration_input join_view (finite_rename_schema f h g union_schema) B = Some x"
+    and holds: "(d,t) \<in> M" and view: "resolution_view_term join_view t = Some (x,y)"
+  obtain B0 where B0: "finite_registration_value P n union_registration B0 = Some v"
+      "finite_binding_valuation B0 0 = finite_binding_valuation B (f 0)"
+      "finite_binding_valuation B0 1 = finite_binding_valuation B (f 1)"
+    using carried[OF valued] by blast
+  obtain a' b where t: "t = Pair_Term a' (Pair_Term b y)" and x: "x = Pair_Term a' b"
+    using view by (auto simp: join_view_term)
+  obtain xs ys where lists: "a' = data_list_term xs" "b = data_list_term ys" "data_elements xs" "data_elements ys"
+    using holds union t unfolding data_union_exact by auto
+  have "x = Pair_Term (decode_finite_term (finite_binding_valuation B0 0)) (decode_finite_term (finite_binding_valuation B0 1))"
+    using input B0(2,3) by (simp add: union_variant_input)
+  then have first: "decode_finite_term (finite_binding_valuation B0 0) = data_list_term xs"
+    and second: "decode_finite_term (finite_binding_valuation B0 1) = data_list_term ys"
+    using x lists(1,2) by simp_all
+  have "(d,Pair_Term a' (Pair_Term b (decode_finite_term v))) \<in> M"
+    using union_registration_checked[OF selection B0(1) first lists(3) second lists(4)] union lists(1,2) by simp
+  moreover have "resolution_view_term join_view (Pair_Term a' (Pair_Term b (decode_finite_term v))) =
+      Some (x,decode_finite_term v)"
+    using x by (simp add: join_view_term)
+  ultimately show "\<exists>t'. (d,t') \<in> M \<and> resolution_view_term join_view t' = Some (x,decode_finite_term v)" by blast
+qed
 
 theorem union_registration_answers:
   fixes M :: "(nat \<times> factor_term) set"
@@ -423,26 +479,17 @@ theorem union_registration_answers:
     and selection: "\<And>t. (5,t) \<in> positive_meaning (decode_finite_system P) \<longleftrightarrow>
       (5,t) \<in> positive_meaning bag_comparison_system"
   shows "head_registration_answers M (union_construction n) P 48 union_schema join_view 2"
-  unfolding head_registration_answers_def union_construction_value
-proof (intro allI impI)
-  fix B v x t y
-  assume valued: "finite_registration_value P n union_registration B = Some v"
-    and input: "head_registration_input join_view union_schema B = Some x"
-    and holds: "(48,t) \<in> M" and view: "resolution_view_term join_view t = Some (x,y)"
-  obtain a b where t: "t = Pair_Term a (Pair_Term b y)" and x: "x = Pair_Term a b" using view by (auto simp: join_view_term)
-  obtain xs ys where lists: "a = data_list_term xs" "b = data_list_term ys" "data_elements xs" "data_elements ys"
-    using holds union t unfolding data_union_exact by auto
-  have "x = Pair_Term (decode_finite_term (finite_binding_valuation B 0)) (decode_finite_term (finite_binding_valuation B 1))"
-    using input by (simp add: union_registration_input)
-  then have first: "decode_finite_term (finite_binding_valuation B 0) = data_list_term xs"
-    and second: "decode_finite_term (finite_binding_valuation B 1) = data_list_term ys"
-    using x lists(1,2) by simp_all
-  have "(48,Pair_Term a (Pair_Term b (decode_finite_term v))) \<in> M"
-    using union_registration_checked[OF selection valued first lists(3) second lists(4)] union lists(1,2) by simp
-  moreover have "resolution_view_term join_view (Pair_Term a (Pair_Term b (decode_finite_term v))) =
-      Some (x,decode_finite_term v)"
-    using x by (simp add: join_view_term)
-  ultimately show "\<exists>t'. (48,t') \<in> M \<and> resolution_view_term join_view t' = Some (x,decode_finite_term v)" by blast
+proof -
+  have "head_registration_answers M (union_construction n) P 48 (finite_rename_schema id id id union_schema) join_view 2"
+  proof (rule union_registration_answers_variant[OF union selection])
+    fix B v
+    assume "witness_value (union_construction n) P 48 (finite_rename_schema id id id union_schema) B 2 = Some v"
+    then show "\<exists>B0. finite_registration_value P n union_registration B0 = Some v \<and>
+        finite_binding_valuation B0 0 = finite_binding_valuation B (id 0) \<and>
+        finite_binding_valuation B0 1 = finite_binding_valuation B (id 1)"
+      by (simp only: finite_rename_schema_ident union_construction_value id_apply) blast
+  qed
+  then show ?thesis by (simp only: finite_rename_schema_ident)
 qed
 
 text \<open>
@@ -776,6 +823,102 @@ lemma union_produced_fields [simp]:
   "narrowed_declarations.truncate (union_produced Z) = union_narrowed Z"
   "declared_production (union_produced Z) e S s = Some union_registration"
   by (simp_all add: union_produced_def)
+
+text \<open>
+  The records' generic facts (task 782, placed here by task 796): their fields; a narrowed record with no producer or
+  consumer discharged at any correspondence; the union of two such records and of their frames, the frames apart
+  from the other's sockets by site; the produced record's static premise.
+\<close>
+
+lemma union_narrowed_empty [simp]:
+  "declared_producers (union_narrowed Z) = {||}" "declared_consumers (union_narrowed Z) = {||}"
+  "declared_sockets (union_narrowed Z) = Z" "declared_narrowing (union_narrowed Z) e S s = union_class"
+  by (simp_all add: union_narrowed_def)
+
+lemma union_produced_simps [simp]:
+  "declared_producers (union_produced Z) = {||}" "declared_consumers (union_produced Z) = {||}"
+  "declared_sockets (union_produced Z) = Z" "declared_narrowing (union_produced Z) e S s = union_class"
+  by (simp_all add: union_produced_def)
+
+lemma union_produced_declared: "narrowed_productions_declared (union_produced Z)"
+  by (simp add: narrowed_productions_declared_def)
+
+lemma union_narrowed_corr:
+  assumes d: "narrowed_declarations_discharged M (union_narrowed Z) corr"
+  shows "narrowed_declarations_discharged M (union_narrowed Z) corr'"
+  unfolding narrowed_declarations_discharged_def
+proof (intro conjI allI impI)
+  show "declarations_formed (resolution_declarations.truncate (union_narrowed Z))" by (rule narrowed_formed[OF d])
+next
+  fix d V hs assume "(d,V,hs) |\<in>| declared_producers (union_narrowed Z)"
+  then show "producer_discharged M d V hs (corr' d)" by simp
+next
+  fix d e V i assume "(d,e,V,i) |\<in>| declared_consumers (union_narrowed Z)"
+  then show "consumer_discharged M e V (corr' d i)" by simp
+next
+  fix e S s keep Vp Vh assume "(e,S,s,keep,Vp,Vh) |\<in>| declared_sockets (union_narrowed Z)"
+  then show "narrowed_socket_discharged M S s keep Vp Vh (declared_narrowing (union_narrowed Z) e S s)"
+    by (rule narrowed_socket[OF d])
+qed
+
+lemma union_narrowed_union:
+  assumes d: "narrowed_declarations_discharged M (union_narrowed Z) corr"
+    and d': "narrowed_declarations_discharged M (union_narrowed Z') corr"
+  shows "narrowed_declarations_discharged M (union_narrowed (Z |\<union>| Z')) corr"
+  unfolding narrowed_declarations_discharged_def
+proof (intro conjI allI impI)
+  have fZ: "fBall Z (\<lambda>(e,S,s,keep,Vp,Vh). view_formed Vp \<and> view_formed Vh)"
+    using narrowed_formed[OF d] by (simp add: declarations_formed_def)
+  have fZ': "fBall Z' (\<lambda>(e,S,s,keep,Vp,Vh). view_formed Vp \<and> view_formed Vh)"
+    using narrowed_formed[OF d'] by (simp add: declarations_formed_def)
+  show "declarations_formed (resolution_declarations.truncate (union_narrowed (Z |\<union>| Z')))"
+    using fZ fZ' by (fastforce simp: declarations_formed_def)
+next
+  fix d V hs assume "(d,V,hs) |\<in>| declared_producers (union_narrowed (Z |\<union>| Z'))"
+  then show "producer_discharged M d V hs (corr d)" by simp
+next
+  fix d e V i assume "(d,e,V,i) |\<in>| declared_consumers (union_narrowed (Z |\<union>| Z'))"
+  then show "consumer_discharged M e V (corr d i)" by simp
+next
+  fix e S s keep Vp Vh assume "(e,S,s,keep,Vp,Vh) |\<in>| declared_sockets (union_narrowed (Z |\<union>| Z'))"
+  then have "(e,S,s,keep,Vp,Vh) |\<in>| declared_sockets (union_narrowed Z) \<or>
+      (e,S,s,keep,Vp,Vh) |\<in>| declared_sockets (union_narrowed Z')" by simp
+  then show "narrowed_socket_discharged M S s keep Vp Vh (declared_narrowing (union_narrowed (Z |\<union>| Z')) e S s)"
+  proof
+    assume "(e,S,s,keep,Vp,Vh) |\<in>| declared_sockets (union_narrowed Z)"
+    from narrowed_socket[OF d this] show ?thesis by simp
+  next
+    assume "(e,S,s,keep,Vp,Vh) |\<in>| declared_sockets (union_narrowed Z')"
+    from narrowed_socket[OF d' this] show ?thesis by simp
+  qed
+qed
+
+lemma union_frames_union:
+  assumes "narrowed_frames_discharged M (union_narrowed Z) \<Phi>" "narrowed_frames_discharged M (union_narrowed Z') \<Phi>'"
+    and "fst ` fset \<Phi> \<inter> fst ` fset Z' = {}" and "fst ` fset \<Phi>' \<inter> fst ` fset Z = {}"
+  shows "narrowed_frames_discharged M (union_narrowed (Z |\<union>| Z')) (\<Phi> |\<union>| \<Phi>')"
+  unfolding narrowed_frames_discharged_def union_narrowed_empty funion_iff
+proof (intro allI impI)
+  fix e S s C keep Vp Vh
+  assume f: "(e,S,s,C) |\<in>| \<Phi> \<or> (e,S,s,C) |\<in>| \<Phi>'"
+    and m: "(e,S,s,keep,Vp,Vh) |\<in>| Z \<or> (e,S,s,keep,Vp,Vh) |\<in>| Z'"
+  show "narrowed_socket_framed M S s keep Vp Vh union_class (fset C)" using f
+  proof
+    assume f1: "(e,S,s,C) |\<in>| \<Phi>"
+    have "e \<in> fst ` fset \<Phi>" using f1 by force
+    then have "(e,S,s,keep,Vp,Vh) |\<notin>| Z'" using assms(3) by force
+    then have "(e,S,s,keep,Vp,Vh) |\<in>| Z" using m by blast
+    then show ?thesis
+      by (rule assms(1)[unfolded narrowed_frames_discharged_def union_narrowed_empty, rule_format, OF f1])
+  next
+    assume f2: "(e,S,s,C) |\<in>| \<Phi>'"
+    have "e \<in> fst ` fset \<Phi>'" using f2 by force
+    then have "(e,S,s,keep,Vp,Vh) |\<notin>| Z" using assms(4) by force
+    then have "(e,S,s,keep,Vp,Vh) |\<in>| Z'" using m by blast
+    then show ?thesis
+      by (rule assms(2)[unfolded narrowed_frames_discharged_def union_narrowed_empty, rule_format, OF f2])
+  qed
+qed
 
 definition quotation_union_sockets :: union_sockets where
   "quotation_union_sockets = {|(50,quotation_pair_socket_schema,7,False,join_view,quotation_view)|}"

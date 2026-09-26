@@ -1,6 +1,6 @@
 {
- "base_receipt_sha256": "b4a95bda7fe2bb19ea645f88a0d65cc19b6e0f9f339751cd76a1694390e7c8bb",
- "checked_content_sha256": "57659b5afdb7f5d296d95e3ec701ac7e6aaf26f10e2116b82ee4dff5c5308b83",
+ "base_receipt_sha256": "df4a8c2348cc96e84434a56dcda3661c707cbf393ae4f4800e8a17d053b827f4",
+ "checked_content_sha256": "e328a4a7296d61b5512b47942f4e4359b7e15db59d8e315b2d713291b25cac93",
  "host_tests": {
   "kernel": {
    "exit_code": 0,
@@ -17,20 +17,20 @@
    "ran": 309,
    "skipped": 0,
    "tail": [
-    "{\"status\": \"failed\", \"error\": \"[Errno 2] No such file or directory: '/tmp/tmp42qc8vjl/no-project/theories/Development_Answer_a2d8d6490cc2.thy'\"}"
+    "{\"status\": \"failed\", \"error\": \"[Errno 2] No such file or directory: '/tmp/tmp1l4inz8z/no-project/theories/Development_Answer_a2d8d6490cc2.thy'\"}"
    ]
   }
  },
  "phases": {
-  "base_and_impact": 0.37,
+  "base_and_impact": 0.36,
   "execution_impact": 0.0,
   "export": 0.0,
-  "proof": 30.11,
-  "recipe_impact": 0.41,
-  "recipes_and_host_tests": 11.62
+  "proof": 31.12,
+  "recipe_impact": 0.53,
+  "recipes_and_host_tests": 12.2
  },
  "rebuilt_theories": [
-  "Factor_Varied_Declarations"
+  "Factor_Schema_Instantiation_Declarations"
  ],
  "recipes": {
   "allocated-environments": {
@@ -190,19 +190,19 @@
    "status": "unchanged"
   }
  },
- "reused_theories": 1935,
- "seconds": 54.45,
+ "reused_theories": 1936,
+ "seconds": 57.03,
  "source_checks": {
   "missing_theory_files": [],
   "proof_escape_matches": [],
   "refusals": [],
-  "theory_count": 1936,
+  "theory_count": 1937,
   "unlisted_theories": []
  },
  "status": "accepted",
- "theories": 1936,
+ "theories": 1937,
  "validation_inputs": {
-  "ROOT": "5abe222f5ff6ea3f474f32c5040dc9f758f522e2891e7b276753ccb9b49d50a5",
+  "ROOT": "344cbd03bf05ca902f24124ca579da700cbf1fb16334e37db09d2d0de2a6c73c",
   "tools/check.py": "71c91573138e10d317e5d920f5776af39687d313836a5552bbb0ec1d2d580381",
   "tools/incremental_check.py": "7f57110d9b4e04a7eb01215c21ea098fffcff71410454a248f6eb122909a1d98"
  }

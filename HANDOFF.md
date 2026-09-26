@@ -69,7 +69,7 @@ into the briefs #522 and #523 corrected, or recorded superseded there.
   #605 → its installed carrying #663 → R6c's carrying
   #611 → rc's numbered forms #540 (after #676) and native form #661 → R7 #542 (the numbered course; #661 feeds its
   native part #707) and the request at the given #547 → #399.
-- The clause match (#642's addition, briefed by #643; M #645, V1 #647, V3's #653, #687, #655, #688 and its control #657 landed): V2a #649 (after #597 and the forms
+- The clause match (#642's addition, briefed by #643; M #645, V1 #647, V3's #653, #687, #655, #688 and its control #657 landed): V2a #649 (landed, `da884904`; it followed #597 and the forms
   #676) and V2b #651 (after #599), divided so that #605 does not wait on #599; V3, divided by plan-89 by the room its
   relations leave, in one theory edited in turn: #653 (the general statement in `given_readers_extension`) beside #687
   (the given's registrations complete at the rooted readers, `Development_Rooted_Registrations`), then #655 (the given's
@@ -437,7 +437,10 @@ follow-ups are in `PLANNING_LOG.md` and the earlier states (`HANDOFF-before-cond
   `Development_Installed_Presentations_Execution`: the three installed presentations read back in 0.51, 0.58 and 0.55 s
   held, the match found and the registration carried exactly at the eight registered sites; the installations' code
   equations `asked_installation_code` in `Development_First_Problem_Asked`, `first_request_installation_code` in
-  `Development_First_Request_Program`).
+  `Development_First_Request_Program`); V2a (#649, `da884904`): R5d's kinds of declarations carried along the match in
+  `Factor_Varied_Declarations` (`declarations_varied`, `declarations_varied_discharged`, the committed forms at the
+  variant, `finite_committed_variant_transfer`; the locale facts `clause_true_along`, `clause_true_back`,
+  `head_kept_along`, `premise_at_image`, `material_at_image`; `socket_discharged_matched` at any match).
 - **The probe's start and the base** (Q29): a probe's start is the base's chain (#623, `.build/tasks/623/result.md`);
   the one-session base landed inert (#624) and switched on by the owner (Q29–Q32, 2026-09-26); the start estimated by the chain (#625); held at the library's scale, 3.33
   s against 37.68 s (#628); `Factor_Resolution_Commitments`' proof time (#629).
@@ -568,15 +571,20 @@ planner searches for a theory before briefing a task that edits it.
   W4a's holders stay as they are, so F2b no longer waits. #599 was accepted before the mail asking it for the
   production field reached it, so the field is R5f1's and #609 waits on R5f1; the brief #727 proposes R5f1 and R5f2
   and divides #651 at its (3) (after R5f2, before #661), standing in meanwhile before #540, #609, #613, #651 and F2c;
+  plan-96 sent its first proposal back: #611 carries 48's productions to the installed programs and waits on #651, so
+  the production field's carrying and the whole-record discharge with productions move into #651, after R5f1 (no
+  chain grows, #611 being after #609), v2b-3 keeping the forms and transfer; R5f1 places #599's REASONING_REUSE.md
+  additions (q128); #651's brief gains review 650's 3;
   #725's Decided lines mailed to #609, #540, #613,
   #699, #701, #611 and #542.
-- **Unhandled at plan-95's end**: (1) #600's `Reviews:` line names `r5e`: rewrite it to 599 (as #650's was,
-  `.build/plans/plan-95/b650.md`), else #599's merge round is not reviewed; (2) #728 landed (`63647433`), its review's
-  follow-ups: 1 a tools task (`tools/proof_diagnostics.py` and `tools/proof_contexts.py` opening a finished session
-  database the way `tools/proof_timings.py` now does, reusing its `read_only` and `checked_sources`), 2 the checking
-  lines' costs — 3.3 s and 11.0 s of #693's check (review 660's 2 answered: mail #542, #547 and #399), 3 a `--theory`
-  run retaining only its rows, and #728's two identical 5.36 MB timings files retired.
-- **What the next events ask**: #727's proposal, to be placed (R5f1, R5f2, #651's division); #726's landing before
+- **#599's merge round** (q128, plan-96): both branches changed `Factor_Commitment_Controls`' THEORY_MAP.md row and
+  `bring-main` was refused (Q13's gap, `PLANNING_LOG.md`); answered by the #165 pattern — the narrowed-socket control
+  into a controls theory of its own, `Factor_Commitment_Controls` and its row back to the branch point, its
+  REASONING_REUSE.md additions in `.build/tasks/599/rows.md` for R5f1; its review #600 rewritten (`Reviews: 599`, the
+  round's scope; the production and the search are R5f1's and R5f2's). #728's review: 1 and 3 the tools fix continuing
+  #728, 2 mailed to #542, #547 and #399.
+- **What the next events ask**: #727's revised proposal, to be placed (R5f1, R5f2, v2b-3, #651's brief rewritten); #599's merge round and its re-review
+  #600; #726's landing before
   #681 and #609 (review 604's follow-ups; #605, #679, #681 and #609 told the dead free socket's pattern); review 604's
   low moves (2's bag class, 4, 6) with #601's bag transports wait for the next low-moves batch (next-edits 274); review
   608's first verdict's follow-ups 1–5 are held by no file (the review file keeps the last verdict only), as review
@@ -629,7 +637,9 @@ planner searches for a theory before briefing a task that edits it.
   #701, #611, #542 — #725's Decided lines, #611 also its follow-up (two narrowed sockets in one clause, R5f2's control
   first); #605, #679, #681, #609 — review 604's 1 (the dead free socket), #681 and #609 also #726's view-term lemma to
   cite, #605 the socket 36 dropped by #726; #695 — review 694's 2, 3, 4 and 6; #699 — its 7; #701 — its 1; #726,
-  #542, #547, #399 — its 5 (the timings tool's fix #728).
+  #542, #547, #399 — its 5 (the timings tool's fix #728). Plan-96: #663, #611 — review 650's 4 (installed controls
+  read the committed sockets from `declarations_varied`); #724 — review 650's 1 (its `Factor_Resolution_Commitments`
+  part) and 2 (next-edits 276, 277); #542, #547, #399 — #728's review's 2 (review 660's 2 answered).
 - **The harness's gaps met by this run's tasks** are owed to the owner and listed in `PLANNING_LOG.md` (2026-09-26,
   plan-86); new ones go there.
 - **Ledger entries that can leave** (the harness's `v2.py ledger`): Q7's and Q2's questions and answers, recorded in the

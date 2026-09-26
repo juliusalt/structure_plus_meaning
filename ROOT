@@ -1677,6 +1677,7 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Finite_Filtered_Keyed_Products
     RRA_Linked_Record_Candidates
     Tree_Map_Indexes
+    Factor_Indexed_Resolution
     First_Index_Trees
     Merge_Sort_Keys
     Ordered_Member_Trees
@@ -1926,6 +1927,7 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Development_Given_Installed_Declarations
     Development_Installed_Presentations_Execution
     Development_First_Problem_Asked
+    Development_Socket_Liveness_Execution
     Development_Asked_Registrations
     Development_First_Request_Program
     Development_First_Request_Registrations

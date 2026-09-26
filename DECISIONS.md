@@ -17189,6 +17189,8 @@ siblings closed before the socket's input is ground hold those variables, outsid
 | 29.0/6, 29.0/7 | {6}, {7} | free at 32.0/0 | own outputs = [] | not committable (ground output: checks) | the same |
 | 32.0/0: 29; headed_incidence_view / identity | {2} | free at 54.0/1, 64.0/1, 79.0/1; kept at #733's | none | commits | commits |
 | 36.3/5: 6; identity / inner_right_view | {5} | nowhere (42.0/1 dropped, #726) | — | never | never at present callers |
+| 40.0/0: 39; outer_pair_view / inner_right_view (#603; row added by task 751) | {3,4} | directly at 43.0/1, 50.1/1 | 50.1/1: its input x2 = ((x5,[]),x6) (I) | commits (one premise; 39's output x4 its own) | commits |
+| 54.0/1: 32; identity / identity, carried by 53 (#603; row added by task 751) | {2,3} | directly at 56.0/2, 65.0/2, 104.0/2, 104.1/2 | none | commits (its input the head's) | commits |
 | 50.2/2, 50.2/3: 50; quotation_view / quotation_view (#607) | {3,12,13,16,17}, {4,14,15,17} | free at 55.1/1 and in 50's recursion | none | never: closed 37, 34, x7–x9, x11 | commit |
 | 55.1/1: 50; quotation_view / instantiation_view | {5,6,7} | free at 55.2/2–3, 57.0/4, 60.1/0, 65.0/3 | none (its head's used variables are []) | commits where 55 is committed | commits |
 | 55.2/2, 55.2/3: 55; instantiation_view / instantiation_view | {5,15,17,19,21,22}, {6,16,18,20,22} | as 55.1/1 | none | never: closed 37, 34, x10–x14 | commit |

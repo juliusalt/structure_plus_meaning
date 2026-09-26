@@ -53,69 +53,31 @@ through B2's recording, citing `development_citing_row_generation_certified`; th
 into the briefs #522 and #523 corrected, or recorded superseded there.
 
 **The native evaluator's open line**, in chain order (what landed is under Delivered):
-- R5d: #595 landed (Delivered); then #665's builds (#585's
-  builds (1), which the discharge line did not take; `.build/tasks/665/result.md`): the viewed record beside the old
-  #666 and the switch to the kept names #668 landed → the discharges over a view, the pair their instance:
-  the direct producer #670 and the material single solution with the parent context stated once #672 and the socket
-  kinds #674 and the test at the socket's inputs with the exchange at views #689 and the declared exchanges,
-  forms and transfer at views #676 (all landed). Carriers #597 (landed; restated from the function witness by the fix #722, review 598's 1) → R6b's parts #601 (the
-  root family) and #603 (artifacts and citations), R6c's instantiation family in three parts #607 → #679 → #681
-  (#601, #603, #607 and #679 landed; #681 also after #601, whose carriers 59 and 51 it consumes, and after the fix #726 (landed, `ef01f564`) —
-  review 604's: the view term once, the dead free sockets dropped — which runs beside #679); #676 and #597 → R5e #599
-  (narrowed sockets) → R6c's #609 (48; also after #607, #679, #726 and R5f1, which states the production field, #727 its stand-in); #725's correction (q126): the union is the
-  narrowed sockets' production, a step of R5's committed search, R3 and W4a untouched — R5f1 #734 landed (`c88d10c2`, Delivered),
-  its fix #765 (the productions at the committing socket's own views; before R5f2, F2c and #613) and R5f2 #736 (before rc #540 and V2b's (3) #738), briefed by #727, #651
-  carrying the narrowed record with R5f1's production field after R5f1; R6b's numbered carrying
-  #605 (landed) → its installed carrying #663 → R6c's carrying
-  #611 → rc's numbered forms #540 (after #676) and native form #661 → R7 #542 (the numbered course; #661 feeds its
-  native part #707) and the request at the given #547 → #399.
-- Reviews 680 (#679's) and 606 (#605's), placed by plan-96: the design #730 (61.0/4 commits at none of its callers
-  under `finite_parent_output`; R5's parent-output condition at callers that fix part of the head output, every
-  declared socket tabulated; before #681, #609, #611, #540, #542, F2c #701 and #613); the fix #731 (continuing #679:
-  the carried-socket proof once, `socket_carried_listed`, and the two instantiation theories' sockets through it, the
-  row-set bag lemma once, 32's declaration below the Factor theories; narrowed by plan-97 at its second rejection to
-  that and review 731's words) → the fix #741 (landed `feb80f30`: the root-family and
-  artifact-citation sockets through the shape, `socket_discharged_along` and `_direct` retired); the fix #732 (landed `d047f171`: one
-  transfer over the sites the obligations read, `declarations_agree_read_discharged`, with review 664's 2), then its
-  review's consolidation #753 (landed `2f4cdab1`: the one-step guard agreements once in `Development_Given_Readers`)
-  and its own review's #754 (landed `5cf263ec`: the subset and lookup agreements likewise; its review's follow-ups next-edits 285–287, given to #611); the `declarations_list` facts'
-  move into `Factor_Resolution_Commitments` given to #724;
-  #733's builds (32's kept sockets, declared by no build before): the row-value part #758 (71.0/1, 75.0/3, 505.0/4; landed `f4eff9f9`)
-  and the selection part #760 (81.0/3, 104.1/3, 105.1/2, 119.0/1) side by side, then their carrying #762 before #611.
-  Correction (10) (#730, landed `746b3321`): the socket test at the socket's frame; B1 #743 landed (`ec1f648f`, Delivered); B2a #745
-  (#630's contexts at a frame and over N; before B2b and R5f2; re-planned from its tree at its partial end), B2b #747 (forms, transfer, controls; after #732; before
-  rc #540 and #611), B3a #749 landed (`c78a8e31`, Delivered), B3b #751 (#607's and #679's frames, the liveness
-  evaluation; before #611), each with its review, placed by plan-97 from #740's proposal.
-- The clause match (#642's addition, briefed by #643; M #645, V1 #647, V3's #653, #687, #655, #688 and its control #657 landed): V2a #649 (landed, `da884904`; it followed #597 and the forms
-  #676) and V2b #651 (after #599), divided so that #605 does not wait on #599; V3, divided by plan-89 by the room its
-  relations leave, in one theory edited in turn: #653 (the general statement in `given_readers_extension`) beside #687
-  (the given's registrations complete at the rooted readers, `Development_Rooted_Registrations`), then #655 (the given's
-  installation), then #688 (the instances at the asked relation and the first request, which R7's native part #707,
-  #547 and #399 consume); the control #657's installations take about 20 s of its load, 9.6 s of it the three programs'
-  rooted closures (#715), since read from their roots (#716; Open 99).
-- The resolver at the given's size (#644's attribution and #683's addition to task 495's entry, "The resolver at the
-  given's size", both accepted), briefed by #684 (`.build/tasks/684/result.md`) and placed by plan-90: F1 #693 (R3's
-  default selection at a priority reading the commitment's tests; landed, `b69af34f`), F3 #695 (landed `a2e8ee81`; a solved ground call
-  reused; after F1 and #676, before #613; re-planned by plan-97 from its tree at its partial end, q129's course (b) at
-  a committed focus; its measurements and F5's trigger the investigation #742, accepted: F5's trigger does not hold, R7 #542 re-measures it), F2a #697 and F2a′ #713 (patterns over the shared-term table, ground nodes
-  collapsed into references, the keyed constructors; landed), F2b1 #699 and F2b2 #755 (F2b divided at q130:
-  R3's search over an indexed state keeping R3's patterns, then F2a's shared patterns over it; F2b1 ended partial and was
-  re-planned from its tree by plan-99, its measurements the investigation #764 beside F2b2) and F2c #701 (R5's
-  committed search over the shared state), the waiting fix #757 (F3's waiting rule before class (iii) and to nodes left of the goal, #742's figures; after F2b1,
-  B1 and R5f1, before R7 #542 and #613), C #703 (a found derivation checked over its graph; before
-  #542, #547 and #399), each with its review; divided from R7 the stated-leaves program's presentation #705 (landed) and 526's native course #707 (after #542, #653, #688 and #661, before #399), from #399 its controls #709
-  (after #399, before #401, #403 and #553); #542, #399, #547 and #443 rewritten from #684's corrected briefs (#542 the
-  numbered course, off #653, #661 and #688), their reviews #543 and #400 narrowed to them. #685 landed (`57e13b53`: the tuple in `Finite_Pattern_Tuples`); then #672,
-  #689 and F1 (each changes `Factor_Resolution_Commitments`, in that order). The socket fact (#683's "A
-  fact of R5's tests": 32 at 79.0/1 never commits) is settled by #686's correction (9) of task 495's entry: a socket
-  commits once the siblings resolved before it are closed with their variables among its inputs; #672 states the inputs
-  and the closed siblings beside the test, #674 (divided by plan-89) the socket kinds' readings and contexts at views
-  with the closed case, #689 the test changed, the exchange at views at it, a control and #683's section marked; #601
-  states the instance at 79.0/1 after #672, and #605 and F1 wait on #689. Off the
-  route: the committed lifting's consolidation #613, then #724 (review 677's follow-ups, words equal: the free
-  premise-only variable once beside R5's test; after F3, R5e, C and #613, each of which changes
-  `Factor_Resolution_Commitments` before it). #540's and #605's briefs were divided by #659 (#661 and #663 their
-  new parts).
+- The declarations and their carrying (#585's addition; what landed is under Delivered): R6c's third part #681 (after
+  #601, #679 and #726, whose facts it consumes) and 48's #609 (after R5e, #607, #679, #726 and R5f1's production field)
+  → R6c's carrying #611 (also after B2b #747, B3b #751, #651 and #762) → rc's numbered forms #540 (after B2b and R5f2)
+  and native form #661 (after V2b's (3) #738) → R7 #542 (the numbered course; #661 feeds its native part #707) and the
+  request at the given #547 → #399. #725's correction (q126): 48's union is the narrowed sockets' production, a step of
+  R5's committed search, R3 and W4a untouched; R5f1 #734 and its fix #765 landed; R5f2 #736 (briefed by #727) before rc
+  #540 and V2b's (3) #738; #651 carries the narrowed record with R5f1's production field.
+- Correction (10) (#730's design from reviews 680 and 606, landed `746b3321`): the socket test at the socket's frame;
+  its builds, placed by plan-97 from #740's proposal: B1 #743 and B3a #749 landed; B2a #745 (#630's contexts at a frame
+  and over N; before B2b and R5f2; re-planned from its tree), B2b #747 (forms, transfer, controls; before rc #540 and
+  #611), B3b #751 (#607's and #679's frames, the liveness evaluation; before #611). The fixes #731, #741, #732, #753 and
+  #754 landed (Delivered); #754's review's follow-ups next-edits 285–287 given to #611, the `declarations_list` facts'
+  move to #724. #733's builds (32's kept sockets, declared by no build before): #758 landed; the selection part #760,
+  then their carrying #762 before #611.
+- The clause match (#642's addition, briefed by #643): M, V1, V2a and V3 (#653, #687, #655, #688, the control #657)
+  landed (Delivered); V2b #651 and its (3) #738 remain; #688's instances are consumed by R7's native part #707, #547
+  and #399.
+- The resolver at the given's size (#683's addition to task 495's entry, from #644's attribution; briefed by #684,
+  placed by plan-90): F1, F3, F2a and F2a′ landed (Delivered); F2b1 #699 (re-planned from its tree by plan-99, its
+  measurements the investigation #764 beside F2b2) → F2b2 #755 → F2c #701 (R5's committed search over the shared
+  state) → C #703 (a found derivation checked over its graph; before #542, #547 and #399); the waiting fix #757
+  (#742's figures; after F2b1, B1 and R5f1, before R7 #542 and #613). Divided from R7 #542 (the numbered course) its
+  native part #707 (after #542, #653, #688 and #661, before #399), from #399 its controls #709 (before #401, #403 and
+  #553). Off the route: the lifting's consolidation #613, then #724 (review 677's follow-ups, words equal; after F3,
+  R5e, C and #613, each of which changes `Factor_Resolution_Commitments` before it).
 
 **Retired** on #376's and #378's entries (their tables): the decomposition line (#325–#334), N1a, N1b, N3a, N3b, N4a
 and N4b as briefed, #371, #377, the designation by locus (#169, #170), the index form's retirement (#92, #93) and the
@@ -133,7 +95,7 @@ by a task of their own (Open 100).
 
 **Shape.** No build waits on a review task. The route's longest chain runs F2b1 #699 → F2b2 #755 → F2c #701 → C #703 →
 R7 #542 → #707 → #399 → #709 → the record #553 → #447 → #449 → #450; since B1 landed, B2a #745 → B2b #747 → rc #540
-→ #542, the fix #765 → R5f2 #736 → #540, B3b #751 → #611 → #542 and #609 → #611 are one shorter, the
+→ #542, R5f2 #736 → #540, B3b #751 → #611 → #542 and #609 → #611 are one shorter, the
 carryings more — past the
 limit through splices, so nothing is added after the route's tail until it shortens (the status line gives the depths).
 The approval build (Open 142) after #407 and #447 waits for it to shorten; the controls task #718 after C (depth 10)
@@ -142,7 +104,7 @@ was placed when #668 landed.
 **Order** (the queue holds it; the planner's choice, a residual until the native answer to the selection problem
 exists, Q2): the slots are one pool, each free slot going to the first task in the queue that can start and a review
 standing where its review task stands, so every review stands right after its build. By slack on the longest chain:
-F2b1 #699, B2a #745, R5f1's fix #765, F2b2 #755, the measurement #764, F2c #701 and C #703; the
+F2b1 #699, B2a #745, F2b2 #755, the measurement #764, F2c #701 and C #703; the
 waiting fix #757; B2b #747, B3b #751 and R5f2 #736; #733's builds #758, #760 and #762; V2b #651 and its (3) #738;
 R6c's #609 and #681; rc #540 and #661; #611; R7 #542, its native part #707, #399 and its controls #709, #547; the route in its chains'
 order (#551, #549, #553, #401, #403, #443, #447, #407, #445, #449); the controls #718 after C, and the lifting's
@@ -460,7 +422,8 @@ follow-ups are in `PLANNING_LOG.md` and the earlier states (`HANDOFF-before-cond
   `Factor_Narrowed_Commitments` the committed step's production (`finite_narrowed_production` over
   `finite_socket_productions`, the value `finite_registration_production`), the sub-search from the produced state
   (`finite_produced_state`, `_invariant`, `_held`, `_confined`), the narrowed record's production field; today's search
-  at no production. Its productions restricted to the committing socket's own views by the fix #765 (review 735's 1).
+  at no production. Its productions restricted to the committing socket's own views by the fix #765 (`7357cac5`:
+  `finite_socket_productions_committed`).
 - **32's kept sockets carried by 59** (#758, `f4eff9f9`): in `Factor_Row_Value_Socket_Declarations` 71.0/1, 75.0/3 and
   505.0/4 kept and framed at their notions' systems, the list consumer stated once (70, 74 and 504 its instances),
   `family_rows_producer_at`.
@@ -614,8 +577,8 @@ planner searches for a theory before briefing a task that edits it.
 
 ## Now
 
-- **The graph's width**: the declaration builds (#609, #651, #681, #751, #760) run beside the route, which is (B2a → B2b; R5f1's
-  fix → R5f2; B3b; F2b1 → F2b2 → F2c → C) → rc #540 and #611 → R7
+- **The graph's width**: the declaration builds (#609, #651, #681, #751, #760) run beside the route, which is (B2a → B2b; B2a →
+  R5f2; B3b; F2b1 → F2b2 → F2c → C) → rc #540 and #611 → R7
   #542 → #707 → #399. Nothing is invented to fill the gaps: the low-moves batch (next-edits 274, 276, 278, 281) moves
   statements out of theories B2a–B3b, #681 and #609 edit, so it waits until they have landed.
 - **Briefs written before their theories grew** may be refused at their start (#596 was; #607 was divided by #678):
@@ -676,8 +639,7 @@ planner searches for a theory before briefing a task that edits it.
   two statements F3 restated beyond its result's list; #701 — F2b's division at q130, its search over F2b2 #755's state;
   #701, #755 — the priority parameter; #542 — F5's re-measurement (#742). Plan-99: #745 — B1's Remains
   (`finite_nodes_headed` derived from `resolution_invariant`, today's exchange its instance), the free socket's
-  containment confirmed, review 744's 4; #765 — review 744's 2 and 5's row with review 735's 1 and 2
-  (in its brief); #724 — review 744's 3 and 5's blank lines; #681, #609 —
+  containment confirmed, review 744's 4;  #724 — review 744's 3 and 5's blank lines; #681, #609 —
   B1's names; #751 — review 750's 1 (correction (10)'s table's two missing rows, added by it) and 2; #609 — review
   750's 2 (consume `socket_framed_at_carried`); #681 — review 750's 2 (its equation form in
   `Factor_Resolution_Carriers`, every use moved, the old fact retired); #755 — F2b1's measurements divided off to #764,
@@ -685,7 +647,8 @@ planner searches for a theory before briefing a task that edits it.
   imports the resolver's refinement theories); #736 — review 735's 3 (the committed search's facts read at
   `finite_produced_state`, stated once), after #765; #609 — review 735's 4 (the bridge of review 600's 2, which R5f1
   left); #724 — #745's follow-up (`finite_socket_free_framed_default` citing `finite_variant_absorbs`, moved into
-  `Factor_Resolution_Commitments`); #760 — review 759's 1 and 2; #762 — review 759's 3 and 4.
+  `Factor_Resolution_Commitments`); #760 — review 759's 1 and 2; #762 — review 759's 3 and 4; #736 — review 765's 1–3; #701 —
+  next-edits 297.
 - **The harness's gaps met by this run's tasks** are owed to the owner and listed in `PLANNING_LOG.md` (2026-09-26,
   plan-86); new ones go there.
 - **Ledger entries that can leave** (the harness's `v2.py ledger`): Q7's and Q2's questions and answers, recorded in the

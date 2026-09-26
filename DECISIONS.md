@@ -17502,6 +17502,19 @@ priority names 12 only once its input is ground. 12 then runs on a free input, 1
   native forms likewise (O2, O3). A discharge that does not generalize to an arbitrary priority is reported by its build
   with the condition it needs: a priority under which a socket kind's exchange fails is a finding, never a premise. R5's
   committed forms stand unchanged; R7 #542 and #547 call the forms at the moded selection with the given's modes.
+  [Marked by task 804 (review 803's follow-up 4): built. O2 (task 802) states the exchange at any priority
+  (`finite_commitment_exchanges_at`, the default `finite_commitment_exchanges` its instance by
+  `finite_commitment_exchanges_priority`), `finite_committed_exact_premises_select_at`, the discharges at a priority
+  (`finite_declared_commitment_exchanges_at`, `finite_narrowed_commitment_exchanges_at` and the other `_exchanges_at`
+  theorems) and the committed forms at a priority (the `_exact_at` forms of `Factor_Narrowed_Productions` and
+  `Factor_Resolution_Views`); O3 (task 804) states rc's forms at a priority — the locale `registered_commitment_at`,
+  `registered_commitment.registered_at_default` (the default forms its instances), `committed_registrations.registered_at`
+  and `committed_registered_resolution_exact_at`, `_verdict_exact_at`, `_demand_exact_at`,
+  `native_committed_registered_exact_at`, `native_committed_registrations_exact_at`,
+  `committed_registrations_relocated_at`, `native_committed_registered_relocated_at` — and the moded forms
+  (`committed_moded_resolution_exact`, `committed_moded_verdict_exact`, `committed_moded_demand_exact`,
+  `native_committed_moded_exact`, `native_committed_moded_relocated`); no discharge needed a condition at an arbitrary
+  priority.]
 - *The given's modes.* 5 (data selection, its argument (element, (list, rest))) at two views: the *row view*
   ((k,v),(l,r)), input (k,l), output (v,r) — a keyed element's key and the list in, its value and the rest out — and the
   *whole view* (e,(l,r)), input (e,l), output r. The producers of the given's record that 77's and 113's searches meet
@@ -17612,6 +17625,8 @@ answer wherever 12 has one: its input.
   (`determined_value_complete`): complete wherever the premises holding the variable, at every admissible formed
   binding, hold at a formed value only at the pattern's term there — so `finite_registration_complete` and
   `finite_construction_complete` hold of a determined registration exactly under that criterion, whoever declares one.
+  [Corrected by task 804 (review 812's follow-up 2): under that criterion, not exactly — `determined_value_unique` is
+  sufficient for completeness, not necessary: a registration can be complete without its value determined so.]
   At a head variable (a socket's production): #599's `registration_complete_at_socket`, generic in the construction,
   discharged once for every input registration by its producer's reflexivity (`input_registration_answers`, below); 12
   at 37.0/2 is its instance, and a later socket declaring an input registration consumes the same lemma with its
@@ -17652,7 +17667,11 @@ answer wherever 12 has one: its input.
   selection (q142): O2 states R5f2's narrowed exchange once at any priority, the default its instance; this
   correction's new statements are the production's discharge and its transfer, which read no selection. So the forms at
   the moded selection (O3's rc, O4's modes) are exact with the production, from O2's exchange and I2's discharge; no
-  discharge is stated at the default alone.
+  discharge is stated at the default alone. [Marked by task 804 (review 803's follow-up 4): built — O2's
+  `finite_narrowed_commitment_exchanges_at` with `finite_committed_exact_premises_select_at` and the `_exact_at` forms;
+  O3's `registered_commitment_at`, `committed_registrations.registered_at`, the `_exact_at` forms and the moded forms
+  `committed_moded_resolution_exact`, `committed_moded_verdict_exact`, `committed_moded_demand_exact`,
+  `native_committed_moded_exact`, `native_committed_moded_relocated`.]
 - *The transfer*: the value reads neither the program nor the bound, so the gap q138 names for a collection production
   (its value W2's search in the program searched) does not arise. By agreement, the production's discharge carries to
   every program whose meaning agrees at the registration's site (answers read M at 12 alone, production nothing); by
@@ -18561,7 +18580,7 @@ execution theories import the refinement theories of F2b, F2c and C.
 | F2c | [Added by task 683.] R5's committed search refined, the commitment tests read on projections at declared sites; the code equation of `finite_committed_search` | F2b | about 350K |
 | C | [Added by task 683.] The check of a found derivation over its graph by the existing graph reading, over shared terms, equivalent to the tree check of the unfolded certificate; certificates built once per node; code equations of the result forms | F3, F2c | about 330K |
 | O1 | [Added by task 787, correction (12).] Modes (`Factor_Resolution_Modes`, new, above `Factor_Resolution_Commitments`; `ROOT`, `THEORY_MAP.md`): `resolution_modes`, `finite_declared_goal`, `finite_waiting_variables`, `finite_mode_binder`, `finite_moded_priority`, `finite_moded_select`; `finite_moded_priority_none`, the selection facts at the moded selection as instances of F1's lemma, modes relocated; a control in `Factor_Mode_Controls` (new, imported by no theory): a keyed lookup beside an identity producer in small, the true call resolved at the moded selection in fewer states than at R5's default, R4's value beside | F1 (landed) | about 150K |
-| O2 | [Added by task 787, correction (12).] The exchange at any priority (`Factor_Resolution_Commitments`, `Factor_Resolution_Producer_Discharge`, `Factor_Resolution_Socket_Discharges`, `Factor_Resolution_Material_Discharge`, `Factor_Narrowed_Productions`, `Factor_Resolution_Views`): the committed sub-search's frame and placement lemmas and every discharge of the exchange stated at any priority of F1's selection in #613's `finite_exchanges_by`, the default statements their instances by name and statement; the committed forms at the moded selection as instances of #613's forms at a selection; O1's control's false call refuted there | #613 (its changes after #777's and #786's) | about 250K, divided at its brief if its relations exceed the room |
+| O2 | [Added by task 787, correction (12).] The exchange at any priority (`Factor_Resolution_Commitments`, `Factor_Resolution_Producer_Discharge`, `Factor_Resolution_Socket_Discharges`, `Factor_Resolution_Material_Discharge`, `Factor_Narrowed_Productions`, `Factor_Resolution_Views`): the committed sub-search's frame and placement lemmas and every discharge of the exchange stated at any priority of F1's selection in #613's `finite_exchanges_by`, the default statements their instances by name and statement; the committed forms at the moded selection as instances of #613's forms at a selection; O1's control's false call refuted there [Corrected by task 804 (review 801's follow-up 3): the committed forms at the moded selection and O1's control's false call refuted there are O3's, where O1 and O2 meet — `committed_moded_resolution_exact`, `committed_moded_verdict_exact`, `committed_moded_demand_exact` (`Factor_Committed_Registrations`), `native_committed_moded_exact`, `native_committed_moded_relocated` (`Factor_Native_Committed_Registrations`), `mode_control_refuted` (`Factor_Mode_Controls`); O2 states everything at an arbitrary priority and reads no mode.] | #613 (its changes after #777's and #786's) | about 250K, divided at its brief if its relations exceed the room |
 | O3 | [Added by task 787, correction (12).] rc at a priority (`Factor_Committed_Registrations`, `Factor_Native_Committed_Registrations`): rc's numbered and native forms at a priority of F1's selection, the default their instance | O2 | about 100K |
 | O4 | [Added by task 787, correction (12).] The given's modes (`Development_Given_Modes`, new, beside `Development_Given_Declarations`; `Development_Given_Modes_Execution`, new, imported by no theory): `given_modes` (5 at the row and whole views) and their relocations to the rooted readers, the asked and first request's programs and their installations (sites mapped as the records'); 77/1–2 and 113/7 at the moded selection against R5's default, outcomes and states, the next cost named | O1 (O2 for a refutation) | about 100K |
 | I1 | [Added by task 789, correction (13).] The determined value; the files it changes: `Factor_Least_Collections` (the datatype, the value, the one proof by cases, `finite_registration_value_formed`), `Factor_Least_Witness_Registrations` (the kind's case of the generic completeness contract), `Factor_Varied_Narrowed_Sockets` (`map_registration_families`'s case), `Factor_Varied_Narrowed_Transfer` (the carried values), and any proof the constructor breaks where a theory unfolds `finite_registration_value` at an abstract registration: `Determined_Value p` of `registration_families`, beside `Single_Family` and `Paired_Families`; `finite_determined_value p B` (p's term at B where every variable of p is bound and the term formed, none otherwise), `finite_determined_value_formed`, `finite_determined_value_decoded` (the decoded value is p evaluated at the decoded valuation); `finite_registration_value`'s case and `finite_registration_value_determined` (independent of the program and the bound); every proof by cases over the families gaining its case, statements kept; `map_registration_families`'s case (the pattern renamed by the binder map) with its value lemma; `determined_value_complete` (W4a's `finite_value_complete` at a determined value, once: complete wherever the premises holding the variable hold at a formed value only at the pattern's term); `determined_values_carried` (`registration_values_carried` of a determined registration) and the relocated construction's value at one | q143's answer (A), given; no edge with F2c #701 (whichever lands second extends the other's case analyses over the families) | about 60K |

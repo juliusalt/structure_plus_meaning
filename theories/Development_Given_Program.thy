@@ -258,10 +258,6 @@ lemma granted_complete_data_agreement:
     values_complete_data_agreement overlap_agreement_union[OF generation_source_system_formed
       adoption_value_system_formed source_complete_data_agreement adoption_complete_data_agreement]]])
 
-lemma additions_guard_agreement:
-  "systems_agree_on use_additions_system guard_readers_system (system_definitions use_additions_system)"
-  unfolding guard_readers_system_def
-  by (rule system_union_agree_left[OF payload_audit_system_formed readers_agreement])
 
 lemmas complete_data_guard_agreement =
   whole_agreement_transitive[OF complete_data_additions_agreement additions_guard_agreement]

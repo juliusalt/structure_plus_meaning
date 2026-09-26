@@ -19047,3 +19047,26 @@ stalls), run 1's heavy (13 % memory stalls), and the two agree at the posing wit
 gate in its own terms; the planner decides whether it is needed. One run each; no theory changed; no recipe reached.
 
 Recorded 2026-09-26 (task 583).
+
+## The committed lifting is stated once over the selection parameter, at an invariant of the searched states
+
+Task 613, from #566's review (follow-ups 2, 3, 6), after F1 #693 and F3 #695.
+
+- `finite_committed_lifting_by` (`Factor_Resolution_Commitments`) lifts `finite_committed_search_by sel κ K P` at any
+  selection and any invariant J of the searched states, under `finite_lifting_premises`: R4's selection facts (a
+  nonempty set of pending goals, none a waiting material premise), J a pattern-root invariant kept by every committed
+  successor of a selected goal, and the exchange and construction premise read at the selection and J
+  (`finite_exchanges_by`, `finite_constructions_by`, J kept at the produced, kept and constructed states). The invariant
+  is a parameter rather than the ground call's invariant with the holders invariant because the holders invariant holds
+  at no pattern root (#527's review): at the committed selection J is that pair (`finite_committed_lifting_premises`, F1's
+  `finite_resolution_select_lifts` and `finite_resolution_select_unheld` its discharge), at no commitment the pattern-root
+  invariant, so the H-over-U change #527's review proposed is not needed.
+- The conclusion (`finite_keeping_outcome`) keeps the barring and the root's value only where the search commits nothing
+  and never constructs (`finite_commits_nothing`), a condition on the commitment and the selection, not per branch: a
+  committed step's exchange chooses a new support and bars the nodes present, so neither is kept there.
+- The forms at a selection parameter (`finite_committed_resolution_by`, `_demand_by`, `native_committed_resolution_by`)
+  are exact under `finite_committed_exact_premises` (the lifting's premises for each call's invariant, holding at the
+  call's initial state); the committed forms are their instances at the committed selection.
+- R4's `finite_resolution_lifting_by` keeps its induction (the planner, q141): deriving it from the committed lifting
+  needs the committed search below Completeness, a move of Commitments' views and committed-search sections that #611,
+  #777, #779 and #701 meet; it is the follow-up task 613's result states.

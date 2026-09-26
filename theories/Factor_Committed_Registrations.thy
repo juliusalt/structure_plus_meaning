@@ -1,5 +1,5 @@
 theory Factor_Committed_Registrations
-  imports Factor_Narrowed_Productions
+  imports Factor_Narrowed_Productions Factor_Resolution_Modes
 begin
 
 section \<open>The committed resolution with complete registrations\<close>
@@ -23,7 +23,61 @@ text \<open>
   (@{thm [source] finite_complete_registrations_premise_only}): that is @{text committed_registrations}. R5's exactness is
   its instance at the empty construction; W4a's is the instance at the record declaring nothing, whose commitment is
   none and exchanges with no premise.
+
+  Every form is stated once at a priority @{text pr} of F1's selection (@{const finite_resolution_select_at}), under
+  the exchange at that priority (@{const finite_commitment_exchanges_at}, task 802): @{text registered_commitment_at}.
+  The default statements are its instances at the commitment's own priority (@{const finite_commitment_priority}),
+  by name and statement; the declared and the narrowed commitments exchange at every priority
+  (@{thm [source] finite_declared_commitment_exchanges_at}, @{thm [source] finite_narrowed_commitment_exchanges_at}),
+  so their forms hold at any priority, the moded one (@{const finite_moded_priority}, O1) among them: a mode is never
+  a premise of exactness.
 \<close>
+
+locale registered_commitment_at =
+  fixes pr :: "('a,'s::linorder,'d,'c) resolution_state \<Rightarrow> ('a,'s,'d,'c) resolution_goal \<Rightarrow> bool"
+    and \<kappa> :: "('a,'s,'d,'c) finite_witness_construction"
+    and P :: "('a,'s,'d,'c) finite_schema_system"
+    and K :: "('a,'s,'d,'c) resolution_commitment"
+  assumes formed: "finite_witness_construction_formed \<kappa>"
+    and complete: "finite_construction_complete \<kappa> P"
+    and exchanges: "finite_commitment_exchanges_at pr (\<lambda>_. False) \<kappa> K P"
+begin
+
+lemma lifts: "finite_construction_lifts (\<lambda>_. False) \<kappa> P"
+  by (rule finite_construction_complete_lifts[OF complete])
+
+lemma exact_premises: "finite_committed_exact_premises
+    (\<lambda>d t s. resolution_invariant P d t s \<and> resolution_registrations_held \<kappa> s) (finite_resolution_select_at pr \<kappa> P) \<kappa> K P"
+  by (rule finite_committed_exact_premises_select_at[OF formed exchanges lifts])
+
+theorem committed_registered_resolution_exact:
+  shows "finite_committed_resolution_by (finite_resolution_select_at pr \<kappa> P) \<kappa> K P d t n = Finite_Resolved C \<Longrightarrow>
+      (d,decode_finite_term t) \<in> positive_meaning (decode_finite_system P)"
+    and "finite_resolution_refutes (finite_committed_resolution_by (finite_resolution_select_at pr \<kappa> P) \<kappa> K P d t n) \<Longrightarrow>
+      (d,decode_finite_term t) \<notin> positive_meaning (decode_finite_system P)"
+  by (erule finite_committed_resolution_by_sound(3)) (erule finite_committed_resolution_by_refutation_exact[OF exact_premises])
+
+theorem committed_registered_verdict_exact:
+  assumes "finite_resolution_verdict (finite_committed_resolution_by (finite_resolution_select_at pr \<kappa> P) \<kappa> K P d t n) = Some b"
+  shows "b \<longleftrightarrow> (d,decode_finite_term t) \<in> positive_meaning (decode_finite_system P)"
+  by (rule finite_committed_verdict_by_exact[OF exact_premises assms])
+
+theorem committed_registered_demand_exact:
+  assumes "finite_committed_demand_by (finite_resolution_select_at pr \<kappa> P) \<kappa> K P Q n = Some A"
+  shows "schema_system_formed (decode_finite_system P)"
+    "fset A = {q\<in>fset Q. decode_finite_call_term q \<in> positive_meaning (decode_finite_system P)}"
+  using finite_committed_demand_by_exact[OF exact_premises assms] by blast+
+
+end
+
+text \<open>The declared commitment exchanges at every priority: its forms hold at any, a complete construction given.\<close>
+
+lemma registered_commitment_at_declared:
+  assumes \<kappa>: "finite_witness_construction_formed \<kappa>" and complete: "finite_construction_complete \<kappa> P"
+    and discharged: "declarations_discharged (positive_meaning (decode_finite_system P)) D corr"
+  shows "registered_commitment_at pr \<kappa> P (finite_declared_commitment D)"
+  by (rule registered_commitment_at.intro[OF \<kappa> complete finite_declared_commitment_exchanges_at[OF \<kappa> discharged
+    finite_complete_registrations_premise_only[OF complete]]])
 
 locale registered_commitment =
   fixes \<kappa> :: "('a,'s::linorder,'d,'c) finite_witness_construction"
@@ -37,6 +91,11 @@ begin
 lemma lifts: "finite_construction_lifts (\<lambda>_. False) \<kappa> P"
   by (rule finite_construction_complete_lifts[OF complete])
 
+text \<open>The default is the commitment's own priority: every form below is the instance there.\<close>
+
+lemma registered_at_default: "registered_commitment_at (finite_commitment_priority K) \<kappa> P K"
+  by (rule registered_commitment_at.intro[OF formed complete exchanges[unfolded finite_commitment_exchanges_priority]])
+
 text \<open>(1): per call, in the shape of @{thm [source] finite_program_resolution_exact}.\<close>
 
 theorem committed_registered_resolution_exact:
@@ -44,14 +103,15 @@ theorem committed_registered_resolution_exact:
       (d,decode_finite_term t) \<in> positive_meaning (decode_finite_system P)"
     and "finite_resolution_refutes (finite_committed_resolution \<kappa> K P d t n) \<Longrightarrow>
       (d,decode_finite_term t) \<notin> positive_meaning (decode_finite_system P)"
-  using finite_committed_resolution_sound(2)[of \<kappa> K P d t n C]
-    finite_committed_resolution_refutation_exact[OF formed exchanges lifts, of d t n]
-  by blast+
+  unfolding finite_committed_resolution_select
+  by (erule registered_commitment_at.committed_registered_resolution_exact(1)[OF registered_at_default])
+    (erule registered_commitment_at.committed_registered_resolution_exact(2)[OF registered_at_default])
 
 theorem committed_registered_verdict_exact:
   assumes "finite_resolution_verdict (finite_committed_resolution \<kappa> K P d t n) = Some b"
   shows "b \<longleftrightarrow> (d,decode_finite_term t) \<in> positive_meaning (decode_finite_system P)"
-  by (rule finite_committed_verdict_exact[OF formed exchanges lifts assms])
+  by (rule registered_commitment_at.committed_registered_verdict_exact[OF registered_at_default
+    assms[unfolded finite_committed_resolution_select]])
 
 text \<open>(2): at the demand, in the shape of @{thm [source] finite_program_evaluation_exact}.\<close>
 
@@ -59,7 +119,8 @@ theorem committed_registered_demand_exact:
   assumes "finite_committed_demand \<kappa> K P Q n = Some A"
   shows "schema_system_formed (decode_finite_system P)"
     "fset A = {q\<in>fset Q. decode_finite_call_term q \<in> positive_meaning (decode_finite_system P)}"
-  using finite_committed_demand_exact[OF formed exchanges lifts assms] by blast+
+  using registered_commitment_at.committed_registered_demand_exact[OF registered_at_default
+    assms[unfolded finite_committed_demand_select]] by blast+
 
 end
 
@@ -100,6 +161,21 @@ lemma registered: "registered_commitment \<kappa> P (finite_narrowed_commitment 
 
 sublocale registered_commitment \<kappa> P "finite_narrowed_commitment P m D \<Phi>"
   by (rule registered)
+
+text \<open>At a priority: the narrowed exchange holds at every one (O2), so the forms hold at any.\<close>
+
+lemma registered_at: "registered_commitment_at pr \<kappa> P (finite_narrowed_commitment P m D \<Phi>)"
+  by (rule registered_commitment_at.intro[OF formed complete
+    finite_narrowed_commitment_exchanges_at[OF formed discharged frames productions declared only]])
+
+lemmas committed_registered_resolution_exact_at =
+  registered_commitment_at.committed_registered_resolution_exact[OF registered_at]
+
+lemmas committed_registered_verdict_exact_at =
+  registered_commitment_at.committed_registered_verdict_exact[OF registered_at]
+
+lemmas committed_registered_demand_exact_at =
+  registered_commitment_at.committed_registered_demand_exact[OF registered_at]
 
 end
 
@@ -152,5 +228,52 @@ lemmas committed_registered_no_declaration_exact =
     unfolded finite_narrowed_commitment_none]
   registered_commitment.committed_registered_demand_exact[OF registered_commitment_none,
     unfolded finite_narrowed_commitment_none]
+
+section \<open>(3): the forms at the moded selection\<close>
+
+text \<open>
+  The moded selection (@{const finite_moded_select}, O1) is F1's selection at the moded priority, so its forms are
+  the forms at a priority there. The declared and the narrowed commitments exchange at every priority, so no premise
+  reads a mode: at no modes each form is the default's (@{thm [source] finite_moded_priority_none}), and a wrong mode
+  costs work, never a verdict.
+\<close>
+
+lemma registered_commitment_moded_declared:
+  assumes "finite_witness_construction_formed \<kappa>" and "finite_construction_complete \<kappa> P"
+    and "declarations_discharged (positive_meaning (decode_finite_system P)) D corr"
+  shows "registered_commitment_at (finite_moded_priority (finite_declared_commitment D) Dm M) \<kappa> P
+    (finite_declared_commitment D)"
+  by (rule registered_commitment_at_declared[OF assms])
+
+context committed_registrations
+begin
+
+lemma registered_moded:
+  "registered_commitment_at (finite_moded_priority (finite_narrowed_commitment P m D \<Phi>) Dm M) \<kappa> P
+    (finite_narrowed_commitment P m D \<Phi>)"
+  by (rule registered_at)
+
+theorem committed_moded_resolution_exact:
+  shows "finite_moded_resolution \<kappa> (finite_narrowed_commitment P m D \<Phi>) Dm M P d t n = Finite_Resolved C \<Longrightarrow>
+      (d,decode_finite_term t) \<in> positive_meaning (decode_finite_system P)"
+    and "finite_resolution_refutes (finite_moded_resolution \<kappa> (finite_narrowed_commitment P m D \<Phi>) Dm M P d t n) \<Longrightarrow>
+      (d,decode_finite_term t) \<notin> positive_meaning (decode_finite_system P)"
+  by (erule registered_commitment_at.committed_registered_resolution_exact(1)[OF registered_moded])
+    (erule registered_commitment_at.committed_registered_resolution_exact(2)[OF registered_moded])
+
+theorem committed_moded_verdict_exact:
+  assumes "finite_resolution_verdict (finite_moded_resolution \<kappa> (finite_narrowed_commitment P m D \<Phi>) Dm M P d t n) =
+    Some b"
+  shows "b \<longleftrightarrow> (d,decode_finite_term t) \<in> positive_meaning (decode_finite_system P)"
+  by (rule registered_commitment_at.committed_registered_verdict_exact[OF registered_moded assms])
+
+theorem committed_moded_demand_exact:
+  assumes "finite_committed_demand_by (finite_moded_select \<kappa> (finite_narrowed_commitment P m D \<Phi>) Dm M P) \<kappa>
+    (finite_narrowed_commitment P m D \<Phi>) P Q n = Some A"
+  shows "schema_system_formed (decode_finite_system P)"
+    "fset A = {q\<in>fset Q. decode_finite_call_term q \<in> positive_meaning (decode_finite_system P)}"
+  using registered_commitment_at.committed_registered_demand_exact[OF registered_moded assms] by blast+
+
+end
 
 end

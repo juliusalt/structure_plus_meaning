@@ -1338,6 +1338,7 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Finite_Presented_Collections
     Factor_Least_Collections
     Factor_Least_Witness_Registrations
+    Factor_Varied_Constructions
     Factor_Reader_Witness_Registrations
     Finite_Presented_Coordinates
     Finite_Presented_Structures
@@ -1862,6 +1863,7 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Native_Control_Literal_Boundary
     Native_Control_Prepared_Cause_Review
     Native_Control_Quotation_Code
+    Factor_Stated_Leaves_Program
     Development_Given_Readers
     Development_Given_Registrations
     Development_Given_Program
@@ -1903,7 +1905,9 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Development_Package_Program
     Development_Native_Package
     Development_Given_Installation
+    Development_Rooted_Registrations
     Development_Given_Extensions
+    Development_Installed_Presentations
     Development_First_Problem_Asked
     Development_Asked_Registrations
     Development_First_Request_Program

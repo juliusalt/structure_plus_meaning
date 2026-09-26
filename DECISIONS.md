@@ -16672,6 +16672,10 @@ metadata (50, 52, 55–65, 587) — and 48's class is infinite, not merely large
    function of the clause set. A ground goal equal to an ancestor on its branch is pruned. The result for a call:
    *resolved*, with its certificate; *refuted*, when no branch succeeded and none was cut by the bound; *unresolved*,
    with its diagnosis.
+   [Corrected by task 683 ("The resolver at the given's size", below): these classes come last. The selection takes
+   first a goal the search settles at once (no alternative; pruned or reusable), then a goal the declared commitment
+   would take, then a goal with one alternative (F1); and a ground call equal to the call of a node whose subtree is
+   solved is closed by that node's derivation (F3).]
 5. **Exactness, proved once.** A resolved call's certificate is checked by the existing finite proof checker
    (`Factor_Finite_Proof_Checking`, exact to `checks_schema_proof`), so the call holds by `schema_proof_sound`:
    soundness is the checker's, not re-proved. A refuted call has no derivation, by the completeness of resolution:
@@ -16985,6 +16989,81 @@ source the socket commits and keeps one answer (one certificate, R4's two); with
 is premise-only and bound, the test refuses the commitment, and both answers stay (two). Correction (7)'s three
 counterexamples are not yet controls: a later controls task takes them.]
 
+[Corrected by task 686, a design, from #683's "A fact of R5's tests" and the planner's decision that the route needs
+#585's 32 committed at 79.0/1. (9) R5c′'s narrowing (#589) asks more than the exchange needs, and it keeps a socket whose
+input a sibling binds from ever committing: a socket commits only with its input ground
+(`finite_declared_commitment_input_ground`) while every other premise and material premise of its parent clause is
+pending (`finite_siblings_pending`, `finite_children_instances`), so under any selection such a socket is searched
+plainly. At the given it is 32 at 79.0/1: 79.0 ((x0,x1),(x2,x3)) :- 37(x0,(x1,x4)), 32((x4,x2),x5), 59(x5,x6),
+78((x0,x1),x7), 51(x7,x6), 59(x7,x3), premise-only x4–x7. 32's input holds the artifact x4 that 37 returns, and its rows
+x5 are held by 59, a carrier and no consumer, so neither the socket test nor the direct test commits it, and 79's
+committed sub-search enumerates the orders of 47 root rows at a refusal (47! ≈ 2.6×10⁵⁹). What R5c′'s counterexamples
+change is a variable a resolved sibling fixed and the socket's obligation does not keep: at c(X) :- r(Z), prod(Pair X Y),
+cons(Pair Z Y), r fixes Z, which prod's obligation, keeping X alone, may change. The obligation (`socket_discharged`)
+keeps two parts of the parent's instance at every new answer — the socket premise's input (xi; a material premise's
+source) and the head's input (`head_kept` at either flag) — and a sibling holding only those is fixed by it too.
+- *The socket's inputs*: the variables of its premise's input read at the premise's view (a call premise's pi part, xi
+  at the identity view; a material premise's source) and of the head's input read at the head's view (what `head_kept`
+  keeps at either flag: ci at the identity view, the whole conclusion where it is no pair): `socket_inputs S s` at the
+  clause, `finite_socket_inputs S s` at a finite schema, equal under decoding; `socket_inputs_kept`: the instance the
+  obligation gives agrees with the old one on them (`socket_discharged`, `head_kept_input`, `evaluate_pattern_agree`).
+  The kept head's output is not among them: `head_kept` keeps it at one flag only, and the set is read by a condition
+  that reads no flag.
+- *Closed*: a premise or material premise of the parent node at key s′ is closed when nothing is pending at or under its
+  position (`resolution_pending_under st (resolution_node_position nd @ [s′]) = {||}`, R3b's): a node stands there with
+  its subtree closed, or, after F3, its ground call was reused from a solved node. ("Closed", not "settled": F1's class
+  (i) is "settled at once".)
+- *The test*: at a socket at key s of node nd, β = `finite_node_binding nd`, two conditions take the place of the three it
+  read. `finite_children_closed st nd s` replaces `finite_children_instances` in `finite_call_narrowed` and
+  `finite_material_narrowed`: every premise and material premise of nd's clause is pending as its instance under β, or —
+  at a key other than s — is closed, its instance under β ground and its variables among the socket's inputs; every
+  pending goal whose parent position is nd's is one of those instances. `finite_premise_only_inputs st nd s` replaces
+  `finite_siblings_pending ∧ finite_premise_only_free` in `finite_socket_kept` and `finite_socket_free`: every
+  premise-only variable is free (bound to its own variable, held only by nd's pending children) or is among the socket's
+  inputs with a ground binding; the sibling condition is `finite_children_closed`'s alone. The strict conditions imply
+  them (every closed disjunct unused), so every commitment the test made it still makes, and no declaration still commits
+  nothing (`finite_declared_commitment_none`); what it adds is a socket whose closed siblings hold only its inputs.
+  `finite_declared_commitment_input_ground` stands. One kind, call and material sockets alike: the condition is read by
+  both parts of the test and discharged over the one parent context.
+- *#565's premise at those states*, per state and with its statement unchanged. The parent's instance under the support is
+  true: its pending premises by the support; a closed call premise's ground instance by the subtree acceptance of the
+  node at its position (`finite_node_proof_subtree_accepted`, sound by `schema_proof_sound`; after F3, of the solved node
+  it reuses); a closed material premise's by the parent's linkage (`resolution_node_linked`, a done material premise
+  satisfied) — so the obligation applies. Its new instance agrees with the old on the socket's inputs, so every closed
+  sibling's instance, every premise-only variable among the inputs and every ground value they put into pending goals
+  keep their values; the pending siblings are the new instance's premises (`finite_parent_exchange_holds`); the variables
+  the exchange changes are the free premise-only variables, held only by the pending children, and at a free socket the
+  parent's output, held as `finite_socket_holders` says; nothing is pending under a closed sibling. So
+  `finite_exchange_context` holds as at R5c′'s states, and `finite_committed_found_supported` gives a kept state supported
+  with every node barred. #565's note (exactness resting on another branch of an earlier-resolved sibling) does not arise:
+  the only siblings resolved before the commitment are those the obligation fixes.
+- *Still refused*: R5c's sibling control and R5c′'s order control (r closed, Z not among prod's inputs {X}); #593's (ii)
+  and the premise-only control (Z constructed or bound, premise-only and not among prod's inputs); correction (7)'s three
+  (the pending children's instances, `finite_premise_only_unshared` and `finite_input_output_apart` are still checked). A
+  closed sibling with a non-ground instance (at a kept socket whose head input its caller leaves open) is refused: its
+  truth would need acceptance at every grounding of an inner node, which the subtree acceptance does not state, and no use
+  asks it.
+- *At 79.0/1*: 37's variables x0, x1, x4 are among 32's premise input (x4,x2) and 79's head input ((x0,x1),x2). Once 37 is
+  closed — committed directly, its sub-search closing its subtree, or searched plainly to its end — 32((A,r),x5) commits
+  at the free socket, 79's node the focus root wherever 79 is committed (directly at 80, 392 and 525, as a kept socket at
+  83.0/1), its siblings 59, 78, 51 and 59 pending; the obligation, carried by 59 and 51 and consumed by 78 up to w, is
+  #585's and #601's, unchanged. 32's other sockets whose input is the artifact a sibling 37 returns commit the same way
+  where that sibling holds only the head's input; 12 at 37.0/2 stays committed directly.
+- *With F1 and F3* (#683): F1's priority reads `commit_call` and `commit_material`, so a socket whose closed siblings hold
+  only its inputs is a priority goal from the state they close in, and nothing of F1 changes; a sibling holding more,
+  resolved first, still forecloses the socket (searched plainly, exact by R4), and the priority keeps the socket first
+  wherever its test holds. F3's reuse closes a ground sibling with no node at its position; the truth of its instance is
+  F3's linkage's, and F3, landing after, extends the closed-premise truth lemma to its third disjunct, its statement
+  unchanged.
+- *Weighed and not taken*: a second socket kind for a resolved input — the obligation and the exchange are the socket's,
+  only the state condition differs; 59 declared a consumer — it carries the class and is not invariant; a direct
+  commitment through carriers — #585's (b) rejected it, the socket's clause-level obligation stating that exchange; the
+  closed sibling required to be a committed producer (37) — narrower, and closedness is what the argument reads; the kept
+  head's output among the inputs — kept at one flag only.
+The builds (task 686's `result.md`): the notions, the parent context over them and the material discharge's closed case
+in #672; the socket kinds' closed case, the test's change and a control in #674; the instance at 79.0/1 in #601. No build
+is added and the chain is unchanged.]
+
 Presentation freedom makes a false call expensive: a true call is resolved at the first presentation its producer
 yields, a false one only after every presentation (n! root lists of n roots), so a refusal past a few elements reaches
 the bound and is unresolved. The commitment (R5): a site declared *functional up to a presentation class* at its
@@ -17176,6 +17255,212 @@ installed; each declaration, carrier and narrowing comes from its notion's contr
 supplies; unresolved is never refuted and never admits; #519's counterexample — a commitment refuting a true call — is
 the case each kind's control is checked against, and each control refutes a false call beside a resolved true one.
 
+### The resolver at the given's size: the selection, a solved ground call reused, the shared state and the construction once
+
+[Added by task 683, a design, from investigation #644 (`.build/tasks/644/result.md`, accepted; its figures in
+`.build/tasks/644/measurements.md`; its draft `.build/tasks/644/draft/theories/Search_Attribution.thy`, evidence and not a
+proposal): the given's readers 113 and 77, resolved by R3/R4, did not return at small environments (#636's escalation).
+#644 named the cause at its samples — branching into dead ends compounded by repetition: R3's classes take every ground
+call before the goal whose failure ends a dead alternative, so each dead branch carries and re-solves the ground goals
+pending beside it (113 at one row: 5,715 states for a successful branch of 208 levels, ground goals solved 2,060 times
+for 37 distinct) — and the cause at scale, per-step size: every node keeps its instantiated call and bindings, each step
+substitutes into all of them and the selection reads every pending goal, quadratic in the branch. This section decides
+the selection (F1), the reuse of a ground call already solved on its branch (F3), the search's state over shared subterms
+(F2), the construction's value once (F4), the check of a found derivation (#644's last follow-up) and where the
+collection's attribution (F5) stands. R7 (#542), #547 and #399 resolve 113 and 77 at the given and wait on them. The
+given's readers stay exactly as installed (Q28, task 496's entry): every fix is on the producing side, in the evaluator.]
+
+| Earlier proposal or state | Correction |
+|---|---|
+| This entry's item 4: "Selection: a ground goal first; then a goal whose free variables occur in no other pending goal …" | Those classes come last: first a goal the search settles at once (no alternative; with F3, pruned or reusable), then a goal the declared commitment would take, then a goal with one alternative (F1). |
+| Item 4: "A ground goal equal to an ancestor on its branch is pruned"; no other repetition is removed | Kept, and a ground call equal to the call of a node whose subtree is solved is closed by that node's derivation (F3). |
+| "Cost at the given's size": of the order of 10⁶ to 10⁷ steps, a second over shared ground terms | The inclusion's branch is the rows times the admission, of the order of 10⁸ at the given without F3 and of 10⁶ with it; the per-step cost is F2's (estimates below; R7 measures). |
+| #644's follow-ups: F2 and F4 refinements needing no decision; the checker over shared terms after F2 | Their boundaries are fixed here; F4 is a field of F2's state; the check is made on the found state's derivation graph by the existing graph reading, which F3 makes necessary. |
+
+**What the clauses show at the given's size.** An artifact lookup (37, `artifact_lookup_schema`) admits the complete
+environment at its socket 0 — 26 at the environment — before it selects the row; an environment inclusion (113,
+`environment_inclusion_schema`) admits both environments and includes the artifact rows through 112, which looks each row
+up in the other environment through 37. One inclusion therefore admits the other environment once per row, each time the
+same ground call. #644's figures show the growth: under its draft selection 113 resolves at one row at depth 207 with 144
+ground solves of 35 distinct, and at two rows at a depth between 800 and 1,200 with 585 solves of 67 distinct, where a
+branch linear in the data would be about twice one row's. At the given — 252 definitions with a row each at least, 28,729
+addresses, #644's 20 to 30 steps per address — one admission is of the order of 7×10⁵ steps and the inclusion's branch of
+the order of 10⁸ (the rows times the admission); with each distinct ground call solved once per branch, of the order of
+10⁶. 77's closure check (76) reads every member's definition through the same lookups. These are estimates from #644's
+rate; the builds measure the samples and R7 the given.
+
+**F1 — the selection.**
+1. *R3's default changes; no consumer names a selection.* Every consumer already calls a default — R3's search and
+   `finite_program_resolution`, W2's queries (`finite_query_search`), R5's committed search (`finite_committed_search`)
+   and its forms, and through them R7, #547 and #399 — so the selection reaches them all as they stand. The rebuild is the
+   resolver's line, the 16 theories that import `Factor_Program_Resolution`; rebuild cost is no reason for a second
+   selection beside the one every consumer should take.
+2. *One selection, a priority its parameter.* Constructions first and held goals never, as R3's. Among the other pending
+   goals that are calls or solvable material goals (the candidates), in order: (i) a goal the search settles at once —
+   no alternative, or (with F3) pruned or reusable; (ii) a goal the priority names; (iii) a goal with one alternative;
+   (iv) R3's classes over the candidates (`finite_goal_selection`: ground, independent, solvable material, leaf), where
+   (with F3) a ground call equal to one in progress waits while another candidate stands. Within a class the least
+   position, as R3's: positions order which goal is worked first, never which alternative is kept. R3's default is the
+   selection at the empty priority. R5's default (`finite_committed_search`) is the selection at the commitment's own
+   tests: a goal `commit_call K` or `commit_material K` accepts on the focused state, at no focus or with its parent's
+   position as the focus, evaluated only at goals whose site or parent clause a declaration names. Every goal
+   `finite_committed_goal_outcome` would commit is among them, the tests reading the focus through `finite_focus_pending`
+   and the free socket at its parent's position. At `no_commitment` the priority is empty, so
+   `finite_committed_search_by_plain` stands.
+3. *Alternatives from unifiers only.* `finite_goal_alternatives P g` (the name the builder's): at a call goal the number
+   of interface-and-clause pairs of its site whose renamed interface and head unify with its pattern (R2's unifier; the
+   state is not substituted); at a solvable material goal the number of R1's solutions whose instance pairs unify. It is a
+   function of the program and the goal, so it changes only where a step binds the goal's variables, and its cache is
+   F2's. Its contract: none exactly when `finite_goal_successors P st g` is empty; one gives one successor. It does not
+   count distinct successor states — two solutions of a material goal whose variables occur nowhere else give one state
+   — which no class needs.
+4. *Exactness.* One lemma: at every priority the selection selects a nonempty set of pending, unheld calls or solvable
+   material goals, and constructions as R3's — the premises of `finite_resolution_lifting` and
+   `finite_resolution_lifting_by`, and the facts R5's lifting reads (`finite_resolution_select_lifts`,
+   `finite_resolution_select_unheld`, `finite_resolution_select_none_construction`), restated at the selection. No
+   exactness proof is new; R4's refutation proof is re-pointed from `finite_plain_selection` to the selection at no
+   construction.
+5. *The committed choice under it.* R5's socket test commits a socket only while every other premise of its parent
+   clause is pending (`finite_siblings_pending`, correction (4)), and the direct test only while every other holder of the
+   output is a declared consumer (`finite_direct_commitment`). Without the priority, a one-alternative sibling or consumer
+   expanded first would foreclose both — site 1's one clause beside 48's union (#585's (c)) is such a consumer — as R3's
+   order foreclosed a socket where a ground or leaf-bearing sibling came first (the order control's shape). With the
+   priority a goal is committed at the first state it is committable in: a socket when its parent's clause is resolved, a
+   direct producer before its consumers are expanded; among committable goals the least position, so one commitment can
+   still end another's committability. The narrowing is unchanged, and a socket reached after a sibling is searched
+   plainly, exact by R4. The controls are evaluated again under F1: the order control's socket, committable when c's
+   clause is resolved, is predicted to commit, keep a and end at the barred cut — unresolved where R3's order resolved
+   it, never refuted. Every control keeps R4's value beside its own, and no true call becomes refuted.
+6. *Weighed.* A selection each consumer names, R3's kept: a second, dominated selection, every form twinned or given a
+   parameter. Counting successor states: the state substituted per alternative, the cost #644 measured. The priority
+   before (i): a goal with no alternative ends its branch at no cost. The priority's coverage made a theorem: exactness
+   does not rest on it, and the views line's tests would carry its proof; a control shows it.
+
+**F3 — a ground call solved on its branch closes an equal call.** Kept: the repetition is what makes the given's
+inclusion quadratic, and #644's two-row depth shows its growth; deferring it would leave R7 at the order of 10⁸ steps.
+1. *The step.* A node is solved when no pending goal stands at or under its position (`finite_solved_node`, the
+   builder's name). A ground call goal equal, in site and pattern, to the call of a solved node has one successor: the
+   goal removed, nothing substituted. It stands in R3's step function (`finite_goal_successors`), so both searches take
+   it, `finite_committed_successors` through it, and `finite_committed_search_by_plain` stands. Pruning (an ancestor's
+   equal call) is checked first, as now; in R5 the barred checks come first. No clause alternative is kept beside it.
+2. *The certificate.* `finite_node_proof` takes at a premise socket the node at the socket's position or, where none
+   stands, the solved node whose call is the premise's instance (the least position among them): the certificate is the
+   unfolded derivation, its soundness the checker's as now. `resolution_node_linked` gains a third disjunct: a premise's
+   instance is the call of a solved node. The child-or-reuse relation stays acyclic — every node a solved node reaches is
+   solved, and the node whose premise is closed is not, its goal pending under it — so the certificate's fuel, the number
+   of nodes, suffices.
+3. *Exactness.* A support (`resolution_supported`, `_by`, `_at`) constrains each pending goal and node alone, so removing
+   a goal keeps a support at any focus and barred set, and keeps the root value; R4's call lifting gains the case, and R5's
+   lifting reads it through `resolution_goal_lifted_at`, `resolution_goal_step` and `resolution_registrations_goal_step`,
+   their statements unchanged. No rank is read. With R5: a reuse target may be barred, soundness being the checker's; a
+   committed call's output holds a variable, so a commitment's answer node is never closed by reuse;
+   `finite_children_instances` and `finite_siblings_pending` read pending goals, so a parent one of whose premises was
+   closed by reuse does not commit, which is never a refutation; R5c′'s frame keeps its statements but the position-keeping
+   one (`finite_committed_search_positions`), restated so that a pending call's position keeps a node, a pending call or
+   its closing by a solved node. The holders invariant is untouched: a ground goal holds no variable.
+4. *The waiting rule* (F1's (iv)). A ground call equal to a pending goal at a lesser position, or to the call of a node
+   that is not its ancestor and whose subtree is not solved, is not selected while another candidate stands, so the second
+   occurrence is closed by the first rather than solved beside it. It never empties the selection.
+5. *Weighed.* Deferring F3 to a measurement at the given: the arithmetic above decides it. Tabling of non-ground call
+   variants with answer tables (suspension and completion, SLG-style): a new search, where the measured repetition is of
+   ground calls. The reuse recorded in the state (a new field), or the solved subtree copied at the goal's position: a
+   field changes every proof that builds a state, and a copy grows the state by the unfolded size F3 removes; the
+   certificate builder finds the solved node by its call.
+
+**The check of a found derivation.** With F3 the search makes each distinct subderivation once, but the certificate is
+the unfolded tree — at the given's inclusion the rows times the admission, of the order of 10⁸ nodes — which the tree
+checker (`finite_checks_schema_proof`), run on every found certificate by `finite_program_resolution` and
+`finite_outcome_result`, would traverse, restoring the cost F3 removes. Decided: the check is made on the found state's
+derivation graph — the library's inference graph, its nodes the state's positions, a premise discharged to the node at its
+position or to the solved node that closed it — by the existing finite graph reading
+(`Factor_Executable_Readings.finite_graph_reading`, exact; `finite_closed_graph_reading_sound`), each node once and over
+F2's shared terms (#644's last follow-up, the checker over shared terms). Its acceptance at a found state is proved
+equivalent to the tree check of the unfolded certificate, so `finite_program_resolution` and the committed forms keep their
+statements and certificate values (built once per node, shared in memory), and a code equation makes the check over the
+graph. A consumer that traverses a certificate at the given's size reads its graph. Weighed: graph certificates as the
+result's type — every consumer's statements change; a later design where a consumer records the graph. No check run,
+since R3b proves the resolver's certificates accepted — rejected: item 5, soundness is the checker's, and a checker checks
+what is provided (Q28).
+
+**F2 — the search's state over shared subterms, a refinement.** The refined searches' projections equal R3's and R5's
+searches — by induction on the bound over the searches' step equations, each refined step's successors projecting to the
+abstract step's — so R4's and R5's statements are read unchanged, and the refined searches enter as code equations of
+`finite_resolution_search` and `finite_committed_search`.
+- Every ground subterm of the state's goals and nodes is held once in the shared-term table (`Shared_Term_Tables`:
+  `share_term_exact`, `share_terms_exact`; the table extended as the search makes ground terms, `share_term_preserves`),
+  so ground subterms are equal exactly when their references are (`shared_canonical_equality`). A pattern is a skeleton of
+  variables and pairs whose ground subterms are references, each pair caching its variable set; unification descends a
+  reference through its view (`shared_view_decode`) and builds through the canonical constructors (`shared_leaf_exact`,
+  `shared_pair_exact`), equal to R2's unifier over the projection. This is the missing use at the resolver of
+  REASONING_REUSE.md's row "A term over the shared subterms of a family of terms", with its table extended as the
+  traversal constructs, which that row records as not done at B6.
+- Substitution stops at a subterm none of whose variables the unifier binds; an index from each free variable to the goals
+  and nodes holding it (an instance of `Carrier_Indexes`) makes a step visit only the holders of the variables its unifier
+  binds; ground nodes and ground goals are kept apart and never substituted.
+- Per goal: its alternatives (F1), groundness, leaf, independence (from the holder index), and whether it is pruned or
+  reusable (F3, from an index of ancestors' and solved nodes' calls by site and reference), so the selection reads class
+  sets kept as steps change them.
+- The projection decodes references and forgets caches; the refined state built from an abstract one projects back to
+  it; the refined state's formation — its table formed, its references canonical, every cache equal to what it caches — is
+  established by its constructors and kept by every refined step, never checked again (REASONING_REUSE.md, "A check made
+  where its premise is established").
+- R5's committed search refined reads the commitment tests on projections, only at goals whose site or parent clause a
+  declaration names.
+- Target (#644): 77/1, its bound handed in, linear in its bound.
+- Weighed: R3's state type changed to the shared form — every statement of R3b, R4, R5 and W2 reads the state, and the
+  refinement transfers them by one projection theorem; a sharing notion of its own for patterns with variables — the size
+  is in the ground subterms (environment values), and the skeletons are clause-sized.
+
+**F4 — the construction's value once.** `finite_registered_value κ P nd a` is read by the selection at every state while
+its registration is ready, and again by the construction step for each variable (#644: at 77/1 the collection recomputed
+at every selection, +1.11 s of 1.05). Its arguments — the site, the schema, the node's ground bindings, the variable — are
+fixed once the registration is ready, so F2's state keeps the value beside the node, computed once on its branch and read
+by the selection and the step; every kept value equals `finite_registered_value κ P nd a`. A field of F2's state, not a
+theory of its own.
+
+**F5 — the collection.** W2's queries resolve with R3's default (`finite_query_search`), so F1 and F3 reach them
+unchanged. What remains is repetition across queries — a step query at every element (82 at a definition, which reads it
+through 37 and admits the environment again), each a search of its own that F3's reuse on one branch does not reach.
+Placed as a measurement: F1's and F3's builds count the collection's queries at 77/1–3 by site and bound (#644 found None
+at bounds 40 and 80). The course, if that repetition dominates: F3's reuse extended to a table of solved ground calls with
+their certificates, carried by the collection from query to query, a table entry closing a goal as a solved node does —
+designed when measured.
+
+**A fact of R5's tests, for the planner.** A socket commits only with its input ground
+(`finite_declared_commitment_input_ground`) while every sibling is pending, so a socket whose input a sibling binds never
+commits, under any selection. #585's table plans such sockets: 12 at 37.0/2 (its input the artifact 5 selects) and 32 at
+79.0/1 (its input the artifact 37 returns). 12 is committed directly in 37's focus, where no other pending goal holds its
+output; 32's rows are held there by 59, a carrier and not a consumer, so neither test commits it, and 79's committed
+sub-search would enumerate its rows. Whether the views line needs a narrowing that admits a resolved sibling holding only
+the socket's input is the planner's; this section decides nothing of #585's.
+
+**What the builds must respect**, beyond the entry's:
+- The given's readers exactly as installed; every fix in the evaluator; no library theory on the route evaluates or
+  imports a refinement collection.
+- A result depends on the program's clauses, the call, the registrations, the declarations and the bound: F1 reads
+  alternatives from the clause set and positions only to break ties; F3 reads the state's solved nodes and compares
+  ground calls for equality.
+- Unresolved never refutes and never admits; F1 and F3 change which branches are explored, never a verdict's exactness;
+  every control keeps R4's value beside its own.
+- F2, F4 and the check over the graph change no statement: code equations proved equal on every input, in refinement
+  theories the route's executions import.
+- Nothing reads the bootstrap loop's datatypes, rows, loci or keys; payloads stay inert but where R1 reads addresses; no
+  recorded word changes.
+
+**What it relies on** (task 376's test): the selection reads a goal's alternatives from the clause set, its groundness and
+where its variables occur, and positions to break ties, as R3's does; the priority reads the declared commitment's own
+tests; the reuse compares ground calls for equality and reads which positions hold pending goals; the shared state
+compares ground subterms by reference, which `shared_canonical_equality` makes their equality; the check is the existing
+graph reading.
+
+**The builds**: rows F1, F3, F2a, F2b, F2c and C of this entry's table; each build's theories, contracts, size and
+measurements are in `.build/tasks/683/result.md`. The order: F1 first, F2a beside it; F3 after F1; F2b after F3 and F2a;
+F2c after F2b; C after F3 and F2c. R7 (#542), #547 and #399 wait on C beside the views line; the controls task (#636's four
+remaining controls, correction (7)'s three) follows C. The consumers' forms are unchanged: they call the defaults, and their
+execution theories import the refinement theories of F2b, F2c and C.
+
+[Recorded 2026-09-26 (task 683's decision; a design, no theory changes).]
+
 ### What of the counterpart line stays
 
 | Piece | Standing | Role and reason |
@@ -17203,6 +17488,12 @@ the case each kind's control is checked against, and each control refutes a fals
 | R6c | [Added by task 585.] The instantiation family's declarations (50, 52, 55–65, 69, 72, 587; the carriers 46, 63, 55 at its scope, 584 and 586) and 48's (the registration at 48.0, the narrowed sockets at its eight uses), carried by the same transfer; the control (a pattern whose slots are unioned, a false call refuted) | R5e, R6b | about 220K |
 | R7 | The given at the guard's calls: 113, 80, 392 and 525 at the given as its own candidate, 505 and 590 at one of its definitions; the unresolved goals recorded (the least witnesses expected); seconds measured, E1's composition compared; the performance channel for a call past a held run | R4, R6 | about 150K |
 | R8 | The counterparts retired: the readers moved to their home, `Development_Native_State` re-cited, the counterpart theories removed with their rows and ROOT entries, REASONING_REUSE.md's rows re-cited; #487's remainder with it | after #483 | about 150K |
+| F1 | [Added by task 683.] The selection (`Factor_Program_Resolution`): the alternatives from unifiers, the classes, a priority parameter, R3's default at the empty priority and R5's (`finite_committed_search`) at the commitment's tests; the lemma meeting the lifting's premises, R4's, R3b's and R5's selection facts restated; the controls evaluated again; #644's fixtures and the collection's queries measured | #644 | about 360K with its relations |
+| F3 | [Added by task 683.] A solved ground call reused: the step in `finite_goal_successors`, the certificate through solved nodes, `resolution_node_linked`'s third disjunct and acyclicity (R3b), the lifting's case (R4), R5's position-keeping frame lemma, the waiting rule and reuse class in the selection; a reuse control; the samples' depths measured | F1 | about 420K |
+| F2a | [Added by task 683.] Patterns over the shared-term table: skeletons with references and cached variable sets, substitution stopping at subterms whose variables are unbound, unification equal to R2's over the projection, the table extended as ground terms are made | R2, `Shared_Term_Tables` | about 250K |
+| F2b | [Added by task 683.] The refined state and R3's refined search: the holder index, ground goals and nodes apart, the class caches, F4's values, formation established by the constructors, the projection theorem, the code equation of `finite_resolution_search` | F3, F2a | about 380K |
+| F2c | [Added by task 683.] R5's committed search refined, the commitment tests read on projections at declared sites; the code equation of `finite_committed_search` | F2b | about 350K |
+| C | [Added by task 683.] The check of a found derivation over its graph by the existing graph reading, over shared terms, equivalent to the tree check of the unfolded certificate; certificates built once per node; code equations of the result forms | F3, F2c | about 330K |
 
 R1 and R2 are independent of each other; R3 follows both, R4 R3, R5 R4, R6 R5; R7 follows R4 and R6 [corrected by task 585: R5c follows R5b (#565), R5d R5c and R6, R5e R5d, R6b R5d, R6c
 R5e and R6b; rc (#540) follows R5e; R7 and #547 follow R6c]. R8 is independent of
@@ -17253,6 +17544,10 @@ no deeper than a clause's head, that is 10 to 100 seconds a goal, the doubled bo
 counterparts took 0.26 s (113), 0.69 s (80) and 38.3 s (525 over 252 definitions): the resolving evaluator is expected
 slower by one to two orders of magnitude on the reading goals. A criticism sample at the given's term is a call of the
 same size. These are estimates; a demand past a held run's three minutes goes to the performance channel (R7).
+[Corrected by task 683 ("The resolver at the given's size", below): an artifact lookup admits the whole environment and
+an inclusion looks up every row, so without reuse the inclusion's branch at the given is the rows times the admission,
+of the order of 10⁸ steps; with each distinct ground call solved once per branch (F3), of the order of 10⁶; the per-step
+cost is F2's. Estimates; the builds measure the samples and R7 the given.]
 
 ### What the builds must respect
 

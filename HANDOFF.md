@@ -53,8 +53,7 @@ through B2's recording, citing `development_citing_row_generation_certified`; th
 into the briefs #522 and #523 corrected, or recorded superseded there.
 
 **The native evaluator's open line**, in chain order (what landed is under Delivered):
-- R5d: #595, narrowed by q122 (plan-86, `.build/plans/plan-86/q122.md`) to the view vocabulary in
-  `Factor_Resolution_Commitments`, the transfer and the forms at the record as it stands; then #665's builds (#585's
+- R5d: #595 landed (Delivered); then #665's builds (#585's
   builds (1), which the discharge line did not take; `.build/tasks/665/result.md`): the viewed record beside the old
   #666 → the switch to the kept names, every use migrated #668 → the discharges over a view, the pair their instance:
   the direct producer #670 beside the material single solution with the parent context stated once #672 → the socket
@@ -63,15 +62,31 @@ into the briefs #522 and #523 corrected, or recorded superseded there.
   (#678's division; #681 also after #601, whose carriers 59 and 51 it consumes); #676 and #597 → R5e #599 (narrowed
   sockets) → R6c's #609 (48; also after #607 and #679, whose views its sockets' parents take); R6b's numbered carrying
   #605 → its installed carrying #663 → R6c's carrying
-  #611 → rc's numbered forms #540 (after #676) and native form #661 → R7 #542 and the request at the given #547 → #399.
-- The clause match (#642's addition, briefed by #643; M #645 landed): V1 #647; V2a #649 (after #597 and the forms
-  #676) and V2b #651 (after #599), divided so that #605 does not wait on #599; V3's parts #653 (the asked and request
-  installations), #655 (the given's) and #657 (the control, off the route).
-- The resolver at the given's size (#644's attribution, accepted; Now): the design #683 (F1's selection, F3's reuse of
-  a ground call solved on its branch, F2's shared state, F4, with the builds table) → the brief #684 (the fix's builds,
-  the controls task, #399 and #542 divided within a build's room, #547 and #443 corrected), the stand-in #542, #547 and
-  #399 wait on until its proposal is placed. Off the route: the committed lifting's consolidation #613. #540's and
-  #605's briefs were divided by #659 (#661 and #663 their new parts).
+  #611 → rc's numbered forms #540 (after #676) and native form #661 → R7 #542 (the numbered course; #661 feeds its
+  native part #707) and the request at the given #547 → #399.
+- The clause match (#642's addition, briefed by #643; M #645, V1 #647 and V3's general part #653 landed): V2a #649 (after #597 and the forms
+  #676) and V2b #651 (after #599), divided so that #605 does not wait on #599; V3, divided by plan-89 by the room its
+  relations leave, in one theory edited in turn: #653 (the general statement in `given_readers_extension`) beside #687
+  (the given's registrations complete at the rooted readers, `Development_Rooted_Registrations`), then #655 (the given's
+  installation), then #688 (the instances at the asked relation and the first request, which R7's native part #707,
+  #547 and #399 consume), then the control #657 (off the route).
+- The resolver at the given's size (#644's attribution and #683's addition to task 495's entry, "The resolver at the
+  given's size", both accepted), briefed by #684 (`.build/tasks/684/result.md`) and placed by plan-90: F1 #693 (R3's
+  default selection at a priority reading the commitment's tests; after #689 and #670), F3 #695 (a solved ground call
+  reused; after F1 and #676, before #613), F2a #697 (patterns over the shared-term table; at once), F2b #699 and F2c #701
+  (R3's and R5's searches over the refined shared state), C #703 (a found derivation checked over its graph; before
+  #542, #547 and #399), each with its review; divided from R7 the stated-leaves program's presentation #705 (at once,
+  before #542) and 526's native course #707 (after #542, #653, #688 and #661, before #399), from #399 its controls #709
+  (after #399, before #401, #403 and #553); #542, #399, #547 and #443 rewritten from #684's corrected briefs (#542 the
+  numbered course, off #653, #661 and #688), their reviews #543 and #400 narrowed to them. #685 after #668, then #672,
+  #689 and F1 (each changes `Factor_Resolution_Commitments`, in that order). The socket fact (#683's "A
+  fact of R5's tests": 32 at 79.0/1 never commits) is settled by #686's correction (9) of task 495's entry: a socket
+  commits once the siblings resolved before it are closed with their variables among its inputs; #672 states the inputs
+  and the closed siblings beside the test, #674 (divided by plan-89) the socket kinds' readings and contexts at views
+  with the closed case, #689 the test changed, the exchange at views at it, a control and #683's section marked; #601
+  states the instance at 79.0/1 after #672, and #605 and F1 wait on #689. Off the
+  route: the committed lifting's consolidation #613. #540's and #605's briefs were divided by #659 (#661 and #663 their
+  new parts).
 
 **Retired** on #376's and #378's entries (their tables): the decomposition line (#325–#334), N1a, N1b, N3a, N3b, N4a
 and N4b as briefed, #371, #377, the designation by locus (#169, #170), the index form's retirement (#92, #93) and the
@@ -87,19 +102,21 @@ line, a row at a locus; the decomposition's schema and library; the digit layout
 **Word changes are serialized** (Decisions): none is queued. A word change's records are re-recorded after its landing
 by a task of their own (Open 100).
 
-**Shape.** No build waits on a review task. The route's longest chain, 15 deep, runs #595 → #666 → #668 → #672 → #674
-→ #676 → #599 → #609 → #611 → R7 #542 → #399 → the record #553 → #447 → #449 → #450; through #597 it is one shorter —
-past the limit through splices, so nothing is added after #408, #446, #448, #449 or #450 until they shorten (the status
-line gives the depths). The approval build (Open 142) after #407 and #447 waits for the chain to shorten.
+**Shape.** No build waits on a review task. The route's longest chain, 19 deep, runs #666 → #668 → #685 → #672 → #674
+→ #689 → F1 #693 → F3 #695 → F2b #699 → F2c #701 → C #703 → R7 #542 → #707 → #399 → #709 → the record #553 → #447 →
+#449 → #450; #676 → #599 → #609 → #611 → #542 has one step of slack, #597's parts and the carryings more — past the
+limit through splices, so nothing is added after the route's tail until it shortens (the status line gives the depths).
+The approval build (Open 142) after #407 and #447, and the controls task (Open 150) after C, wait for it to shorten.
 
 **Order** (the queue holds it; the planner's choice, a residual until the native answer to the selection problem
 exists, Q2): the slots are one pool, each free slot going to the first task in the queue that can start and a review
 standing where its review task stands, so every review stands right after its build. By slack on the longest chain:
-#595 and #596 (and V1 #647, running); the fix's design #683 and brief #684; #665's builds on the longest chain first
-(#666, #668, #672, #670, #674, #676), then R5e #599 and R6c's #609; #597, R6c's instantiation family (#607, #679,
-#681) beside R6b's parts #601 and #603; V3's #653 and #655 in the slots the route leaves; the carryings #605 and #663
-with V2a #649 and V2b #651; rc #540 and #661; #611; R7 #542 and #547; the route in its chains' order (#399, #551,
-#549, #553, #401, #403, #443, #447, #407, #445, #449); #657 and the consolidation #613 last.
+#665's builds on the longest chain first (#666, #668, the tuple's move #685, #672, #670, #674, #689), F1 #693, #676,
+F3 #695, F2b #699, F2c #701, C #703; F2a #697 and the stated-leaves program #705 (startable at once, taking the slots
+the chain leaves); R5e #599 and R6c's #609; #597, R6c's instantiation family (#607, #679, #681) beside R6b's parts
+#601 and #603; V3's #653 and #687, then #655 and #688; the carryings #605 and #663 with V2a #649 and V2b #651; rc
+#540 and #661; #611; R7 #542, its native part #707, #399 and its controls #709, #547; the route in its chains' order
+(#551, #549, #553, #401, #403, #443, #447, #407, #445, #449); #657 and the consolidation #613 last.
 ## Decisions
 
 Taken by the planning episodes, where they are not entries of `DECISIONS.md`.
@@ -122,6 +139,11 @@ Taken by the planning episodes, where they are not entries of `DECISIONS.md`.
   clause; the least witnesses are produced on the producing side (the evaluator's witness construction, a least
   fixpoint by iteration, or the proposer) and handed in with a certificate, checked by the given's clauses and the
   finite proof checker (#496's entry, "A checker does not produce").
+- **Q29–Q32** (answered 2026-09-26 09:40): the owner switched on the one-session base (`state/one-session-base`: every
+  check the harness runs may make its base one session over HOL by #624's trigger — half the library rebuilt, or the
+  chain's modeled start past 10 s) and the retirement of the chain it supersedes (`state/retire-superseded`, pruned
+  `SUPERSEDED_GRACE` after the re-rooting). The next check re-roots (the chain's modeled start was 39 s; a whole
+  one-session base took 934 s to build, #628); from then a probe starts in about 3 s.
 - **17:50, 18:12, 18:36**: the native notion of a problem is the loop's product, not a design's; #373's design (landed
   `93cae3bb`) was accepted and then withdrawn at the owner's question, its identity resting on HOL-assigned prefixes
   and keys. **A design is judged by what its identity rests on, not by what its contract avoids.** Every distinction a
@@ -208,7 +230,11 @@ a task):
   `probe.summary.json`. An edit to a base theory is probed from the tree, the unchanged theories between it and its
   changed dependents loaded as renamed copies; such a probe loads the copies first and does not finish within 60 s, so
   a brief asking for one names the theories it loads or accepts the repository's check for the combination (#398's
-  review). A probe from a tree behind main whose base advanced is refused, naming
+  review). On a one-session base (on since the owner's answer to Q29–Q32) a probe starts in about 3 s; until the first
+  one lands, a probe on the chain base starts in about 39 s (163 sessions, 15.7 GB; #666), so above
+  `Factor_Resolution_Commitments` a second theory stacked on a first does not fit the 60 s bound and a session
+  validates such a combination by the repository's check. A probe from a tree behind main whose base advanced is
+  refused, naming
   what differs only because main advanced: `v2.py bring-main`, or `--base` at the heap the tree matches, or
   `--from-heap` for one theory; a changed theory's `export_code … checking` is blanked in the probe's copy and named
   skipped; a past base's own sources are read with `--base-sources`.
@@ -259,7 +285,9 @@ follow-ups are in `PLANNING_LOG.md` and the earlier states (`HANDOFF-before-cond
 - **The entries**: #378 (`cbf0c7e9`), #376 (`47a67cfe`), #381 (`2d97747c`), #383 (`7b23938c`), #428 (`631429e6`, the
   payload audit's reliances), #460 (`584c3a76`, its decision withdrawn by Q27), #482 (`e2b239ac`), #495 (`3e8049be`,
   with the plan's record of Q27; #585's addition), #496 (`e9c4b54b`, with the plan's record of Q28; #642's addition
-  `6bb79246`); #481's attribution of the recording (`.build/tasks/481/result.md`).
+  `6bb79246`); #481's attribution of the recording (`.build/tasks/481/result.md`); #683's addition to task 495's entry
+  (the resolver at the given's size) from #644's attribution (`.build/tasks/644/result.md`); #686's correction (9) of
+  task 495's entry (R5's socket test read at the socket's inputs, `.build/tasks/686/result.md`).
 - **The development package**: `Development_Package_Program.package_program` (#340; a landing that changes one of its
   six programs derives it again, Q18 (c)), the closed package `development_package_environment` (#342); its generic
   content beside its notions (#426).
@@ -316,6 +344,11 @@ follow-ups are in `PLANNING_LOG.md` and the earlier states (`HANDOFF-before-cond
   (the resolver's controls, `premise_only_control`, W4b's `given_registration_controls`); R6
   `Development_Given_Declarations` (#520: 32, 6 with 5, 10, 45, their material sockets and the consumers 49 and 54,
   discharged at the notions' systems).
+- **R5d's first part** (#595, `e46ed1a6`): the view vocabulary in `Factor_Resolution_Commitments`
+  (`resolution_view_pattern`, `view_pattern_match`, `view_lookup`, `finite_pattern_tuple_variables` over the library's
+  `finite_pattern_tuple`) and `Factor_Resolution_Views` (the committed forms under discharged declarations; the
+  transfer: `declarations_relocated`, `declarations_relocated_discharged`, `declarations_agree_discharged`,
+  `finite_commitment_exchanges_relocated`, `finite_construction_lifts_relocated`); names in `.build/tasks/595/result.md`.
 - **The least witnesses** (#496's entry): W2 `Factor_Least_Collections` (#524, #567, #634), W3
   `Factor_Least_Witness_Facts` (#513, #634), W4a `Factor_Construction_Holders` and `Factor_Least_Witness_Registrations`
   (#526, #615, #634: `finite_construction_complete`, `relocated_construction_complete`, the exact forms with
@@ -326,9 +359,16 @@ follow-ups are in `PLANNING_LOG.md` and the earlier states (`HANDOFF-before-cond
   `merge_witness_registration`, nullary values built at module load, review 660's 2).
 - **The clause match** (#642's addition): M `Factor_Finite_Schema_Matching` (#645, `2139dfe2`: `finite_schema_match`
   deciding alpha variance of two finite clauses with their binder and socket maps, `finite_schema_matched` and the
-  clause facts along it; its socket types read as linearly ordered, review 646's 1).
+  clause facts along it; its socket types read as linearly ordered, review 646's 1); V1 `Factor_Varied_Constructions`
+  (#647, `95b03407`: `finite_varied_construction`, a construction carried along the match to an alpha-variant program,
+  `varied_construction_complete` under agreeing meanings, `varied_relocated_complete` after W4a's relocation in a finite
+  mapped extension; where the placed program holds two distinct alpha-equal clauses at one site with differing values
+  the variation gives no value there — unresolved, never wrong, review 648); V3's general part #653 (`75d1aff1`,
+  `Development_Installed_Presentations`: an extension's installed package read natively through
+  `given_readers_extension`, `installed_construction` relocated and varied and complete there, `installed_entry_exact`
+  the native exact form at the installed entry).
 - **The probe's start and the base** (Q29): a probe's start is the base's chain (#623, `.build/tasks/623/result.md`);
-  the one-session base landed inert (#624); the start estimated by the chain (#625); held at the library's scale, 3.33
+  the one-session base landed inert (#624) and switched on by the owner (Q29–Q32, 2026-09-26); the start estimated by the chain (#625); held at the library's scale, 3.33
   s against 37.68 s (#628); `Factor_Resolution_Commitments`' proof time (#629).
 - **The low moves** (#618): `map_relation_values`' and `socket_sum`'s laws in `Bootstrap_Relations`,
   `map_schema_patterns`, `requested_slots`' locality, the notions' elimination rules, `native_replay_closed_meaning`.
@@ -362,12 +402,7 @@ The owner's questions, a line each (their words and the provisional choices in f
 - **Q24** #376's four choices — provisional. **Q25** #381's split of the test — provisional. **Q26** #383's three
   choices — provisional (a use leaf in the term language the owner's to choose).
 - **Q27** answered 09:48, **Q28** answered 10:44 (Decisions; #495's and #496's entries).
-- **Q29** the proof base as one heap (#623) — provisional: #624's trigger (half the library rebuilt, or the chain's
-  modeled start past 10 s), landed inert behind `INCREMENTAL_CHECK_ONE_SESSION_BASE` (`fd17a213`); its addendum Q30
-  (`prune_bases` keeping the superseded levels, the switch at the landing check the harness's) and Q31 (#628, held: a
-  one-session base of the whole library built in 934 s, a probe starting in 3.33 s against the chain's 37.68 s, 2.45
-  against 14.36 GiB); the superseded heaps' retirement, `PROBE_GB` and the probe's cap the owner's. Further evidence:
-  reviews 622 and 632, follow-up 6 (probes above `Factor_Resolution_Commitments` past their 60 s bound).
+- **Q29–Q32** answered 2026-09-26 09:40 (Decisions): the proof base as one heap is on.
 
 **To plan, in the order expected** (numbers kept from earlier states):
 
@@ -385,6 +420,9 @@ The owner's questions, a line each (their words and the provisional choices in f
 142. The owner's approval of the first answer: a build after #447 and #407, an owner record citing the admission, the
    criticism record and the verification record (`development_owner_approval`, Q23 (c)); publication after
    verification and the translation (Q18 (a), item 3). Briefed once #447 and #407 are nearer.
+150. The controls task of #684's proposal (`.build/tasks/684/brief/controls.txt`, the text after its `---` line; its
+   review's items in `brief/reviews.txt`, line `controls`): after C #703, spliced before nothing; placed once C's depth
+   is 9 or less, so that it ends a chain of 10 at most.
 148. The first answer itself: an executor given only the first request's packet (#445), answering through #401's
    command, judged by #399, criticized by #449, verified by #407 — the plan's stage 3 (Q4, provisional: no agent
    executor run yet); planned when #445 and #401 are nearer.
@@ -427,6 +465,12 @@ planner searches for a theory before briefing a task that edits it.
 
 ## Now
 
+- **#684's proposal placed** (plan-90): #693–#710 (Graph); #613 rewritten to take F1's selection lemma and restated R5
+  selection facts and F3's reuse case and restated positions as instances (after #599 and F3 #695; 195K beside 264K of
+  relations at the edit — refused at 220K —, so if its relations grow by its start it is divided there: (1) and (3),
+  then (2) and (4)); #543 and #400 narrowed to the rewritten #542 and #399. The rewritten #542 and #399 had 84K and 70K
+  of margin at proposal before rc's, V3's and the fix's theories add to their relations: a refusal at start divides
+  them again.
 - **q122 and the views builds** (plan-86, `.build/plans/plan-86/q122.md`): #585's builds (1) asked the discharge line
   for its discharges stated over a view; it took pairs, and `resolution_declarations` carries no view (191 uses in five
   theories). #595 is narrowed (its brief rewritten, its review #596 resized to its room) to the view vocabulary in
@@ -436,11 +480,11 @@ planner searches for a theory before briefing a task that edits it.
   the forms last, before #540, #599 and #649) and corrected the briefs of #540, #597, #599, #601, #603, #607, #649 and
   #661 (applied); #597's carriers go to a theory of their own above `Factor_Resolution_Commitments`. Review 632's items
   are in those briefs (the Controls row and correction (8) with #668). The reviews' sizes are those the form check
-  passed: a review refused at its start is resized to its room, as #596 was. #595 was rejected twice: review-596.2's
-  findings resolved, review 596.3 found the view vocabulary restating library content (`finite_tuple_pattern`,
-  `view_substitute_agree`, `evaluate_decoded_agree` and `evaluate_decoded_agrees`) and the two matchers repeating one
-  argument; plan-88 re-planned it with a fix round in its tree continuing its session (its brief's "Fix round"), and
-  mailed the review's other follow-ups (Mailed).
+  passed: a review refused at its start is resized to its room, as #596 was. #595 landed (`e46ed1a6`) after a fix round
+  that took review 596.3's finding (the vocabulary restating library content) by importing `Native_Collection_Programs`
+  for the tuple of patterns; of the re-review's follow-ups, that import — 382 theories of the development line added to
+  the resolution line's ancestors — is undone by the fix #685 (a move, no copy; #672 after it since #686), and the matchers' lemmas
+  once and the layout went to #666 (Mailed).
 - **#607 divided** by #678 (`.build/tasks/678/result.md`): #607 the instantiation family's first part (50, 52, 55–58),
   #679 the second (59–65), #681 the third (69, 72, 587), each with its review, a chain after #597 spliced before #611;
   #681 also waits on #601 (the carriers 59 and 51 it consumes) and #609 on #607 and #679 (its narrowed sockets'
@@ -450,25 +494,25 @@ planner searches for a theory before briefing a task that edits it.
   dead ends compounded by repetition — R3's selection defers the goal that refutes a dead alternative, so every dead
   branch re-solves the ground goals pending beside it (113 at one row: 5,715 states for a branch of 208) — and at scale
   per-step size (the state grows with the depth, quadratic in the branch); R6's declarations engage no commitment on
-  these paths. Its fixes F1–F5 go to the design #683 (continuing #644's session) and the brief #684; R7 #542, #547 and
-  #399 wait on the fix, F2 included (its second question, answered). The controls task after the fix, in #684's brief:
+  these paths. #683 decided the fix (Graph); R7 #542, #547 and #399 wait on C #703, and through it on F1, F3 and F2.
+  The controls task (Open 150), after C:
   #636's four remaining controls (77 and 113 at the package and the merge, through `given_control_verdict` and
   `merge_control_inclusions`), correction (7)'s three counterexample controls, the controls' literals onto the
   library's code (review 639's 1), the commitment test's conjuncts at the state after construction (review 632's 5),
   and review 660's 3 (`control_registrations_code [code]` dropped with its literal schemas,
   `Development_First_Request_Registrations` imported for 561's).
-- **#643's corrected briefs over a build's room**: #399 (260K beside 345K of relations) and #542 (190K beside 439K)
-  keep their earlier briefs; #684 divides them with the fix and corrects #547 and #443 where the fix changes them.
+
 - **V3's second part** (#655): the given's own installation is a closed installation, not a mapped extension; if W4a's
   relocation completeness stands only in `finite_mapped_native_extension`, #655 brings it to the planner.
 - **The graph's width**: the route is one chain — #595 → #666 → #668 → (#672 → #674, #670, #597) → #676 → R5e, R6b's
   and R6c's parts → the carryings → R7 → #399 — so between its landings little else can start; after #668 three builds
   run side by side; beside the chain run the clause-match line (#645, #647, #653, #655) and #644. Nothing is invented to
   fill the gaps.
-- **What the next events ask**: #595's landing after its fix round (its result's names, which #666–#676 cite by
-  description); the design #683's verdict and the brief #684's proposal; Q29's answer. The samples build #551 is the
-  part of #544's division nearest its room (384K at proposal): a hand-back there divides corrected item (3), the
-  planner's.
+- **What the next events ask**: #685's check (a changed recorded word would make it a word change, the planner's to
+  order); the first one-session base's landing, after which probes start in about 3 s. V3's parts, #672, #674 (with
+  #689), #601 and #613 grew or were divided against their relations:
+  a build refused at its start is divided then. The samples build #551 is the part of #544's division nearest its room
+  (384K at proposal): a hand-back there divides corrected item (3), the planner's.
 - **Mailed, read by each task's first session** (open tasks only): #540 — q110, #506's 1 and 7, q105 (the barred
   lifting over #563's), q112, review 527's 1 (the holders invariant over U at a pattern root, stated by the first that
   needs it) and 2 (the hand-in resolution over the committed form), #634's moves and W4b's division, plan-84's (the
@@ -491,7 +535,14 @@ planner searches for a theory before briefing a task that edits it.
   and 5; #649 — 646's 1, 3 and 5; #651 — 646's 1 and 5; #653, #655 — 646's 1. Plan-88: #666 — review 596.3's
   follow-ups on the pattern matcher's completeness and a declaration's hole list as data; #540, #605 — review 596.3's
   agreement transfer from P's completeness; #609 — its narrowed sockets read #607's and #679's views; #611 — its Inputs
-  the parts' results (#607, #679, #681, #609); #681 — #601's discharges of the carriers 59 and 51.
+  the parts' results (#607, #679, #681, #609); #681 — #601's discharges of the carriers 59 and 51; #666 — the
+  re-review of #595's fix round, follow-ups 2 and 3 (the matchers' lemmas once, the layout). Plan-89: #657 — review
+  648's follow-ups (the merge over alpha-equal clauses stated at the registered sites; the match's cost at every
+  construction call measured beside the read-backs) and V3's division; #605, #547 — 32 committed at 79.0/1 under #689's
+  test (#686). #684's mails are carried into its proposal's briefs and the four rewrites. Plan-90: #655 — review 654's
+  1 and 2 (`installed_entry_exact` at `(d,decode_finite_term t)`; V1's `installed_variant` and
+  `native_varied_relocated_resolution_exact` consumed, no second route); #688 — 654's 1; #657 — 654's 3 (no alpha-equal
+  clauses with differing values at 77, 392, 525 and 561's installed clauses; the match's cost #707's).
 - **The harness's gaps met by this run's tasks** are owed to the owner and listed in `PLANNING_LOG.md` (2026-09-26,
   plan-86); new ones go there.
 - **Ledger entries that can leave** (the harness's `v2.py ledger`): Q7's and Q2's questions and answers, recorded in the

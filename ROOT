@@ -1348,6 +1348,7 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Factor_Narrowed_Productions
     Factor_Varied_Constructions
     Factor_Varied_Narrowed_Sockets
+    Factor_Varied_Narrowed_Transfer
     Factor_Reader_Witness_Registrations
     Finite_Presented_Coordinates
     Finite_Presented_Structures

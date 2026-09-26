@@ -72,7 +72,8 @@ into the briefs #522 and #523 corrected, or recorded superseded there.
   move #793 after K1.
 - The given's record (R6c): #782 landed the one produced record at the rooted readers (R7's); its installed carrying
   #796 (the produced record's relocation, the generic join at its notions) → #798 (526 and 561,
-  `given_union_registration`) → #707, #547 and #399 (q144); #784, the control of 55's two-union clause, off the route.
+  `given_union_registration`) → #707, #547 and #399 (q144); #784 (review 783's 4, 5 and 8) off the route, its control
+  of 55's two-union clause moved to the brief of K1–K3, #819 (q146: past a held run until corrections (12)–(14) land).
 - Then R7 #542 (the numbered course) → its native part #707 → #399 → its controls #709 (before #401, #403 and #553);
   #547 → #443.
 - Off the route: the controls #718 (after C and RD1); #724 (review 677's follow-ups, words equal; after O2, C and RD1;

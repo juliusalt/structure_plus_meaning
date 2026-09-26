@@ -17547,6 +17547,12 @@ priority names 12 only once its input is ground. 12 then runs on a free input, 1
 - *The registration experiment's non-return at 11* (#779: bound 100, 40–47 GiB, its timeout not delivered): the design
   of (b)'s registration takes it up first, diagnosing it at 77/1 under the moded order, where 11 meets ground data; no
   other build does.
+  [Corrected by task 790 (task 496's entry, "11's premise-only target is produced by 10's own material premise"): (b)'s
+  binder is no registration. The target has a producer among the given's clauses, 10's material premise, which binds
+  its source from a read skeleton; what kept it from producing, and made 9's inversion exponential, is R1's skeleton
+  reading, in which an open part outweighs an unreadable one. The registration's non-return is the enumeration of every
+  rearrangement of the artifact's rows once its source is ground (depth 56 at 77/1, 33 at 77/2, under both orders).
+  The remedy is RD1 of task 496's builds, before R7 #542 and #547.]
 - *Weighed and not taken*: #779's naive widening (every goal holding a pending producer's input first: 5 pulled forward
   where its element is free, branching 90–102 times) — a mode's ground input is what makes a binder a lookup; a mode as a
   commitment (5 declared a producer at 37.0/1: a cut whose obligation holds only where 26 has admitted a functional
@@ -18831,6 +18837,129 @@ are in `.build/tasks/642/result.md`.
 
 [Recorded 2026-09-26 (task 642's decision; a design, no theory changes).]
 
+### 11's premise-only target is produced by 10's own material premise: the skeleton reading is corrected, and no registration is built
+
+[Added by task 790, a design, from correction (12) of task 495's entry ("Two further costs follow", (b), and "The
+registration experiment's non-return at 11") and #787's Remains (b): once 12 is committed and produced at 37.0/2, 77/1's
+search meets 11 (artifact admission) with ground data whose target, 11's premise-only variable, no goal binds; (12)
+named its binder a registration at that target, the artifact its ground data present. Evidence:
+`.build/tasks/790/draft/theories/Registration_Diagnosis.thy` (#787's draft with a guard, course (A) and course (B);
+runner `draft/spec.txt`), logs `.build/tasks/790/p1`–`p4`, shared runs with their loads in `measurements.log`.]
+
+**What 11 checks, and what holds its target.** 11's clause (`artifact_admission_schema`) is one premise, 10 at (y, x):
+x the data, y the premise-only target. 10's clause (`artifact_projection_schema`) holds y as its material premise's
+source; its call premises, 0 at (1, 5) and 9 at (1, (2, 6)), (1, (3, 7)), (1, (4, 8)), relate the observation fields 1–4,
+10's own premise-only variables, to the data's four lists 5–8. 10 holds of (w, x) exactly when w is the whole target of
+an artifact x presents (`artifact_projection_exact`), and that artifact is unique (`artifact_value_presents_unique`). So
+the target is determined by the data, and the given has its producer: the material premise, which binds its source
+from a read skeleton (`finite_material_resolution`'s Reading branch: one candidate, the artifact enumerated from it).
+
+**#779's non-return, diagnosed.**
+- The construction (#779's `sa_kappa_x`: 11's variable 1 registered, its value the whole target of the artifact
+  `finite_artifact_value_read` reads from x) fires as soon as x is ground. 10's material premise then has a ground source
+  and a skeleton not yet read, and `finite_material_resolution`'s Open_Reading branch enumerates
+  `finite_artifact_enumerations C` — every rearrangement of the artifact's four row lists — and filters it by the
+  patterns. The selection computes it at the next state, strictly: `finite_candidate_goal` asks
+  `finite_solvable_material_goal` (`finite_material_resolution M ≠ Material_Waits`), and `finite_goal_choice` counts
+  `finite_goal_alternatives` (`finite_material_alternative_set`).
+- Where: 26 (environment admission) calls 11 at each artifact row of the environment, at ground data, before 37 or 12 is
+  reached. 77/1's environment holds artifacts of 1, 5 and 18 addresses (0, 3 and 14 incidence rows, 0, 1 and 1
+  attachments). The guard meets a ground-source material goal first at depth 11 (state 12: the 1-address artifact, one
+  rearrangement) and the first above 10^6 rearrangements at depth 56 (state 57: the 18-address artifact, 18!·14! ≈
+  5.6×10^26); at 77/2 (four artifacts, up to 27 addresses and 23 incidence rows) at depth 33 (state 34: a 9-address
+  artifact, 5.2×10^8). The same depth and state under R5's default and under the moded order (#787's v = 7): 26 comes
+  before anything either order decides.
+- What grows: one successor set, factorial in the artifact's rows. Not the states (57 at the guard), and not with the
+  bound (20, 40, 60 and 100 alike): the bound counts states, and none is counted inside the call; the 10 s timeout was not
+  delivered because the time went to allocating and collecting that one list (40–47 GiB). The runs here were bounded
+  at 10–12 GiB and 300,000 states and stopped by the guard before the call.
+
+**Without the registration the check is exponential.** 10's material premise waits while its source is free and its
+skeleton open. 0 lays the carrier, one alternative a step; each 9 leaf has an address alternative (8 looks the payload
+up in the carrier rows) and a payload one, wrong where an anchor must stand. The wrong one dies only when its field is
+read, because `reading_pair` returns Open_Reading whenever either part is open: an unreadable entry beside an open tail
+reads as open. A field of n leaves carries up to 2^n branches until it is closed. 11 alone at the data of a chain
+artifact (k addresses, k − 1 incidence rows), R5's default, no construction: 45, 474 and 4,366 states at k = 1, 2, 3,
+resolved; more than 164,512 at k = 5 (15 s, bound 1000); at 77/1's 5-address artifact more than 300,000 (the cap, bound
+3000); its 18-address artifact unresolved in 25 s (18,436 states, deepest 550).
+
+**With the registration and R1 as it stands, factorial.** 11 at k = 3 is resolved in 78 states, the material goal
+enumerating 3!·2! = 12 rearrangements at each classification; at k = 8 the first classification meets 8!·7! ≈ 2.0×10^8.
+The registration does kill a wrong leaf at once — a ground source makes the material goal solvable, and one with no
+consistent candidate is taken first and fails — but pays the enumeration at every state.
+
+**The courses weighed.**
+- (A) The skeleton reading corrected: an unreadable part makes a pairing of readings unreadable whatever is still open.
+  Exact: an unreadable entry is a ground term where an anchor, an address or a formed attachment must stand, or a payload
+  or a nonempty target where a list continues; it stays unreadable under every substitution of the open parts, while
+  every solution's instance reads (its fields enumerate the source's rows); so no solution exists, and
+  `finite_material_resolution_exact` keeps its statement. The only change of value is Material_Waits to
+  Material_Solutions {} where an entry is unreadable (a ground source already gave {} there, after the enumeration).
+  With it a wrong leaf is killed when laid, and 10's material premise, its skeleton laid by 0 and the 9s, reads it and
+  binds its source: the target is produced by the given's own clause, by resolution. Prototype (v = 10, no construction):
+  11 at k = 8 resolved in 612 states, its verdict resolved with the certificate checked; at 77/1's 18-address artifact in
+  2,782 states (7.5 s); 113/7 resolved in 412 states at bound 400 (R5 today 638, the moded order 491). Taken.
+- (B) The registration kept, R1's ground-source branch refined into a generator of the rearrangements consistent with
+  what the fields hold so far (`Candidate_Generators`), the choice counting alternatives to two (it reads 0, 1 or more).
+  Prototype (v = 8): k = 8 in 358 states, the 18-address artifact in 1,394 (1.6 s). But the selection takes a solvable
+  material goal before leaf call goals (`finite_goal_selection`, its third class before its fourth), so the material goal
+  was expanded once with a field still open (tails of 7 and 14 rows), where its consistent candidates are factorial
+  again (the prototype tried two orders there, inexactly). (B) needs an order besides — a mode at 0 and 9, or a rule
+  keeping a ground-source material goal unexpanded while its fields are open — and adds a construction whose producer
+  is a HOL reader, a registration form W2 does not have. Not taken.
+- (C) A least collection of the program's own readers: the only reader answering the target from the data is 10 at
+  (e, x), whose resolution with e free is the exponential search above; and W2 presents data lists, not one term. Not
+  taken.
+- The registration beside (A): harmful. Binding the source before the fields are read puts the material goal back in
+  the ground-source branch, the enumeration. No registration or hand-in at a material premise's source is added while
+  R1 enumerates there.
+
+**The registration, as it would stand.** Value: `Finite_Target (Finite_Whole C)` with `finite_artifact_value_read x =
+Some C`, the empty artifact where it returns none. Completeness at 11's clause in W4a's form (`finite_value_complete` at
+variable 1; the premises holding it, the call premise 10 at (1, 0)): at a program where 10 means
+`artifact_projection_system`'s 10, the premise holds at some formed w exactly when w is the whole target of an artifact
+x presents (`artifact_projection_exact`); where one exists the reader returns it (`finite_artifact_value_read_exact`,
+every formed artifact having a finite representation) and it is the only one (`artifact_value_presents_unique`), so the
+premise holds at the value; where none exists it holds at no value, the value's included. The registration would
+determine, never choose. It is recorded, not built: (A) makes it unnecessary, and with R1 as it stands it is harmful.
+#789's determined value (a pattern of the clause's variables at the ground bindings, q143) cannot express it: the target
+is a function of the data, not a pattern of it; no build here edits `registration_families` or `Factor_Least_Collections`.
+
+**The given's clauses where a premise-only target is met.** From the recomputed head table
+(`.build/tasks/495/head_table.txt`): every premise-only variable held by a material premise's source or by 10 at its
+target position, or produced by one; "met" from the runs' counts at 77/1 (to depth 1,544), 77/2 (to 657) and 113/7.
+
+| Clause (variable) | Held by | At 77 | At 113 | Its producer | After this correction |
+|---|---|---|---|---|---|
+| 11/0 (1) | 10 at (1, 0) | met: 26's rows (depth 11 and 56 at 77/1, 33 at 77/2), 12's two calls in 37's clause | met in 12's clause, data ground | 10's material premise, from the skeleton 0 and the 9s lay | RD1; no registration |
+| 1/0 (2) | the material premise's source | met (9's payload leaves, 49) | met | 1's material premise, from the carrier 0 lays (its other fields the empty terminator): read today | unchanged |
+| 45/1 (0) | 10 at (0, …) and material premise 2's source | not met | not met | 10 as at 11; then premise 2 with a ground source and free fields (2, 3, 4 held by it alone): its canonical commitment where committable, else the enumeration | RD1 for 10; premise 2 R7's to attribute where met (RD2) |
+| 50/1 (7) | 40, 45 | not met | not met | 40, from the environment | unchanged |
+| 500/1 (1) | 45 | not met | not met | 45 | unchanged |
+
+**The prediction, checked.** #787's draft with v = 7 and the registration does not run at 77/1 or 77/2: the guard
+stops it at depth 56 and 33. Course (A) with v = 7's order and production (v = 11, 77's least bound handed in, no
+registration): 77/1 unresolved at bound 8,000, stopped by the 12 GiB guard at 7,936 states (deepest 1,544, 85 s; 4,994
+of the states, 63 %, 8's walk steps); 77/2 unresolved at 3,000 in 40 s (1,684 states, deepest 657, 1,507 of them inside
+37's committed sub-search, 5's walks and 2's recognition). Branching at 9 and 8 is gone (four branching 9 goals in 7,936
+states). The next cost is the abstract state's per state — about 10 ms and 1.6 MB a state at 77/1 (12.8 GB at 7,936),
+24 ms at 77/2: the committed search runs over R3's abstract state, with no committed counterpart of F2's indexed or
+shared state yet (#779's follow-up) — and after it the proof's own size, led by 8's linear lookup: 10's check walks the
+carrier rows for every address a field holds, and each artifact is admitted by 26 and again in 37's and 12's clauses.
+
+**The owner's answers to Q27 and Q28.** Kept. The evaluator constructs the target from the given's own clauses (Q27);
+the checker checks, the finite proof checker accepting a certificate whose material candidate is 10's own clause's; no
+clause of the given's readers is refined, restated or added; no registration is read; unresolved is never refuted.
+
+**What the builds must respect.** R1's statements are kept by name and statement, the reading's change proved exact once
+(its monotonicity); no registration or hand-in at a material premise's source while R1 enumerates a ground source; the
+given's readers exactly as installed; nothing reads the bootstrap loop's datatypes, and no recorded word changes.
+
+**The builds**: RD1 of the table below, before R7 #542 and #547 (77 at the given admits the environment's artifacts
+through 11); RD2 named, placed only where R7 attributes a ground-source enumeration.
+
+[Recorded 2026-09-27 (task 790's decision; a design, no theory changes).]
+
 ### What it relies on
 
 Task 376's test:
@@ -18858,6 +18987,8 @@ Task 376's test:
 | V2 | [Added by task 642.] Declarations carried by the match: `declarations_varied` at R5d's views, discharged at N; `finite_committed_variant_transfer` | M, R5d's first part (#599) | about 120K |
 | V3 | [Added by task 642.] The native inputs at the installed packages, stated once in `given_readers_extension` and once for the given's installation: the installed package's finite presentation read natively; a construction complete at the numbered program, relocated and varied, complete there; the native exact form at the installed entry; instances at the asked relation (#635's construction, 526 at `asked_entry`), the first request (#640's, 561 at `first_request_entry`) and the given (#528's, relocated by `given_readers_placement`); one control in an execution theory: the match reaches the installed clauses at 77, 392, 525 and 561, the read-back timed | V1, #635, #640, #528 | about 150K |
 | R7b | [Added by task 642.] The native course measured: 526 at the installed guard read natively, with V3's construction and the declarations #605 carries — the read-back, the match, the resolution, held seconds and demanded calls — against R7's numbered course; a call past a held run to the performance channel | V3, #605, rc (#540), R7 (#542) | about 100K |
+| RD1 | [Added by task 790.] The skeleton reading corrected (`Factor_Material_Resolution`): a pairing of readings with an unreadable part outweighing an open one; its monotonicity (an unreadable reading of a material pattern stays unreadable under every substitution, and a satisfied instance reads); `finite_material_resolution_exact`, `_sound`, `_complete` kept by name and statement, and every proof above that unfolds the skeleton's openness (`finite_canonical_solutions`, #631's discharge in `Factor_Resolution_Material_Discharge`) re-proved with its statement kept; a control in `Factor_Resolution_Controls`, one evaluation: 11 at chain artifacts of 1–8 addresses and at an 18-address artifact resolved, a false 11 call refuted | R1 (landed); O2 where #631's discharge unfolds the skeleton (the planner's order) | about 120K |
+| RD2 | [Added by task 790; not placed.] R1's ground-source branch as a generator of the rearrangements consistent with the fields (`Candidate_Generators`), the choice counting alternatives to two, with an order keeping such a goal unexpanded while its fields are open: where R7 meets a material premise whose source is bound before its fields are read (45/1's premise 2) | RD1 | about 120K |
 
 W3 can start now. W1 goes with R3, as a correction of #503 or after it. W2 follows R4 and W1; W4 follows W1–W3 and R4.
 R5 and R6 (#507) are independent of W1–W4 and bound the cost of refusals at the presentation-free readers, 79's root
@@ -18867,6 +18998,8 @@ readers; #447's entries reaching 77 wait on W4.
 [Added by task 642: M first; V1 after M; V2 after M and R5d's first part; V3 after V1, #635, #640 and #528; #605's
 installed part after V2 and V3; rc's native corollary after V1 and V2; R7b after V3, #605 and rc. #399, #547 and #447
 take the native course through V3, #605 and rc.]
+[Added by task 790: RD1 before R7 (#542) and #547, which rest on 77 at the given; RD2 only where R7 attributes a
+ground-source enumeration.]
 
 ### What the builds must respect
 

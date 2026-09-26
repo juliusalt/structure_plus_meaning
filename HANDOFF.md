@@ -467,6 +467,9 @@ What landed that open work builds on, a line each; how it went and each review's
 - **`Factor_Resolution_Commitments`' proof time** (#629, `.build/tasks/629/result.md`): 1,377 commands, 19.9 s, 41 %
   of it one `auto` at line 1733 (a one-line repair: about 8 s less per check, 6–7 s per probe loading the theory,
   made by #621); the theory from a tree costs about 11 s above a probe's 37 s start; no move of its parts.
+- **W4a2** (#615, `ca1caff8`): `Factor_Least_Witness_Registrations` extended with the four registrations of task 496's
+  item 4 over the numbered readers' sites, complete by W3's facts through the premise form, their values formed;
+  distinctness out of the forms' premises; task 496's entry marked (review 527's 3–5). Review 616's follow-ups: Now.
 
 ## Open
 
@@ -582,6 +585,17 @@ searches for a theory before briefing a task that edits it.
 
 ## Now
 
+- **Not handled at plan-82's end.** (1) #528 (W4b) came back: it needs about 140K and its 345K of relations leave 129K;
+  529, 542, 547 and 399 wait on it. Re-plan it — trim what it names, or divide it: the discharges at the three
+  programs and relocation's instance, with review 616's follow-up 2 as obligations (the finite given programs' clauses
+  at 77, 392, 525 and 561 equal `finite_schema_of` of the HOL clauses the registrations carry; the list-site hypotheses
+  discharged at element sites 390 and 523 through `context_list_profile`'s semantics), apart from the controls and
+  REASONING_REUSE.md's row; review 616's follow-up 4 (the four registrations in a theory of their own above
+  `Factor_Least_Witness_Facts`, the generic half reader-independent) may shrink those relations and is weighed with it.
+  (2) Review 616's follow-ups 1 (`closed_bound_least` and `callee_list_unsourced` into `Factor_Least_Witness_Facts`,
+  W3's two clause forms derived from it) and 3 (`finite_query_holds_equation`, `finite_family_collection_keys` into
+  `Factor_Least_Collections`): unrouted, with (1)'s division or the next edit of those theories. (3) W4a2 #615 landed
+  (`ca1caff8`); the Graph's and Order's mentions of it are stale.
 - **The committed search narrowed where it commits** (q109, plan-78, `.build/plans/plan-78/q109.md`; q110, plan-79,
   `.build/plans/plan-79/q110.md`; q112, plan-80, `.build/plans/plan-80/q112.md`; q113, plan-81, `.build/plans/plan-81/q113.md`): a
   commitment or construction the

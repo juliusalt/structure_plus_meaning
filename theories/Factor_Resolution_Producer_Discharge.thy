@@ -485,51 +485,39 @@ section \<open>The direct producer, over a view\<close>
 text \<open>
   A view reads a term as a pair of an input and an output (@{typ "factor_term \<Rightarrow> (factor_term \<times> factor_term) option"}),
   and a pattern as its two parts, whose values under every grounding are the view's of the pattern's value
-  (@{text finite_view_parts}). A producer discharged at a view has corresponding outputs at every two answers whose
-  views share the input; a consumer discharged at a view holds at two terms whose views share the input and whose
-  outputs correspond, or at neither. The context of a committed goal whose view has a ground input, whose producer is
-  so discharged and whose every other goal outside the position either holds none of the output's variables or is a
-  consumer holding the output pattern itself beside an input sharing none, follows (@{text finite_direct_context}).
-  The pair and swap views are R5's producer and its right- and left-side consumers (@{text finite_view_parts_pair},
-  @{text finite_view_parts_swap}, @{text producer_discharged_view}, @{text consumer_discharged_pair_view},
-  @{text consumer_discharged_swap_view}); R5d's views instantiate the same lemma.
+  (@{text finite_view_parts}). A producer discharged at a view with its output's one hole
+  (@{text producer_discharged_single}, #593's view discharge merged into the record's obligation) has corresponding
+  outputs at every two answers whose views share the input; a consumer discharged at a view holds at two terms whose
+  views share the input and whose outputs correspond, or at neither. The context of a committed goal whose view has a
+  ground input, whose producer is so discharged and whose every other goal outside the position either holds none of
+  the output's variables or is a consumer holding the output pattern itself beside an input sharing none, follows
+  (@{text finite_direct_context}). R5's producer and its right- and left-side consumers are the record's identity and
+  swap views (@{text view_identity_term}, @{text view_swap_term}); R5d's views instantiate the same lemma.
 \<close>
 
-definition view_producer_discharged ::
-    "('d \<times> factor_term) set \<Rightarrow> 'd \<Rightarrow> (factor_term \<Rightarrow> (factor_term \<times> factor_term) option) \<Rightarrow>
-      (factor_term \<Rightarrow> factor_term \<Rightarrow> bool) \<Rightarrow> bool" where
-  "view_producer_discharged M d view corr \<longleftrightarrow> (\<forall>a b u v v'. (d,a) \<in> M \<longrightarrow> (d,b) \<in> M \<longrightarrow>
-    view a = Some (u,v) \<longrightarrow> view b = Some (u,v') \<longrightarrow> corr v v')"
-
-definition view_consumer_discharged ::
-    "('d \<times> factor_term) set \<Rightarrow> 'd \<Rightarrow> (factor_term \<Rightarrow> (factor_term \<times> factor_term) option) \<Rightarrow>
-      (factor_term \<Rightarrow> factor_term \<Rightarrow> bool) \<Rightarrow> bool" where
-  "view_consumer_discharged M e view corr \<longleftrightarrow> (\<forall>a b u v v'. view a = Some (u,v) \<longrightarrow> view b = Some (u,v') \<longrightarrow>
-    corr v v' \<longrightarrow> ((e,a) \<in> M \<longleftrightarrow> (e,b) \<in> M))"
-
 theorem finite_direct_context:
-  fixes H :: "('a,'s,'d,'c) resolution_goal set"
-  assumes parts: "finite_view_parts view p pi po" and ground: "finite_pattern_variables pi = {||}"
-    and producer: "view_producer_discharged M e view corr"
+  fixes H :: "('a,'s,'d,'c) resolution_goal set" and V :: "nat resolution_view"
+  assumes parts: "finite_view_parts (resolution_view_term V) p pi po" and ground: "finite_pattern_variables pi = {||}"
+    and producer: "producer_discharged M e V [snd (snd V)] cs"
     and holds: "(e,decode_finite_term (resolution_value \<theta> p)) \<in> M"
     and others: "\<And>h. h \<in> H \<Longrightarrow> finite_goal_holds M \<theta> h"
     and consumers: "\<And>h. h \<in> H \<Longrightarrow> resolution_goal_variables h |\<inter>| finite_pattern_variables po = {||} \<or>
-      (\<exists>q' r' e' p' view' ci. h = Resolution_Call_Goal q' r' e' p' \<and> finite_view_parts view' p' ci po \<and>
-        finite_pattern_variables ci |\<inter>| finite_pattern_variables po = {||} \<and> view_consumer_discharged M e' view' corr)"
+      (\<exists>q' r' e' p' V' ci. h = Resolution_Call_Goal q' r' e' p' \<and> finite_view_parts (resolution_view_term V') p' ci po \<and>
+        finite_pattern_variables ci |\<inter>| finite_pattern_variables po = {||} \<and> consumer_discharged M e' V' (cs 0))"
     and new: "(e,decode_finite_term (resolution_value \<theta>2 p)) \<in> M"
   shows "\<exists>\<theta>1. (\<forall>z. z |\<in>| finite_pattern_variables p \<longrightarrow> \<theta>1 z = \<theta>2 z) \<and> (\<forall>h. h \<in> H \<longrightarrow> finite_goal_holds M \<theta>1 h)"
 proof -
   define \<theta>1 where "\<theta>1 = (\<lambda>z. if z |\<in>| finite_pattern_variables po then \<theta>2 z else \<theta> z)"
   have pv: "finite_pattern_variables p = finite_pattern_variables po"
     using parts ground unfolding finite_view_parts_def by simp
-  have v1: "view (decode_finite_term (resolution_value \<theta> p)) =
+  have v1: "resolution_view_term V (decode_finite_term (resolution_value \<theta> p)) =
       Some (decode_finite_term (resolution_value \<theta> pi),decode_finite_term (resolution_value \<theta> po))"
-    and v2: "view (decode_finite_term (resolution_value \<theta>2 p)) =
+    and v2: "resolution_view_term V (decode_finite_term (resolution_value \<theta>2 p)) =
       Some (decode_finite_term (resolution_value \<theta>2 pi),decode_finite_term (resolution_value \<theta>2 po))"
     using parts unfolding finite_view_parts_def by blast+
   have pi_eq: "resolution_value \<theta>2 pi = resolution_value \<theta> pi" by (rule resolution_value_cong) (simp add: ground)
-  have c: "corr (decode_finite_term (resolution_value \<theta> po)) (decode_finite_term (resolution_value \<theta>2 po))"
-    using producer[unfolded view_producer_discharged_def, rule_format, OF holds new v1 v2[unfolded pi_eq]] .
+  have c: "cs 0 (decode_finite_term (resolution_value \<theta> po)) (decode_finite_term (resolution_value \<theta>2 po))"
+    using producer[unfolded producer_discharged_single, rule_format, OF holds new v1 v2[unfolded pi_eq]] .
   show ?thesis
   proof (intro exI conjI allI impI)
     fix z assume "z |\<in>| finite_pattern_variables p"
@@ -543,67 +531,36 @@ proof -
         by (rule finite_goal_holds_cong) (use dis in \<open>auto simp: \<theta>1_def fset_eq_iff\<close>)
       then show ?thesis using others[OF h] by simp
     next
-      fix q' r' e' p' view' ci
-      assume hq: "h = Resolution_Call_Goal q' r' e' p'" and parts': "finite_view_parts view' p' ci po"
+      fix q' r' e' p' V' ci
+      assume hq: "h = Resolution_Call_Goal q' r' e' p'" and parts': "finite_view_parts (resolution_view_term V') p' ci po"
         and dis: "finite_pattern_variables ci |\<inter>| finite_pattern_variables po = {||}"
-        and cons: "view_consumer_discharged M e' view' corr"
-      have w1: "view' (decode_finite_term (resolution_value \<theta> p')) =
+        and cons: "consumer_discharged M e' V' (cs 0)"
+      have w1: "resolution_view_term V' (decode_finite_term (resolution_value \<theta> p')) =
           Some (decode_finite_term (resolution_value \<theta> ci),decode_finite_term (resolution_value \<theta> po))"
-        and w2: "view' (decode_finite_term (resolution_value \<theta>1 p')) =
+        and w2: "resolution_view_term V' (decode_finite_term (resolution_value \<theta>1 p')) =
           Some (decode_finite_term (resolution_value \<theta>1 ci),decode_finite_term (resolution_value \<theta>1 po))"
         using parts' unfolding finite_view_parts_def by blast+
       have ci_eq: "resolution_value \<theta>1 ci = resolution_value \<theta> ci"
         by (rule resolution_value_cong) (use dis in \<open>auto simp: \<theta>1_def fset_eq_iff\<close>)
       have po_eq: "resolution_value \<theta>1 po = resolution_value \<theta>2 po" by (rule resolution_value_cong) (simp add: \<theta>1_def)
       have iff: "(e',decode_finite_term (resolution_value \<theta> p')) \<in> M \<longleftrightarrow> (e',decode_finite_term (resolution_value \<theta>1 p')) \<in> M"
-        using cons[unfolded view_consumer_discharged_def, rule_format, OF w1 w2[unfolded ci_eq po_eq] c] .
+        using cons[unfolded consumer_discharged_def, rule_format, OF w1 w2[unfolded ci_eq po_eq] c] .
       have "(e',decode_finite_term (resolution_value \<theta> p')) \<in> M" using others[OF h] hq by (simp add: finite_goal_holds_def)
       then show ?thesis using iff hq by (simp add: finite_goal_holds_def)
     qed
   qed
 qed
 
-subsection \<open>R5's producer and consumers are the pair and swap views\<close>
-
-lemma producer_discharged_view:
-  assumes "producer_discharged M d corr"
-  shows "view_producer_discharged M d pair_view corr"
-  unfolding view_producer_discharged_def
-proof (intro allI impI)
-  fix a b u v v' assume a: "(d,a) \<in> M" and b: "(d,b) \<in> M" and va: "pair_view a = Some (u,v)"
-    and vb: "pair_view b = Some (u,v')"
-  from va vb have "a = Pair_Term u v" "b = Pair_Term u v'" by (simp_all add: pair_view_some)
-  with a b assms show "corr v v'" unfolding producer_discharged_def by blast
-qed
-
-lemma consumer_discharged_pair_view:
-  assumes "consumer_discharged M e True corr"
-  shows "view_consumer_discharged M e pair_view corr"
-  unfolding view_consumer_discharged_def
-proof (intro allI impI)
-  fix a b u v v' assume va: "pair_view a = Some (u,v)" and vb: "pair_view b = Some (u,v')" and c: "corr v v'"
-  have k: "(e,consumer_argument True u v) \<in> M \<longleftrightarrow> (e,consumer_argument True u v') \<in> M"
-    using assms c unfolding consumer_discharged_def by blast
-  from va vb have "a = Pair_Term u v" "b = Pair_Term u v'" by (simp_all add: pair_view_some)
-  then show "(e,a) \<in> M \<longleftrightarrow> (e,b) \<in> M" using k by (simp add: consumer_argument_def)
-qed
-
-lemma consumer_discharged_swap_view:
-  assumes "consumer_discharged M e False corr"
-  shows "view_consumer_discharged M e swap_view corr"
-  unfolding view_consumer_discharged_def
-proof (intro allI impI)
-  fix a b u v v' assume va: "swap_view a = Some (u,v)" and vb: "swap_view b = Some (u,v')" and c: "corr v v'"
-  have k: "(e,consumer_argument False u v) \<in> M \<longleftrightarrow> (e,consumer_argument False u v') \<in> M"
-    using assms c unfolding consumer_discharged_def by blast
-  from va vb have "a = Pair_Term v u" "b = Pair_Term v' u" by (simp_all add: swap_view_some)
-  then show "(e,a) \<in> M \<longleftrightarrow> (e,b) \<in> M" using k by (simp add: consumer_argument_def)
-qed
-
 subsection \<open>R5's direct commitment discharges the exchange\<close>
 
+text \<open>
+  At declarations of the identity and swap views (@{const pair_declarations}) the direct test is R5's
+  (@{thm [source] finite_direct_commitment_pair}), and its context is the view context at the identity view for the
+  producer and at the identity or swap view for each consumer.
+\<close>
+
 lemma finite_direct_commitment_context:
-  assumes discharged: "declarations_discharged M D corr"
+  assumes pair: "pair_declarations D" and discharged: "declarations_discharged M D corr"
     and direct: "finite_direct_commitment D F st (Resolution_Call_Goal q r e p)"
     and holds: "(e,decode_finite_term (resolution_value \<theta> p)) \<in> M"
     and others: "\<And>h. h |\<in>| finite_focus_pending F st \<Longrightarrow> h \<noteq> Resolution_Call_Goal q r e p \<Longrightarrow> finite_goal_holds M \<theta> h"
@@ -613,70 +570,74 @@ lemma finite_direct_commitment_context:
 proof -
   let ?g = "Resolution_Call_Goal q r e p"
   obtain x y where p: "p = Finite_Pattern_Pair x y"
-    using direct by (cases p) (simp_all add: finite_direct_commitment_def)
-  have prod: "e |\<in>| declared_producers D" and ground: "finite_pattern_variables x = {||}"
+    using direct by (cases p) (simp_all add: finite_direct_commitment_pair[OF pair])
+  have prod: "(e,view_identity,[view_output]) |\<in>| declared_producers D" and ground: "finite_pattern_variables x = {||}"
     and holders: "fBall (finite_focus_pending F st) (\<lambda>h. h = ?g \<or>
-      resolution_goal_variables h |\<inter>| finite_pattern_variables y = {||} \<or> finite_output_consumer D e y h)"
-    using direct unfolding p by (simp_all add: finite_direct_commitment_def)
-  have pd: "producer_discharged M e (corr e)" using discharged prod unfolding declarations_discharged_def by blast
-  have cd: "consumer_discharged M e' b (corr e)" if "(e,e',b) |\<in>| declared_consumers D" for e' b
+      resolution_goal_variables h |\<inter>| finite_pattern_variables y = {||} \<or>
+      finite_output_consumer D e [y] (finite_pattern_variables y) h)"
+    using direct unfolding p by (simp_all add: finite_direct_commitment_pair[OF pair])
+  have pd: "producer_discharged M e view_identity [view_output] (corr e)"
+    using discharged prod unfolding declarations_discharged_def by blast
+  have cd: "consumer_discharged M e' V (corr e 0)" if "(e,e',V,0) |\<in>| declared_consumers D" for e' V
     using discharged that unfolding declarations_discharged_def by blast
   define H where "H = {h. h |\<in>| finite_focus_pending F st \<and> h \<noteq> ?g}"
   have "\<exists>\<theta>1. (\<forall>z. z |\<in>| finite_pattern_variables p \<longrightarrow> \<theta>1 z = \<theta>2 z) \<and> (\<forall>h. h \<in> H \<longrightarrow> finite_goal_holds M \<theta>1 h)"
-  proof (rule finite_direct_context[where view=pair_view and pi=x and po=y and corr="corr e"])
-    show "finite_view_parts pair_view p x y" unfolding p by (rule finite_view_parts_pair)
+  proof (rule finite_direct_context[where V=view_identity and pi=x and po=y and cs="corr e"])
+    show "finite_view_parts (resolution_view_term view_identity) p x y"
+      unfolding p view_identity_term by (rule finite_view_parts_pair)
     show "finite_pattern_variables x = {||}" by (rule ground)
-    show "view_producer_discharged M e pair_view (corr e)" by (rule producer_discharged_view[OF pd])
+    show "producer_discharged M e view_identity [snd (snd view_identity)] (corr e)"
+      using pd by (simp only: view_identity_output)
     show "(e,decode_finite_term (resolution_value \<theta> p)) \<in> M" by (rule holds)
     show "finite_goal_holds M \<theta> h" if "h \<in> H" for h using others that unfolding H_def by blast
     show "(e,decode_finite_term (resolution_value \<theta>2 p)) \<in> M" by (rule new)
     show "resolution_goal_variables h |\<inter>| finite_pattern_variables y = {||} \<or>
-      (\<exists>q' r' e' p' view' ci. h = Resolution_Call_Goal q' r' e' p' \<and> finite_view_parts view' p' ci y \<and>
-        finite_pattern_variables ci |\<inter>| finite_pattern_variables y = {||} \<and> view_consumer_discharged M e' view' (corr e))"
+      (\<exists>q' r' e' p' V' ci. h = Resolution_Call_Goal q' r' e' p' \<and> finite_view_parts (resolution_view_term V') p' ci y \<and>
+        finite_pattern_variables ci |\<inter>| finite_pattern_variables y = {||} \<and> consumer_discharged M e' V' (corr e 0))"
       if h: "h \<in> H" for h
     proof -
       from h have hF: "h |\<in>| finite_focus_pending F st" and hg: "h \<noteq> ?g" unfolding H_def by simp_all
-      have "h = ?g \<or> resolution_goal_variables h |\<inter>| finite_pattern_variables y = {||} \<or> finite_output_consumer D e y h"
+      have "h = ?g \<or> resolution_goal_variables h |\<inter>| finite_pattern_variables y = {||} \<or>
+          finite_output_consumer D e [y] (finite_pattern_variables y) h"
         using holders hF by blast
-      with hg have "resolution_goal_variables h |\<inter>| finite_pattern_variables y = {||} \<or> finite_output_consumer D e y h"
+      with hg have "resolution_goal_variables h |\<inter>| finite_pattern_variables y = {||} \<or>
+          finite_output_consumer D e [y] (finite_pattern_variables y) h"
         by blast
       then show ?thesis
       proof
-        assume c: "finite_output_consumer D e y h"
+        assume c: "finite_output_consumer D e [y] (finite_pattern_variables y) h"
         obtain q' r' e' x' z where hq: "h = Resolution_Call_Goal q' r' e' (Finite_Pattern_Pair x' z)"
-          and alt: "((e,e',True) |\<in>| declared_consumers D \<and> z = y \<and>
+          and alt: "((e,e',view_identity,0) |\<in>| declared_consumers D \<and> z = y \<and>
               finite_pattern_variables x' |\<inter>| finite_pattern_variables y = {||}) \<or>
-            ((e,e',False) |\<in>| declared_consumers D \<and> x' = y \<and>
+            ((e,e',view_swap,0) |\<in>| declared_consumers D \<and> x' = y \<and>
               finite_pattern_variables z |\<inter>| finite_pattern_variables y = {||})"
-          using c by (auto simp: finite_output_consumer_def split: resolution_goal.splits finite_term_pattern.splits)
+          using c by (auto simp: finite_output_consumer_pair[OF pair] split: resolution_goal.splits finite_term_pattern.splits)
         from alt show ?thesis
         proof
-          assume a: "(e,e',True) |\<in>| declared_consumers D \<and> z = y \<and>
+          assume a: "(e,e',view_identity,0) |\<in>| declared_consumers D \<and> z = y \<and>
             finite_pattern_variables x' |\<inter>| finite_pattern_variables y = {||}"
           have zy: "z = y" using a by blast
-          have parts': "finite_view_parts pair_view (Finite_Pattern_Pair x' z) x' y"
-            unfolding zy by (rule finite_view_parts_pair)
-          have ec: "(e,e',True) |\<in>| declared_consumers D" using a by (elim conjE)
-          have cons': "view_consumer_discharged M e' pair_view (corr e)"
-            by (rule consumer_discharged_pair_view[OF cd[OF ec]])
+          have parts': "finite_view_parts (resolution_view_term view_identity) (Finite_Pattern_Pair x' z) x' y"
+            unfolding zy view_identity_term by (rule finite_view_parts_pair)
+          have ec: "(e,e',view_identity,0) |\<in>| declared_consumers D" using a by (elim conjE)
+          have cons': "consumer_discharged M e' view_identity (corr e 0)" by (rule cd[OF ec])
           have dis': "finite_pattern_variables x' |\<inter>| finite_pattern_variables y = {||}" using a by blast
           show ?thesis
             by (rule disjI2, rule exI[of _ q'], rule exI[of _ r'], rule exI[of _ e'],
-              rule exI[of _ "Finite_Pattern_Pair x' z"], rule exI[of _ pair_view], rule exI[of _ x'])
+              rule exI[of _ "Finite_Pattern_Pair x' z"], rule exI[of _ view_identity], rule exI[of _ x'])
               (intro conjI hq parts' dis' cons')
         next
-          assume a: "(e,e',False) |\<in>| declared_consumers D \<and> x' = y \<and>
+          assume a: "(e,e',view_swap,0) |\<in>| declared_consumers D \<and> x' = y \<and>
             finite_pattern_variables z |\<inter>| finite_pattern_variables y = {||}"
           have xy: "x' = y" using a by blast
-          have parts': "finite_view_parts swap_view (Finite_Pattern_Pair x' z) z y"
-            unfolding xy by (rule finite_view_parts_swap)
-          have ec: "(e,e',False) |\<in>| declared_consumers D" using a by (elim conjE)
-          have cons': "view_consumer_discharged M e' swap_view (corr e)"
-            by (rule consumer_discharged_swap_view[OF cd[OF ec]])
+          have parts': "finite_view_parts (resolution_view_term view_swap) (Finite_Pattern_Pair x' z) z y"
+            unfolding xy view_swap_term by (rule finite_view_parts_swap)
+          have ec: "(e,e',view_swap,0) |\<in>| declared_consumers D" using a by (elim conjE)
+          have cons': "consumer_discharged M e' view_swap (corr e 0)" by (rule cd[OF ec])
           have dis': "finite_pattern_variables z |\<inter>| finite_pattern_variables y = {||}" using a by blast
           show ?thesis
             by (rule disjI2, rule exI[of _ q'], rule exI[of _ r'], rule exI[of _ e'],
-              rule exI[of _ "Finite_Pattern_Pair x' z"], rule exI[of _ swap_view], rule exI[of _ z])
+              rule exI[of _ "Finite_Pattern_Pair x' z"], rule exI[of _ view_swap], rule exI[of _ z])
               (intro conjI hq parts' dis' cons')
         qed
       qed blast
@@ -689,7 +650,7 @@ theorem finite_direct_exchange:
   fixes P :: "('a,'s::linorder,'d,'c) finite_schema_system"
   assumes \<kappa>: "finite_witness_construction_formed \<kappa>" and I: "resolution_invariant P d t st"
     and sup: "resolution_supported_at (\<lambda>_. False) F B P st \<theta>"
-    and gF: "g |\<in>| finite_focus_pending F st"
+    and gF: "g |\<in>| finite_focus_pending F st" and pair: "pair_declarations D"
     and discharged: "declarations_discharged (positive_meaning (decode_finite_system P)) D corr"
     and direct: "finite_direct_commitment D F st g"
     and parent: "finite_goal_premise st g"
@@ -702,7 +663,7 @@ theorem finite_direct_exchange:
 proof -
   let ?M = "positive_meaning (decode_finite_system P)"
   obtain q r e p where gq: "g = Resolution_Call_Goal q r e p"
-    using direct by (cases g) (simp_all add: finite_direct_commitment_def)
+    using direct by (cases g) (simp_all add: finite_direct_commitment_pair[OF pair])
   have gp: "g |\<in>| resolution_pending st" "resolution_focused F q"
     using gF gq by (simp_all add: finite_focus_pending_focused)
   have holds: "(e,decode_finite_term (resolution_value \<theta> p)) \<in> ?M"
@@ -715,7 +676,7 @@ proof -
     fix \<theta>2 assume new: "(e,decode_finite_term (resolution_value \<theta>2 p)) \<in> ?M"
     obtain \<theta>1 where t: "\<forall>z. z |\<in>| finite_pattern_variables p \<longrightarrow> \<theta>1 z = \<theta>2 z"
       and hh: "\<forall>h. h |\<in>| finite_focus_pending F st \<and> h \<noteq> Resolution_Call_Goal q r e p \<longrightarrow> finite_goal_holds ?M \<theta>1 h"
-      using finite_direct_commitment_context[OF discharged direct[unfolded gq] holds others new] by blast
+      using finite_direct_commitment_context[OF pair discharged direct[unfolded gq] holds others new] by blast
     have "finite_goal_holds ?M \<theta>1 h"
       if "h |\<in>| finite_focus_pending F st" "\<not> resolution_focused (Some q) (resolution_goal_position h)" for h
     proof -
@@ -739,12 +700,13 @@ text \<open>
   #565's premise at every direct commitment, with no hypothesis on the state: the test checks the goal-premise
   condition where it commits (@{thm [source] finite_declared_commitment_premise}), and the premise asks for a kept
   state only at a state keeping the holders invariant and an unheld call, which give #526's (b\<Zprime>). What remains is
-  the declarations' discharge and a program whose registrations are premise-only.
+  the declarations' discharge, at declarations of the identity and swap views, and a program whose registrations are
+  premise-only.
 \<close>
 
 theorem finite_direct_commitment_exchanges:
   fixes P :: "('a,'s::linorder,'d,'c) finite_schema_system"
-  assumes \<kappa>: "finite_witness_construction_formed \<kappa>"
+  assumes \<kappa>: "finite_witness_construction_formed \<kappa>" and pair: "pair_declarations D"
     and discharged: "declarations_discharged (positive_meaning (decode_finite_system P)) D corr"
     and only: "finite_registrations_premise_only \<kappa> P"
   shows "resolution_invariant P d t st \<Longrightarrow> resolution_supported_at (\<lambda>_. False) F B P st \<theta> \<Longrightarrow>
@@ -765,7 +727,7 @@ proof -
       (Some (resolution_goal_position g)) B st)"
   have "commit_call (finite_declared_commitment D) F st g" using committed by (simp add: finite_goal_committed_def)
   then have parent: "finite_goal_premise st g" by (rule finite_declared_commitment_premise)
-  show ?thesis by (rule finite_direct_exchange[OF \<kappa> I sup gF discharged direct parent only H unheld s0])
+  show ?thesis by (rule finite_direct_exchange[OF \<kappa> I sup gF pair discharged direct parent only H unheld s0])
 qed
 
 end

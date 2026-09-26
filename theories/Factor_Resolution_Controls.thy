@@ -142,8 +142,9 @@ definition commitment_control_program :: "(nat,nat,nat,nat) finite_schema_system
       ((1,0),commitment_permutation_nil),((1,1),commitment_permutation_cons),((2,0),commitment_control_check)|}\<rparr>"
 
 definition commitment_control_declarations :: "(nat,nat,nat) resolution_declarations" where
-  "commitment_control_declarations = \<lparr>declared_producers={|1|}, declared_consumers={|(1,1,False)|},
-    declared_sockets={|(1,commitment_permutation_cons,0,False)|}\<rparr>"
+  "commitment_control_declarations = \<lparr>declared_producers={|(1,view_identity,[view_output])|},
+    declared_consumers={|(1,1,view_swap,0)|},
+    declared_sockets={|(1,commitment_permutation_cons,0,False,view_identity,view_identity)|}\<rparr>"
 
 abbreviation commitment_control_call :: "octets list \<Rightarrow> octets list \<Rightarrow> finite_factor_term" where
   "commitment_control_call as bs \<equiv> Finite_Pair (control_payload_list as) (control_payload_list bs)"
@@ -194,8 +195,9 @@ definition commitment_exchange_program :: "octets \<Rightarrow> (nat,nat,nat,nat
       ((4,0),commitment_exchange_functional a),((5,0),commitment_exchange_consumer),((6,0),commitment_exchange_root)|}\<rparr>"
 
 definition commitment_exchange_declarations :: "(nat,nat,nat) resolution_declarations" where
-  "commitment_exchange_declarations = \<lparr>declared_producers={|4|}, declared_consumers={|(4,5,True)|},
-    declared_sockets={|(3,commitment_exchange_select,0,False)|}\<rparr>"
+  "commitment_exchange_declarations = \<lparr>declared_producers={|(4,view_identity,[view_output])|},
+    declared_consumers={|(4,5,view_identity,0)|},
+    declared_sockets={|(3,commitment_exchange_select,0,False,view_identity,view_identity)|}\<rparr>"
 
 text \<open>
   The variant control (review 519's second shape): q(X) :- perm(X,[V|[a|W]]), c(Pair X [V|[a|W]]), the permutation a
@@ -221,8 +223,9 @@ definition commitment_variant_program :: "octets \<Rightarrow> (nat,nat,nat,nat)
       ((7,0),commitment_variant_root a)|}\<rparr>"
 
 definition commitment_variant_declarations :: "(nat,nat,nat) resolution_declarations" where
-  "commitment_variant_declarations = \<lparr>declared_producers={|1|}, declared_consumers={|(1,5,True)|},
-    declared_sockets={|(1,commitment_permutation_cons,0,False)|}\<rparr>"
+  "commitment_variant_declarations = \<lparr>declared_producers={|(1,view_identity,[view_output])|},
+    declared_consumers={|(1,5,view_identity,0)|},
+    declared_sockets={|(1,commitment_permutation_cons,0,False,view_identity,view_identity)|}\<rparr>"
 
 text \<open>
   The sibling control, the counterexample to #565's exchange premise at a socket (task 586; DECISIONS.md, task 495's
@@ -264,7 +267,7 @@ definition commitment_sibling_program :: "octets \<Rightarrow> octets \<Rightarr
 
 definition commitment_sibling_declarations :: "(nat,nat,nat) resolution_declarations" where
   "commitment_sibling_declarations = \<lparr>declared_producers={||}, declared_consumers={||},
-    declared_sockets={|(3,commitment_sibling_clause,1,True)|}\<rparr>"
+    declared_sockets={|(3,commitment_sibling_clause,1,True,view_identity,view_identity)|}\<rparr>"
 
 text \<open>
   The order control (task 589): the sibling control's clause with r's call holding a leaf, c(X) :- r(Pair [] Z),
@@ -301,7 +304,7 @@ definition commitment_order_program :: "(nat,nat,nat,nat) finite_schema_system" 
 
 definition commitment_order_declarations :: "(nat,nat,nat) resolution_declarations" where
   "commitment_order_declarations = \<lparr>declared_producers={||}, declared_consumers={||},
-    declared_sockets={|(3,commitment_order_clause,1,True)|}\<rparr>"
+    declared_sockets={|(3,commitment_order_clause,1,True,view_identity,view_identity)|}\<rparr>"
 
 text \<open>
   The material control (task 621, #593's first counterexample): p(x) :- mat(C;A,E,B,F), q(Pair A E), over an artifact
@@ -340,7 +343,7 @@ definition material_control_program :: "(nat,nat,nat,nat) finite_schema_system" 
 
 definition material_control_declarations :: "(nat,nat,nat) resolution_declarations" where
   "material_control_declarations = \<lparr>declared_producers={||}, declared_consumers={||},
-    declared_sockets={|(1,material_control_clause,0,True)|}\<rparr>"
+    declared_sockets={|(1,material_control_clause,0,True,view_identity,view_identity)|}\<rparr>"
 
 lemma material_control:
   "finite_resolution_verdict (finite_program_resolution no_witness_construction material_control_program 1
@@ -385,7 +388,7 @@ definition premise_only_program :: "nat finite_term_pattern \<Rightarrow> (nat,n
 
 definition premise_only_declarations :: "nat finite_term_pattern \<Rightarrow> (nat,nat,nat) resolution_declarations" where
   "premise_only_declarations src = \<lparr>declared_producers={||}, declared_consumers={||},
-    declared_sockets={|(1,premise_only_clause src,0,True)|}\<rparr>"
+    declared_sockets={|(1,premise_only_clause src,0,True,view_identity,view_identity)|}\<rparr>"
 
 abbreviation premise_only_literal :: "nat finite_term_pattern" where
   "premise_only_literal \<equiv> Finite_Pattern_Target (Finite_Whole material_control_artifact)"

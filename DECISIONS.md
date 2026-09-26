@@ -16989,6 +16989,19 @@ source the socket commits and keeps one answer (one certificate, R4's two); with
 is premise-only and bound, the test refuses the commitment, and both answers stay (two). Correction (7)'s three
 counterexamples are not yet controls: a later controls task takes them.]
 
+[Corrected by task 668 (the record at views, its switch; review 632's follow-up 2), in (8): the socket's ordinary premise
+is read at the premise's view (`finite_socket_pair` at views; R5's pair is its identity instance,
+`finite_socket_pair_identity`). The parenthesis "at another form the obligation is vacuous and the output's variables are a
+head variable's binding, whose values no kept head fixes" is withdrawn, and the pair condition is not among the
+conditions true wherever the search reaches: it is a static property of the clause, so a socket declared at a premise
+its view does not match never commits, and its declaration is refused by the obligation's first conjunct
+(`socket_discharged` at views); at a kept head the obligation's instance condition is vacuous there. The record, its
+obligations and the test are the viewed ones under the kept names (`resolution_declarations`, `declarations_discharged`
+with `declarations_formed`, `finite_declared_commitment`); R5's declarations are those of the identity and swap views
+(`pair_declarations`), and the discharges (#593's, #621's, #630's, #631's) and #595's forms are stated at them through the
+pair-formula lemmas (`producer_discharged_identity`, `consumer_discharged_argument`, `socket_discharged_identity`,
+`finite_declared_commitment_pair`), none proved again over a view; #595's transfer holds at any views.]
+
 [Corrected by task 686, a design, from #683's "A fact of R5's tests" and the planner's decision that the route needs
 #585's 32 committed at 79.0/1. (9) R5c′'s narrowing (#589) asks more than the exchange needs, and it keeps a socket whose
 input a sibling binds from ever committing: a socket commits only with its input ground

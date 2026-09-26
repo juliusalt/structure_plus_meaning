@@ -68,6 +68,8 @@ lemmas given_record_defs = given_bag_declarations_def given_artifact_declaration
   reading_declarations_def location_declarations_def resolution_site_declarations_def
   interpretation_declarations_def projection_target_declarations_def binder_declarations_def
   bag_binder_declarations_def union_binder_declarations_def instantiation_binder_declarations_def
+  schema_family_socket_record_def callee_inclusion_socket_record_def payload_audit_socket_record_def
+  clause_reading_row_record_def premise_slot_row_record_def schema_slot_row_record_def root_slot_row_record_def
 
 abbreviation given_records where
   "given_records \<equiv> [given_bag_declarations, given_artifact_declarations,
@@ -77,7 +79,9 @@ abbreviation given_records where
     headed_declarations, family_rows_declarations, record_artifact_declarations, target_artifact_declarations,
     admission_declarations, reading_declarations, location_declarations, resolution_site_declarations,
     interpretation_declarations, projection_target_declarations, binder_declarations, bag_binder_declarations,
-    union_binder_declarations, instantiation_binder_declarations]"
+    union_binder_declarations, instantiation_binder_declarations, schema_family_socket_record,
+    callee_inclusion_socket_record, payload_audit_socket_record, clause_reading_row_record, premise_slot_row_record,
+    schema_slot_row_record, root_slot_row_record]"
 
 lemma given_declarations_records: "given_declarations = declarations_list given_records"
   by (simp only: given_declarations_def)
@@ -196,31 +200,83 @@ proof -
   show ?thesis using assms e r m79 m12 m7 m32 m65 m57 m50 m42 m45 m40 m39 by auto
 qed
 
+text \<open>
+  The sites of 32's kept sockets: 72, 81 and 505 are entries of the given's readers; 72's clause calls 71; 77's calls
+  76, whose list step calls 75; 122's calls 121, whose list step calls 119; 119's second clause calls 105, whose
+  socket schema calls 104. Each socket schema's callees are then reached by @{thm [source] given_socket_reaches}.
+\<close>
+
+lemma given_rooted_socket_sites:
+  assumes "d \<in> {71,75,81,104,105,119,505}"
+  shows "d \<in> system_definitions given_rooted_readers_system"
+proof -
+  let ?R = "system_definitions given_rooted_readers_system"
+  have e: "72 \<in> ?R" "77 \<in> ?R" "81 \<in> ?R" "122 \<in> ?R" "505 \<in> ?R"
+    using given_rooted_entries given_rooted_members(1,2,5,9,12) by blast+
+  have m72: "71 \<in> ?R"
+    by (rule given_rooted_clause_reaches[OF definition_call_admission_system_formed guard_definition_call_agreement e(1),
+        of definition_call_admission_schema])
+      (simp_all add: schema_dependencies_def rel_ran_image definition_call_admission_schema_def)
+  have m77: "76 \<in> ?R"
+    by (rule given_rooted_clause_reaches[OF package_closure_admission_system_formed guard_closure_agreement e(2),
+        of package_closure_admission_schema])
+      (simp_all add: schema_dependencies_def rel_ran_image package_closure_admission_schema_def)
+  have m76: "75 \<in> ?R"
+    by (rule given_rooted_clause_reaches[OF definition_callee_list_system_formed guard_definition_callee_list_agreement
+        m77, of "context_list_step_schema 75 76"])
+      (auto simp: context_list_clauses_def schema_dependencies_def rel_ran_image context_list_step_schema_def)
+  have m122: "121 \<in> ?R"
+    by (rule given_rooted_clause_reaches[OF package_retention_admission_system_formed
+        guard_package_retention_agreement e(4), of package_retention_admission_schema])
+      (simp_all add: schema_dependencies_def rel_ran_image package_retention_admission_schema_def)
+  have m121: "119 \<in> ?R"
+    by (rule given_rooted_clause_reaches[OF package_slot_list_system_formed guard_package_slot_list_agreement m122,
+        of "context_list_step_schema 119 121"])
+      (auto simp: context_list_clauses_def schema_dependencies_def rel_ran_image context_list_step_schema_def)
+  have m119: "105 \<in> ?R"
+    by (rule given_rooted_clause_reaches[OF package_slot_reading_system_formed guard_package_slot_agreement m121,
+        of package_definition_slot_schema])
+      (auto simp: package_slot_reading_clauses_def schema_dependencies_def rel_ran_image
+        package_definition_slot_schema_def)
+  have sock: "(105,schema_slot_row_schema,2,True,view_identity,view_identity) |\<in>| declared_sockets given_declarations"
+    unfolding given_declarations_records
+    by (rule declarations_list_socket_member[where D=schema_slot_row_record])
+      (simp only: list.set insert_iff simp_thms, simp add: schema_slot_row_record_def)
+  have call: "104 \<in> schema_dependencies (decode_finite_schema schema_slot_row_schema)"
+    by (rule finite_premise_callee) (simp add: schema_slot_row_schema_def)
+  have m105: "104 \<in> ?R" using given_socket_reaches[OF sock m119 call] .
+  show ?thesis using assms e m72 m76 m121 m119 m105 by auto
+qed
+
 theorem given_declarations_sites:
   "declared_sites given_declarations \<subseteq> system_definitions given_rooted_readers_system"
 proof -
   let ?R = "system_definitions given_rooted_readers_system"
-  let ?S = "{6,7,10,11,12,21,29,31,32,34,35,36,37,39,40,41,42,45,47,48,49,54,55,77,79,83} :: nat set"
+  let ?A = "{6,7,10,11,12,21,29,31,32,34,35,36,37,39,40,41,42,45,47,48,49,54,55,77,79,83} :: nat set"
+  let ?B = "{71,75,81,104,105,119,505} :: nat set"
+  let ?S = "?A \<union> ?B"
+  have site: "d \<in> ?R" if "d \<in> ?S" for d
+    using that given_rooted_declared_sites[of d] given_rooted_socket_sites[of d] by blast
   have p: "d \<in> ?R" if m: "(d,V,hs) |\<in>| declared_producers given_declarations" for d V hs
   proof -
     obtain D where "D \<in> set given_records" "(d,V,hs) |\<in>| declared_producers D"
       using declarations_list_members(1)[OF m[unfolded given_declarations_records]] by blast
     then have "d \<in> ?S" by (auto simp: given_record_defs)
-    then show ?thesis by (rule given_rooted_declared_sites)
+    then show ?thesis by (rule site)
   qed
   have c: "d \<in> ?R \<and> e \<in> ?R" if m: "(d,e,V,i) |\<in>| declared_consumers given_declarations" for d e V i
   proof -
     obtain D where "D \<in> set given_records" "(d,e,V,i) |\<in>| declared_consumers D"
       using declarations_list_members(2)[OF m[unfolded given_declarations_records]] by blast
     then have "d \<in> ?S \<and> e \<in> ?S" by (auto simp: given_record_defs)
-    then show ?thesis using given_rooted_declared_sites by blast
+    then show ?thesis using site by blast
   qed
   have s: "e \<in> ?R" if m: "(e,S,s,keep,Vp,Vh) |\<in>| declared_sockets given_declarations" for e S s keep Vp Vh
   proof -
     obtain D where "D \<in> set given_records" "(e,S,s,keep,Vp,Vh) |\<in>| declared_sockets D"
       using m[unfolded given_declarations_records] by (rule declarations_list_sockets)
     then have "e \<in> ?S" by (auto simp: given_record_defs)
-    then show ?thesis by (rule given_rooted_declared_sites)
+    then show ?thesis by (rule site)
   qed
   have dep: "x \<in> ?R" if "(e,S,s,keep,Vp,Vh) |\<in>| declared_sockets given_declarations"
     "x \<in> schema_dependencies (decode_finite_schema S)" for e S s keep Vp Vh x

@@ -21,7 +21,7 @@ subsection \<open>The entry rule\<close>
 
 text \<open>
   The entry's argument is the tuple of the parts (@{const term_tuple}, with its pattern
-  @{const finite_pattern_tuple}, of theory \<open>Native_Collection_Programs\<close>).
+  @{const finite_pattern_tuple}, of theory \<open>Finite_Pattern_Tuples\<close>).
 \<close>
 
 abbreviation verdict_entry :: "local_address option definition_site" where

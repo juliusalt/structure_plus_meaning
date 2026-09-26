@@ -64,7 +64,7 @@ into the briefs #522 and #523 corrected, or recorded superseded there.
   #605 → its installed carrying #663 → R6c's carrying
   #611 → rc's numbered forms #540 (after #676) and native form #661 → R7 #542 (the numbered course; #661 feeds its
   native part #707) and the request at the given #547 → #399.
-- The clause match (#642's addition, briefed by #643; M #645, V1 #647 and V3's general part #653 landed): V2a #649 (after #597 and the forms
+- The clause match (#642's addition, briefed by #643; M #645, V1 #647, V3's general part #653 and #687 landed): V2a #649 (after #597 and the forms
   #676) and V2b #651 (after #599), divided so that #605 does not wait on #599; V3, divided by plan-89 by the room its
   relations leave, in one theory edited in turn: #653 (the general statement in `given_readers_extension`) beside #687
   (the given's registrations complete at the rooted readers, `Development_Rooted_Registrations`), then #655 (the given's
@@ -75,8 +75,7 @@ into the briefs #522 and #523 corrected, or recorded superseded there.
   default selection at a priority reading the commitment's tests; after #689 and #670), F3 #695 (a solved ground call
   reused; after F1 and #676, before #613), F2a #697 (patterns over the shared-term table; at once), F2b #699 and F2c #701
   (R3's and R5's searches over the refined shared state), C #703 (a found derivation checked over its graph; before
-  #542, #547 and #399), each with its review; divided from R7 the stated-leaves program's presentation #705 (at once,
-  before #542) and 526's native course #707 (after #542, #653, #688 and #661, before #399), from #399 its controls #709
+  #542, #547 and #399), each with its review; divided from R7 the stated-leaves program's presentation #705 (landed) and 526's native course #707 (after #542, #653, #688 and #661, before #399), from #399 its controls #709
   (after #399, before #401, #403 and #553); #542, #399, #547 and #443 rewritten from #684's corrected briefs (#542 the
   numbered course, off #653, #661 and #688), their reviews #543 and #400 narrowed to them. #685 after #668, then #672,
   #689 and F1 (each changes `Factor_Resolution_Commitments`, in that order). The socket fact (#683's "A
@@ -112,11 +111,11 @@ The approval build (Open 142) after #407 and #447, and the controls task (Open 1
 exists, Q2): the slots are one pool, each free slot going to the first task in the queue that can start and a review
 standing where its review task stands, so every review stands right after its build. By slack on the longest chain:
 #665's builds on the longest chain first (#666, #668, the tuple's move #685, #672, #670, #674, #689), F1 #693, #676,
-F3 #695, F2b #699, F2c #701, C #703; F2a #697 and the stated-leaves program #705 (startable at once, taking the slots
-the chain leaves); R5e #599 and R6c's #609; #597, R6c's instantiation family (#607, #679, #681) beside R6b's parts
+F3 #695, F2b #699, F2c #701, C #703; F2a #697 (at once, in a slot the chain leaves); R5e #599 and R6c's #609; #597, R6c's instantiation family (#607, #679, #681) beside R6b's parts
 #601 and #603; V3's #653 and #687, then #655 and #688; the carryings #605 and #663 with V2a #649 and V2b #651; rc
 #540 and #661; #611; R7 #542, its native part #707, #399 and its controls #709, #547; the route in its chains' order
-(#551, #549, #553, #401, #403, #443, #447, #407, #445, #449); #657 and the consolidation #613 last.
+(#551, #549, #553, #401, #403, #443, #447, #407, #445, #449); the registrations' consolidation #711 (off the route,
+after #668, filling the slots the chain leaves), #657 and the lifting's consolidation #613 last.
 ## Decisions
 
 Taken by the planning episodes, where they are not entries of `DECISIONS.md`.
@@ -310,8 +309,9 @@ follow-ups are in `PLANNING_LOG.md` and the earlier states (`HANDOFF-before-cond
 - **The verification frame**: `Development_Verification_Frame` (#405, #432, #433: parts (a)–(d), and (f) per store;
   its controls in `.build/tasks/405/controls`).
 - **The criticism's notions**: `Criticism_Samples` (#435; S1 #478, the sample over a base), `Criticism_Use_Samples`
-  (#437), `Criticism_Octet_Samples` (#439, #463, #480), `Factor_Stated_Leaves` (#441, 570; its finite presentation
-  R7's).
+  (#437), `Criticism_Octet_Samples` (#439, #463, #480), `Factor_Stated_Leaves` (#441, 570), its program presented
+  finitely in `Factor_Stated_Leaves_Program` (#705, `a3bb9d79`: `finite_stated_report_program`, its `_code`,
+  `finite_stated_report_exact`; R7 takes them).
 - **The evaluation over a base**: E1 `Factor_Implemented_Base_Evaluation` (#464) stands; the counterparts retired (R8a
   #508, R8b #510, #555, #556), their presentation readers in `Factor_Finite_Site_Value_Readers`, their controls in
   `Factor_Executed_Controls`.
@@ -354,7 +354,8 @@ follow-ups are in `PLANNING_LOG.md` and the earlier states (`HANDOFF-before-cond
   (#526, #615, #634: `finite_construction_complete`, `relocated_construction_complete`, the exact forms with
   registrations), W4b `Development_Given_Registrations` (#528: 77, 392 and 561 complete at `finite_given_readers`, 77's
   and 561's at `package_request_system`), `Development_Asked_Registrations` (#635: #399's two courses, placed) and
-  `Development_First_Request_Registrations` (#640: at the first request's program and its installation, placed); the
+  `Development_First_Request_Registrations` (#640: at the first request's program and its installation, placed),
+  `Development_Rooted_Registrations` (#687, `c91495e8`: complete at the given's rooted readers); the
   three registrations' code from the programs' clauses (#660, `aa72ef2a`: `bound_witness_registration` and
   `merge_witness_registration`, nullary values built at module load, review 660's 2).
 - **The clause match** (#642's addition): M `Factor_Finite_Schema_Matching` (#645, `2139dfe2`: `finite_schema_match`
@@ -542,7 +543,8 @@ planner searches for a theory before briefing a task that edits it.
   test (#686). #684's mails are carried into its proposal's briefs and the four rewrites. Plan-90: #655 — review 654's
   1 and 2 (`installed_entry_exact` at `(d,decode_finite_term t)`; V1's `installed_variant` and
   `native_varied_relocated_resolution_exact` consumed, no second route); #688 — 654's 1; #657 — 654's 3 (no alpha-equal
-  clauses with differing values at 77, 392, 525 and 561's installed clauses; the match's cost #707's).
+  clauses with differing values at 77, 392, 525 and 561's installed clauses; the match's cost #707's); #542 — 706's 1
+  (the stated-leaves program's three facts; 590 measured with `finite_call_admission_program_code`'s share apart).
 - **The harness's gaps met by this run's tasks** are owed to the owner and listed in `PLANNING_LOG.md` (2026-09-26,
   plan-86); new ones go there.
 - **Ledger entries that can leave** (the harness's `v2.py ledger`): Q7's and Q2's questions and answers, recorded in the

@@ -17226,6 +17226,22 @@ committed); every control's value unchanged or named. **B2a** (`Factor_Resolutio
 from the framed obligation, the kept and free contexts at a frame (the free one head output by head output, as above),
 `finite_socket_commitment_exchange`, `finite_framed_commitment_exchanges`; today's the instances; stated over a class N
 at a kept answer in N at once, R5f2's restatement of #630's contexts moving here so that they are restated once.
+[B2a landed (task 745): the parent context at a frame `finite_framed_parent_context` (`finite_parent_context_framed`,
+`finite_framed_socket_context`), the valuation set head output by head output `finite_framed_valuation` (over
+`finite_kinds_valuation`), the material part `finite_framed_material_commitment_exchanges`; at the call sockets
+`finite_framed_instance_true`, `finite_framed_parent_premise`, `finite_framed_exchange_valuation`,
+`finite_framed_new_instance` (from the obligation at a frame over a class N, the calls conjunct of
+`narrowed_socket_framed` inline, which a framed socket gives at every N: `socket_framed_calls`), one call context
+`finite_framed_call_context` with `finite_framed_kept_context` and `finite_framed_free_context` its instances, each the
+exchange for every new answer whose socket output is in N; `finite_framed_socket_exchange` and
+`finite_framed_commitment_exchanges`, the instance at the framed test of the dispatch stated once,
+`finite_framed_contained_exchanges` (at any commitment with no production whose call and material commitments the
+framed test makes at every invariant state; its direct part `finite_direct_exchange`, stated at every commitment).
+Today's `finite_parent_instance_true`, `finite_socket_parent_premise`, `finite_socket_exchange_valuation`,
+`finite_socket_new_instance` (the socket's inputs outside the default frame kept through the head's view),
+`finite_socket_kept_context`, `finite_socket_free_context`, `finite_socket_commitment_exchange`,
+`finite_declared_commitment_exchanges` (the dispatch at no frames) and the material lemmas are their instances,
+statements kept.]
 **B2b** (`Factor_Resolution_Views`, `Factor_Commitment_Controls`; after B2a; before rc #540, #605, #611): #676's forms at
 framed declarations, the frames' transfer (relocation maps their sites as the sockets'; agreement keeps them), and two
 controls — a socket whose closed upstream sibling holds a private remainder (one certificate at its frame, R4's n!

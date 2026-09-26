@@ -710,7 +710,14 @@ planner searches for a theory before briefing a task that edits it.
 
 ## Now
 
-- **The graph's width**: (b) #771 (handing over), the lifting's consolidation #613 and #782 run; the designs #789 and
+- **Not handled (plan-109's window ended)**: #771 landed (`914497c2`); review 772's follow-ups 1–5
+  (`.build/tasks/772/review.md`) are unplaced and unmailed: 1 the consolidation making F2b1 the access's instance
+  (q139), placed from #771's result, with its moves; 2 to F2c #701 and #788 (`clause_sockets_distinct` from formation,
+  the route's initial states `search_placeable`, the branch #788's fixtures take); 3 to #788 (the costs to measure); 4 a
+  next-edits item (the REASONING_REUSE.md row); 5 F2c #701's brief corrected (R5's committed sub-searches, barring and
+  productions are not among `resolution_representation`'s steps: the representation extended by them, or F2c's own
+  search over the access). When #791's proposal is placed, #724 is set after O2 (#787's verdict).
+- **The graph's width**: the lifting's consolidation #613 and #782 run; the designs #789 and
   #790 and the brief #791 start as slots free; #784 follows #782, #788 follows (b). The route is ((b) #771 → F2c → C),
   #782, #789's and #790's builds and O1–O4 → R7 #542 → #707 → #399, with #782 also before #547.
 - **Briefs written before their theories grew** may be refused at their start (#596 was; #607 was divided by #678):

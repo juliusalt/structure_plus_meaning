@@ -177,6 +177,60 @@ theorem finite_collection_construction_complete:
   shows "finite_construction_complete (finite_collection_construction Rs n) P"
   by (rule finite_collection_construction_complete_at) (rule complete)
 
+section \<open>A determined value's completeness, once for the kind\<close>
+
+text \<open>
+  A determined value (@{const finite_determined_value}) is complete at a premise-only variable wherever the premises
+  holding the variable, at every admissible formed binding where the value is defined, hold at a formed value only at
+  the pattern's term there (@{text determined_value_unique}). The criterion is sufficient: a determined registration is
+  complete under it (@{text determined_registration_complete}), whoever declares one, and the collection construction of
+  such registrations with it (@{thm [source] finite_collection_construction_complete_at}).
+\<close>
+
+definition determined_value_unique ::
+    "('a,'s,'d,'c) finite_schema_system \<Rightarrow> ('a,'s,'d) finite_factor_schema \<Rightarrow> 'a \<Rightarrow> 'a finite_term_pattern \<Rightarrow> bool" where
+  "determined_value_unique P S a p \<longleftrightarrow> (\<forall>B w. finite_relation_functional B \<longrightarrow>
+      fBall B (\<lambda>(b,t). finite_term_formed t) \<longrightarrow> a |\<notin>| fimage fst B \<longrightarrow>
+      finite_variable_premises_bound S a (fimage fst B) \<longrightarrow> finite_determined_value p B \<noteq> None \<longrightarrow>
+      finite_term_formed w \<longrightarrow> finite_variable_premises_hold P S a ((finite_binding_valuation B)(a:=w)) \<longrightarrow>
+      finite_determined_value p B=Some w)"
+
+theorem determined_value_complete:
+  assumes unique: "determined_value_unique P S a p"
+  shows "finite_value_complete P S a (finite_determined_value p)"
+  unfolding finite_value_complete_def
+proof (intro allI impI)
+  fix B v
+  assume fn: "finite_relation_functional B" and bf: "fBall B (\<lambda>(b,t). finite_term_formed t)"
+    and free: "a |\<notin>| fimage fst B" and bound: "finite_variable_premises_bound S a (fimage fst B)"
+    and val: "finite_determined_value p B=Some v"
+  show "(\<exists>w. finite_term_formed w \<and> finite_variable_premises_hold P S a ((finite_binding_valuation B)(a:=w))) \<longleftrightarrow>
+      finite_variable_premises_hold P S a ((finite_binding_valuation B)(a:=v))"
+  proof
+    assume "\<exists>w. finite_term_formed w \<and> finite_variable_premises_hold P S a ((finite_binding_valuation B)(a:=w))"
+    then obtain w where w: "finite_term_formed w" "finite_variable_premises_hold P S a ((finite_binding_valuation B)(a:=w))"
+      by blast
+    have "finite_determined_value p B=Some w"
+      using unique fn bf free bound val w unfolding determined_value_unique_def by blast
+    then show "finite_variable_premises_hold P S a ((finite_binding_valuation B)(a:=v))" using val w(2) by simp
+  next
+    assume "finite_variable_premises_hold P S a ((finite_binding_valuation B)(a:=v))"
+    then show "\<exists>w. finite_term_formed w \<and> finite_variable_premises_hold P S a ((finite_binding_valuation B)(a:=w))"
+      using finite_determined_value_formed[OF val] by blast
+  qed
+qed
+
+corollary determined_registration_complete:
+  assumes det: "registration_families R=Determined_Value p"
+    and head: "registration_variable R |\<notin>| finite_pattern_variables (finite_schema_conclusion (registration_schema R))"
+    and unique: "determined_value_unique P (registration_schema R) (registration_variable R) p"
+  shows "finite_registration_complete P n R"
+proof -
+  have "finite_registration_value P n R=finite_determined_value p"
+    by (rule ext) (rule finite_registration_value_determined[OF det])
+  then show ?thesis using head determined_value_complete[OF unique] by (simp add: finite_registration_complete_def)
+qed
+
 section \<open>An unconstructed registration\<close>
 
 text \<open>

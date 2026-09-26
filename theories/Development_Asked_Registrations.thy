@@ -62,11 +62,13 @@ proof -
     unfolding system_dependency_closed_def by blast
 qed
 
+lemma asked_sites: "{5,12,47,76,82,113,390,391}\<subseteq>system_definitions asked_program_system"
+  using given_rooted_read_sites(1) asked_readers_inside by blast
+
 lemma asked_readers_meaning_at:
   assumes "d\<in>system_definitions guard_readers_system" "d\<in>system_definitions asked_program_system"
   shows "(d,t)\<in>positive_meaning asked_program_system \<longleftrightarrow> (d,t)\<in>positive_meaning guard_readers_system"
-  using positive_meaning_shared_definitions[OF guard_readers_formed asked_program_formed
-    asked_readers_guard_agreement assms] by simp
+  by (rule readers_agreement_meanings(1)[OF asked_program_formed asked_readers_guard_agreement asked_sites assms])
 
 lemma asked_goals_meaning_at:
   assumes goals: "d\<in>system_definitions first_problem_goals_system" and member: "d\<in>system_definitions asked_program_system"
@@ -170,13 +172,11 @@ lemma asked_readers_meanings:
   "(76,t)\<in>positive_meaning asked_program_system \<longleftrightarrow> (76,t)\<in>positive_meaning definition_callee_list_system"
   "(82,t)\<in>positive_meaning asked_program_system \<longleftrightarrow> (82,t)\<in>positive_meaning definition_edge_reading_system"
   "(113,t)\<in>positive_meaning asked_program_system \<longleftrightarrow> (113,t)\<in>positive_meaning environment_inclusion_system"
-  using asked_readers_meaning_at[OF asked_reader_sites(1,2)] asked_readers_meaning_at[OF asked_reader_sites(3,4)]
-    asked_readers_meaning_at[OF asked_reader_sites(5,6)] asked_readers_meaning_at[OF asked_reader_sites(7,8)]
-    asked_readers_meaning_at[OF asked_reader_sites(9,10)] given_readers_meanings
-  by simp_all
+  by (simp_all only: readers_agreement_meanings(3,5,6,7,8)[OF asked_program_formed asked_readers_guard_agreement
+    asked_sites])
 
 lemma asked_readers_listing: "context_list_rule_relation (positive_meaning asked_program_system) 390 391"
-  by (rule read_meanings_listing, rule asked_readers_meaning_at) (auto simp: asked_reader_sites)
+  by (rule readers_agreement_meanings(9)[OF asked_program_formed asked_readers_guard_agreement asked_sites])
 
 lemma asked_goals_listing: "context_list_rule_relation (positive_meaning asked_program_system) 523 524"
 proof -
@@ -195,10 +195,8 @@ theorem asked_registrations_complete:
   "finite_registration_complete finite_asked_program n (additions_witness_registration 392 391)"
   "finite_registration_complete finite_asked_program n (additions_witness_registration 525 524)"
 proof -
-  have sites: "{5,12,47,76,82,113,390,391}\<subseteq>system_definitions asked_program_system"
-    using given_rooted_read_sites(1) asked_readers_inside by blast
   note by_agreement=readers_agreement_registrations_complete[where P=finite_asked_program,
-    unfolded finite_asked_program_exact, OF asked_program_formed asked_readers_guard_agreement sites]
+    unfolded finite_asked_program_exact, OF asked_program_formed asked_readers_guard_agreement asked_sites]
   show "finite_registration_complete finite_asked_program n bound_witness_registration"
     by (rule by_agreement(1))
   show "finite_registration_complete finite_asked_program n (additions_witness_registration 392 391)"

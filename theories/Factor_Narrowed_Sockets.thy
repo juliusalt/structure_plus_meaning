@@ -486,7 +486,7 @@ proof (rule narrowed_socket_discharged_callees[OF src _ _ _ _ eq])
 qed
 
 theorem narrowed_declarations_relocated_discharged:
-  fixes P :: "('a,'s,'d,'c) finite_schema_system" and g :: "'d \<Rightarrow> 'e"
+  fixes P :: "('a,'s::linorder,'d,'c) finite_schema_system" and g :: "'d \<Rightarrow> 'e"
   assumes Pf: "schema_system_formed (decode_finite_system P)"
     and injective: "inj_on g (system_definitions (decode_finite_system P) \<union>
       declared_sites (resolution_declarations.truncate ND))"

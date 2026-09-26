@@ -1337,8 +1337,10 @@ definition no_commitment :: "('a,'s,'d,'c) resolution_commitment" where
 text \<open>
   The committed search selects at the commitment's own tests (F1 of the addition "The resolver at the given's size" to
   task 495's entry): a goal the call or material test accepts on the state the selection reads, at no focus or with
-  the goal's parent position as the focus, is taken before a goal with one alternative, so a goal is committed at the
-  first state it is committable in. At no commitment the priority is empty and the selection is R3's.
+  the goal's parent position as the focus, is taken before a goal with one alternative. Among the goals the tests
+  accept at one state only the least position is taken, so one commitment can end another's committability, and a
+  one-alternative sibling expanded before a socket becomes committable can still foreclose it (F1.5 of the addition).
+  At no commitment the priority is empty and the selection is R3's.
 \<close>
 
 definition finite_commitment_priority ::
@@ -1463,21 +1465,46 @@ proof -
   with finite_material_resolution_source(1)[OF skeleton source] show ?thesis using that by blast
 qed
 
+text \<open>
+  At the focus of a committed sub-search a call takes its call's successors and never the reuse step (F3 of the
+  addition "The resolver at the given's size" to task 495's entry, course (b) of q129): the focus is solved in its own
+  subtree as before F3, so a committed call's answer is the node its resolution leaves at the focus, and no committed
+  goal is cut for being reusable. Every other goal of the sub-search is closed by reuse as anywhere else.
+\<close>
+
 definition finite_committed_successors ::
-    "('a,'s,'d,'c) resolution_commitment \<Rightarrow> ('a,'s,'d,'c) finite_schema_system \<Rightarrow> 's list option \<Rightarrow>
+    "('a,'s::linorder,'d,'c) resolution_commitment \<Rightarrow> ('a,'s,'d,'c) finite_schema_system \<Rightarrow> 's list option \<Rightarrow>
       ('a,'s,'d,'c) resolution_state \<Rightarrow> ('a,'s,'d,'c) resolution_goal \<Rightarrow> ('a,'s,'d,'c) resolution_state fset" where
   "finite_committed_successors K P F st g = (case g of
       Resolution_Material_Goal q r M \<Rightarrow> (case finite_canonical_solutions M of
           Some Ws \<Rightarrow> if commit_material K F st g then finite_solution_successors st q r M Ws
             else finite_goal_successors P st g
         | None \<Rightarrow> finite_goal_successors P st g)
-    | Resolution_Call_Goal q r d p \<Rightarrow> finite_goal_successors P st g)"
+    | Resolution_Call_Goal q r d p \<Rightarrow> if F = Some q then finite_call_successors P st q r d p
+        else finite_goal_successors P st g)"
 
-lemma finite_committed_successors_subset:
-  "finite_committed_successors K P F st g |\<subseteq>| finite_goal_successors P st g"
+text \<open>A committed successor is a goal's successor or, at the focus, a call's.\<close>
+
+lemma finite_committed_successors_cases:
+  assumes s: "s |\<in>| finite_committed_successors K P F st g"
+  obtains (goal) "s |\<in>| finite_goal_successors P st g"
+    | (focus) q r e p where "g = Resolution_Call_Goal q r e p" "F = Some q"
+      "s |\<in>| finite_call_successors P st q r e p"
 proof (cases g)
+  case (Resolution_Call_Goal q r e p)
+  show thesis
+  proof (cases "F = Some q")
+    case True
+    show thesis
+      by (rule focus[OF Resolution_Call_Goal True]) (use s in \<open>simp add: Resolution_Call_Goal True finite_committed_successors_def\<close>)
+  next
+    case False
+    show thesis
+      by (rule goal) (use s in \<open>simp add: Resolution_Call_Goal False finite_committed_successors_def\<close>)
+  qed
+next
   case (Resolution_Material_Goal q r M)
-  show ?thesis
+  have sub: "finite_committed_successors K P F st g |\<subseteq>| finite_goal_successors P st g"
   proof (cases "finite_canonical_solutions M")
     case (Some Ws')
     then obtain Ws where Ws: "finite_material_resolution M = Material_Solutions Ws" "Ws' |\<subseteq>| Ws"
@@ -1485,10 +1512,39 @@ proof (cases g)
     show ?thesis using Some Ws finite_solution_successors_mono[OF Ws(2), of st q r M]
       by (simp add: Resolution_Material_Goal finite_committed_successors_def finite_material_successors_solutions)
   qed (simp add: Resolution_Material_Goal finite_committed_successors_def)
-qed (simp add: finite_committed_successors_def)
+  show thesis by (rule goal, rule fsubsetD[OF sub s])
+qed
+
+lemma finite_committed_successor_invariant:
+  assumes I: "resolution_invariant P d t st" and pending: "g |\<in>| resolution_pending st"
+    and s: "s |\<in>| finite_committed_successors K P F st g"
+  shows "resolution_invariant P d t s"
+  using s
+proof (cases rule: finite_committed_successors_cases)
+  case goal
+  then show ?thesis by (rule resolution_goal_step[OF I pending])
+next
+  case (focus q r e p)
+  show ?thesis by (rule resolution_call_step[OF I pending[unfolded focus(1)] focus(3)])
+qed
+
+lemma finite_committed_successor_held:
+  assumes distinct: "resolution_positions_distinct st" and H: "resolution_registrations_held \<kappa> st"
+    and pending: "g |\<in>| resolution_pending st" and unheld: "\<not> finite_held \<kappa> st g"
+    and s: "s |\<in>| finite_committed_successors K P F st g"
+  shows "resolution_registrations_held \<kappa> s"
+  using s
+proof (cases rule: finite_committed_successors_cases)
+  case goal
+  then show ?thesis by (rule resolution_registrations_goal_step[OF distinct H pending unheld])
+next
+  case (focus q r e p)
+  show ?thesis by (rule resolution_registrations_call_step[OF distinct H pending[unfolded focus(1)]
+    unheld[unfolded focus(1)] focus(3)])
+qed
 
 lemma no_commitment_successors [simp]:
-  "finite_committed_successors no_commitment P F st g = finite_goal_successors P st g"
+  "finite_committed_successors no_commitment P None st g = finite_goal_successors P st g"
   by (simp add: finite_committed_successors_def no_commitment_def split: resolution_goal.split option.split)
 
 definition finite_goal_committed ::
@@ -1533,7 +1589,7 @@ lemma no_commitment_barring [simp]: "finite_goal_barring no_commitment F B st g 
   by (simp add: finite_goal_barring_def finite_material_committed_def no_commitment_def split: resolution_goal.split)
 
 definition finite_committed_goal_outcome ::
-    "('s list option \<Rightarrow> 's list fset \<Rightarrow> ('a,'s,'d,'c) resolution_state \<Rightarrow> ('a,'s,'d,'c) resolution_outcome) \<Rightarrow>
+    "('s::linorder list option \<Rightarrow> 's list fset \<Rightarrow> ('a,'s,'d,'c) resolution_state \<Rightarrow> ('a,'s,'d,'c) resolution_outcome) \<Rightarrow>
       ('a,'s,'d,'c) resolution_commitment \<Rightarrow> ('a,'s,'d,'c) finite_schema_system \<Rightarrow> 's list option \<Rightarrow>
       's list fset \<Rightarrow> ('a,'s,'d,'c) resolution_state \<Rightarrow> ('a,'s,'d,'c) resolution_goal \<Rightarrow>
       ('a,'s,'d,'c) resolution_outcome" where
@@ -1550,6 +1606,7 @@ definition finite_committed_goal_outcome ::
          else Resolution_Outcome {||} {|Resolution_Witnessed (resolution_witnesses st) g|})
        else finite_outcome_union (fimage (rec F (finite_goal_barring K F B st g)) S))"
 
+
 text \<open>
   A construction step is committed as a goal is: every node present at it is barred in the rest of the search, for
   the ranks that justify pruning do not carry across a construction (task 526, q110), and it constructs at the
@@ -1560,7 +1617,7 @@ text \<open>
 \<close>
 
 primrec finite_committed_search_by ::
-    "(('a,'s,'d,'c) resolution_state \<Rightarrow> ('a,'s,'d,'c) resolution_selection) \<Rightarrow>
+    "(('a,'s::linorder,'d,'c) resolution_state \<Rightarrow> ('a,'s,'d,'c) resolution_selection) \<Rightarrow>
       ('a,'s,'d,'c) finite_witness_construction \<Rightarrow> ('a,'s,'d,'c) resolution_commitment \<Rightarrow>
       ('a,'s,'d,'c) finite_schema_system \<Rightarrow> nat \<Rightarrow> 's list option \<Rightarrow> 's list fset \<Rightarrow>
       ('a,'s,'d,'c) resolution_state \<Rightarrow> ('a,'s,'d,'c) resolution_outcome" where
@@ -1660,8 +1717,8 @@ next
         from found False obtain s where s: "s |\<in>| finite_committed_successors K P F st g"
           and st': "st' |\<in>| resolution_found (?rec F (finite_goal_barring K F B st g) s)"
           by (auto simp: finite_committed_goal_outcome_def Let_def resolution_fset_simps split: if_splits)
-        have "s |\<in>| finite_goal_successors P st g" using s finite_committed_successors_subset by blast
-        then show ?thesis using Suc.IH st' resolution_goal_step[OF Suc.prems(1) pending] by blast
+        have "resolution_invariant P d t s" by (rule finite_committed_successor_invariant[OF Suc.prems(1) pending s])
+        then show ?thesis using Suc.IH st' by blast
       qed
     next
       case Select_None
@@ -1732,10 +1789,9 @@ next
         from found False obtain s where s: "s |\<in>| finite_committed_successors K P F st g"
           and st': "st' |\<in>| resolution_found (?rec F (finite_goal_barring K F B st g) s)"
           by (auto simp: finite_committed_goal_outcome_def Let_def resolution_fset_simps split: if_splits)
-        have gs: "s |\<in>| finite_goal_successors P st g" using s finite_committed_successors_subset by blast
-        have Is: "resolution_invariant P d t s" by (rule resolution_goal_step[OF Suc.prems(1) pending gs])
+        have Is: "resolution_invariant P d t s" by (rule finite_committed_successor_invariant[OF Suc.prems(1) pending s])
         have Hs: "resolution_registrations_held \<kappa> s"
-          by (rule resolution_registrations_goal_step[OF distinct Suc.prems(2) pending unheld gs])
+          by (rule finite_committed_successor_held[OF distinct Suc.prems(2) pending unheld s])
         show ?thesis by (rule Suc.IH[OF Is Hs st'])
       qed
     next
@@ -1757,7 +1813,7 @@ proof -
     using cert by (auto simp: finite_state_proofs_def resolution_fset_simps)
   have root: "resolution_node_site nd=d" "resolution_node_call nd=finite_exact_term_pattern t"
     using I nd unfolding resolution_invariant_def resolution_nodes_placed_def by blast+
-  have "fcard (resolution_subtree (resolution_nodes st) nd) \<le> fcard (resolution_nodes st)"
+  have "fcard (resolution_reach (resolution_nodes st) nd) \<le> fcard (resolution_nodes st)"
     by (rule fcard_mono) auto
   from finite_node_proof_accepted[OF I closed nd(1) this] show ?thesis by (simp add: p root)
 qed
@@ -1771,7 +1827,7 @@ text \<open>
 \<close>
 
 definition finite_outcome_result ::
-    "('a,'s,'d,'c) finite_schema_system \<Rightarrow> 'd \<Rightarrow> finite_factor_term \<Rightarrow> ('a,'s,'d,'c) resolution_outcome \<Rightarrow>
+    "('a,'s::linorder,'d,'c) finite_schema_system \<Rightarrow> 'd \<Rightarrow> finite_factor_term \<Rightarrow> ('a,'s,'d,'c) resolution_outcome \<Rightarrow>
       ('a,'s,'d,'c) finite_resolution_result" where
   "finite_outcome_result P d t R = (let C = ffUnion (fimage finite_state_proofs (resolution_found R));
       A = ffilter (\<lambda>p. finite_checks_schema_proof P p d t) C in
@@ -2943,22 +2999,40 @@ next
             show thesis by (rule that[of st' \<theta>']) (simp_all only: eqS eqB s u)
           next
             case False
-            have eqS: "finite_committed_successors K P F st g = finite_goal_successors P st g"
-              using False by (auto simp: finite_committed_successors_def split: resolution_goal.splits option.splits)
             have eqB: "finite_goal_barring K F B st g = B"
               using False by (auto simp: finite_goal_barring_def finite_material_committed_def split: resolution_goal.splits)
             show thesis
-            proof (rule resolution_goal_lifted_at[OF Ip sup foreign pending focus kind])
-              fix st' \<theta>' assume s: "st' |\<in>| finite_goal_successors P st g"
-                and u: "resolution_supported_at U F B P st' \<theta>'"
-                and "\<And>v. resolution_root_value st \<theta> v \<Longrightarrow> resolution_root_value st' \<theta>' v"
-              show thesis using that s u eqS eqB by simp
+            proof (cases "\<exists>q r e p. g = Resolution_Call_Goal q r e p \<and> F = Some q")
+              case True
+              then obtain q r e p where gc: "g = Resolution_Call_Goal q r e p" and Fq: "F = Some q" by blast
+              have eqS: "finite_committed_successors K P F st g = finite_call_successors P st q r e p"
+                using gc Fq by (simp add: finite_committed_successors_def)
+              have goal: "Resolution_Call_Goal q r e p |\<in>| resolution_pending st" using pending gc by simp
+              have fq: "resolution_focused F q" using focus gc by simp
+              show thesis
+              proof (rule resolution_call_lifted_at[OF Ip sup foreign goal fq])
+                fix st' \<theta>' assume s: "st' |\<in>| finite_call_successors P st q r e p"
+                  and u: "resolution_supported_at U F B P st' \<theta>'"
+                  and "\<And>v. resolution_root_value st \<theta> v \<Longrightarrow> resolution_root_value st' \<theta>' v"
+                show thesis using that s u eqS eqB by simp
+              qed
+            next
+              case unfocused: False
+              have eqS: "finite_committed_successors K P F st g = finite_goal_successors P st g"
+                using False unfocused
+                by (auto simp: finite_committed_successors_def split: resolution_goal.splits option.splits)
+              show thesis
+              proof (rule resolution_goal_lifted_at[OF Ip sup foreign pending focus kind])
+                fix st' \<theta>' assume s: "st' |\<in>| finite_goal_successors P st g"
+                  and u: "resolution_supported_at U F B P st' \<theta>'"
+                  and "\<And>v. resolution_root_value st \<theta> v \<Longrightarrow> resolution_root_value st' \<theta>' v"
+                show thesis using that s u eqS eqB by simp
+              qed
             qed
           qed
-          have gs: "st' |\<in>| finite_goal_successors P st g" using st' finite_committed_successors_subset by blast
-          have I': "resolution_invariant P d t st'" by (rule resolution_goal_step[OF I pending gs])
+          have I': "resolution_invariant P d t st'" by (rule finite_committed_successor_invariant[OF I pending st'])
           have H': "resolution_registrations_held \<kappa> st'"
-            by (rule resolution_registrations_goal_step[OF distinct H pending unheld gs])
+            by (rule finite_committed_successor_held[OF distinct H pending unheld st'])
           have lifted: "finite_lifted_outcome U F P (?rec F (finite_goal_barring K F B st g) st')"
             by (rule Suc.IH[OF I' H' sup'])
           have ne: "finite_committed_successors K P F st g \<noteq> {||}" using st' by auto
@@ -3356,7 +3430,7 @@ text \<open>
 \<close>
 
 definition finite_substitution_step ::
-    "('a,'s,'d,'c) finite_witness_construction \<Rightarrow> 's list \<Rightarrow> ('a,'s,'d,'c) resolution_state \<Rightarrow>
+    "('a,'s::linorder,'d,'c) finite_witness_construction \<Rightarrow> 's list \<Rightarrow> ('a,'s,'d,'c) resolution_state \<Rightarrow>
       ('a,'s,'d,'c) resolution_state \<Rightarrow> bool" where
   "finite_substitution_step \<kappa> q st st' \<longleftrightarrow> (\<exists>\<sigma> G N W V.
     st' = resolution_state_substitute \<sigma> (Resolution_State G N W) \<and>
@@ -3372,13 +3446,45 @@ definition finite_substitution_step ::
        (\<forall>z. z |\<in>| resolution_goal_variables g \<longrightarrow> \<not> resolution_placed st z \<and>
          (\<exists>nd. nd |\<in>| N \<and> resolution_node_position nd = fst (fst z))))) \<and>
     (\<forall>h. h |\<in>| resolution_pending st \<longrightarrow> h |\<in>| G \<or> \<not> resolution_is_call h \<or>
-      (\<exists>nd. nd |\<in>| N \<and> resolution_node_position nd = resolution_goal_position h)) \<and>
+      (\<exists>nd. nd |\<in>| N \<and> resolution_node_position nd = resolution_goal_position h) \<or>
+      (resolution_goal_position h \<noteq> q \<and> resolution_focused (Some q) (resolution_goal_position h) \<and>
+        (\<exists>nd. nd |\<in>| N \<and> finite_position_left (resolution_node_position nd) (resolution_goal_position h)))) \<and>
     ffilter (\<lambda>nd. \<not> resolution_focused (Some q) (resolution_node_position nd)) N = finite_outside_nodes q st \<and>
     resolution_nodes st |\<subseteq>| N \<and>
     (\<forall>nd. nd |\<in>| N \<longrightarrow> nd |\<in>| resolution_nodes st \<or>
       ((\<forall>m. m |\<in>| resolution_nodes st \<longrightarrow> resolution_node_position m \<noteq> resolution_node_position nd) \<and>
        (\<forall>z. z |\<in>| finite_pattern_variables (resolution_node_call nd) \<longrightarrow> \<not> resolution_placed st z \<and>
          (\<exists>m. m |\<in>| N \<and> resolution_node_position m = fst (fst z))))))"
+
+text \<open>
+  A ground call closed by reuse at a position inside the focus other than the focus itself is a substitution step: the
+  identity substitution, the goal removed, a node standing left of it.
+\<close>
+
+lemma finite_close_substitution_step:
+  assumes g: "g |\<in>| resolution_pending st"
+    and focus: "resolution_focused (Some q) (resolution_goal_position g)"
+    and reuse: "finite_reusable st g" and root: "resolution_goal_position g \<noteq> q"
+  shows "finite_substitution_step \<kappa> q st (finite_goal_closed st g)"
+proof -
+  obtain nd where nd: "nd |\<in>| resolution_nodes st"
+    "finite_position_left (resolution_node_position nd) (resolution_goal_position g)"
+    using reuse by (cases g) (auto simp: finite_reusable_def fBex_member_iff)
+  have gid: "resolution_goal_substitute Finite_Variable = id"
+    by (rule ext) (simp add: resolution_goal_substitute_identity)
+  have nid: "resolution_node_substitute Finite_Variable = id"
+    by (rule ext) (simp add: resolution_node_substitute_identity)
+  have ident: "finite_goal_closed st g = resolution_state_substitute Finite_Variable
+      (Resolution_State (resolution_pending st |-| {|g|}) (resolution_nodes st) (resolution_witnesses st))"
+    unfolding finite_goal_closed_def resolution_state_substitute_def gid nid by simp
+  show ?thesis unfolding finite_substitution_step_def
+    apply (rule exI[of _ Finite_Variable], rule exI[of _ "resolution_pending st |-| {|g|}"],
+      rule exI[of _ "resolution_nodes st"], rule exI[of _ "resolution_witnesses st"], rule exI[of _ "{}"])
+    apply (insert ident focus nd root g)
+    apply (auto simp: finite_outside_pending_def finite_outside_nodes_def fset_eq_iff resolution_fset_simps
+      less_eq_fset.rep_eq)
+    done
+qed
 
 lemma finite_call_substitution_step:
   assumes I: "resolution_invariant P d t st"
@@ -3438,6 +3544,11 @@ proof -
   have removed: "\<forall>h. h |\<in>| resolution_pending st \<longrightarrow> h |\<in>| G \<or> \<not> resolution_is_call h \<or>
       (\<exists>nd. nd |\<in>| N \<and> resolution_node_position nd = resolution_goal_position h)"
     using node_at unfolding G_def by auto
+  have removed': "\<forall>h. h |\<in>| resolution_pending st \<longrightarrow> h |\<in>| G \<or> \<not> resolution_is_call h \<or>
+      (\<exists>nd. nd |\<in>| N \<and> resolution_node_position nd = resolution_goal_position h) \<or>
+      (resolution_goal_position h \<noteq> q \<and> resolution_focused (Some q) (resolution_goal_position h) \<and>
+        (\<exists>nd. nd |\<in>| N \<and> finite_position_left (resolution_node_position nd) (resolution_goal_position h)))"
+    using removed by blast
   have nout: "ffilter (\<lambda>nd. \<not> resolution_focused (Some q) (resolution_node_position nd)) N = finite_outside_nodes q st"
     using focus unfolding N_def finite_outside_nodes_def by (auto simp: fset_eq_iff finite_clause_node_def)
   have nsub: "resolution_nodes st |\<subseteq>| N" by (auto simp: N_def)
@@ -3465,7 +3576,7 @@ proof -
   qed
   show ?thesis unfolding finite_substitution_step_def
     by (rule exI[of _ \<sigma>], rule exI[of _ G], rule exI[of _ N], rule exI[of _ "resolution_witnesses st"], rule exI[of _ V])
-      (use st' Vsub fixed range origin gout gin removed nout nsub nnew in blast)
+      (use st' Vsub fixed range origin gout gin removed' nout nsub nnew in blast)
 qed
 
 lemma finite_material_substitution_step:
@@ -3506,11 +3617,17 @@ proof -
   have removed: "\<forall>h. h |\<in>| resolution_pending st \<longrightarrow> h |\<in>| G \<or> \<not> resolution_is_call h \<or>
       (\<exists>nd. nd |\<in>| resolution_nodes st \<and> resolution_node_position nd = resolution_goal_position h)"
     unfolding G_def by auto
+  have removed': "\<forall>h. h |\<in>| resolution_pending st \<longrightarrow> h |\<in>| G \<or> \<not> resolution_is_call h \<or>
+      (\<exists>nd. nd |\<in>| resolution_nodes st \<and> resolution_node_position nd = resolution_goal_position h) \<or>
+      (resolution_goal_position h \<noteq> q \<and> resolution_focused (Some q) (resolution_goal_position h) \<and>
+        (\<exists>nd. nd |\<in>| resolution_nodes st \<and>
+          finite_position_left (resolution_node_position nd) (resolution_goal_position h)))"
+    using removed by blast
   have nout: "ffilter (\<lambda>nd. \<not> resolution_focused (Some q) (resolution_node_position nd)) (resolution_nodes st) =
       finite_outside_nodes q st" by (simp add: finite_outside_nodes_def)
   show ?thesis unfolding finite_substitution_step_def
     by (rule exI[of _ \<sigma>], rule exI[of _ G], rule exI[of _ "resolution_nodes st"], rule exI[of _ "resolution_witnesses st"],
-      rule exI[of _ V]) (use st' Vsub fixed range origin gout gin removed nout in \<open>intro conjI; fastforce\<close>)
+      rule exI[of _ V]) (use st' Vsub fixed range origin gout gin removed' nout in \<open>intro conjI; fastforce\<close>)
 qed
 
 lemma finite_construction_substitution_step:
@@ -3942,15 +4059,37 @@ next
         from found False obtain s1 where s1: "s1 |\<in>| finite_committed_successors K P (Some q) st g"
           and s': "s' |\<in>| resolution_found (?rec (Some q) (finite_goal_barring K (Some q) B st g) s1)"
           by (auto simp: finite_committed_goal_outcome_def Let_def resolution_fset_simps split: if_splits)
-        have gs: "s1 |\<in>| finite_goal_successors P st g" using s1 finite_committed_successors_subset by blast
-        have I1: "resolution_invariant P d t s1" by (rule resolution_goal_step[OF Suc.prems(1) pending gs])
+        have I1: "resolution_invariant P d t s1"
+          by (rule finite_committed_successor_invariant[OF Suc.prems(1) pending s1])
         have "finite_substitution_step \<kappa> q st s1"
         proof (cases g)
           case (Resolution_Call_Goal q' r e p)
-          have cs: "s1 |\<in>| finite_call_successors P st q' r e p" using gs by (simp add: Resolution_Call_Goal)
           have fq: "resolution_focused (Some q) q'" using focus Resolution_Call_Goal by simp
           show ?thesis
-            by (rule finite_call_substitution_step[OF Suc.prems(1) pending[unfolded Resolution_Call_Goal] fq cs])
+          proof (cases "q' = q")
+            case True
+            have cs: "s1 |\<in>| finite_call_successors P st q' r e p"
+              using s1 True by (simp add: finite_committed_successors_def Resolution_Call_Goal)
+            show ?thesis
+              by (rule finite_call_substitution_step[OF Suc.prems(1) pending[unfolded Resolution_Call_Goal] fq cs])
+          next
+            case nq: False
+            have gs: "s1 |\<in>| finite_goal_successors P st g"
+              using s1 nq
+              by (auto simp del: finite_goal_successors.simps simp: finite_committed_successors_def Resolution_Call_Goal)
+            show ?thesis
+            proof (cases "finite_reusable st g")
+              case True
+              have "s1 = finite_goal_closed st g" using gs by (simp add: finite_reusable_successors[OF True])
+              moreover have "resolution_goal_position g \<noteq> q" using nq Resolution_Call_Goal by simp
+              ultimately show ?thesis using finite_close_substitution_step[OF pending focus True] by simp
+            next
+              case False
+              have cs: "s1 |\<in>| finite_call_successors P st q' r e p" using gs False by (simp add: Resolution_Call_Goal)
+              show ?thesis
+                by (rule finite_call_substitution_step[OF Suc.prems(1) pending[unfolded Resolution_Call_Goal] fq cs])
+            qed
+          qed
         next
           case (Resolution_Material_Goal q' r M)
           obtain Ws where sol: "s1 |\<in>| finite_solution_successors st q' r M Ws"
@@ -4338,16 +4477,36 @@ next
         from found False obtain s1 where s1: "s1 |\<in>| finite_committed_successors K P (Some q) st g"
           and s': "s' |\<in>| resolution_found (?rec (Some q) (finite_goal_barring K (Some q) B st g) s1)"
           by (auto simp: finite_committed_goal_outcome_def Let_def resolution_fset_simps split: if_splits)
-        have gs: "s1 |\<in>| finite_goal_successors P st g" using s1 finite_committed_successors_subset by blast
-        have I1: "resolution_invariant P d t s1" by (rule resolution_goal_step[OF I pending gs])
+        have I1: "resolution_invariant P d t s1" by (rule finite_committed_successor_invariant[OF I pending s1])
         have H1: "resolution_registrations_held \<kappa> s1"
-          by (rule resolution_registrations_goal_step[OF distinct H pending unheld gs])
+          by (rule finite_committed_successor_held[OF distinct H pending unheld s1])
         have "finite_substitution_step no_witness_construction q st s1"
         proof (cases g)
           case (Resolution_Call_Goal q' r e p)
-          have cs: "s1 |\<in>| finite_call_successors P st q' r e p" using gs by (simp add: Resolution_Call_Goal)
           have fq: "resolution_focused (Some q) q'" using focus Resolution_Call_Goal by simp
-          show ?thesis by (rule finite_call_substitution_step[OF I pending[unfolded Resolution_Call_Goal] fq cs])
+          show ?thesis
+          proof (cases "q' = q")
+            case True
+            have cs: "s1 |\<in>| finite_call_successors P st q' r e p"
+              using s1 True by (simp add: finite_committed_successors_def Resolution_Call_Goal)
+            show ?thesis by (rule finite_call_substitution_step[OF I pending[unfolded Resolution_Call_Goal] fq cs])
+          next
+            case nq: False
+            have gs: "s1 |\<in>| finite_goal_successors P st g"
+              using s1 nq
+              by (auto simp del: finite_goal_successors.simps simp: finite_committed_successors_def Resolution_Call_Goal)
+            show ?thesis
+            proof (cases "finite_reusable st g")
+              case True
+              have "s1 = finite_goal_closed st g" using gs by (simp add: finite_reusable_successors[OF True])
+              moreover have "resolution_goal_position g \<noteq> q" using nq Resolution_Call_Goal by simp
+              ultimately show ?thesis using finite_close_substitution_step[OF pending focus True] by simp
+            next
+              case False
+              have cs: "s1 |\<in>| finite_call_successors P st q' r e p" using gs False by (simp add: Resolution_Call_Goal)
+              show ?thesis by (rule finite_call_substitution_step[OF I pending[unfolded Resolution_Call_Goal] fq cs])
+            qed
+          qed
         next
           case (Resolution_Material_Goal q' r M)
           obtain Ws where sol: "s1 |\<in>| finite_solution_successors st q' r M Ws"
@@ -4428,20 +4587,141 @@ qed
 
 subsection \<open>Positions, placement and kept states\<close>
 
-definition finite_positions_kept :: "('a,'s,'d,'c) resolution_state \<Rightarrow> ('a,'s,'d,'c) resolution_state \<Rightarrow> bool" where
-  "finite_positions_kept st st' \<longleftrightarrow> (\<forall>p.
+text \<open>
+  The positions a committed search keeps: a pending call's position or a node's keeps a pending call or a node, or,
+  inside the focus and other than it, the closing of a ground call by reuse, a node standing left of it; every node
+  keeps a node at its position.
+\<close>
+
+definition finite_positions_kept ::
+    "'s::linorder list \<Rightarrow> ('a,'s,'d,'c) resolution_state \<Rightarrow> ('a,'s,'d,'c) resolution_state \<Rightarrow> bool" where
+  "finite_positions_kept q st st' \<longleftrightarrow> (\<forall>p.
     ((\<exists>h. h |\<in>| resolution_pending st \<and> resolution_is_call h \<and> resolution_goal_position h = p) \<or>
      (\<exists>nd. nd |\<in>| resolution_nodes st \<and> resolution_node_position nd = p)) \<longrightarrow>
     ((\<exists>h. h |\<in>| resolution_pending st' \<and> resolution_is_call h \<and> resolution_goal_position h = p) \<or>
-     (\<exists>nd. nd |\<in>| resolution_nodes st' \<and> resolution_node_position nd = p)))"
+     (\<exists>nd. nd |\<in>| resolution_nodes st' \<and> resolution_node_position nd = p) \<or>
+     (p \<noteq> q \<and> take (length q) p = q \<and>
+      (\<exists>nd. nd |\<in>| resolution_nodes st' \<and> finite_position_left (resolution_node_position nd) p)))) \<and>
+    (\<forall>nd. nd |\<in>| resolution_nodes st \<longrightarrow>
+      (\<exists>nd'. nd' |\<in>| resolution_nodes st' \<and> resolution_node_position nd' = resolution_node_position nd))"
+
+text \<open>The two clauses of the position-keeping relation, read at one position and one node, and its introduction.\<close>
+
+lemma finite_positions_kept_at:
+  assumes kept: "finite_positions_kept q st s"
+    and p: "(\<exists>h. h |\<in>| resolution_pending st \<and> resolution_is_call h \<and> resolution_goal_position h = p) \<or>
+      (\<exists>nd. nd |\<in>| resolution_nodes st \<and> resolution_node_position nd = p)"
+  shows "(\<exists>h. h |\<in>| resolution_pending s \<and> resolution_is_call h \<and> resolution_goal_position h = p) \<or>
+     (\<exists>nd. nd |\<in>| resolution_nodes s \<and> resolution_node_position nd = p) \<or>
+     (p \<noteq> q \<and> take (length q) p = q \<and>
+      (\<exists>nd. nd |\<in>| resolution_nodes s \<and> finite_position_left (resolution_node_position nd) p))"
+  by (rule kept[unfolded finite_positions_kept_def, THEN conjunct1, rule_format, OF p])
+
+lemma finite_positions_kept_node:
+  assumes kept: "finite_positions_kept q st s" and nd: "nd |\<in>| resolution_nodes st"
+  shows "\<exists>nd'. nd' |\<in>| resolution_nodes s \<and> resolution_node_position nd' = resolution_node_position nd"
+  by (rule kept[unfolded finite_positions_kept_def, THEN conjunct2, rule_format, OF nd])
+
+lemma finite_positions_keptI:
+  assumes at: "\<And>p. (\<exists>h. h |\<in>| resolution_pending st \<and> resolution_is_call h \<and> resolution_goal_position h = p) \<or>
+      (\<exists>nd. nd |\<in>| resolution_nodes st \<and> resolution_node_position nd = p) \<Longrightarrow>
+    (\<exists>h. h |\<in>| resolution_pending s \<and> resolution_is_call h \<and> resolution_goal_position h = p) \<or>
+     (\<exists>nd. nd |\<in>| resolution_nodes s \<and> resolution_node_position nd = p) \<or>
+     (p \<noteq> q \<and> take (length q) p = q \<and>
+      (\<exists>nd. nd |\<in>| resolution_nodes s \<and> finite_position_left (resolution_node_position nd) p))"
+    and node: "\<And>nd. nd |\<in>| resolution_nodes st \<Longrightarrow>
+      \<exists>nd'. nd' |\<in>| resolution_nodes s \<and> resolution_node_position nd' = resolution_node_position nd"
+  shows "finite_positions_kept q st s"
+  unfolding finite_positions_kept_def by (intro conjI allI impI) (erule at node)+
+
+lemma finite_positions_kept_trans:
+  assumes a: "finite_positions_kept q st s1" and b: "finite_positions_kept q s1 s2"
+  shows "finite_positions_kept q st s2"
+proof (rule finite_positions_keptI)
+  fix p assume p: "(\<exists>h. h |\<in>| resolution_pending st \<and> resolution_is_call h \<and> resolution_goal_position h = p) \<or>
+     (\<exists>nd. nd |\<in>| resolution_nodes st \<and> resolution_node_position nd = p)"
+  from finite_positions_kept_at[OF a p] show "(\<exists>h. h |\<in>| resolution_pending s2 \<and> resolution_is_call h \<and> resolution_goal_position h = p) \<or>
+     (\<exists>nd. nd |\<in>| resolution_nodes s2 \<and> resolution_node_position nd = p) \<or>
+     (p \<noteq> q \<and> take (length q) p = q \<and>
+      (\<exists>nd. nd |\<in>| resolution_nodes s2 \<and> finite_position_left (resolution_node_position nd) p))"
+  proof (elim disjE)
+    assume "\<exists>h. h |\<in>| resolution_pending s1 \<and> resolution_is_call h \<and> resolution_goal_position h = p"
+    then show ?thesis by (rule finite_positions_kept_at[OF b disjI1])
+  next
+    assume "\<exists>nd. nd |\<in>| resolution_nodes s1 \<and> resolution_node_position nd = p"
+    then show ?thesis by (rule finite_positions_kept_at[OF b disjI2])
+  next
+    assume c: "p \<noteq> q \<and> take (length q) p = q \<and>
+      (\<exists>nd. nd |\<in>| resolution_nodes s1 \<and> finite_position_left (resolution_node_position nd) p)"
+    then obtain n1 where n1: "n1 |\<in>| resolution_nodes s1" "finite_position_left (resolution_node_position n1) p" by blast
+    obtain n2 where n2: "n2 |\<in>| resolution_nodes s2" "resolution_node_position n2 = resolution_node_position n1"
+      using finite_positions_kept_node[OF b n1(1)] by blast
+    have "\<exists>nd. nd |\<in>| resolution_nodes s2 \<and> finite_position_left (resolution_node_position nd) p"
+      using n1(2) n2 by (intro exI[of _ n2]) simp
+    then show ?thesis using c by blast
+  qed
+next
+  fix nd assume "nd |\<in>| resolution_nodes st"
+  then obtain n1 where n1: "n1 |\<in>| resolution_nodes s1" "resolution_node_position n1 = resolution_node_position nd"
+    using finite_positions_kept_node[OF a] by blast
+  then obtain n2 where "n2 |\<in>| resolution_nodes s2" "resolution_node_position n2 = resolution_node_position n1"
+    using finite_positions_kept_node[OF b] by blast
+  then show "\<exists>nd'. nd' |\<in>| resolution_nodes s2 \<and> resolution_node_position nd' = resolution_node_position nd"
+    using n1(2) by auto
+qed
+
+lemma finite_positions_kept_weaken:
+  assumes kept: "finite_positions_kept q' st s" and q: "take (length q) q' = q"
+  shows "finite_positions_kept q st s"
+proof -
+  have lq: "length q \<le> length q'" using arg_cong[OF q, of length] by (simp only: length_take min.absorb_iff1)
+  have inner: "p \<noteq> q \<and> take (length q) p = q" if "p \<noteq> q'" "take (length q') p = q'" for p
+  proof
+    have "take (length q) p = take (length q) (take (length q') p)" using lq by (simp add: min.absorb1)
+    also have "\<dots> = take (length q) q'" by (simp only: that(2))
+    also have "\<dots> = q" by (rule q)
+    finally show tq: "take (length q) p = q" .
+    show "p \<noteq> q"
+    proof
+      assume pq: "p = q"
+      have t: "take (length q') q = q'" using that(2) unfolding pq .
+      have "length q' \<le> length q" using arg_cong[OF t, of length] by (simp only: length_take min.absorb_iff1)
+      then have eq: "length q = length q'" by (rule order_antisym[OF lq])
+      have "take (length q') q' = q" using q by (simp only: eq)
+      then have "q' = q" by (simp only: take_all order_refl)
+      then show False using that(1) pq by simp
+    qed
+  qed
+  show ?thesis
+  proof (rule finite_positions_keptI)
+    fix p assume p: "(\<exists>h. h |\<in>| resolution_pending st \<and> resolution_is_call h \<and> resolution_goal_position h = p) \<or>
+      (\<exists>nd. nd |\<in>| resolution_nodes st \<and> resolution_node_position nd = p)"
+    from finite_positions_kept_at[OF kept p] show "(\<exists>h. h |\<in>| resolution_pending s \<and> resolution_is_call h \<and>
+        resolution_goal_position h = p) \<or> (\<exists>nd. nd |\<in>| resolution_nodes s \<and> resolution_node_position nd = p) \<or>
+      (p \<noteq> q \<and> take (length q) p = q \<and>
+        (\<exists>nd. nd |\<in>| resolution_nodes s \<and> finite_position_left (resolution_node_position nd) p))"
+    proof (elim disjE)
+      assume c: "p \<noteq> q' \<and> take (length q') p = q' \<and>
+        (\<exists>nd. nd |\<in>| resolution_nodes s \<and> finite_position_left (resolution_node_position nd) p)"
+      then have "p \<noteq> q \<and> take (length q) p = q" using inner by blast
+      then show ?thesis using c by blast
+    qed blast+
+  next
+    fix nd assume "nd |\<in>| resolution_nodes st"
+    then show "\<exists>nd'. nd' |\<in>| resolution_nodes s \<and> resolution_node_position nd' = resolution_node_position nd"
+      by (rule finite_positions_kept_node[OF kept])
+  qed
+qed
 
 lemma finite_substitution_step_positions:
   assumes step: "finite_substitution_step \<kappa> q st st'"
-  shows "finite_positions_kept st st'"
+  shows "finite_positions_kept q st st'"
 proof -
   obtain \<sigma> G N W where st': "st' = resolution_state_substitute \<sigma> (Resolution_State G N W)"
     and removed: "\<forall>h. h |\<in>| resolution_pending st \<longrightarrow> h |\<in>| G \<or> \<not> resolution_is_call h \<or>
-      (\<exists>nd. nd |\<in>| N \<and> resolution_node_position nd = resolution_goal_position h)"
+      (\<exists>nd. nd |\<in>| N \<and> resolution_node_position nd = resolution_goal_position h) \<or>
+      (resolution_goal_position h \<noteq> q \<and> resolution_focused (Some q) (resolution_goal_position h) \<and>
+        (\<exists>nd. nd |\<in>| N \<and> finite_position_left (resolution_node_position nd) (resolution_goal_position h)))"
     and nsub: "resolution_nodes st |\<subseteq>| N"
     using step unfolding finite_substitution_step_def by (elim exE conjE) (rule that; assumption)
   have goal: "resolution_goal_substitute \<sigma> h |\<in>| resolution_pending st'" if "h |\<in>| G" for h
@@ -4449,14 +4729,18 @@ proof -
   have node: "resolution_node_substitute \<sigma> nd |\<in>| resolution_nodes st'" if "nd |\<in>| N" for nd
     using that by (simp add: st')
   show ?thesis unfolding finite_positions_kept_def
-  proof (intro allI impI)
+  proof (intro conjI allI impI)
     fix p assume "(\<exists>h. h |\<in>| resolution_pending st \<and> resolution_is_call h \<and> resolution_goal_position h = p) \<or>
       (\<exists>nd. nd |\<in>| resolution_nodes st \<and> resolution_node_position nd = p)"
     then show "(\<exists>h. h |\<in>| resolution_pending st' \<and> resolution_is_call h \<and> resolution_goal_position h = p) \<or>
-      (\<exists>nd. nd |\<in>| resolution_nodes st' \<and> resolution_node_position nd = p)"
+      (\<exists>nd. nd |\<in>| resolution_nodes st' \<and> resolution_node_position nd = p) \<or>
+      (p \<noteq> q \<and> take (length q) p = q \<and>
+        (\<exists>nd. nd |\<in>| resolution_nodes st' \<and> finite_position_left (resolution_node_position nd) p))"
     proof (elim disjE exE conjE)
       fix h assume h: "h |\<in>| resolution_pending st" "resolution_is_call h" "resolution_goal_position h = p"
       from removed h(1) h(2) consider "h |\<in>| G" | "\<exists>nd. nd |\<in>| N \<and> resolution_node_position nd = resolution_goal_position h"
+        | "resolution_goal_position h \<noteq> q \<and> resolution_focused (Some q) (resolution_goal_position h) \<and>
+            (\<exists>nd. nd |\<in>| N \<and> finite_position_left (resolution_node_position nd) (resolution_goal_position h))"
         by blast
       then show ?thesis
       proof cases
@@ -4465,26 +4749,44 @@ proof -
       next
         case 2
         then obtain nd where "nd |\<in>| N" "resolution_node_position nd = p" using h(3) by blast
-        then show ?thesis using node by (intro disjI2 exI[of _ "resolution_node_substitute \<sigma> nd"]) simp
+        then show ?thesis using node by (intro disjI2 disjI1 exI[of _ "resolution_node_substitute \<sigma> nd"]) simp
+      next
+        case 3
+        then have pq: "resolution_goal_position h \<noteq> q" and foc: "resolution_focused (Some q) (resolution_goal_position h)"
+          and ex: "\<exists>nd. nd |\<in>| N \<and> finite_position_left (resolution_node_position nd) (resolution_goal_position h)"
+          by blast+
+        from ex obtain nd where nd: "nd |\<in>| N"
+          "finite_position_left (resolution_node_position nd) (resolution_goal_position h)" by blast
+        have "\<exists>nd'. nd' |\<in>| resolution_nodes st' \<and>
+            finite_position_left (resolution_node_position nd') (resolution_goal_position h)"
+          using node[OF nd(1)] nd(2) by (intro exI[of _ "resolution_node_substitute \<sigma> nd"]) simp
+        moreover have "take (length q) (resolution_goal_position h) = q" using foc by (simp only: resolution_focused_some)
+        ultimately show ?thesis using pq unfolding h(3) by blast
       qed
     next
       fix nd assume "nd |\<in>| resolution_nodes st" "resolution_node_position nd = p"
-      then show ?thesis using node nsub by (intro disjI2 exI[of _ "resolution_node_substitute \<sigma> nd"]) auto
+      then have "\<exists>nd'. nd' |\<in>| resolution_nodes st' \<and> resolution_node_position nd' = p"
+        using node nsub by (intro exI[of _ "resolution_node_substitute \<sigma> nd"]) auto
+      then show ?thesis by blast
     qed
+  next
+    fix nd assume "nd |\<in>| resolution_nodes st"
+    then show "\<exists>nd'. nd' |\<in>| resolution_nodes st' \<and> resolution_node_position nd' = resolution_node_position nd"
+      using node nsub by (intro exI[of _ "resolution_node_substitute \<sigma> nd"]) auto
   qed
 qed
 
 theorem finite_committed_search_positions:
   assumes \<kappa>: "finite_witness_construction_formed \<kappa>" and I: "resolution_invariant P d t st"
     and found: "s' |\<in>| resolution_found (finite_committed_search_by (finite_committed_select \<kappa> K P) \<kappa> K P n (Some q) B st)"
-  shows "finite_positions_kept st s'"
-proof (rule finite_committed_search_relation[where R="\<lambda>q. finite_positions_kept", OF \<kappa> _ _ _ _ I found])
-  show "finite_positions_kept st st" for q st unfolding finite_positions_kept_def by blast
-  show "finite_positions_kept st s2" if "finite_positions_kept st s1" "finite_positions_kept s1 s2" for q st s1 s2
-    using that unfolding finite_positions_kept_def by blast
-  show "finite_positions_kept st s" if "finite_positions_kept st s" "take (length q) q' = q" for q q' st s
-    using that(1) .
-  show "finite_positions_kept st st'" if "resolution_invariant P d t st" "finite_substitution_step \<kappa> q st st'"
+  shows "finite_positions_kept q st s'"
+proof (rule finite_committed_search_relation[where R="finite_positions_kept", OF \<kappa> _ _ _ _ I found])
+  show "finite_positions_kept q st st" for q st unfolding finite_positions_kept_def by blast
+  show "finite_positions_kept q st s2" if "finite_positions_kept q st s1" "finite_positions_kept q s1 s2" for q st s1 s2
+    using that by (rule finite_positions_kept_trans)
+  show "finite_positions_kept q st s" if "finite_positions_kept q' st s" "take (length q) q' = q" for q q' st s
+    using that by (rule finite_positions_kept_weaken)
+  show "finite_positions_kept q st st'" if "resolution_invariant P d t st" "finite_substitution_step \<kappa> q st st'"
     for q st st' using that(2) by (rule finite_substitution_step_positions)
 qed
 
@@ -4628,12 +4930,13 @@ theorem finite_committed_kept_nonempty:
   shows "finite_kept (resolution_goal_position g) (resolution_found (finite_committed_search_by
       (finite_committed_select \<kappa> K P) \<kappa> K P n (Some (resolution_goal_position g)) B st)) \<noteq> {||}"
 proof -
-  have kept: "finite_positions_kept st s0" by (rule finite_committed_search_positions[OF \<kappa> I s0])
+  have kept: "finite_positions_kept (resolution_goal_position g) st s0"
+    by (rule finite_committed_search_positions[OF \<kappa> I s0])
   have closed: "finite_focus_pending (Some (resolution_goal_position g)) s0 = {||}"
     using finite_committed_search_found[OF \<kappa> I s0] by blast
   have "(\<exists>h. h |\<in>| resolution_pending s0 \<and> resolution_is_call h \<and> resolution_goal_position h = resolution_goal_position g) \<or>
       (\<exists>nd. nd |\<in>| resolution_nodes s0 \<and> resolution_node_position nd = resolution_goal_position g)"
-    using kept g unfolding finite_positions_kept_def by blast
+    using finite_positions_kept_at[OF kept, of "resolution_goal_position g"] g by blast
   then obtain nd where nd: "nd |\<in>| resolution_nodes s0" "resolution_node_position nd = resolution_goal_position g"
   proof (elim disjE exE conjE)
     fix h assume "h |\<in>| resolution_pending s0" "resolution_goal_position h = resolution_goal_position g"

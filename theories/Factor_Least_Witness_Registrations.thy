@@ -276,7 +276,8 @@ proof -
         Resolution_Call_Goal (?pos@[s]) (Some (resolution_node_site nd,resolution_node_clause nd,s)) e
           (finite_pattern_substitute \<beta> p) |\<in>| ?G \<or>
         (\<exists>m. m |\<in>| resolution_nodes st \<and> resolution_node_position m = ?pos@[s] \<and>
-          resolution_node_site m = e \<and> resolution_node_call m = finite_pattern_substitute \<beta> p)"
+          resolution_node_site m = e \<and> resolution_node_call m = finite_pattern_substitute \<beta> p) \<or>
+        resolution_premise_reused st (?pos@[s]) e (finite_pattern_substitute \<beta> p)"
     and mat: "\<And>s M. (s,M) |\<in>| finite_schema_materials ?S \<Longrightarrow>
         Resolution_Material_Goal (?pos@[s]) (resolution_node_site nd,resolution_node_clause nd,s)
           (finite_material_pattern_substitute \<beta> M) |\<in>| ?G \<or> resolution_material_done \<beta> M"
@@ -370,7 +371,14 @@ proof -
       have "\<not> (\<exists>m. m |\<in>| resolution_nodes st \<and> resolution_node_position m = ?pos@[s] \<and>
           resolution_node_site m = e \<and> resolution_node_call m = finite_pattern_substitute \<beta> p)"
         using resolution_variable_heldD(2)[OF held] xp by metis
-      then show "Resolution_Call_Goal (?pos@[s]) (Some (resolution_node_site nd,resolution_node_clause nd,s)) e
+      moreover have "\<not> resolution_premise_reused st (?pos@[s]) e (finite_pattern_substitute \<beta> p)"
+      proof
+        assume "resolution_premise_reused st (?pos@[s]) e (finite_pattern_substitute \<beta> p)"
+        then have "finite_pattern_variables (finite_pattern_substitute \<beta> p) = {||}"
+          unfolding resolution_premise_reused_def by blast
+        then show False using xp by simp
+      qed
+      ultimately show "Resolution_Call_Goal (?pos@[s]) (Some (resolution_node_site nd,resolution_node_clause nd,s)) e
           (finite_pattern_substitute \<beta> p) |\<in>| ?G" using prem[OF sp] by blast
     qed
     have mat_pending: "\<And>s M. (s,M) |\<in>| finite_schema_materials ?S \<Longrightarrow> a |\<in>| finite_material_variables M \<Longrightarrow>

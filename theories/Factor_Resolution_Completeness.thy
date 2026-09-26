@@ -1277,6 +1277,27 @@ proof -
   qed
 qed
 
+text \<open>
+  A support constrains each pending goal and node alone, so a state with fewer pending goals and the same nodes keeps
+  it, at any focus and barred set, and keeps the root value: the case of a ground call closed by reuse (F3).
+\<close>
+
+lemma resolution_supported_at_fewer:
+  assumes sup: "resolution_supported_at F Fo B P st \<theta>"
+    and pend: "resolution_pending st' |\<subseteq>| resolution_pending st" and nodes: "resolution_nodes st' = resolution_nodes st"
+  shows "resolution_supported_at F Fo B P st' \<theta>"
+proof -
+  have sub: "\<And>h. h |\<in>| resolution_pending st' \<Longrightarrow> h |\<in>| resolution_pending st"
+    by (rule fsubsetD[OF pend])
+  show ?thesis using sup sub nodes unfolding resolution_supported_at_def resolution_placed_def by blast
+qed
+
+lemma resolution_root_value_fewer:
+  assumes "resolution_root_value st \<theta> v"
+    and "resolution_pending st' |\<subseteq>| resolution_pending st" and "resolution_nodes st' = resolution_nodes st"
+  shows "resolution_root_value st' \<theta> v"
+  using assms unfolding resolution_root_value_def by (auto simp: less_eq_fset.rep_eq)
+
 lemma resolution_goal_lifted_at:
   assumes I: "resolution_pattern_invariant P d0 \<pi>0 st" and sup: "resolution_supported_at F Fo B P st \<theta>"
     and foreign: "\<And>z. F z \<Longrightarrow> snd z |\<notin>| finite_program_variables P"
@@ -1289,11 +1310,23 @@ proof (cases g)
   have goal: "Resolution_Call_Goal q r e p |\<in>| resolution_pending st" using g Resolution_Call_Goal by simp
   have fq: "resolution_focused Fo q" using focus Resolution_Call_Goal by simp
   show thesis
-  proof (rule resolution_call_lifted_at[OF I sup foreign goal fq])
-    fix st' \<theta>' assume s: "st' |\<in>| finite_call_successors P st q r e p" and u: "resolution_supported_at F Fo B P st' \<theta>'"
-      and w: "\<And>v. resolution_root_value st \<theta> v \<Longrightarrow> resolution_root_value st' \<theta>' v"
-    have s': "st' |\<in>| finite_goal_successors P st g" using s Resolution_Call_Goal by simp
-    show thesis by (rule that[OF s' u w])
+  proof (cases "finite_reusable st g")
+    case True
+    have s': "finite_goal_closed st g |\<in>| finite_goal_successors P st g" by (simp add: finite_reusable_successors[OF True])
+    have fewer: "resolution_pending (finite_goal_closed st g) |\<subseteq>| resolution_pending st"
+      "resolution_nodes (finite_goal_closed st g) = resolution_nodes st"
+      by (auto simp: finite_goal_closed_def less_eq_fset.rep_eq resolution_fset_simps)
+    show thesis
+      by (rule that[OF s' resolution_supported_at_fewer[OF sup fewer]]) (rule resolution_root_value_fewer[OF _ fewer])
+  next
+    case False
+    show thesis
+    proof (rule resolution_call_lifted_at[OF I sup foreign goal fq])
+      fix st' \<theta>' assume s: "st' |\<in>| finite_call_successors P st q r e p" and u: "resolution_supported_at F Fo B P st' \<theta>'"
+        and w: "\<And>v. resolution_root_value st \<theta> v \<Longrightarrow> resolution_root_value st' \<theta>' v"
+      have s': "st' |\<in>| finite_goal_successors P st g" using s Resolution_Call_Goal False by simp
+      show thesis by (rule that[OF s' u w])
+    qed
   qed
 next
   case (Resolution_Material_Goal q r M)
@@ -1465,19 +1498,12 @@ qed
 
 section \<open>The selection meets the lifting's conditions\<close>
 
-lemma finite_goal_selection_member:
-  "g |\<in>| finite_goal_selection G A \<Longrightarrow> g |\<in>| A \<and> (resolution_is_call g \<or> finite_solvable_material_goal g)"
-  unfolding finite_goal_selection_def Let_def finite_first_goals_def
-  by (cases g) (auto simp: finite_independent_goal_def split: if_splits)
-
-lemma finite_candidate_goal_kind: "finite_candidate_goal g \<longleftrightarrow> resolution_is_call g \<or> finite_solvable_material_goal g"
-  by (cases g) simp_all
 
 lemma finite_resolution_select_lifts:
   assumes sel: "finite_resolution_select_at pr \<kappa> P st = Select_Goals G"
   shows "G \<noteq> {||} \<and>
     (\<forall>g. g |\<in>| G \<longrightarrow> g |\<in>| resolution_pending st \<and> (resolution_is_call g \<or> finite_solvable_material_goal g))"
-  using finite_resolution_select_at_exact(1)[OF sel] by (simp add: finite_candidate_goal_kind)
+  using finite_resolution_select_at_exact(1)[OF sel] by (simp add: finite_candidate_goal_def)
 
 section \<open>Exactness of the per-call result\<close>
 
@@ -1696,7 +1722,7 @@ proof -
   have closed': "resolution_pending ?st = {||}" using closed by simp
   have nd': "resolution_node_substitute \<sigma> nd |\<in>| resolution_nodes ?st"
     unfolding resolution_state_substitute_fields by (rule fimageI[OF nd(1)])
-  have "fcard (resolution_subtree (resolution_nodes ?st) (resolution_node_substitute \<sigma> nd)) \<le> fcard (resolution_nodes ?st)"
+  have "fcard (resolution_reach (resolution_nodes ?st) (resolution_node_substitute \<sigma> nd)) \<le> fcard (resolution_nodes ?st)"
     by (rule fcard_mono) auto
   from finite_node_proof_pattern_accepted[OF I' closed' nd' this]
   have "finite_checks_schema_proof P (finite_node_proof (fcard (resolution_nodes ?st)) (resolution_nodes ?st)

@@ -271,8 +271,8 @@ definition liveness_detail where
 section \<open>The declared sockets live and dead, today and after\<close>
 
 text \<open>
-  One evaluation over the asked program, compiled once: the 37 sockets the records declare (R6's, #601's, #603's,
-  #607's and #679's), by name. Strictly (every direct commitment decided by its clause) live and dead under today's
+  One evaluation over the asked program, compiled once: the 44 sockets the records declare (R6's, #601's, #603's,
+  #607's and #679's, and the seven of 32's kept sockets, #758's and #760's), by name. Strictly (every direct commitment decided by its clause) live and dead under today's
   test and after; then the sockets live only in the lenient reading, where a direct commitment's output reaches the
   caller's head and goals outside the clause may hold it. Every socket's clause is a clause of the asked program (no
   name holds 999).
@@ -280,20 +280,21 @@ text \<open>
 
 lemma socket_liveness:
   "liveness_names (liveness_live finite_asked_program liveness_declarations liveness_frames False False) =
-      {|(32,0,0),(40,0,0),(54,0,1),(79,0,1),(83,0,1)|} \<and>
+      {|(32,0,0),(40,0,0),(54,0,1),(79,0,1),(83,0,1),(119,0,1)|} \<and>
    liveness_names (declared_sockets liveness_declarations |-|
       liveness_live finite_asked_program liveness_declarations liveness_frames False False) =
       {|(6,1,1),(7,0,0),(7,0,1),(7,0,2),(7,0,3),(10,0,4),(12,0,2),(29,0,5),(29,0,6),(29,0,7),(36,3,5),(37,0,2),
         (45,1,2),(50,2,2),(50,2,3),(55,1,1),(55,2,2),(55,2,3),(57,0,4),(58,0,0),(60,1,0),(60,1,1),(61,0,4),
-        (62,0,0),(63,1,0),(63,1,1),(63,2,0),(63,2,1),(64,0,1),(64,0,2),(65,0,3),(65,0,4)|} \<and>
+        (62,0,0),(63,1,0),(63,1,1),(63,2,0),(63,2,1),(64,0,1),(64,0,2),(65,0,3),(65,0,4),
+        (71,0,1),(75,0,3),(81,0,3),(104,1,3),(105,1,2),(505,0,4)|} \<and>
    liveness_names (liveness_live finite_asked_program liveness_declarations liveness_frames True False) =
       {|(6,1,1),(7,0,0),(7,0,1),(7,0,2),(7,0,3),(12,0,2),(29,0,5),(32,0,0),(37,0,2),(40,0,0),(54,0,1),
-        (79,0,1),(83,0,1)|} \<and>
+        (79,0,1),(83,0,1),(119,0,1)|} \<and>
    liveness_names (declared_sockets liveness_declarations |-|
       liveness_live finite_asked_program liveness_declarations liveness_frames True False) =
       {|(10,0,4),(29,0,6),(29,0,7),(36,3,5),(45,1,2),(50,2,2),(50,2,3),(55,1,1),(55,2,2),(55,2,3),(57,0,4),
         (58,0,0),(60,1,0),(60,1,1),(61,0,4),(62,0,0),(63,1,0),(63,1,1),(63,2,0),(63,2,1),(64,0,1),(64,0,2),
-        (65,0,3),(65,0,4)|} \<and>
+        (65,0,3),(65,0,4),(71,0,1),(75,0,3),(81,0,3),(104,1,3),(105,1,2),(505,0,4)|} \<and>
    liveness_names (liveness_live finite_asked_program liveness_declarations liveness_frames False True |-|
       liveness_live finite_asked_program liveness_declarations liveness_frames False False) =
       {|(6,1,1),(7,0,0),(7,0,1),(7,0,2),(7,0,3),(10,0,4),(12,0,2),(58,0,0)|} \<and>

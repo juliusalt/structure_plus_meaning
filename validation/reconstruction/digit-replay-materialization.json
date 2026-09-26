@@ -2,5 +2,5 @@
  "boundary": "Validated against an accepted proof base and an incremental proof of its changed theories; no separate source-only copy was materialized.",
  "recipe_files": 894,
  "recipe_source_manifest": "digit-replay-sources.json",
- "recipe_source_manifest_sha256": "e76aab19af9438926d2232f7bebbe038e315173e81e774380baba8b3d012ae12"
+ "recipe_source_manifest_sha256": "9102a2b3869e1ca6dfd8c0fe23088365cec7e3d0f2100ab323981f580fdd257b"
 }

@@ -1,6 +1,6 @@
 {
- "base_receipt_sha256": "00f3de3e50f835ea155988e53e178808db5d096dc9c5f695267ff1f611e540e9",
- "checked_content_sha256": "566bf0f51ed14322e2b5e030c331dbad4215bb4732ecdf66625183cebb905c17",
+ "base_receipt_sha256": "b4a95bda7fe2bb19ea645f88a0d65cc19b6e0f9f339751cd76a1694390e7c8bb",
+ "checked_content_sha256": "b6327c42f342da4d62572e9c57d7addede9dfd7954b61b1fd95297d4bafa7bbe",
  "host_tests": {
   "kernel": {
    "exit_code": 0,
@@ -14,210 +14,285 @@
   "tools": {
    "exit_code": 0,
    "failing": [],
-   "ran": 306,
+   "ran": 309,
    "skipped": 0,
    "tail": [
-    "{\"status\": \"failed\", \"error\": \"[Errno 2] No such file or directory: '/tmp/tmpzlsjg0dm/no-project/theories/Development_Answer_a2d8d6490cc2.thy'\"}"
+    "{\"status\": \"failed\", \"error\": \"[Errno 2] No such file or directory: '/tmp/tmphzodrojo/no-project/theories/Development_Answer_a2d8d6490cc2.thy'\"}"
    ]
   }
  },
  "phases": {
   "base_and_impact": 0.35,
-  "execution_impact": 0.0,
-  "export": 0.0,
-  "proof": 96.39,
-  "recipe_impact": 0.41,
-  "recipes_and_host_tests": 11.46
+  "execution_impact": 1.35,
+  "export": 7.23,
+  "recipe_impact": 0.42,
+  "recipes_and_host_tests": 11.47
  },
- "rebuilt_theories": [
-  "Development_Asked_Registrations",
-  "Development_First_Request_Registrations",
-  "Development_Given_Declarations",
-  "Development_Given_Declarations_Execution",
-  "Development_Given_Registrations",
-  "Development_Installed_Presentations",
-  "Development_Installed_Presentations_Execution",
-  "Development_Rooted_Registrations",
-  "Factor_Artifact_Citation_Declarations",
-  "Factor_Commitment_Controls",
-  "Factor_Construction_Holders",
-  "Factor_Instantiation_Declarations",
-  "Factor_Least_Collections",
-  "Factor_Least_Witness_Registrations",
-  "Factor_Program_Resolution",
-  "Factor_Reader_Witness_Registrations",
-  "Factor_Resolution_Acceptance",
-  "Factor_Resolution_Carriers",
-  "Factor_Resolution_Commitments",
-  "Factor_Resolution_Completeness",
-  "Factor_Resolution_Controls",
-  "Factor_Resolution_Material_Discharge",
-  "Factor_Resolution_Producer_Discharge",
-  "Factor_Resolution_Socket_Discharges",
-  "Factor_Resolution_Views",
-  "Factor_Root_Family_Declarations",
-  "Factor_Varied_Constructions"
- ],
+ "rebuilt_theories": [],
  "recipes": {
   "allocated-environments": {
-   "status": "unchanged"
+   "exit_code": 0,
+   "seconds": 0.0,
+   "status": "reused"
   },
   "artifact-lookup": {
-   "status": "unchanged"
+   "exit_code": 0,
+   "seconds": 0.0,
+   "status": "reused"
   },
   "builtin-investigations": {
-   "status": "unchanged"
+   "exit_code": 0,
+   "seconds": 0.0,
+   "status": "reused"
   },
   "cached-grafts": {
-   "status": "unchanged"
+   "exit_code": 0,
+   "seconds": 0.0,
+   "status": "reused"
   },
   "certificate-coverage": {
-   "status": "unchanged"
+   "exit_code": 0,
+   "seconds": 0.0,
+   "status": "reused"
   },
   "certificate-development": {
-   "status": "unchanged"
+   "exit_code": 0,
+   "seconds": 0.0,
+   "status": "reused"
   },
   "certificate-input-development": {
-   "status": "unchanged"
+   "exit_code": 0,
+   "seconds": 0.0,
+   "status": "reused"
   },
   "certificate-scope-repair": {
-   "status": "unchanged"
+   "exit_code": 0,
+   "seconds": 0.0,
+   "status": "reused"
   },
   "certified-causes": {
-   "status": "unchanged"
+   "exit_code": 0,
+   "seconds": 0.0,
+   "status": "reused"
   },
   "concurrent-history": {
-   "status": "unchanged"
+   "exit_code": 0,
+   "seconds": 0.0,
+   "status": "reused"
   },
   "constructed-history": {
-   "status": "unchanged"
+   "exit_code": 0,
+   "seconds": 0.0,
+   "status": "reused"
   },
   "data-reading": {
-   "status": "unchanged"
+   "exit_code": 0,
+   "seconds": 0.0,
+   "status": "reused"
   },
   "decision-replay": {
-   "status": "unchanged"
+   "exit_code": 0,
+   "seconds": 0.0,
+   "status": "reused"
   },
   "digit-allocation": {
-   "status": "unchanged"
+   "exit_code": 0,
+   "seconds": 0.0,
+   "status": "reused"
   },
   "digit-generation": {
-   "status": "unchanged"
+   "exit_code": 0,
+   "seconds": 0.0,
+   "status": "reused"
   },
   "digit-history": {
-   "status": "unchanged"
+   "exit_code": 0,
+   "seconds": 0.0,
+   "status": "reused"
   },
   "digit-replay": {
-   "status": "unchanged"
+   "exit_code": 0,
+   "seconds": 0.0,
+   "status": "reused"
   },
   "encoded-environments": {
-   "status": "unchanged"
+   "exit_code": 0,
+   "seconds": 0.0,
+   "status": "reused"
   },
   "environment-grafts": {
-   "status": "unchanged"
+   "exit_code": 0,
+   "seconds": 0.0,
+   "status": "reused"
   },
   "environment-updates": {
-   "status": "unchanged"
+   "exit_code": 0,
+   "seconds": 0.0,
+   "status": "reused"
   },
   "generation-records": {
-   "status": "unchanged"
+   "exit_code": 0,
+   "seconds": 0.0,
+   "status": "reused"
   },
   "graft-admission": {
-   "status": "unchanged"
+   "exit_code": 0,
+   "seconds": 0.0,
+   "status": "reused"
   },
   "history-index": {
-   "status": "unchanged"
+   "exit_code": 0,
+   "seconds": 0.0,
+   "status": "reused"
   },
   "indexed-generation": {
-   "status": "unchanged"
+   "exit_code": 0,
+   "seconds": 0.0,
+   "status": "reused"
   },
   "known-history": {
-   "status": "unchanged"
+   "exit_code": 0,
+   "seconds": 0.0,
+   "status": "reused"
   },
   "literal-replay": {
-   "status": "unchanged"
+   "exit_code": 0,
+   "seconds": 0.0,
+   "status": "reused"
   },
   "native-admission": {
-   "status": "unchanged"
+   "exit_code": 0,
+   "seconds": 0.0,
+   "status": "reused"
   },
   "native-certificate-replay": {
-   "status": "unchanged"
+   "exit_code": 0,
+   "seconds": 0.0,
+   "status": "reused"
   },
   "native-certificates": {
-   "status": "unchanged"
+   "exit_code": 0,
+   "seconds": 0.0,
+   "status": "reused"
   },
   "native-child": {
-   "status": "unchanged"
+   "exit_code": 0,
+   "seconds": 0.0,
+   "status": "reused"
   },
   "native-derivations": {
-   "status": "unchanged"
+   "exit_code": 0,
+   "seconds": 0.0,
+   "status": "reused"
   },
   "native-development": {
-   "status": "unchanged"
+   "exit_code": 0,
+   "seconds": 0.0,
+   "status": "reused"
   },
   "native-development-machinery": {
-   "status": "unchanged"
+   "exit_code": 0,
+   "seconds": 0.0,
+   "status": "reused"
   },
   "native-development-seed": {
-   "status": "unchanged"
+   "exit_code": 0,
+   "seconds": 0.0,
+   "status": "reused"
   },
   "native-evaluation": {
-   "status": "unchanged"
+   "exit_code": 0,
+   "seconds": 0.0,
+   "status": "reused"
   },
   "native-extensions": {
-   "status": "unchanged"
+   "exit_code": 0,
+   "seconds": 0.0,
+   "status": "reused"
   },
   "native-graphs": {
-   "status": "unchanged"
+   "exit_code": 0,
+   "seconds": 0.0,
+   "status": "reused"
   },
   "native-histories": {
-   "status": "unchanged"
+   "exit_code": 0,
+   "seconds": 0.0,
+   "status": "reused"
   },
   "native-nodes": {
-   "status": "unchanged"
+   "exit_code": 0,
+   "seconds": 0.0,
+   "status": "reused"
   },
   "native-requirements": {
-   "status": "unchanged"
+   "exit_code": 0,
+   "seconds": 0.0,
+   "status": "reused"
   },
   "native-sources": {
-   "status": "unchanged"
+   "exit_code": 0,
+   "seconds": 0.0,
+   "status": "reused"
   },
   "native-steering": {
-   "status": "unchanged"
+   "exit_code": 0,
+   "seconds": 0.0,
+   "status": "reused"
   },
   "native-workflow": {
-   "status": "unchanged"
+   "exit_code": 0,
+   "seconds": 0.0,
+   "status": "reused"
   },
   "quoted-history": {
-   "status": "unchanged"
+   "exit_code": 0,
+   "seconds": 0.0,
+   "status": "reused"
   },
   "required-causes": {
-   "status": "unchanged"
+   "exit_code": 0,
+   "seconds": 0.0,
+   "status": "reused"
   },
   "required-history": {
-   "status": "unchanged"
+   "exit_code": 0,
+   "seconds": 0.0,
+   "status": "reused"
   },
   "requirement-decisions": {
-   "status": "unchanged"
+   "exit_code": 0,
+   "seconds": 0.0,
+   "status": "reused"
   },
   "requirement-plans": {
-   "status": "unchanged"
+   "exit_code": 0,
+   "seconds": 0.0,
+   "status": "reused"
   },
   "requirement-sources": {
-   "status": "unchanged"
+   "exit_code": 0,
+   "seconds": 0.0,
+   "status": "reused"
   },
   "source-development": {
-   "status": "unchanged"
+   "exit_code": 0,
+   "seconds": 0.0,
+   "status": "reused"
   },
   "use-allocation": {
-   "status": "unchanged"
+   "exit_code": 0,
+   "seconds": 0.0,
+   "status": "reused"
   },
   "use-codecs": {
-   "status": "unchanged"
+   "exit_code": 0,
+   "seconds": 0.0,
+   "status": "reused"
   }
  },
- "reused_theories": 1908,
- "seconds": 119.92,
+ "reused_theories": 1935,
+ "seconds": 23.7,
  "source_checks": {
   "missing_theory_files": [],
   "proof_escape_matches": [],

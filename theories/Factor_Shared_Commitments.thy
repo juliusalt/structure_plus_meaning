@@ -509,7 +509,7 @@ proof -
     have pos: "access_goal_position ?V h = q" using v.goal_position[OF h] Resolution_Call_Goal by simp
     show ?thesis using Resolution_Call_Goal ic pos sc call[OF Fr h Resolution_Call_Goal]
       by (cases "F = Some q")
-        (simp_all add: represented_committed_successors_def finite_committed_successors_def finite_material_committed_def)
+        (simp_all add: represented_committed_successors_def finite_committed_successors_in_def finite_material_committed_def)
   next
     case (Resolution_Material_Goal q rr M)
     have ic: "\<not> access_is_call ?V h" using v.is_call[OF h] Resolution_Material_Goal by simp
@@ -517,12 +517,12 @@ proof -
     proof (cases "finite_canonical_solutions M")
       case None
       then show ?thesis using Resolution_Material_Goal ic sc
-        by (simp add: represented_committed_successors_def finite_committed_successors_def finite_material_committed_def)
+        by (simp add: represented_committed_successors_def finite_committed_successors_in_def finite_material_committed_def)
     next
       case (Some Ws)
       then show ?thesis using Resolution_Material_Goal ic sc solution[OF Fr h Resolution_Material_Goal, of Ws]
         by (cases "commit_material K F ?st (Resolution_Material_Goal q rr M)")
-          (simp_all add: represented_committed_successors_def finite_committed_successors_def finite_material_committed_def)
+          (simp_all add: represented_committed_successors_def finite_committed_successors_in_def finite_material_committed_def)
     qed
   qed
   show "Fi s'" if s': "s' |\<in>| represented_committed_successors R F cm r ?V h"
@@ -568,10 +568,10 @@ proof -
   then show ?thesis
   proof cases
     case closed
-    then show ?thesis using pu by (simp add: represented_committed_goal_outcome_def finite_committed_goal_outcome_def)
+    then show ?thesis using pu by (simp add: represented_committed_goal_outcome_def finite_committed_goal_outcome_in_def)
   next
     case cut
-    then show ?thesis using pu pb by (simp add: represented_committed_goal_outcome_def finite_committed_goal_outcome_def)
+    then show ?thesis using pu pb by (simp add: represented_committed_goal_outcome_def finite_committed_goal_outcome_in_def)
   next
     case unpruned
     have npu: "\<not> access_pruned_among (\<lambda>q. q |\<notin>| B) ?V h" and npb: "\<not> access_pruned_among (\<lambda>q. q |\<in>| B) ?V h"
@@ -719,7 +719,7 @@ proof -
         using rec[OF conjunct1[OF c]] conjunct2[OF c] bar by simp
     qed
     show ?thesis
-      unfolding represented_committed_step_def Let_def Access_Construction finite_committed_search_by.simps(2) if_not_P[OF ne]
+      unfolding represented_committed_step_def Let_def Access_Construction finite_committed_search_by_in.simps(2) if_not_P[OF ne]
       by (simp add: s M img fg)
   next
     case (Access_Goals G)
@@ -738,14 +738,14 @@ proof -
         by (rule goal_outcome[where recA = ?recA and recI = recI, OF Fr h so rec recfound])
     qed
     show ?thesis
-      unfolding represented_committed_step_def Let_def Access_Goals finite_committed_search_by.simps(2) if_not_P[OF ne]
+      unfolding represented_committed_step_def Let_def Access_Goals finite_committed_search_by_in.simps(2) if_not_P[OF ne]
       by (simp add: s img)
   next
     case Access_None
     have s: "finite_resolution_select_at pr \<kappa> P (finite_focused F ?st) = Select_None"
       using sel(1) Access_None by simp
     show ?thesis
-      unfolding represented_committed_step_def Let_def Access_None finite_committed_search_by.simps(2) if_not_P[OF ne]
+      unfolding represented_committed_step_def Let_def Access_None finite_committed_search_by_in.simps(2) if_not_P[OF ne]
       by (simp add: s fg)
   qed
 qed

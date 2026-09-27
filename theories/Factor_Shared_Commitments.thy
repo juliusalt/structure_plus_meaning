@@ -21,15 +21,6 @@ text \<open>
   committed search's code equation.
 \<close>
 
-lemma take_prefix_trans:
-  assumes ab: "take (length a) b = a" and bc: "take (length b) c = b"
-  shows "take (length a) c = a"
-proof -
-  have "length a \<le> length b" using arg_cong[OF ab, of length] by simp
-  then have "take (length a) c = take (length a) (take (length b) c)" by (simp add: min_def)
-  then show ?thesis using bc ab by simp
-qed
-
 lemma take_prefix_cases:
   assumes f: "take (length f) g = f" and p: "take (length p) g = p"
   shows "take (length f) p = f \<or> take (length p) f = p"
@@ -90,12 +81,6 @@ lemma access_focused_simps [simp]:
   "access_witnesses (access_focused F V) = access_witnesses V"
   by (simp_all add: access_focused_def Let_def)
 
-text \<open>A ground call's pruning among the nodes at positions a test admits: the barred nodes, or the others.\<close>
-
-definition access_pruned_among :: "('s list \<Rightarrow> bool) \<Rightarrow> ('g,'n,'k,'a,'s,'d,'c) search_access \<Rightarrow> 'g \<Rightarrow> bool" where
-  "access_pruned_among X V h \<longleftrightarrow> access_ground V h \<and> list_ex (\<lambda>i. X (take i (access_goal_position V h)) \<and>
-    fBex (access_nodes_at V (take i (access_goal_position V h))) (\<lambda>n. access_closes V n h)) [0..<length (access_goal_position V h)]"
-
 context access_formed
 begin
 
@@ -142,12 +127,12 @@ proof -
     proof cases
       case under
       have "take (length p) (resolution_goal_position g) = p \<Longrightarrow> take (length f) (resolution_goal_position g) = f" for g
-        using take_prefix_trans[OF under] by blast
+        using resolution_focused_within[where F="Some f" for f, unfolded resolution_focused_some, OF under] by blast
       then show ?thesis using Some under fpend by auto
     next
       case above
       have "take (length f) (resolution_goal_position g) = f \<Longrightarrow> take (length p) (resolution_goal_position g) = p" for g
-        using take_prefix_trans[OF above(2)] by blast
+        using resolution_focused_within[where F="Some f" for f, unfolded resolution_focused_some, OF above(2)] by blast
       then show ?thesis using Some above fpend by (auto simp: fset_eq_iff)
     next
       case apart
@@ -185,66 +170,6 @@ proof -
     subgoal for g z b using registered[of g z b] finite_focus_pending_subset[of F st] by (auto simp: finite_focused_def)
     subgoal using witnesses by (simp add: fn)
     done
-qed
-
-lemma pruned_among:
-  assumes h: "h |\<in>| access_goals V"
-  shows "access_pruned_among X V h \<longleftrightarrow> finite_pruned (Resolution_State (resolution_pending st)
-    (ffilter (\<lambda>nd. X (resolution_node_position nd)) (resolution_nodes st)) (resolution_witnesses st)) (access_goal V h)"
-proof (cases "access_goal V h")
-  case (Resolution_Call_Goal q rr d p)
-  have pos: "access_goal_position V h = q" using goal_position[OF h] Resolution_Call_Goal by simp
-  have gr: "access_ground V h \<longleftrightarrow> finite_pattern_variables p = {||}" using ground[OF h] Resolution_Call_Goal by simp
-  have eq: "(\<exists>i\<in>set [0..<length q]. X (take i q) \<and> fBex (access_nodes_at V (take i q)) (\<lambda>n. access_closes V n h)) \<longleftrightarrow>
-      fBex (ffilter (\<lambda>nd. X (resolution_node_position nd)) (resolution_nodes st)) (\<lambda>nd. length (resolution_node_position nd) < length q \<and>
-        take (length (resolution_node_position nd)) q = resolution_node_position nd \<and>
-        resolution_node_site nd = d \<and> resolution_node_call nd = p)"
-    if g: "finite_pattern_variables p = {||}"
-  proof
-    assume "\<exists>i\<in>set [0..<length q]. X (take i q) \<and> fBex (access_nodes_at V (take i q)) (\<lambda>n. access_closes V n h)"
-    then obtain i n where i: "i < length q" and x: "X (take i q)" and n: "n |\<in>| access_nodes_at V (take i q)"
-      and c: "access_closes V n h" by auto
-    have np: "resolution_node_position (access_node V n) = take i q" using node_at[OF n] by simp
-    have m: "resolution_node_site (access_node V n) = d" "resolution_node_call (access_node V n) = p"
-      using closes[OF h Resolution_Call_Goal g n] c by simp_all
-    have mem: "access_node V n |\<in>| ffilter (\<lambda>nd. X (resolution_node_position nd)) (resolution_nodes st)"
-      using node_in[OF n] np x by simp
-    show "fBex (ffilter (\<lambda>nd. X (resolution_node_position nd)) (resolution_nodes st)) (\<lambda>nd. length (resolution_node_position nd) < length q \<and>
-        take (length (resolution_node_position nd)) q = resolution_node_position nd \<and>
-        resolution_node_site nd = d \<and> resolution_node_call nd = p)"
-    proof (rule rev_bexI[OF mem])
-      show "length (resolution_node_position (access_node V n)) < length q \<and>
-          take (length (resolution_node_position (access_node V n))) q = resolution_node_position (access_node V n) \<and>
-          resolution_node_site (access_node V n) = d \<and> resolution_node_call (access_node V n) = p"
-        using np i m by simp
-    qed
-  next
-    assume "fBex (ffilter (\<lambda>nd. X (resolution_node_position nd)) (resolution_nodes st)) (\<lambda>nd. length (resolution_node_position nd) < length q \<and>
-        take (length (resolution_node_position nd)) q = resolution_node_position nd \<and>
-        resolution_node_site nd = d \<and> resolution_node_call nd = p)"
-    then obtain nd where nd: "nd |\<in>| ffilter (\<lambda>nd. X (resolution_node_position nd)) (resolution_nodes st)"
-        "length (resolution_node_position nd) < length q"
-        "take (length (resolution_node_position nd)) q = resolution_node_position nd"
-        "resolution_node_site nd = d" "resolution_node_call nd = p" by blast
-    have nd0: "nd |\<in>| resolution_nodes st" and xn: "X (resolution_node_position nd)" using nd(1) by simp_all
-    obtain n where n: "n |\<in>| access_nodes_at V (resolution_node_position nd)" "access_node V n = nd"
-      by (rule node_set_at[OF nd0])
-    have c: "access_closes V n h" using closes[OF h Resolution_Call_Goal g n(1)] n(2) nd(4,5) by simp
-    show "\<exists>i\<in>set [0..<length q]. X (take i q) \<and> fBex (access_nodes_at V (take i q)) (\<lambda>n. access_closes V n h)"
-      using nd n c xn by (intro bexI[of _ "length (resolution_node_position nd)"]) auto
-  qed
-  show ?thesis
-  proof (cases "finite_pattern_variables p = {||}")
-    case True
-    then show ?thesis using eq[OF True] pos gr Resolution_Call_Goal
-      by (simp add: access_pruned_among_def finite_pruned_def list_ex_iff)
-  next
-    case False
-    then show ?thesis using gr Resolution_Call_Goal by (simp add: access_pruned_among_def finite_pruned_def)
-  qed
-next
-  case (Resolution_Material_Goal q rr M)
-  then show ?thesis using ground[OF h] by (simp add: access_pruned_among_def finite_pruned_def)
 qed
 
 lemma node_positions: "q |\<in>| fimage resolution_node_position (resolution_nodes st) \<longleftrightarrow> access_nodes_at V q \<noteq> {||}"
@@ -1037,16 +962,11 @@ text \<open>
   (@{const search_substitute_plain}), and a found state is shared again (@{const search_of}).
 \<close>
 
-definition finite_solution_alternatives where
-  "finite_solution_alternatives M Ws = ffUnion (fimage (\<lambda>W. ffUnion (fimage (\<lambda>E.
-      case finite_unify_pairs E of None \<Rightarrow> {||} | Some u \<Rightarrow> {|(E,u)|})
-    (finite_material_instance_pairs W M))) Ws)"
 
 lemma finite_solution_successors_alternatives:
   "finite_solution_successors st q rr M Ws =
     fimage (finite_material_alternative_state st q rr M) (finite_solution_alternatives M Ws)"
-  unfolding finite_solution_successors_def finite_solution_alternatives_def
-  by (simp add: fimage_distributes finite_material_alternative_state_def cong: option.case_cong split: option.split)
+  unfolding finite_solution_successors_def by (rule finite_solution_alternatives_states)
 
 definition shared_committed_representation :: "('a,'s,'d,'c) finite_witness_construction \<Rightarrow> ('a,'s,'d,'c) finite_schema_system \<Rightarrow>
     (('a,'s::linorder,'d,'c) shared_search, ('a,'s,'d,'c) shared_goal_entry, ('a,'s,'d,'c) shared_node_entry,

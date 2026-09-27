@@ -18856,6 +18856,19 @@ relocation reads the placement's site map.
 
 Recorded 2026-09-27 (task 831's decision; a design, no theory changes).
 
+[Added by task 839 (review 838's follow-up 1, plan-119), GT1a's refinements and GT1b's course. (a) The table closes only
+goals below the root (`q ≠ []` in `finite_table_closes`): a closed root would leave the found state no root node and no
+certificate, and the call would read refuted; the committed focus, never closed by an entry, is its analogue. (b) A
+premise's certificate is read in the step's order: the node at its socket, then a reused node left of it, then the
+entry. (c) Validity is the checker's acceptance of each entry's certificate at its call (`finite_table_valid`); GT4 #841
+shows the graph check establishes it. GT1b (task 839) carries the table through the committed step, search and lifting
+(`Factor_Resolution_Lifting`) and R4 (`Factor_Resolution_Completeness`), today's forms the instances at the empty table,
+statements kept: the closing's case is one lemma of the step, `resolution_closed_lifted_at` (with
+`finite_table_closes_true` at a valid table), cited by the goal step both liftings take; R4 keeps its own induction
+(#849). A refutation is exact at every table; a resolution is sound at every table, not only a valid one, since the
+result keeps only certificates the checker accepts, so the verdict is exact at every table. The table forms of the
+committed relation, frame, placement, position and found lemmas (item 3's "R5's … lemmas") moved to GT2 (q155).]
+
 ### What of the counterpart line stays
 
 | Piece | Standing | Role and reason |

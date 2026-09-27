@@ -794,6 +794,182 @@ proof -
     using k(3) ex out' eq h(2) by simp
 qed
 
+text \<open>
+  The substitution's value at a bound variable is its pattern read against the shared state, a walk of the bound
+  pattern. It is tabulated once per bound variable: the graph of the values over the bound variables, read at each
+  occurrence by the variable's fibre, which is the value itself (@{text fset_graph_lookup}), so no statement changes.
+\<close>
+
+lemma fset_graph_lookup:
+  "(case finite_singleton_option (fimage snd (ffilter (\<lambda>z. fst z = a) (fimage (\<lambda>a. (a, g a)) D))) of
+      Some p \<Rightarrow> p | None \<Rightarrow> g a) = g a"
+proof (cases "a |\<in>| D")
+  case True
+  then have "fimage snd (ffilter (\<lambda>z. fst z = a) (fimage (\<lambda>a. (a, g a)) D)) = {|g a|}"
+    by (auto simp: fset_eq_iff fimage_iff intro!: image_eqI[where x = "(a, g a)"])
+  then show ?thesis by simp
+next
+  case False
+  then have e: "fimage snd (ffilter (\<lambda>z. fst z = a) (fimage (\<lambda>a. (a, g a)) D)) = {||}"
+    by (auto simp: fset_eq_iff fimage_iff)
+  have "finite_singleton_option (fimage snd (ffilter (\<lambda>z. fst z = a) (fimage (\<lambda>a. (a, g a)) D))) = None"
+    unfolding e by (metis finite_singleton_option_some finsert_not_fempty option.exhaust)
+  then show ?thesis by simp
+qed
+
+lemma search_substitute_plain_code [code]:
+  "search_substitute_plain P \<tau> D r = (let r1 = search_reshare (plain_grounds \<tau> D) r;
+      x = shared_sharing (search_state r1); tab = fimage (\<lambda>a. (a, keyed_pattern_at x (\<tau> a))) D in
+    search_substitute P (\<lambda>a. case finite_singleton_option (fimage snd (ffilter (\<lambda>z. fst z = a) tab)) of
+      Some p \<Rightarrow> p | None \<Rightarrow> keyed_pattern_at x (\<tau> a)) D r1)"
+proof -
+  let ?x = "shared_sharing (search_state (search_reshare (plain_grounds \<tau> D) r))"
+  have tab: "(\<lambda>a. case finite_singleton_option (fimage snd (ffilter (\<lambda>z. fst z = a)
+      (fimage (\<lambda>a. (a, keyed_pattern_at ?x (\<tau> a))) D))) of Some p \<Rightarrow> p | None \<Rightarrow> keyed_pattern_at ?x (\<tau> a)) =
+    (\<lambda>a. keyed_pattern_at ?x (\<tau> a))"
+    by (rule ext, rule fset_graph_lookup)
+  show ?thesis unfolding search_substitute_plain_def Let_def by (simp only: tab)
+qed
+
+subsection \<open>A shared unifier substituted, its bindings collapsed\<close>
+
+text \<open>
+  A unifier computed over the shared state binds variables to shared patterns, references into the table among them.
+  Its bindings are collapsed through the keyed constructor, a node whose parts became ground made a reference, and
+  substituted as they are: no binding is decoded, shared again or walked below a reference.
+\<close>
+
+lemma shared_bindings_extends:
+  assumes tf: "table_formed T" and ext: "table_extends T T'" and s: "shared_bindings_formed T s"
+  shows "shared_bindings_formed T' s \<and> shared_bindings_project T' s = shared_bindings_project T s"
+  using s
+proof (induction s)
+  case (Cons z s)
+  then show ?case by (cases z) (simp add: shared_pattern_extends[OF tf _ ext])
+qed simp
+
+fun keyed_collapse_bindings ::
+    "('a \<times> 'a shared_pattern) list \<Rightarrow> share_state \<Rightarrow> ('a \<times> 'a shared_pattern) list \<times> share_state" where
+  "keyed_collapse_bindings [] x = ([], x)"
+| "keyed_collapse_bindings ((a,p) # s) x = (case keyed_share_collapse p x of (p', x1) \<Rightarrow>
+    (case keyed_collapse_bindings s x1 of (s', x2) \<Rightarrow> ((a,p') # s', x2)))"
+
+lemma keyed_collapse_bindings:
+  "share_state_formed x \<Longrightarrow> shared_bindings_formed (share_state_table x) s \<Longrightarrow>
+    share_state_formed (snd (keyed_collapse_bindings s x)) \<and>
+    table_extends (share_state_table x) (share_state_table (snd (keyed_collapse_bindings s x))) \<and>
+    shared_bindings_formed (share_state_table (snd (keyed_collapse_bindings s x))) (fst (keyed_collapse_bindings s x)) \<and>
+    shared_bindings_project (share_state_table (snd (keyed_collapse_bindings s x))) (fst (keyed_collapse_bindings s x)) =
+      shared_bindings_project (share_state_table x) s \<and>
+    (\<forall>z\<in>set (fst (keyed_collapse_bindings s x)). shared_collapsed (snd z))"
+proof (induction s arbitrary: x)
+  case Nil
+  then show ?case by simp
+next
+  case (Cons z s)
+  obtain a p where z: "z = (a,p)" by (cases z)
+  obtain p' x1 where k1: "keyed_share_collapse p x = (p', x1)" by (cases "keyed_share_collapse p x")
+  obtain s' x2 where k2: "keyed_collapse_bindings s x1 = (s', x2)" by (cases "keyed_collapse_bindings s x1")
+  have fp: "shared_pattern_formed (share_state_table x) p" and fs: "shared_bindings_formed (share_state_table x) s"
+    using Cons.prems(2) z by simp_all
+  note c = share_state_collapse[OF Cons.prems(1) fp]
+  have x1: "share_state_formed x1" and fp': "shared_pattern_formed (share_state_table x1) p'"
+    and pp': "shared_pattern_project (share_state_table x1) p' = shared_pattern_project (share_state_table x) p"
+    and cp': "shared_collapsed p'" and e1: "table_extends (share_state_table x) (share_state_table x1)"
+    using c k1 by simp_all
+  have tf: "table_formed (share_state_table x)" using share_state_formed_table(1)[OF Cons.prems(1)] .
+  have tf1: "table_formed (share_state_table x1)" using share_state_formed_table(1)[OF x1] .
+  note b1 = shared_bindings_extends[OF tf e1 fs]
+  note IH = Cons.IH[OF x1 conjunct1[OF b1]]
+  have x2: "share_state_formed x2" and e2: "table_extends (share_state_table x1) (share_state_table x2)"
+    and fs': "shared_bindings_formed (share_state_table x2) s'"
+    and ps': "shared_bindings_project (share_state_table x2) s' = shared_bindings_project (share_state_table x1) s"
+    and cs': "\<forall>z\<in>set s'. shared_collapsed (snd z)" using IH k2 by simp_all
+  note p2 = shared_pattern_extends[OF tf1 fp' e2]
+  show ?case using x2 table_extends_trans[OF e1 e2] fs' ps' cs' p2 pp' cp' b1 by (simp add: z k1 k2)
+qed
+
+definition search_share :: "share_state \<Rightarrow> ('a,'s::linorder,'d,'c) shared_search \<Rightarrow> ('a,'s,'d,'c) shared_search" where
+  "search_share x r = r\<lparr>search_state := shared_reshare x (search_state r)\<rparr>"
+
+lemma search_share:
+  assumes r: "search_formed \<kappa> P r" and x: "share_state_formed x"
+    and ext: "table_extends (search_table r) (share_state_table x)"
+  shows "search_formed \<kappa> P (search_share x r)" and "search_project (search_share x r) = search_project r"
+    and "search_table (search_share x r) = share_state_table x"
+    and "shared_goals (search_state (search_share x r)) = shared_goals (search_state r)"
+    and "shared_nodes (search_state (search_share x r)) = shared_nodes (search_state r)"
+proof -
+  have s: "shared_state_formed \<kappa> P (search_state r)" and reg: "search_registered_formed r" and v: "search_values_formed \<kappa> P r"
+    using search_formedD[OF r] by simp_all
+  note e = shared_reshare[OF s x ext]
+  show "search_table (search_share x r) = share_state_table x" by (simp add: search_share_def shared_reshare_def)
+  show "shared_goals (search_state (search_share x r)) = shared_goals (search_state r)"
+    "shared_nodes (search_state (search_share x r)) = shared_nodes (search_state r)"
+    by (simp_all add: search_share_def shared_reshare_def)
+  show "search_project (search_share x r) = search_project r" using e(2) by (simp add: search_share_def)
+  have tf: "table_formed (search_table r)" using shared_entries_formed(4)[OF s] .
+  have vf: "search_values_formed \<kappa> P (r\<lparr>search_state := shared_reshare x (search_state r), search_registered := search_registered r\<rparr>)"
+    by (rule search_values_extends[OF v tf]) (simp add: shared_reshare_def ext)
+  have rf: "search_registered_formed (search_share x r)"
+    using reg by (simp add: search_registered_formed_def search_share_def shared_reshare_def)
+  show "search_formed \<kappa> P (search_share x r)"
+    using e(1) rf vf by (simp add: search_formed_def search_share_def)
+qed
+
+definition search_bind :: "('a,'s,'d,'c) finite_schema_system \<Rightarrow>
+    (('s,'a) resolution_variable \<times> ('s,'a) resolution_variable shared_pattern) list \<Rightarrow>
+    ('a,'s::linorder,'d,'c) shared_search \<Rightarrow> ('a,'s,'d,'c) shared_search" where
+  "search_bind P s r = (case keyed_collapse_bindings s (shared_sharing (search_state r)) of (s', x) \<Rightarrow>
+    search_substitute P (shared_binding_substitution s') (shared_binding_domain s') (search_share x r))"
+
+theorem search_bind:
+  assumes r: "search_formed \<kappa> P r" and sf: "shared_bindings_formed (search_table r) s"
+  shows "search_formed \<kappa> P (search_bind P s r)"
+    and "search_project (search_bind P s r) =
+      resolution_state_substitute (finite_binding_substitution (shared_bindings_project (search_table r) s)) (search_project r)"
+    and "table_extends (search_table r) (search_table (search_bind P s r))"
+proof -
+  let ?x = "shared_sharing (search_state r)"
+  have st: "shared_state_formed \<kappa> P (search_state r)" using search_formedD[OF r] by simp
+  have x: "share_state_formed ?x" using shared_entries_formed(3)[OF st] .
+  obtain s' x' where k: "keyed_collapse_bindings s ?x = (s', x')" by (cases "keyed_collapse_bindings s ?x")
+  have c: "share_state_formed x' \<and> table_extends (share_state_table ?x) (share_state_table x') \<and>
+      shared_bindings_formed (share_state_table x') s' \<and>
+      shared_bindings_project (share_state_table x') s' = shared_bindings_project (share_state_table ?x) s \<and>
+      (\<forall>z\<in>set s'. shared_collapsed (snd z))"
+    using keyed_collapse_bindings[OF x sf] k by simp
+  have x': "share_state_formed x'" and ext: "table_extends (search_table r) (share_state_table x')" using c by simp_all
+  note h = search_share[OF r x' ext]
+  let ?r1 = "search_share x' r"
+  have \<sigma>f: "\<And>a. shared_pattern_formed (search_table ?r1) (shared_binding_substitution s' a)"
+    using shared_binding_substitution_formed[of "share_state_table x'" s'] c h(3) by simp
+  have cs: "\<forall>z\<in>set s'. shared_collapsed (snd z)" using c by simp
+  have \<sigma>c: "shared_collapsed (shared_binding_substitution s' a)" for a
+  proof (cases "map_of s' a")
+    case (Some p)
+    then have "(a,p) \<in> set s'" by (rule map_of_SomeD)
+    then show ?thesis using cs Some by (force simp: shared_binding_substitution_def)
+  qed (simp add: shared_binding_substitution_def)
+  have out: "\<And>a. a |\<notin>| shared_binding_domain s' \<Longrightarrow> shared_binding_substitution s' a = Shared_Variable a"
+    by (rule shared_binding_substitution_outside)
+  note k2 = search_substitute[OF h(1) \<sigma>f \<sigma>c out]
+  have eq: "search_bind P s r = search_substitute P (shared_binding_substitution s') (shared_binding_domain s') ?r1"
+    by (simp add: search_bind_def k)
+  show "search_formed \<kappa> P (search_bind P s r)" using k2(1) eq by simp
+  have e2: "table_extends (share_state_table x')
+      (search_table (search_substitute P (shared_binding_substitution s') (shared_binding_domain s') ?r1))"
+    using k2(2) h(3) by simp
+  show "table_extends (search_table r) (search_table (search_bind P s r))"
+    using table_extends_trans[OF ext e2] eq by simp
+  have "(\<lambda>a. shared_pattern_project (search_table ?r1) (shared_binding_substitution s' a)) =
+      finite_binding_substitution (shared_bindings_project (search_table r) s)"
+    using c h(3) by (simp add: fun_eq_iff shared_binding_substitution_project)
+  then show "search_project (search_bind P s r) =
+      resolution_state_substitute (finite_binding_substitution (shared_bindings_project (search_table r) s)) (search_project r)"
+    using k2(3) h(2) eq by simp
+qed
+
 subsection \<open>F4: every value the construction returned is kept, computed once\<close>
 
 text \<open>
@@ -1228,10 +1404,10 @@ qed
 section \<open>The successors of a goal\<close>
 
 text \<open>
-  A call is expanded by R3's alternatives, each read at the goal's projection: the goal is removed, the ground terms of
-  the clause's premises and node shared, the premises placed at their positions and the node at the goal's, and the
-  alternative's unifier shared and substituted, collapsed. A material goal is removed and its solution's unifier
-  substituted. Each projects to R3's alternative state.
+  A call's plain alternative, one of R3's read at the goal's projection, places its clause and substitutes its unifier,
+  shared first and collapsed; a material goal's removes the goal and substitutes its solution's unifier. Each projects
+  to R3's alternative state. The search's own successors take the same placement with the shared unifier's
+  alternatives instead (@{text search_call_successors}, @{text search_solution_successors} below).
 \<close>
 
 definition search_place_goals :: "('a,'s,'d,'c) finite_schema_system \<Rightarrow> ('s list \<times> ('a,'s,'d,'c) resolution_goal) list \<Rightarrow>
@@ -1302,17 +1478,26 @@ next
   show ?case unfolding unf using IH sh nl p1 p2 p3 z by (auto intro!: fset_eqI)
 qed
 
+text \<open>
+  A clause is placed at a call goal's position: the goal removed, the ground terms of the clause's premises and node
+  shared, the premises placed at their positions and the node at the goal's. The call state of a plain alternative
+  substitutes its unifier, shared first, into the placed state.
+\<close>
+
+definition search_call_place :: "('a,'s,'d,'c) finite_schema_system \<Rightarrow> ('a,'s::linorder,'d,'c) shared_search \<Rightarrow>
+    's list \<Rightarrow> 'd \<Rightarrow> 'c \<Rightarrow> ('a,'s,'d) finite_factor_schema \<Rightarrow> ('a,'s,'d,'c) shared_search" where
+  "search_call_place P r q d c S = (let G = finite_clause_goals q d c S; nd = finite_clause_node q d c S;
+      r1 = search_reshare (ffUnion (fimage goal_grounds G) |\<union>| node_grounds nd) (search_remove_goal q r);
+      r2 = search_place_goals P (finite_functional_rows (fimage (\<lambda>g. (resolution_goal_position g, g)) G)) r1 in
+    search_put_node q (enter_node (shared_derivation_of (shared_sharing (search_state r2)) nd)) r2)"
+
 definition search_call_state :: "('a,'s,'d,'c) finite_schema_system \<Rightarrow> ('a,'s::linorder,'d,'c) shared_search \<Rightarrow>
     's list \<Rightarrow> ('d \<times> 'c \<times> 's) option \<Rightarrow> 'd \<Rightarrow> ('s,'a) resolution_variable finite_term_pattern \<Rightarrow>
     'a finite_term_pattern \<times> 'c \<times> ('a,'s,'d) finite_factor_schema \<times>
       (('s,'a) resolution_variable \<times> ('s,'a) resolution_variable finite_term_pattern) list \<Rightarrow>
     ('a,'s,'d,'c) shared_search" where
-  "search_call_state P r q rr d p z = (case z of (i,c,S,u) \<Rightarrow> (let G = finite_clause_goals q d c S;
-      nd = finite_clause_node q d c S;
-      r1 = search_reshare (ffUnion (fimage goal_grounds G) |\<union>| node_grounds nd) (search_remove_goal q r);
-      r2 = search_place_goals P (finite_functional_rows (fimage (\<lambda>g. (resolution_goal_position g, g)) G)) r1;
-      r3 = search_put_node q (enter_node (shared_derivation_of (shared_sharing (search_state r2)) nd)) r2 in
-    search_substitute_plain P (finite_binding_substitution u) (fset_of_list (map fst u)) r3))"
+  "search_call_state P r q rr d p z = (case z of (i,c,S,u) \<Rightarrow>
+    search_substitute_plain P (finite_binding_substitution u) (fset_of_list (map fst u)) (search_call_place P r q d c S))"
 
 definition search_material_state :: "('a,'s,'d,'c) finite_schema_system \<Rightarrow> ('a,'s::linorder,'d,'c) shared_search \<Rightarrow>
     's list \<Rightarrow> ('s,'a) resolution_variable finite_pattern_pairs \<times>
@@ -1327,17 +1512,18 @@ lemma call_alternative_clause:
   using assms unfolding finite_call_alternative_set_def
   by (auto simp: ffUnion.rep_eq fimage.rep_eq split: if_splits option.splits)
 
-theorem search_call_state:
+theorem search_call_place:
   assumes r: "search_formed \<kappa> P r" and pl: "search_placeable (search_project r)" and sock: "clause_sockets_distinct P"
     and at: "RBT.lookup (shared_goals (search_state r)) q = Some h"
     and g: "shared_goal_project (search_table r) (shared_entry_goal h) = Resolution_Call_Goal q rr d p"
-    and z: "z |\<in>| finite_call_alternative_set P q d p"
-  shows "search_formed \<kappa> P (search_call_state P r q rr d p z)"
-    and "search_project (search_call_state P r q rr d p z) = finite_call_alternative_state (search_project r) q rr d p z"
-    and "search_placeable (search_project (search_call_state P r q rr d p z))"
+    and cl: "((d,c),S) |\<in>| finite_system_clauses P"
+  shows "search_formed \<kappa> P (search_call_place P r q d c S)"
+    and "search_project (search_call_place P r q d c S) = Resolution_State
+      (finite_clause_goals q d c S |\<union>| (resolution_pending (search_project r) |-| {|Resolution_Call_Goal q rr d p|}))
+      (finsert (finite_clause_node q d c S) (resolution_nodes (search_project r))) (resolution_witnesses (search_project r))"
+    and "search_placeable (search_project (search_call_place P r q d c S))"
+    and "table_extends (search_table r) (search_table (search_call_place P r q d c S))"
 proof -
-  obtain i c S u where zz: "z = (i,c,S,u)" and cl: "((d,c),S) |\<in>| finite_system_clauses P"
-    using call_alternative_clause[OF z] by blast
   have f1: "finite_relation_functional (finite_schema_premises S)"
     and f2: "finite_relation_functional (finite_schema_materials S)"
     and dj: "fimage fst (finite_schema_premises S) |\<inter>| fimage fst (finite_schema_materials S) = {||}"
@@ -1445,20 +1631,42 @@ proof -
       using sp3(4) r3(2) r2 r1(2) p0 by simp
     show ?thesis using g3 n3 w3 by (cases "search_project ?r3") simp
   qed
+  have e: "search_call_place P r q d c S = ?r3" by (simp add: search_call_place_def Let_def)
+  show "search_formed \<kappa> P (search_call_place P r q d c S)" using r3(1) e by simp
+  show "search_project (search_call_place P r q d c S) =
+      Resolution_State (?G |\<union>| (resolution_pending ?st |-| {|?g|})) (finsert ?nd (resolution_nodes ?st)) (resolution_witnesses ?st)"
+    using p3 e by simp
+  show "search_placeable (search_project (search_call_place P r q d c S))"
+    using search_placeable_call[OF pl gin f1 f2 dj, where c = c and W = "resolution_witnesses ?st"] p3 e by simp
+  have t0: "search_table ?r0 = search_table r" using r0(2) by (simp add: shared_remove_goal_def shared_replace_def)
+  have t3: "search_table ?r3 = search_table ?r1" using r3(2) x2 by (simp add: shared_put_node_def)
+  show "table_extends (search_table r) (search_table (search_call_place P r q d c S))" using r1(3) t0 t3 e by simp
+qed
+
+theorem search_call_state:
+  assumes r: "search_formed \<kappa> P r" and pl: "search_placeable (search_project r)" and sock: "clause_sockets_distinct P"
+    and at: "RBT.lookup (shared_goals (search_state r)) q = Some h"
+    and g: "shared_goal_project (search_table r) (shared_entry_goal h) = Resolution_Call_Goal q rr d p"
+    and z: "z |\<in>| finite_call_alternative_set P q d p"
+  shows "search_formed \<kappa> P (search_call_state P r q rr d p z)"
+    and "search_project (search_call_state P r q rr d p z) = finite_call_alternative_state (search_project r) q rr d p z"
+    and "search_placeable (search_project (search_call_state P r q rr d p z))"
+proof -
+  obtain i c S u where zz: "z = (i,c,S,u)" and cl: "((d,c),S) |\<in>| finite_system_clauses P"
+    using call_alternative_clause[OF z] by blast
+  note pc = search_call_place[OF r pl sock at g cl]
   have out: "\<And>a. a |\<notin>| fset_of_list (map fst u) \<Longrightarrow> finite_binding_substitution u a = Finite_Variable a"
     by (rule finite_binding_substitution_outside)
   note k = search_substitute_plain[where \<tau> = "finite_binding_substitution u" and D = "fset_of_list (map fst u)",
-    OF r3(1) out]
+    OF pc(1) out]
   have e: "search_call_state P r q rr d p z =
-      search_substitute_plain P (finite_binding_substitution u) (fset_of_list (map fst u)) ?r3"
-    by (simp add: search_call_state_def zz Let_def)
+      search_substitute_plain P (finite_binding_substitution u) (fset_of_list (map fst u)) (search_call_place P r q d c S)"
+    by (simp add: search_call_state_def zz)
   show "search_formed \<kappa> P (search_call_state P r q rr d p z)" using k(1) e by simp
-  show pr: "search_project (search_call_state P r q rr d p z) = finite_call_alternative_state ?st q rr d p z"
-    using k(2) e p3 by (simp add: finite_call_alternative_state_def zz)
-  have "search_placeable (search_project ?r3)"
-    using search_placeable_call[OF pl gin f1 f2 dj, where c = c and W = "resolution_witnesses ?st"] p3 by simp
-  then show "search_placeable (search_project (search_call_state P r q rr d p z))"
-    using k(2) e search_placeable_substitute by simp
+  show "search_project (search_call_state P r q rr d p z) = finite_call_alternative_state (search_project r) q rr d p z"
+    using k(2) e pc(2) by (simp add: finite_call_alternative_state_def zz)
+  show "search_placeable (search_project (search_call_state P r q rr d p z))"
+    using k(2) e pc(3) search_placeable_substitute by simp
 qed
 
 theorem search_material_state:
@@ -1493,12 +1701,447 @@ proof -
     using k(2) e search_placeable_substitute by simp
 qed
 
+subsection \<open>The alternatives computed by the shared unifier\<close>
+
+text \<open>
+  A call goal's alternatives are computed on its shared pattern: the ground terms of the definition's renamed
+  interfaces and clause heads are shared first, and each clause is unified by F2a's unifier (@{const shared_unify_pairs})
+  against the goal's pattern as it stands, so a variable is bound to the reference of the goal's ground subterm, never
+  to its decoded copy. A material goal's solutions are unified likewise: its shared fields against the solution's
+  instances, shared first. Each shared alternative projects to R3's (@{thm [source] shared_unify_pairs_exact}), and its
+  state is the placed clause, or the goal removed, with the shared unifier bound (@{const search_bind}).
+\<close>
+
+definition search_call_grounds :: "('a,'s,'d,'c) finite_schema_system \<Rightarrow> 's list \<Rightarrow> 'd \<Rightarrow> finite_factor_term fset" where
+  "search_call_grounds P q d =
+    ffUnion (fimage (\<lambda>(e,i). if e \<noteq> d then {||} else pattern_grounds (finite_rename_apart (q,False) i))
+      (finite_system_interfaces P)) |\<union>|
+    ffUnion (fimage (\<lambda>((e,c),S). if e \<noteq> d then {||} else
+      pattern_grounds (finite_rename_apart (q,True) (finite_schema_conclusion S))) (finite_system_clauses P))"
+
+definition shared_call_pairs :: "share_state \<Rightarrow> 's list \<Rightarrow> 'a finite_term_pattern \<Rightarrow> ('a,'s,'d) finite_factor_schema \<Rightarrow>
+    ('s,'a) resolution_variable shared_pattern \<Rightarrow> ('s,'a) resolution_variable shared_pattern_pairs" where
+  "shared_call_pairs x q i S gp = [(keyed_pattern_at x (finite_rename_apart (q,False) i), gp),
+    (keyed_pattern_at x (finite_rename_apart (q,True) (finite_schema_conclusion S)), gp)]"
+
+definition shared_call_alternatives :: "('a,'s,'d,'c) finite_schema_system \<Rightarrow> share_state \<Rightarrow> 's list \<Rightarrow> 'd \<Rightarrow>
+    ('s,'a) resolution_variable shared_pattern \<Rightarrow> ('a finite_term_pattern \<times> 'c \<times> ('a,'s,'d) finite_factor_schema \<times>
+      (('s,'a) resolution_variable \<times> ('s,'a) resolution_variable shared_pattern) list) fset" where
+  "shared_call_alternatives P x q d gp = (let T = share_state_table x in
+    ffUnion (fimage (\<lambda>(e,i). if e \<noteq> d then {||} else
+      ffUnion (fimage (\<lambda>((e',c),S). if e' \<noteq> d then {||} else
+        (case shared_unify_pairs T (shared_call_pairs x q i S gp) of None \<Rightarrow> {||} | Some s \<Rightarrow> {|(i,c,S,s)|}))
+        (finite_system_clauses P)))
+    (finite_system_interfaces P)))"
+
+lemma shared_call_alternatives_member:
+  "z |\<in>| shared_call_alternatives P x q d gp \<longleftrightarrow> (\<exists>i c S s. z = (i,c,S,s) \<and> (d,i) |\<in>| finite_system_interfaces P \<and>
+    ((d,c),S) |\<in>| finite_system_clauses P \<and> shared_unify_pairs (share_state_table x) (shared_call_pairs x q i S gp) = Some s)"
+  (is "?l \<longleftrightarrow> ?r")
+proof
+  assume ?l
+  then show ?r unfolding shared_call_alternatives_def Let_def
+    by (auto simp: ffUnion.rep_eq fimage.rep_eq split: if_splits option.splits)
+next
+  assume ?r
+  then show ?l unfolding shared_call_alternatives_def Let_def by (force simp: ffUnion.rep_eq fimage.rep_eq)
+qed
+
+lemma finite_call_alternative_set_member:
+  "z |\<in>| finite_call_alternative_set P q d p \<longleftrightarrow> (\<exists>i c S u. z = (i,c,S,u) \<and> (d,i) |\<in>| finite_system_interfaces P \<and>
+    ((d,c),S) |\<in>| finite_system_clauses P \<and> finite_unify_pairs [(finite_rename_apart (q,False) i,p),
+      (finite_rename_apart (q,True) (finite_schema_conclusion S),p)] = Some u)"
+  (is "?l \<longleftrightarrow> ?r")
+proof
+  assume ?l
+  then show ?r unfolding finite_call_alternative_set_def
+    by (auto simp: ffUnion.rep_eq fimage.rep_eq split: if_splits option.splits)
+next
+  assume ?r
+  then show ?l unfolding finite_call_alternative_set_def by (force simp: ffUnion.rep_eq fimage.rep_eq)
+qed
+
+lemma shared_call_pairs_exact:
+  assumes x: "share_state_formed x" and gp: "shared_pattern_formed (share_state_table x) gp"
+    and hi: "\<And>t. t |\<in>| pattern_grounds (finite_rename_apart (q,False) i) \<Longrightarrow> table_holds (share_state_table x) t"
+    and hS: "\<And>t. t |\<in>| pattern_grounds (finite_rename_apart (q,True) (finite_schema_conclusion S)) \<Longrightarrow>
+      table_holds (share_state_table x) t"
+  shows "shared_pairs_formed (share_state_table x) (shared_call_pairs x q i S gp) \<and>
+    shared_pairs_project (share_state_table x) (shared_call_pairs x q i S gp) =
+      [(finite_rename_apart (q,False) i, shared_pattern_project (share_state_table x) gp),
+       (finite_rename_apart (q,True) (finite_schema_conclusion S), shared_pattern_project (share_state_table x) gp)]"
+proof -
+  have rep: "keyed_state_represents x (share_state_table x)" and tf: "table_formed (share_state_table x)"
+    using share_state_formed_table[OF x] by simp_all
+  note k1 = keyed_pattern_at_exact[OF rep tf, where p = "finite_rename_apart (q,False) i", OF hi]
+    and k2 = keyed_pattern_at_exact[OF rep tf, where p = "finite_rename_apart (q,True) (finite_schema_conclusion S)", OF hS]
+  show ?thesis using k1 k2 gp by (simp add: shared_call_pairs_def)
+qed
+
+lemma shared_call_alternatives_project:
+  assumes x: "share_state_formed x" and gp: "shared_pattern_formed (share_state_table x) gp"
+    and held: "\<forall>t. t |\<in>| search_call_grounds P q d \<longrightarrow> table_holds (share_state_table x) t"
+  shows "fimage (\<lambda>(i,c,S,s). (i,c,S,shared_bindings_project (share_state_table x) s)) (shared_call_alternatives P x q d gp) =
+      finite_call_alternative_set P q d (shared_pattern_project (share_state_table x) gp)"
+    and "z |\<in>| shared_call_alternatives P x q d gp \<Longrightarrow> \<exists>i c S s. z = (i,c,S,s) \<and>
+      ((d,c),S) |\<in>| finite_system_clauses P \<and> shared_bindings_formed (share_state_table x) s"
+proof -
+  let ?T = "share_state_table x" and ?p = "shared_pattern_project (share_state_table x) gp"
+  let ?f = "\<lambda>(i,c,S,s). (i,c,S,shared_bindings_project ?T s)"
+  have tf: "table_formed ?T" using share_state_formed_table(1)[OF x] .
+  have pairs: "shared_pairs_formed ?T (shared_call_pairs x q i S gp) \<and>
+      shared_pairs_project ?T (shared_call_pairs x q i S gp) =
+        [(finite_rename_apart (q,False) i, ?p), (finite_rename_apart (q,True) (finite_schema_conclusion S), ?p)]"
+    if "(d,i) |\<in>| finite_system_interfaces P" "((d,c),S) |\<in>| finite_system_clauses P" for i c S
+  proof (rule shared_call_pairs_exact[OF x gp])
+    fix t assume "t |\<in>| pattern_grounds (finite_rename_apart (q,False) i)"
+    then have "t |\<in>| search_call_grounds P q d" using that(1)
+      by (force simp: search_call_grounds_def ffUnion.rep_eq fimage.rep_eq)
+    then show "table_holds ?T t" using held by blast
+  next
+    fix t assume "t |\<in>| pattern_grounds (finite_rename_apart (q,True) (finite_schema_conclusion S))"
+    then have "t |\<in>| search_call_grounds P q d" using that(2)
+      by (force simp: search_call_grounds_def ffUnion.rep_eq fimage.rep_eq)
+    then show "table_holds ?T t" using held by blast
+  qed
+  note un = shared_unify_pairs_exact[OF tf]
+  show "fimage ?f (shared_call_alternatives P x q d gp) = finite_call_alternative_set P q d ?p"
+  proof (rule fset_eqI)
+    fix z
+    show "z |\<in>| fimage ?f (shared_call_alternatives P x q d gp) \<longleftrightarrow> z |\<in>| finite_call_alternative_set P q d ?p"
+    proof
+      assume "z |\<in>| fimage ?f (shared_call_alternatives P x q d gp)"
+      then obtain y where y: "y |\<in>| shared_call_alternatives P x q d gp" and zy: "z = ?f y" by (auto simp: fimage_iff)
+      then obtain i c S s where yy: "y = (i,c,S,s)" and ii: "(d,i) |\<in>| finite_system_interfaces P"
+        and cc: "((d,c),S) |\<in>| finite_system_clauses P"
+        and us: "shared_unify_pairs ?T (shared_call_pairs x q i S gp) = Some s"
+        by (auto simp: shared_call_alternatives_member)
+      have "finite_unify_pairs [(finite_rename_apart (q,False) i, ?p), (finite_rename_apart (q,True) (finite_schema_conclusion S), ?p)] =
+          Some (shared_bindings_project ?T s)"
+        using un[OF conjunct1[OF pairs[OF ii cc]]] conjunct2[OF pairs[OF ii cc]] us by simp
+      then show "z |\<in>| finite_call_alternative_set P q d ?p" using yy zy ii cc by (simp add: finite_call_alternative_set_member)
+    next
+      assume "z |\<in>| finite_call_alternative_set P q d ?p"
+      then obtain i c S u where zz: "z = (i,c,S,u)" and ii: "(d,i) |\<in>| finite_system_interfaces P"
+        and cc: "((d,c),S) |\<in>| finite_system_clauses P"
+        and uu: "finite_unify_pairs [(finite_rename_apart (q,False) i, ?p),
+          (finite_rename_apart (q,True) (finite_schema_conclusion S), ?p)] = Some u"
+        by (auto simp: finite_call_alternative_set_member)
+      have "map_option (shared_bindings_project ?T) (shared_unify_pairs ?T (shared_call_pairs x q i S gp)) = Some u"
+        using un[OF conjunct1[OF pairs[OF ii cc]]] conjunct2[OF pairs[OF ii cc]] uu by simp
+      then obtain s where us: "shared_unify_pairs ?T (shared_call_pairs x q i S gp) = Some s"
+        and su: "shared_bindings_project ?T s = u" by auto
+      have m: "(i,c,S,s) |\<in>| shared_call_alternatives P x q d gp" using ii cc us by (simp add: shared_call_alternatives_member)
+      show "z |\<in>| fimage ?f (shared_call_alternatives P x q d gp)" using fimageI[OF m, of ?f] zz su by simp
+    qed
+  qed
+  show "\<exists>i c S s. z = (i,c,S,s) \<and> ((d,c),S) |\<in>| finite_system_clauses P \<and> shared_bindings_formed ?T s"
+    if mz: "z |\<in>| shared_call_alternatives P x q d gp"
+  proof -
+    obtain i c S s where zz: "z = (i,c,S,s)" and ii: "(d,i) |\<in>| finite_system_interfaces P"
+      and cc: "((d,c),S) |\<in>| finite_system_clauses P"
+      and us: "shared_unify_pairs ?T (shared_call_pairs x q i S gp) = Some s"
+      using mz unfolding shared_call_alternatives_member by blast
+    show ?thesis using un[OF conjunct1[OF pairs[OF ii cc]]] us zz cc by blast
+  qed
+qed
+
+definition search_call_successors :: "('a,'s,'d,'c) finite_schema_system \<Rightarrow> ('a,'s::linorder,'d,'c) shared_search \<Rightarrow>
+    's list \<Rightarrow> 'd \<Rightarrow> ('s,'a) resolution_variable shared_pattern \<Rightarrow> ('a,'s,'d,'c) shared_search fset" where
+  "search_call_successors P r q d gp = (let r0 = search_reshare (search_call_grounds P q d) r in
+    fimage (\<lambda>(i,c,S,s). search_bind P s (search_call_place P r0 q d c S))
+      (shared_call_alternatives P (shared_sharing (search_state r0)) q d gp))"
+
+theorem search_call_successors:
+  assumes r: "search_formed \<kappa> P r" and pl: "search_placeable (search_project r)" and sock: "clause_sockets_distinct P"
+    and at: "RBT.lookup (shared_goals (search_state r)) q = Some h"
+    and g: "shared_entry_goal h = Shared_Call_Goal q rr d gp"
+  shows "fimage search_project (search_call_successors P r q d gp) =
+      fimage (finite_call_alternative_state (search_project r) q rr d (shared_pattern_project (search_table r) gp))
+        (finite_call_alternative_set P q d (shared_pattern_project (search_table r) gp))"
+    and "s' |\<in>| search_call_successors P r q d gp \<Longrightarrow> search_formed \<kappa> P s' \<and> search_placeable (search_project s')"
+proof -
+  let ?p = "shared_pattern_project (search_table r) gp" and ?st = "search_project r"
+  let ?r0 = "search_reshare (search_call_grounds P q d) r"
+  let ?x = "shared_sharing (search_state ?r0)" and ?T0 = "search_table ?r0"
+  let ?F = "\<lambda>(i,c,S,s). search_bind P s (search_call_place P ?r0 q d c S)"
+  let ?f = "\<lambda>(i,c,S,s). (i,c,S,shared_bindings_project (share_state_table ?x) s)"
+  note h0 = search_reshare[where G = "search_call_grounds P q d", OF r]
+  have s: "shared_state_formed \<kappa> P (search_state r)" using search_formedD[OF r] by simp
+  have tf: "table_formed (search_table r)" using shared_entries_formed(4)[OF s] .
+  have gpf: "shared_pattern_formed (search_table r) gp"
+    using shared_entries_formed(1)[OF s at] g by (simp add: goal_entry_formed_def)
+  note gp0 = shared_pattern_extends[OF tf gpf h0(3)]
+  have s0: "shared_state_formed \<kappa> P (search_state ?r0)" using search_formedD[OF h0(1)] by simp
+  have x0: "share_state_formed ?x" using shared_entries_formed(3)[OF s0] .
+  have tf0: "table_formed ?T0" using shared_entries_formed(4)[OF s0] .
+  have gpx: "shared_pattern_formed (share_state_table ?x) gp" "shared_pattern_project (share_state_table ?x) gp = ?p"
+    using gp0 by simp_all
+  have held: "\<forall>t. t |\<in>| search_call_grounds P q d \<longrightarrow> table_holds (share_state_table ?x) t" using h0(4) by simp
+  note A = shared_call_alternatives_project[OF x0 gpx(1) held]
+  have at0: "RBT.lookup (shared_goals (search_state ?r0)) q = Some h" using h0(5) at by simp
+  have pl0: "search_placeable (search_project ?r0)" using h0(2) pl by simp
+  have g0: "shared_goal_project ?T0 (shared_entry_goal h) = Resolution_Call_Goal q rr d ?p" using g gp0 by simp
+  have step: "search_formed \<kappa> P (?F z) \<and> search_project (?F z) = finite_call_alternative_state ?st q rr d ?p (?f z) \<and>
+      search_placeable (search_project (?F z))"
+    if z: "z |\<in>| shared_call_alternatives P ?x q d gp" for z
+  proof -
+    obtain i c S s where zz: "z = (i,c,S,s)" and cl: "((d,c),S) |\<in>| finite_system_clauses P"
+      and sf: "shared_bindings_formed (share_state_table ?x) s" using A(2)[OF z] by blast
+    note pc = search_call_place[OF h0(1) pl0 sock at0 g0 cl]
+    have sf0: "shared_bindings_formed ?T0 s" using sf by simp
+    note sb = shared_bindings_extends[OF tf0 pc(4) sf0]
+    note b = search_bind[OF pc(1) conjunct1[OF sb]]
+    have pr: "search_project (search_bind P s (search_call_place P ?r0 q d c S)) =
+        finite_call_alternative_state ?st q rr d ?p (i,c,S,shared_bindings_project ?T0 s)"
+      using b(2) pc(2) sb h0(2) by (simp add: finite_call_alternative_state_def)
+    have pb: "search_placeable (search_project (search_bind P s (search_call_place P ?r0 q d c S)))"
+      using b(2) pc(3) search_placeable_substitute by simp
+    show ?thesis using b(1) pr pb zz by simp
+  qed
+  have eq: "search_call_successors P r q d gp = fimage ?F (shared_call_alternatives P ?x q d gp)"
+    by (simp add: search_call_successors_def Let_def)
+  have m: "fimage search_project (fimage ?F (shared_call_alternatives P ?x q d gp)) =
+      fimage (finite_call_alternative_state ?st q rr d ?p) (fimage ?f (shared_call_alternatives P ?x q d gp))"
+    unfolding fset.map_comp comp_def by (rule fset.map_cong0) (use step in blast)
+  note A1 = A(1)[unfolded gpx(2)]
+  show "fimage search_project (search_call_successors P r q d gp) =
+      fimage (finite_call_alternative_state ?st q rr d ?p) (finite_call_alternative_set P q d ?p)"
+    unfolding eq m A1 by (rule refl)
+  show "search_formed \<kappa> P s' \<and> search_placeable (search_project s')" if ms: "s' |\<in>| search_call_successors P r q d gp"
+  proof -
+    obtain z where z: "z |\<in>| shared_call_alternatives P ?x q d gp" and sz: "s' = ?F z"
+      using ms eq by (auto simp: fimage_iff)
+    show ?thesis unfolding sz using step[OF z] by blast
+  qed
+qed
+
+definition shared_material_pairs :: "share_state \<Rightarrow> 'a shared_material \<Rightarrow> 'a finite_pattern_pairs \<Rightarrow> 'a shared_pattern_pairs" where
+  "shared_material_pairs x gM E = zip [shared_material_source gM, shared_material_atoms gM, shared_material_edges gM,
+    shared_material_counts gM, shared_material_functions gM] (map (\<lambda>e. keyed_pattern_at x (snd e)) E)"
+
+definition solution_grounds :: "('a \<times> finite_factor_term) fset fset \<Rightarrow> 'a finite_material_pattern \<Rightarrow> finite_factor_term fset" where
+  "solution_grounds Ws M = ffUnion (fimage (\<lambda>W. ffUnion (fimage (\<lambda>E. ffUnion (fset_of_list (map (\<lambda>e. pattern_grounds (snd e)) E)))
+    (finite_material_instance_pairs W M))) Ws)"
+
+definition shared_solution_alternatives :: "share_state \<Rightarrow> 'a shared_material \<Rightarrow> 'a finite_material_pattern \<Rightarrow>
+    ('a \<times> finite_factor_term) fset fset \<Rightarrow> ('a finite_pattern_pairs \<times> ('a \<times> 'a shared_pattern) list) fset" where
+  "shared_solution_alternatives x gM M Ws = (let T = share_state_table x in ffUnion (fimage (\<lambda>W. ffUnion (fimage (\<lambda>E.
+      case shared_unify_pairs T (shared_material_pairs x gM E) of None \<Rightarrow> {||} | Some s \<Rightarrow> {|(E,s)|})
+    (finite_material_instance_pairs W M))) Ws))"
+
+lemma shared_solution_alternatives_member:
+  "z |\<in>| shared_solution_alternatives x gM M Ws \<longleftrightarrow> (\<exists>W E s. z = (E,s) \<and> W |\<in>| Ws \<and>
+    E |\<in>| finite_material_instance_pairs W M \<and> shared_unify_pairs (share_state_table x) (shared_material_pairs x gM E) = Some s)"
+  (is "?l \<longleftrightarrow> ?r")
+proof
+  assume ?l
+  then show ?r unfolding shared_solution_alternatives_def Let_def
+    by (auto simp: ffUnion.rep_eq fimage.rep_eq split: option.splits)
+next
+  assume ?r
+  then show ?l unfolding shared_solution_alternatives_def Let_def by (force simp: ffUnion.rep_eq fimage.rep_eq)
+qed
+
+lemma finite_solution_alternatives_member:
+  "z |\<in>| finite_solution_alternatives M Ws \<longleftrightarrow> (\<exists>W E u. z = (E,u) \<and> W |\<in>| Ws \<and>
+    E |\<in>| finite_material_instance_pairs W M \<and> finite_unify_pairs E = Some u)"
+  (is "?l \<longleftrightarrow> ?r")
+proof
+  assume ?l
+  then show ?r unfolding finite_solution_alternatives_def by (auto simp: ffUnion.rep_eq fimage.rep_eq split: option.splits)
+next
+  assume ?r
+  then show ?l unfolding finite_solution_alternatives_def by (force simp: ffUnion.rep_eq fimage.rep_eq)
+qed
+
+lemma material_instance_pairs_shape:
+  assumes "E |\<in>| finite_material_instance_pairs W M"
+  shows "\<exists>a b c e f. E = [(finite_material_source M, finite_exact_term_pattern a),
+    (finite_material_atoms M, finite_exact_term_pattern b), (finite_material_edges M, finite_exact_term_pattern c),
+    (finite_material_counts M, finite_exact_term_pattern e), (finite_material_functions M, finite_exact_term_pattern f)]"
+  using assms unfolding finite_material_instance_pairs_def by (auto simp: ffUnion.rep_eq fimage.rep_eq)
+
+lemma shared_material_pairs_exact:
+  assumes x: "share_state_formed x" and gM: "shared_material_formed (share_state_table x) gM"
+    and E: "E |\<in>| finite_material_instance_pairs W (shared_material_project (share_state_table x) gM)"
+    and held: "\<And>t. t |\<in>| ffUnion (fset_of_list (map (\<lambda>e. pattern_grounds (snd e)) E)) \<Longrightarrow> table_holds (share_state_table x) t"
+  shows "shared_pairs_formed (share_state_table x) (shared_material_pairs x gM E) \<and>
+    shared_pairs_project (share_state_table x) (shared_material_pairs x gM E) = E"
+proof -
+  let ?T = "share_state_table x"
+  have rep: "keyed_state_represents x ?T" and tf: "table_formed ?T" using share_state_formed_table[OF x] by simp_all
+  obtain a b c e f where Ee: "E = [(finite_material_source (shared_material_project ?T gM), finite_exact_term_pattern a),
+      (finite_material_atoms (shared_material_project ?T gM), finite_exact_term_pattern b),
+      (finite_material_edges (shared_material_project ?T gM), finite_exact_term_pattern c),
+      (finite_material_counts (shared_material_project ?T gM), finite_exact_term_pattern e),
+      (finite_material_functions (shared_material_project ?T gM), finite_exact_term_pattern f)]"
+    using material_instance_pairs_shape[OF E] by blast
+  have k: "shared_pattern_formed ?T (keyed_pattern_at x (finite_exact_term_pattern v :: 'a finite_term_pattern)) \<and>
+      shared_pattern_project ?T (keyed_pattern_at x (finite_exact_term_pattern v :: 'a finite_term_pattern)) =
+        finite_exact_term_pattern v"
+    if v: "v \<in> {a,b,c,e,f}" for v
+  proof -
+    have "\<And>t. t |\<in>| pattern_grounds (finite_exact_term_pattern v :: 'a finite_term_pattern) \<Longrightarrow> table_holds ?T t"
+    proof -
+      fix t assume t: "t |\<in>| pattern_grounds (finite_exact_term_pattern v :: 'a finite_term_pattern)"
+      have "t |\<in>| ffUnion (fset_of_list (map (\<lambda>e. pattern_grounds (snd e)) E))" using v t by (auto simp: Ee ffUnion.rep_eq)
+      then show "table_holds ?T t" by (rule held)
+    qed
+    from keyed_pattern_at_exact[OF rep tf, where p = "finite_exact_term_pattern v", OF this] show ?thesis by blast
+  qed
+  show ?thesis using k[of a] k[of b] k[of c] k[of e] k[of f] gM
+    by (simp add: Ee shared_material_pairs_def shared_material_formed_def shared_material_project_def)
+qed
+
+lemma shared_solution_alternatives_project:
+  assumes x: "share_state_formed x" and gM: "shared_material_formed (share_state_table x) gM"
+    and held: "\<forall>t. t |\<in>| solution_grounds Ws (shared_material_project (share_state_table x) gM) \<longrightarrow>
+      table_holds (share_state_table x) t"
+  shows "fimage (\<lambda>(E,s). (E, shared_bindings_project (share_state_table x) s))
+      (shared_solution_alternatives x gM (shared_material_project (share_state_table x) gM) Ws) =
+    finite_solution_alternatives (shared_material_project (share_state_table x) gM) Ws"
+    and "z |\<in>| shared_solution_alternatives x gM (shared_material_project (share_state_table x) gM) Ws \<Longrightarrow>
+      \<exists>E s. z = (E,s) \<and> shared_bindings_formed (share_state_table x) s"
+proof -
+  let ?T = "share_state_table x" and ?M = "shared_material_project (share_state_table x) gM"
+  let ?f = "\<lambda>(E,s). (E, shared_bindings_project ?T s)"
+  have tf: "table_formed ?T" using share_state_formed_table(1)[OF x] .
+  have pairs: "shared_pairs_formed ?T (shared_material_pairs x gM E) \<and> shared_pairs_project ?T (shared_material_pairs x gM E) = E"
+    if "W |\<in>| Ws" "E |\<in>| finite_material_instance_pairs W ?M" for W E
+  proof (rule shared_material_pairs_exact[OF x gM that(2)])
+    fix t assume "t |\<in>| ffUnion (fset_of_list (map (\<lambda>e. pattern_grounds (snd e)) E))"
+    then have "t |\<in>| solution_grounds Ws ?M" using that by (force simp: solution_grounds_def ffUnion.rep_eq fimage.rep_eq)
+    then show "table_holds ?T t" using held by blast
+  qed
+  note un = shared_unify_pairs_exact[OF tf]
+  show "fimage ?f (shared_solution_alternatives x gM ?M Ws) = finite_solution_alternatives ?M Ws"
+  proof (rule fset_eqI)
+    fix z
+    show "z |\<in>| fimage ?f (shared_solution_alternatives x gM ?M Ws) \<longleftrightarrow> z |\<in>| finite_solution_alternatives ?M Ws"
+    proof
+      assume "z |\<in>| fimage ?f (shared_solution_alternatives x gM ?M Ws)"
+      then obtain y where y: "y |\<in>| shared_solution_alternatives x gM ?M Ws" and zy: "z = ?f y" by (auto simp: fimage_iff)
+      then obtain W E s where yy: "y = (E,s)" and ww: "W |\<in>| Ws" and ee: "E |\<in>| finite_material_instance_pairs W ?M"
+        and us: "shared_unify_pairs ?T (shared_material_pairs x gM E) = Some s"
+        by (auto simp: shared_solution_alternatives_member)
+      have "finite_unify_pairs E = Some (shared_bindings_project ?T s)"
+        using un[OF conjunct1[OF pairs[OF ww ee]]] conjunct2[OF pairs[OF ww ee]] us by simp
+      then show "z |\<in>| finite_solution_alternatives ?M Ws" using yy zy ww ee by (auto simp: finite_solution_alternatives_member)
+    next
+      assume "z |\<in>| finite_solution_alternatives ?M Ws"
+      then obtain W E u where zz: "z = (E,u)" and ww: "W |\<in>| Ws" and ee: "E |\<in>| finite_material_instance_pairs W ?M"
+        and uu: "finite_unify_pairs E = Some u" by (auto simp: finite_solution_alternatives_member)
+      have "map_option (shared_bindings_project ?T) (shared_unify_pairs ?T (shared_material_pairs x gM E)) = Some u"
+        using un[OF conjunct1[OF pairs[OF ww ee]]] conjunct2[OF pairs[OF ww ee]] uu by simp
+      then obtain s where us: "shared_unify_pairs ?T (shared_material_pairs x gM E) = Some s"
+        and su: "shared_bindings_project ?T s = u" by auto
+      have m: "(E,s) |\<in>| shared_solution_alternatives x gM ?M Ws" using ww ee us
+        by (auto simp: shared_solution_alternatives_member)
+      show "z |\<in>| fimage ?f (shared_solution_alternatives x gM ?M Ws)" using fimageI[OF m, of ?f] zz su by simp
+    qed
+  qed
+  show "\<exists>E s. z = (E,s) \<and> shared_bindings_formed ?T s" if mz: "z |\<in>| shared_solution_alternatives x gM ?M Ws"
+  proof -
+    obtain W E s where zz: "z = (E,s)" and ww: "W |\<in>| Ws" and ee: "E |\<in>| finite_material_instance_pairs W ?M"
+      and us: "shared_unify_pairs ?T (shared_material_pairs x gM E) = Some s"
+      using mz unfolding shared_solution_alternatives_member by blast
+    show ?thesis using un[OF conjunct1[OF pairs[OF ww ee]]] us zz by blast
+  qed
+qed
+
+definition search_solution_successors :: "('a,'s,'d,'c) finite_schema_system \<Rightarrow> ('a,'s::linorder,'d,'c) shared_search \<Rightarrow>
+    's list \<Rightarrow> ('s,'a) resolution_variable shared_material \<Rightarrow> ('s,'a) resolution_variable finite_material_pattern \<Rightarrow>
+    (('s,'a) resolution_variable \<times> finite_factor_term) fset fset \<Rightarrow> ('a,'s,'d,'c) shared_search fset" where
+  "search_solution_successors P r q gM M Ws = (let r0 = search_reshare (solution_grounds Ws M) r in
+    fimage (\<lambda>(E,s). search_bind P s (search_remove_goal q r0)) (shared_solution_alternatives (shared_sharing (search_state r0)) gM M Ws))"
+
+theorem search_solution_successors:
+  assumes r: "search_formed \<kappa> P r" and pl: "search_placeable (search_project r)"
+    and at: "RBT.lookup (shared_goals (search_state r)) q = Some h"
+    and g: "shared_entry_goal h = Shared_Material_Goal q rr gM"
+  shows "fimage search_project (search_solution_successors P r q gM (shared_material_project (search_table r) gM) Ws) =
+      fimage (finite_material_alternative_state (search_project r) q rr (shared_material_project (search_table r) gM))
+        (finite_solution_alternatives (shared_material_project (search_table r) gM) Ws)"
+    and "s' |\<in>| search_solution_successors P r q gM (shared_material_project (search_table r) gM) Ws \<Longrightarrow>
+      search_formed \<kappa> P s' \<and> search_placeable (search_project s')"
+proof -
+  let ?M = "shared_material_project (search_table r) gM" and ?st = "search_project r"
+  let ?r0 = "search_reshare (solution_grounds Ws ?M) r"
+  let ?x = "shared_sharing (search_state ?r0)" and ?T0 = "search_table ?r0"
+  let ?F = "\<lambda>(E,s). search_bind P s (search_remove_goal q ?r0)"
+  let ?f = "\<lambda>(E,s). (E, shared_bindings_project (share_state_table ?x) s)"
+  note h0 = search_reshare[where G = "solution_grounds Ws ?M", OF r]
+  have s: "shared_state_formed \<kappa> P (search_state r)" using search_formedD[OF r] by simp
+  have tf: "table_formed (search_table r)" using shared_entries_formed(4)[OF s] .
+  have gf: "shared_material_formed (search_table r) gM"
+    using shared_entries_formed(1)[OF s at] g by (simp add: goal_entry_formed_def)
+  note gM0 = shared_material_extends[OF tf gf h0(3)]
+  have s0: "shared_state_formed \<kappa> P (search_state ?r0)" using search_formedD[OF h0(1)] by simp
+  have x0: "share_state_formed ?x" using shared_entries_formed(3)[OF s0] .
+  have gMx: "shared_material_formed (share_state_table ?x) gM" "shared_material_project (share_state_table ?x) gM = ?M"
+    using gM0 by simp_all
+  have held: "\<forall>t. t |\<in>| solution_grounds Ws (shared_material_project (share_state_table ?x) gM) \<longrightarrow>
+      table_holds (share_state_table ?x) t" using h0(4) gMx(2) by simp
+  note A = shared_solution_alternatives_project[OF x0 gMx(1) held]
+  note A2 = A(2)[unfolded gMx(2)]
+  have at0: "RBT.lookup (shared_goals (search_state ?r0)) q = Some h" using h0(5) at by simp
+  have g0: "shared_goal_project ?T0 (shared_entry_goal h) = Resolution_Material_Goal q rr ?M" using g gM0 by simp
+  note r0 = search_remove_goal[OF h0(1) at0]
+  note sr0 = shared_remove_goal[OF s0 at0]
+  have p0: "search_project (search_remove_goal q ?r0) = Resolution_State
+      (resolution_pending ?st |-| {|Resolution_Material_Goal q rr ?M|}) (resolution_nodes ?st) (resolution_witnesses ?st)"
+    using sr0(2-4) r0(2) g0 h0(2) by (cases "search_project (search_remove_goal q ?r0)") simp
+  have trm: "search_table (search_remove_goal q ?r0) = ?T0" using r0(2) by (simp add: shared_remove_goal_def shared_replace_def)
+  have plr: "search_placeable (search_project (search_remove_goal q ?r0))" using search_placeable_fewer[OF pl] p0 by simp
+  have step: "search_formed \<kappa> P (?F z) \<and> search_project (?F z) = finite_material_alternative_state ?st q rr ?M (?f z) \<and>
+      search_placeable (search_project (?F z))"
+    if z: "z |\<in>| shared_solution_alternatives ?x gM ?M Ws" for z
+  proof -
+    obtain E s where zz: "z = (E,s)" and sf: "shared_bindings_formed (share_state_table ?x) s"
+      using A2[OF z] by blast
+    have sf0: "shared_bindings_formed (search_table (search_remove_goal q ?r0)) s" using sf trm by simp
+    note b = search_bind[OF r0(1) sf0]
+    have pr: "search_project (search_bind P s (search_remove_goal q ?r0)) =
+        finite_material_alternative_state ?st q rr ?M (E, shared_bindings_project (share_state_table ?x) s)"
+      using b(2) p0 trm by (simp add: finite_material_alternative_state_def)
+    have pb: "search_placeable (search_project (search_bind P s (search_remove_goal q ?r0)))"
+      using b(2) plr search_placeable_substitute by simp
+    show ?thesis using b(1) pr pb zz by simp
+  qed
+  have eq: "search_solution_successors P r q gM ?M Ws = fimage ?F (shared_solution_alternatives ?x gM ?M Ws)"
+    by (simp add: search_solution_successors_def Let_def)
+  have m: "fimage search_project (fimage ?F (shared_solution_alternatives ?x gM ?M Ws)) =
+      fimage (finite_material_alternative_state ?st q rr ?M) (fimage ?f (shared_solution_alternatives ?x gM ?M Ws))"
+    unfolding fset.map_comp comp_def by (rule fset.map_cong0) (use step in blast)
+  note A1 = A(1)[unfolded gMx(2)]
+  show "fimage search_project (search_solution_successors P r q gM ?M Ws) =
+      fimage (finite_material_alternative_state ?st q rr ?M) (finite_solution_alternatives ?M Ws)"
+    unfolding eq m A1 by (rule refl)
+  show "search_formed \<kappa> P s' \<and> search_placeable (search_project s')" if ms: "s' |\<in>| search_solution_successors P r q gM ?M Ws"
+  proof -
+    obtain z where z: "z |\<in>| shared_solution_alternatives ?x gM ?M Ws" and sz: "s' = ?F z"
+      using ms eq by (auto simp: fimage_iff)
+    show ?thesis unfolding sz using step[OF z] by blast
+  qed
+qed
+
+subsection \<open>The successors\<close>
+
+text \<open>
+  A goal is read as it stands in the shared state: a call is closed by a reusable node or expanded by the shared
+  unifier's alternatives, and a material goal by its solutions' shared alternatives; only the material pattern is read
+  plain, as the material resolution reads it.
+\<close>
+
 definition search_successors :: "('a,'s,'d,'c) finite_witness_construction \<Rightarrow> ('a,'s,'d,'c) finite_schema_system \<Rightarrow>
     ('a,'s::linorder,'d,'c) shared_search \<Rightarrow> ('a,'s,'d,'c) shared_goal_entry \<Rightarrow> ('a,'s,'d,'c) shared_search fset" where
-  "search_successors \<kappa> P r h = (case shared_goal_project (search_table r) (shared_entry_goal h) of
-      Resolution_Call_Goal q rr d p \<Rightarrow> if access_reusable (shared_access \<kappa> P r) h then {|search_remove_goal q r|}
-        else fimage (search_call_state P r q rr d p) (finite_call_alternative_set P q d p)
-    | Resolution_Material_Goal q rr M \<Rightarrow> fimage (search_material_state P r q) (finite_material_alternative_set M))"
+  "search_successors \<kappa> P r h = (case shared_entry_goal h of
+      Shared_Call_Goal q rr d gp \<Rightarrow> if access_reusable (shared_access \<kappa> P r) h then {|search_remove_goal q r|}
+        else search_call_successors P r q d gp
+    | Shared_Material_Goal q rr gM \<Rightarrow> (let M = shared_material_project (search_table r) gM in
+        case finite_material_resolution M of Material_Waits \<Rightarrow> {||}
+        | Material_Solutions Ws \<Rightarrow> search_solution_successors P r q gM M Ws))"
 
 theorem search_successors:
   assumes r: "search_formed \<kappa> P r" and pl: "search_placeable (search_project r)" and sock: "clause_sockets_distinct P"
@@ -1521,55 +2164,53 @@ proof -
     using search_remove_goal(1)[OF r that(1)] closed[OF that] search_placeable_fewer[OF pl]
     by (simp add: finite_goal_closed_def)
   show "fimage search_project (search_successors \<kappa> P r h) = finite_goal_successors P ?st (access_goal (shared_access \<kappa> P r) h)"
-  proof (cases "shared_goal_project ?T (shared_entry_goal h)")
-    case (Resolution_Call_Goal q rr d p)
-    have q: "shared_goal_position (shared_entry_goal h) = q"
-      using arg_cong[OF Resolution_Call_Goal, of resolution_goal_position] by simp
-    have atq: "RBT.lookup (shared_goals (search_state r)) q = Some h" using at q by simp
-    have reuse: "access_reusable (shared_access \<kappa> P r) h \<longleftrightarrow> finite_reusable ?st (Resolution_Call_Goal q rr d p)"
-      using reusable[OF h] Resolution_Call_Goal by (simp add: shared_access_simps)
+  proof (cases "shared_entry_goal h")
+    case (Shared_Call_Goal q rr d gp)
+    let ?p = "shared_pattern_project ?T gp"
+    have g: "shared_goal_project ?T (shared_entry_goal h) = Resolution_Call_Goal q rr d ?p" using Shared_Call_Goal by simp
+    have atq: "RBT.lookup (shared_goals (search_state r)) q = Some h" using at Shared_Call_Goal by simp
+    have reuse: "access_reusable (shared_access \<kappa> P r) h \<longleftrightarrow> finite_reusable ?st (Resolution_Call_Goal q rr d ?p)"
+      using reusable[OF h] g by (simp add: shared_access_simps)
     show ?thesis
     proof (cases "access_reusable (shared_access \<kappa> P r) h")
       case True
-      then show ?thesis using reuse closed[OF atq Resolution_Call_Goal] Resolution_Call_Goal
+      then show ?thesis using reuse closed[OF atq g] g Shared_Call_Goal
         by (simp add: search_successors_def shared_access_simps)
     next
       case False
-      have "fimage search_project (fimage (search_call_state P r q rr d p) (finite_call_alternative_set P q d p)) =
-          fimage (finite_call_alternative_state ?st q rr d p) (finite_call_alternative_set P q d p)"
-        unfolding fset.map_comp comp_def
-        by (rule fset.map_cong0) (rule search_call_state(2)[OF r pl sock atq Resolution_Call_Goal])
-      then show ?thesis using False reuse Resolution_Call_Goal
+      then show ?thesis using reuse search_call_successors(1)[OF r pl sock atq Shared_Call_Goal] g Shared_Call_Goal
         by (simp add: search_successors_def shared_access_simps finite_call_successors_alternatives)
     qed
   next
-    case (Resolution_Material_Goal q rr M)
-    have q: "shared_goal_position (shared_entry_goal h) = q"
-      using arg_cong[OF Resolution_Material_Goal, of resolution_goal_position] by simp
-    have atq: "RBT.lookup (shared_goals (search_state r)) q = Some h" using at q by simp
-    have "fimage search_project (fimage (search_material_state P r q) (finite_material_alternative_set M)) =
-        fimage (finite_material_alternative_state ?st q rr M) (finite_material_alternative_set M)"
-      unfolding fset.map_comp comp_def
-      by (rule fset.map_cong0) (rule search_material_state(2)[OF r pl atq Resolution_Material_Goal])
-    then show ?thesis using Resolution_Material_Goal
-      by (simp add: search_successors_def shared_access_simps finite_material_successors_alternatives)
+    case (Shared_Material_Goal q rr gM)
+    let ?M = "shared_material_project ?T gM"
+    have g: "shared_goal_project ?T (shared_entry_goal h) = Resolution_Material_Goal q rr ?M" using Shared_Material_Goal by simp
+    have atq: "RBT.lookup (shared_goals (search_state r)) q = Some h" using at Shared_Material_Goal by simp
+    have e: "fimage search_project (search_successors \<kappa> P r h) =
+        fimage (finite_material_alternative_state ?st q rr ?M) (finite_material_alternative_set ?M)"
+    proof (cases "finite_material_resolution ?M")
+      case Material_Waits
+      then show ?thesis by (simp add: search_successors_def Shared_Material_Goal Let_def finite_material_alternative_set_def)
+    next
+      case (Material_Solutions Ws)
+      then show ?thesis using search_solution_successors(1)[OF r pl atq Shared_Material_Goal, of Ws]
+        by (simp add: search_successors_def Shared_Material_Goal Let_def finite_material_alternative_set_def)
+    qed
+    then show ?thesis using g by (simp add: shared_access_simps finite_material_successors_alternatives)
   qed
   show "search_formed \<kappa> P s' \<and> search_placeable (search_project s')" if "s' |\<in>| search_successors \<kappa> P r h"
-  proof (cases "shared_goal_project ?T (shared_entry_goal h)")
-    case (Resolution_Call_Goal q rr d p)
-    have q: "shared_goal_position (shared_entry_goal h) = q"
-      using arg_cong[OF Resolution_Call_Goal, of resolution_goal_position] by simp
-    have atq: "RBT.lookup (shared_goals (search_state r)) q = Some h" using at q by simp
-    show ?thesis using that closed_ok[OF atq Resolution_Call_Goal]
-      search_call_state(1,3)[OF r pl sock atq Resolution_Call_Goal] Resolution_Call_Goal
-      by (auto simp: search_successors_def split: if_splits elim!: fimageE)
+  proof (cases "shared_entry_goal h")
+    case (Shared_Call_Goal q rr d gp)
+    have g: "shared_goal_project ?T (shared_entry_goal h) = Resolution_Call_Goal q rr d (shared_pattern_project ?T gp)"
+      using Shared_Call_Goal by simp
+    have atq: "RBT.lookup (shared_goals (search_state r)) q = Some h" using at Shared_Call_Goal by simp
+    show ?thesis using that closed_ok[OF atq g] search_call_successors(2)[OF r pl sock atq Shared_Call_Goal] Shared_Call_Goal
+      by (auto simp: search_successors_def split: if_splits)
   next
-    case (Resolution_Material_Goal q rr M)
-    have q: "shared_goal_position (shared_entry_goal h) = q"
-      using arg_cong[OF Resolution_Material_Goal, of resolution_goal_position] by simp
-    have atq: "RBT.lookup (shared_goals (search_state r)) q = Some h" using at q by simp
-    show ?thesis using that search_material_state(1,3)[OF r pl atq Resolution_Material_Goal] Resolution_Material_Goal
-      by (auto simp: search_successors_def elim!: fimageE)
+    case (Shared_Material_Goal q rr gM)
+    have atq: "RBT.lookup (shared_goals (search_state r)) q = Some h" using at Shared_Material_Goal by simp
+    show ?thesis using that search_solution_successors(2)[OF r pl atq Shared_Material_Goal] Shared_Material_Goal
+      by (auto simp: search_successors_def Let_def split: finite_material_outcome.splits)
   qed
 qed
 

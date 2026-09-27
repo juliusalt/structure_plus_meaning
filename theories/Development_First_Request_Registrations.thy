@@ -92,21 +92,24 @@ text \<open>
   so the registrations are complete at it by agreement (@{thm [source] readers_agreement_registrations_complete}).
 \<close>
 
-theorem first_request_registrations_complete:
-  "finite_registration_complete finite_first_request_program n bound_witness_registration"
-  "finite_registration_complete finite_first_request_program n (additions_witness_registration 392 391)"
-  "finite_registration_complete finite_first_request_program n merge_witness_registration"
+theorem first_request_registrations_complete_in:
+  assumes exact: "finite_query_exact \<Xi> finite_first_request_program n"
+  shows "finite_registration_complete_in \<Xi> finite_first_request_program n bound_witness_registration"
+  "finite_registration_complete_in \<Xi> finite_first_request_program n (additions_witness_registration 392 391)"
+  "finite_registration_complete_in \<Xi> finite_first_request_program n merge_witness_registration"
 proof -
-  note by_agreement=readers_agreement_registrations_complete[where P=finite_first_request_program,
-    unfolded finite_first_request_program_exact, OF first_request_program_formed first_request_readers_guard_agreement
+  note by_agreement=readers_agreement_registrations_complete_in[where P=finite_first_request_program,
+    unfolded finite_first_request_program_exact, OF exact first_request_program_formed first_request_readers_guard_agreement
     first_request_sites]
-  show "finite_registration_complete finite_first_request_program n bound_witness_registration"
+  show "finite_registration_complete_in \<Xi> finite_first_request_program n bound_witness_registration"
     by (rule by_agreement(1))
-  show "finite_registration_complete finite_first_request_program n (additions_witness_registration 392 391)"
+  show "finite_registration_complete_in \<Xi> finite_first_request_program n (additions_witness_registration 392 391)"
     by (rule by_agreement(2))
-  show "finite_registration_complete finite_first_request_program n merge_witness_registration"
+  show "finite_registration_complete_in \<Xi> finite_first_request_program n merge_witness_registration"
     by (rule by_agreement(3))
 qed
+
+lemmas first_request_registrations_complete = first_request_registrations_complete_in[OF finite_query_exact_plain]
 
 subsection \<open>The clauses the registrations name\<close>
 
@@ -177,16 +180,19 @@ qed
 
 subsection \<open>The construction complete and the resolver exact there\<close>
 
-theorem first_request_construction_complete:
-  "finite_construction_complete (finite_collection_construction given_witness_registrations n) finite_first_request_program"
+theorem first_request_construction_complete_in:
+  assumes exact: "finite_query_exact \<Xi> finite_first_request_program n"
+  shows "finite_construction_complete (finite_collection_construction_in \<Xi> given_witness_registrations n) finite_first_request_program"
 proof (rule finite_collection_construction_complete_at)
   fix R c
   assume R: "R \<in> set given_witness_registrations"
     and clause: "((registration_site R,c),registration_schema R) |\<in>| finite_system_clauses finite_first_request_program"
-  show "finite_registration_complete finite_first_request_program n R"
-    using R clause first_request_registrations_complete first_request_registered_clauses(4) registration_sites
+  show "finite_registration_complete_in \<Xi> finite_first_request_program n R"
+    using R clause first_request_registrations_complete_in[OF exact] first_request_registered_clauses(4) registration_sites
     by (auto simp: given_witness_registrations_def)
 qed
+
+lemmas first_request_construction_complete = first_request_construction_complete_in[OF finite_query_exact_plain]
 
 text \<open>
   The exact forms at that construction, R5's at no commitment, the construction's formation discharged

@@ -19284,6 +19284,106 @@ at a table at the installed program stand in `relocated_registrations_in`, its t
 the agreeing program itself (the checker's acceptance of the same certificates there) is not stated: truth is what a
 found state and GT4's graph verdicts read (`finite_check_found_true`, `finite_state_graph_verdicts_in_true`).]
 
+[Corrected by task 918 (q161 (A), from W5 #847; `.build/plans/plan-129/q161.md`), a design. W5's claim (2) — "every
+value outside a committed goal's output kept, and a registration's element (82's callee sites, 5's rows at 561) never
+one" — is corrected. Its first half stands, as a fact the discharges prove and their statements drop; its second half is
+a fact of a search, not of the given's record, and is made one of the query search by construction.
+
+*What the exchange and the lifting keep today.* WC2a's exchange (`finite_commitment_exchanges_by_in Θ sel U κ K P`,
+its Lifting form `finite_exchanges_by_in`) gives a committed goal's kept state, a material successor and a produced
+state each supported at *some* valuation, every node barred: no value of the incoming support is related, and a support
+reads no node's call. The lifting (`finite_committed_lifting_by_in`) keeps the root values (`finite_keeping_outcome`)
+only at `finite_commits_nothing K sel`. The discharges prove what each step changes inside their proofs: the direct
+producer's valuation is the answer on the committed goal's variables and the support elsewhere (`finite_direct_context`);
+a framed socket's (`finite_framed_valuation`, read by `finite_framed_call_context`) is the answer on the output's
+variables and the support outside them, outside the parent's free premise variables and, at a socket without the kept
+head, outside the absorbed head outputs; the material, kinds and narrowed valuations likewise
+(`finite_framed_material_valuation`, `finite_kinds_valuation`, `Factor_Narrowed_Productions`' produced valuation). Their
+statements (`finite_exchange_context`, `finite_framed_socket_class_context`) keep only "the answer on the goal's
+variables".
+
+*The counterexample to the element claim.* `finite_goal_premise` is vacuous at [] and the direct producer's test
+(`finite_producer_commits`) reads no node: a query rooted at a declared producer's call — 79 is one
+(`root_family_producer_record`) — commits its root goal at the top focus, the committed sub-search keeps the least answer,
+and every other true instance's root value is lost; below the root, a producer whose output the root call holds moves it
+the same way (its test lets any node hold the output). A kept socket keeps its parent's call (the head kept, so every
+ancestor's), but a socket without the kept head moves its parent's head output where the parent is the focus root. So "a
+registration's element is never a committed output" holds only where no top-level commitment meets the root call's
+variables — at the given's queries as #831 read them (5 over ground lists; 82 at (x, (d, e)), e free) — and no
+statement of R5 says so.
+
+**The decision.**
+1. *A committed step's changes.* A committed step at a focus F on a goal g changes only: g's variables (its input is
+   ground wherever it commits); its parent node's own premise-only variables; and, only where the parent is the focus
+   root (F = Some (butlast of g's position), the condition every socket without the kept head has), the parent's call's
+   variables — besides the variables its sub-search introduces. The sub-search, the production and the material solution
+   substitute nothing else. A step is *root-apart* at F when none of its changes is a variable of the root call (the root
+   goal while pending and the root nodes' calls, `resolution_root_value`'s objects). Names the builder's
+   (`resolution_root_variables`, `finite_exchange_changes`, `finite_root_apart`).
+2. *The valued exchange.* Beside WC2a's exchange, the same shape with one conjunct more: wherever the step is root-apart,
+   the kept state (the material successor, the produced kept state) is supported at a valuation keeping every root value
+   (`finite_commitment_exchanges_valued_by_in Θ sel U κ K P` at a selection, over pattern-invariant states, WC2a's ground
+   invariant an instance; `finite_exchanges_valued_by_in` its Lifting form over J). It implies the plain exchange, which
+   stays as WC2a stated it. A premise of its own, not a conjunct of WC2a's exchange: the valued premise is read only
+   where a value is to be kept, and a conjunct would change a landed definition every lifting and exact premise reads.
+3. *The lifting keeps the root values at the top focus.* The outcome gains a second flag (`finite_valued_outcome U F B P
+   st θ cb cv R`: cb gives B' = B, cv every root value kept; `finite_keeping_outcome` its instance at cb = cv). The
+   lifting is generalized to conclude it with cb = `finite_commits_nothing K sel` and cv holding where K commits nothing,
+   or where F = None, the valued exchange holds, every commitment of K at None is root-apart and no construction is
+   selected; `finite_committed_lifting_by_in` its instance by name and statement, one induction. At F = None no first
+   join occurs (K1's is below a ground focus), so the value case is stated without the bundle's ground-founds conjunct:
+   a pattern root, where task 849's counterexample shows that conjunct can fail, is not held to it.
+4. *The root-kept restriction of a commitment* (`finite_root_kept K`, the builder's name): K at every focus Some q; at
+   the top focus it commits only root-apart goals. The committed search at a Some focus reads its tests only at Some
+   foci, so every committed sub-search under it is K's, its exchange and valued exchange follow from K's without a
+   discharge restated, and every commitment it makes at None is root-apart by construction. At a ground root the root
+   call holds no variable, so it is K throughout (`finite_root_kept_ground`): no verdict, check form or recorded word
+   changes where it is chosen.
+5. *W4a's completeness at the given's committing instance.* The query search's commitment at the given's instance is the
+   root-kept restriction of the given's lifted commitment (the given's record varied along the query program's left
+   injection, as W5 has it). W5's named premise — the query search keeps the root value of every true instance — is
+   then VK1's value lifting at the query's pattern root (F = None, nothing barred, the query's own variables foreign),
+   and W4a's completeness of the four registrations carries there: the refusals at 77, 392 and 525 through W5's
+   construction are justified. The price is the restriction's: a committable goal holding a root variable is searched
+   plainly at the top, every answer of it an instance, which completeness requires; a query rooted at a producer finds
+   every presentation of its output. 5's and 82's queries meet no such goal as #831 read them; VK2 measures it.
+
+**Weighed and not taken.**
+- *A value conjunct in WC2a's exchange*: a landed definition changed under every lifting and exact premise, and false at
+  a step that is not root-apart (a free socket at a focus root moves its parent's call).
+- *Root-apartness in R5's tests* (`finite_producer_commits`, `finite_socket_holders`): equal at every ground root, so no
+  word would change, but a change of R5's definitions every discharge re-cites; the combinator changes nothing landed.
+- *The query search at the root's own focus* (Some [], as K2's check form): it blocks the root's direct commitment and
+  lets a socket without the kept head at the root node move the root's head output — the element itself.
+- *The kept head's argument for kept sockets* (their frame keeps the parent's call, t3 with `head_kept`, so every
+  ancestor's): it would let a kept socket holding a root variable commit at the top; a second argument beside apartness
+  for no measured need — VK2's measurement calls for it, if a query at the given meets such a socket.
+- *Completeness up to the committed classes* (a representative collected): the element's term changes, W3's facts and
+  the identity query compare terms; a per-registration invariance proof, not a generic one.
+- *A ground wrapper* (the query a ground call at a fresh site whose clause holds the pattern): every discharge at the
+  ground invariant, but W2's program type and its reading of root calls change, and the values to keep are the wrapper
+  node's premise variables — the same apartness under another name.
+- *Nothing committed at the top* (R4's plain search at the query): cut at the given (#829).
+
+**What the builds must respect.**
+- Every landed statement kept by name and statement (R3–R5, K1, K2, GT1–GT2c, WC2a's exchange, premises and lifting);
+  the valued forms stand beside, the plain ones their instances.
+- GT2b #889 states each discharge once, in its pass, in the valued form, at a table, a formed selection and, where it
+  generalizes, the pattern invariant and a foreign U (the ground invariant and U = λ_. False its instances); a context
+  lemma exports the agreement its valuation proves (the support kept outside the step's changes); a discharge that does
+  not generalize to the pattern invariant or a foreign U is reported with the condition it needs, never made a premise;
+  no discharge is stated again after the pass.
+- The root-kept restriction is a parameter chosen at a query search; no verdict and no check form reads it.
+- A query cut at the bound leaves the call unresolved, never refuted; a hand-in never refutes; the given's readers as
+  installed and no clause of any program changed (Q27, Q28); nothing reads the bootstrap loop's datatypes; payloads
+  inert; no recorded word changes.
+
+**What it relies on** (task 376's test): root-apartness compares the variables of the state's own goals and nodes by
+occurrence; it reads no name, position or payload; the restriction reads a committed goal's variables and the root's.
+
+**The builds**: rows VK1 and VK2 of the table below, and GT2b #889's valued pass. Recorded 2026-09-27 (task 918's
+decision; a design, no theory changes).]
+
 ### What of the counterpart line stays
 
 | Piece | Standing | Role and reason |
@@ -19335,12 +19435,14 @@ found state and GT4's graph verdicts read (`finite_check_found_true`, `finite_st
 | GT4 | [Added by task 831.] C at a table (`Factor_Resolution_Graph_Checks`): a closed premise discharged to an assertion node, the check reading the assumption boundary among the table's calls (`finite_graph_reading_conditional_sound`); the nodes' linking through an index of the found state's nodes by position (#703's quadratic `finite_premise_nodes`); a table's validity (each entry's graph read with its assumptions among earlier entries) and its soundness; the result forms' code equations at a table [marked by task 882: done by #841, `finite_table_graph_checks` over the rows in production order, `finite_table_graph_checks_valid`, `finite_table_graph_checks_produced`, `finite_state_graph_check_accepts_valid`; the judgment's verdict at a checked table read from its graph alone, `finite_state_graph_verdicts_in` (task 882)] | GT1 | about 200K |
 | GT5 | [Added by task 831.] The given's table (`Development_Given_Table`, new, beside `Development_Given_Registrations`): its calls from the given's value in their order — 11 at its artifact presentations, 7 and 12 at each with itself, 26 at its environment value and its lists' suffixes, 156 at its site value, 79, 82 and 83 (80, 77) at its package, the four sockets and 526 at (g, g) — and the binding count B; the table valid at every numbered program agreeing with the rooted readers on those calls' callee closure (the asked program, the first request's), and relocated to the asked relation's and the first request's installations (GT2's relocation) | GT2, #798 | about 120K |
 | GT6 | [Added by task 831.] The given's table produced (`Development_Given_Table_Execution`, new, imported by no theory): bottom-up at K2's check forms at the table so far with the given's modes, declarations and registrations, 77's bound at the given handed in, 7's, 11's and 12's roots through the parallel map, the fit tested at the smallest rows first; each certificate checked over its graph with GT4; the retained record (the calls' order, each entry's node count and graph digest, the validity outcome, the base and the resolver); states, seconds and memory by part | GT3, GT4, GT5 | about 100K, a run of hours placed by the planner |
-| W5 | [Added by task 831; task 496's entry, "77's least bound at the given and at a candidate …".] W2's queries resolved by R5's committed search at a table (`Factor_Least_Collections`: `finite_query_search`, `finite_query_answers` and `finite_identity_check` at the committed search with the given's declarations and selection, a statement change of W2's definitions; `Factor_Least_Witness_Registrations`, `Factor_Reader_Witness_Registrations`): a query's completeness from R5's lifting at its pattern root, every value outside a committed goal's output kept, and a valid table's closing keeping it; W4a's completeness carried; the given's four registrations complete there, at the rooted readers and by agreement at the asked and first request's programs; a control: 77 at a two-definition package with a missing callee refuted through the registration at a table, R4's value beside | GT2, I3a #815, #798 | about 250K |
+| W5 | [Added by task 831; task 496's entry, "77's least bound at the given and at a candidate …".] W2's queries resolved by R5's committed search at a table (`Factor_Least_Collections`: `finite_query_search`, `finite_query_answers` and `finite_identity_check` at the committed search with the given's declarations and selection, a statement change of W2's definitions; `Factor_Least_Witness_Registrations`, `Factor_Reader_Witness_Registrations`): a query's completeness from R5's lifting at its pattern root, every value outside a committed goal's output kept, and a valid table's closing keeping it [Corrected by task 918: the query's completeness is VK1's value lifting at the pattern root, the given's committing instance the root-kept restriction of the given's lifted commitment — every value outside a step's changes kept by the discharges' valuations, and a registration's element never moved because the restriction commits no root-held goal at the top; VK2 discharges W5's named premise there]; W4a's completeness carried; the given's four registrations complete there, at the rooted readers and by agreement at the asked and first request's programs; a control: 77 at a two-definition package with a missing callee refuted through the registration at a table, R4's value beside | GT2, I3a #815, #798 | about 250K |
 | OS1 | [Added by task 835, correction (15).] An open premise's truth (`Factor_Resolution_Material_Discharge`, beside `finite_closed_premise_true`): `finite_open_node_true` — at an invariant state (`resolution_invariant`) and a support at a focus (`resolution_supported_at`), a node every goal pending under whose position is in the focus has a true call, by induction over the nodes under it through `resolution_node_linked` (a pending premise by the support, a child node by induction, a reused premise by `resolution_solved_node_true`, a material premise pending by the support or done by `finite_material_done_ground_satisfied`); `finite_open_premise_true` — a call premise of a node whose instance under the binding is ground and every goal pending under whose position is in the focus is true, `finite_closed_premise_true` its closed case, kept [built by task 853: `finite_open_node_true` is stated at a valuation formed at every variable, the goals pending under the node holding at it, not at the support — at the support it fails where a node's call holds a variable no goal constrains and the support's value there is unformed; `finite_open_premise_true` is the support's form, its instance ground, through the support made formed (the goals under the premise keep their values, `finite_goal_holds_formed`); `finite_material_socket_exchange` retired (review 724's follow-up 4), and `resolution_value_substitute_decoded`, `finite_material_ground_substitute`, `evaluate_material_variables_formed` moved up from `Factor_Resolution_Socket_Discharges`, names and statements kept] | none unlanded | about 80K |
 | OS2 | [Added by task 835, correction (15).] The framed test with open siblings (`Factor_Resolution_Commitments`, `Factor_Resolution_Socket_Discharges`; `Factor_Narrowed_Productions` and any theory whose proof unfolds the test; the controls): `finite_children_framed`'s closed disjunct for a call premise at a key other than the socket's — nothing pending under it — replaced by: every goal pending under it holds no variable of the binding at the socket premise's pattern or at a frame variable (its instance ground and its pattern outside the frame kept); material premises unchanged; every statement kept by name and statement, the definition's change named; `finite_framed_instance_true` with the open case (OS1); the exchange's valuation, new-instance and context lemmas (`finite_framed_exchange_valuation`, `finite_framed_new_instance`, `finite_framed_call_context`, `finite_framed_socket_class_context`) with the open siblings' goals kept by the condition; the controls whose values change evaluated again (the framed, carrier, narrowed and input-production controls, K2's check control, O4's and I3a's execution lemmas — I3a's trace then showing the production met), a changed value reported with R4's beside; a control: a parent whose other child has goals pending under it when the socket is taken, the production met, a false call refuted as by R4 [built by task 855: the definition as above, its variables `finite_socket_binding_variables` (the node binding at the frame and at the socket key's premise patterns); the row form `finite_free_premise_row` and the framed bound `finite_premise_only_framed_bound`, `finite_premise_only_bound` and `finite_framed_premise_only` its instances; the open case through `finite_open_premise_holds_in` (the goals under the premise holding at θ), `finite_open_premise_true_in` its support's form; the exchange's valuation, new-instance and context lemmas needed no change — a goal under an open sibling keeps its values at the new valuation already by the holders test (every focused goal holding a changed output or absorbed variable is the socket's sibling or the socket) and by the free premise-only variables' definition (only the parent's children hold them), so no proof reads the new condition; it stands as correction (15) decided, and dropping it is the planner's. Values: at 77/1 200 the production is met, 220 states against 614, the verdict unchanged; every other control keeps its values; the new control (26(x,y) :- 2(x,x) in I2's program) resolves the true call in 30 states against 58 without the production and refutes the false one in 6, R4 beside] | OS1; the lander rule with #834 and #724 (both edit `Factor_Resolution_Commitments`) | about 250K |
 | WC1 | [Added by task 907, correction (16).] The waiting class (`Factor_Socket_Waiting`, new, above `Factor_Resolution_Modes`; `ROOT`, `THEORY_MAP.md`): F1's choice over the unheld candidates a waiting predicate does not name or that are settled at once, over all of them when none stands; F1's selection with a waiting predicate beside its priority, at a table (`finite_resolution_select_waiting_in Θ pr wt κ P`), today's `finite_resolution_select_in` its instance at the empty predicate; F1's two facts at it, `finite_selection_framed` and `finite_selection_unheld` at it; `finite_socket_waits D Φ M st g` (the rule's (a)–(d)), never at no frames; the waiting moded selection (the moded priority and `finite_socket_waits`), the moded selection its instance at no frames; names the builder's | nothing unlanded (GT2a #843 landed) | about 70K |
 | WC2 | [Added by task 907, correction (16).] The exchange at a formed selection (`Factor_Resolution_Commitments`, `Factor_Resolution_Producer_Discharge`, `Factor_Resolution_Socket_Discharges`, `Factor_Resolution_Material_Discharge`, `Factor_Narrowed_Productions`, `Factor_Resolution_Views`, `Factor_Committed_Registrations`, `Factor_Native_Committed_Registrations`, the abstract forms of `Factor_Resolution_Checks`): a formed selection (F1's two facts as a predicate of a selection); the exchange at a table and a formed selection, its discharges, the lifting and exact premises at one, O2's and GT2a's priority forms their instances by name and statement; the committed, check and rc forms at the waiting moded selection; a control in a theory imported by no theory: #896's fixture (`c896_term`) at depth 1 and 2 through R5's committed search at the waiting moded selection against the moded selection (verdicts, states), R4 beside where it returns | WC1; GT2b #889 and GT2c #888 (the same theories), or riding in GT2b if it has not started (q160) | about 250K, divided at its brief if its relations exceed the room |
 | WC3 | [Added by task 907, correction (16).] The class at the route (`Factor_Search_Representations`, `Factor_Shared_Search`, `Factor_Shared_Commitments`, `Factor_Resolution_Checks`, and the deferred search's theories as D1b and D1d leave them): the pending framed sockets a kept set of the search; the waiting set over the access, formed (equal to `finite_socket_waits` at the projection); the kept selection and `route_select` with it, the settled class untouched; the committed step formed at the waiting selection; K2's route constants' selection the waiting moded selection, their code equations through it, every exactness statement of K2 kept (q160); the controls evaluated again — `check_controls`, `given_union_control` (its last conjunct replaced: the inner unions selected at their own focus), K3's rows, `committed_trace` at a bound with a margin (review 898's follow-up 4); the given's 55 at depth 1–3 through the route (verdicts; the commitments at [2], [2,2], [2,3], [2,7], [2,8], [2,6] and [3] as membership facts); `measurement.md`: held, before and after, the 55 fixture at depth 1–3, 77/1 at 200, 113/7 at #830's rows and the given's 77 at 30 steps, the waiting set's share of a step | WC2, D1d #905, FI #892 and GT3 #876 (the last builds restating `kept_select_by`, `route_select` and the route constants' code) | about 200K |
+| VK1 | [Added by task 918.] The value lifting and the root-kept restriction (`Factor_Resolution_Lifting`, `Factor_Resolution_Commitments`; a theory whose proof unfolds a generalized definition, re-cited): a state's root variables, a committed step's changes and root-apartness; the two-flag outcome and the lifting generalized, `finite_committed_lifting_by_in` its instance, its value case at None stated without the ground-founds conjunct; the valued exchange at a selection over pattern-invariant states and its Lifting form, WC2a's plain forms their instances; the valued premises at a formed selection beside `finite_committed_lifting_premises_by_in`; the root-kept restriction: K at every Some focus, K at every ground root, its plain and valued exchanges from K's, every commitment at None root-apart; a control in a theory imported by no theory: a query rooted at a declared producer with two answers in one class — the committed search keeping the least only, the restriction finding both, R4 beside | the planner's (task 918's result) | the planner's (task 918's result) |
+| VK2 | [Added by task 918.] The given's committing instance (the theories stating W5's given instance and registrations): W5's named premise at the root-kept restriction of the given's lifted commitment, from VK1's value lifting at the pattern root and GT2b's valued discharges carried to the query program (V2a, V2b, #798's record); W4a's completeness of the four registrations there, re-cited from W5's forms; 77/1 through the registration at the committing instance against the plain one (outcomes, states), and whether a query meets a root-held committable goal | the planner's (task 918's result) | the planner's (task 918's result) |
 
 R1 and R2 are independent of each other; R3 follows both, R4 R3, R5 R4, R6 R5; R7 follows R4 and R6 [corrected by task 585: R5c follows R5b (#565), R5d R5c and R6, R5e R5d, R6b R5d, R6c
 R5e and R6b; rc (#540) follows R5e; R7 and #547 follow R6c] [corrected by task 725: R5f1 follows R5e and F3, and F2c, #613 and R5f2 follow it; rc (#540) and
@@ -19932,7 +20034,11 @@ every state R3's selection computed the value again (the shared committed search
   of W2's definitions, not of R3, R4 or R5. W4a's completeness is carried: a query's completeness rests on the lifting
   at its pattern root (`finite_query_search_lifting`), which W5 proves of R5's committed search from its lifting — every
   value outside a committed goal's output kept, and a registration's element (82's callee sites, 5's rows at 561) is
-  never one — and which a valid table's closing keeps. Its cost: 26 at the candidate once, then each reached definition
+  never one — and which a valid table's closing keeps [Corrected by task 918, in task 495's entry after the section "The
+given's calls are decided once": the first half holds (the discharges' valuations keep the support outside a committed
+step's changes); the second is a fact of a search — a query rooted at a producer commits its root — so the given's
+committing instance takes the root-kept restriction of the given's lifted commitment, which commits no goal holding a
+root variable at the top focus; W5's named premise is VK1's value lifting there, discharged by VK2]. Its cost: 26 at the candidate once, then each reached definition
   read once in the candidate's environment, ≈ 20–30 states an address (#644), the order of 76's own reading. Until W5, a
   refusal at 80, 392 or 525 is unavailable (the hand-in fails and the queries are cut: unresolved, never refuted), and
   an admission rests on the hand-in.
@@ -19949,6 +20055,26 @@ every state R3's selection computed the value again (the shared committed search
   W5's complete construction at the check forms; the given's readers as installed.
 
 [Recorded 2026-09-27 (task 831's decision; a design, no theory changes).]
+
+[Built by task 847 (W5), with q161's answer. W2's queries are resolved at a query's parameters
+(`Factor_Least_Collections.query_parameters`): two parts, the program's (a table, a priority, a commitment) for the
+ground resolution of every instance found and of an identity (`finite_parameters_resolution`, R5's
+`finite_committed_resolution_by_in`), and the lifted query program's for the query's search (`finite_query_search_in`,
+R5's `finite_committed_search_by_in`), since the search runs over the program with its variables lifted apart and a
+HOL definition takes a commitment at one variable type (q161 (B)); the given's lifted part is the given's declarations
+varied along the lifting, a use-site instance. At `plain_query_parameters` (the empty table, no priority, no
+commitment) every definition is the one of its name before W5 (`finite_parameters_search_plain`,
+`finite_parameters_resolution_plain`); the names stand for those instances, so every consumer and every production
+(`Factor_Narrowed_Commitments.finite_registration_production`) reads R4 as before. Soundness holds at every parameters.
+Completeness is carried under one named premise, `finite_query_exact` (`finite_parameters_refutes_exact` of the
+program's part, `finite_query_search_keeps` of the query's search), discharged at the plain parameters
+(`finite_query_exact_plain`) and, its ground part, wherever R5's committed forms are exact
+(`finite_parameters_refutes_exact_committed`); W4a's completeness and the given's registrations' rest on it (their
+`_in` forms). Its search part at a committing lifted part is not a consequence of R5's lifting, which keeps a root value
+only where nothing is committed and states its found-state invariant at ground roots: the design placed for q161 (A)
+decides a value-keeping lifting, and the given's committing instance is its builds'. A hand-in row names its site,
+schema and variable and the bindings its value relies on, and matches where the node's ground bindings contain them
+(next-edits 215).]
 
 ### What it relies on
 

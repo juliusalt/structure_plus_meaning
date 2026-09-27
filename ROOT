@@ -1676,6 +1676,7 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Criticism_Octet_Samples
     Factor_Executed_Controls
     Factor_Resolution_Controls
+    Factor_Least_Query_Controls
     Factor_Mode_Controls
     Factor_Commitment_Controls
     Factor_Narrowed_Controls

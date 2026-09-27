@@ -190,21 +190,24 @@ qed
 
 subsection \<open>The registrations complete there\<close>
 
-theorem asked_registrations_complete:
-  "finite_registration_complete finite_asked_program n bound_witness_registration"
-  "finite_registration_complete finite_asked_program n (additions_witness_registration 392 391)"
-  "finite_registration_complete finite_asked_program n (additions_witness_registration 525 524)"
+theorem asked_registrations_complete_in:
+  assumes exact: "finite_query_exact \<Xi> finite_asked_program n"
+  shows "finite_registration_complete_in \<Xi> finite_asked_program n bound_witness_registration"
+  "finite_registration_complete_in \<Xi> finite_asked_program n (additions_witness_registration 392 391)"
+  "finite_registration_complete_in \<Xi> finite_asked_program n (additions_witness_registration 525 524)"
 proof -
-  note by_agreement=readers_agreement_registrations_complete[where P=finite_asked_program,
-    unfolded finite_asked_program_exact, OF asked_program_formed asked_readers_guard_agreement asked_sites]
-  show "finite_registration_complete finite_asked_program n bound_witness_registration"
+  note by_agreement=readers_agreement_registrations_complete_in[where P=finite_asked_program,
+    unfolded finite_asked_program_exact, OF exact asked_program_formed asked_readers_guard_agreement asked_sites]
+  show "finite_registration_complete_in \<Xi> finite_asked_program n bound_witness_registration"
     by (rule by_agreement(1))
-  show "finite_registration_complete finite_asked_program n (additions_witness_registration 392 391)"
+  show "finite_registration_complete_in \<Xi> finite_asked_program n (additions_witness_registration 392 391)"
     by (rule by_agreement(2))
-  show "finite_registration_complete finite_asked_program n (additions_witness_registration 525 524)"
-    by (rule additions_witness_registration_complete[where element_site=523])
+  show "finite_registration_complete_in \<Xi> finite_asked_program n (additions_witness_registration 525 524)"
+    by (rule additions_witness_registration_complete_in[OF exact, where element_site=523])
       (simp_all only: finite_asked_program_exact asked_readers_meanings asked_goals_listing)
 qed
+
+lemmas asked_registrations_complete = asked_registrations_complete_in[OF finite_query_exact_plain]
 
 subsection \<open>The clauses the registrations name\<close>
 
@@ -269,16 +272,19 @@ qed
 
 subsection \<open>The construction complete and the resolver exact there\<close>
 
-theorem asked_construction_complete:
-  "finite_construction_complete (finite_collection_construction given_witness_registrations n) finite_asked_program"
+theorem asked_construction_complete_in:
+  assumes exact: "finite_query_exact \<Xi> finite_asked_program n"
+  shows "finite_construction_complete (finite_collection_construction_in \<Xi> given_witness_registrations n) finite_asked_program"
 proof (rule finite_collection_construction_complete_at)
   fix R c
   assume R: "R \<in> set given_witness_registrations"
     and clause: "((registration_site R,c),registration_schema R) |\<in>| finite_system_clauses finite_asked_program"
-  show "finite_registration_complete finite_asked_program n R"
-    using R clause asked_registrations_complete asked_registered_clauses(4) registration_sites
+  show "finite_registration_complete_in \<Xi> finite_asked_program n R"
+    using R clause asked_registrations_complete_in[OF exact] asked_registered_clauses(4) registration_sites
     by (auto simp: given_witness_registrations_def)
 qed
+
+lemmas asked_construction_complete = asked_construction_complete_in[OF finite_query_exact_plain]
 
 text \<open>
   The exact forms at that construction, R5's at no commitment: the complete forms, since the registered forms ask

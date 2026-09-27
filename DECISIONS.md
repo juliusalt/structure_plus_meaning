@@ -17490,7 +17490,10 @@ priority names 12 only once its input is ground. 12 then runs on a free input, 1
   position, only where nothing is committable. At no modes it is `finite_commitment_priority K`
   (`finite_moded_priority_none`): the moded search at no modes is R5's default and every existing form keeps its value.
   The moded selection is `finite_resolution_select_at (finite_moded_priority K D M) κ P`, a priority of F1's selection,
-  read on the focused state as R5's default reads its tests.
+  read on the focused state as R5's default reads its tests. [Corrected by task 907, correction (16): the committed
+  forms at the given take the waiting moded selection — the moded priority beside a waiting class read from the
+  declared sockets' frames, which sets aside a pending framed socket's siblings that would foreclose its commitment; a
+  mode binder never waits, so the modes' order stands inside it.]
 - *Exactness.* F1's lemma at that priority (`finite_resolution_select_at_exact`) gives every selection premise of the
   lifting; nothing about the selection is proved again. The lifting's other premise, the exchange, is not the
   selection's: `finite_commitment_exchanges` quantifies over the found and kept states of a committed goal's sub-search,
@@ -17992,6 +17995,125 @@ production only where the framed socket test holds, and at 77 the test fails at 
   the planner named; GT6 meets 37's lookups under 79, 82 and 83's reads of the given's definitions with the production
   met.]
 
+[Corrected by task 907, a design, from investigation #896 (`.build/tasks/896/result.md` and `measurement.md`, its draft
+`.build/tasks/896/draft/D896_Census.thy`) and review 828's follow-ups 1 and 2, with a draft running the rule below on the
+route's own selection (`.build/tasks/907/draft/D907_Wait.thy`, its selections in `.build/tasks/907/traces/`; shared
+runs, little contention, `.build/tasks/907/measurements.log`). (16) The waiting class. At the given 55's false call at
+depth 2 is never refuted (#827: unresolved at 800, not returned at 1500). At every 55 pair node F1's order expands the
+one-clause premises 46/4, 46/5, 6/6, 48/7, 48/8, 49/9, 49/10 and 1/11 (class (iii)) while 34 at 55.2/1, which binds the
+sockets' input (the child roots x13, x14), still has two-alternative goals pending (class (iv)). Expanded, they hold the
+sockets' frame variables and the node's head outputs, and the framed test at 55.2/2 and 55.2/3 fails for good (children
+framed, premise-only framed, holders); the inner pair is searched plainly with its head outputs free, its unions, bag
+comparison and disjointness enumerate every presentation, and the refuting goal, 55 at the root's socket 3, is never
+selected. The placed step fixes (F234, FI, D1) lower the cost of a state of a search that does not terminate: the cause
+is the order.
+- *The rule.* At a state, a pending goal g standing at the position of a node nd followed by a key k *waits* when a
+  pending call goal h standing at nd's position followed by a key s ≠ k — the premise s of nd's clause in its original
+  form — is a socket the record declares at nd's site, nd's schema and s, with views Vp and Vh, a frame C is declared
+  for it at the same coordinates, and:
+  (a) h's viewed output at Vp holds a variable (a socket whose output is fixed commits nothing);
+  (b) g holds no variable of h's viewed input at Vp (a goal that may bind the socket's input never waits for it);
+  (c) g holds a variable of the image of C under nd's binding, or — g being no socket the record declares for nd's
+  clause — of the image of nd's head output at Vh (the head's viewed output: `resolution_view_pattern Vh` at the
+  schema's conclusion);
+  (d) g is no mode binder at the state (`finite_mode_binder D M st g`): a lookup's binder is taken as correction (12)
+  orders it, and the class never demotes a goal the modes promote.
+  The predicate (`finite_socket_waits D Φ M st g`, the builder's name) reads the declared sockets, their frames and views,
+  the modes and the state: the pending goals, their positions compared for a node's children, the node's site, schema
+  and binding, and variable sets. A default frame is not read: every clause variable outside the socket's input would
+  make the socket's own feeders wait (37 at 55.2/0 holds x10). Material sockets order nothing: no measured need.
+- *At 55's pair clause* (premises 0: 37(x,y,x10); 1: 34((x10,x4),[(x11,x13),(x12,x14)]); 2, 3: the sockets, input the
+  child root x13 or x14, output the term, used variables, interior and slots (x5,x15,x17,x19 and x6,x16,x18,x20), frames
+  {5,15,17,19,21,22} and {6,16,18,20,22}; 4, 5: 46 appending x11, x12 and the interiors into x21, x22; 6: 6(x22,x8); 7, 8:
+  48 into x9 and x7, sockets with frames {9} and {7}; 9, 10: 49(x8,x9), 49(x8,z); 11: 1(x7)): 46, 46, 6, 48 and 48 wait
+  for both 55 sockets through their frames; 48/7 and 48/8 wait for them through x19, x20, x15, x16 and never the other
+  way, a 55 socket holding its own output, which is their input; at an inner node, whose head outputs x5–x9 are the
+  committed socket's free outputs, 49/9, 49/10 and 1/11 wait through the head output, and 49/9 for 48/7 through {9}; at
+  the root, whose head outputs are the call's, 49/9, 49/10 and 1/11 are ground checks and do not wait; 37 and 34 never
+  wait. Sockets wait only through frames: at an inner node both 55 sockets hold head outputs (x5, x6), and waiting
+  through them each would wait for the other, the fallback taking a carrier first.
+- *Its place: a class of F1's selection of its own.* After F1's class (i) — a goal the search settles at once (no
+  alternative, pruned, reusable, closed by a table) never waits — the goals the class names are set aside from (ii),
+  (iii) and (iv) while an unheld candidate it does not name stands; when every candidate is named the choice is F1's
+  over all of them, so the class never empties the selection. Formally, F1's choice (`finite_goal_choice_in`) over the
+  unheld candidates that do not wait or are settled at once when one stands, else over all; F1's selection with a
+  waiting predicate beside its priority (`finite_resolution_select_waiting_in Θ pr wt κ P`, the builder's name), today's
+  selection its instance at the empty predicate, statements kept. The committed forms take it at the moded priority and
+  `finite_socket_waits D Φ M` (the *waiting moded selection*), which at no frames is the moded selection. Not a mode: a
+  mode is a site and a view promoting a lookup's binder; the class is read from the relation between a declared socket
+  and its siblings — the frames the carrying states — and demotes. Not a priority: a priority promotes only, and the
+  goals that must wait are one-alternative goals of class (iii), taken before the socket's input binder in (iv). It
+  amends F1's item 5: a goal committable while it waits is not committed first.
+- *Exactness.* The waiting selection is F1's choice over a subset of the unheld candidates or over all of them: every
+  selected set is a nonempty set of pending, unheld candidate goals and a construction is R3's (the two facts of
+  `finite_resolution_select_at_exact_in`), hence `finite_selection_framed` and `finite_selection_unheld`. The lifting's
+  other premise, the exchange, quantifies over committed sub-searches run at the search's own selection; O2 stated it
+  and its discharges at any priority of F1's selection, GT2a at a table, their proofs reading the selection only through
+  F1's facts. Stated once at any selection meeting those two facts (a *formed selection*), the priority forms their
+  instances, the waiting selection — and any later order — needs only its formation lemma. Nothing about the order
+  enters exactness: a refutation at the waiting selection is exact, a resolution sound, and unresolved never refutes. A
+  discharge that does not generalize is reported by its build with the condition it needs, never made a premise.
+- *How a step keeps it.* On the abstract state the predicate is evaluated where the selection reaches past class (i). At
+  the route the pending framed sockets are a kept set of the shared search — a goal's membership reads its raise (site
+  and key), the record and its presence, as the kept classes' goal-local tests do (#865) — and the waiting set is
+  computed once a step, where the selection reaches past the settled class, from that set: each socket's parent through
+  the node index, the parent's pending premise goals through their positions, their variable sets against the socket's
+  input and the images of the frame and the head output at the node's binding (resolved through D1a's store at the
+  deferred search; a frame is a few variables). It is not kept across steps: a goal's waiting reads other goals'
+  presence and the bindings of the frame's variables, as the route's priority class does (#871). The kept selection
+  (`kept_select_by`) sets it aside from the priority, one-alternative and R3's classes as it sets aside the held goals
+  (`class_first` skipping them along the class trees), the settled class untouched, and chooses over all when that
+  leaves nothing. Trigger for a kept class: WC3's measurement placing the computation above a tenth of a step at the
+  given's 77 at 30 steps or #830's fixtures.
+- *The figures* (selections through the route; the draft replaces the route's choice by the access selection over the
+  goals that do not wait where the route chose a waiting goal — 76 of 4,710 selections at depth 2, 116 of 9,658 at
+  depth 3 — and its seconds include a projection of the state every selection, so only counts compare):
+
+| Call (depth, variant) | Bound | Today (#896) | #896's prototype (by key) | The rule |
+|---|---|---|---|---|
+| 1, first leaf false | 500 | refuted, 1,590 | refuted, 1,663 | refuted, 1,716 |
+| 2, last leaf false (#827's) | 800 / 1500 | unresolved 4,136 / not returned | refuted, 4,806 at both | refuted, 4,710 at both |
+| 2, true | 1500 | resolved, 4,402 | resolved, 4,673 | resolved, 4,523 |
+| 2, first leaf false | 800 | refuted, 3,965 | refuted, 4,206 | refuted, 4,110 |
+| 3, last leaf false | 800 / 1500 / 3000 | unresolved, 5,569 at 800 | not returned in 25 s at 1500 | refuted at 3000, 9,658 (63 s) |
+| 3, true | 1500 / 3000 | — | not returned in 20 s at 1500 | resolved at 3000, 9,432 (52 s) |
+
+  What commits (the traces): at depth 2 the root's socket 2 at [2]; in its sub-search the inner sockets at [2,2] and
+  [2,3], the inner unions at [2,7] and [2,8] produced, 6 at [2,6]; then the root's socket 3 at [3], whose failure
+  refutes. At the root the unions and 6 are checks, the call's outputs ground. At depth 3 the same one level deeper.
+  The true calls pay 3–8 % more selections than today at depth 1–2. Review 828's follow-up 1 is settled: the inner
+  unions commit at the check form, and `given_union_control`'s last conjunct, which asserts they do not, is revised in
+  WC3. Its follow-up 2: #519's case is exercised — the inner unions are produced, the true call with used variables
+  [x1,x0] resolved and the false refuted.
+- *Depth 3's clause trials: at a trigger, not now.* With the class depth 3 terminates. Its growth is the lookups' (the
+  root's 37 at [0] in each clause alternative, 1,073 → 1,808 selections from depth 2 to 3, and 12's check at [0,2],
+  1,059 → 1,802: a larger artifact compared with itself), which the given's table closes (GT5: 12 at each artifact with
+  itself). Trigger: R7 #542's figures at the given's 55 calls with the table: a 55 call not decided within its bound with
+  its lookups closed makes a design of 55's clause trials (the syntax kind at the root address read before the lookup — a
+  mode at the readings — or a determinate key over the artifact), this draft its baseline.
+- *Weighed and not taken.* The prototype by key (#896's `c896_adeferred`: a pair node's premises but 0–3): keys would
+  confer the class; the rule reads the record and names the same goals at an inner node, fewer at the root (4,710
+  against 4,806). Promoting the input's feeders (#896's first prototype): it overrides F1's classes inside the feeder's
+  subtree, and was worse. The carriers 4–8 alone: 49/9, 49/10 and 1/11 expanded early at the inner node with free head
+  outputs, 21,096 selections at 800, unresolved — why the head output counts. The class before (i): a goal with no
+  alternative ends its branch at no cost, and a pruned, reusable or closed goal is ground and waits for nothing. Kept
+  across steps, a mode, a priority, sockets waiting through the head output: above. Twin route constants beside K2's:
+  q160, below.
+- *What the builds must respect*: the given's readers exactly as installed; no clause of any program changes; the class
+  read by the selection alone, never by a test, a discharge or a construction, and never a premise of exactness; at no
+  frames every form's value is today's; unresolved never refutes and never admits; every control keeps R4's value beside
+  its own where R4 returns; a trace or a count at the least bound a result needs is kept in a measurement, a control
+  stating verdicts at bounds with a margin and a trace's content as membership (review 898's follow-up 4).
+- *What it relies on* (task 376's test): positions compared for a node's children; sites, schemas and keys compared for
+  equality with the record's tuples; variable sets of patterns and the node binding's images; no payload read; no key or
+  position names a goal of the class.
+- *Provisional (q160, the planner's).* K2's route constants take the class by their selection becoming the waiting moded
+  selection (they already take the frames and declarations it reads): their defining equations change, every exactness
+  statement of K2 is kept, and the controls that evaluate them are evaluated again in WC3 — as F1's item 1 made every
+  consumer receive a new default — not twin constants beside K2's. The exchange's generalization to a formed selection
+  is one build after GT2b #889 and GT2c #888, or rides in GT2b if it has not started.
+- *The builds*: rows WC1–WC3 of the builds table below.]
+
 Presentation freedom makes a false call expensive: a true call is resolved at the first presentation its producer
 yields, a false one only after every presentation (n! root lists of n roots), so a refusal past a few elements reaches
 the bound and is unresolved. The commitment (R5): a site declared *functional up to a presentation class* at its
@@ -18474,7 +18596,11 @@ rate; the builds measure the samples and R7 the given.
    position as the focus, evaluated only at goals whose site or parent clause a declaration names. Every goal
    `finite_committed_goal_outcome` would commit is among them, the tests reading the focus through `finite_focus_pending`
    and the free socket at its parent's position. At `no_commitment` the priority is empty, so
-   `finite_committed_search_by_plain` stands.
+   `finite_committed_search_by_plain` stands. [Corrected by task 907, correction (16) of "Committed choice, for
+   refusals": the selection takes a waiting predicate beside its priority — after (i), the goals it names are set aside
+   from (ii)–(iv) while an unheld candidate it does not name stands, the choice over all of them when none does; today's
+   selection its instance at the empty predicate. The committed forms take it at the moded priority and the socket
+   waiting class read from the declared sockets' frames.]
 3. *Alternatives from unifiers only.* `finite_goal_alternatives P g` (the name the builder's): at a call goal the number
    of interface-and-clause pairs of its site whose renamed interface and head unify with its pattern (R2's unifier; the
    state is not substituted); at a solvable material goal the number of R1's solutions whose instance pairs unify. It is a
@@ -18501,7 +18627,10 @@ rate; the builds measure the samples and R7 the given.
    it, never refuted. Every control keeps R4's value beside its own, and no true call becomes refuted. [Corrected by
    task 787, correction (12) of "Committed choice, for refusals": where a declared producer's input or output is bound
    by a goal with a declared mode, the order is the moded priority — commitments first, then binders — a priority of this
-   selection passed at #613's selection parameter; this item stands.]
+   selection passed at #613's selection parameter; this item stands.] [Corrected by task 907, correction (16): a goal
+   committable while it waits for a pending framed socket of its parent is not committed first — its commitment would
+   fix the socket's carried set and foreclose the socket's own; the socket commits at the first state it is committable
+   in, its waiting siblings after it.]
 6. *Weighed.* A selection each consumer names, R3's kept: a second, dominated selection, every form twinned or given a
    parameter. Counting successor states: the state substituted per alternative, the cost #644 measured. The priority
    before (i): a goal with no alternative ends its branch at no cost. The priority's coverage made a theorem: exactness
@@ -19137,6 +19266,11 @@ statements kept: the closing's case is one lemma of the step, `resolution_closed
 result keeps only certificates the checker accepts, so the verdict is exact at every table. The table forms of the
 committed relation, frame, placement, position and found lemmas (item 3's "R5's … lemmas") moved to GT2 (q155).]
 
+[Note (task 907, from GT2a #843's hand-over, its Decisions): the closed-goal step's form — a ground call an entry of the
+table closes, strictly under the focus, is a disjunct of the substitution step's removed-call clause
+(`finite_substitution_step`), so the committed search's frame, placement and confinement lemmas needed no change of
+proof and its positions lemma a fourth case.]
+
 ### What of the counterpart line stays
 
 | Piece | Standing | Role and reason |
@@ -19191,6 +19325,9 @@ committed relation, frame, placement, position and found lemmas (item 3's "R5's 
 | W5 | [Added by task 831; task 496's entry, "77's least bound at the given and at a candidate …".] W2's queries resolved by R5's committed search at a table (`Factor_Least_Collections`: `finite_query_search`, `finite_query_answers` and `finite_identity_check` at the committed search with the given's declarations and selection, a statement change of W2's definitions; `Factor_Least_Witness_Registrations`, `Factor_Reader_Witness_Registrations`): a query's completeness from R5's lifting at its pattern root, every value outside a committed goal's output kept, and a valid table's closing keeping it; W4a's completeness carried; the given's four registrations complete there, at the rooted readers and by agreement at the asked and first request's programs; a control: 77 at a two-definition package with a missing callee refuted through the registration at a table, R4's value beside | GT2, I3a #815, #798 | about 250K |
 | OS1 | [Added by task 835, correction (15).] An open premise's truth (`Factor_Resolution_Material_Discharge`, beside `finite_closed_premise_true`): `finite_open_node_true` — at an invariant state (`resolution_invariant`) and a support at a focus (`resolution_supported_at`), a node every goal pending under whose position is in the focus has a true call, by induction over the nodes under it through `resolution_node_linked` (a pending premise by the support, a child node by induction, a reused premise by `resolution_solved_node_true`, a material premise pending by the support or done by `finite_material_done_ground_satisfied`); `finite_open_premise_true` — a call premise of a node whose instance under the binding is ground and every goal pending under whose position is in the focus is true, `finite_closed_premise_true` its closed case, kept [built by task 853: `finite_open_node_true` is stated at a valuation formed at every variable, the goals pending under the node holding at it, not at the support — at the support it fails where a node's call holds a variable no goal constrains and the support's value there is unformed; `finite_open_premise_true` is the support's form, its instance ground, through the support made formed (the goals under the premise keep their values, `finite_goal_holds_formed`); `finite_material_socket_exchange` retired (review 724's follow-up 4), and `resolution_value_substitute_decoded`, `finite_material_ground_substitute`, `evaluate_material_variables_formed` moved up from `Factor_Resolution_Socket_Discharges`, names and statements kept] | none unlanded | about 80K |
 | OS2 | [Added by task 835, correction (15).] The framed test with open siblings (`Factor_Resolution_Commitments`, `Factor_Resolution_Socket_Discharges`; `Factor_Narrowed_Productions` and any theory whose proof unfolds the test; the controls): `finite_children_framed`'s closed disjunct for a call premise at a key other than the socket's — nothing pending under it — replaced by: every goal pending under it holds no variable of the binding at the socket premise's pattern or at a frame variable (its instance ground and its pattern outside the frame kept); material premises unchanged; every statement kept by name and statement, the definition's change named; `finite_framed_instance_true` with the open case (OS1); the exchange's valuation, new-instance and context lemmas (`finite_framed_exchange_valuation`, `finite_framed_new_instance`, `finite_framed_call_context`, `finite_framed_socket_class_context`) with the open siblings' goals kept by the condition; the controls whose values change evaluated again (the framed, carrier, narrowed and input-production controls, K2's check control, O4's and I3a's execution lemmas — I3a's trace then showing the production met), a changed value reported with R4's beside; a control: a parent whose other child has goals pending under it when the socket is taken, the production met, a false call refuted as by R4 [built by task 855: the definition as above, its variables `finite_socket_binding_variables` (the node binding at the frame and at the socket key's premise patterns); the row form `finite_free_premise_row` and the framed bound `finite_premise_only_framed_bound`, `finite_premise_only_bound` and `finite_framed_premise_only` its instances; the open case through `finite_open_premise_holds_in` (the goals under the premise holding at θ), `finite_open_premise_true_in` its support's form; the exchange's valuation, new-instance and context lemmas needed no change — a goal under an open sibling keeps its values at the new valuation already by the holders test (every focused goal holding a changed output or absorbed variable is the socket's sibling or the socket) and by the free premise-only variables' definition (only the parent's children hold them), so no proof reads the new condition; it stands as correction (15) decided, and dropping it is the planner's. Values: at 77/1 200 the production is met, 220 states against 614, the verdict unchanged; every other control keeps its values; the new control (26(x,y) :- 2(x,x) in I2's program) resolves the true call in 30 states against 58 without the production and refutes the false one in 6, R4 beside] | OS1; the lander rule with #834 and #724 (both edit `Factor_Resolution_Commitments`) | about 250K |
+| WC1 | [Added by task 907, correction (16).] The waiting class (`Factor_Socket_Waiting`, new, above `Factor_Resolution_Modes`; `ROOT`, `THEORY_MAP.md`): F1's choice over the unheld candidates a waiting predicate does not name or that are settled at once, over all of them when none stands; F1's selection with a waiting predicate beside its priority, at a table (`finite_resolution_select_waiting_in Θ pr wt κ P`), today's `finite_resolution_select_in` its instance at the empty predicate; F1's two facts at it, `finite_selection_framed` and `finite_selection_unheld` at it; `finite_socket_waits D Φ M st g` (the rule's (a)–(d)), never at no frames; the waiting moded selection (the moded priority and `finite_socket_waits`), the moded selection its instance at no frames; names the builder's | nothing unlanded (GT2a #843 landed) | about 70K |
+| WC2 | [Added by task 907, correction (16).] The exchange at a formed selection (`Factor_Resolution_Commitments`, `Factor_Resolution_Producer_Discharge`, `Factor_Resolution_Socket_Discharges`, `Factor_Resolution_Material_Discharge`, `Factor_Narrowed_Productions`, `Factor_Resolution_Views`, `Factor_Committed_Registrations`, `Factor_Native_Committed_Registrations`, the abstract forms of `Factor_Resolution_Checks`): a formed selection (F1's two facts as a predicate of a selection); the exchange at a table and a formed selection, its discharges, the lifting and exact premises at one, O2's and GT2a's priority forms their instances by name and statement; the committed, check and rc forms at the waiting moded selection; a control in a theory imported by no theory: #896's fixture (`c896_term`) at depth 1 and 2 through R5's committed search at the waiting moded selection against the moded selection (verdicts, states), R4 beside where it returns | WC1; GT2b #889 and GT2c #888 (the same theories), or riding in GT2b if it has not started (q160) | about 250K, divided at its brief if its relations exceed the room |
+| WC3 | [Added by task 907, correction (16).] The class at the route (`Factor_Search_Representations`, `Factor_Shared_Search`, `Factor_Shared_Commitments`, `Factor_Resolution_Checks`, and the deferred search's theories as D1b and D1d leave them): the pending framed sockets a kept set of the search; the waiting set over the access, formed (equal to `finite_socket_waits` at the projection); the kept selection and `route_select` with it, the settled class untouched; the committed step formed at the waiting selection; K2's route constants' selection the waiting moded selection, their code equations through it, every exactness statement of K2 kept (q160); the controls evaluated again — `check_controls`, `given_union_control` (its last conjunct replaced: the inner unions selected at their own focus), K3's rows, `committed_trace` at a bound with a margin (review 898's follow-up 4); the given's 55 at depth 1–3 through the route (verdicts; the commitments at [2], [2,2], [2,3], [2,7], [2,8], [2,6] and [3] as membership facts); `measurement.md`: held, before and after, the 55 fixture at depth 1–3, 77/1 at 200, 113/7 at #830's rows and the given's 77 at 30 steps, the waiting set's share of a step | WC2, D1d #905, FI #892 and GT3 #876 (the last builds restating `kept_select_by`, `route_select` and the route constants' code) | about 200K |
 
 R1 and R2 are independent of each other; R3 follows both, R4 R3, R5 R4, R6 R5; R7 follows R4 and R6 [corrected by task 585: R5c follows R5b (#565), R5d R5c and R6, R5e R5d, R6b R5d, R6c
 R5e and R6b; rc (#540) follows R5e; R7 and #547 follow R6c] [corrected by task 725: R5f1 follows R5e and F3, and F2c, #613 and R5f2 follow it; rc (#540) and
@@ -19209,7 +19346,10 @@ and #830's fix at its cause, which edits the same step; W5 follows GT2, I3a #815
 GT6 follows GT3, GT4 and GT5. R7 #542 follows GT6; #547 follows GT5 and GT6; #707 follows #542; #399 follows W5 and
 #707] [corrected by task 835: OS1 waits on nothing unlanded; OS2 follows OS1, the lander rule with #834 and #724; K3
 #825 follows OS2, and through it GT2, GT3 and GT6; #718 follows OS2 for its 77 and 79 fixtures; I3b #817 is unchanged
-by it]. R8 is independent of
+by it] [corrected by task 907: WC1 waits on nothing unlanded; WC2 follows WC1, GT2b #889 and GT2c #888, or rides in
+GT2b (q160); WC3 follows WC2, D1d #905, FI #892 and GT3 #876, beside GT6, whose table's validity does not rest on the
+order (before GT6 if its retained run is to read the waiting route); R7 #542 (its control candidate), #547, #707 and
+#399 follow WC3, resting on refutations at the given's readers]. R8 is independent of
 R1–R7 and follows #483. The least witness's builds follow the planner's decision. The route:
 
 - #397 (the posing) evaluates no reader entry: unaffected.

@@ -1,6 +1,6 @@
 {
- "base_receipt_sha256": "9ca85ad82d45061d00ea2676ff89e7ef8e758a9b90ce879ea57219e76df3aab9",
- "checked_content_sha256": "811241a9dd91fca7b4ebde15bb27dc1c905e8b0c64380a3dbfa61f1c8bc14e97",
+ "base_receipt_sha256": "e3e2678572630101a3f7ef3f6e1b73e2ad1271b93cecf582a6826d2a41d42440",
+ "checked_content_sha256": "981f81d04442994b4b5e82f41fee87eaecd2cff71339672a7d2b7275daad8d08",
  "host_tests": {
   "kernel": {
    "exit_code": 0,
@@ -17,7 +17,7 @@
    "ran": 309,
    "skipped": 0,
    "tail": [
-    "{\"status\": \"failed\", \"error\": \"[Errno 2] No such file or directory: '/tmp/tmp76aq98zu/no-project/theories/Development_Answer_a2d8d6490cc2.thy'\"}"
+    "{\"status\": \"failed\", \"error\": \"[Errno 2] No such file or directory: '/tmp/tmpqqu17xjo/no-project/theories/Development_Answer_a2d8d6490cc2.thy'\"}"
    ]
   }
  },
@@ -25,12 +25,65 @@
   "base_and_impact": 0.38,
   "execution_impact": 0.0,
   "export": 0.0,
-  "proof": 29.12,
-  "recipe_impact": 0.42,
-  "recipes_and_host_tests": 11.58
+  "proof": 153.97,
+  "recipe_impact": 0.4,
+  "recipes_and_host_tests": 11.36
  },
  "rebuilt_theories": [
-  "Factor_Resolution_Graph_Checks"
+  "Development_Asked_Registrations",
+  "Development_First_Request_Registrations",
+  "Development_Given_Carried_Declarations",
+  "Development_Given_Declarations",
+  "Development_Given_Declarations_Execution",
+  "Development_Given_Frames",
+  "Development_Given_Installed_Declarations",
+  "Development_Given_Modes",
+  "Development_Given_Modes_Execution",
+  "Development_Given_Productions",
+  "Development_Given_Productions_Execution",
+  "Development_Given_Registrations",
+  "Development_Installed_Presentations",
+  "Development_Installed_Presentations_Execution",
+  "Development_Rooted_Registrations",
+  "Development_Socket_Liveness_Execution",
+  "Factor_Artifact_Citation_Declarations",
+  "Factor_Check_Controls",
+  "Factor_Commitment_Controls",
+  "Factor_Committed_Registrations",
+  "Factor_Definition_Reading_Declarations",
+  "Factor_Input_Production_Controls",
+  "Factor_Input_Productions",
+  "Factor_Instantiation_Declarations",
+  "Factor_Least_Witness_Registrations",
+  "Factor_Material_Reading_Controls",
+  "Factor_Mode_Controls",
+  "Factor_Narrowed_Commitments",
+  "Factor_Narrowed_Controls",
+  "Factor_Narrowed_Productions",
+  "Factor_Narrowed_Sockets",
+  "Factor_Native_Committed_Registrations",
+  "Factor_Producer_Correspondences",
+  "Factor_Reader_Witness_Registrations",
+  "Factor_Resolution_Carriers",
+  "Factor_Resolution_Checks",
+  "Factor_Resolution_Commitments",
+  "Factor_Resolution_Controls",
+  "Factor_Resolution_Graph_Checks",
+  "Factor_Resolution_Material_Discharge",
+  "Factor_Resolution_Modes",
+  "Factor_Resolution_Producer_Discharge",
+  "Factor_Resolution_Socket_Discharges",
+  "Factor_Resolution_Views",
+  "Factor_Root_Family_Declarations",
+  "Factor_Row_Selection_Socket_Declarations",
+  "Factor_Row_Value_Socket_Declarations",
+  "Factor_Schema_Instantiation_Declarations",
+  "Factor_Shared_Commitments",
+  "Factor_Union_Declarations",
+  "Factor_Varied_Constructions",
+  "Factor_Varied_Declarations",
+  "Factor_Varied_Narrowed_Sockets",
+  "Factor_Varied_Narrowed_Transfer"
  ],
  "recipes": {
   "allocated-environments": {
@@ -190,19 +243,19 @@
    "status": "unchanged"
   }
  },
- "reused_theories": 1968,
- "seconds": 52.14,
+ "reused_theories": 1917,
+ "seconds": 177.15,
  "source_checks": {
   "missing_theory_files": [],
   "proof_escape_matches": [],
   "refusals": [],
-  "theory_count": 1969,
+  "theory_count": 1971,
   "unlisted_theories": []
  },
  "status": "accepted",
- "theories": 1969,
+ "theories": 1971,
  "validation_inputs": {
-  "ROOT": "5710d5d29e79205deef647a649fdec17e3b920d4e75c60304609544749eb5b1f",
+  "ROOT": "649b552e4833eb34b9b04e0c6ad6bbe64485bba8c51c0c5f1c7ffc6822466c3d",
   "tools/check.py": "71c91573138e10d317e5d920f5776af39687d313836a5552bbb0ec1d2d580381",
   "tools/incremental_check.py": "7f57110d9b4e04a7eb01215c21ea098fffcff71410454a248f6eb122909a1d98"
  }

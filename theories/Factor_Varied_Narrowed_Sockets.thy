@@ -161,7 +161,7 @@ next
     unfolding evaluate_map_finite_pattern
   proof (rule evaluate_pattern_cong)
     fix a assume "a \<in> pattern_variables (decode_finite_pattern ci)"
-    then have "a \<in> schema_variables (decode_finite_schema S)" using ci by (auto simp: decoded_pattern_variables)
+    then have "a \<in> schema_variables (decode_finite_schema S)" using ci by (auto simp: finite_pattern_variables_correct[symmetric])
     then have aX: "a |\<in>| finite_schema_variables S" by (simp add: finite_schema_variables_correct)
     show "((\<lambda>x. decode_finite_term (finite_binding_valuation B x)) \<circ> f) a =
         decode_finite_term (finite_binding_valuation (finite_bindings_carried_back f (finite_schema_variables S) B) a)"
@@ -188,7 +188,7 @@ proof -
   have aS: "a \<in> schema_variables (decode_finite_schema S)"
     using resolution_view_parts_variables(2)[OF vf vS] head_scope by auto
   have mv: "fset (finite_pattern_variables (map_finite_term_pattern f ci)) = f ` fset (finite_pattern_variables ci)"
-    by (simp add: decoded_pattern_variables[symmetric] decode_finite_pattern_map rename_pattern_variables)
+    by (simp add: finite_pattern_variables_correct decode_finite_pattern_map rename_pattern_variables)
   have "f a |\<notin>| finite_pattern_variables (map_finite_term_pattern f ci)"
   proof
     assume "f a |\<in>| finite_pattern_variables (map_finite_term_pattern f ci)"

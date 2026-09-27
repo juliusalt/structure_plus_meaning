@@ -1710,15 +1710,25 @@ definition finite_children_closed ::
         h = Resolution_Material_Goal (resolution_node_position nd@[s]) (resolution_node_site nd,resolution_node_clause nd,s)
           (finite_material_pattern_substitute (finite_node_binding nd) N)))"
 
+text \<open>
+  A premise-only variable's row form, which both tests' first disjuncts read: the node binds it to its own renamed-apart
+  variable and only the node's children hold that variable.
+\<close>
+
+definition finite_free_premise_row ::
+    "('a,'s,'d,'c) resolution_state \<Rightarrow> ('a,'s,'d,'c) resolution_node \<Rightarrow> 'a \<Rightarrow> bool" where
+  "finite_free_premise_row st nd a \<longleftrightarrow>
+    (a,Finite_Variable ((resolution_node_position nd,True),a)) |\<in>| resolution_node_bindings nd \<and>
+    fBall (resolution_pending st) (\<lambda>h. ((resolution_node_position nd,True),a) |\<in>| resolution_goal_variables h \<longrightarrow>
+      resolution_goal_position h \<noteq> [] \<and> butlast (resolution_goal_position h) = resolution_node_position nd)"
+
 definition finite_premise_only_inputs ::
     "nat resolution_view \<Rightarrow> nat resolution_view \<Rightarrow> ('a,'s,'d,'c) resolution_state \<Rightarrow> ('a,'s,'d,'c) resolution_node \<Rightarrow>
       's \<Rightarrow> bool" where
   "finite_premise_only_inputs Vp Vh st nd s \<longleftrightarrow>
     fBall (finite_schema_variables (resolution_node_schema nd) |-|
         finite_pattern_variables (finite_schema_conclusion (resolution_node_schema nd))) (\<lambda>a.
-      ((a,Finite_Variable ((resolution_node_position nd,True),a)) |\<in>| resolution_node_bindings nd \<and>
-        fBall (resolution_pending st) (\<lambda>h. ((resolution_node_position nd,True),a) |\<in>| resolution_goal_variables h \<longrightarrow>
-          resolution_goal_position h \<noteq> [] \<and> butlast (resolution_goal_position h) = resolution_node_position nd)) \<or>
+      finite_free_premise_row st nd a \<or>
       (a |\<in>| finite_socket_inputs Vp Vh (resolution_node_schema nd) s \<and>
         finite_pattern_variables (finite_node_binding nd a) = {||}))"
 
@@ -1742,21 +1752,6 @@ definition finite_free_premise_variable where
     snd z |\<in>| finite_schema_variables (resolution_node_schema np) \<and>
     snd z |\<notin>| finite_pattern_variables (finite_schema_conclusion (resolution_node_schema np)) \<and>
     finite_free_premise_only st np (snd z)"
-
-lemma finite_premise_only_bound:
-  assumes poi: "finite_premise_only_inputs Vp Vh st np k"
-    and sv: "single_valued (fset (resolution_node_bindings np))"
-    and a: "a |\<in>| finite_schema_variables (resolution_node_schema np)"
-      "a |\<notin>| finite_pattern_variables (finite_schema_conclusion (resolution_node_schema np))"
-  shows "finite_free_premise_only st np a \<or>
-    (a |\<in>| finite_socket_inputs Vp Vh (resolution_node_schema np) k \<and>
-      finite_pattern_variables (finite_node_binding np a) = {||})"
-proof -
-  have "a |\<in>| finite_schema_variables (resolution_node_schema np) |-|
-      finite_pattern_variables (finite_schema_conclusion (resolution_node_schema np))" using a by simp
-  from fbspec[OF poi[unfolded finite_premise_only_inputs_def] this]
-  show ?thesis unfolding finite_free_premise_only_def using finite_node_binding_row[OF sv] by blast
-qed
 
 definition finite_output_consumer ::
     "('a,'s,'d) resolution_declarations \<Rightarrow> 'd \<Rightarrow> ('s,'a) resolution_variable finite_term_pattern list \<Rightarrow>
@@ -5057,12 +5052,22 @@ qed
 subsection \<open>The three conditions at a frame\<close>
 
 text \<open>
-  (i) Every premise and material premise of the parent is pending as its instance, or, at another key, closed with its
-  instance ground and its variables outside the frame; every pending goal under the parent is one of the instances.
+  (i) Every premise and material premise of the parent is pending as its instance or, at another key, has its instance
+  ground and its variables outside the frame: a material premise closed, nothing pending under it; a call premise open
+  or closed, every goal pending under it holding no variable the node binds at the socket's premise or at a frame
+  variable (@{text finite_socket_binding_variables}; nothing pending under it is the case where nothing is read). Every
+  pending goal under the parent is one of the instances.
   (ii) Every premise-only variable of the parent is free, or outside the frame with a ground binding. At the default
   frame they are correction (9)'s conditions (@{text finite_children_closed_framed},
   @{text finite_premise_only_inputs_framed}).
 \<close>
+
+definition finite_socket_binding_variables where
+  "finite_socket_binding_variables C nd s = ffUnion ((\<lambda>a. finite_pattern_variables (finite_node_binding nd a)) |`|
+    (C |\<union>| ffUnion ((\<lambda>(s',e,p). if s' = s then finite_pattern_variables p else {||}) |`|
+        finite_schema_premises (resolution_node_schema nd)) |\<union>|
+      ffUnion ((\<lambda>(s',N). if s' = s then finite_material_variables N else {||}) |`|
+        finite_schema_materials (resolution_node_schema nd))))"
 
 definition finite_children_framed ::
     "'a fset \<Rightarrow> ('a,'s,'d,'c) resolution_state \<Rightarrow> ('a,'s,'d,'c) resolution_node \<Rightarrow> 's \<Rightarrow> bool" where
@@ -5070,7 +5075,8 @@ definition finite_children_framed ::
     fBall (finite_schema_premises (resolution_node_schema nd)) (\<lambda>(s',e,p).
       Resolution_Call_Goal (resolution_node_position nd@[s']) (Some (resolution_node_site nd,resolution_node_clause nd,s')) e
         (finite_pattern_substitute (finite_node_binding nd) p) |\<in>| resolution_pending st \<or>
-      (s' \<noteq> s \<and> resolution_pending_under st (resolution_node_position nd@[s']) = {||} \<and>
+      (s' \<noteq> s \<and> fBall (resolution_pending_under st (resolution_node_position nd@[s'])) (\<lambda>h.
+          resolution_goal_variables h |\<inter>| finite_socket_binding_variables C nd s = {||}) \<and>
         finite_pattern_variables (finite_pattern_substitute (finite_node_binding nd) p) = {||} \<and>
         finite_pattern_variables p |\<inter>| C = {||})) \<and>
     fBall (finite_schema_materials (resolution_node_schema nd)) (\<lambda>(s',N).
@@ -5093,10 +5099,7 @@ definition finite_premise_only_framed ::
   "finite_premise_only_framed C st nd \<longleftrightarrow>
     fBall (finite_schema_variables (resolution_node_schema nd) |-|
         finite_pattern_variables (finite_schema_conclusion (resolution_node_schema nd))) (\<lambda>a.
-      ((a,Finite_Variable ((resolution_node_position nd,True),a)) |\<in>| resolution_node_bindings nd \<and>
-        fBall (resolution_pending st) (\<lambda>h. ((resolution_node_position nd,True),a) |\<in>| resolution_goal_variables h \<longrightarrow>
-          resolution_goal_position h \<noteq> [] \<and> butlast (resolution_goal_position h) = resolution_node_position nd)) \<or>
-      (a |\<notin>| C \<and> finite_pattern_variables (finite_node_binding nd a) = {||}))"
+      finite_free_premise_row st nd a \<or> (a |\<notin>| C \<and> finite_pattern_variables (finite_node_binding nd a) = {||}))"
 
 text \<open>
   (iii) At a free socket the parent absorbs the frame. With ho the head's output at the head's view, O the socket's own
@@ -5345,6 +5348,41 @@ lemma finite_premise_only_inputs_framed:
   shows "finite_premise_only_framed (finite_default_frame Vp Vh (resolution_node_schema nd) s) st nd"
   using assms unfolding finite_premise_only_inputs_def finite_premise_only_framed_def
   by (auto simp: finite_default_frame_def)
+
+text \<open>
+  At single-valued bindings a framed test's first disjunct is the free premise-only variable read through the node's one
+  row; the bound at the default frame is today's (@{text finite_premise_only_bound}), outside the default frame being
+  among the socket's inputs.
+\<close>
+
+lemma finite_premise_only_framed_bound:
+  assumes pof: "finite_premise_only_framed C st np"
+    and sv: "single_valued (fset (resolution_node_bindings np))"
+    and a: "a |\<in>| finite_schema_variables (resolution_node_schema np)"
+      "a |\<notin>| finite_pattern_variables (finite_schema_conclusion (resolution_node_schema np))"
+  shows "finite_free_premise_only st np a \<or> (a |\<notin>| C \<and> finite_pattern_variables (finite_node_binding np a) = {||})"
+proof -
+  have "a |\<in>| finite_schema_variables (resolution_node_schema np) |-|
+      finite_pattern_variables (finite_schema_conclusion (resolution_node_schema np))" using a by simp
+  from fbspec[OF pof[unfolded finite_premise_only_framed_def] this]
+  show ?thesis unfolding finite_free_premise_only_def finite_free_premise_row_def
+    using finite_node_binding_row[OF sv] by blast
+qed
+
+lemma finite_premise_only_bound:
+  assumes poi: "finite_premise_only_inputs Vp Vh st np k"
+    and sv: "single_valued (fset (resolution_node_bindings np))"
+    and a: "a |\<in>| finite_schema_variables (resolution_node_schema np)"
+      "a |\<notin>| finite_pattern_variables (finite_schema_conclusion (resolution_node_schema np))"
+  shows "finite_free_premise_only st np a \<or>
+    (a |\<in>| finite_socket_inputs Vp Vh (resolution_node_schema np) k \<and>
+      finite_pattern_variables (finite_node_binding np a) = {||})"
+proof -
+  have "finite_free_premise_only st np a \<or> (a |\<notin>| finite_default_frame Vp Vh (resolution_node_schema np) k \<and>
+      finite_pattern_variables (finite_node_binding np a) = {||})"
+    by (rule finite_premise_only_framed_bound[OF finite_premise_only_inputs_framed[OF poi] sv a])
+  then show ?thesis using a(1) by (auto simp: finite_default_frame_def)
+qed
 
 lemma finite_socket_holders_mono:
   assumes hold: "finite_socket_holders F st q Y g" and sub: "\<And>v. v |\<in>| Y' \<Longrightarrow> v |\<in>| Y"

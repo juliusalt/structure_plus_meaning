@@ -113,25 +113,28 @@ definition productions_trace :: "(nat,nat,nat,nat) produced_declarations \<Right
       None {||} (finite_initial_state 77 t)))"
 
 text \<open>
-  The rows. At 200, 77/1 and 77/2 are unresolved, cut at the bound, with the same verdict, diagnoses and states with
-  and without the production: it is not met. The trace names why: 12(x4,x3) at 2.0.1.2 is taken under 37 at 2.0.1 with
-  its input ground and its output free, and of the framed test's conditions only 37's children framed fails
-  (@{const finite_children_framed}, the fourth of the list): 26 at 2.0.1.0 and 5 at 2.0.1.1 have their goals taken and
-  their instantiated patterns ground, and goals pending under them. At 400 neither call returns within 150 s (the
-  measurement of task 815).
+  The rows. At 200, 77/1 and 77/2 are unresolved, cut at the bound, with the same verdict and diagnoses with and
+  without the production. Since correction (15)'s open siblings (OS2, task 855) the production is met at 77/1: 220
+  states against 614 before, 12's committed sub-search a produced check. The trace names it: 12(x4,x3) at 2.0.1.2 is
+  taken under 37 at 2.0.1 with its input ground and its output free, and every condition of the framed test the
+  production reads holds there but the kept test, the socket being free: 37's children framed
+  (@{const finite_children_framed}, the fourth of the list) among them, 26 at 2.0.1.0 and 5 at 2.0.1.1 having their
+  goals taken, their instantiated patterns ground and goals pending under them, none holding a variable 37's binding
+  gives at 12's premise or at the frame {3}. 77/2 at 200 is cut before 37 (201 states, as before). Task 815's figures
+  at 400 predate the narrowed test (correction (15)'s census: 830 and 430 states, the production met).
 \<close>
 
 lemma given_productions_controls:
   "productions_search True given_input_declarations lookup_frames 1 200 = (None, [0,2]) \<and>
    productions_search True given_declarations lookup_frames 1 200 = (None, [0,2]) \<and>
-   productions_states True given_input_declarations lookup_frames 1 200 = 614 \<and>
+   productions_states True given_input_declarations lookup_frames 1 200 = 220 \<and>
    productions_search True given_input_declarations lookup_frames 2 200 = (None, [0]) \<and>
    productions_search True given_declarations lookup_frames 2 200 = (None, [0]) \<and>
    productions_states True given_input_declarations lookup_frames 2 200 = 201 \<and>
    productions_states True given_declarations lookup_frames 2 200 = 201 \<and>
    set (productions_trace given_input_declarations lookup_frames 1 200) =
-    {([2,0,1,2],[1,2,0,1],[True,True,True,False,True,True,False,True,False,False,False,False,True,True]),
-     ([2,0,1,2],[1,2,0,1,2],[False,False,True,False,True,True,False,True,False,False,False,False,True,True])}"
+    {([2,0,1,2],[1,2,0,1],[True,True,True,True,True,True,False,True,False,False,False,False,True,True]),
+     ([2,0,1,2],[1,2,0,1,2],[False,False,True,True,True,True,False,True,False,False,False,False,True,True])}"
   by eval
 
 end

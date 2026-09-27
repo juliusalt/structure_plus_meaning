@@ -211,6 +211,6 @@ lemma finite_narrowed_commitment_under [code]:
      commit_production := narrowed_production_under K P n D \<Phi>\<rparr>)"
   by (simp only: finite_narrowed_commitment_def finite_narrowed_production_under Let_def)
 
-export_code finite_framed_commitment finite_narrowed_commitment checking SML
+
 
 end

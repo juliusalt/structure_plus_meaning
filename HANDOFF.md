@@ -34,8 +34,8 @@ program relies on comes from a native notion. The route rests on these accepted 
   (b) not.
 
 **The first problem's route**, each build with its review. Landed: the recording (P #581, X′ #583), the posing #397 with
-its one-citation recording #562. Open: AX1–AX4 (#928's (c), from the brief #929: AX1 #930 → AX2a #932 → AX2b #934 and
-AX3a #936 → AX3b #938, which records the posing again → AX4 #940) → R7 #542 (the given at the guard's calls in the
+its one-citation recording #562, AX1 #930 (`Factor_Environment_Additions`). Open: AX2a–AX4 (#928's (c), from the brief
+#929: AX2a #932 → AX2b #934 and AX3a #936 → AX3b #938, which records the posing again → AX4 #940) → R7 #542 (the given at the guard's calls in the
 numbered course) → its native part #707 → the answer's judgment and admission #399 → its controls #709 → the transport
 #401, the verification's native half #403 and its harness #407; the first request at the given #547 → its packet, issue
 and execution #443 → its delivery #445; the criticism's observations #549 and samples #551 → its record #553 (after
@@ -45,7 +45,7 @@ two phases at the given's table relocated to the installation, admission through
 complete construction, soundness at a table whose calls are true. After AX4 lands, one brief rewrites from AX1–AX4's
 hand-overs the briefs the asked relation's change reaches (#542, #707, #399, #709, #710, #401, #443, #445, #549, #551,
 #553, #447, #449; #928's Remains), #709's with the two phases, the table and GT6's record it still lacks (#880's
-Remains 2); #547 is not reached.
+Remains 2), #542's with review 931's 2 (952's clause 1 at added-target bindings); #547 is not reached.
 
 **The given's calls, decided once** (#831's section; #496's "77's least bound at the given and at a candidate"): a table
 of certified ground calls every judgment's search closes (one successor, never a committed focus), its validity checked
@@ -87,9 +87,9 @@ request construction over rows, the incremental assessment, the rows line, the d
 digit layout, the rule programs' law, the shared-subterm engine (B1–B6), the exporter's obligations. Their remains are
 under Open and in `.build/plans/next-edits.md`.
 
-**Shape and order.** No build waits on a review. The longest chain, 13 deep: AX1 #930 → AX2a #932 → AX2b #934 → AX3b
-#938 → AX4 #940 → R7 #542 → #707 → #399 → #709 → #553 → #447 → #449 → #450; D1b's second part #926 → D1d #905 → GT3
-#876 → WC3 #916 or GT6 #878 → R7 one shorter. Nothing is added after the tail until it shortens (the approval build,
+**Shape and order.** No build waits on a review. The longest chains, 12 deep: AX2a #932 → AX2b #934 → AX3b #938 → AX4
+#940 → R7 #542 → #707 → #399 → #709 → #553 → #447 → #449 → #450, and D1b's second part #926 → D1d #905 → GT3 #876 → WC3
+#916 or GT6 #878 → R7 as long. Nothing is added after the tail until it shortens (the approval build,
 Open 142, waits for that). The queue is the planner's choice, a residual until the selection problem's native answer
 (Q2): running tasks first with their reviews, #942, AX1–AX4 with theirs, VK2, WC2b, D1d, #875,
 GT3, WC3, GT6, the route in its chains' order, #887 after R7's review. Word changes are serialized; none is queued.
@@ -254,7 +254,8 @@ REASONING_REUSE.md, how each went in `PLANNING_LOG.md`.
   `Factor_Generation_Reader_Payloads`), `note_composed`, `Development_Native_State` (`development_given_value`); the
   definition closure read from its roots (#716).
 - **The guard and the asked relation**: `Development_First_Problem_Guard`, `Factor_Package_Additions`,
-  `Factor_Payload_Audit`, `Development_First_Problem_Asked`; non-nominality in `Presentation_Equivariance`,
+  `Factor_Payload_Audit`, `Development_First_Problem_Asked`, the additions of an environment `Factor_Environment_Additions`
+  (AX1: the class relative to the given, G1's reader exact to 113, the additions' use action); non-nominality in `Presentation_Equivariance`,
   `Factor_Use_Actions` and `Factor_Use_Renaming`. **The request at a package**: `Factor_Package_Requests`,
   `Development_First_Request_Program`. **The verification frame**: `Development_Verification_Frame`. **The criticism's
   notions**: `Criticism_Samples`, `Criticism_Use_Samples`, `Criticism_Octet_Samples`, `Factor_Stated_Leaves`,
@@ -374,7 +375,7 @@ a theory before briefing a task that edits it.
 
 ## Now
 
-- **Under way**: D1b's second part #926, AX1 #930 and #942, which carries q164's answer (it reached no session) and
+- **Under way**: D1b's second part #926, AX2a #932 and #942, which carries q164's answer (it reached no session) and
   review 923's follow-ups 1, 2, 4 and 5; GT3 #876 waits on it (both edit `Factor_Resolution_Checks`).
 - **What the next events ask**: #875's figures — GT6's prediction and worker count, the checking fold measured at
   samples, the kept forms (q162) and FI's remaining costs (Graph); with them the re-run of #718's 77 and 79 fixtures with

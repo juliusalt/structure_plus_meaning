@@ -19,7 +19,37 @@ text \<open>
   being every answer. Nothing of the given's readers is refined, restated or added, and no search is read.
 \<close>
 
-section \<open>At the rooted readers: the lookup record's sites and frames, and its production at any reflexive meaning\<close>
+section \<open>At the rooted readers: the lookup record's sites and frames, and the clauses of 37 and 12\<close>
+
+text \<open>37 and 12 each have one clause at the rooted readers: artifact lookup's and artifact identity's.\<close>
+
+lemma lookup_rooted_clause:
+  "((37,c),S) \<in> system_clauses given_rooted_readers_system \<longleftrightarrow> c = 0 \<and> S = decode_finite_schema lookup_socket_schema"
+proof -
+  have r37: "37 \<in> system_definitions given_rooted_readers_system" by (rule given_rooted_declared_sites) simp
+  have agree: "systems_agree_on artifact_lookup_system given_rooted_readers_system
+      (system_definitions artifact_lookup_system \<inter> system_definitions given_rooted_readers_system)"
+    by (rule given_agreements(3)[OF artifact_lookup_system_formed guard_lookup_agreement])
+  have d37: "37 \<in> system_definitions artifact_lookup_system"
+    using artifact_lookup_system_formed artifact_lookup_clause[of 0 artifact_lookup_schema]
+    unfolding schema_system_formed_def by blast
+  have "((37,c),S) \<in> system_clauses given_rooted_readers_system \<longleftrightarrow> ((37,c),S) \<in> system_clauses artifact_lookup_system"
+    using agree d37 r37 unfolding systems_agree_on_def by blast
+  then show ?thesis by (simp add: lookup_socket_decoded)
+qed
+
+lemma identity_rooted_clause:
+  "((12,c),S) \<in> system_clauses given_rooted_readers_system \<longleftrightarrow> c = 0 \<and> S = decode_finite_schema identity_socket_schema"
+proof -
+  have r12: "12 \<in> system_definitions given_rooted_readers_system" by (rule given_rooted_declared_sites) simp
+  have agree: "systems_agree_on artifact_identity_system given_rooted_readers_system
+      (system_definitions artifact_identity_system \<inter> system_definitions given_rooted_readers_system)"
+    by (rule given_agreements(3)[OF artifact_identity_system_formed guard_identity_agreement])
+  have d12: "12 \<in> system_definitions artifact_identity_system" by simp
+  have "((12,c),S) \<in> system_clauses given_rooted_readers_system \<longleftrightarrow> ((12,c),S) \<in> system_clauses artifact_identity_system"
+    using agree d12 r12 unfolding systems_agree_on_def by blast
+  then show ?thesis by (simp add: identity_socket_decoded)
+qed
 
 lemma lookup_given_socket:
   "(37,lookup_socket_schema,2,False,view_identity,lookup_view) |\<in>| declared_sockets given_declarations"
@@ -62,31 +92,6 @@ proof
   qed
 qed
 
-text \<open>
-  The lookup record's production is discharged at any meaning at which 12 is reflexive, at any program: the first
-  part's @{thm [source] lookup_input_productions} is its instance at the rooted readers.
-\<close>
-
-lemma lookup_input_productions_at:
-  assumes reflexive: "producer_reflexive M 12 view_identity"
-  shows "productions_discharged M P m lookup_input_declarations"
-proof (rule input_productions_discharged)
-  fix e S s keep Vp Vh R
-  assume sock: "(e,S,s,keep,Vp,Vh) |\<in>| declared_sockets lookup_input_declarations"
-    and p: "declared_production lookup_input_declarations e S s = Some R"
-  have R: "R = identity_input_registration" and V: "Vp = view_identity" using sock p by simp_all
-  show "(R = input_registration (registration_site R) (registration_schema R) Vp (registration_variable R) \<and>
-        head_registration Vp (registration_schema R) (registration_variable R) \<and>
-        producer_reflexive M (registration_site R) Vp \<and> (\<forall>x. declared_narrowing lookup_input_declarations e S s x)) \<or>
-      (head_registration Vp (registration_schema R) (registration_variable R) \<and>
-        head_registration_produces (finite_collection_construction [R] m) P (registration_site R) (registration_schema R)
-          (registration_variable R) (declared_narrowing lookup_input_declarations e S s) \<and>
-        head_registration_answers M (finite_collection_construction [R] m) P (registration_site R)
-          (registration_schema R) Vp (registration_variable R))"
-    unfolding R V identity_input_registration_fields(1-3)
-    using identity_input_registration_head reflexive by (simp add: identity_input_registration_def)
-qed
-
 context given_readers_extension
 begin
 
@@ -115,20 +120,14 @@ lemma given_input_discharged_Q:
     (narrowed_declarations.truncate given_input_declarations) given_input_frames"
   "productions_discharged (positive_meaning (decode_finite_system Q)) Q m given_input_declarations"
 proof -
-  have closed: "system_dependency_closed given_rooted_readers_system
-      (system_definitions given_rooted_readers_system \<inter> system_definitions (decode_finite_system Q))"
-    by (rule systems_agree_on_intersection_closed[OF given_rooted_readers_formed target_formed rooted_shared])
-  have sites: "declared_sites (resolution_declarations.truncate (narrowed_declarations.truncate given_input_declarations))
-      \<subseteq> system_definitions given_rooted_readers_system \<inter> system_definitions (decode_finite_system Q)"
-    using given_input_sites given_declarations_sites by (auto intro: rooted_in_Q)
+  note carried = produced_record_discharged_Q[OF given_input_declarations_discharged(1) given_input_frames_discharged
+    subset_trans[OF given_input_sites given_declarations_sites]]
   show "narrowed_declarations_discharged (positive_meaning (decode_finite_system Q))
       (narrowed_declarations.truncate given_input_declarations) given_declarations_correspondence"
-    by (rule narrowed_declarations_agree_discharged[OF given_rooted_readers_formed target_formed rooted_shared closed
-      sites given_input_declarations_discharged(1)])
+    by (rule carried(1))
   show "narrowed_frames_discharged (positive_meaning (decode_finite_system Q))
       (narrowed_declarations.truncate given_input_declarations) given_input_frames"
-    by (rule narrowed_frames_agree_discharged[OF given_rooted_readers_formed target_formed rooted_shared closed
-      sites given_input_frames_discharged])
+    by (rule carried(2))
   show "productions_discharged (positive_meaning (decode_finite_system Q)) Q m given_input_declarations"
     unfolding given_input_declarations_def
     by (rule produced_override_productions[OF given_declarations_discharged_Q(3)
@@ -138,7 +137,8 @@ qed
 theorem committed_input_registrations_Q:
   assumes \<kappa>: "finite_witness_construction_formed \<kappa>" and complete: "finite_construction_complete \<kappa> Q"
   shows "committed_registrations \<kappa> Q m given_input_declarations given_input_frames given_declarations_correspondence"
-  by (rule committed_registrations.intro[OF \<kappa> complete given_input_discharged_Q
+  by (rule produced_committed_registrations_Q[OF \<kappa> complete given_input_declarations_discharged(1)
+    given_input_frames_discharged subset_trans[OF given_input_sites given_declarations_sites] given_input_discharged_Q(3)
     given_input_declarations_discharged(3)])
 
 subsection \<open>The lookup record at the installed program\<close>
@@ -167,38 +167,136 @@ proof -
     by (simp add: installed_meaning[OF rooted_in_Q[OF r12]])
 qed
 
+text \<open>
+  The lookup socket's sources at the installed program are unique, and 12 has one placed and one installed clause:
+  37 and 12 each have one clause, so both are instances of @{thm [source] installed_single_clause}.
+\<close>
+
+lemma installed_lookup_sources:
+  "finite_varied_sources_unique_at {installed_placement 37} (finite_rename_system installed_placement Q)
+    installed_presentation"
+  by (rule installed_single_clause(3)[OF given_rooted_declared_sites lookup_rooted_clause]) simp
+
+lemma placed_identity_clause:
+  "((installed_placement 12,c),S) |\<in>| finite_system_clauses (finite_rename_system installed_placement Q) \<longleftrightarrow>
+    c = 0 \<and> S = finite_rename_schema id id installed_placement identity_socket_schema"
+  by (rule installed_single_clause(1)[OF given_rooted_declared_sites identity_rooted_clause]) simp
+
+lemma installed_identity_clause:
+  "\<exists>c1 T1 f1 h1. ((installed_placement 12,c1),T1) |\<in>| finite_system_clauses installed_presentation \<and>
+    finite_schema_match (finite_rename_schema id id installed_placement identity_socket_schema) T1 = Some (f1,h1) \<and>
+    (\<forall>c T. ((installed_placement 12,c),T) |\<in>| finite_system_clauses installed_presentation \<longrightarrow> c = c1 \<and> T = T1)"
+  by (rule installed_single_clause(2)[OF given_rooted_declared_sites identity_rooted_clause]) simp
+
+text \<open>
+  The lookup record's production at the installed program, computed once: every socket of the carried record stands
+  at the placed 37, and its production there is 12's input registration varied to 12's one installed clause.
+\<close>
+
+lemma installed_lookup_value:
+  assumes sock: "(e,T,t,keep,Vp,Vh) |\<in>| declared_sockets installed_lookup_declarations"
+  obtains c1 T1 f1 h1 where "e = installed_placement 37"
+    "((installed_placement 12,c1),T1) |\<in>| finite_system_clauses installed_presentation"
+    "finite_schema_match (finite_rename_schema id id installed_placement identity_socket_schema) T1 = Some (f1,h1)"
+    "declared_production installed_lookup_declarations e T t =
+      Some (input_registration (installed_placement 12) T1 view_identity (f1 1))"
+proof -
+  let ?P = "finite_rename_system installed_placement Q"
+  let ?L = "produced_relocated installed_placement lookup_input_declarations"
+  let ?S = "finite_rename_schema id id installed_placement identity_socket_schema"
+  define R :: "(nat,nat,local_address option definition_site,nat) collection_registration"
+    where "R = input_registration (installed_placement 12) ?S view_identity 1"
+  obtain S s where m: "(e,S,s,keep,Vp,Vh) |\<in>| declared_sockets ?L"
+      and src: "(S,s) |\<in>| varied_socket_sources ?P installed_presentation (declared_sockets ?L) e T t"
+    using sock unfolding installed_lookup_declarations_def produced_varied_sockets_member by blast
+  have Lsock: "(e',S',s',k',V',W') |\<in>| declared_sockets ?L \<longleftrightarrow> e' = installed_placement 37 \<and>
+      S' = finite_rename_schema id id installed_placement lookup_socket_schema \<and> s' = 2 \<and> k' = False \<and>
+      V' = view_identity \<and> W' = lookup_view" for e' S' s' k' V' W'
+    unfolding produced_relocated_sockets by auto
+  have e37: "e = installed_placement 37" and Ss: "S = finite_rename_schema id id installed_placement lookup_socket_schema"
+      "s = 2"
+    using m unfolding Lsock by blast+
+  have one_src: "S' = S \<and> s' = s"
+    if src': "(S',s') |\<in>| varied_socket_sources ?P installed_presentation (declared_sockets ?L) e T t" for S' s'
+  proof -
+    obtain keep' Vp' Vh' where "(e,S',s',keep',Vp',Vh') |\<in>| declared_sockets ?L"
+      using src' unfolding varied_socket_sources_member by blast
+    then have "S' = finite_rename_schema id id installed_placement lookup_socket_schema" "s' = 2"
+      unfolding Lsock by blast+
+    then show ?thesis using Ss by simp
+  qed
+  have srcs: "varied_socket_sources ?P installed_presentation (declared_sockets ?L) e T t = {|(S,s)|}"
+  proof (rule fset_eqI)
+    fix z
+    show "z |\<in>| varied_socket_sources ?P installed_presentation (declared_sockets ?L) e T t \<longleftrightarrow> z |\<in>| {|(S,s)|}"
+    proof
+      assume a: "z |\<in>| varied_socket_sources ?P installed_presentation (declared_sockets ?L) e T t"
+      obtain S' s' where z: "z = (S',s')" by (cases z)
+      have "S' = S \<and> s' = s" using a unfolding z by (rule one_src)
+      then show "z |\<in>| {|(S,s)|}" unfolding z by simp
+    next
+      assume "z |\<in>| {|(S,s)|}"
+      then have "z = (S,s)" by simp
+      then show "z |\<in>| varied_socket_sources ?P installed_presentation (declared_sockets ?L) e T t" using src by simp
+    qed
+  qed
+  have inj: "inj_on installed_placement (declared_sites (resolution_declarations.truncate lookup_input_declarations))"
+    by (rule inj_on_subset[OF installation(5)]) (use given_declarations_sites_Q lookup_input_sites in blast)
+  have m0: "(37,lookup_socket_schema,2,False,view_identity,lookup_view) |\<in>| declared_sockets lookup_input_declarations"
+    by simp
+  have LR: "declared_production ?L e S s = Some R"
+    unfolding e37 Ss produced_relocated_keys(2)[OF inj m0]
+    by (simp add: R_def identity_input_registration_def input_registration_relocated_eq)
+  have pc: "((installed_placement 12,0),?S) |\<in>| finite_system_clauses ?P" by (simp add: placed_identity_clause)
+  have site: "registration_site R = installed_placement 12" "registration_schema R = ?S"
+    by (simp_all add: R_def input_registration_def)
+  have r12: "12 \<in> system_definitions given_rooted_readers_system" by (rule given_rooted_declared_sites) simp
+  obtain c1 T1 f1 h1 where u: "((installed_placement 12,c1),T1) |\<in>| finite_system_clauses installed_presentation"
+      "finite_schema_match ?S T1 = Some (f1,h1)"
+      "\<forall>c T. ((installed_placement 12,c),T) |\<in>| finite_system_clauses installed_presentation \<longrightarrow> c = c1 \<and> T = T1"
+      "registrations_varied ?P installed_presentation R = {|registration_varied f1 T1 R|}"
+    by (rule installed_single_registration[OF r12 identity_rooted_clause site])
+  have Sf: "finite_schema_formed ?S" by (rule finite_system_clause_formed[OF installed_presentation_formed(2) pc])
+  have Tf: "finite_schema_formed T1" by (rule finite_system_clause_formed[OF installed_presentation_formed(1) u(1)])
+  interpret matched: finite_schema_matched ?S T1 f1 h1 by (rule finite_schema_matched.intro[OF Sf Tf u(2)])
+  have head: "head_registration view_identity ?S 1" using identity_input_registration_head by simp
+  have R': "registration_varied f1 T1 R = input_registration (installed_placement 12) T1 view_identity (f1 1)"
+    unfolding R_def by (rule matched.input_registration_varied[OF head])
+  have carried: "production_carried ?P installed_presentation (Some R) =
+      Some (input_registration (installed_placement 12) T1 view_identity (f1 1))"
+    unfolding production_carried_some using u(4) R' by simp
+  have prod: "declared_production installed_lookup_declarations e T t =
+      Some (input_registration (installed_placement 12) T1 view_identity (f1 1))"
+    unfolding installed_lookup_declarations_def produced_declarations_varied_fields production_varied_def Let_def srcs
+    using LR carried by simp
+  then show ?thesis by (rule that[OF e37 u(1) u(2)])
+qed
+
 theorem installed_lookup_productions:
   "productions_discharged (positive_meaning (decode_finite_system installed_presentation)) installed_presentation m
     installed_lookup_declarations"
 proof (rule input_productions_discharged)
-  let ?P = "finite_rename_system installed_placement Q"
   let ?L = "produced_relocated installed_placement lookup_input_declarations"
   let ?S = "finite_rename_schema id id installed_placement identity_socket_schema"
   fix e T t keep Vp Vh R'
   assume mem: "(e,T,t,keep,Vp,Vh) |\<in>| declared_sockets installed_lookup_declarations"
     and p: "declared_production installed_lookup_declarations e T t = Some R'"
+  obtain c1 T1 f1 h1 where v: "e = installed_placement 37"
+      "((installed_placement 12,c1),T1) |\<in>| finite_system_clauses installed_presentation"
+      "finite_schema_match ?S T1 = Some (f1,h1)"
+      "declared_production installed_lookup_declarations e T t =
+        Some (input_registration (installed_placement 12) T1 view_identity (f1 1))"
+    by (rule installed_lookup_value[OF mem])
+  have R'': "R' = input_registration (installed_placement 12) T1 view_identity (f1 1)" using p v(4) by simp
   obtain S s where m: "(e,S,s,keep,Vp,Vh) |\<in>| declared_sockets ?L"
-      and src: "(S,s) |\<in>| varied_socket_sources ?P installed_presentation (declared_sockets ?L) e T t"
     using mem unfolding installed_lookup_declarations_def produced_varied_sockets_member by blast
-  obtain R where R: "declared_production ?L e S s = Some R" "registrations_varied ?P installed_presentation R = {|R'|}"
-    using production_varied_source[OF p[unfolded installed_lookup_declarations_def produced_declarations_varied_fields]
-      src] by blast
-  have Rr: "R = input_registration (installed_placement 12) ?S view_identity 1"
-    using R(1) by (simp add: produced_relocated_def identity_input_registration_def input_registration_relocated_eq)
   have V: "Vp = view_identity" using m by (auto simp: produced_relocated_sockets)
-  have site: "registration_site R = installed_placement 12" "registration_schema R = ?S"
-    unfolding Rr by (simp_all add: input_registration_def)
-  have "R' |\<in>| registrations_varied ?P installed_presentation R" using R(2) by simp
-  then obtain c c' T1 f1 h1 where v: "((installed_placement 12,c),?S) |\<in>| finite_system_clauses ?P"
-      "((installed_placement 12,c'),T1) |\<in>| finite_system_clauses installed_presentation"
-      "finite_schema_match ?S T1 = Some (f1,h1)" "R' = registration_varied f1 T1 R"
-    unfolding registrations_varied_member site by blast
-  have Sf: "finite_schema_formed ?S" by (rule finite_system_clause_formed[OF installed_presentation_formed(2) v(1)])
+  have pc: "((installed_placement 12,0),?S) |\<in>| finite_system_clauses (finite_rename_system installed_placement Q)"
+    by (simp add: placed_identity_clause)
+  have Sf: "finite_schema_formed ?S" by (rule finite_system_clause_formed[OF installed_presentation_formed(2) pc])
   have Tf: "finite_schema_formed T1" by (rule finite_system_clause_formed[OF installed_presentation_formed(1) v(2)])
   interpret matched: finite_schema_matched ?S T1 f1 h1 by (rule finite_schema_matched.intro[OF Sf Tf v(3)])
   have head: "head_registration view_identity ?S 1" using identity_input_registration_head by simp
-  have R'': "R' = input_registration (installed_placement 12) T1 view_identity (f1 1)"
-    unfolding v(4) Rr by (rule matched.input_registration_varied[OF head])
   have headT: "head_registration view_identity T1 (f1 1)" by (rule matched.head_registration_matched[OF head])
   have narrowing: "\<forall>x. declared_narrowing installed_lookup_declarations e T t x" by (simp add: installed_lookup_narrowing)
   show "(R' = input_registration (registration_site R') (registration_schema R') Vp (registration_variable R') \<and>
@@ -214,53 +312,6 @@ proof (rule input_productions_discharged)
     unfolding R'' V using headT lookup_reflexive_installed narrowing by (simp add: input_registration_def)
 qed
 
-text \<open>The lookup socket's sources at the installed program are unique: 37 has one clause, artifact lookup's.\<close>
-
-lemma installed_lookup_sources:
-  "finite_varied_sources_unique_at {installed_placement 37} (finite_rename_system installed_placement Q)
-    installed_presentation"
-  unfolding finite_varied_sources_unique_at_def
-proof (intro allI impI)
-  fix e c S c' S' c'' T f h f' h'
-  assume e: "e \<in> {installed_placement 37}"
-    and S: "((e,c),S) |\<in>| finite_system_clauses (finite_rename_system installed_placement Q)"
-    and S': "((e,c'),S') |\<in>| finite_system_clauses (finite_rename_system installed_placement Q)"
-  have r37: "37 \<in> system_definitions given_rooted_readers_system" by (rule given_rooted_declared_sites) simp
-  have agree: "systems_agree_on artifact_lookup_system given_rooted_readers_system
-      (system_definitions artifact_lookup_system \<inter> system_definitions given_rooted_readers_system)"
-    by (rule given_agreements(3)[OF artifact_lookup_system_formed guard_lookup_agreement])
-  have d37: "37 \<in> system_definitions artifact_lookup_system"
-    using artifact_lookup_system_formed artifact_lookup_clause[of 0 artifact_lookup_schema]
-    unfolding schema_system_formed_def by blast
-  have one: "X = artifact_lookup_schema" if "((37,c0),X) \<in> system_clauses given_rooted_readers_system" for c0 X
-  proof -
-    have "((37,c0),X) \<in> system_clauses artifact_lookup_system"
-      using agree that d37 r37 unfolding systems_agree_on_def by blast
-    then show ?thesis by simp
-  qed
-  have from_Q: "\<exists>X. Z = finite_rename_schema id id installed_placement X \<and>
-      decode_finite_schema X = artifact_lookup_schema"
-    if a: "((e,k),Z) |\<in>| finite_system_clauses (finite_rename_system installed_placement Q)" for k Z
-  proof -
-    obtain d c0 S0 where o: "((d,c0),S0) |\<in>| finite_system_clauses Q" "e = installed_placement d"
-        "Z = finite_rename_schema id id installed_placement S0"
-      using a by (auto simp: finite_rename_system_def)
-    have Qc: "((d,c0),decode_finite_schema S0) \<in> system_clauses (decode_finite_system Q)"
-      using o(1) by (simp only: finite_system_clause_decoded)
-    have dQ: "d \<in> system_definitions (decode_finite_system Q)"
-      using target_formed[unfolded schema_system_formed_def] Qc by blast
-    have "d = 37" by (rule inj_onD[OF installation(5)]) (use o(2) e dQ rooted_in_Q[OF r37] in auto)
-    then have "decode_finite_schema S0 = artifact_lookup_schema" using one Qc rooted_clauses_Q[OF r37] by blast
-    then show ?thesis using o(3) by blast
-  qed
-  obtain X where X: "S = finite_rename_schema id id installed_placement X"
-      "decode_finite_schema X = artifact_lookup_schema" using from_Q[OF S] by blast
-  obtain X' where X': "S' = finite_rename_schema id id installed_placement X'"
-      "decode_finite_schema X' = artifact_lookup_schema" using from_Q[OF S'] by blast
-  have "decode_finite_schema X = decode_finite_schema X'" using X(2) X'(2) by simp
-  then have "X = X'" by (simp only: decode_finite_schema_injective)
-  then show "S = S'" using X(1) X'(1) by simp
-qed
 
 subsection \<open>The given's input record at the installed program\<close>
 
@@ -330,6 +381,75 @@ theorem installed_input_declared: "narrowed_productions_declared installed_input
   unfolding installed_input_override
   by (rule produced_override_declared[OF installed_declared[folded installed_given_declarations_def]
     installed_lookup_declared])
+
+subsection \<open>12's production at the varied lookup socket\<close>
+
+text \<open>
+  At every socket of the lookup record carried to the installed program, the given's input record declares 12's
+  input registration, varied to 12's one installed clause: the committed search at 526 and 561 takes 12's input from
+  this production. The production applies at every goal whose pattern the identity view reads: its conclusion's
+  input is a variable, which matches every input.
+\<close>
+
+theorem installed_lookup_production:
+  assumes sock: "(e,T,t,keep,Vp,Vh) |\<in>| declared_sockets installed_lookup_declarations"
+  obtains c1 T1 f1 h1 where "e = installed_placement 37"
+    "((installed_placement 12,c1),T1) |\<in>| finite_system_clauses installed_presentation"
+    "finite_schema_match (finite_rename_schema id id installed_placement identity_socket_schema) T1 = Some (f1,h1)"
+    "declared_production installed_input_declarations e T t =
+      Some (input_registration (installed_placement 12) T1 view_identity (f1 1))"
+proof -
+  obtain c1 T1 f1 h1 where v: "e = installed_placement 37"
+      "((installed_placement 12,c1),T1) |\<in>| finite_system_clauses installed_presentation"
+      "finite_schema_match (finite_rename_schema id id installed_placement identity_socket_schema) T1 = Some (f1,h1)"
+      "declared_production installed_lookup_declarations e T t =
+        Some (input_registration (installed_placement 12) T1 view_identity (f1 1))"
+    by (rule installed_lookup_value[OF sock])
+  have keyed: "socket_keyed (resolution_declarations.truncate installed_lookup_declarations) e T t"
+    unfolding socket_keyed_iff truncate_fields using sock by blast
+  have "declared_production installed_input_declarations e T t =
+      Some (input_registration (installed_placement 12) T1 view_identity (f1 1))"
+    unfolding installed_input_override using keyed v(4) by simp
+  then show ?thesis by (rule that[OF v(1) v(2) v(3)])
+qed
+
+corollary installed_lookup_production_present:
+  assumes "(installed_placement 37,T,t,keep,Vp,Vh) |\<in>| declared_sockets installed_lookup_declarations"
+  shows "declared_production installed_input_declarations (installed_placement 37) T t \<noteq> None"
+  by (rule installed_lookup_production[OF assms]) simp
+
+theorem installed_lookup_applies:
+  assumes sock: "(e,T,t,keep,Vp,Vh) |\<in>| declared_sockets installed_lookup_declarations"
+    and p: "declared_production installed_input_declarations e T t = Some R'"
+    and view: "resolution_view_pattern view_identity p \<noteq> None"
+  shows "finite_registration_applies view_identity R' (installed_placement 12) p"
+proof -
+  let ?S = "finite_rename_schema id id installed_placement identity_socket_schema"
+  obtain c1 T1 f1 h1 where u: "e = installed_placement 37"
+      "((installed_placement 12,c1),T1) |\<in>| finite_system_clauses installed_presentation"
+      "finite_schema_match ?S T1 = Some (f1,h1)"
+      "declared_production installed_input_declarations e T t =
+        Some (input_registration (installed_placement 12) T1 view_identity (f1 1))"
+    by (rule installed_lookup_production[OF sock])
+  have R': "R' = input_registration (installed_placement 12) T1 view_identity (f1 1)" using p u(4) by simp
+  have pc: "((installed_placement 12,0),?S) |\<in>| finite_system_clauses (finite_rename_system installed_placement Q)"
+    by (simp add: placed_identity_clause)
+  have Sf: "finite_schema_formed ?S" by (rule finite_system_clause_formed[OF installed_presentation_formed(2) pc])
+  have Tf: "finite_schema_formed T1" by (rule finite_system_clause_formed[OF installed_presentation_formed(1) u(2)])
+  have T1: "T1 = finite_rename_schema f1 h1 id ?S" using finite_schema_match_exact(1)[OF Sf Tf u(3)] by blast
+  have conc: "resolution_view_pattern view_identity (finite_schema_conclusion T1) =
+      Some (Finite_Variable (f1 0),Finite_Variable (f1 1))"
+    unfolding T1 by (simp add: finite_rename_schema_def identity_socket_schema_def view_identity_pattern)
+  obtain x y where xy: "resolution_view_pattern view_identity p = Some (x,y)" using view by auto
+  have val: "finite_binding_valuation {|(f1 0,finite_residual_term x)|} (f1 0) = finite_residual_term x"
+    by (rule finite_binding_valuation_member) (simp_all add: finite_relation_functional_def)
+  have site: "registration_site R' = installed_placement 12" and schema: "registration_schema R' = T1"
+    unfolding R' by (simp_all add: input_registration_def)
+  show ?thesis
+    unfolding finite_registration_applies_def site schema xy conc
+    by (simp only: option.case fst_conv finite_matching_bindings.simps(1) resolution_value_constructors(1) val
+      simp_thms)
+qed
 
 subsection \<open>The committed registrations at the installed program\<close>
 

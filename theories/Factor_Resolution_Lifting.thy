@@ -9,9 +9,8 @@ text \<open>
   resolution", items 5 and 6): the round of a true call, the ground value of a pattern under a support, positions,
   the support of a state, the successors a step constructs and the supported successor of a supported goal. With
   them stand the views (R5's producers' outputs), the committed search (R5, "Committed choice, for refusals") and its
-  lifting at a focused barred support over the selection parameter, which read nothing above them: the completeness
-  of the resolving evaluator reads R4's search as the committed search at no commitment
-  (@{text finite_committed_search_by_plain}).
+  lifting at a focused barred support over the selection parameter, which read nothing above them; the committed
+  search's instance at no commitment is R4's search (@{text finite_committed_search_by_plain}).
 \<close>
 
 section \<open>A true call is established at a finite round\<close>
@@ -114,6 +113,7 @@ definition resolution_value :: "('v \<Rightarrow> finite_factor_term) \<Rightarr
 lemma resolution_value_exact:
   "finite_exact_term_pattern (resolution_value \<theta> p) = finite_pattern_substitute (resolution_substitution \<theta>) p"
   by (simp add: resolution_value_def finite_exact_residual_substitute)
+
 
 lemma resolution_value_eq:
   "resolution_value \<theta> p = t \<longleftrightarrow>

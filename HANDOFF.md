@@ -112,8 +112,8 @@ into the briefs #522 and #523 corrected, or recorded superseded there.
   ground root calls (#819's rewrites; the committed forms at None for pattern roots, #542's 590).
 - The given's record (R6c): #782 landed the one produced record at the rooted readers (R7's); its installed carrying:
   #796 landed (the produced record's relocation, the generic join at its notions); #798 (the one record at 526 and 561;
-  review 797's 1–3; its second session repaired the stalled proofs, the stack loading complete in 34.5 s, and hands
-  over, continuing 798; review 783's 6 and a move are next-edits 351 and 352) → `given_union_registration` #859 (#782's Remains 4,
+  review 797's 1–3; its second session repaired the stalled proofs, the stack loading complete in 34.5 s, landed
+  (`626b605f`); review 783's 6 and a move are next-edits 351 and 352) → `given_union_registration` #859 (#782's Remains 4,
   review 767's 2, q138: its facts at the varied relocated registration, discharged from the agreements alone) → #707,
   #547 and #399 (q144). #784 landed (review 783's 4, 5 and 8); its control of 55's
   two-union clause is c55 #827 (q146, review 785's 1–3), after K3, off the route.
@@ -544,10 +544,17 @@ planner searches for a theory before briefing a task that edits it.
 
 ## Now
 
-- **Under way**: #798 hands over (its proofs repaired, the stack loading complete in 34.5 s; `given_union_registration`
-  #859 after it); OS2 #855, GT1a #837 and #861 build; #849 hands over its fallback; #863 and #873 start as slots free;
-  the brief #874 (GT3, GT6 and #542's rewrite) when a slot has nothing to build.
-- **What the next events ask**: the hand-overs of #798, OS2, GT1a, #849 and #861, then #863 and #873; #874's
+- **Under way**: OS2 #855, GT1a #837 and #861 build; #849 hands over its fallback; #863 and #873 start as slots free;
+  the brief #874 (GT3, GT6 and #542's rewrite) when a slot has nothing to build. #798 landed (`626b605f`).
+- **Not yet handled (plan-118's window ended)**: review 799's follow-ups of #798 (`.build/tasks/799/review.md`). Its 3:
+  `asked_installed_declarations_discharged` and `first_request_installed_declarations_discharged` state
+  `committed_registrations` with a construction formed and complete at `finite_asked_program` /
+  `finite_first_request_program` as premise — for #707's, #547's and #399's rewrites. Its 4, #859's consumer:
+  `installed_committed_registrations` carries any construction complete at the numbered program, so
+  `given_union_registration` at V3's base installation may serve no route consumer; #859 and #860 are unqueued until
+  the planner decides whether #859 builds the union registration's completeness at the two numbered programs instead or
+  is deleted (#707, #547 and #399 wait on it: re-point them then). Its 1 and 2 are next-edits 354 and 355.
+- **What the next events ask**: the hand-overs of OS2, GT1a, #849 and #861, then #863 and #873; #874's
   proposal; then a brief
   rewriting #547, #707 and #399 from #831's section (the table at the installed programs through the proved
   correspondence, Q33 (d); #399's admission conditional on the table's validity, discharged by GT6's retained outcome),

@@ -52,12 +52,12 @@ of certified ground calls every judgment's search closes (one successor, never a
 once over graphs and retained; a judgment in two phases; 77's bound handed in for an admission, W5 for a refusal;
 one-time ≈ 31–34 M states, a judgment's part ≈ 2–5 M (after #928 a candidate's part is its additions). Landed: the
 table through R3–R5 and C (GT1a, GT1b, GT4, GT4b, GT4c, GT2a, GT2c), the given's calls (GT5 #845), W5 #847, VK1 #920 (the
-root-kept restriction, the valued exchange and lifting; task 918's decision) and GT2b's first part #889. Open: GT2b's
-second part #922 (the narrowed productions, the composed forms, GT2c's premise blocks) → its follow-up #942 (q164:
-the construction's support and lifting at a true table, rc's construction premise discharged, the transfers at a table)
+root-kept restriction, the valued exchange and lifting; task 918's decision) and GT2b's two parts #889 and #922 (every discharge valued
+at a true table, the composed forms, GT2c's premise blocks). Open: #942 (q164 and review 923's 1–2: the construction's
+support and lifting at a true table, rc's construction premise discharged, the committed forms' transfers at a table)
 → VK2 #924 (W5's premise at the given's committing instance) → AX4 and #399, and WC2b #914 and #547; GT3 #876 (the table in F2's shared representation, after D1d) → GT6 #878
 (the table produced once, a run of hours parked for its completion, its record `validation/given-table.json`, after
-#875, which supplies its prediction and worker count) → #542, #547, #707, #399. R7 #542 waits on #922 and #547 on #942; #547 not
+#875, which supplies its prediction and worker count) → #542, #547, #707, #399. #547 waits on #942, not
 on VK2 (its refusal at 561 goes through the merge at W5's plain instance). The table is the readers' part, its guard
 part at (g, g) retired by AX4, so GT6 and #875 do not wait on AX1–AX4.
 
@@ -266,7 +266,8 @@ REASONING_REUSE.md, how each went in `PLANNING_LOG.md`.
   (`development_indexed_generation`, parametric), the placeholder line (`Factor_Positive_Parametricity`,
   `Factor_Placeholder_Fill`, `Factor_Placeholder_Schemas`, `Factor_Placeholder_Packages`, `Factor_Parametric_Causes`),
   `Development_Recording_Refinements` (no library theory imports it).
-- **The resolving evaluator**, every form at a table (GT1a–GT2c) and the exchange's lower discharges valued (VK1, #889):
+- **The resolving evaluator**, every form at a table (GT1a–GT2c) and the exchange's discharges valued at a true table
+  (VK1, #889, #922):
   R1 `Factor_Material_Resolution`, R2 `Factor_Pattern_Unification`, R3 `Factor_Program_Resolution`, R3b
   `Factor_Resolution_Acceptance`, R4 `Factor_Resolution_Completeness` with `Factor_Resolution_Lifting` (the value
   lifting and the root-kept restriction), R5 `Factor_Resolution_Commitments` with its discharges
@@ -373,8 +374,8 @@ a theory before briefing a task that edits it.
 
 ## Now
 
-- **Under way**: D1b's second part #926, AX1 #930 and GT2b's second part #922, whose follow-up #942 carries q164's
-  answer (it reached no session); review 894's dispatch item is moot, #922's `result.md` says.
+- **Under way**: D1b's second part #926, AX1 #930 and #942, which carries q164's answer (it reached no session) and
+  review 923's follow-ups 1, 2, 4 and 5; GT3 #876 waits on it (both edit `Factor_Resolution_Checks`).
 - **What the next events ask**: #875's figures — GT6's prediction and worker count, the checking fold measured at
   samples, the kept forms (q162) and FI's remaining costs (Graph); with them the re-run of #718's 77 and 79 fixtures with
   review 858's attributions (next-edits 364–366), due since W5's landing but waiting for the deferred route, since

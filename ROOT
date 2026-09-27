@@ -1686,6 +1686,7 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Finite_Filtered_Keyed_Products
     RRA_Linked_Record_Candidates
     Tree_Map_Indexes
+    Factor_Framed_Commitment_Index
     Factor_Indexed_Resolution
     First_Index_Trees
     Merge_Sort_Keys

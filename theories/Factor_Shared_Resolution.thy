@@ -1060,12 +1060,6 @@ record (overloaded) ('a,'s::linorder,'d,'c) shared_state =
 abbreviation shared_state_table :: "('a,'s::linorder,'d,'c) shared_state \<Rightarrow> shape list" where
   "shared_state_table s \<equiv> share_state_table (shared_sharing s)"
 
-definition tree_values :: "('k::linorder, 'v) rbt \<Rightarrow> 'v fset" where
-  "tree_values t = fset_of_list (map snd (RBT.entries t))"
-
-lemma tree_values_member: "v |\<in>| tree_values t \<longleftrightarrow> (\<exists>k. RBT.lookup t k = Some v)"
-  by (force simp: tree_values_def fset_of_list_elem RBT.lookup_in_tree)
-
 lemma fimage_tree_values_member:
   "x |\<in>| fimage f (tree_values t) \<longleftrightarrow> (\<exists>k v. RBT.lookup t k = Some v \<and> f v = x)"
 proof
@@ -1079,9 +1073,6 @@ next
   then have "v |\<in>| tree_values t" by (auto simp: tree_values_member)
   with kv(2) show "x |\<in>| fimage f (tree_values t)" by blast
 qed
-
-lemma tree_values_empty [simp]: "tree_values RBT.empty = {||}"
-  by (rule fset_eqI) (simp add: tree_values_member)
 
 lemma tree_values_image:
   assumes same: "\<And>p. map_option f (RBT.lookup t p) = map_option g (RBT.lookup t' p)"

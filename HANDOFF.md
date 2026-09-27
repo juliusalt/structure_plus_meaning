@@ -62,7 +62,10 @@ table, `committed_registrations_in` and `relocated_registrations_in` whose table
 instance `relocated_registrations_in.native_moded_check_installed_in` with the resolution's half beside it, no global
 table copy (next-edits 335 confirmed), the table's transfers carrying truth, so the relocated table is true at the
 numbered program and no formation-only form is placed; review 893's follow-ups mailed) and GT2b #889 (every discharge
-of the exchange and OS1's open premise at a table and a formed selection, after WC2a #912: correction (16), below); GT5 #845 (the given's table) after GT2c, W5 #847 after GT2a and
+of the exchange and OS1's open premise at a table and a formed selection, after WC2a #912: correction (16), below); GT5 #845 (committed `f9484e82`: `Development_Given_Table`, the given's calls
+`given_table_calls` from its value, the readers' part valid at the rooted readers and the guard's part certified at
+`finite_asked_program`, their truth at agreeing programs and at the installations, the relocation once as
+`mapped_installed_table_true`; review 846's follow-ups mailed to GT6, R7, #707, #399 and #547, next-edits 380–381), W5 #847 after GT2a and
 GT2c (q161: W2's definitions take a parameter record per type, completeness under a named premise open at the given's
 committing instance, since #831's (2) does not follow from R5's lifting; the design #918 decides a value-keeping
 lifting and exchange before GT2b's one pass), R7 #542 and the first request #547 after GT2b; GT3 #876 (the table in F2's shared representation, after GT2c, GT4
@@ -127,7 +130,8 @@ correction (16) of "Committed choice, for refusals"): a class of F1's selection 
 holding a variable of a pending framed socket's frame, or of the head output, waits while the socket is pending in its
 original form — read by the selection alone, never by exactness; 55's false call at depth 2 refuted in 4,710
 selections, depth 3 in 9,658, the true calls 3–8 % more; review 828's follow-up 1 settled. Its builds, placed from
-the brief #909, each with its review: WC1 #910 (the class, `Factor_Socket_Waiting`) and WC2a #912 (committed
+the brief #909, each with its review: WC1 #910 (committed `168d2de1`: the class and F1's selection with it,
+`Factor_Socket_Waiting`; review 911's follow-ups mailed, correction (16)'s "Its place" sentence amended by WC2b) and WC2a #912 (committed
 `dce8c15c`: `finite_selection_formed`, the exchange `finite_commitment_exchanges_by_in` and the lifting and exact
 premises at a table and a formed selection; review 913's follow-ups mailed to GT2b and WC2b, next-edits 329 retired)
 at once; GT2b #889 rewritten from #909's copy to state every
@@ -360,6 +364,8 @@ REASONING_REUSE.md, how each went in `PLANNING_LOG.md`.
   `relocated_registrations`; at a table since GT2c #888, `committed_registrations_in` and `relocated_registrations_in`,
   premise blocks whose table premises GT2b discharges).
 - **The binding store** `Shared_Binding_Stores` (D1a #899), under which D1b's deferred search keeps its nodes.
+- **The given's table's calls** `Development_Given_Table` (GT5 #845): `given_table_calls`, the readers' part and the
+  guard's part (certified at `finite_asked_program`), their truth at agreeing programs and at the installations.
 - **Briefs whose findings stand**: #434 (the approval record's place, part (g), parts (h) and (e), Q25) and #451 (the
   readings of "generation" and "adoption"), each in its `result.md`.
 
@@ -433,13 +439,18 @@ a theory before briefing a task that edits it.
 
 ## Now
 
-- **Under way**: D1c #901 continued from its tree (the planner's answers to its questions in its brief); WC1 #910 of
-  correction (16); GT5 #845 and W5 #847; the design #918 (q161 (A)); FI #892 after D1c (review 891's 3 and 4 mailed
-  again).
-- **What the next events ask**: the design #918's verdict (q161 (A)), then what GT2b #889 must respect put into its
-  brief before it starts and the value-keeping builds placed before #399; GT6's prediction and worker count from #875
-  before its run, with the checking fold
-  measured at samples; #709's brief rewritten before it starts. Q33 is the owner's.
+- **Under way**: D1c #901 continued from its tree, withdrawing its kept held goals and construction nodes (q162
+  answered (b): as built they made the step slower at every scale, `.build/tasks/901/measurement.md`; the counts, the
+  pruned index, the class trees and `enter_goal` land; keeping them waits on #875's figures; D1b #903, FI #892 and
+  #875 mailed); W5 #847 (mailed task 918's answer 3); the brief of task 918's builds; FI #892 after D1c.
+- **Task 918 accepted** (`.build/tasks/918/verdict.md`): the root-kept restriction, the valued exchange and the lifting
+  with a two-flag outcome beside WC2a's; its builds briefed together — VK1 first (startable at once), GT2b #889's pass
+  valued and divided by theory where beyond its room, VK2 after GT2b and W5, before #399 (mailed); W5 hands over its
+  premise at the plain instance, VK2 discharging the rest. GT2b #889 and #399 wait on the brief until its proposal is
+  placed; whether #547 waits on VK2 the proposal says.
+- **What the next events ask**: the brief's proposal placed (#889's and #894's rewrites from `.build/plans/plan-130/`
+  by edit); GT6's prediction and worker count from #875 before its run, with the checking fold measured at samples;
+  #709's brief rewritten before it starts. Q33 is the owner's.
 
 - **Planners stopped**: plan-120 and plan-121 were stopped by a classifier declining a turn, before their notes; this
   file and `PLANNING_LOG.md` carried all they settled. Keep both current at every event.

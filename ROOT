@@ -1328,6 +1328,7 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Factor_Required_History_Investigation
     Ordered_Finite_Terms
     Factor_Resolution_Commitments
+    Factor_Resolution_Graph_Checks
     Factor_Resolution_Modes
     Factor_Resolution_Producer_Discharge
     Factor_Resolution_Material_Discharge
@@ -1897,6 +1898,7 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Factor_Root_Family_Declarations
     Factor_Artifact_Citation_Declarations
     Factor_Input_Productions
+    Factor_Resolution_Checks
     Factor_Input_Production_Controls
     Factor_Row_Value_Socket_Declarations
     Factor_Row_Selection_Socket_Declarations
@@ -1943,6 +1945,7 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Development_Installed_Presentations
     Development_Given_Installed_Declarations
     Development_Given_Frames
+    Development_Given_Productions
     Development_Installed_Presentations_Execution
     Development_First_Problem_Asked
     Development_Socket_Liveness_Execution
@@ -1951,6 +1954,8 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Development_First_Request_Registrations
     Development_Given_Modes
     Development_Given_Modes_Execution
+    Factor_Check_Controls
+    Development_Given_Productions_Execution
     Development_Native_State
     Development_First_Problem
     Development_Bounded_Recording_Execution

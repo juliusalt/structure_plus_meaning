@@ -1,6 +1,6 @@
 {
- "base_receipt_sha256": "d3564ba95460b28229d59b56b86e9259cc8810e7dee6f0cb178cd28990762c20",
- "checked_content_sha256": "d2e7fda8772f2753364ac32e0b33512eebc2b79ad869f7785b8b9d7f18fc65db",
+ "base_receipt_sha256": "e3e2678572630101a3f7ef3f6e1b73e2ad1271b93cecf582a6826d2a41d42440",
+ "checked_content_sha256": "981f81d04442994b4b5e82f41fee87eaecd2cff71339672a7d2b7275daad8d08",
  "host_tests": {
   "kernel": {
    "exit_code": 0,
@@ -17,17 +17,17 @@
    "ran": 309,
    "skipped": 0,
    "tail": [
-    "{\"status\": \"failed\", \"error\": \"[Errno 2] No such file or directory: '/tmp/tmp05n3qp26/no-project/theories/Development_Answer_a2d8d6490cc2.thy'\"}"
+    "{\"status\": \"failed\", \"error\": \"[Errno 2] No such file or directory: '/tmp/tmpqqu17xjo/no-project/theories/Development_Answer_a2d8d6490cc2.thy'\"}"
    ]
   }
  },
  "phases": {
-  "base_and_impact": 0.4,
+  "base_and_impact": 0.38,
   "execution_impact": 0.0,
   "export": 0.0,
-  "proof": 125.07,
+  "proof": 153.97,
   "recipe_impact": 0.4,
-  "recipes_and_host_tests": 11.45
+  "recipes_and_host_tests": 11.36
  },
  "rebuilt_theories": [
   "Development_Asked_Registrations",
@@ -39,12 +39,15 @@
   "Development_Given_Installed_Declarations",
   "Development_Given_Modes",
   "Development_Given_Modes_Execution",
+  "Development_Given_Productions",
+  "Development_Given_Productions_Execution",
   "Development_Given_Registrations",
   "Development_Installed_Presentations",
   "Development_Installed_Presentations_Execution",
   "Development_Rooted_Registrations",
   "Development_Socket_Liveness_Execution",
   "Factor_Artifact_Citation_Declarations",
+  "Factor_Check_Controls",
   "Factor_Commitment_Controls",
   "Factor_Committed_Registrations",
   "Factor_Definition_Reading_Declarations",
@@ -62,8 +65,10 @@
   "Factor_Producer_Correspondences",
   "Factor_Reader_Witness_Registrations",
   "Factor_Resolution_Carriers",
+  "Factor_Resolution_Checks",
   "Factor_Resolution_Commitments",
   "Factor_Resolution_Controls",
+  "Factor_Resolution_Graph_Checks",
   "Factor_Resolution_Material_Discharge",
   "Factor_Resolution_Modes",
   "Factor_Resolution_Producer_Discharge",
@@ -239,18 +244,18 @@
   }
  },
  "reused_theories": 1917,
- "seconds": 147.52,
+ "seconds": 177.15,
  "source_checks": {
   "missing_theory_files": [],
   "proof_escape_matches": [],
   "refusals": [],
-  "theory_count": 1966,
+  "theory_count": 1971,
   "unlisted_theories": []
  },
  "status": "accepted",
- "theories": 1966,
+ "theories": 1971,
  "validation_inputs": {
-  "ROOT": "2185acfa3b700eb9811e0a59ddd2176d2504c64ff282a067b56262fe652eb213",
+  "ROOT": "649b552e4833eb34b9b04e0c6ad6bbe64485bba8c51c0c5f1c7ffc6822466c3d",
   "tools/check.py": "71c91573138e10d317e5d920f5776af39687d313836a5552bbb0ec1d2d580381",
   "tools/incremental_check.py": "7f57110d9b4e04a7eb01215c21ea098fffcff71410454a248f6eb122909a1d98"
  }

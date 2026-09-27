@@ -1,7 +1,6 @@
 theory Factor_Resolution_Commitments
-  imports Presentation_Contracts Ordered_Finite_Terms
+  imports Presentation_Contracts
     Factor_Positive_Locality Factor_System_Relocation Factor_Finite_System_Fields Factor_Construction_Holders
-    Finite_Pattern_Tuples Finite_Functional_Enumeration
 begin
 
 text \<open>
@@ -1332,6 +1331,47 @@ definition finite_committed_resolution_by ::
   "finite_committed_resolution_by sel \<kappa> K P d t n =
     finite_outcome_result P d t (finite_committed_search_by sel \<kappa> K P n None {||} (finite_initial_state d t))"
 
+text \<open>
+  A focus focuses the root when it holds the root position: @{term None} and @{term "Some []"}. There every goal is
+  focused (@{text finite_root_focus_pending}), and what the forms' proofs read — the initial state's support at the
+  focus and a found state's root node — is read as at @{term None}. The committed forms at @{term None}, for pattern
+  roots, and the check forms at @{term "Some []"}, for ground root calls (@{text Factor_Resolution_Checks}), are the
+  statements below and in the next sections at such a focus: their certificates here, their refutation, verdict,
+  demand-level and native exactness where the forms are exact.
+\<close>
+
+lemma finite_root_focus_pending:
+  assumes root: "resolution_focused F []"
+  shows "finite_focus_pending F st = resolution_pending st"
+  using root by (cases F) (auto simp: finite_focus_pending_def fset_eq_iff)
+
+theorem finite_focused_resolution_certificates:
+  assumes Pf: "finite_system_formed P" and tf: "finite_term_formed t"
+    and \<kappa>: "finite_witness_construction_formed \<kappa>"
+    and goals: "\<And>st G. sel st = Select_Goals G \<Longrightarrow> G |\<subseteq>| resolution_pending st"
+    and root: "resolution_focused F []"
+  shows "finite_outcome_result P d t (finite_committed_search_by sel \<kappa> K P n F {||} (finite_initial_state d t)) =
+    (let R = finite_committed_search_by sel \<kappa> K P n F {||} (finite_initial_state d t);
+      C = ffUnion (fimage finite_state_proofs (resolution_found R)) in
+    if C\<noteq>{||} then Finite_Resolved C else if resolution_diagnoses R={||} then Finite_Refuted
+    else Finite_Unresolved (resolution_diagnoses R))"
+proof -
+  let ?R = "finite_committed_search_by sel \<kappa> K P n F {||} (finite_initial_state d t)"
+  let ?C = "ffUnion (fimage finite_state_proofs (resolution_found ?R))"
+  have closed: "resolution_invariant P d t s \<and> resolution_pending s={||}" if s: "s |\<in>| resolution_found ?R" for s
+    using finite_committed_search_by_found[OF \<kappa> goals resolution_initial_invariant[OF Pf tf] s]
+    by (simp add: finite_root_focus_pending[OF root])
+  have accepted: "finite_checks_schema_proof P p d t" if "p |\<in>| ?C" for p
+  proof -
+    from that obtain s where s: "s |\<in>| resolution_found ?R" and p: "p |\<in>| finite_state_proofs s"
+      by (auto simp: resolution_fset_simps)
+    from closed[OF s] have I: "resolution_invariant P d t s" and closed_s: "resolution_pending s={||}" by blast+
+    show ?thesis by (rule finite_closed_state_proofs_accepted[OF I closed_s p])
+  qed
+  have all: "ffilter (\<lambda>p. finite_checks_schema_proof P p d t) ?C = ?C" using accepted by (auto simp: fset_eq_iff)
+  show ?thesis by (auto simp: finite_outcome_result_def finite_outcome_result_in_def finite_state_proofs_empty Let_def all)
+qed
+
 theorem finite_committed_resolution_by_sound:
   assumes res: "finite_committed_resolution_by sel \<kappa> K P d t n = Finite_Resolved C"
   shows "C\<noteq>{||}" and "\<And>p. p |\<in>| C \<Longrightarrow> finite_checks_schema_proof P p d t"
@@ -1347,21 +1387,8 @@ theorem finite_committed_resolution_by_certificates:
       C = ffUnion (fimage finite_state_proofs (resolution_found R)) in
     if C\<noteq>{||} then Finite_Resolved C else if resolution_diagnoses R={||} then Finite_Refuted
     else Finite_Unresolved (resolution_diagnoses R))"
-proof -
-  let ?R = "finite_committed_search_by sel \<kappa> K P n None {||} (finite_initial_state d t)"
-  let ?C = "ffUnion (fimage finite_state_proofs (resolution_found ?R))"
-  have closed: "resolution_invariant P d t s \<and> resolution_pending s={||}" if s: "s |\<in>| resolution_found ?R" for s
-    using finite_committed_search_by_found[OF \<kappa> goals resolution_initial_invariant[OF Pf tf] s] by simp
-  have accepted: "finite_checks_schema_proof P p d t" if "p |\<in>| ?C" for p
-  proof -
-    from that obtain s where s: "s |\<in>| resolution_found ?R" and p: "p |\<in>| finite_state_proofs s"
-      by (auto simp: resolution_fset_simps)
-    from closed[OF s] have I: "resolution_invariant P d t s" and closed_s: "resolution_pending s={||}" by blast+
-    show ?thesis by (rule finite_closed_state_proofs_accepted[OF I closed_s p])
-  qed
-  have all: "ffilter (\<lambda>p. finite_checks_schema_proof P p d t) ?C = ?C" using accepted by (auto simp: fset_eq_iff)
-  show ?thesis by (auto simp: finite_committed_resolution_by_def finite_outcome_result_def finite_outcome_result_in_def finite_state_proofs_empty Let_def all)
-qed
+  unfolding finite_committed_resolution_by_def
+  by (rule finite_focused_resolution_certificates[OF Pf tf \<kappa> goals, where F=None]) (simp_all add: resolution_focused_def)
 
 definition finite_committed_resolution ::
     "('a,'s::linorder,'d,'c) finite_witness_construction \<Rightarrow> ('a,'s,'d,'c) resolution_commitment \<Rightarrow>
@@ -4621,9 +4648,10 @@ lemma finite_committed_exact_premises_select:
     (finite_committed_select \<kappa> K P) \<kappa> K P"
   using assms unfolding finite_commitment_exchanges_priority by (rule finite_committed_exact_premises_select_at)
 
-theorem finite_committed_resolution_by_refutation_exact:
-  assumes given: "finite_committed_exact_premises J sel \<kappa> K P"
-    and refutes: "finite_resolution_refutes (finite_committed_resolution_by sel \<kappa> K P d t n)"
+theorem finite_focused_resolution_refutation_exact:
+  assumes given: "finite_committed_exact_premises J sel \<kappa> K P" and root: "resolution_focused F []"
+    and refutes: "finite_resolution_refutes
+      (finite_outcome_result P d t (finite_committed_search_by sel \<kappa> K P n F {||} (finite_initial_state d t)))"
   shows "(d,decode_finite_term t) \<notin> positive_meaning (decode_finite_system P)"
 proof
   assume holds: "(d,decode_finite_term t) \<in> positive_meaning (decode_finite_system P)"
@@ -4638,25 +4666,25 @@ proof
   have tf: "finite_term_formed t"
     using positive_meaning_formed[OF holds]
     by (auto simp: schema_call_formed_def pattern_accepts_def finite_term_formed_correct)
-  let ?R = "finite_committed_search_by sel \<kappa> K P n None {||} (finite_initial_state d t)"
+  let ?R = "finite_committed_search_by sel \<kappa> K P n F {||} (finite_initial_state d t)"
   let ?C = "ffUnion (fimage finite_state_proofs (resolution_found ?R))"
   have I0: "resolution_invariant P d t (finite_initial_state d t)" by (rule resolution_initial_invariant[OF Pf tf])
-  have S0: "resolution_supported_at (\<lambda>_. False) None {||} P (finite_initial_state d t) (\<lambda>_. Finite_Payload [])"
+  have S0: "resolution_supported_at (\<lambda>_. False) F {||} P (finite_initial_state d t) (\<lambda>_. Finite_Payload [])"
     using holds by (simp add: resolution_supported_at_def finite_initial_state_def resolution_value_ground)
-  have lifted: "finite_lifted_outcome (\<lambda>_. False) None P ?R"
+  have lifted: "finite_lifted_outcome (\<lambda>_. False) F P ?R"
     by (rule finite_keeping_outcome_lifted[OF finite_committed_lifting_by[OF lifting resolution_no_foreign
       initial[OF Pf tf] S0]])
-  have res: "finite_committed_resolution_by sel \<kappa> K P d t n = (if ?C\<noteq>{||} then Finite_Resolved ?C
+  have res: "finite_outcome_result P d t ?R = (if ?C\<noteq>{||} then Finite_Resolved ?C
       else if resolution_diagnoses ?R={||} then Finite_Refuted else Finite_Unresolved (resolution_diagnoses ?R))"
-    using finite_committed_resolution_by_certificates[OF Pf tf \<kappa> goals, where K=K and d=d and n=n]
+    using finite_focused_resolution_certificates[OF Pf tf \<kappa> goals root, where K=K and d=d and n=n]
     by (simp add: Let_def)
   from lifted show False unfolding finite_lifted_outcome_def
   proof (elim disjE exE conjE)
     fix st' B' \<theta>' assume st': "st' |\<in>| resolution_found ?R"
-    have "resolution_invariant P d t st' \<and> finite_focus_pending None st' = {||}"
+    have "resolution_invariant P d t st' \<and> finite_focus_pending F st' = {||}"
       by (rule finite_committed_search_by_found[OF \<kappa> goals I0 st'])
     then obtain nd where nd: "nd |\<in>| resolution_nodes st'" "resolution_node_position nd = []"
-      by (auto simp: resolution_invariant_in_def resolution_root_held_def)
+      by (auto simp: finite_root_focus_pending[OF root] resolution_invariant_in_def resolution_root_held_def)
     then have "finite_node_proof (fcard (resolution_nodes st')) (resolution_nodes st') nd |\<in>| finite_state_proofs st'"
       by (auto simp: finite_state_proofs_def finite_state_proofs_in_def)
     then have "?C \<noteq> {||}" using resolution_union_nonempty[of st' "resolution_found ?R" finite_state_proofs] st' by auto
@@ -4667,6 +4695,79 @@ proof
   qed
 qed
 
+lemma finite_focused_verdict_exact:
+  assumes given: "finite_committed_exact_premises J sel \<kappa> K P" and root: "resolution_focused F []"
+    and verdict: "finite_resolution_verdict
+      (finite_outcome_result P d t (finite_committed_search_by sel \<kappa> K P n F {||} (finite_initial_state d t))) = Some b"
+  shows "b \<longleftrightarrow> (d,decode_finite_term t) \<in> positive_meaning (decode_finite_system P)"
+proof (cases "finite_outcome_result P d t (finite_committed_search_by sel \<kappa> K P n F {||} (finite_initial_state d t))")
+  case (Finite_Resolved C)
+  then show ?thesis using verdict finite_outcome_result_sound(3)[OF Finite_Resolved]
+    by (simp add: finite_resolution_verdict_def)
+next
+  case Finite_Refuted
+  have r: "finite_resolution_refutes
+      (finite_outcome_result P d t (finite_committed_search_by sel \<kappa> K P n F {||} (finite_initial_state d t)))"
+    using Finite_Refuted by (simp add: finite_resolution_refutes_def)
+  have "(d,decode_finite_term t) \<notin> positive_meaning (decode_finite_system P)"
+    by (rule finite_focused_resolution_refutation_exact[OF given root r])
+  then show ?thesis using verdict Finite_Refuted by (simp add: finite_resolution_verdict_def)
+next
+  case (Finite_Unresolved D)
+  then show ?thesis using verdict by (simp add: finite_resolution_verdict_def)
+qed
+
+text \<open>
+  A native form's answer from its calls' results: each call with its result, and the demand-level answer. Where each
+  resolved result holds with accepted certificates, each refuting result refutes and the demand-level answer is exact,
+  the native form is exact: the committed and the check native forms are this argument at their per-call forms.
+\<close>
+
+lemma native_resolution_calls_exact:
+  assumes T: "T = fimage (\<lambda>q. (q,res q)) R"
+    and resolved: "\<And>q C. res q = Finite_Resolved C \<Longrightarrow> C \<noteq> {||} \<and>
+      fBall C (\<lambda>p. finite_checks_schema_proof P p (fst q) (snd q)) \<and>
+      decode_finite_call_term q \<in> positive_meaning (decode_finite_system P)"
+    and refuted: "\<And>q. finite_resolution_refutes (res q) \<Longrightarrow>
+      decode_finite_call_term q \<notin> positive_meaning (decode_finite_system P)"
+    and demand: "\<And>B. A = Some B \<Longrightarrow> schema_system_formed (decode_finite_system P) \<and>
+      fset B = {q\<in>fset R. decode_finite_call_term q \<in> positive_meaning (decode_finite_system P)}"
+  shows "fimage fst T = R"
+    and "(q,Finite_Resolved C) |\<in>| T \<Longrightarrow> C \<noteq> {||} \<and> fBall C (\<lambda>p. finite_checks_schema_proof P p (fst q) (snd q)) \<and>
+      decode_finite_call_term q \<in> positive_meaning (decode_finite_system P)"
+    and "(q,r) |\<in>| T \<Longrightarrow> finite_resolution_refutes r \<Longrightarrow>
+      decode_finite_call_term q \<notin> positive_meaning (decode_finite_system P)"
+    and "A = Some B \<Longrightarrow> schema_system_formed (decode_finite_system P) \<and>
+      fset B = {q\<in>fset R. decode_finite_call_term q \<in> positive_meaning (decode_finite_system P)}"
+proof -
+  show "fimage fst T = R" unfolding T by (simp add: fset.map_comp comp_def)
+  show "(q,Finite_Resolved C) |\<in>| T \<Longrightarrow> C \<noteq> {||} \<and> fBall C (\<lambda>p. finite_checks_schema_proof P p (fst q) (snd q)) \<and>
+      decode_finite_call_term q \<in> positive_meaning (decode_finite_system P)"
+  proof -
+    assume "(q,Finite_Resolved C) |\<in>| T"
+    then have "res q = Finite_Resolved C" unfolding T by auto
+    then show ?thesis by (rule resolved)
+  qed
+  show "(q,r) |\<in>| T \<Longrightarrow> finite_resolution_refutes r \<Longrightarrow>
+      decode_finite_call_term q \<notin> positive_meaning (decode_finite_system P)"
+  proof -
+    assume "(q,r) |\<in>| T" and rr: "finite_resolution_refutes r"
+    then have "r = res q" unfolding T by auto
+    with rr have "finite_resolution_refutes (res q)" by simp
+    then show ?thesis by (rule refuted)
+  qed
+  show "A = Some B \<Longrightarrow> schema_system_formed (decode_finite_system P) \<and>
+      fset B = {q\<in>fset R. decode_finite_call_term q \<in> positive_meaning (decode_finite_system P)}"
+    by (rule demand)
+qed
+
+theorem finite_committed_resolution_by_refutation_exact:
+  assumes given: "finite_committed_exact_premises J sel \<kappa> K P"
+    and refutes: "finite_resolution_refutes (finite_committed_resolution_by sel \<kappa> K P d t n)"
+  shows "(d,decode_finite_term t) \<notin> positive_meaning (decode_finite_system P)"
+  by (rule finite_focused_resolution_refutation_exact[OF given _ refutes[unfolded finite_committed_resolution_by_def]])
+    (simp add: resolution_focused_def)
+
 lemmas finite_committed_resolution_by_exact =
   finite_committed_resolution_by_sound(3) finite_committed_resolution_by_refutation_exact
 
@@ -4674,21 +4775,8 @@ lemma finite_committed_verdict_by_exact:
   assumes given: "finite_committed_exact_premises J sel \<kappa> K P"
     and verdict: "finite_resolution_verdict (finite_committed_resolution_by sel \<kappa> K P d t n) = Some b"
   shows "b \<longleftrightarrow> (d,decode_finite_term t) \<in> positive_meaning (decode_finite_system P)"
-proof (cases "finite_committed_resolution_by sel \<kappa> K P d t n")
-  case (Finite_Resolved C)
-  then show ?thesis using verdict finite_committed_resolution_by_sound(3)[OF Finite_Resolved]
-    by (simp add: finite_resolution_verdict_def)
-next
-  case Finite_Refuted
-  have r: "finite_resolution_refutes (finite_committed_resolution_by sel \<kappa> K P d t n)"
-    using Finite_Refuted by (simp add: finite_resolution_refutes_def)
-  have "(d,decode_finite_term t) \<notin> positive_meaning (decode_finite_system P)"
-    by (rule finite_committed_resolution_by_refutation_exact[OF given r])
-  then show ?thesis using verdict Finite_Refuted by (simp add: finite_resolution_verdict_def)
-next
-  case (Finite_Unresolved D)
-  then show ?thesis using verdict by (simp add: finite_resolution_verdict_def)
-qed
+  by (rule finite_focused_verdict_exact[OF given _ verdict[unfolded finite_committed_resolution_by_def]])
+    (simp add: resolution_focused_def)
 
 theorem finite_committed_demand_by_exact:
   assumes given: "finite_committed_exact_premises J sel \<kappa> K P"
@@ -4696,24 +4784,11 @@ theorem finite_committed_demand_by_exact:
   shows "schema_system_formed (decode_finite_system P)"
     "fset A = {q\<in>fset D. decode_finite_call_term q \<in> positive_meaning (decode_finite_system P)}"
 proof -
-  let ?v = "\<lambda>q. finite_resolution_verdict (finite_committed_resolution_by sel \<kappa> K P (fst q) (snd q) n)"
-  from result have Pf: "finite_system_formed P" and answered: "\<And>q. q |\<in>| D \<Longrightarrow> ?v q \<noteq> None"
-    and A: "A = fimage fst (ffilter (\<lambda>(q,v). v = Some True) (fimage (\<lambda>q. (q,?v q)) D))"
-    by (auto simp: finite_committed_demand_by_def Let_def split: if_splits)
-  show "schema_system_formed (decode_finite_system P)" using Pf by (simp add: finite_system_formed_correct)
-  have key: "\<And>q. q |\<in>| D \<Longrightarrow>
-      ?v q = Some True \<longleftrightarrow> decode_finite_call_term q \<in> positive_meaning (decode_finite_system P)"
-  proof -
-    fix q assume q: "q |\<in>| D"
-    obtain b where b: "?v q = Some b" using answered[OF q] by auto
-    have "b \<longleftrightarrow> (fst q,decode_finite_term (snd q)) \<in> positive_meaning (decode_finite_system P)"
-      by (rule finite_committed_verdict_by_exact[OF given b])
-    then show "?v q = Some True \<longleftrightarrow> decode_finite_call_term q \<in> positive_meaning (decode_finite_system P)"
-      using b by (simp add: decode_finite_call_term_fields)
-  qed
+  note demand = finite_verdict_demand_exact[OF result[unfolded finite_committed_demand_by_def]]
+  show "schema_system_formed (decode_finite_system P)"
+    by (rule demand(1)) (rule finite_committed_verdict_by_exact[OF given])
   show "fset A = {q\<in>fset D. decode_finite_call_term q \<in> positive_meaning (decode_finite_system P)}"
-    unfolding A fimage_fst_filter_graph ffilter.rep_eq Set.filter_eq
-    by (rule Collect_cong) (simp add: key cong: conj_cong)
+    by (rule demand(2)) (rule finite_committed_verdict_by_exact[OF given])
 qed
 
 theorem native_committed_resolution_by_exact:
@@ -4730,27 +4805,28 @@ proof -
   from result have T: "T = fimage (\<lambda>q. (q,finite_committed_resolution_by sel \<kappa> K P (fst q) (snd q) n)) R"
     and A: "A = finite_committed_demand_by sel \<kappa> K P R n"
     by (simp_all add: native_committed_resolution_by_def)
-  show "fimage fst T = R" unfolding T by (simp add: fset.map_comp comp_def)
+  have resolved: "C \<noteq> {||} \<and> fBall C (\<lambda>p. finite_checks_schema_proof P p (fst q) (snd q)) \<and>
+      decode_finite_call_term q \<in> positive_meaning (decode_finite_system P)"
+    if res: "finite_committed_resolution_by sel \<kappa> K P (fst q) (snd q) n = Finite_Resolved C" for q C
+    using finite_committed_resolution_by_sound[OF res] by (simp add: decode_finite_call_term_fields)
+  have refuted: "decode_finite_call_term q \<notin> positive_meaning (decode_finite_system P)"
+    if "finite_resolution_refutes (finite_committed_resolution_by sel \<kappa> K P (fst q) (snd q) n)" for q
+    using finite_committed_resolution_by_refutation_exact[OF given that] by (simp add: decode_finite_call_term_fields)
+  have demand: "schema_system_formed (decode_finite_system P) \<and>
+      fset B = {q\<in>fset R. decode_finite_call_term q \<in> positive_meaning (decode_finite_system P)}"
+    if "A = Some B" for B
+    using finite_committed_demand_by_exact[OF given that[unfolded A]] by blast
+  note exact = native_resolution_calls_exact[OF T resolved refuted demand]
+  show "fimage fst T = R" by (rule exact(1))
   show "(q,Finite_Resolved C) |\<in>| T \<Longrightarrow> C \<noteq> {||} \<and> fBall C (\<lambda>p. finite_checks_schema_proof P p (fst q) (snd q)) \<and>
       decode_finite_call_term q \<in> positive_meaning (decode_finite_system P)"
-  proof -
-    assume "(q,Finite_Resolved C) |\<in>| T"
-    then have res: "finite_committed_resolution_by sel \<kappa> K P (fst q) (snd q) n = Finite_Resolved C" unfolding T by auto
-    show ?thesis using finite_committed_resolution_by_sound[OF res] by (simp add: decode_finite_call_term_fields)
-  qed
+    by (rule exact(2))
   show "(q,r) |\<in>| T \<Longrightarrow> finite_resolution_refutes r \<Longrightarrow>
       decode_finite_call_term q \<notin> positive_meaning (decode_finite_system P)"
-  proof -
-    assume "(q,r) |\<in>| T" and rr: "finite_resolution_refutes r"
-    then have "r = finite_committed_resolution_by sel \<kappa> K P (fst q) (snd q) n" unfolding T by auto
-    with rr have "finite_resolution_refutes (finite_committed_resolution_by sel \<kappa> K P (fst q) (snd q) n)" by simp
-    then show "decode_finite_call_term q \<notin> positive_meaning (decode_finite_system P)"
-      using finite_committed_resolution_by_refutation_exact[OF given]
-      by (simp add: decode_finite_call_term_fields)
-  qed
+    by (rule exact(3))
   show "A = Some B \<Longrightarrow> schema_system_formed (decode_finite_system P) \<and>
       fset B = {q\<in>fset R. decode_finite_call_term q \<in> positive_meaning (decode_finite_system P)}"
-    using finite_committed_demand_by_exact[OF given] unfolding A by blast
+    by (rule exact(4))
 qed
 
 theorem finite_committed_resolution_refutation_exact:
@@ -4825,9 +4901,42 @@ section \<open>The transfer by agreement and by relocation\<close>
 text \<open>
   Where the committed verdicts of two programs are both given, exactness makes each the call's positive meaning:
   two programs agreeing on a dependency-closed set holding the called definition give the same verdict, and so do
-  a program and its relocation by a map injective on its definitions and the called one. Each consumes the
-  program's own contract, the locality of positive meaning and the relocation of the consequence operator.
+  a program and its relocation by a map injective on its definitions and the called one. Every transfer, committed
+  and check, is one argument (@{text finite_exact_verdicts_equal}) at two calls of equal meaning: by the locality of
+  positive meaning, or by the relocated meaning at the called site (@{text finite_renamed_meaning_at}, the relocation
+  of the consequence operator at a site that need not be a definition).
 \<close>
+
+lemma finite_renamed_meaning_at:
+  assumes Pf: "schema_system_formed (decode_finite_system P)"
+    and injective: "inj_on g (insert d (system_definitions (decode_finite_system P)))"
+  shows "(g d,x) \<in> positive_meaning (decode_finite_system (finite_rename_system g P)) \<longleftrightarrow>
+    (d,x) \<in> positive_meaning (decode_finite_system P)"
+proof (cases "d \<in> system_definitions (decode_finite_system P)")
+  case True
+  then show ?thesis
+    using renamed_system_meaning_at[OF Pf inj_on_subset[OF injective subset_insertI] True]
+    by (simp add: finite_rename_system_correct)
+next
+  case False
+  have "(g d,x) \<notin> positive_meaning (rename_system g (decode_finite_system P))"
+  proof
+    assume "(g d,x) \<in> positive_meaning (rename_system g (decode_finite_system P))"
+    then obtain e where e: "(e,x) \<in> positive_meaning (decode_finite_system P)" "g e = g d"
+      by (auto simp: renamed_system_positive_meaning[OF Pf inj_on_subset[OF injective subset_insertI]] map_prod_def)
+    have "e \<in> system_definitions (decode_finite_system P)" by (rule positive_meaning_site[OF e(1)])
+    then have "e = d" using inj_onD[OF injective e(2)] by simp
+    then show False using False positive_meaning_site[OF e(1)] by simp
+  qed
+  then show ?thesis using False positive_meaning_site[of d x "decode_finite_system P"]
+    by (auto simp: finite_rename_system_correct)
+qed
+
+lemma finite_exact_verdicts_equal:
+  assumes v: "b \<longleftrightarrow> (d,x) \<in> positive_meaning P" and v': "b' \<longleftrightarrow> (e,x) \<in> positive_meaning Q"
+    and same: "(e,x) \<in> positive_meaning Q \<longleftrightarrow> (d,x) \<in> positive_meaning P"
+  shows "b = b'"
+  using v v' same by blast
 
 corollary finite_committed_agreement_transfer:
   assumes \<kappa>: "finite_witness_construction_formed \<kappa>" and ex: "finite_commitment_exchanges (\<lambda>_. False) \<kappa> K P"
@@ -4840,8 +4949,8 @@ corollary finite_committed_agreement_transfer:
     and v: "finite_resolution_verdict (finite_committed_resolution \<kappa> K P d t n) = Some b"
     and v': "finite_resolution_verdict (finite_committed_resolution \<kappa>' K' Q d t m) = Some b'"
   shows "b = b'"
-  using finite_committed_verdict_exact[OF \<kappa> ex cl v] finite_committed_verdict_exact[OF \<kappa>' ex' cl' v']
-    positive_meaning_dependency_locality[OF Pf Qf agree closed dV] by blast
+  by (rule finite_exact_verdicts_equal[OF finite_committed_verdict_exact[OF \<kappa> ex cl v]
+    finite_committed_verdict_exact[OF \<kappa>' ex' cl' v'] positive_meaning_dependency_locality[OF Pf Qf agree closed dV, symmetric]])
 
 corollary finite_committed_relocation_transfer:
   assumes \<kappa>: "finite_witness_construction_formed \<kappa>" and ex: "finite_commitment_exchanges (\<lambda>_. False) \<kappa> K P"
@@ -4854,30 +4963,8 @@ corollary finite_committed_relocation_transfer:
     and v: "finite_resolution_verdict (finite_committed_resolution \<kappa> K P d t n) = Some b"
     and v': "finite_resolution_verdict (finite_committed_resolution \<kappa>' K' (finite_rename_system g P) (g d) t m) = Some b'"
   shows "b = b'"
-proof -
-  have ren: "decode_finite_system (finite_rename_system g P) = rename_system g (decode_finite_system P)"
-    by (simp add: finite_rename_system_correct)
-  have PM: "positive_meaning (rename_system g (decode_finite_system P)) =
-      map_prod g id ` positive_meaning (decode_finite_system P)"
-    by (rule renamed_system_positive_meaning[OF Pf inj_on_subset[OF injective subset_insertI]])
-  have backward: "(d,x) \<in> positive_meaning (decode_finite_system P)"
-    if "(g d,x) \<in> map_prod g id ` positive_meaning (decode_finite_system P)" for x
-  proof -
-    from that obtain d0 where d0: "(d0,x) \<in> positive_meaning (decode_finite_system P)" "g d0 = g d" by auto
-    have "d0 \<in> system_definitions (decode_finite_system P)"
-      using positive_meaning_formed[OF d0(1)] by (auto simp: schema_call_formed_def system_definitions_def rel_dom_def)
-    then have "d0 = d" using inj_onD[OF injective d0(2)] by simp
-    then show ?thesis using d0(1) by simp
-  qed
-  have fwd: "(g d,x) \<in> map_prod g id ` positive_meaning (decode_finite_system P)"
-    if "(d,x) \<in> positive_meaning (decode_finite_system P)" for x
-    using that by force
-  have eq: "(g d,decode_finite_term t) \<in> positive_meaning (decode_finite_system (finite_rename_system g P)) \<longleftrightarrow>
-      (d,decode_finite_term t) \<in> positive_meaning (decode_finite_system P)"
-    unfolding ren PM by (rule iffI[OF backward fwd])
-  show ?thesis
-    using finite_committed_verdict_exact[OF \<kappa> ex cl v] finite_committed_verdict_exact[OF \<kappa>' ex' cl' v'] eq by blast
-qed
+  by (rule finite_exact_verdicts_equal[OF finite_committed_verdict_exact[OF \<kappa> ex cl v]
+    finite_committed_verdict_exact[OF \<kappa>' ex' cl' v'] finite_renamed_meaning_at[OF Pf injective]])
 
 section \<open>The socket test at the socket's frame\<close>
 

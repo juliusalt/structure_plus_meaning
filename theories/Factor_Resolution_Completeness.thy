@@ -468,6 +468,41 @@ proof (rule fset_eqI)
 qed
 
 text \<open>
+  A demand's answer from its calls' verdicts: formed, every call answered, the calls answered true. Where each verdict
+  is exact at its call, the answer is exact at the demand. Every demand-level form is this argument at its per-call
+  verdict: the resolver's below, the committed forms' and the check forms'
+  (@{text finite_committed_demand_by_exact}, @{text finite_check_demand_by_exact}).
+\<close>
+
+lemma finite_verdict_demand_exact:
+  assumes result: "(let V = fimage (\<lambda>q. (q,v q)) D in
+      if finite_system_formed P \<and> fBall V (\<lambda>(q,w). w \<noteq> None)
+      then Some (fimage fst (ffilter (\<lambda>(q,w). w = Some True) V)) else None) = Some A"
+    and exact: "\<And>q b. v q = Some b \<Longrightarrow>
+      b \<longleftrightarrow> (fst q,decode_finite_term (snd q)) \<in> positive_meaning (decode_finite_system P)"
+  shows "schema_system_formed (decode_finite_system P)"
+    "fset A = {q\<in>fset D. decode_finite_call_term q \<in> positive_meaning (decode_finite_system P)}"
+proof -
+  from result have Pf: "finite_system_formed P" and answered: "\<And>q. q |\<in>| D \<Longrightarrow> v q \<noteq> None"
+    and A: "A = fimage fst (ffilter (\<lambda>(q,w). w = Some True) (fimage (\<lambda>q. (q,v q)) D))"
+    by (auto simp: Let_def split: if_splits)
+  show "schema_system_formed (decode_finite_system P)" using Pf by (simp add: finite_system_formed_correct)
+  have key: "\<And>q. q |\<in>| D \<Longrightarrow>
+      v q = Some True \<longleftrightarrow> decode_finite_call_term q \<in> positive_meaning (decode_finite_system P)"
+  proof -
+    fix q assume q: "q |\<in>| D"
+    obtain b where b: "v q = Some b" using answered[OF q] by auto
+    have "b \<longleftrightarrow> (fst q,decode_finite_term (snd q)) \<in> positive_meaning (decode_finite_system P)"
+      by (rule exact[OF b])
+    then show "v q = Some True \<longleftrightarrow> decode_finite_call_term q \<in> positive_meaning (decode_finite_system P)"
+      using b by (simp add: decode_finite_call_term_fields)
+  qed
+  show "fset A = {q\<in>fset D. decode_finite_call_term q \<in> positive_meaning (decode_finite_system P)}"
+    unfolding A fimage_fst_filter_graph ffilter.rep_eq Set.filter_eq
+    by (rule Collect_cong) (simp add: key cong: conj_cong)
+qed
+
+text \<open>
   A demand is resolved when the program is formed and every call of it is resolved or refuted; the result is
   then the set of resolved calls, in the shape of @{const finite_program_evaluation}, and nothing otherwise.
 \<close>
@@ -490,24 +525,11 @@ theorem finite_demand_resolution_exact_in:
   shows "schema_system_formed (decode_finite_system P)"
     "fset A = {q\<in>fset D. decode_finite_call_term q \<in> positive_meaning (decode_finite_system P)}"
 proof -
-  let ?v = "\<lambda>q. finite_resolution_verdict (finite_program_resolution_in \<Theta> no_witness_construction P (fst q) (snd q) n)"
-  from result have Pf: "finite_system_formed P" and answered: "\<And>q. q |\<in>| D \<Longrightarrow> ?v q \<noteq> None"
-    and A: "A = fimage fst (ffilter (\<lambda>(q,v). v = Some True) (fimage (\<lambda>q. (q,?v q)) D))"
-    by (auto simp: finite_demand_resolution_in_def Let_def split: if_splits)
-  show "schema_system_formed (decode_finite_system P)" using Pf by (simp add: finite_system_formed_correct)
-  have key: "\<And>q. q |\<in>| D \<Longrightarrow>
-      ?v q = Some True \<longleftrightarrow> decode_finite_call_term q \<in> positive_meaning (decode_finite_system P)"
-  proof -
-    fix q assume q: "q |\<in>| D"
-    obtain b where b: "?v q = Some b" using answered[OF q] by auto
-    have "b \<longleftrightarrow> (fst q,decode_finite_term (snd q)) \<in> positive_meaning (decode_finite_system P)"
-      by (rule finite_resolution_verdict_exact_in[OF b])
-    then show "?v q = Some True \<longleftrightarrow> decode_finite_call_term q \<in> positive_meaning (decode_finite_system P)"
-      using b by (simp add: decode_finite_call_term_fields)
-  qed
+  note demand = finite_verdict_demand_exact[OF result[unfolded finite_demand_resolution_in_def]]
+  show "schema_system_formed (decode_finite_system P)"
+    by (rule demand(1)) (rule finite_resolution_verdict_exact_in)
   show "fset A = {q\<in>fset D. decode_finite_call_term q \<in> positive_meaning (decode_finite_system P)}"
-    unfolding A fimage_fst_filter_graph ffilter.rep_eq Set.filter_eq
-    by (rule Collect_cong) (simp add: key cong: conj_cong)
+    by (rule demand(2)) (rule finite_resolution_verdict_exact_in)
 qed
 
 theorem finite_demand_resolution_exact:

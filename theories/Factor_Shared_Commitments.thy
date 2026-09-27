@@ -78,6 +78,7 @@ lemma access_focused_simps [simp]:
   "access_value_none (access_focused F V) = access_value_none V"
   "access_registered (access_focused F V) = access_registered V"
   "access_holdable (access_focused F V) = access_holdable V"
+  "access_call_variables (access_focused F V) = access_call_variables V"
   "access_witnesses (access_focused F V) = access_witnesses V"
   by (simp_all add: access_focused_def Let_def)
 
@@ -156,6 +157,7 @@ proof -
     subgoal for h using is_call by (simp add: access_focus_goals_def)
     subgoal for h using solvable by (simp add: access_focus_goals_def)
     subgoal for h using leaf by (simp add: access_focus_goals_def)
+    subgoal for n q using node_call_variables by simp
     subgoal for h using holdable by (simp add: access_focus_goals_def held)
     subgoal for nd using nodes by (simp add: fn)
     subgoal for n q using node_at by simp
@@ -251,7 +253,7 @@ text \<open>
 definition access_focus_ground :: "'s list option \<Rightarrow> ('g,'n,'k,'a,'s,'d,'c) search_access \<Rightarrow> bool" where
   "access_focus_ground F V = (case F of None \<Rightarrow> False | Some q \<Rightarrow>
     fBall (access_goals_at V q) (\<lambda>h. access_variables V h = {||}) \<and>
-    fBall (access_nodes_at V q) (\<lambda>n. finite_pattern_variables (resolution_node_call (access_node V n)) = {||}))"
+    fBall (access_nodes_at V q) (\<lambda>n. access_call_variables V n = {||}))"
 
 definition access_determinate_key :: "'s list \<Rightarrow> ('g,'n,'k,'a,'s,'d,'c) search_access \<Rightarrow> nat" where
   "access_determinate_key q V = fcard (ffilter (\<lambda>h. take (length q) (access_goal_position V h) = q \<and>
@@ -365,19 +367,37 @@ definition tested_committed_goal_outcome ::
            (finite_key_blocks (\<lambda>s'. access_determinate_key (tests_position T r V x h) (rep_access R s')) S)
          else finite_outcome_union (fimage (rec F (if cm then B |\<union>| rep_node_positions R r else B)) S))"
 
-definition tested_committed_step ::
+text \<open>
+  The step selecting through a selection the representation gives (@{text selected_committed_step}): the selection and
+  the value the goals' outcomes read are passed in, so that a representation keeping the selection's classes reads them
+  rather than testing every goal of its focus. The tested step is its instance at the selection over the focused access
+  and the prepared tests (@{text tested_committed_step}), the step stated once (task 891).
+\<close>
+
+definition selected_committed_step ::
     "('r,'g,'n,'k,'a,'s::linorder,'d,'c,'z) committed_representation_scheme \<Rightarrow> ('r,'g,'n,'k,'a,'s,'d,'c,'x) committed_tests \<Rightarrow>
-      ('r \<Rightarrow> 'g \<Rightarrow> bool) \<Rightarrow> ('a,'s,'d,'c) finite_witness_construction \<Rightarrow> ('a,'s,'d,'c) finite_schema_system \<Rightarrow>
+      ('r \<Rightarrow> 'g \<Rightarrow> bool) \<Rightarrow>
+      ('s list option \<Rightarrow> 'r \<Rightarrow> ('g,'n,'k,'a,'s,'d,'c) search_access \<Rightarrow> 'x \<Rightarrow> ('n,'g) access_selection) \<Rightarrow>
+      ('s list option \<Rightarrow> 'r \<Rightarrow> ('g,'n,'k,'a,'s,'d,'c) search_access \<Rightarrow> 'x) \<Rightarrow>
+      ('a,'s,'d,'c) finite_witness_construction \<Rightarrow> ('a,'s,'d,'c) finite_schema_system \<Rightarrow>
       ('s list option \<Rightarrow> 's list fset \<Rightarrow> 'r \<Rightarrow> ('a,'s,'d,'c) resolution_outcome) \<Rightarrow>
       's list option \<Rightarrow> 's list fset \<Rightarrow> 'r \<Rightarrow> ('a,'s,'d,'c) resolution_outcome" where
-  "tested_committed_step R T gd \<kappa> P rec F B r = (let V = rep_access R r; x = tests_prepare T F r V in
-    case access_select (\<lambda>h. gd r h \<and> tests_priority T F r V x h) (access_focused F V) of
+  "selected_committed_step R T gd sel xp \<kappa> P rec F B r = (let V = rep_access R r; x = xp F r V in
+    case sel F r V x of
       Access_Construction N \<Rightarrow> (let M = ffilter (\<lambda>m. resolution_focused F (access_node_position V m)) N in
         if M = {||} then Resolution_Outcome {||} {|Resolution_Stuck (fimage (access_goal V) (access_focus_goals F V))|}
         else finite_outcome_union (fimage (\<lambda>m. rec F (B |\<union>| rep_node_positions R r) (rep_construct R r m)) M))
     | Access_Goals G \<Rightarrow> finite_outcome_union (fimage (tested_committed_goal_outcome R T gd rec F B r V x) G)
     | Access_None \<Rightarrow> Resolution_Outcome {||}
         (finsert (Resolution_Stuck (fimage (access_goal V) (access_focus_goals F V))) (finite_unconstructed \<kappa> P (rep_project R r))))"
+
+definition tested_committed_step ::
+    "('r,'g,'n,'k,'a,'s::linorder,'d,'c,'z) committed_representation_scheme \<Rightarrow> ('r,'g,'n,'k,'a,'s,'d,'c,'x) committed_tests \<Rightarrow>
+      ('r \<Rightarrow> 'g \<Rightarrow> bool) \<Rightarrow> ('a,'s,'d,'c) finite_witness_construction \<Rightarrow> ('a,'s,'d,'c) finite_schema_system \<Rightarrow>
+      ('s list option \<Rightarrow> 's list fset \<Rightarrow> 'r \<Rightarrow> ('a,'s,'d,'c) resolution_outcome) \<Rightarrow>
+      's list option \<Rightarrow> 's list fset \<Rightarrow> 'r \<Rightarrow> ('a,'s,'d,'c) resolution_outcome" where
+  "tested_committed_step R T gd \<kappa> P rec F B r = selected_committed_step R T gd
+    (\<lambda>F r V x. access_select (\<lambda>h. gd r h \<and> tests_priority T F r V x h) (access_focused F V)) (tests_prepare T) \<kappa> P rec F B r"
 
 primrec tested_committed_search ::
     "('r,'g,'n,'k,'a,'s::linorder,'d,'c,'z) committed_representation_scheme \<Rightarrow> ('r,'g,'n,'k,'a,'s,'d,'c,'x) committed_tests \<Rightarrow>
@@ -417,7 +437,8 @@ lemma represented_committed_goal_outcome_tested:
 
 lemma represented_committed_step_tested:
   "represented_committed_step R pr gd \<kappa> K P rec F B r = tested_committed_step R (projected_tests R K pr gd) gd \<kappa> P rec F B r"
-  unfolding represented_committed_step_def tested_committed_step_def represented_committed_goal_outcome_tested[where pr=pr]
+  unfolding represented_committed_step_def tested_committed_step_def selected_committed_step_def
+    represented_committed_goal_outcome_tested[where pr=pr]
   by (simp add: projected_tests_def Let_def)
 
 lemma represented_committed_search_tested:
@@ -434,29 +455,9 @@ next
 qed
 
 text \<open>
-  The step selecting through a selection the representation gives (@{text selected_committed_step}): the selection and
-  the value the goals' outcomes read are passed in, so that a representation keeping the selection's classes reads them
-  rather than testing every goal of its focus. The tested step is its instance at the selection over the focused access
-  and the prepared tests (@{text tested_committed_step_selected}); the search stops where the focus, read as the
-  representation gives it, holds no goal.
+  The search stops where the focus, read as the representation gives it, holds no goal. The tested step is the
+  selected step at the selection over the focused access and the prepared tests (@{text tested_committed_step_selected}).
 \<close>
-
-definition selected_committed_step ::
-    "('r,'g,'n,'k,'a,'s::linorder,'d,'c,'z) committed_representation_scheme \<Rightarrow> ('r,'g,'n,'k,'a,'s,'d,'c,'x) committed_tests \<Rightarrow>
-      ('r \<Rightarrow> 'g \<Rightarrow> bool) \<Rightarrow>
-      ('s list option \<Rightarrow> 'r \<Rightarrow> ('g,'n,'k,'a,'s,'d,'c) search_access \<Rightarrow> 'x \<Rightarrow> ('n,'g) access_selection) \<Rightarrow>
-      ('s list option \<Rightarrow> 'r \<Rightarrow> ('g,'n,'k,'a,'s,'d,'c) search_access \<Rightarrow> 'x) \<Rightarrow>
-      ('a,'s,'d,'c) finite_witness_construction \<Rightarrow> ('a,'s,'d,'c) finite_schema_system \<Rightarrow>
-      ('s list option \<Rightarrow> 's list fset \<Rightarrow> 'r \<Rightarrow> ('a,'s,'d,'c) resolution_outcome) \<Rightarrow>
-      's list option \<Rightarrow> 's list fset \<Rightarrow> 'r \<Rightarrow> ('a,'s,'d,'c) resolution_outcome" where
-  "selected_committed_step R T gd sel xp \<kappa> P rec F B r = (let V = rep_access R r; x = xp F r V in
-    case sel F r V x of
-      Access_Construction N \<Rightarrow> (let M = ffilter (\<lambda>m. resolution_focused F (access_node_position V m)) N in
-        if M = {||} then Resolution_Outcome {||} {|Resolution_Stuck (fimage (access_goal V) (access_focus_goals F V))|}
-        else finite_outcome_union (fimage (\<lambda>m. rec F (B |\<union>| rep_node_positions R r) (rep_construct R r m)) M))
-    | Access_Goals G \<Rightarrow> finite_outcome_union (fimage (tested_committed_goal_outcome R T gd rec F B r V x) G)
-    | Access_None \<Rightarrow> Resolution_Outcome {||}
-        (finsert (Resolution_Stuck (fimage (access_goal V) (access_focus_goals F V))) (finite_unconstructed \<kappa> P (rep_project R r))))"
 
 primrec selected_committed_search ::
     "('r,'g,'n,'k,'a,'s::linorder,'d,'c,'z) committed_representation_scheme \<Rightarrow> ('r,'g,'n,'k,'a,'s,'d,'c,'x) committed_tests \<Rightarrow>
@@ -512,7 +513,25 @@ next
       then show "finite_pattern_variables (resolution_node_call (access_node V m)) = {||}" using a p by blast
     qed
   qed
-  show ?thesis using Some g n by (simp add: access_focus_ground_def finite_focus_ground_def)
+  have nc: "fBall (access_nodes_at V q) (\<lambda>n. access_call_variables V n = {||}) \<longleftrightarrow>
+      fBall (access_nodes_at V q) (\<lambda>n. finite_pattern_variables (resolution_node_call (access_node V n)) = {||})"
+  proof
+    assume a: "fBall (access_nodes_at V q) (\<lambda>n. access_call_variables V n = {||})"
+    show "fBall (access_nodes_at V q) (\<lambda>n. finite_pattern_variables (resolution_node_call (access_node V n)) = {||})"
+    proof (intro fBallI)
+      fix m assume m: "m |\<in>| access_nodes_at V q"
+      then show "finite_pattern_variables (resolution_node_call (access_node V m)) = {||}"
+        using a node_call_variables[OF m] by auto
+    qed
+  next
+    assume a: "fBall (access_nodes_at V q) (\<lambda>n. finite_pattern_variables (resolution_node_call (access_node V n)) = {||})"
+    show "fBall (access_nodes_at V q) (\<lambda>n. access_call_variables V n = {||})"
+    proof (intro fBallI)
+      fix m assume m: "m |\<in>| access_nodes_at V q"
+      then show "access_call_variables V m = {||}" using a node_call_variables[OF m] by auto
+    qed
+  qed
+  show ?thesis using Some g n nc by (simp add: access_focus_ground_def finite_focus_ground_def)
 qed
 
 lemma determinate_key: "access_determinate_key q V = finite_determinate_key q st"
@@ -914,7 +933,7 @@ proof -
         using rec[OF conjunct1[OF c]] conjunct2[OF c] bar by simp
     qed
     show ?thesis
-      unfolding tested_committed_step_def Let_def Access_Construction finite_committed_search_by_in.simps(2) if_not_P[OF ne]
+      unfolding tested_committed_step_def selected_committed_step_def Let_def Access_Construction finite_committed_search_by_in.simps(2) if_not_P[OF ne]
       by (simp add: s M img fg)
   next
     case (Access_Goals G)
@@ -932,14 +951,14 @@ proof -
         by (rule tested_goal_outcome[where recA = ?recA and recI = recI, OF Fr h prepared[OF Fr h] rec recfound])
     qed
     show ?thesis
-      unfolding tested_committed_step_def Let_def Access_Goals finite_committed_search_by_in.simps(2) if_not_P[OF ne]
+      unfolding tested_committed_step_def selected_committed_step_def Let_def Access_Goals finite_committed_search_by_in.simps(2) if_not_P[OF ne]
       by (simp add: s img)
   next
     case Access_None
     have s: "finite_resolution_select_at pr \<kappa> P (finite_focused F ?st) = Select_None"
       using sel(1) Access_None by simp
     show ?thesis
-      unfolding tested_committed_step_def Let_def Access_None finite_committed_search_by_in.simps(2) if_not_P[OF ne]
+      unfolding tested_committed_step_def selected_committed_step_def Let_def Access_None finite_committed_search_by_in.simps(2) if_not_P[OF ne]
       by (simp add: s fg)
   qed
 qed
@@ -1010,7 +1029,7 @@ proof -
     case (Access_Construction N)
     from x obtain m where m: "m |\<in>| N"
       and y: "x |\<in>| resolution_found (recI F (B |\<union>| rep_node_positions R r) (rep_construct R r m))"
-      unfolding tested_committed_step_def Let_def Access_Construction
+      unfolding tested_committed_step_def selected_committed_step_def Let_def Access_Construction
       by (auto simp: finite_outcome_union_def split: if_splits)
     have "m |\<in>| access_construction_nodes (access_focused F ?V)" using Access_Construction m by (rule access_select_construction)
     then have "\<exists>q. m |\<in>| access_nodes_at (access_focused F ?V) q" by (rule access_construction_nodes_at)
@@ -1021,13 +1040,13 @@ proof -
     case (Access_Goals G)
     from x obtain h where hG: "h |\<in>| G"
       and y: "x |\<in>| resolution_found (tested_committed_goal_outcome R T gd recI F B r ?V ?x h)"
-      unfolding tested_committed_step_def Let_def Access_Goals by (auto simp: finite_outcome_union_def)
+      unfolding tested_committed_step_def selected_committed_step_def Let_def Access_Goals by (auto simp: finite_outcome_union_def)
     have "h |\<in>| access_goals (access_focused F ?V)" using Access_Goals hG by (rule access_select_goals)
     then have h: "h |\<in>| access_goals ?V" by (simp add: access_focus_goals_def)
     show ?thesis by (rule goal[OF h y])
   next
     case Access_None
-    then show ?thesis using x unfolding tested_committed_step_def Let_def by simp
+    then show ?thesis using x unfolding tested_committed_step_def selected_committed_step_def Let_def by simp
   qed
 qed
 
@@ -1667,43 +1686,13 @@ lemma access_focused_whole:
   by (cases V) (use assms in \<open>auto simp: access_focused_def access_focus_goals_def Let_def fun_eq_iff fset_eq_iff
     ffilter.rep_eq\<close>)
 
-definition access_goal_choice_by ::
-    "('g fset \<Rightarrow> 'g fset) \<Rightarrow> ('g,'n,'k,'a,'s::linorder,'d,'c) search_access \<Rightarrow> 'g fset \<Rightarrow> 'g fset" where
-  "access_goal_choice_by pc V A = (let c0 = ffilter (\<lambda>h. access_candidate V h \<and> access_settled V h) A in
-    if c0 \<noteq> {||} then access_first_goals V c0
-    else let cp = pc (ffilter (access_candidate V) A) in if cp \<noteq> {||} then access_first_goals V cp
-    else let c1 = ffilter (\<lambda>h. access_candidate V h \<and> access_single V h) A in
-      if c1 \<noteq> {||} then access_first_goals V c1
-    else access_waiting_selection V A)"
-
-lemma access_goal_choice_by:
-  assumes "pc (ffilter (access_candidate V) A) = ffilter rp (ffilter (access_candidate V) A)"
-  shows "access_goal_choice_by pc V A = access_goal_choice rp V A"
-  by (simp only: access_goal_choice_by_def access_goal_choice_classes Let_def assms)
-
-definition kept_select_by :: "('a,'s,'d,'c) finite_witness_construction \<Rightarrow> ('a,'s,'d,'c) finite_schema_system \<Rightarrow>
-    (('a,'s,'d,'c) shared_goal_entry fset \<Rightarrow> ('a,'s,'d,'c) shared_goal_entry fset) \<Rightarrow> ('a,'s::linorder,'d,'c) shared_search \<Rightarrow>
-    (('a,'s,'d,'c) shared_goal_entry,('a,'s,'d,'c) shared_node_entry,nat,'a,'s,'d,'c) search_access \<Rightarrow>
-    (('a,'s,'d,'c) shared_node_entry, ('a,'s,'d,'c) shared_goal_entry) access_selection" where
-  "kept_select_by \<kappa> P pc r V = (let N = access_construction_nodes V in
-    if N \<noteq> {||} then Access_Construction (access_first_nodes V N)
-    else let H = search_held \<kappa> P r; K = search_classes r; c0 = class_first H (class_settled K);
-      S = (if c0 \<noteq> {||} then c0 else
-        let cp = pc (fset_of_list (map snd (RBT.entries (class_candidates K))) |-| H) in
-        if cp \<noteq> {||} then access_first_goals V cp else
-        let c1 = class_first H (class_single K) in
-        if c1 \<noteq> {||} then c1 else access_waiting_selection V (access_goals V |-| H)) in
-      if S = {||} then Access_None else Access_Goals S)"
-
-lemma search_select_kept: "search_select \<kappa> P rp r = kept_select_by \<kappa> P (ffilter rp) r (shared_access \<kappa> P r)"
-  by (simp only: search_select_def kept_select_by_def Let_def)
 
 definition committed_kept_select :: "('a,'s,'d,'c) finite_witness_construction \<Rightarrow> ('a,'s,'d,'c) finite_schema_system \<Rightarrow>
     (('a,'s,'d,'c) shared_goal_entry fset \<Rightarrow> ('a,'s,'d,'c) shared_goal_entry fset) \<Rightarrow> 's list option \<Rightarrow>
     ('a,'s::linorder,'d,'c) shared_search \<Rightarrow>
     (('a,'s,'d,'c) shared_goal_entry,('a,'s,'d,'c) shared_node_entry,nat,'a,'s,'d,'c) search_access \<Rightarrow>
     (('a,'s,'d,'c) shared_node_entry, ('a,'s,'d,'c) shared_goal_entry) access_selection" where
-  "committed_kept_select \<kappa> P pc F r V = (if F = None \<or> F = Some [] then kept_select_by \<kappa> P pc r V
+  "committed_kept_select \<kappa> P pc F r V = (if F = None \<or> F = Some [] then kept_select_by pc r V
     else let W = access_focused F V; N = access_construction_nodes W in
       if N \<noteq> {||} then Access_Construction (access_first_nodes W N)
       else let S = access_goal_choice_by pc W (ffilter (\<lambda>h. \<not> (access_holdable W h \<and> access_held W h)) (access_goals W)) in
@@ -1723,10 +1712,10 @@ proof (cases "F = None \<or> F = Some []")
     using arg_cong[OF access_focused_whole[OF True, of ?V], of access_goals] by simp
   have X: "h |\<in>| access_focus_goals F ?V" if "h |\<in>| ?X" for h
     using that class_tree_member[OF tc, of h] by (auto simp: fg shared_access_simps fset_of_list.rep_eq)
-  have e: "kept_select_by \<kappa> P pc r ?V = kept_select_by \<kappa> P (ffilter rp) r ?V"
-    by (simp only: kept_select_by_def Let_def pc[OF X])
-  have e1: "kept_select_by \<kappa> P (ffilter rp) r ?V = access_select rp ?V"
-    using search_select[OF r K, of rp] by (simp only: search_select_kept)
+  have e: "kept_select_by pc r ?V = kept_select_by (ffilter rp) r ?V"
+    by (simp only: kept_select_by_def search_held_def[symmetric] Let_def pc[OF X])
+  have e1: "kept_select_by (ffilter rp) r ?V = access_select rp ?V"
+    using search_select[OF r K, of rp] by (simp only: search_select_def)
   show ?thesis using True by (simp only: committed_kept_select_def e e1 access_focused_whole[OF True] if_True)
 next
   case False

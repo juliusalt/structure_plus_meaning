@@ -128,8 +128,9 @@ class at the route, K2's constants redefined at the waiting moded selection, the
 GT3, before #542, #547 and #887, beside GT6, whose table's validity does not rest on the order (#878 mailed to name the
 selection it ran); #542 mailed the trigger of 55's clause trials (Open 152). Review 828's follow-ups 3–5 (the committed trace out of a chain of three evaluating
 theories, about 90 s a check) were the fix #898, landed (`ae6ded12`: `committed_trace` in `Factor_Committed_Traces`,
-which evaluates nothing); review 898's 1 went to #887, its 2 and 3 are the fix #908 (no execution theory importing
-another, one evaluation per theory), its 4 to D2 (the trace at a margin once the order moves the course).
+which evaluates nothing); review 898's 1 went to #887, its 2 and 3 were the fix #908, landed (`43bae697`: the fixtures in
+`Development_Given_Execution_Fixtures`, which evaluates nothing; review 908's 1 and 2 to WC3 through #909, its 3 with
+#887, its 4 next-edits 377), its 4 to D2 (the trace at a margin once the order moves the course).
 
 **Retired** on #376's and #378's entries: the decomposition line (#325–#334), N1a, N1b, N3a, N3b, N4a, N4b, #371, #377,
 the designation by locus (#169, #170), the index form's retirement (#92, #93), the machinery's native verification
@@ -419,8 +420,7 @@ a theory before briefing a task that edits it.
 
 ## Now
 
-- **Under way**: D1c #901 and D1a #899; GT2c #888; the fix #908 (review 898's 2–3); FI #892 after D1c (review 891's 3
-  and 4, plan-127's mail); the brief #909 of correction (16)'s builds after #907 lands, GT2b #889 held for its rewrite.
+- **Under way**: D1c #901 and D1a #899; GT2c #888; FI #892 after D1c (review 891's 3 and 4, plan-127's mail); the brief #909 of correction (16)'s builds after #907 lands, GT2b #889 held for its rewrite.
 - **What the next events ask**: #909's proposal placed — WC1 and WC2a at once, WC2a feeding GT2b, WC2b after WC1, GT2b
   and GT2c, WC3 before #542, #547 and #887; GT2b's and #894's rewrites placed by edit from the brief's copies under the
   planner's folder; GT2c's answer on `finite_table_true` at the relocated table (#883's review 1: else the

@@ -18875,7 +18875,14 @@ by `finite_state_graph_check_accepts_valid` and `finite_table_valid_extend`; fro
 premises and checks no entry's certificate (`finite_state_graph_verdicts_in`): equal to `finite_state_verdicts_in` at a
 valid table (`finite_state_graph_verdicts_in_valid`) and so to GT1a's outcome (`finite_outcome_result_in_graph_verdicts`),
 sound wherever the table's calls are true (`finite_state_graph_verdicts_in_true`, through
-`finite_state_graph_check_true_at`) — decision 2's table part once, the judgment's part at every judgment]. GT1b (task 839) carries the table through the committed step, search and lifting
+`finite_state_graph_check_true_at`) — decision 2's table part once, the judgment's part at every judgment] [marked by task 883: it checks none at a found state because the graph reading
+holds there — at a valid table (`finite_state_graph_check_found_in`) and at a table whose calls are true
+(`finite_table_true`, `finite_state_graph_check_found_true`), as an installation's relocated table's are (Q33 (d)) — and
+the root certificate's tree check, which does read the entries' certificates, is the verdict's lazy fallback, evaluated
+only where the reading fails. The premise read is truth, not formation: the graph check reads only an entry's
+formation, but the reading at a found state is proved through the tree acceptance at the same calls re-certified,
+which every true call has (`finite_checks_schema_proof_complete`). One fold checks the table and produces it
+(`finite_table_checked`, equal to the pair by `finite_table_checked_exact`)]. GT1b (task 839) carries the table through the committed step, search and lifting
 (`Factor_Resolution_Lifting`) and R4 (`Factor_Resolution_Completeness`), today's forms the instances at the empty table,
 statements kept: the closing's case is one lemma of the step, `resolution_closed_lifted_at` (with
 `finite_table_closes_true` at a valid table), cited by the goal step both liftings take; R4 keeps its own induction

@@ -12,148 +12,71 @@ readiness, the verdict of a kind and request construction are native — then pr
 definitions, then the translation of native content into Isabelle. Its third step begins with the native loop's first
 problem (the owner, 18:53): what a problem is, its native notion the loop's product and not a design's; then Q2's
 problem (17:18), how to choose the next problem to solve, posed over the first answer; the authority question a native
-problem whose answer the owner approves. Every step answers the owner's rule of 18:12 (every distinction a native
-program relies on comes from a native notion), which withdrew #373's notion of a problem. The route rests on these
-entries of DECISIONS.md, all accepted, found by their headings:
+problem whose answer the owner approves. Every step answers the owner's rule of 18:12: every distinction a native
+program relies on comes from a native notion. The route rests on these accepted entries of `DECISIONS.md`, by heading:
 - #378, "The native loop's first problem is what a problem is; …": the least form (an asked relation and a given) posed
   from the owner record of 18:53; the answer native content, judged by the guard, admitted as a generation, verified by
-  Isabelle before publication, approved by the owner (Q23).
+  Isabelle before publication, approved by the owner (Q23); corrected by #928: the asked relation reads a candidate by
+  its additions over the given.
 - #376, "Every distinction a native program relies on comes from a native notion: …": the given is the development's
   package read by the Factor grammar's native readers; the request at a package; the bootstrap loop's presentations
   kept exact and unextended until it retires (Q24).
-- #381, "The first problem's requirements use the test of a native distinction; …" (Q23 (a)): the guard's sockets G1
-  retention, G2 formation and closure, G3 the callee boundary, G4 the octet audit; parts (a), (b), (c), (f) checked by
-  Isabelle in the verification request; the rest criticism and the owner's approval (Q25).
-- #383, "Non-nominality of uses is equivariance under use permutations, …": part (d) in the verification request, a
-  use-renamed sample in criticism (Q26).
+- #381, "The first problem's requirements use the test of a native distinction; …": the guard's sockets G1 retention, G2
+  formation and closure, G3 the callee boundary, G4 the octet audit; parts (a), (b), (c), (f) checked by Isabelle in the
+  verification request, the rest criticism and the owner's approval (Q23 (a), Q25). #383, "Non-nominality of uses is
+  equivariance under use permutations, …": part (d) in the verification request, a use-renamed sample in criticism (Q26).
 - #482 with #560's parametric recording: every route generation costs its payload's size once.
 - #495, "The native evaluator constructs the missing witnesses by resolution: …" (Q27), with #585's and #683's
-  additions, corrections (5)–(16) and #831's section "The given's calls are decided once".
-- #496, "A checker does not produce: …" (Q28), with #642's addition (registrations and declarations reach an installed
-  package through the clause match) and #790's section.
+  additions, corrections (5)–(16), #831's section "The given's calls are decided once" and #890's addition "The step at
+  the given's depth"; #496, "A checker does not produce: …" (Q28), with #642's addition (registrations and declarations
+  reach an installed package through the clause match) and #790's section.
+- #928, "The given's readers and the asked relation are implementations of their notions: …" (Q33): (c) taken, (a) and
+  (b) not.
 
-**The first problem's route.** Landed: the recording (P #581, X′ #583) and the posing #397 with its one-citation
-recording #562. Open, each build with its review: R7 #542 (the given at the guard's calls in the numbered course) →
-its native part #707 → the answer's judgment and admission #399 → its controls #709 → the transport #401, the
-verification's native half #403 and its harness #407; the first request at the given #547 → its packet, issue and
-execution #443 → its delivery #445; the criticism's observations #549 and samples #551 side by side → its record #553
-(after #399) → its controls #447 → its route #449. Every route generation is recorded through B2's recording, citing
-`development_citing_row_generation_certified`. #880 rewrote #547, #707, #399 and GT2 #843 with their reviews from
-#831's section: the judgment in two phases at the given's table relocated to the installation, admission through the
-hand-in, refusal through W5's complete construction, soundness at a table whose calls are true. #709's brief does not
-yet name the two phases, the table or GT6's record (#880's Remains 2, mailed to it): rewrite it before it starts.
+**The first problem's route**, each build with its review. Landed: the recording (P #581, X′ #583), the posing #397 with
+its one-citation recording #562. Open: AX1–AX4 (#928's (c), from the brief #929: AX1 #930 → AX2a #932 → AX2b #934 and
+AX3a #936 → AX3b #938, which records the posing again → AX4 #940) → R7 #542 (the given at the guard's calls in the
+numbered course) → its native part #707 → the answer's judgment and admission #399 → its controls #709 → the transport
+#401, the verification's native half #403 and its harness #407; the first request at the given #547 → its packet, issue
+and execution #443 → its delivery #445; the criticism's observations #549 and samples #551 → its record #553 (after
+#399) → its controls #447 → its route #449. Every route generation is recorded through B2's recording
+(`development_citing_row_generation_certified`). #547, #707, #399 and GT2 follow #831's section (#880): the judgment in
+two phases at the given's table relocated to the installation, admission through the hand-in, refusal through W5's
+complete construction, soundness at a table whose calls are true. After AX4 lands, one brief rewrites from AX1–AX4's
+hand-overs the briefs the asked relation's change reaches (#542, #707, #399, #709, #710, #401, #443, #445, #549, #551,
+#553, #447, #449; #928's Remains), #709's with the two phases, the table and GT6's record it still lacks (#880's
+Remains 2); #547 is not reached.
 
-**The given's calls, decided once** (#831's section; #496's "77's least bound at the given and at a candidate"): a
-table of certified ground calls every judgment's search closes (one successor, never a committed focus), its validity
-checked once over graphs and retained; a judgment in two phases; 77's bound handed in for an admission, W5 for a
-refusal. One-time ≈ 31–34 M states, a judgment's part ≈ 2–5 M. Builds: GT1a and GT1b landed (#837, #839: the table
-in R3, R3b, the committed step, search and lifting and R4; refutation exact and a resolution's certificates sound at
-every table, a valid table deciding only which calls resolve — the entry's addition; review 840's 1–6 mailed to GT4,
-GT2, W5 and GT6) and GT4 #841 (`99e45393`: C at a table, validity checked over graphs; its verdict at a table
-tree-checks the entries a judgment reads) and GT4b #882 (`f0d6e6fd`, review 842's 1–4: the verdict at a table read
-from the graph alone, exact at a valid table and sound where its calls are true; the table's checks over indexed
-certificates) and GT4c #883 (`2e988a42`: the graph reading at found states under the entries' calls' truth,
-`finite_table_true`; the indexed check over a reach; one fold checking and producing the table; its review's 1–2
-mailed to GT2, 3 to GT3, 4 to GT6, 5 next-edits 370) → GT2, divided by q158 within a build's room: GT2a #843 (the
-committed search, its forms, exchange and lifting at a table, landed `7d686653`: every `_in` name takes the table and
-today's names are its instances at the empty table, six `_def` facts are now `_in_def`; its hand-over,
-`.build/tasks/843/result.md` Remains, says what the other two consume; no check form at a table, GT2c's) → side by side GT2c #888 (committed `6d620dfe` after one fix: the check forms, the route constants and rc's forms at a
-table, `committed_registrations_in` and `relocated_registrations_in` whose table premises GT2b discharges, the named
-instance `relocated_registrations_in.native_moded_check_installed_in` with the resolution's half beside it, no global
-table copy (next-edits 335 confirmed), the table's transfers carrying truth, so the relocated table is true at the
-numbered program and no formation-only form is placed; review 893's follow-ups mailed) and, by task 918's decision (q161 (A), accepted: the root-kept restriction, the valued exchange and lifting), VK1 #920
-→ GT2b's two parts #889 (the three lowest discharge theories, OS1's open premise) and #922 (the narrowed productions,
-the composed forms, GT2c's premise blocks), each discharge once valued at a table, a formed selection and the pattern
-invariant → VK2 #924 (W5's premise at the given's committing instance) before #399; GT5 #845 (committed `f9484e82`: `Development_Given_Table`, the given's calls
-`given_table_calls` from its value, the readers' part valid at the rooted readers and the guard's part certified at
-`finite_asked_program`, their truth at agreeing programs and at the installations, the relocation once as
-`mapped_installed_table_true`; review 846's follow-ups mailed to GT6, R7, #707, #399 and #547, next-edits 380–381), W5 #847 landed (W2's queries at a query's parameters, completeness under `finite_query_search_keeps` at the plain
-instance), R7 #542 and the first request #547 after GT2b's second part #922 (#547 not after VK2: its refusal at 561
-goes through the merge at W5's plain instance); GT3 #876 (the table in F2's shared representation, after GT2c, GT4
-and the step's fixes) → GT6 #878 (the table produced once, a run of hours parked for its completion, its record
-`validation/given-table.json`, after GT5, the step's fixes and #875, which supplies its prediction and worker count) →
-#542, #547, #707, #399. The given's implementations after Q33 (#928, accepted; its entry "The given's readers and the
-asked relation are implementations of their notions: …"): (c) taken, the asked relation reading a candidate by its
-additions over the given, the given unchanged; (a) and (b) not taken, (a) at its trigger (Open 153); its builds AX1–AX4
-(the additions, the extension's packages, the additions guard with the asked program re-rooted and the posing recorded
-again, the given-specific work at the new installation) briefed by #929, AX4 after VK2 and before R7; GT6 and #875 do
-not wait (the table is the readers' part, its guard part at (g, g) retired by AX4).
+**The given's calls, decided once** (#831's section; #496's "77's least bound at the given and at a candidate"): a table
+of certified ground calls every judgment's search closes (one successor, never a committed focus), its validity checked
+once over graphs and retained; a judgment in two phases; 77's bound handed in for an admission, W5 for a refusal;
+one-time ≈ 31–34 M states, a judgment's part ≈ 2–5 M (after #928 a candidate's part is its additions). Landed: the
+table through R3–R5 and C (GT1a, GT1b, GT4, GT4b, GT4c, GT2a, GT2c), the given's calls (GT5 #845), W5 #847, VK1 #920 (the
+root-kept restriction, the valued exchange and lifting; task 918's decision) and GT2b's first part #889. Open: GT2b's
+second part #922 (the narrowed productions, the composed forms, GT2c's premise blocks) → its follow-up #942 (q164:
+the construction's support and lifting at a true table, rc's construction premise discharged, the transfers at a table)
+→ VK2 #924 (W5's premise at the given's committing instance) → AX4 and #399, and WC2b #914 and #547; GT3 #876 (the table in F2's shared representation, after D1d) → GT6 #878
+(the table produced once, a run of hours parked for its completion, its record `validation/given-table.json`, after
+#875, which supplies its prediction and worker count) → #542, #547, #707, #399. R7 #542 waits on #922 and #547 on #942; #547 not
+on VK2 (its refusal at 561 goes through the merge at W5's plain instance). The table is the readers' part, its guard
+part at (g, g) retired by AX4, so GT6 and #875 do not wait on AX1–AX4.
 
-**A search step's cost** (#830's attribution, its fixes placed from #852): landed σ tabulated with F2a's shared unifier
-(#861), the pruning test through the node-call index (#863) and the selection's classes kept (#865, `a888fea7`, at no
-focus: 15.2 s at 20 rows against 26.3, a step 0.13–0.98 ms from 3 to 20 rows) → in F2c #871 (the focused instance,
-q156, with review 866's first follow-ups mailed; since #869 also the admitted focused goals
-and their priority kept as a class, the guard asked once a step, `clause_sockets_distinct` once a call, review 870's
-2–4). The commitment's tests over the access (#867, `b805e7c8`) with F2c's committed step over them (#869, `20f3bdf3`)
-put the route at #830's 10 rows with the given's whole frames at 3.12 ms a step, above the old route there (prepare
-61 %, priority 32 %; 1.24 s against 9.11 s at the given): the access tests' goal decoded once per test landed
-(#884, `6d139860`; review 884's 1–4, the 54–96 decodes a step that remain, go to #886, its 5 to #887, its 6
-next-edits 363); #871 landed (`b8f1026f`: the committed step through the kept classes at the whole focus, the admitted
-goals' priority a class made once a step; its entry "The committed step selects through the kept classes; …"). #885 landed
-(`55a180da`: `class_first` without listing; per-call counts not built, q159; the skip at q not taken); its review's
-follow-ups 1, 5 and 6 (the route's held goals through one access, `route_select`'s eager record, 113/7, a text) are
-F234's, 2–4 (the maintenance at a substitution: the step's goal re-tested and put at every update, the held goals and
-the waiting fallback recomputed each step, construction nodes, stale positions of the goal-call index) D1's, 7
-next-edits 376. K3 #825 found the
-step at the given's term size the next cost (0.02–0.21 s a step); #886 attributed it on shared runs (accepted partial,
-`.build/tasks/886/result.md`): finding 1, the eager substitution into every node holding a bound variable, grows with
-the depth of the list being built (1.7 s a step at 350) — 77 at the given does not finish and GT6 is out of reach until
-it is placed. D1 #890 decided it (accepted; its addition to task 495's entry, "The step at the given's depth: …"): nodes
-kept as placed under a binding store (D1a, a notion), the deferred search a third instance of the search representation
-(D1b), the goal side's operations bounded a step (D1c), the deferred committed search and the route through it (D1d);
-6–8 ms a step predicted at 30, 300 and 350 steps, GT6 52–85 h on one worker; the goal side numbered (D1e) and the
-groundness counters wait on #875's figures. Placed from the brief #897 (its `result.md` gives each edge's reason), each
-with its review: D1a #899 (the binding store, `Shared_Binding_Stores`, landed `8daeae20`; review 900's 1, 3, 5–7 mailed
-to D1b, its 2 and 4 next-edits 378–379), D1c #901 (with F234's finding 3, 113/7
-and next-edits 316 and 338), D1b #903 (after D1a and D1c; divided when its first session ended partial, plan-131: #903 the state, the bind and
-the place, continued from its tree, its second part the steps, the representation, the search and the code equation;
-`search_variables_placed` the deferred path's premise, tested at the code equations' entry), D1d #905 (after D1b's
-second part, FI and GT2c;
-review 891's 1 and next-edits 375's #871 part); GT3 #876 (its brief rewritten from #897's: D1's deferred searches,
-GT2a's calls lemmas, the graph verdicts at a table of true calls) and #875 wait on D1d. Findings 2–4 (the root
-node decoded at every step, `enter_goal`'s decode, the table reversed at every access build; 24 to 6–8 ms a first step
-predicted) are the fix F234 #891 after #885, with review 872's consolidation of #871's bodies — findings 2 and 4 and the
-consolidation landed (`c0d51080`; review 891's follow-ups 1 and 5 mailed to #897, 2 to #875, 3 and 4 to FI), finding
-3 (`enter_goal` through the shared unifier, which changes
-`enter_goal_formed`'s statement) folded into D1c with 113/7 at #830's rows; #861's question is settled, (c) kept. FI #892 landed
-(`38e389d2`, q157: `Ranged_Carrier_Indexes`, the committed selection at a proper focus through the range; review 895's
-3 to WC3 #916, 6 to WC2b #914, 4 next-edits 386). #875, rewritten again, measures the deferred route held after D1's
-builds, beside GT3, and supplies GT6's prediction, its worker count and D1e's trigger; the kept forms (q162) and FI's
-remaining costs (review 895's 1, 2 and 5; next-edits 385) are decided at its figures.
+**A search step's cost** (#830's and #886's attributions): the fixes placed from #852, F234 #891, FI #892 (the committed
+selection at a proper focus through the range), D1a #899 (the binding store), D1c #901 (the goal side bounded) and D1b's
+first part #903 landed. D1 #890 decided the step at the given's depth: nodes kept as placed under a binding store, 6–8 ms
+a step predicted at 30, 300 and 350 steps, GT6 52–85 h on one worker. Open: D1b's second part #926 (the deferred steps,
+search and code equation) → D1d #905 (the deferred committed search and the route through it) → GT3 #876 and #875 (the
+deferred route held: GT6's prediction and worker count, D1e's and the groundness counters' triggers). Decided at #875's
+figures and placed at the next restater of the route constants' code (WC3 #916 if the figures come before it starts):
+the kept held goals and construction nodes (q162; `.build/tasks/901/result.md` Remains (a)–(e), next-edits 384) and
+FI's remaining costs (review 895's 2 and 5, next-edits 385).
 
-**Corrections (12)–(15)** have landed, K3 #825 last (`2397d6a9`: at the check forms 113/7 resolves at 230 in 0.06 s; at 77 the check form
-gives the committed form's figures, 77/1 and 77/2 cut up to 800 past 12's production; 77 at the given's own
-definition a step of about 0.11 s, #886's) → GT2 #843; the consolidation #832 landed (`41fcff74`: the check and committed forms' exactness once over a focus,
-the demand argument once, the transfers from one relocated meaning, `finite_exact_verdicts_equal`), its review's 1, 2
-and 4–7 the consolidation #887 after GT3 (GT2 told to add no further copy), its 3 next-edits 372 with the low moves. I3b #817 and its fix #881
-landed (`b9d5f1d3`, `3686b772`: 12's production present at the installed lookup socket, `installed_single_clause`,
-the installed carrying of a produced record stated once); review 818's 5 and #881's re-review are next-edits 362, 368
-and 369. Off the route: #857 re-ran #718's 77 and 79 fixtures after OS2 (`5fd0f1b0`: still not returning, their cost
-W5's and the table's; the re-run with review 858's attributions at W5's landing, next-edits 364–366). c55 #827 landed
-(`1b9bea86`): 55's pair clause at the given at depth 2, the true call resolved and the false one not refuted within
-bounds (unresolved at 800, not returned at 1500). #896 attributed it (accepted, `.build/tasks/896/result.md`): F1's
-order at a pair node expands its one-clause premises while 34, which binds the sockets' input, has alternatives
-pending, so the framed test at 55.2/2 and 55.2/3 fails for good and the inner unions enumerate every presentation — an
-order, not a step's cost; its prototype waiting class refutes depth 2 in 4,806 selections. D2 #907 decided it (accepted;
-correction (16) of "Committed choice, for refusals"): a class of F1's selection of its own at a pair node — a goal
-holding a variable of a pending framed socket's frame, or of the head output, waits while the socket is pending in its
-original form — read by the selection alone, never by exactness; 55's false call at depth 2 refuted in 4,710
-selections, depth 3 in 9,658, the true calls 3–8 % more; review 828's follow-up 1 settled. Its builds, placed from
-the brief #909, each with its review: WC1 #910 (committed `168d2de1`: the class and F1's selection with it,
-`Factor_Socket_Waiting`; review 911's follow-ups mailed, correction (16)'s "Its place" sentence amended by WC2b) and WC2a #912 (committed
-`dce8c15c`: `finite_selection_formed`, the exchange `finite_commitment_exchanges_by_in` and the lifting and exact
-premises at a table and a formed selection; review 913's follow-ups mailed to GT2b and WC2b, next-edits 329 retired)
-at once; GT2b #889 rewritten from #909's copy to state every
-discharge at a table and a formed selection in one pass, after WC2a; WC2b #914 (the forms at the waiting moded
-selection, the 55 fixture, the control; review 893's rc consolidation and next-edits 332 and 334 with it) after WC1,
-GT2b and GT2c; WC3 #916 (the class at the route, K2's constants redefined at the waiting moded selection, the controls
-again, review 908's 1 and 2) after WC2b, D1d, FI and GT3, before #542, #547 and #887, beside GT6, whose table's
-validity does not rest on the order (#878 mailed to name the selection it ran); #542, #547 and #887 mailed what WC3
-changes for them, #542 the trigger of 55's clause trials (Open 152). Review 828's follow-ups 3–5 (the committed trace out of a chain of three evaluating
-theories, about 90 s a check) were the fix #898, landed (`ae6ded12`: `committed_trace` in `Factor_Committed_Traces`,
-which evaluates nothing); review 898's 1 went to #887, its 2 and 3 were the fix #908, landed (`43bae697`: the fixtures in
-`Development_Given_Execution_Fixtures`, which evaluates nothing; review 908's 1 and 2 to WC3 through #909, its 3 with
-#887, its 4 next-edits 377), its 4 to D2 (the trace at a margin once the order moves the course).
+**The order at a pair node** (correction (16), D2 #907 from #896's attribution of c55 #827): a waiting class of F1's
+selection, read by the selection alone, never by exactness. Landed: WC1 #910, WC2a #912. Open: WC2b #914 (the forms at
+the waiting moded selection, the 55 fixture, the control; after #942) → WC3 #916 (the class at the route, K2's constants
+redefined at the waiting moded selection; after D1d, FI and GT3) → #542, #547, #887, beside GT6, whose table's validity
+does not rest on the order; R7 #542's figures set the trigger of 55's clause trials (Open 152). The consolidation #887
+(review 832's follow-ups) after GT3 and WC3; nothing waits on it.
 
 **Retired** on #376's and #378's entries: the decomposition line (#325–#334), N1a, N1b, N3a, N3b, N4a, N4b, #371, #377,
 the designation by locus (#169, #170), the index form's retirement (#92, #93), the machinery's native verification
@@ -164,14 +87,12 @@ request construction over rows, the incremental assessment, the rows line, the d
 digit layout, the rule programs' law, the shared-subterm engine (B1–B6), the exporter's obligations. Their remains are
 under Open and in `.build/plans/next-edits.md`.
 
-**Shape and order.** No build waits on a review. The longest chain, 13 deep: D1b #903 → its second part #926 → D1d #905 → GT3 #876
-→ WC3 #916 → R7 #542 → #707 → #399 → #709 → #553 → #447 → #449 → #450, GT6 #878 → R7 as long; GT2b #889 → #922 →
-WC2b #914 → WC3 one shorter; #929's AX1 → AX2 → AX3 → AX4 → R7 shorter still;
-D1's builds and GT2's division spliced as detail; nothing is added after its tail until it
-shortens (the approval build, Open 142, waits for that). The queue is the planner's choice, a residual until the
-selection problem's native answer (Q2): running tasks first, the brief #929 and its builds, D1b's two parts and GT2b's beside them, VK2, WC2b
-and D1d each with its review, #875, GT3, WC3, GT6, the route in its chains' order, the consolidation #887 after R7's
-review (nothing waits on it). Word changes are serialized; none is queued.
+**Shape and order.** No build waits on a review. The longest chain, 13 deep: AX1 #930 → AX2a #932 → AX2b #934 → AX3b
+#938 → AX4 #940 → R7 #542 → #707 → #399 → #709 → #553 → #447 → #449 → #450; D1b's second part #926 → D1d #905 → GT3
+#876 → WC3 #916 or GT6 #878 → R7 one shorter. Nothing is added after the tail until it shortens (the approval build,
+Open 142, waits for that). The queue is the planner's choice, a residual until the selection problem's native answer
+(Q2): running tasks first with their reviews, #942, AX1–AX4 with theirs, VK2, WC2b, D1d, #875,
+GT3, WC3, GT6, the route in its chains' order, #887 after R7's review. Word changes are serialized; none is queued.
 
 ## Decisions
 
@@ -192,10 +113,8 @@ Taken by the planning episodes, where they are not entries of `DECISIONS.md`.
   proof checker (#496).
 - **Q33** (2026-09-27 12:46): an implementation is restricted only to implementing its notion correctly — a notion's
   definition is independent of and prior to its implementation, and being installed restricts no implementation; the
-  ledger's summary of Q28 ("the given's readers unchanged") was not the owner's words. The given's readers and the asked
-  relation may change where they stay exact to their notions: the design of the given's implementations decides (a)–(c)
-  of Q33 before GT6, R7, #875 and VK2; briefs saying "the given's readers as installed … (Q27, Q28)" are corrected at
-  their next rewrite.
+  ledger's summary of Q28 ("the given's readers unchanged") was not the owner's words. #928 decided (a)–(c) (Graph);
+  briefs saying "the given's readers as installed … (Q27, Q28)" are corrected at their next rewrite.
 - **Q29–Q32** (2026-09-26 09:40): the one-session base is on (`state/one-session-base`) and the chain it supersedes
   retired (`state/retire-superseded`); a base re-roots as one session whenever its chain's modeled start passes 10 s.
 - **17:50, 18:12, 18:36**: the native notion of a problem is the loop's product, not a design's; **a design is judged by
@@ -324,86 +243,68 @@ task):
 What landed that open work builds on, a line each naming its theories; their facts are in THEORY_MAP.md and
 REASONING_REUSE.md, how each went in `PLANNING_LOG.md`.
 
-- **The entries** (DECISIONS.md): #378, #376, #381, #383, #428, #460 (its decision withdrawn by Q27), #482 and #560,
-  #495 with #585's and #683's additions, corrections (5)–(16), #831's section and #890's addition, #496 with #642's
-  addition and #790's
-  section, #613's entry, #782's and #817's. The planner's answers to each design are in its `verdict.md`; the attributions
-  #481, #644, #715, #829, #830, #851 and #886 in their `result.md`.
-- **The development package**: `Development_Package_Program` (#340; a landing changing one of its six programs derives
-  it again, Q18 (c)), `development_package_environment` (#342).
+- **The entries** (`DECISIONS.md`): #378, #376, #381, #383, #428, #460 (its decision withdrawn by Q27), #482 and #560,
+  #495 with its additions, corrections (5)–(16), #831's section and #890's addition, #496 with #642's addition and
+  #790's section, the entries of #613, #782, #817 and #928. The planner's answer to each design is in its `verdict.md`;
+  the attributions #481, #644, #715, #829, #830, #851, #886 and #896 in their `result.md`.
+- **The development package**: `Development_Package_Program` (a landing changing one of its six programs derives it
+  again, Q18 (c)), `development_package_environment`.
 - **The given**: `Development_Given_Readers`, `Development_Given_Program`, `Development_Given_Installation` (47 entries
   at fresh uses), their payloads (`Factor_System_Payloads`, `Factor_Reader_Payloads`,
   `Factor_Generation_Reader_Payloads`), `note_composed`, `Development_Native_State` (`development_given_value`); the
   definition closure read from its roots (#716).
 - **The guard and the asked relation**: `Development_First_Problem_Guard`, `Factor_Package_Additions`,
   `Factor_Payload_Audit`, `Development_First_Problem_Asked`; non-nominality in `Presentation_Equivariance`,
-  `Factor_Use_Actions` and `Factor_Use_Renaming`.
-- **The request at a package**: `Factor_Package_Requests`, `Development_First_Request_Program`.
-- **The verification frame**: `Development_Verification_Frame`.
-- **The criticism's notions**: `Criticism_Samples`, `Criticism_Use_Samples`, `Criticism_Octet_Samples`,
-  `Factor_Stated_Leaves`, `Factor_Stated_Leaves_Program`.
-- **The evaluation over a base**: `Factor_Implemented_Base_Evaluation` (E1); the counterparts retired, their readers in
-  `Factor_Finite_Site_Value_Readers`, their controls in `Factor_Executed_Controls`.
+  `Factor_Use_Actions` and `Factor_Use_Renaming`. **The request at a package**: `Factor_Package_Requests`,
+  `Development_First_Request_Program`. **The verification frame**: `Development_Verification_Frame`. **The criticism's
+  notions**: `Criticism_Samples`, `Criticism_Use_Samples`, `Criticism_Octet_Samples`, `Factor_Stated_Leaves`,
+  `Factor_Stated_Leaves_Program`. **The evaluation over a base**: `Factor_Implemented_Base_Evaluation` (E1); the
+  counterparts retired, their readers in `Factor_Finite_Site_Value_Readers`, their controls in `Factor_Executed_Controls`.
 - **The owner records and the posing**: `Development_Owner_Records` (`development_citing_row_generation`,
   `development_owner_approval`), `Development_First_Problem`, `Development_First_Problem_Execution`.
 - **The recording**: `Factor_Bounded_Generation_Scopes`, `Development_Bounded_Recording`
   (`development_indexed_generation`, parametric), the placeholder line (`Factor_Positive_Parametricity`,
   `Factor_Placeholder_Fill`, `Factor_Placeholder_Schemas`, `Factor_Placeholder_Packages`, `Factor_Parametric_Causes`),
-  `Development_Recording_Refinements` (no library theory imports it); X′ within the gate.
-- **The resolving evaluator**: R1 `Factor_Material_Resolution`, R2 `Factor_Pattern_Unification`, R3
-  `Factor_Program_Resolution` (F1's selection, F3's reuse, GT1a's table), R3b `Factor_Resolution_Acceptance`, R4
-  `Factor_Resolution_Completeness` and the lifting `Factor_Resolution_Lifting` (both at a table since GT1b, its control
-  `Factor_Table_Controls`; the value lifting and the root-kept restriction since VK1 #920, `finite_root_kept` and the
-  valued exchange and premises beside WC2a's); R5 `Factor_Resolution_Commitments`, its
-  discharges `Factor_Resolution_Producer_Discharge`, `Factor_Resolution_Socket_Discharges`,
-  `Factor_Resolution_Material_Discharge`, its forms and transfers `Factor_Resolution_Views`,
-  `Factor_Resolution_Carriers`, `Factor_Narrowed_Sockets`, `Factor_Narrowed_Commitments`, `Factor_Narrowed_Productions`;
-  modes `Factor_Resolution_Modes`; the check forms `Factor_Resolution_Checks` (with the route constants at a table since GT2c #888, and the table's
-  transfers carrying truth, `finite_table_true_agreement` and `finite_table_true_relocated_alpha`); the framed test's index
-  `Factor_Framed_Commitment_Index`; the input production `Factor_Input_Productions`; controls in
+  `Development_Recording_Refinements` (no library theory imports it).
+- **The resolving evaluator**, every form at a table (GT1a–GT2c) and the exchange's lower discharges valued (VK1, #889):
+  R1 `Factor_Material_Resolution`, R2 `Factor_Pattern_Unification`, R3 `Factor_Program_Resolution`, R3b
+  `Factor_Resolution_Acceptance`, R4 `Factor_Resolution_Completeness` with `Factor_Resolution_Lifting` (the value
+  lifting and the root-kept restriction), R5 `Factor_Resolution_Commitments` with its discharges
+  (`Factor_Resolution_Producer_Discharge`, `Factor_Resolution_Socket_Discharges`, `Factor_Resolution_Material_Discharge`),
+  forms and transfers (`Factor_Resolution_Views`, `Factor_Resolution_Carriers`, `Factor_Narrowed_Sockets`,
+  `Factor_Narrowed_Commitments`, `Factor_Narrowed_Productions`), modes `Factor_Resolution_Modes`, the waiting class
+  `Factor_Socket_Waiting`, the check forms and route constants `Factor_Resolution_Checks`,
+  `Factor_Framed_Commitment_Index`, the input production `Factor_Input_Productions`; controls in
   `Factor_Resolution_Controls`, `Factor_Commitment_Controls`, `Factor_Narrowed_Controls`, `Factor_Mode_Controls`,
-  `Factor_Check_Controls`.
-- **The resolver's states**: F2a `Factor_Shared_Patterns`, F2b1 `Factor_Indexed_Resolution`, F2b2
-  `Factor_Shared_Resolution`, `Factor_Search_Representations` and `Factor_Shared_Search` (the selection's classes kept,
-  #865), F2c
-  `Factor_Shared_Commitments` (its committed step over the access tests since #869, its selection at a proper focus
-  through the range of the kept class trees since FI #892, `Ranged_Carrier_Indexes`), the commitment's tests over the
-  access `Factor_Access_Commitments` (#867), C `Factor_Resolution_Graph_Checks` (at a table since GT4 #841; the
-  verdict from the graph alone, GT4b #882; the reading at a true table and one checking fold, GT4c #883).
+  `Factor_Check_Controls`, `Factor_Table_Controls`, the committed trace in `Factor_Committed_Traces`.
+- **The resolver's states**: `Factor_Shared_Patterns`, `Factor_Indexed_Resolution`, `Factor_Shared_Resolution`,
+  `Factor_Search_Representations`, `Factor_Shared_Search` (the selection's classes kept, the goal side bounded),
+  `Factor_Shared_Commitments` (the committed step over the access tests and the kept classes, at a proper focus through
+  `Ranged_Carrier_Indexes`), `Factor_Access_Commitments`, C `Factor_Resolution_Graph_Checks` (at a table, the verdict
+  from the graph alone, one checking fold), the binding store `Shared_Binding_Stores`, the deferred search's first part
+  `Factor_Deferred_Search` (the deferred state, its formation and access, bind and place).
 - **The given's declarations**: `Development_Given_Declarations`, `Factor_Root_Family_Declarations`,
   `Factor_Artifact_Citation_Declarations`, `Factor_Instantiation_Declarations`,
   `Factor_Schema_Instantiation_Declarations`, `Factor_Definition_Reading_Declarations`, `Factor_Union_Declarations`,
-  `Factor_Row_Value_Socket_Declarations`, `Factor_Row_Selection_Socket_Declarations`; their carrying
+  `Factor_Row_Value_Socket_Declarations`, `Factor_Row_Selection_Socket_Declarations`; carried in
   `Development_Given_Carried_Declarations` (`given_declarations`, the one produced record), `Development_Given_Frames`,
-  `Development_Given_Installed_Declarations` (with the one record at 526 and 561), `Development_Given_Modes`,
-  `Development_Given_Productions`, `Development_Given_Installed_Productions` (the input record at 526 and 561,
-  12's production present at the installed lookup socket, #881); liveness
+  `Development_Given_Installed_Declarations`, `Development_Given_Modes`, `Development_Given_Productions`,
+  `Development_Given_Installed_Productions` (12's production at the installed lookup socket); liveness
   `Development_Socket_Liveness_Execution`.
-- **The least witnesses**: `Factor_Least_Collections` (since W5 #847 W2's queries at a query's parameters — table,
-  priority, commitment — their completeness under the named premise `finite_query_search_keeps`, discharged at the plain
-  instance, VK2's at the given's committing instance), `Factor_Least_Witness_Facts`, `Factor_Construction_Holders`,
-  `Factor_Least_Witness_Registrations`, `Development_Given_Registrations`, `Development_Asked_Registrations`,
-  `Development_First_Request_Registrations`, `Development_Rooted_Registrations`.
+- **The least witnesses**: `Factor_Least_Collections` (W2's queries at a query's parameters, their completeness under
+  `finite_query_search_keeps`, discharged at the plain instance), `Factor_Least_Witness_Facts`,
+  `Factor_Construction_Holders`, `Factor_Least_Witness_Registrations`, `Development_Given_Registrations`,
+  `Development_Asked_Registrations`, `Development_First_Request_Registrations`, `Development_Rooted_Registrations`.
 - **The clause match**: `Factor_Finite_Schema_Matching`, `Factor_Varied_Constructions`, `Factor_Varied_Declarations`,
-  `Factor_Varied_Narrowed_Sockets`, `Factor_Varied_Narrowed_Transfer`, `Development_Installed_Presentations`.
-- **rc's forms**: `Factor_Committed_Registrations`, `Factor_Native_Committed_Registrations` (the locale
-  `relocated_registrations`; at a table since GT2c #888, `committed_registrations_in` and `relocated_registrations_in`,
-  premise blocks whose table premises GT2b discharges).
-- **The binding store** `Shared_Binding_Stores` (D1a #899), under which D1b's deferred search keeps its nodes; the
-  deferred search's first part `Factor_Deferred_Search` (D1b #903, `1fb5d229`): the deferred state, its formation and
-  access, the goal-only substitution, a ground node's resolution, the deferred bind and place.
-- **The goal side bounded** (D1c #901, `Factor_Shared_Resolution`, `Factor_Shared_Search`): open counts carried at the
-  parent, the goal-call index pruned, the class trees written where a membership changes, `enter_goal` counting the
-  shared unifier's alternatives on the shared goal (`enter_goal_formed` and `enter_goal_fields` restated); the held
-  goals and construction nodes computed at the selection, their kept forms not taken (q162).
-- **The given's table's calls** `Development_Given_Table` (GT5 #845): `given_table_calls`, the readers' part and the
-  guard's part (certified at `finite_asked_program`), their truth at agreeing programs and at the installations.
+  `Factor_Varied_Narrowed_Sockets`, `Factor_Varied_Narrowed_Transfer`, `Development_Installed_Presentations`. **rc's
+  forms**: `Factor_Committed_Registrations`, `Factor_Native_Committed_Registrations` (at a table:
+  `committed_registrations_in`, `relocated_registrations_in`, premise blocks whose table premises GT2b discharges).
+- **The given's table's calls**: `Development_Given_Table` (GT5: `given_table_calls`, the readers' part and the guard's
+  part, their truth at agreeing programs and at the installations). **K3**: `Development_Given_Checks_Execution` (the
+  given at the check forms; 77 at the given's own definition a step of about 0.11 s).
 - **Briefs whose findings stand**: #434 (the approval record's place, part (g), parts (h) and (e), Q25) and #451 (the
   readings of "generation" and "adoption"), each in its `result.md`.
 
-- **K3** `Development_Given_Checks_Execution` (#825, `2397d6a9`): the given at the check forms — 113/7, 77/1 and 77/2
-  against the committed forms, seven counts a search (`given_checks_search`), the outcome lemmas, `given_checks_cut`;
-  77 at the given's own definition a step of about 0.11 s (#886's).
 ## Open
 
 The owner's questions, a line each (their words and provisional choices in full are in the ledger):
@@ -472,25 +373,15 @@ a theory before briefing a task that edits it.
 
 ## Now
 
-- **Under way**: D1b's second part #926 (review 904's follow-ups mailed), GT2b's first part #889 after VK1's landing and the
-  brief #929 of task 928's builds side by side (D1b's parts carry q162's answer; D1b and D1d review 902's follow-ups;
-  review 848's follow-ups 1–6 in VK1's and VK2's briefs through #919, next-edits 207, 273 and 383 given to them).
-  Decided at #875's figures on the deferred route: the kept held goals and construction nodes (q162, review 902's 3:
-  `.build/tasks/901/result.md` Remains (a)–(e); next-edits 384's words) and FI's remaining costs (review 895's 2 and 5:
-  the focus's emptiness and `access_first_goals` through the range, `rbt_range`'s appends; next-edits 385), placed at
-  the next restater of the route constants' code, WC3 #916 if the figures come before it starts.
-- **What the next events ask**: GT6's prediction and worker count from #875 before its run, with the checking fold
-  measured at samples; the decisions at #875's figures (Under way); #709's brief rewritten before it starts (the two
-  phases, the table, GT6's record); #929's proposal placed (AX4 after AX3 and VK2, #542 re-pointed onto it); after AX4
-  lands, the route's briefs the asked relation's change reaches rewritten from AX1–AX4's hand-overs by a brief (#542,
-  #707, #399, #709, #710, #401, #443, #445, #549, #551, #553, #447, #449: #928's Remains).
-
-- **Planners stopped**: plan-120 and plan-121 were stopped by a classifier declining a turn, and plan-131's window
-  ended, before their notes; this file, `PLANNING_LOG.md`, `.build/plans/mailed.md` and next-edits carried all they
-  settled. Keep them current at every event.
-- **Briefs nearest their rooms**: #542, #399 and the samples build #551; GT2b #889 at 350K beside the discharge
-  theories' relations (divided by theory if handed back). A brief written before its theories grew may be refused at
-  its start, and is resized or divided then.
+- **Under way**: D1b's second part #926, AX1 #930 and GT2b's second part #922, whose follow-up #942 carries q164's
+  answer (it reached no session); review 894's dispatch item is moot, #922's `result.md` says.
+- **What the next events ask**: #875's figures — GT6's prediction and worker count, the checking fold measured at
+  samples, the kept forms (q162) and FI's remaining costs (Graph); with them the re-run of #718's 77 and 79 fixtures with
+  review 858's attributions (next-edits 364–366), due since W5's landing but waiting for the deferred route, since
+  before D1d the step at the given does not finish; after AX4 lands, the route briefs' rewrite (Graph).
+- **Briefs nearest their rooms**: #542, #399 and the samples build #551. A brief written before its theories grew may be
+  refused at its start, and is resized or divided then.
+- **The knowledge base** loaded at 702K of its 742K (2026-09-27): keep this file lean; a base rebuild is the owner's.
 - **The harness's gaps met by this run's tasks** are owed to the owner and listed in `PLANNING_LOG.md` (2026-09-26,
   plan-86); new ones go there.
 - **Ledger entries that can leave** (the harness's `v2.py ledger`): Q7's and Q2's questions and answers, recorded in

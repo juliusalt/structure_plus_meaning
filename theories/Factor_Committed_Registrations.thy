@@ -227,6 +227,22 @@ lemmas committed_registered_verdict_exact_at =
 lemmas committed_registered_demand_exact_at =
   registered_commitment_at.committed_registered_demand_exact[OF registered_at]
 
+text \<open>
+  The narrowed commitment's exchange at a table whose calls are true: valued at any formed selection, and its plain part
+  at every priority there (GT2c's exchange premise at a table, @{text committed_registrations_in}).
+\<close>
+
+lemma exchanges_valued_true:
+  assumes formed_sel: "finite_selection_formed \<kappa> P sel" and true: "finite_table_true P \<Theta>"
+  shows "finite_commitment_exchanges_valued_by_in \<Theta> sel U \<kappa> (finite_narrowed_commitment P m D \<Phi>) P"
+  by (rule finite_narrowed_commitment_exchanges_in[OF formed formed_sel true discharged frames productions declared only])
+
+lemma exchanges_at_true:
+  assumes true: "finite_table_true P \<Theta>"
+  shows "finite_commitment_exchanges_at_in \<Theta> pr (\<lambda>_. False) \<kappa> (finite_narrowed_commitment P m D \<Phi>) P"
+  unfolding finite_commitment_exchanges_at_in_def
+  by (rule finite_commitment_exchanges_valued_plain_in[OF exchanges_valued_true[OF finite_resolution_select_formed_in true]])
+
 end
 
 lemma committed_registrations_collection:
@@ -426,11 +442,22 @@ theorem committed_moded_demand_exact_in:
 
 end
 
+text \<open>
+  At a table whose calls are true the exchange premise is rc's (@{text committed_registrations.exchanges_at_true}); the
+  construction premise at the table stays the caller's.
+\<close>
+
+lemma committed_registrations_in_true:
+  assumes registered: "committed_registrations \<kappa> P m D \<Phi> corr" and true: "finite_table_true P \<Theta>"
+    and lifts: "finite_construction_lifts_in \<Theta> (\<lambda>_. False) \<kappa> P"
+  shows "committed_registrations_in \<kappa> P m D \<Phi> corr \<Theta>"
+  by (rule committed_registrations_in.intro[OF registered committed_registrations_in_axioms.intro[OF lifts
+    committed_registrations.exchanges_at_true[OF registered true]]])
+
 lemma committed_registrations_in_empty:
   assumes registered: "committed_registrations \<kappa> P m D \<Phi> corr"
   shows "committed_registrations_in \<kappa> P m D \<Phi> corr resolution_empty_table"
-  by (rule committed_registrations_in.intro[OF registered committed_registrations_in_axioms.intro[OF
-    registered_commitment.lifts[OF committed_registrations.registered[OF registered]]
-    registered_commitment_at.exchanges[OF committed_registrations.registered_at[OF registered]]]])
+  by (rule committed_registrations_in_true[OF registered finite_table_true_empty
+    registered_commitment.lifts[OF committed_registrations.registered[OF registered]]])
 
 end

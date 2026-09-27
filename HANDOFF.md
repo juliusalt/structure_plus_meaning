@@ -127,8 +127,10 @@ correction (16) of "Committed choice, for refusals"): a class of F1's selection 
 holding a variable of a pending framed socket's frame, or of the head output, waits while the socket is pending in its
 original form — read by the selection alone, never by exactness; 55's false call at depth 2 refuted in 4,710
 selections, depth 3 in 9,658, the true calls 3–8 % more; review 828's follow-up 1 settled. Its builds, placed from
-the brief #909, each with its review: WC1 #910 (the class, `Factor_Socket_Waiting`) and WC2a #912 (the formed
-selection, the exchange and lifting at a table and at it) at once; GT2b #889 rewritten from #909's copy to state every
+the brief #909, each with its review: WC1 #910 (the class, `Factor_Socket_Waiting`) and WC2a #912 (committed
+`dce8c15c`: `finite_selection_formed`, the exchange `finite_commitment_exchanges_by_in` and the lifting and exact
+premises at a table and a formed selection; review 913's follow-ups mailed to GT2b and WC2b, next-edits 329 retired)
+at once; GT2b #889 rewritten from #909's copy to state every
 discharge at a table and a formed selection in one pass, after WC2a; WC2b #914 (the forms at the waiting moded
 selection, the 55 fixture, the control; review 893's rc consolidation and next-edits 332 and 334 with it) after WC1,
 GT2b and GT2c; WC3 #916 (the class at the route, K2's constants redefined at the waiting moded selection, the controls
@@ -431,8 +433,9 @@ a theory before briefing a task that edits it.
 
 ## Now
 
-- **Under way**: D1c #901 continued from its tree (the planner's answers to its questions in its brief); WC2a #912 and
-  WC1 #910 of correction (16); FI #892 after D1c (review 891's 3 and 4 mailed again); GT2c #888 committed, landing.
+- **Under way**: D1c #901 continued from its tree (the planner's answers to its questions in its brief); WC1 #910 of
+  correction (16); GT5 #845 and W5 #847; the design #918 (q161 (A)); FI #892 after D1c (review 891's 3 and 4 mailed
+  again).
 - **What the next events ask**: the design #918's verdict (q161 (A)), then what GT2b #889 must respect put into its
   brief before it starts and the value-keeping builds placed before #399; GT6's prediction and worker count from #875
   before its run, with the checking fold

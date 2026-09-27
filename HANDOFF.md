@@ -89,7 +89,8 @@ kept as placed under a binding store (D1a, a notion), the deferred search a thir
 (D1b), the goal side's operations bounded a step (D1c), the deferred committed search and the route through it (D1d);
 6–8 ms a step predicted at 30, 300 and 350 steps, GT6 52–85 h on one worker; the goal side numbered (D1e) and the
 groundness counters wait on #875's figures. Placed from the brief #897 (its `result.md` gives each edge's reason), each
-with its review: D1a #899 (the binding store, `Shared_Binding_Stores`, at once), D1c #901 (with F234's finding 3, 113/7
+with its review: D1a #899 (the binding store, `Shared_Binding_Stores`, landed `8daeae20`; review 900's 1, 3, 5–7 mailed
+to D1b, its 2 and 4 next-edits 378–379), D1c #901 (with F234's finding 3, 113/7
 and next-edits 316 and 338), D1b #903 (after D1a and D1c, over D1c's `search_update`), D1d #905 (after D1b, FI and GT2c;
 review 891's 1 and next-edits 375's #871 part); GT3 #876 (its brief rewritten from #897's: D1's deferred searches,
 GT2a's calls lemmas, the graph verdicts at a table of true calls) and #875 wait on D1d. Findings 2–4 (the root
@@ -420,12 +421,19 @@ a theory before briefing a task that edits it.
 
 ## Now
 
-- **Under way**: D1c #901 and D1a #899; GT2c #888; FI #892 after D1c (review 891's 3 and 4, plan-127's mail); the brief #909 of correction (16)'s builds after #907 lands, GT2b #889 held for its rewrite.
+- **Under way**: D1c #901; GT2c #888; FI #892 after D1c (review 891's 3 and 4, plan-127's mail); the brief #909 of correction (16)'s builds after #907 lands, GT2b #889 held for its rewrite.
 - **What the next events ask**: #909's proposal placed — WC1 and WC2a at once, WC2a feeding GT2b, WC2b after WC1, GT2b
   and GT2c, WC3 before #542, #547 and #887; GT2b's and #894's rewrites placed by edit from the brief's copies under the
   planner's folder; GT2c's answer on `finite_table_true` at the relocated table (#883's review 1: else the
   formation-only form is placed); GT6's prediction and worker count from #875 before its run, with the checking fold
   measured at samples; #709's brief rewritten before it starts. Q33 is the owner's.
+- **Not yet handled (plan-128's window ended)**: D1c #901 ended partial (`.build/tasks/901/result.md`; its tree
+  `.build/trees/901` holds the work, FSR loading clean, FSS step 3 with seven probe errors): re-plan it as "D1c,
+  continued from its tree" — its Remains 1–5 the session's first batch, its original Done items, Decided and Size kept
+  (`.build/tasks/901/brief.json`) — and queue it; FI #892, #902 and D1b #903 wait on it. The planner's answers to its
+  questions (plan-128): `classes_keys_prefix` gaining the two formation premises is accepted (chain contiguity holds only
+  at formed states; its one consumer passes them); the kept sets' formation folded into `search_classes_formed` is the
+  intended clause (established by the constructors, kept by every step).
 - **Planners stopped**: plan-120 and plan-121 were stopped by a classifier declining a turn, before their notes; this
   file and `PLANNING_LOG.md` carried all they settled. Keep both current at every event.
 - **Briefs nearest their rooms**: #542, #399 and the samples build #551; GT2b #889 at 350K beside the discharge

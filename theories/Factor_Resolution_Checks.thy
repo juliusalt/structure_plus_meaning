@@ -1404,19 +1404,17 @@ lemma commitment_tests_outcome:
     tested_committed_goal_outcome R (commitment_tests R ce Kc Dm M gd) gd rec F B r V (E,b')"
   by (rule ext) (simp add: tested_committed_goal_outcome_def commitment_tests_def Let_def)
 
-definition route_select where
-  "route_select \<kappa> P Kc Dm M gd F r V x =
-    committed_kept_select \<kappa> P (admitted_priority_class Kc Dm M (gd r) (access_focused F V) (fst x)) F r V"
-
 text \<open>
   At the whole focus the priority's class reads the state's access (@{thm [source] access_focused_whole}), so the route
-  builds no focused record there.
+  builds no focused record there; at a proper focus the focused record is built once, its goals the range of the goal
+  tree under the focus (@{text shared_focused}), and both the priority's class and the selection read it (task 892).
 \<close>
 
-lemma route_select_code [code]:
-  "route_select \<kappa> P Kc Dm M gd F r V x = committed_kept_select \<kappa> P
-    (admitted_priority_class Kc Dm M (gd r) (if F = None \<or> F = Some [] then V else access_focused F V) (fst x)) F r V"
-  by (cases "F = None \<or> F = Some []") (simp_all add: route_select_def access_focused_whole)
+definition route_select where
+  "route_select \<kappa> P Kc Dm M gd F r V x = (if F = None \<or> F = Some []
+    then committed_kept_select \<kappa> P (admitted_priority_class Kc Dm M (gd r) V (fst x)) F r V
+    else let W = shared_focused (the F) r V in
+      focused_kept_select (admitted_priority_class Kc Dm M (gd r) W (fst x)) (the F) r V W)"
 
 lemma route_kept_formed:
   assumes tf: "tested_representation_formed (shared_committed_representation \<kappa> P) Fi \<kappa> P K pr
@@ -1434,8 +1432,26 @@ next
   let ?V = "shared_access \<kappa> P s" let ?W = "access_focused F ?V" let ?E = "shared_commitment_access s"
   have "route_select \<kappa> P Kc Dm M gd F s ?V (?E,True) = access_select (\<lambda>h. gd s h \<and> access_moded_priority_at Kc Dm M ?W ?E
       (fBex (access_goals ?W) (\<lambda>h. gd s h \<and> access_commitment_priority Kc ?W ?E h)) h) ?W"
-    unfolding route_select_def fst_conv
-    by (rule committed_kept_select[OF f]) (rule admitted_priority_class, simp)
+  proof (cases "F = None \<or> F = Some []")
+    case True
+    have "route_select \<kappa> P Kc Dm M gd F s ?V (?E,True) =
+        committed_kept_select \<kappa> P (admitted_priority_class Kc Dm M (gd s) ?W ?E) F s ?V"
+      using True by (simp add: route_select_def access_focused_whole)
+    also have "\<dots> = access_select (\<lambda>h. gd s h \<and> access_moded_priority_at Kc Dm M ?W ?E
+        (fBex (access_goals ?W) (\<lambda>h. gd s h \<and> access_commitment_priority Kc ?W ?E h)) h) ?W"
+      by (rule committed_kept_select[OF f]) (rule admitted_priority_class, simp)
+    finally show ?thesis .
+  next
+    case False
+    obtain g where g: "F = Some g" and gne: "g \<noteq> []" using False by (cases F) auto
+    have "route_select \<kappa> P Kc Dm M gd F s ?V (?E,True) =
+        focused_kept_select (admitted_priority_class Kc Dm M (gd s) ?W ?E) g s ?V ?W"
+      by (simp add: route_select_def g gne shared_focused[OF f(1)] Let_def)
+    also have "\<dots> = access_select (\<lambda>h. gd s h \<and> access_moded_priority_at Kc Dm M ?W ?E
+        (fBex (access_goals ?W) (\<lambda>h. gd s h \<and> access_commitment_priority Kc ?W ?E h)) h) ?W"
+      unfolding g by (rule focused_kept_select[OF f]) (rule admitted_priority_class, simp)
+    finally show ?thesis .
+  qed
   then show ?case by (simp add: shared_committed_representation_def commitment_tests_def Let_def)
 next
   case (3 s F B rec)

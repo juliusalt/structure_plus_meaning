@@ -1109,6 +1109,7 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Factor_Resolution_Acceptance
     Factor_Search_Representations
     Factor_Resolution_Completeness
+    Factor_Table_Controls
     Factor_Construction_Holders
     Factor_Finite_Proof_Inspection
     Factor_Finite_Source_Computation
@@ -1948,6 +1949,7 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Development_Given_Installed_Declarations
     Development_Given_Frames
     Development_Given_Productions
+    Development_Given_Installed_Productions
     Development_Installed_Presentations_Execution
     Development_First_Problem_Asked
     Development_Socket_Liveness_Execution

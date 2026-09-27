@@ -187,7 +187,7 @@ definition committed_counted_goal ::
 lemma committed_counted_goal_outcome:
   assumes rec: "\<And>F' B' s. fst (rec F' B' s) = rec' F' B' s"
   shows "fst (committed_counted_goal rec K P F B st g) = finite_committed_goal_outcome rec' K P F B st g"
-  unfolding committed_counted_goal_def finite_committed_goal_outcome_def Let_def
+  unfolding committed_counted_goal_def finite_committed_goal_outcome_in_def Let_def
   by (simp add: rec committed_counted_join_outcome split: if_split)
 
 definition committed_goal_states ::

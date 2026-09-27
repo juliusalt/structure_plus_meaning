@@ -18859,6 +18859,19 @@ relocation reads the placement's site map.
 
 Recorded 2026-09-27 (task 831's decision; a design, no theory changes).
 
+[Added by task 839 (review 838's follow-up 1, plan-119), GT1a's refinements and GT1b's course. (a) The table closes only
+goals below the root (`q ≠ []` in `finite_table_closes`): a closed root would leave the found state no root node and no
+certificate, and the call would read refuted; the committed focus, never closed by an entry, is its analogue. (b) A
+premise's certificate is read in the step's order: the node at its socket, then a reused node left of it, then the
+entry. (c) Validity is the checker's acceptance of each entry's certificate at its call (`finite_table_valid`); GT4 #841
+shows the graph check establishes it. GT1b (task 839) carries the table through the committed step, search and lifting
+(`Factor_Resolution_Lifting`) and R4 (`Factor_Resolution_Completeness`), today's forms the instances at the empty table,
+statements kept: the closing's case is one lemma of the step, `resolution_closed_lifted_at` (with
+`finite_table_closes_true` at a valid table), cited by the goal step both liftings take; R4 keeps its own induction
+(#849). A refutation is exact at every table; a resolution is sound at every table, not only a valid one, since the
+result keeps only certificates the checker accepts, so the verdict is exact at every table. The table forms of the
+committed relation, frame, placement, position and found lemmas (item 3's "R5's … lemmas") moved to GT2 (q155).]
+
 ### What of the counterpart line stays
 
 | Piece | Standing | Role and reason |
@@ -20211,3 +20224,31 @@ Task 863, #830's fix (1) (a) as the planner placed it (`.build/tasks/830/verdict
   recipe reaches `Factor_Shared_Search`, and every fixture measured takes the shared branch. The branch is kept: it is
   what makes the code equation hold at every input, and replacing it by R3's own equation changes the code equation's
   statement, the planner's.
+
+## The given's input record at the installed programs: #798's record overridden by the lookup record, carried piecewise
+
+Task 817, I3's second part (correction (13) of "Committed choice, for refusals", task 495's entry; q144).
+
+- **The record carried as a join.** The first part's `given_input_declarations` is `produced_override
+  given_declarations lookup_input_declarations`. Relocation commutes with the override at every socket (the same
+  producers, consumers and sockets, the same class and production at each: `produced_relocated_override`, the placement
+  injective on both records' sites); nothing is claimed away from the sockets, and a variation reads a record only there
+  (`produced_declarations_varied_cong`). Variation commutes with the override outright where the overriding record's
+  sites have unique sources (`produced_declarations_varied_override`); the two give `produced_carried_override`, stated
+  generically in `Factor_Native_Committed_Registrations` beside `produced_relocated` (the join's own theory,
+  `Factor_Narrowed_Productions`, sees neither relocation nor variation). At the installed programs the carried record is
+  #798's `installed_given_declarations` overridden by the lookup record carried (`installed_input_override`): 37 has one
+  clause, artifact lookup's, so its sources are unique at the placed 37 (`installed_lookup_sources`).
+- **What is discharged, and by whom.** Productions and the static premise are the override's facts over #798's
+  (`installed_productions`, `installed_declared`) and the lookup record's; the lookup socket's class is every answer, so
+  its static premise holds vacuously and `productions_carry_uniquely` is not needed at 12. 12's production is I2's input
+  registration relocated (`input_registration_relocated_eq`, review 814's follow-up 1, beside `input_registration_varied`)
+  and varied along the clause match; it is discharged by `input_productions_discharged`, 12 reflexive at the installed
+  program by the installation's meaning (`installed_meaning`), no search read. The narrowings agree within #798's five
+  sites (`installed_input_within`), the lookup socket's class being every answer: #798's site-restricted agreement needs
+  no extension to 37's key. The committed registrations follow from `committed_registrations_produced_relocated` at the
+  numbered program's `committed_input_registrations_Q`.
+- **A correction.** `families_relocated` had no equation at `Determined_Value`, so a relocated input registration's
+  families were unspecified; it now keeps a determined value (its pattern names no site).
+- **Not built here:** the production's presence at the installed lookup socket (a nonempty varied production, from the
+  unique source at 37 and the unique installed clause at 12), which no premise of the carrying reads.

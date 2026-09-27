@@ -19995,3 +19995,34 @@ whose socket declares a production (an order within O1's priority, read by the s
 admits a sibling whose instantiated pattern is ground and whose variables lie outside the frame while goals are
 pending under it (R5's socket framing and #565's exchange proved again at that weaker premise). Nothing here is an
 outcome against the given's meaning: no call is refuted, and the unresolved calls are cut at the bound.
+
+## The check of a found derivation is indexed: post-ordered nodes, positions and shared call references
+
+Task 833, from review 704's follow-ups 1–3 of C (#703). C's check read a found state's nodes through sets: a premise's
+nodes filtered every node, a rank counted a node's reach, and the certificate table, the reach and the graph's
+membership test were sets searched member by member — quadratic in the nodes, and every key comparison between two
+equal ground calls walked their terms (at the given, the environment value).
+
+Decided (code equations only, no statement changed): where the found state's nodes stand at distinct positions they are
+listed once, by one sort, in the post-order of their positions — `finite_post_key` places a node after every node under
+it and every node left of it, so every link decreases it (`finite_node_links_post`), which is all the certificate and
+reach passes need (F3's rank itself is not computed); the listing is a function of the node set
+(`finite_post_listing`), refused where two nodes share a position, and there C's code equations run unchanged. Ground
+calls are keyed by their reference in a table of shared terms built once from the state (`Shared_Term_Tables`): a
+reference keys a term when the keyed step gives that reference exactly for that term (`finite_term_keyed`), so two
+equal calls compare as two numbers; a premise's instances are keyed against the same state. Nodes are indexed by
+position (the tree map's index, `tree_map_index`) and by call reference; certificates and the reach are tree maps over
+positions filled in one pass each. Each code equation is proved equal to C's on every input.
+
+Evidence (`.build/tasks/833/measurement.md`, shared, little contention): 113 over `sa_env`, the whole
+`finite_outcome_result` 0.008 / 0.193 / 0.505 s at 3 / 10 / 13 rows (143 / 549 / 798 nodes) against C's 0.015 / 1.04 /
+3.56 s and the search's 0.06 / 3.3 / 10.5 s; the tree checker 1.15 / 33.5 s / > 40 s. The search returns up to 13 rows;
+at 16 it is cut at its bound.
+
+The found states' verdicts, built once and then only read, are united by the listed union (`Listed_Set_Unions`, as
+`finite_outcome_union_code` unites outcomes): their listings are concatenated and no root certificate is compared
+(review 704's follow-up 5); a certificate found in two states is listed twice in one set. Every tree-map insertion is
+read through the index notion's update at the tree map (`tree_map_updates`).
+
+Limits: every ground call is still walked once (its residual term and its sharing) — the check is linear in the found
+state's size, not in its nodes alone, while its comparisons are bounded.

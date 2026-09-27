@@ -1651,6 +1651,34 @@ text \<open>
   #820's @{text registrations_installed}, so the route's consumers (#547, #707, #399) cite these instances.
 \<close>
 
+text \<open>
+  A table's calls at an installation, stated once for every mapped extension: a table whose calls are true at the
+  numbered program @{text Q}, its calls at @{text Q}'s definitions, relocated by the placement, has its calls true at
+  the placed program and at the program the installed site reads, an alpha variant of it (@{text installed_variant}),
+  at any table of those calls there. It reads the installation's result and the installed reading alone.
+\<close>
+
+context finite_mapped_native_extension
+begin
+
+lemma mapped_installed_table_true:
+  assumes result: "finite_extend_mapped_native E P Q g = Some (F,u)"
+    and read: "native_package_at (decode_finite_environment F) u [] (decode_finite_system R)"
+    and true: "finite_table_true Q \<Theta>" and relocates: "finite_table_relocates placement \<Theta> \<Theta>'"
+    and sites: "fst ` finite_table_calls \<Theta> \<subseteq> system_definitions (decode_finite_system Q)"
+    and calls: "finite_table_calls \<Theta>'' = finite_table_calls \<Theta>'"
+  shows "finite_table_true goal \<Theta>'" and "finite_table_true R \<Theta>''"
+proof -
+  have Qf: "schema_system_formed (decode_finite_system Q)" using target by (simp only: finite_system_formed_correct)
+  have inj: "inj_on placement (system_definitions (decode_finite_system Q) \<union> fst ` finite_table_calls \<Theta>)"
+    using coordinates by (simp only: Un_absorb2[OF sites] finite_system_definitions_correct)
+  note r = finite_table_true_relocated_alpha[OF true relocates Qf inj installed_variant[OF result read] calls]
+  show "finite_table_true goal \<Theta>'" by (rule r(1))
+  show "finite_table_true R \<Theta>''" by (rule r(2))
+qed
+
+end
+
 context relocated_registrations
 begin
 
@@ -1672,10 +1700,7 @@ lemma installed_table_true:
     and calls: "finite_table_calls \<Theta>'' = finite_table_calls \<Theta>'"
   shows "finite_table_true goal \<Theta>'" and "finite_table_true Inst \<Theta>''"
 proof -
-  have Qf: "schema_system_formed (decode_finite_system Q)" using target by (simp only: finite_system_formed_correct)
-  have inj: "inj_on placement (system_definitions (decode_finite_system Q) \<union> fst ` finite_table_calls \<Theta>)"
-    using coordinates by (simp only: Un_absorb2[OF sites] finite_system_definitions_correct)
-  note r = finite_table_true_relocated_alpha[OF true relocates Qf inj installed_variant[OF result read] calls]
+  note r = mapped_installed_table_true[OF result read true relocates sites calls]
   show "finite_table_true goal \<Theta>'" by (rule r(1))
   show "finite_table_true Inst \<Theta>''" by (rule r(2))
 qed

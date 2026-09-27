@@ -1966,6 +1966,7 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Development_Given_Productions_Execution
     Development_Given_Checks_Execution
     Development_Native_State
+    Development_Given_Table
     Development_First_Problem
     Development_Bounded_Recording_Execution
     Development_Native_State_Execution

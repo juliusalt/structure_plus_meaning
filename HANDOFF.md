@@ -49,7 +49,10 @@ checked once over graphs and retained; a judgment in two phases; 77's bound hand
 refusal. One-time ≈ 31–34 M states, a judgment's part ≈ 2–5 M. Builds: GT1a and GT1b landed (#837, #839: the table
 in R3, R3b, the committed step, search and lifting and R4; refutation exact and a resolution's certificates sound at
 every table, a valid table deciding only which calls resolve — the entry's addition; review 840's 1–6 mailed to GT4,
-GT2, W5 and GT6) → GT4 #841 (C at a table) and GT2 #843 (the committed and check forms, rc's
+GT2, W5 and GT6) and GT4 #841 (`99e45393`: C at a table, validity checked over graphs; its verdict at a table
+tree-checks the entries a judgment reads) → GT4b #882 (review 842's 1–4, continuing #841: the verdict at a table read
+from the graph alone, exact at a valid table and sound where its calls are true; the table's checks over indexed
+certificates, the reach once) → GT2 #843 (the committed and check forms over GT4b's verdict, rc's
 forms, the transfers, the table read by its calls alone and — by q155 — the committed search's frame and position lemmas
 at a table; after K3 #825 and the consolidation #832) → GT5 #845 (the given's table) and W5 #847; GT3 #876 (the table in
 F2's shared representation, after GT2, GT4 and #830's fixes) → GT6 #878 (the table produced once, a run of hours parked
@@ -268,7 +271,7 @@ REASONING_REUSE.md, how each went in `PLANNING_LOG.md`.
 - **The resolver's states**: F2a `Factor_Shared_Patterns`, F2b1 `Factor_Indexed_Resolution`, F2b2
   `Factor_Shared_Resolution`, `Factor_Search_Representations` and `Factor_Shared_Search`, F2c
   `Factor_Shared_Commitments`, the commitment's tests over the access `Factor_Access_Commitments` (#867), C
-  `Factor_Resolution_Graph_Checks`.
+  `Factor_Resolution_Graph_Checks` (at a table since GT4 #841).
 - **The given's declarations**: `Development_Given_Declarations`, `Factor_Root_Family_Declarations`,
   `Factor_Artifact_Citation_Declarations`, `Factor_Instantiation_Declarations`,
   `Factor_Schema_Instantiation_Declarations`, `Factor_Definition_Reading_Declarations`, `Factor_Union_Declarations`,
@@ -353,9 +356,9 @@ a theory before briefing a task that edits it.
 
 ## Now
 
-- **Under way**: GT4 #841 and #869 (#867 having landed); #865 continued from its tree (partial: its maintenance
-  narrowed before it lands).
-- **What the next events ask**: the hand-overs of #865, GT4 and #869 (its step measured at the given decides review
+- **Under way**: #869 (#867 having landed); #865 continued from its tree (partial: its maintenance narrowed before it
+  lands); GT4b #882 (continuing #841), before GT2.
+- **What the next events ask**: the hand-overs of #865, GT4b and #869 (its step measured at the given decides review
   868's 4, the linear scans); GT6's prediction and worker count before its run; #709's brief rewritten before it
   starts; #861's question decided on #875's figures before GT6 (provisional (c)). Q33 is the owner's.
 - **Planners stopped**: plan-120 and plan-121 were stopped by a classifier declining a turn, before their notes; this

@@ -1205,4 +1205,31 @@ lemmas native_committed_moded_installed_in = native_committed_moded_exact_in[OF 
 
 end
 
+text \<open>
+  The block's exchange premise at a table whose calls are true at the installed program is the installed record's
+  (@{text committed_registrations.exchanges_at_true}); with the construction premise there, rc's premises at the table.
+\<close>
+
+context relocated_registrations
+begin
+
+lemma installed_exchanges_true:
+  assumes true: "finite_table_true Inst \<Theta>"
+  shows "finite_commitment_exchanges_at_in \<Theta> prio (\<lambda>_. False)
+    (finite_varied_construction goal Inst (finite_relocated_construction placement Q \<kappa>))
+    (finite_narrowed_commitment Inst m' (produced_declarations_varied goal Inst D')
+      (frames_varied goal Inst (frames_relocated placement \<Phi>))) Inst"
+  by (rule committed_registrations.exchanges_at_true[OF registrations_installed true])
+
+lemma registrations_installed_true:
+  assumes true: "finite_table_true Inst \<Theta>"
+    and lifts: "finite_construction_lifts_in \<Theta> (\<lambda>_. False)
+      (finite_varied_construction goal Inst (finite_relocated_construction placement Q \<kappa>)) Inst"
+  shows "committed_registrations_in (finite_varied_construction goal Inst (finite_relocated_construction placement Q \<kappa>))
+    Inst m' (produced_declarations_varied goal Inst D') (frames_varied goal Inst (frames_relocated placement \<Phi>))
+    (corr \<circ> inv_into (declared_sites (resolution_declarations.truncate ND)) placement) \<Theta>"
+  by (rule committed_registrations_in_true[OF registrations_installed true lifts])
+
+end
+
 end

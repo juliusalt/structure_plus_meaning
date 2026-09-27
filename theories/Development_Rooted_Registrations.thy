@@ -27,7 +27,6 @@ lemma given_rooted_guard_agreement:
     (system_definitions guard_readers_system\<inter>system_definitions given_rooted_readers_system)"
   unfolding given_rooted_readers_system_def by (rule rooted_intersection_agreement[OF guard_program_agreement])
 
-
 section \<open>The sites the registrations read stand in the rooted readers\<close>
 
 text \<open>
@@ -200,25 +199,27 @@ proof -
   show "context_list_rule_relation (positive_meaning X) 390 391" by (rule read_meanings_listing, rule read) auto
 qed
 
-theorem readers_agreement_registrations_complete:
+theorem readers_agreement_registrations_complete_in:
   fixes P :: "(nat,nat,nat,nat) finite_schema_system"
-  assumes formed: "schema_system_formed (decode_finite_system P)"
+  assumes exact: "finite_query_exact \<Xi> P n" and formed: "schema_system_formed (decode_finite_system P)"
     and agree: "systems_agree_on guard_readers_system (decode_finite_system P)
       (system_definitions guard_readers_system\<inter>system_definitions (decode_finite_system P))"
     and sites: "{5,12,47,76,82,113,390,391}\<subseteq>system_definitions (decode_finite_system P)"
-  shows "finite_registration_complete P n bound_witness_registration"
-    and "finite_registration_complete P n (additions_witness_registration 392 391)"
-    and "finite_registration_complete P n merge_witness_registration"
+  shows "finite_registration_complete_in \<Xi> P n bound_witness_registration"
+    and "finite_registration_complete_in \<Xi> P n (additions_witness_registration 392 391)"
+    and "finite_registration_complete_in \<Xi> P n merge_witness_registration"
 proof -
   note read=readers_agreement_meanings(2)[OF formed agree sites]
-  show "finite_registration_complete P n bound_witness_registration"
-    by (rule read_meanings_registrations_complete(1)) (rule read, auto)
-  show "finite_registration_complete P n (additions_witness_registration 392 391)"
-    by (rule read_meanings_registrations_complete(3)[OF _ readers_agreement_meanings(9)[OF formed agree sites]])
+  show "finite_registration_complete_in \<Xi> P n bound_witness_registration"
+    by (rule read_meanings_registrations_complete_in(1)[OF exact]) (rule read, auto)
+  show "finite_registration_complete_in \<Xi> P n (additions_witness_registration 392 391)"
+    by (rule read_meanings_registrations_complete_in(3)[OF exact _ readers_agreement_meanings(9)[OF formed agree sites]])
       (rule read, auto)
-  show "finite_registration_complete P n merge_witness_registration"
-    by (rule read_meanings_registrations_complete(2)) (rule read, auto)
+  show "finite_registration_complete_in \<Xi> P n merge_witness_registration"
+    by (rule read_meanings_registrations_complete_in(2)[OF exact]) (rule read, auto)
 qed
+
+lemmas readers_agreement_registrations_complete = readers_agreement_registrations_complete_in[OF finite_query_exact_plain]
 
 section \<open>The rooted readers mean at the read sites what the given's readers mean\<close>
 
@@ -277,21 +278,23 @@ lemma given_rooted_readers_meanings:
 lemma given_rooted_readers_listing: "context_list_rule_relation (positive_meaning given_rooted_readers_system) 390 391"
   by (rule readers_agreement_meanings(9)[OF given_rooted_readers_formed given_rooted_guard_agreement given_rooted_sites])
 
-
 section \<open>The registrations complete there\<close>
 
-theorem given_rooted_registrations_complete:
-  "finite_registration_complete finite_rooted_given_readers n bound_witness_registration"
-  "finite_registration_complete finite_rooted_given_readers n (additions_witness_registration 392 391)"
+theorem given_rooted_registrations_complete_in:
+  assumes exact: "finite_query_exact \<Xi> finite_rooted_given_readers n"
+  shows "finite_registration_complete_in \<Xi> finite_rooted_given_readers n bound_witness_registration"
+  "finite_registration_complete_in \<Xi> finite_rooted_given_readers n (additions_witness_registration 392 391)"
 proof -
-  note by_agreement=readers_agreement_registrations_complete[where P=finite_rooted_given_readers,
-    unfolded finite_rooted_given_readers_exact, OF given_rooted_readers_formed given_rooted_guard_agreement
+  note by_agreement=readers_agreement_registrations_complete_in[where P=finite_rooted_given_readers,
+    unfolded finite_rooted_given_readers_exact, OF exact given_rooted_readers_formed given_rooted_guard_agreement
     given_rooted_sites]
-  show "finite_registration_complete finite_rooted_given_readers n bound_witness_registration"
+  show "finite_registration_complete_in \<Xi> finite_rooted_given_readers n bound_witness_registration"
     by (rule by_agreement(1))
-  show "finite_registration_complete finite_rooted_given_readers n (additions_witness_registration 392 391)"
+  show "finite_registration_complete_in \<Xi> finite_rooted_given_readers n (additions_witness_registration 392 391)"
     by (rule by_agreement(2))
 qed
+
+lemmas given_rooted_registrations_complete = given_rooted_registrations_complete_in[OF finite_query_exact_plain]
 
 section \<open>The clauses the registrations name\<close>
 
@@ -331,17 +334,20 @@ qed
 
 section \<open>The construction complete and the resolver exact there\<close>
 
-theorem given_rooted_construction_complete:
-  "finite_construction_complete (finite_collection_construction given_witness_registrations n)
+theorem given_rooted_construction_complete_in:
+  assumes exact: "finite_query_exact \<Xi> finite_rooted_given_readers n"
+  shows "finite_construction_complete (finite_collection_construction_in \<Xi> given_witness_registrations n)
     finite_rooted_given_readers"
 proof (rule finite_collection_construction_complete_at)
   fix R c
   assume R: "R \<in> set given_witness_registrations"
     and clause: "((registration_site R,c),registration_schema R) |\<in>| finite_system_clauses finite_rooted_given_readers"
-  show "finite_registration_complete finite_rooted_given_readers n R"
-    using R clause given_rooted_registrations_complete given_rooted_registered_clauses(3,4) registration_sites
+  show "finite_registration_complete_in \<Xi> finite_rooted_given_readers n R"
+    using R clause given_rooted_registrations_complete_in[OF exact] given_rooted_registered_clauses(3,4) registration_sites
     by (auto simp: given_witness_registrations_def)
 qed
+
+lemmas given_rooted_construction_complete = given_rooted_construction_complete_in[OF finite_query_exact_plain]
 
 text \<open>
   The exact forms at that construction, R5's at no commitment, the construction's formation discharged

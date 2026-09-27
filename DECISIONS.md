@@ -20056,6 +20056,26 @@ root variable at the top focus; W5's named premise is VK1's value lifting there,
 
 [Recorded 2026-09-27 (task 831's decision; a design, no theory changes).]
 
+[Built by task 847 (W5), with q161's answer. W2's queries are resolved at a query's parameters
+(`Factor_Least_Collections.query_parameters`): two parts, the program's (a table, a priority, a commitment) for the
+ground resolution of every instance found and of an identity (`finite_parameters_resolution`, R5's
+`finite_committed_resolution_by_in`), and the lifted query program's for the query's search (`finite_query_search_in`,
+R5's `finite_committed_search_by_in`), since the search runs over the program with its variables lifted apart and a
+HOL definition takes a commitment at one variable type (q161 (B)); the given's lifted part is the given's declarations
+varied along the lifting, a use-site instance. At `plain_query_parameters` (the empty table, no priority, no
+commitment) every definition is the one of its name before W5 (`finite_parameters_search_plain`,
+`finite_parameters_resolution_plain`); the names stand for those instances, so every consumer and every production
+(`Factor_Narrowed_Commitments.finite_registration_production`) reads R4 as before. Soundness holds at every parameters.
+Completeness is carried under one named premise, `finite_query_exact` (`finite_parameters_refutes_exact` of the
+program's part, `finite_query_search_keeps` of the query's search), discharged at the plain parameters
+(`finite_query_exact_plain`) and, its ground part, wherever R5's committed forms are exact
+(`finite_parameters_refutes_exact_committed`); W4a's completeness and the given's registrations' rest on it (their
+`_in` forms). Its search part at a committing lifted part is not a consequence of R5's lifting, which keeps a root value
+only where nothing is committed and states its found-state invariant at ground roots: the design placed for q161 (A)
+decides a value-keeping lifting, and the given's committing instance is its builds'. A hand-in row names its site,
+schema and variable and the bindings its value relies on, and matches where the node's ground bindings contain them
+(next-edits 215).]
+
 ### What it relies on
 
 Task 376's test:

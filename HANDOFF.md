@@ -57,10 +57,15 @@ certificates) and GT4c #883 (`2e988a42`: the graph reading at found states under
 mailed to GT2, 3 to GT3, 4 to GT6, 5 next-edits 370) → GT2, divided by q158 within a build's room: GT2a #843 (the
 committed search, its forms, exchange and lifting at a table, landed `7d686653`: every `_in` name takes the table and
 today's names are its instances at the empty table, six `_def` facts are now `_in_def`; its hand-over,
-`.build/tasks/843/result.md` Remains, says what the other two consume; no check form at a table, GT2c's) → side by side GT2c #888 (K2's check forms and rc's forms at a table, the named instance at the
-installed program, the table's and the forms' transfers, next-edits 317, review 824's 4) and GT2b #889 (every discharge
-of the exchange and OS1's open premise at a table and a formed selection, after WC2a: correction (16), below); GT5 #845 (the given's table) after GT2c, W5 #847 after GT2a and
-GT2c, R7 #542 and the first request #547 after GT2b; GT3 #876 (the table in F2's shared representation, after GT2c, GT4
+`.build/tasks/843/result.md` Remains, says what the other two consume; no check form at a table, GT2c's) → side by side GT2c #888 (committed `6d620dfe` after one fix: the check forms, the route constants and rc's forms at a
+table, `committed_registrations_in` and `relocated_registrations_in` whose table premises GT2b discharges, the named
+instance `relocated_registrations_in.native_moded_check_installed_in` with the resolution's half beside it, no global
+table copy (next-edits 335 confirmed), the table's transfers carrying truth, so the relocated table is true at the
+numbered program and no formation-only form is placed; review 893's follow-ups mailed) and GT2b #889 (every discharge
+of the exchange and OS1's open premise at a table and a formed selection, after WC2a #912: correction (16), below); GT5 #845 (the given's table) after GT2c, W5 #847 after GT2a and
+GT2c (q161: W2's definitions take a parameter record per type, completeness under a named premise open at the given's
+committing instance, since #831's (2) does not follow from R5's lifting; the design #918 decides a value-keeping
+lifting and exchange before GT2b's one pass), R7 #542 and the first request #547 after GT2b; GT3 #876 (the table in F2's shared representation, after GT2c, GT4
 and the step's fixes) → GT6 #878 (the table produced once, a run of hours parked for its completion, its record
 `validation/given-table.json`, after GT5, the step's fixes and #875, which supplies its prediction and worker count) →
 #542, #547, #707, #399. Q33 is the owner's.
@@ -121,13 +126,15 @@ order, not a step's cost; its prototype waiting class refutes depth 2 in 4,806 s
 correction (16) of "Committed choice, for refusals"): a class of F1's selection of its own at a pair node — a goal
 holding a variable of a pending framed socket's frame, or of the head output, waits while the socket is pending in its
 original form — read by the selection alone, never by exactness; 55's false call at depth 2 refuted in 4,710
-selections, depth 3 in 9,658, the true calls 3–8 % more; review 828's follow-up 1 settled. Its builds, briefed by
-#909 (after #907's landing): WC1 (the class) and WC2a (the formed selection, the exchange and lifting at a table and at
-it) at once; GT2b #889 rewritten to state every discharge at a table and a formed selection in one pass, after WC2a
-(q160: held until then); WC2b (the forms at the waiting moded selection, the control) after WC1, GT2b and GT2c; WC3 (the
-class at the route, K2's constants redefined at the waiting moded selection, the controls again) after D1d, FI and
-GT3, before #542, #547 and #887, beside GT6, whose table's validity does not rest on the order (#878 mailed to name the
-selection it ran); #542 mailed the trigger of 55's clause trials (Open 152). Review 828's follow-ups 3–5 (the committed trace out of a chain of three evaluating
+selections, depth 3 in 9,658, the true calls 3–8 % more; review 828's follow-up 1 settled. Its builds, placed from
+the brief #909, each with its review: WC1 #910 (the class, `Factor_Socket_Waiting`) and WC2a #912 (the formed
+selection, the exchange and lifting at a table and at it) at once; GT2b #889 rewritten from #909's copy to state every
+discharge at a table and a formed selection in one pass, after WC2a; WC2b #914 (the forms at the waiting moded
+selection, the 55 fixture, the control; review 893's rc consolidation and next-edits 332 and 334 with it) after WC1,
+GT2b and GT2c; WC3 #916 (the class at the route, K2's constants redefined at the waiting moded selection, the controls
+again, review 908's 1 and 2) after WC2b, D1d, FI and GT3, before #542, #547 and #887, beside GT6, whose table's
+validity does not rest on the order (#878 mailed to name the selection it ran); #542, #547 and #887 mailed what WC3
+changes for them, #542 the trigger of 55's clause trials (Open 152). Review 828's follow-ups 3–5 (the committed trace out of a chain of three evaluating
 theories, about 90 s a check) were the fix #898, landed (`ae6ded12`: `committed_trace` in `Factor_Committed_Traces`,
 which evaluates nothing); review 898's 1 went to #887, its 2 and 3 were the fix #908, landed (`43bae697`: the fixtures in
 `Development_Given_Execution_Fixtures`, which evaluates nothing; review 908's 1 and 2 to WC3 through #909, its 3 with
@@ -146,9 +153,9 @@ under Open and in `.build/plans/next-edits.md`.
 #876 → GT6 #878 → R7 #542 → #707 → #399 → #709 → #553 → #447 → #449 → #450, and GT2c #888 → D1d → … one shorter,
 D1's builds and GT2's division spliced as detail; nothing is added after its tail until it shortens (the approval build,
 Open 142, waits for that). The queue is the planner's choice, a residual until the selection problem's native answer
-(Q2): running tasks first, the brief #909 (correction (16)'s builds), D1c's and D1a's reviews, GT2c's, D1b, FI and
-D1d each with its review, GT2b, #875, the route in
-its chains' order, the consolidation #887 after GT6's review (nothing waits on it). Word changes are serialized; none is
+(Q2): running tasks first, D1c #901 with its review, the design #918, WC2a and WC1 with theirs, GT5 and W5 with
+theirs, FI, D1b, GT2b, WC2b and D1d each with its review, #875, GT3, WC3, GT6, the route in its chains' order, the
+consolidation #887 after R7's review (nothing waits on it). Word changes are serialized; none is
 queued.
 
 ## Decisions
@@ -207,7 +214,7 @@ figures: the machinery judgment 3.76–4.22 s, the seeded 0.28–0.31 s. Not tak
   where the bundle is built (q147); an unfolding lemma spelling a changed body changes with it where nothing outside
   cites it (q149).
 - A route selection that is not a priority of F1's is a formed selection (F1's two facts, correction (16)): the waiting
-  moded selection is the first, and the exchange is stated at any formed selection (WC2).
+  moded selection is the first, and the exchange is stated at any formed selection (WC2a #912).
 - A free socket whose viewed input holds a variable of the parent's head output at its view never commits under the
   test at inputs (review 604's 1): a declaration build drops such a socket or declares it at a view apart.
 - A partial presentation is honest; a total one that maps the omitted case somewhere is not (item 13).
@@ -322,7 +329,8 @@ REASONING_REUSE.md, how each went in `PLANNING_LOG.md`.
   discharges `Factor_Resolution_Producer_Discharge`, `Factor_Resolution_Socket_Discharges`,
   `Factor_Resolution_Material_Discharge`, its forms and transfers `Factor_Resolution_Views`,
   `Factor_Resolution_Carriers`, `Factor_Narrowed_Sockets`, `Factor_Narrowed_Commitments`, `Factor_Narrowed_Productions`;
-  modes `Factor_Resolution_Modes`; the check forms `Factor_Resolution_Checks`; the framed test's index
+  modes `Factor_Resolution_Modes`; the check forms `Factor_Resolution_Checks` (with the route constants at a table since GT2c #888, and the table's
+  transfers carrying truth, `finite_table_true_agreement` and `finite_table_true_relocated_alpha`); the framed test's index
   `Factor_Framed_Commitment_Index`; the input production `Factor_Input_Productions`; controls in
   `Factor_Resolution_Controls`, `Factor_Commitment_Controls`, `Factor_Narrowed_Controls`, `Factor_Mode_Controls`,
   `Factor_Check_Controls`.
@@ -347,7 +355,9 @@ REASONING_REUSE.md, how each went in `PLANNING_LOG.md`.
 - **The clause match**: `Factor_Finite_Schema_Matching`, `Factor_Varied_Constructions`, `Factor_Varied_Declarations`,
   `Factor_Varied_Narrowed_Sockets`, `Factor_Varied_Narrowed_Transfer`, `Development_Installed_Presentations`.
 - **rc's forms**: `Factor_Committed_Registrations`, `Factor_Native_Committed_Registrations` (the locale
-  `relocated_registrations`).
+  `relocated_registrations`; at a table since GT2c #888, `committed_registrations_in` and `relocated_registrations_in`,
+  premise blocks whose table premises GT2b discharges).
+- **The binding store** `Shared_Binding_Stores` (D1a #899), under which D1b's deferred search keeps its nodes.
 - **Briefs whose findings stand**: #434 (the approval record's place, part (g), parts (h) and (e), Q25) and #451 (the
   readings of "generation" and "adoption"), each in its `result.md`.
 
@@ -421,19 +431,13 @@ a theory before briefing a task that edits it.
 
 ## Now
 
-- **Under way**: D1c #901; GT2c #888; FI #892 after D1c (review 891's 3 and 4, plan-127's mail); the brief #909 of correction (16)'s builds after #907 lands, GT2b #889 held for its rewrite.
-- **What the next events ask**: #909's proposal placed — WC1 and WC2a at once, WC2a feeding GT2b, WC2b after WC1, GT2b
-  and GT2c, WC3 before #542, #547 and #887; GT2b's and #894's rewrites placed by edit from the brief's copies under the
-  planner's folder; GT2c's answer on `finite_table_true` at the relocated table (#883's review 1: else the
-  formation-only form is placed); GT6's prediction and worker count from #875 before its run, with the checking fold
+- **Under way**: D1c #901 continued from its tree (the planner's answers to its questions in its brief); WC2a #912 and
+  WC1 #910 of correction (16); FI #892 after D1c (review 891's 3 and 4 mailed again); GT2c #888 committed, landing.
+- **What the next events ask**: the design #918's verdict (q161 (A)), then what GT2b #889 must respect put into its
+  brief before it starts and the value-keeping builds placed before #399; GT6's prediction and worker count from #875
+  before its run, with the checking fold
   measured at samples; #709's brief rewritten before it starts. Q33 is the owner's.
-- **Not yet handled (plan-128's window ended)**: D1c #901 ended partial (`.build/tasks/901/result.md`; its tree
-  `.build/trees/901` holds the work, FSR loading clean, FSS step 3 with seven probe errors): re-plan it as "D1c,
-  continued from its tree" — its Remains 1–5 the session's first batch, its original Done items, Decided and Size kept
-  (`.build/tasks/901/brief.json`) — and queue it; FI #892, #902 and D1b #903 wait on it. The planner's answers to its
-  questions (plan-128): `classes_keys_prefix` gaining the two formation premises is accepted (chain contiguity holds only
-  at formed states; its one consumer passes them); the kept sets' formation folded into `search_classes_formed` is the
-  intended clause (established by the constructors, kept by every step).
+
 - **Planners stopped**: plan-120 and plan-121 were stopped by a classifier declining a turn, before their notes; this
   file and `PLANNING_LOG.md` carried all they settled. Keep both current at every event.
 - **Briefs nearest their rooms**: #542, #399 and the samples build #551; GT2b #889 at 350K beside the discharge

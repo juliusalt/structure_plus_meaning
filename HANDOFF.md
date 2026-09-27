@@ -53,12 +53,12 @@ once over graphs and retained; a judgment in two phases; 77's bound handed in fo
 one-time ≈ 31–34 M states, a judgment's part ≈ 2–5 M (after #928 a candidate's part is its additions). Landed: the
 table through R3–R5 and C (GT1a, GT1b, GT4, GT4b, GT4c, GT2a, GT2c), the given's calls (GT5 #845), W5 #847, VK1 #920 (the
 root-kept restriction, the valued exchange and lifting; task 918's decision) and GT2b's two parts #889 and #922 (every discharge valued
-at a true table, the composed forms, GT2c's premise blocks). Open: #942 (q164 and review 923's 1–2: the construction's
-support and lifting at a true table, rc's construction premise discharged, the committed forms' transfers at a table)
-→ VK2 #924 (W5's premise at the given's committing instance) → AX4 and #399, and WC2b #914 and #547; GT3 #876 (the table in F2's shared representation, after D1d) → GT6 #878
+at a true table, the composed forms, GT2c's premise blocks) and #942 (q164, review 923's 1–2: rc's table forms from a true table and rc alone, the
+committed forms' transfers at a table). Open: VK2 #924 (W5's premise at the given's committing instance) → AX4 and
+#399; GT3 #876 (the table in F2's shared representation, after D1d) → GT6 #878
 (the table produced once, a run of hours parked for its completion, its record `validation/given-table.json`, after
-#875, which supplies its prediction and worker count) → #542, #547, #707, #399. #547 waits on #942, not
-on VK2 (its refusal at 561 goes through the merge at W5's plain instance). The table is the readers' part, its guard
+#875, which supplies its prediction and worker count) → #542, #547, #707, #399. #547 does not wait on
+VK2 (its refusal at 561 goes through the merge at W5's plain instance). The table is the readers' part, its guard
 part at (g, g) retired by AX4, so GT6 and #875 do not wait on AX1–AX4.
 
 **A search step's cost** (#830's and #886's attributions): the fixes placed from #852, F234 #891, FI #892 (the committed
@@ -73,7 +73,7 @@ FI's remaining costs (review 895's 2 and 5, next-edits 385).
 
 **The order at a pair node** (correction (16), D2 #907 from #896's attribution of c55 #827): a waiting class of F1's
 selection, read by the selection alone, never by exactness. Landed: WC1 #910, WC2a #912. Open: WC2b #914 (the forms at
-the waiting moded selection, the 55 fixture, the control; after #942) → WC3 #916 (the class at the route, K2's constants
+the waiting moded selection, the 55 fixture, the control) → WC3 #916 (the class at the route, K2's constants
 redefined at the waiting moded selection; after D1d, FI and GT3) → #542, #547, #887, beside GT6, whose table's validity
 does not rest on the order; R7 #542's figures set the trigger of 55's clause trials (Open 152). The consolidation #887
 (review 832's follow-ups) after GT3 and WC3; nothing waits on it.
@@ -91,7 +91,7 @@ under Open and in `.build/plans/next-edits.md`.
 #940 → R7 #542 → #707 → #399 → #709 → #553 → #447 → #449 → #450, and D1b's second part #926 → D1d #905 → GT3 #876 → WC3
 #916 or GT6 #878 → R7 as long. Nothing is added after the tail until it shortens (the approval build,
 Open 142, waits for that). The queue is the planner's choice, a residual until the selection problem's native answer
-(Q2): running tasks first with their reviews, #942, AX1–AX4 with theirs, VK2, WC2b, D1d, #875,
+(Q2): running tasks first with their reviews, the investigation of the probe's start, AX2a–AX4 with theirs, VK2, WC2b, D1d, #875,
 GT3, WC3, GT6, the route in its chains' order, #887 after R7's review. Word changes are serialized; none is queued.
 
 ## Decisions
@@ -295,12 +295,14 @@ REASONING_REUSE.md, how each went in `PLANNING_LOG.md`.
   `Development_Socket_Liveness_Execution`.
 - **The least witnesses**: `Factor_Least_Collections` (W2's queries at a query's parameters, their completeness under
   `finite_query_search_keeps`, discharged at the plain instance), `Factor_Least_Witness_Facts`,
-  `Factor_Construction_Holders`, `Factor_Least_Witness_Registrations`, `Development_Given_Registrations`,
+  `Factor_Construction_Holders`, `Factor_Least_Witness_Registrations` (the construction's support and lifting at a true
+  table since #942, `finite_construction_complete_lifts_in`), `Development_Given_Registrations`,
   `Development_Asked_Registrations`, `Development_First_Request_Registrations`, `Development_Rooted_Registrations`.
 - **The clause match**: `Factor_Finite_Schema_Matching`, `Factor_Varied_Constructions`, `Factor_Varied_Declarations`,
   `Factor_Varied_Narrowed_Sockets`, `Factor_Varied_Narrowed_Transfer`, `Development_Installed_Presentations`. **rc's
-  forms**: `Factor_Committed_Registrations`, `Factor_Native_Committed_Registrations` (at a table:
-  `committed_registrations_in`, `relocated_registrations_in`, premise blocks whose table premises GT2b discharges).
+  forms**: `Factor_Committed_Registrations`, `Factor_Native_Committed_Registrations` (at a table whose
+  calls are true, from rc alone since #942: `committed_registrations_in`, `relocated_registrations_in`; the committed
+  forms' transfers at a table).
 - **The given's table's calls**: `Development_Given_Table` (GT5: `given_table_calls`, the readers' part and the guard's
   part, their truth at agreeing programs and at the installations). **K3**: `Development_Given_Checks_Execution` (the
   given at the check forms; 77 at the given's own definition a step of about 0.11 s).
@@ -375,8 +377,9 @@ a theory before briefing a task that edits it.
 
 ## Now
 
-- **Under way**: D1b's second part #926, AX2a #932 and #942, which carries q164's answer (it reached no session) and
-  review 923's follow-ups 1, 2, 4 and 5; GT3 #876 waits on it (both edit `Factor_Resolution_Checks`).
+- **Under way**: D1b's second part #926, AX2a #932, VK2 #924, WC2b #914 and the investigation of the probe's start
+  (review 943's 5: 55–74 s runs whose theories load in 1–2 s, the tool's model predicting 4.9 s over 10 sessions; a
+  cause in the harness or the base goes to the owner).
 - **What the next events ask**: #875's figures — GT6's prediction and worker count, the checking fold measured at
   samples, the kept forms (q162) and FI's remaining costs (Graph); with them the re-run of #718's 77 and 79 fixtures with
   review 858's attributions (next-edits 364–366), due since W5's landing but waiting for the deferred route, since

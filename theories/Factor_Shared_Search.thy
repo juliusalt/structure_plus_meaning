@@ -246,7 +246,41 @@ definition state_access_over :: "('a,'s,'d,'c) shared_goal_entry fset \<Rightarr
      access_open = tree_count (shared_open s),
      access_holders = tree_bucket (shared_holders s),
      access_free = \<lambda>hn. {||}, access_value_none = \<lambda>hn a. True, access_registered = {||},
-     access_holdable = \<lambda>h. False, access_witnesses = shared_witnesses s\<rparr>)"
+     access_holdable = \<lambda>h. False, access_witnesses = shared_witnesses s,
+     access_call_variables = \<lambda>hn. shared_pattern_variables (shared_derivation_call (shared_entry_node hn))\<rparr>)"
+
+text \<open>
+  The table is read where a goal or a node is decoded, not where the access is built (#886's finding 4): the code
+  unfolds the let into the decoding closures, and a call goal is not solvable without reading it. A node's call
+  variables are read of its shared call, never decoded (#886's finding 2).
+\<close>
+
+lemma state_access_over_code [code]:
+  "state_access_over G s =
+    \<lparr>access_goals = G,
+     access_goals_at = \<lambda>q. option_fset (RBT.lookup (shared_goals s) q),
+     access_nodes_at = \<lambda>q. option_fset (RBT.lookup (shared_nodes s) q),
+     access_goal = \<lambda>h. shared_goal_project (shared_state_table s) (shared_entry_goal h),
+     access_node = \<lambda>hn. shared_derivation_project (shared_state_table s) (shared_entry_node hn),
+     access_goal_position = \<lambda>h. shared_goal_position (shared_entry_goal h),
+     access_node_position = \<lambda>hn. shared_derivation_position (shared_entry_node hn),
+     access_variables = \<lambda>h. shared_goal_variables (shared_entry_goal h),
+     access_alternatives = shared_entry_alternatives,
+     access_is_call = \<lambda>h. shared_goal_is_call (shared_entry_goal h),
+     access_solvable = \<lambda>h. (case shared_entry_goal h of Shared_Call_Goal q rr d p \<Rightarrow> False
+       | Shared_Material_Goal q rr M \<Rightarrow> shared_goal_solvable (shared_state_table s) (shared_entry_goal h)),
+     access_leaf = \<lambda>h. shared_goal_leaf (shared_entry_goal h),
+     access_key = \<lambda>h. shared_call_key (shared_entry_goal h),
+     access_closes = shared_closes,
+     access_same = shared_same,
+     access_goal_calls = tree_bucket (shared_goal_calls s),
+     access_node_calls = tree_bucket (shared_node_calls s),
+     access_open = tree_count (shared_open s),
+     access_holders = tree_bucket (shared_holders s),
+     access_free = \<lambda>hn. {||}, access_value_none = \<lambda>hn a. True, access_registered = {||},
+     access_holdable = \<lambda>h. False, access_witnesses = shared_witnesses s,
+     access_call_variables = \<lambda>hn. shared_pattern_variables (shared_derivation_call (shared_entry_node hn))\<rparr>"
+  by (simp add: state_access_over_def Let_def fun_eq_iff split: shared_goal.split)
 
 definition state_access :: "('a,'s::linorder,'d,'c) shared_state \<Rightarrow>
     (('a,'s,'d,'c) shared_goal_entry, ('a,'s,'d,'c) shared_node_entry, nat, 'a, 's, 'd, 'c) search_access" where
@@ -289,6 +323,7 @@ lemma shared_access_simps:
   "access_registered (shared_access \<kappa> P r) = fset_of_list (RBT.keys (search_registered r))"
   "access_holdable (shared_access \<kappa> P r) h \<longleftrightarrow> shared_goal_registered h \<noteq> {||}"
   "access_witnesses (shared_access \<kappa> P r) = shared_witnesses (search_state r)"
+  "access_call_variables (shared_access \<kappa> P r) hn = shared_pattern_variables (shared_derivation_call (shared_entry_node hn))"
   by (simp_all add: shared_access_def state_access_def state_access_over_def Let_def)
 
 lemma shared_goal_lookup_position:
@@ -413,6 +448,13 @@ proof -
     fix h show "shared_goal_leaf (shared_entry_goal h) \<longleftrightarrow>
         finite_leaf_call_goal (shared_goal_project ?T (shared_entry_goal h))"
       by (cases "shared_entry_goal h") (simp_all add: shared_has_leaf[of _ ?T])
+  next
+    fix n q assume "RBT.lookup (shared_nodes ?s) q = Some n"
+    then have "shared_pattern_formed ?T (shared_derivation_call (shared_entry_node n))"
+      using nf by (auto simp: node_entry_formed_def shared_derivation_formed_def)
+    then show "shared_pattern_variables (shared_derivation_call (shared_entry_node n)) =
+        finite_pattern_variables (resolution_node_call (shared_derivation_project ?T (shared_entry_node n)))"
+      by (simp add: shared_derivation_project_def shared_pattern_variables_project)
   next
     fix h assume h: "RBT.lookup (shared_goals ?s) (shared_goal_position (shared_entry_goal h)) = Some h"
       and held: "finite_held \<kappa> (search_project r) (shared_goal_project ?T (shared_entry_goal h))"
@@ -1078,8 +1120,6 @@ proof (rule classes_update_formed[OF r'])
   qed
 qed
 
-text \<open>A step that extends the table and keeps the goals, the pending goals and the nodes keeps the classes formed.\<close>
-
 text \<open>
   The goal-call index keeps the positions of goals that have left (it holds at least the goals making each call), so a
   step re-tests only the touched positions that hold a goal after it, and its own: a touched position holding none is
@@ -1133,6 +1173,8 @@ proof (rule classes_update_formed[OF r'])
     show ?thesis using f False by (simp add: classes_update_lookup)
   qed
 qed
+
+text \<open>A step that extends the table and keeps the goals, the pending goals and the nodes keeps the classes formed.\<close>
 
 lemma classes_formed_extends:
   assumes r: "search_formed \<kappa> P r" and K: "search_classes_formed r"
@@ -3514,32 +3556,33 @@ lemma class_first_code [code]:
   "class_first H t = (case rbt_first_value (\<lambda>h. h |\<notin>| H) (RBT.impl_of t) of None \<Rightarrow> {||} | Some h \<Rightarrow> {|h|})"
   by (simp add: class_first_def rbt_first_value_find RBT.entries.rep_eq)
 
-definition search_select :: "('a,'s,'d,'c) finite_witness_construction \<Rightarrow> ('a,'s,'d,'c) finite_schema_system \<Rightarrow>
-    (('a,'s,'d,'c) shared_goal_entry \<Rightarrow> bool) \<Rightarrow> ('a,'s::linorder,'d,'c) shared_search \<Rightarrow>
+text \<open>
+  The kept selection at a priority given as a class of the candidates (task 871, moved here by task 891): the
+  construction nodes as the access reads them, then the first settled goal, the goals the class names among the
+  candidates, the first single goal and the waiting rule over every goal not held back, the goals held back read over
+  the access it is given (@{text search_held_over}), so that the access is built once. The plain selection is its
+  instance at the class a test's filter makes (@{text search_select}); the committed route's selection at the whole
+  focus is too (@{text Factor_Shared_Commitments}).
+\<close>
+
+definition kept_select_by :: "(('a,'s,'d,'c) shared_goal_entry fset \<Rightarrow> ('a,'s,'d,'c) shared_goal_entry fset) \<Rightarrow>
+    ('a,'s::linorder,'d,'c) shared_search \<Rightarrow>
+    (('a,'s,'d,'c) shared_goal_entry,('a,'s,'d,'c) shared_node_entry,nat,'a,'s,'d,'c) search_access \<Rightarrow>
     (('a,'s,'d,'c) shared_node_entry, ('a,'s,'d,'c) shared_goal_entry) access_selection" where
-  "search_select \<kappa> P rp r = (let V = shared_access \<kappa> P r; N = access_construction_nodes V in
-    if N \<noteq> {||} then Access_Construction (access_first_nodes V N)
-    else let H = search_held \<kappa> P r; K = search_classes r; c0 = class_first H (class_settled K);
-      S = (if c0 \<noteq> {||} then c0 else
-        let cp = ffilter rp (fset_of_list (map snd (RBT.entries (class_candidates K))) |-| H) in
-        if cp \<noteq> {||} then access_first_goals V cp else
-        let c1 = class_first H (class_single K) in
-        if c1 \<noteq> {||} then c1 else access_waiting_selection V (access_goals V |-| H)) in
-      if S = {||} then Access_None else Access_Goals S)"
-
-text \<open>The selection reads the goals held back over the access it builds, building it once.\<close>
-
-lemma search_select_code [code]:
-  "search_select \<kappa> P rp r = (let V = shared_access \<kappa> P r; N = access_construction_nodes V in
+  "kept_select_by pc r V = (let N = access_construction_nodes V in
     if N \<noteq> {||} then Access_Construction (access_first_nodes V N)
     else let H = search_held_over V r; K = search_classes r; c0 = class_first H (class_settled K);
       S = (if c0 \<noteq> {||} then c0 else
-        let cp = ffilter rp (fset_of_list (map snd (RBT.entries (class_candidates K))) |-| H) in
+        let cp = pc (fset_of_list (map snd (RBT.entries (class_candidates K))) |-| H) in
         if cp \<noteq> {||} then access_first_goals V cp else
         let c1 = class_first H (class_single K) in
         if c1 \<noteq> {||} then c1 else access_waiting_selection V (access_goals V |-| H)) in
       if S = {||} then Access_None else Access_Goals S)"
-  by (simp only: search_select_def search_held_def Let_def)
+
+definition search_select :: "('a,'s,'d,'c) finite_witness_construction \<Rightarrow> ('a,'s,'d,'c) finite_schema_system \<Rightarrow>
+    (('a,'s,'d,'c) shared_goal_entry \<Rightarrow> bool) \<Rightarrow> ('a,'s::linorder,'d,'c) shared_search \<Rightarrow>
+    (('a,'s,'d,'c) shared_node_entry, ('a,'s,'d,'c) shared_goal_entry) access_selection" where
+  "search_select \<kappa> P rp r = kept_select_by (ffilter rp) r (shared_access \<kappa> P r)"
 
 theorem search_select:
   assumes r: "search_formed \<kappa> P r" and K: "search_classes_formed r"
@@ -3595,7 +3638,7 @@ proof -
        else if class_first ?H (class_single ?K) \<noteq> {||} then class_first ?H (class_single ?K)
        else access_waiting_selection ?V (access_goals ?V |-| ?H))"
     by (simp only: access_goal_choice_classes Let_def e0 e1 n0 n1)
-  show ?thesis by (simp only: search_select_def access_select_def Let_def A ecp ch)
+  show ?thesis by (simp only: search_select_def kept_select_by_def search_held_def[symmetric] access_select_def Let_def A ecp ch)
 qed
 
 theorem shared_kept_search:

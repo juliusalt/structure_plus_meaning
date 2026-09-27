@@ -20397,3 +20397,27 @@ run's spread (the step's own selection ≤ 6 ms of ten steps). Limits: at a prop
 access (every goal filtered and tested each step), not exercised by these fixtures (no production commits). What the step
 still pays of #865's selection — `class_first` listing a class, the held goals and the waiting fallback each step, the
 access built again inside `search_held` — is the kept search's, left to the fix placed after this one.
+
+### The access holds a node's call variables; the committed step and the kept selection are stated once
+
+[Task 891, from #886's findings 2–4 (`.build/tasks/886/result.md`), review 872's and review 885's follow-ups.]
+
+- A node's call variables are a field of the access (`access_call_variables`), formed at an R3 state as the variables
+  of the node's call (`access_formed.node_call_variables`). The ground-focus test reads the field
+  (`access_focus_ground`); the shared access gives it of the node's shared call (`shared_pattern_variables`), as the
+  commitment access already did, so the test decodes no node (at the given it decoded the root, 441K nodes, every
+  step). The indexed access keeps R3's reading. `access_formed.focus_ground` keeps its statement.
+- The shared state's access reads its table where a goal or a node is decoded (`state_access_over_code`), not where
+  the access is built, and a call goal is not solvable without reading it.
+- The tested committed step is defined as the selected step at the selection over the focused access; the kept
+  selection (`kept_select_by`, in `Factor_Shared_Search`) reads the goals held back over the access it is given, and
+  the plain selection is its instance; the choice at a priority class (`access_goal_choice_by`) stands in
+  `Factor_Search_Representations` beside the choice it generalizes (whose classes lemma keeps its statement). The
+  statements `search_select_code` and `search_select_kept` are retired: the definitions now say what they said. The
+  route's priority class reads the state's access at the whole focus (`route_select_code`).
+- Not taken: a substituted goal's alternatives counted by the shared unifier (#886's finding 3). The unifier shares the
+  definition's ground terms into the sharing state before it unifies (`shared_call_alternatives`), so the count
+  threads that state, where `enter_goal` takes a table and `enter_goal_formed` states the entry formed at it: its cure
+  changes a statement, and is the planner's.
+- Evidence (held, `.build/tasks/891/measurement.md`): the route at the given, 77 at the check form, bound 30:
+  0.555–0.621 s before, 0.260–0.365 s after; bound 10: 0.314 → 0.293 s; 77/1 at 200 unchanged (0.12–0.14 s).

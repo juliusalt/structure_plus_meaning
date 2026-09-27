@@ -1054,6 +1054,16 @@ definition route_select where
   "route_select \<kappa> P Kc Dm M gd F r V x =
     committed_kept_select \<kappa> P (admitted_priority_class Kc Dm M (gd r) (access_focused F V) (fst x)) F r V"
 
+text \<open>
+  At the whole focus the priority's class reads the state's access (@{thm [source] access_focused_whole}), so the route
+  builds no focused record there.
+\<close>
+
+lemma route_select_code [code]:
+  "route_select \<kappa> P Kc Dm M gd F r V x = committed_kept_select \<kappa> P
+    (admitted_priority_class Kc Dm M (gd r) (if F = None \<or> F = Some [] then V else access_focused F V) (fst x)) F r V"
+  by (cases "F = None \<or> F = Some []") (simp_all add: route_select_def access_focused_whole)
+
 lemma route_kept_formed:
   assumes tf: "tested_representation_formed (shared_committed_representation \<kappa> P) Fi \<kappa> P K pr
       (commitment_tests (shared_committed_representation \<kappa> P) shared_commitment_access Kc Dm M gd) gd"

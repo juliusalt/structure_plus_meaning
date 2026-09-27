@@ -60,16 +60,18 @@ for its completion, its record `validation/given-table.json`, after GT5 and the 
 (#861) and the pruning test through the node-call index (#863); open the selection's classes kept #865 (at no focus,
 q156; the held goals and construction nodes recomputed over `search_registered`, mailed to #875) → in F2c #871 (the
 focused instance, q156, mailed),
-and the commitment's tests over the access #867 → F2c's committed step over them #869 (after OS2) → K3 #825. #861's
+and the commitment's tests over the access (#867 landed, `b805e7c8`, `Factor_Access_Commitments`) → F2c's committed
+step over them #869 (review 868's 1–5 and 7 mailed) → K3 #825. #861's
 question — a production binding a variable that occurs nowhere pays a keyed walk: (a) a term-level substitution, (b) an
 order at the given's variable type, (c) kept, provisional — and review 862's 2–4 are the investigation #875's to
 measure (mailed); their fixes are placed before GT6.
 
-**Corrections (12)–(15)** have landed but for K3 #825 (the given at the check forms after #867 → #869: 77/1, 77/2,
+**Corrections (12)–(15)** have landed but for K3 #825 (the given at the check forms after #869: 77/1, 77/2,
 113/7) → GT2, and the consolidation #832 (review 824's 2, 3, 6, 7, 9) before GT2. I3b #817 landed (`b9d5f1d3`); review
 818's 1–4 are the fix #881 (12's production present at the installed lookup socket, `installed_single_clause`, the
 installed carrying stated once) before #547, #707 and #399, its 5 next-edits 362. Off the route: #857 re-runs #718's
-77 and 79 fixtures after OS2, and c55 #827 follows K3, both held runs queued last.
+77 and 79 fixtures after OS2 (still not returning: their cost is W5's and the table's, next-edits 364), and c55
+#827 follows K3, both held runs queued last.
 
 **Retired** on #376's and #378's entries: the decomposition line (#325–#334), N1a, N1b, N3a, N3b, N4a, N4b, #371, #377,
 the designation by locus (#169, #170), the index form's retirement (#92, #93), the machinery's native verification
@@ -80,7 +82,7 @@ request construction over rows, the incremental assessment, the rows line, the d
 digit layout, the rule programs' law, the shared-subterm engine (B1–B6), the exporter's obligations. Their remains are
 under Open and in `.build/plans/next-edits.md`.
 
-**Shape and order.** No build waits on a review. The longest chain, 14 deep: #867 → #869 → K3 #825 → GT2 #843
+**Shape and order.** No build waits on a review. The longest chain, 13 deep: #869 → K3 #825 → GT2 #843
 → GT3 #876 → GT6 #878 → R7 #542 → #707 → #399 → #709 → #553 → #447 → #449 → #450; nothing is added after its tail until
 it shortens (the approval build, Open 142, waits for that). The queue is the planner's choice, a residual until the
 selection problem's native answer (Q2): running tasks first, then by slack on the longest chain, the route in its
@@ -261,7 +263,8 @@ REASONING_REUSE.md, how each went in `PLANNING_LOG.md`.
   `Factor_Check_Controls`.
 - **The resolver's states**: F2a `Factor_Shared_Patterns`, F2b1 `Factor_Indexed_Resolution`, F2b2
   `Factor_Shared_Resolution`, `Factor_Search_Representations` and `Factor_Shared_Search`, F2c
-  `Factor_Shared_Commitments`, C `Factor_Resolution_Graph_Checks`.
+  `Factor_Shared_Commitments`, the commitment's tests over the access `Factor_Access_Commitments` (#867), C
+  `Factor_Resolution_Graph_Checks`.
 - **The given's declarations**: `Development_Given_Declarations`, `Factor_Root_Family_Declarations`,
   `Factor_Artifact_Citation_Declarations`, `Factor_Instantiation_Declarations`,
   `Factor_Schema_Instantiation_Declarations`, `Factor_Definition_Reading_Declarations`, `Factor_Union_Declarations`,
@@ -345,10 +348,11 @@ a theory before briefing a task that edits it.
 
 ## Now
 
-- **Under way**: #865 (q156 answered), #867, GT4 #841 and #857; the fix #881 (review 818's 1–4) can start.
-- **What the next events ask**: the hand-overs of #865, #867, GT4, #857 and #881; GT6's prediction and worker count
-  before its run; #709's brief rewritten before it starts; #861's question decided on #875's figures before GT6
-  (provisional (c)). Q33 is the owner's.
+- **Under way**: #865 (q156 answered), GT4 #841, #857 (told to hand over, no fix task), the fix #881 (review 818's 1–4)
+  and #869 (#867 having landed).
+- **What the next events ask**: the hand-overs of #865, GT4, #857, #881 and #869 (its step measured at the given
+  decides review 868's 4, the linear scans); GT6's prediction and worker count before its run; #709's brief rewritten
+  before it starts; #861's question decided on #875's figures before GT6 (provisional (c)). Q33 is the owner's.
 - **Briefs nearest their rooms**: #542, #399 and the samples build #551; GT2 #843 at 340K — if handed back, its (9) with
   the truth-soundness becomes a task after it and before GT3, GT5 and W5 (#880's Remains 1). A brief written before its
   theories grew may be refused at its start, and is resized or divided then.

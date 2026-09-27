@@ -158,7 +158,7 @@ proof -
     "10 \<in> schema_dependencies (decode_finite_schema given_target_socket_schema)"
     "39 \<in> schema_dependencies (decode_finite_schema interpretation_socket_schema)"
     by (rule finite_premise_callee; simp add: root_family_socket_schema_def identity_socket_schema_def
-      comparison_socket_schema_def family_rows_socket_schema_def 
+      comparison_socket_schema_def family_rows_socket_schema_def
       given_target_socket_schema_def interpretation_socket_schema_def)+
   have m79: "32 \<in> ?R" "37 \<in> ?R" using given_socket_reaches[OF sock(1) e(2)] call(1,2) by blast+
   have m12: "7 \<in> ?R" "11 \<in> ?R" using given_socket_reaches[OF sock(2) r(1)] call(3,4) by blast+

@@ -1080,6 +1080,60 @@ qed
 
 text \<open>A step that extends the table and keeps the goals, the pending goals and the nodes keeps the classes formed.\<close>
 
+text \<open>
+  The goal-call index keeps the positions of goals that have left (it holds at least the goals making each call), so a
+  step re-tests only the touched positions that hold a goal after it, and its own: a touched position holding none is
+  outside every class already, the step leaving it as it was (@{text classes_step_goals}).
+\<close>
+
+definition classes_touched_goals :: "'s list \<Rightarrow> ('a,'s::linorder,'d,'c) shared_state \<Rightarrow> ('a,'s,'d,'c) shared_state \<Rightarrow>
+    's list list" where
+  "classes_touched_goals q s s' = q # concat (map (\<lambda>i. sorted_list_of_fset
+    (ffilter (\<lambda>p. RBT.lookup (shared_goals s') p \<noteq> None) (tree_bucket (shared_goal_calls s') i)))
+    (sorted_list_of_fset (classes_keys q s s')))"
+
+lemma classes_touched_goals_member:
+  "p \<in> set (classes_touched_goals q s s') \<longleftrightarrow>
+    p = q \<or> (RBT.lookup (shared_goals s') p \<noteq> None \<and> p \<in> set (classes_touched q s s'))"
+  by (auto simp: classes_touched_goals_def classes_touched_member sorted_list_of_fset.rep_eq ffilter.rep_eq)
+
+lemma classes_step_goals:
+  assumes r: "search_formed \<kappa> P r" and r': "search_formed \<kappa> P r'"
+    and ext: "table_extends (search_table r) (search_table r')"
+    and goals: "\<And>p. p \<noteq> q \<Longrightarrow> RBT.lookup (shared_goals (search_state r')) p = RBT.lookup (shared_goals (search_state r)) p"
+    and nodes: "\<And>p. p \<noteq> q \<Longrightarrow> RBT.lookup (shared_nodes (search_state r')) p = RBT.lookup (shared_nodes (search_state r)) p"
+    and K: "classes_formed (search_state r) K"
+  shows "classes_formed (search_state r')
+    (classes_update (classes_touched_goals q (search_state r) (search_state r')) (search_state r') K)"
+proof (rule classes_update_formed[OF r'])
+  let ?T = "classes_touched q (search_state r) (search_state r')"
+  have F: "classes_formed (search_state r') (classes_update ?T (search_state r') K)"
+    by (rule classes_step[OF r r' ext goals nodes K])
+  fix p assume out: "p \<notin> set (classes_touched_goals q (search_state r) (search_state r'))"
+  show "RBT.lookup (class_candidates K) p = class_value (kept_candidate (search_table r')) (shared_goals (search_state r')) p \<and>
+      RBT.lookup (class_settled K) p =
+        class_value (kept_settled (search_table r') (search_project r')) (shared_goals (search_state r')) p \<and>
+      RBT.lookup (class_single K) p =
+        class_value (kept_single (search_table r') (search_project r')) (shared_goals (search_state r')) p"
+  proof (cases "p \<in> set ?T")
+    case True
+    have pq: "p \<noteq> q" and none: "RBT.lookup (shared_goals (search_state r')) p = None"
+      using out True by (auto simp: classes_touched_goals_member)
+    have none0: "RBT.lookup (shared_goals (search_state r)) p = None" using goals[OF pq] none by simp
+    show ?thesis using K none none0 unfolding classes_formed_def by (simp add: class_value_def)
+  next
+    case False
+    from F have f: "RBT.lookup (class_candidates (classes_update ?T (search_state r') K)) p =
+        class_value (kept_candidate (search_table r')) (shared_goals (search_state r')) p"
+      "RBT.lookup (class_settled (classes_update ?T (search_state r') K)) p =
+        class_value (kept_settled (search_table r') (search_project r')) (shared_goals (search_state r')) p"
+      "RBT.lookup (class_single (classes_update ?T (search_state r') K)) p =
+        class_value (kept_single (search_table r') (search_project r')) (shared_goals (search_state r')) p"
+      unfolding classes_formed_def by blast+
+    show ?thesis using f False by (simp add: classes_update_lookup)
+  qed
+qed
+
 lemma classes_formed_extends:
   assumes r: "search_formed \<kappa> P r" and K: "search_classes_formed r"
     and ext: "table_extends (search_table r) (search_table r')"
@@ -1129,7 +1183,7 @@ definition search_update :: "'s list \<Rightarrow> ('a,'s,'d,'c) shared_state \<
     ('a,'s,'d,'c) shared_search" where
   "search_update q s' r = r\<lparr>search_state := s', search_registered := tree_move q
     (option_registered (RBT.lookup (shared_goals (search_state r)) q)) (option_registered (RBT.lookup (shared_goals s') q))
-    (search_registered r), search_classes := classes_update (classes_touched q (search_state r) s') s' (search_classes r)\<rparr>"
+    (search_registered r), search_classes := classes_update (classes_touched_goals q (search_state r) s') s' (search_classes r)\<rparr>"
 
 lemma search_values_extends:
   assumes v: "search_values_formed \<kappa> P r" and tf: "table_formed (search_table r)"
@@ -1202,7 +1256,7 @@ definition search_remove_goal :: "'s list \<Rightarrow> ('a,'s::linorder,'d,'c) 
 definition search_put_node :: "'s list \<Rightarrow> ('a,'s,'d,'c) shared_node_entry \<Rightarrow> ('a,'s::linorder,'d,'c) shared_search \<Rightarrow>
     ('a,'s,'d,'c) shared_search" where
   "search_put_node q hn r = (let s' = shared_put_node q hn (search_state r) in
-    r\<lparr>search_state := s', search_classes := classes_update (classes_touched q (search_state r) s') s' (search_classes r)\<rparr>)"
+    r\<lparr>search_state := s', search_classes := classes_update (classes_touched_goals q (search_state r) s') s' (search_classes r)\<rparr>)"
 
 lemma search_put_goal:
   assumes r: "search_formed \<kappa> P r" and h: "goal_entry_formed P (search_table r) q h"
@@ -1263,9 +1317,9 @@ lemma search_update_classes:
   shows "search_classes_formed (search_update q s' r)"
 proof -
   have "classes_formed (search_state (search_update q s' r)) (classes_update
-      (classes_touched q (search_state r) (search_state (search_update q s' r))) (search_state (search_update q s' r))
+      (classes_touched_goals q (search_state r) (search_state (search_update q s' r))) (search_state (search_update q s' r))
       (search_classes r))"
-    by (rule classes_step[OF r r' _ _ _ K]) (use ext goals nodes in simp_all)
+    by (rule classes_step_goals[OF r r' _ _ _ K]) (use ext goals nodes in simp_all)
   then show ?thesis by (simp add: search_update_def)
 qed
 
@@ -1289,9 +1343,9 @@ lemma search_put_node_classes:
 proof -
   have e: "search_state (search_put_node q hn r) = shared_put_node q hn (search_state r)"
     by (simp add: search_put_node_def Let_def)
-  have "classes_formed (search_state (search_put_node q hn r)) (classes_update (classes_touched q (search_state r)
+  have "classes_formed (search_state (search_put_node q hn r)) (classes_update (classes_touched_goals q (search_state r)
       (search_state (search_put_node q hn r))) (search_state (search_put_node q hn r)) (search_classes r))"
-    by (rule classes_step[OF r r' _ _ _ K]) (simp_all add: e shared_put_node_def)
+    by (rule classes_step_goals[OF r r' _ _ _ K]) (simp_all add: e shared_put_node_def)
   then show ?thesis by (simp add: search_put_node_def Let_def)
 qed
 
@@ -3338,12 +3392,18 @@ text \<open>
   the access's (@{text search_select}), at every priority.
 \<close>
 
-definition search_held :: "('a,'s,'d,'c) finite_witness_construction \<Rightarrow> ('a,'s,'d,'c) finite_schema_system \<Rightarrow>
-    ('a,'s::linorder,'d,'c) shared_search \<Rightarrow> ('a,'s,'d,'c) shared_goal_entry fset" where
-  "search_held \<kappa> P r = (let V = shared_access \<kappa> P r in ffUnion (fimage (\<lambda>p.
+definition search_held_over :: "(('a,'s,'d,'c) shared_goal_entry, ('a,'s,'d,'c) shared_node_entry, nat, 'a, 's, 'd, 'c)
+    search_access \<Rightarrow> ('a,'s::linorder,'d,'c) shared_search \<Rightarrow> ('a,'s,'d,'c) shared_goal_entry fset" where
+  "search_held_over V r = ffUnion (fimage (\<lambda>p.
       if fBex (access_nodes_at V p) (\<lambda>n. access_free V n \<noteq> {||})
       then ffilter (\<lambda>h. access_holdable V h \<and> access_held V h) (ffUnion (fimage (access_goals_at V) (tree_bucket (search_registered r) p)))
-      else {||}) (fset_of_list (map fst (RBT.entries (search_registered r))))))"
+      else {||}) (fset_of_list (map fst (RBT.entries (search_registered r)))))"
+
+text \<open>The goals held back are read over the search's access, so a selection that holds it reads them over it once.\<close>
+
+definition search_held :: "('a,'s,'d,'c) finite_witness_construction \<Rightarrow> ('a,'s,'d,'c) finite_schema_system \<Rightarrow>
+    ('a,'s::linorder,'d,'c) shared_search \<Rightarrow> ('a,'s,'d,'c) shared_goal_entry fset" where
+  "search_held \<kappa> P r = search_held_over (shared_access \<kappa> P r) r"
 
 lemma search_held:
   assumes r: "search_formed \<kappa> P r"
@@ -3359,7 +3419,7 @@ proof (rule fset_eqI)
     assume "h |\<in>| search_held \<kappa> P r"
     then obtain p where "h |\<in>| ffilter (\<lambda>h. access_holdable ?V h \<and> access_held ?V h)
         (ffUnion (fimage (access_goals_at ?V) (tree_bucket (search_registered r) p)))"
-      by (auto simp: search_held_def Let_def ffUnion.rep_eq fimage.rep_eq split: if_splits)
+      by (auto simp: search_held_def search_held_over_def Let_def ffUnion.rep_eq fimage.rep_eq split: if_splits)
     then show "h |\<in>| ffilter (\<lambda>h. access_holdable ?V h \<and> access_held ?V h) (access_goals ?V)"
       by (auto simp: ffilter.rep_eq ffUnion.rep_eq fimage.rep_eq shared_access_simps tree_values_member option_fset_def
           split: option.splits)
@@ -3381,7 +3441,7 @@ proof (rule fset_eqI)
         (ffUnion (fimage (access_goals_at ?V) (tree_bucket (search_registered r) (fst (fst x)))))"
       using qb q ho hh by (force simp: ffilter.rep_eq ffUnion.rep_eq fimage.rep_eq shared_access_simps)
     then show "h |\<in>| search_held \<kappa> P r"
-      using key ne by (force simp: search_held_def Let_def ffUnion.rep_eq fimage.rep_eq fset_of_list.rep_eq)
+      using key ne by (force simp: search_held_def search_held_over_def Let_def ffUnion.rep_eq fimage.rep_eq fset_of_list.rep_eq)
   qed
 qed
 
@@ -3433,6 +3493,27 @@ proof -
   finally show "class_first H t = {||} \<longleftrightarrow> ffilter Q (tree_values G |-| H) = {||}" .
 qed
 
+text \<open>
+  A class's first goal outside a set is read along the tree, left to right, stopping at the first: the class is not
+  listed.
+\<close>
+
+fun rbt_first_value :: "('e \<Rightarrow> bool) \<Rightarrow> ('k,'e) RBT_Impl.rbt \<Rightarrow> 'e option" where
+  "rbt_first_value Q RBT_Impl.Empty = None"
+| "rbt_first_value Q (RBT_Impl.Branch c l k v r) = (case rbt_first_value Q l of Some h \<Rightarrow> Some h
+    | None \<Rightarrow> if Q v then Some v else rbt_first_value Q r)"
+
+lemma rbt_first_value_find: "rbt_first_value Q t = find Q (map snd (RBT_Impl.entries t))"
+proof -
+  have app: "find Q (xs @ ys) = (case find Q xs of None \<Rightarrow> find Q ys | Some x \<Rightarrow> Some x)" for xs ys
+    by (induction xs) auto
+  show ?thesis by (induction t) (simp_all add: app split: option.split)
+qed
+
+lemma class_first_code [code]:
+  "class_first H t = (case rbt_first_value (\<lambda>h. h |\<notin>| H) (RBT.impl_of t) of None \<Rightarrow> {||} | Some h \<Rightarrow> {|h|})"
+  by (simp add: class_first_def rbt_first_value_find RBT.entries.rep_eq)
+
 definition search_select :: "('a,'s,'d,'c) finite_witness_construction \<Rightarrow> ('a,'s,'d,'c) finite_schema_system \<Rightarrow>
     (('a,'s,'d,'c) shared_goal_entry \<Rightarrow> bool) \<Rightarrow> ('a,'s::linorder,'d,'c) shared_search \<Rightarrow>
     (('a,'s,'d,'c) shared_node_entry, ('a,'s,'d,'c) shared_goal_entry) access_selection" where
@@ -3445,6 +3526,20 @@ definition search_select :: "('a,'s,'d,'c) finite_witness_construction \<Rightar
         let c1 = class_first H (class_single K) in
         if c1 \<noteq> {||} then c1 else access_waiting_selection V (access_goals V |-| H)) in
       if S = {||} then Access_None else Access_Goals S)"
+
+text \<open>The selection reads the goals held back over the access it builds, building it once.\<close>
+
+lemma search_select_code [code]:
+  "search_select \<kappa> P rp r = (let V = shared_access \<kappa> P r; N = access_construction_nodes V in
+    if N \<noteq> {||} then Access_Construction (access_first_nodes V N)
+    else let H = search_held_over V r; K = search_classes r; c0 = class_first H (class_settled K);
+      S = (if c0 \<noteq> {||} then c0 else
+        let cp = ffilter rp (fset_of_list (map snd (RBT.entries (class_candidates K))) |-| H) in
+        if cp \<noteq> {||} then access_first_goals V cp else
+        let c1 = class_first H (class_single K) in
+        if c1 \<noteq> {||} then c1 else access_waiting_selection V (access_goals V |-| H)) in
+      if S = {||} then Access_None else Access_Goals S)"
+  by (simp only: search_select_def search_held_def Let_def)
 
 theorem search_select:
   assumes r: "search_formed \<kappa> P r" and K: "search_classes_formed r"

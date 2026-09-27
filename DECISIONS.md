@@ -20328,7 +20328,7 @@ those nodes (`Factor_Search_Representations.goal_tests_frame`, premises by posit
 the tests of other goals only through the ground keys of the goal and the node there — the site and reference of the
 ground call each makes, or none — and, when it changes whether a goal stands there, the solvedness of the nodes at the
 prefixes whose open count moves between zero and nonzero (`Factor_Shared_Search.classes_keys`, `classes_frame`). A
-substitution keeps the goal's presence; it re-tests its own goal, and also every goal making a ground call when it grounds
+substitution keeps the goal's presence; it re-tests its own goal, and also every goal making that call when it grounds
 the call of the goal or the node at its position (a formed collapsed ground call is `Shared_Ground i`, so the key moves
 from none to the call's site and reference: the new ground goal can make those goals wait). A goal is tested over the
 state's access without its goal set (`state_access_over {||}`), which no test reads. Evidence: at #830's fixtures the
@@ -20338,6 +20338,15 @@ re-tested; the maintenance costs about 6.5 s of it and saves about 19 s of selec
 goal's presence (`.build/tasks/865/measurement.md`). Limit: the tests of a touched goal read the call's goal and node
 buckets, so grounding substitutions and presence changes cost with the buckets they touch; the held goals and
 construction nodes are computed each step.
+
+[Note (task 885): the cost lay elsewhere. The goal-call index keeps the positions of goals that have left, so a
+touched bucket listed about 50 positions an update at 20 rows, nearly all without a goal (3.2 M deletes over 63,697
+updates), while the tests of the goals touched took 1.06 s of the ~6.5 s maintenance. A step now re-tests only the
+touched positions holding a goal after it, and its own (`classes_touched_goals`, `classes_step_goals`); a class's first
+goal is read along its tree (`class_first_code`) and the held goals over the access the selection builds
+(`search_select_code`). At #830's 20 rows the library search takes 11.9 s against 15.7 s, `search_update` at the
+substitutions 1.57 s against 3.20 s (`.build/tasks/885/measurement.md`). Per-call counts were not built: they would
+save at most about 1 s and add tree operations of their own (planner, q159).]
 
 ## The committed step selects through the kept classes; the route's priority is a class made once a step, where the selection reaches it
 

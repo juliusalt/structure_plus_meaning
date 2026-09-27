@@ -22,6 +22,13 @@ text \<open>
   after enumerating the stored artifact's permutations, in more states. The false call root(rows,[7]), whose use no row
   holds, is refuted, and the lookup of a presentation of another artifact, 37's output ground, is refuted with no
   production met; R4 refutes both and resolves the true call, its values beside.
+
+  The control of an open sibling (OS2 of correction (15)): the same program with 26's clause replaced by
+  26(x,y) :- 2(x,x) (@{text open_sibling_admission}, @{text open_sibling_program}), so that 37's sibling at socket 0
+  is expanded and its bag comparison's goals, at two alternatives each, are pending under it when 12 is taken at
+  37.0/2. None of them holds a variable 37's node binds at 12's premise or at the frame {3}, so the framed test
+  commits the socket with the sibling open and the production is met: the true call is resolved in 30 states against
+  58 without the production, one certificate each, and the false call is refuted in 6; R4 gives the same verdicts.
 \<close>
 
 definition input_control_root :: "(nat,nat,nat) finite_factor_schema" where
@@ -111,25 +118,43 @@ abbreviation input_control_produced :: "(nat,nat,nat,nat) resolution_commitment"
 abbreviation input_control_committed :: "(nat,nat,nat,nat) resolution_commitment" where
   "input_control_committed \<equiv> finite_framed_commitment (resolution_declarations.truncate input_control_declarations) lookup_frames"
 
+definition input_control_run :: "(nat,nat,nat,nat) finite_schema_system \<Rightarrow>
+    (nat,nat,nat,nat) resolution_commitment \<Rightarrow> nat \<Rightarrow> finite_factor_term \<Rightarrow> nat \<Rightarrow> bool option \<times> nat \<times> nat" where
+  "input_control_run P K d t n = (finite_resolution_verdict (finite_moded_resolution no_witness_construction K
+      (resolution_declarations.truncate input_control_declarations) input_control_modes P d t n),
+    commitment_certificates (finite_moded_resolution no_witness_construction K
+      (resolution_declarations.truncate input_control_declarations) input_control_modes P d t n),
+    committed_resolution_states (finite_moded_select no_witness_construction K
+      (resolution_declarations.truncate input_control_declarations) input_control_modes P)
+      no_witness_construction K P d t n)"
+
 definition input_control_row ::
     "(nat,nat,nat,nat) resolution_commitment \<Rightarrow> nat \<Rightarrow> finite_factor_term \<Rightarrow> nat \<Rightarrow> bool option \<times> nat \<times> nat" where
-  "input_control_row K d t n = (finite_resolution_verdict (finite_moded_resolution no_witness_construction K
-      (resolution_declarations.truncate input_control_declarations) input_control_modes input_control_program d t n),
-    commitment_certificates (finite_moded_resolution no_witness_construction K
-      (resolution_declarations.truncate input_control_declarations) input_control_modes input_control_program d t n),
-    committed_resolution_states (finite_moded_select no_witness_construction K
-      (resolution_declarations.truncate input_control_declarations) input_control_modes input_control_program)
-      no_witness_construction K input_control_program d t n)"
+  "input_control_row = input_control_run input_control_program"
 
 abbreviation input_control_plain :: "nat \<Rightarrow> finite_factor_term \<Rightarrow> bool option" where
   "input_control_plain d t \<equiv> finite_resolution_verdict (finite_program_resolution no_witness_construction
     input_control_program d t 30)"
 
+definition open_sibling_admission :: "(nat,nat,nat) finite_factor_schema" where
+  "open_sibling_admission = \<lparr>finite_schema_conclusion = Finite_Pattern_Pair (Finite_Variable 0) (Finite_Variable 1),
+    finite_schema_premises = {|(0,2,Finite_Pattern_Pair (Finite_Variable 0) (Finite_Variable 0))|},
+    finite_schema_materials = {||}\<rparr>"
+
+definition open_sibling_program :: "(nat,nat,nat,nat) finite_schema_system" where
+  "open_sibling_program = input_control_program\<lparr>finite_system_clauses :=
+    finsert ((26,0),open_sibling_admission)
+      (ffilter (\<lambda>((d,c),S). d \<noteq> 26) (finite_system_clauses input_control_program))\<rparr>"
+
+abbreviation open_sibling_produced :: "(nat,nat,nat,nat) resolution_commitment" where
+  "open_sibling_produced \<equiv> finite_narrowed_commitment open_sibling_program 0 input_control_declarations lookup_frames"
+
 text \<open>
   At bound 30 the value is the stored artifact; the true call is resolved in 25 states with the production against 53
   without it, one certificate each (26 before the first join below a ground focus, task 821: the produced goal's
   sub-search, ground, keeps its first found state); the false call is refuted in 6 states and the lookup of another artifact in 23. R4
-  gives the same three verdicts.
+  gives the same three verdicts. With 26's sibling open (@{const open_sibling_program}), the true call is resolved in 30
+  states with the production against 58 without it, and the false call refuted in 6; R4 gives the same two verdicts.
 \<close>
 
 lemma input_production_controls:
@@ -142,7 +167,15 @@ lemma input_production_controls:
     input_control_plain 40 (input_control_call [7]) = Some False \<and>
     input_control_row input_control_produced 37 (input_control_lookup [Finite_Payload [3],Finite_Payload [1]]) 30 =
       (Some False,0,23) \<and>
-    input_control_plain 37 (input_control_lookup [Finite_Payload [3],Finite_Payload [1]]) = Some False"
+    input_control_plain 37 (input_control_lookup [Finite_Payload [3],Finite_Payload [1]]) = Some False \<and>
+    input_control_run open_sibling_program open_sibling_produced 40 (input_control_call [5]) 30 = (Some True,1,30) \<and>
+    input_control_run open_sibling_program input_control_committed 40 (input_control_call [5]) 30 = (Some True,1,58) \<and>
+    finite_resolution_verdict (finite_program_resolution no_witness_construction open_sibling_program 40
+      (input_control_call [5]) 30) = Some True \<and>
+    input_control_run open_sibling_program open_sibling_produced 40 (input_control_call [7]) 30 = (Some False,0,6) \<and>
+    input_control_run open_sibling_program input_control_committed 40 (input_control_call [7]) 30 = (Some False,0,6) \<and>
+    finite_resolution_verdict (finite_program_resolution no_witness_construction open_sibling_program 40
+      (input_control_call [7]) 30) = Some False"
   by eval
 
 end

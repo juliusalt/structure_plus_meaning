@@ -75,10 +75,12 @@ put the route at #830's 10 rows with the given's whole frames at 3.12 ms a step,
 61 %, priority 32 %; 1.24 s against 9.11 s at the given): the access tests' goal decoded once per test landed
 (#884, `6d139860`; review 884's 1–4, the 54–96 decodes a step that remain, go to #886, its 5 to #887, its 6
 next-edits 363); #871 landed (`b8f1026f`: the committed step through the kept classes at the whole focus, the admitted
-goals' priority a class made once a step; its entry "The committed step selects through the kept classes; …"). The fix
-#885 continues #865 (q159: per-call counts dropped on its profile — the maintenance is mostly red-black-tree operations
-keyed by list positions, about 10 µs each — the class-tree writes skipped where a goal's tests and keys are unchanged,
-`class_first` without listing, `search_held` over its access, `route_select`'s eager focused record). K3 #825 found the
+goals' priority a class made once a step; its entry "The committed step selects through the kept classes; …"). #885 landed
+(`55a180da`: `class_first` without listing; per-call counts not built, q159; the skip at q not taken); its review's
+follow-ups 1, 5 and 6 (the route's held goals through one access, `route_select`'s eager record, 113/7, a text) are
+F234's, 2–4 (the maintenance at a substitution: the step's goal re-tested and put at every update, the held goals and
+the waiting fallback recomputed each step, construction nodes, stale positions of the goal-call index) D1's, 7
+next-edits 376. K3 #825 found the
 step at the given's term size the next cost (0.02–0.21 s a step); #886 attributed it on shared runs (accepted partial,
 `.build/tasks/886/result.md`): finding 1, the eager substitution into every node holding a bound variable, grows with
 the depth of the list being built (1.7 s a step at 350) — 77 at the given does not finish and GT6 is out of reach until
@@ -387,10 +389,23 @@ a theory before briefing a task that edits it.
 
 ## Now
 
-- **Under way**: GT2a #843, the fix #885 and c55 #827 (a held run queued last) running; the design D1 #890 startable;
-  F234 #891 after #885; GT2c #888 and GT2b #889 after GT2a; FI #892 after F234 and D1.
-- **What the next events ask**: D1 #890's entry — its builds placed before GT3, #875 and GT6 (spliced, D1 then out of
-  their blockers), FI's brief re-read against its keys; GT2a's hand-over (its item (12)): what GT2b and GT2c consume,
+- **Under way**: GT2a #843, F234 #891, the investigation #896 (55's refutation at depth 2, #827's problem) and c55 #827
+  (a held run queued last); GT2c #888 and GT2b #889 after GT2a; FI #892 after F234 and D1.
+- **Not yet handled (plan-125's window ended)**: D1 #890 finished and its check passed — judge it (`v2.py verdict 890`).
+  Its result (`.build/tasks/890/result.md`) and its addition to task 495's entry, "The step at the given's depth: nodes
+  kept as placed under a binding store, positions numbered where only their key is read, solvedness counted at the
+  parent" (`.build/trees/890/DECISIONS.md` from line 18665 until it lands): (a) built — nodes kept as placed, read
+  through a binding store (D1a, a notion of its own), the deferred search a third instance of `resolution_representation`
+  over F2's shared search (D1b), no statement of R3–R5, K2 or F2a–F2d changed; (c) where only a key is read (the deferred
+  records, the holder index, the store), not in the class trees; (b) where a set grows with depth; review 885's 2–4 as
+  D1c (counts at the parent, the goal-call index pruned, class trees written where they change, held goals and
+  construction nodes kept); the goal side's numbering conditional (D1e, trigger #875). Predicted 6–8 ms a step at 30,
+  300 and 350 steps after F234 and D1b–D1d; GT6 52–85 h on one worker. Builds to brief and place: D1a now; D1b after D1a
+  and F234; D1c after F234; D1d after D1b; GT3 after D1d (D1 then out of GT3's, #875's and GT6's blockers, re-pointed to
+  its builds). Its questions: FI #892's wait on D1 can be dropped (class trees' keys and order kept); GT3's (4)–(5) code
+  equations at a table through D1b's and D1d's deferred searches; #875's brief to add D1e's trigger, the holders per step
+  and the waiting fallback's share; D1b and D1d one build (about 450K) if fewer builds before GT3 are preferred.
+- **What the next events ask**: D1's builds placed before GT3, #875 and GT6; GT2a's hand-over (its item (12)): what GT2b and GT2c consume,
   and whether it stated the check forms' definitions at a table (then GT3 re-pointed off GT2c); GT2c's answer on
   `finite_table_true` at the relocated table (#883's review 1: else the formation-only form is placed); GT6's prediction
   from #875, with the checking fold measured at samples, and its worker count before its run; #709's brief rewritten

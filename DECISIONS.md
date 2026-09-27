@@ -14760,6 +14760,13 @@ outside `rule_triple`, and no step of these families adds `insert_Diff_if`. `nat
 Recorded 2026-09-24 (task 374).
 ## The native loop's first problem is what a problem is; the problem of Q2, second, exercises its answer
 
+[Corrected by task 928 after the owner's answer to Q33 (2026-09-27 12:46): the asked relation reads a candidate by its
+additions over the given — the pair (the given's site value, the candidate's additions), its four requirements unchanged
+on the candidate the additions present — so the posing is recorded again over the new asked relation, the old posing's
+record kept as history, and an admitted answer's payload presents the candidate by its additions, its predecessor the
+posing generation (DECISIONS.md, "The given's readers and the asked relation are implementations of their notions: …",
+course (c)).]
+
 [Corrected by "The first problem's requirements use the test of a native distinction; the octet audit is one of its
 parts" below (task 381), after the owner's words of 2026-09-24 19:57 answering Q23 (a): the first problem's
 requirements use task 376's test of a native distinction, not only the octet audit. The rows of the requirements table
@@ -16571,6 +16578,13 @@ Recorded 2026-09-25 (task 482; a design, no theory changes).
 
 ## The native evaluator constructs the missing witnesses by resolution: one evaluator for every program, exact where it answers, and the counterparts retire from the route
 
+[Corrected by task 928 after the owner's answer to Q33 (2026-09-27 12:46): "The summary line under Q28 was written by an
+agent … those were not my words." The requirement this entry and its additions state — the given's readers "exactly as
+installed", "unchanged", "no clause refined, restated or added" — came from that summary and is withdrawn: the given's
+readers are implementations of their notions, which a decision may replace where it stays exact to each notion
+(DECISIONS.md, "The given's readers and the asked relation are implementations of their notions: …"). Within a build of
+the resolver's line the rule stands as that build's scope: such a build changes no program's clauses.]
+
 Task 495, a design, from the owner's answer to Q27 (2026-09-25 09:48, the owner ledger): "native evaluator that
 constructs the missing witnesses first - I thought this would have been the obvious choice given what I said the role
 of isabelle is no?". Q27 had put task 460's provisional choice — the given's Factor readers entering the first
@@ -16720,6 +16734,9 @@ unavailable, never as a failure row; the request (#443) records it. Nothing fall
 
 ### The least witness has no complete construction
 
+[Corrected by task 928 (Q33): "the given's readers unchanged" in the course recommended below is not a requirement. The
+course was set aside by task 496's entry on the owner's words at Q28 — a checker does not produce — which stand.]
+
 [Corrected by "A checker does not produce: the least witnesses are collected from the given's own readers beside the
 search, and the given's readers check them as installed" below (task 496), after the owner's answer to Q28 (2026-09-25
 10:43): "Are these options consistent with the following - checkers do not solve anything they only check if what is
@@ -16752,6 +16769,12 @@ reaching 77 are unresolved at the given. The courses, for the planner:
   a definition's meaning decided inside the evaluator. Rejected.
 
 ### Committed choice, for refusals
+
+[Corrected by task 928 (Q33): each "What the builds must respect: the given's readers exactly as installed" in the
+corrections below reads as the scope of those builds — the resolver's, which change no program's clauses — not as a
+requirement. The conclusion that 11's entry is "the certificate's own size in the given's clauses, which stay as
+installed: no producing-side course" stands on another ground: no implementation of 8, 9, 10 or 11 exact to their
+notions over the present presentations is sub-quadratic (task 928's entry, course (a)).]
 
 [Corrected by task 518 (R5), the planner's answer to q105. (1) With R3's ancestor pruning, exactness fails under
 discharged declarations: p(v0) :- g(i,y), h(y); g(i,a); g(i,b); h(b); h(a) :- p(v0). g is functional up to the class
@@ -18137,6 +18160,9 @@ restating it; correction (4) above].]
 
 ### The given's remaining producers: views, carriers and narrowed sockets
 
+[Corrected by task 928 (Q33): "the given's readers stay exactly as installed" below reads as the scope of this section's
+builds, not as a requirement (task 928's entry).]
+
 [Note (task 595, R5d's first part, from q122, plan-86): the discharge line (#593, #621, #630, #631) took R5's pairs, not
 views: only `finite_direct_context` is stated over a view, while `finite_direct_exchange`, the socket contexts and
 exchanges (`Factor_Resolution_Socket_Discharges`) and the material single solution (`Factor_Resolution_Material_Discharge`)
@@ -18540,6 +18566,9 @@ the goal is searched plainly — the true call resolved at bound 30, the false o
 
 ### The resolver at the given's size: the selection, a solved ground call reused, the shared state and the construction once
 
+[Corrected by task 928 (Q33): "the given's readers stay exactly as installed" below reads as the scope of this section's
+builds, every fix on the producing side, not as a requirement (task 928's entry).]
+
 [Added by task 683, a design, from investigation #644 (`.build/tasks/644/result.md`, accepted; its figures in
 `.build/tasks/644/measurements.md`; its draft `.build/tasks/644/draft/theories/Search_Attribution.thy`, evidence and not a
 proposal): the given's readers 113 and 77, resolved by R3/R4, did not return at small environments (#636's escalation).
@@ -18792,6 +18821,9 @@ execution theories import the refinement theories of F2b, F2c and C.
 [Recorded 2026-09-26 (task 683's decision; a design, no theory changes).]
 
 ### The step at the given's depth: nodes kept as placed under a binding store, positions numbered where only their key is read, solvedness counted at the parent
+
+[Corrected by task 928 (Q33): "the given's readers as installed; no clause of any program changes" below reads as the
+scope of D1's builds, not as a requirement (task 928's entry).]
 
 [Added by task 890, a design, from investigation #886 (`.build/tasks/886/result.md`, accepted; figures in
 `.build/tasks/886/measurement.md`), its finding 1, with review 885's follow-ups 2–4 (`.build/tasks/885/review.md`,
@@ -19052,6 +19084,13 @@ leaves the route with D1b, the eager node substitution standing only in the shar
 [Recorded 2026-09-27 (task 890's decision; a design, no theory changes).]
 
 ### The given's calls are decided once: a table of certified calls every judgment closes, and the candidate's part each judgment derives
+
+[Corrected by task 928 after the owner's answer to Q33 (2026-09-27 12:46): "the given's readers as installed" — in the
+opening, "What is the owner's", "What the builds must respect" and task 918's addition — is withdrawn as a requirement.
+"What is the owner's" is decided by task 928's entry: (c) taken — the asked relation reads a candidate by its additions
+over the given, a judgment's part linear in them; (a) and (b) not taken, (a) needing a notion change. The table's
+readers' part stands; its guard part at (g, g) is retired, the guard at the given with no additions being the table's
+entries (R7's control); the candidate's part and the two phases are restated there.]
 
 [Added by task 831, a design, from investigation #829 (`.build/tasks/829/result.md`, its causes 2 and 5 and its two
 questions to the planner; figures in `.build/tasks/829/measurement.md`, §3) and #703's measurements
@@ -19566,6 +19605,13 @@ Recorded 2026-09-25 (task 495's decision; a design, no theory changes).
 
 ## A checker does not produce: the least witnesses are collected from the given's own readers beside the search, and the given's readers check them as installed
 
+[Corrected by task 928 after the owner's answer to Q33 (2026-09-27 12:46): the heading's and the entry's "as installed"
+are not the owner's; they came from a summary of Q28 the owner disowned. What stands is the owner's answer to Q28 —
+"checkers do not solve anything they only check if what is provided is what is expected - the difficult part of
+producing is not done by the checker" — and this entry's decision on it: the least witnesses are produced beside the
+search and checked by the given's readers as they stand, each an implementation of its notion that a decision may
+replace where it stays exact to that notion (task 928's entry).]
+
 Task 496, a design, from the owner's answer to Q28 (2026-09-25 10:43, to the monitoring session; asked whether to
 record it as the answer, the owner said "ok"): "Are these options consistent with the following - checkers do not solve
 anything they only check if what is provided is what is expected - the difficult part of producing is not done by the
@@ -19764,6 +19810,10 @@ relies on.
 
 ### Registrations and declarations reach an installed package by matching its clauses against the placed ones
 
+[Corrected by task 928 (Q33): whether an installed presentation "counts as the given's readers evaluated as installed"
+is answered by the owner's words — an implementation is restricted only to implementing its notion correctly — and an
+installed presentation proved exact to the numbered readers is one; Q33's (d), taken provisionally, stands on it.]
+
 [Added by task 642, a design, from q121 (implement-640, 2026-09-26, `.build/plans/plan-84/q121.md`) and review 638's
 follow-ups 1 and 2 (q118, #635, `.build/tasks/638/review.md`): the native forms take a construction and declarations
 over the installed package's own coordinates, while W4a's relocation and R5's transfer carry them along a renaming of
@@ -19896,6 +19946,10 @@ are in `.build/tasks/642/result.md`.
 
 ### 11's premise-only target is produced by 10's own material premise: the skeleton reading is corrected, and no registration is built
 
+[Corrected by task 928 (Q33): "no clause of the given's readers is refined, restated or added" and "exactly as installed"
+below are withdrawn as requirements; RD1 stands on its own ground (exact, no registration). A change of 8, 9, 10 or 11
+exact to their notions cannot make 11 sub-quadratic over the present presentations (task 928's entry, course (a)).]
+
 [Added by task 790, a design, from correction (12) of task 495's entry ("Two further costs follow", (b), and "The
 registration experiment's non-return at 11") and #787's Remains (b): once 12 is committed and produced at 37.0/2, 77/1's
 search meets 11 (artifact admission) with ground data whose target, 11's premise-only variable, no goal binds; (12)
@@ -20019,6 +20073,10 @@ through 11); RD2 named, placed only where R7 attributes a ground-source enumerat
 
 ### 77's least bound at the given and at a candidate: handed in for an admission, collected at the table for a refusal
 
+[Corrected by task 928 (Q33): "as installed" below reads "as they stand". At a candidate 77 is no longer called at the
+candidate's whole value: the added part's closure is task 928's AX2, its bound handed in for an admission and collected
+by its registration for a refusal; 77's bound at the given stands.]
+
 [Added by task 831, a design, from #829's second question to the planner (`.build/tasks/829/result.md`, cause 2): the
 registered construction (`given_witness_registrations`) returns no 77 bound at 77/1 within 400 — its value `None` at
 bounds 200 and 400, more than 10 s at 1000 — because W2's queries are resolved by R4's plain resolution at the same
@@ -20095,6 +20153,7 @@ schema and variable and the bindings its value relies on, and matches where the 
 ### What it relies on
 
 Task 376's test:
+[Corrected by task 928 (Q33): "exactly as installed" below reads "as they stand, each exact to its notion".]
 - The checked program is the given's readers exactly as installed: the judgment relies on what they rely on, recorded
   where each was proved.
 - The construction reads a registration (a site, a schema compared as a value, a variable, query patterns), the
@@ -20135,6 +20194,8 @@ ground-source enumeration.]
 
 ### What the builds must respect
 
+[Corrected by task 928 (Q33): the first requirement below reads "the checked program is the given's readers as they
+stand, each exact to its notion, a decision replacing one only where it stays exact"; the rest stands.]
 - The checked program is the given's readers exactly as installed: no clause refined, restated or added, no reader
   joined to it; registrations and hand-ins are read by the witness construction alone, never by a checker.
 - Every resolved call carries a certificate the existing finite proof checker accepts in the given's readers, the
@@ -21008,3 +21069,253 @@ Task 892 (q157: #871's Remains and review 872's finding 1, the focused instance 
   before, 0.109–0.121 s after. The given's first 30 steps are all at the whole focus: 0.228–0.252 s before, 0.194–0.251 s
   after, equal within the run's spread. Every verdict equal. Limit: at this fixture a focus holds a dozen goals, so the
   filter the range replaces is small; the saving grows with the goals outside the focus, as at the given's size.
+
+## The given's readers and the asked relation are implementations of their notions: the asked relation reads a candidate by its additions; site 8's lookup and 26's key uniqueness stay
+
+Task 928, a design, from the owner's answer to Q33 (2026-09-27 12:46, from the console, the owner ledger): "The summary
+line under Q28 was written by an agent and said "…the least witnesses are produced outside the checker and checked, the
+given's readers unchanged…" - those were not my words. I never limited the actual implementation of any notion in any
+way except that is has to correctly implement the notion. The key is that a notions definition is completely
+independent and prior to the notions implementation, but there is no requirement that keeps a notions implementation
+restricted arbitrarily because "it was already installed"." Q33 (plan-115, from #831's section "The given's calls are
+decided once") had asked whether the route's cost at the given should be cut by (a) site 8's lookup made an index, (b)
+26's key uniqueness checked over a sorted presentation, (c) the asked relation reading a candidate as the given's value
+and its additions — each held off because it changes a given reader or the asked relation, "which your answer to Q28
+keeps as installed" — and whether (d) was acceptable. Figures: #831's section and `.build/tasks/831/result.md`; #829's
+fit (`.build/tasks/829/result.md`, cause 5); 11's derivation after RD1 in #790's section; D1's prediction (#890). No
+theory changes.
+
+**What the answer settles.**
+- The requirement that the given's readers — and the asked relation — stay "exactly as installed", carried from task
+  496's entry through task 495's additions and #831's section into the briefs, came from a summary of Q28 the owner has
+  disowned. It is withdrawn; each place is marked (below). What the owner said at Q28 stands: "checkers do not solve
+  anything they only check if what is provided is what is expected - the difficult part of producing is not done by the
+  checker".
+- A notion's definition is independent of and prior to its implementations. The given's readers are implementations of
+  their notions, each with its contract proved once; the asked relation is an implementation of the first problem's
+  requirements G1–G4 over a given and a candidate (#381's encoding of the owner's test, #378's least form). Either may be
+  replaced by a decision that keeps it exact to its notion — its contract proved once where the notion is — so every
+  meaning the route's judgments rest on is kept. What a replacement changes (the given's value, the posing recorded
+  again, the table recomputed, given-specific records re-derived, a library rebuilt) is weighed as cost, never as a
+  prohibition.
+- Within a build of the route's generic machinery (the resolver and its committed search, the table, D1, VK, WC) "no
+  clause of any program changes" stands as that build's scope: such a build changes the producing side, and a given
+  reader or the asked relation changes only by a decision of this kind.
+- Q33's (d) — the table's calls true at an installation through the numbered table's check and the installation's
+  proved meaning correspondence, taken provisionally — is an implementation of the numbered readers at their
+  installation, exact by a correspondence proved once; the owner's answer bears it out.
+
+**(a) Site 8's lookup an index: not taken; its native forms change a notion.**
+- *What 8 does.* 11 (`artifact_admission_schema`) holds of a data term x through 10 at (y, x); 10
+  (`artifact_projection_schema`) lays the material observation's fields from x: 0 lays the carrier rows, each an
+  address payload beside an anchor variable; every leaf of the data's incidence and attachment fields is converted by
+  9's address clause (`material_projection_address_schema`), 8 (`atom_lookup_here_schema`, `atom_lookup_later_schema`)
+  walking the carrier rows to the row whose address payload equals the leaf; the material premise then reads the
+  skeleton and binds its source (RD1, #790's section). The walk is the derivation: 4.54 k² + 75 k − 40 states at k
+  addresses, 87 % of them 8's at 18 (#829).
+- *No implementation exact to the notions is sub-quadratic over the present presentations.* The lookup's key is an
+  address: an octet payload of the artifact's data class (`artifact_value_presents`) and of the material observation's
+  carrier field (`Factor_Material_Observation.material_observation`: each carrier entry links its address, as an opaque
+  payload, to its occurrence anchor, and incidences and attachments use the anchors). A payload is a leaf: a pattern
+  matches it whole or against a literal, no rule decomposes it, a program reads as structure exactly the payloads it
+  states (`Factor_Finite_Payload_Literals.finite_system_payloads_exact`), and two payloads it does not state are
+  indistinguishable to it (`Factor_Positive_Parametricity.positive_meaning_unlisted_payloads`). A native program relates
+  an address to a row only by equality, and a derivation reaching a row of a data list by an equality-only key passes
+  every row before it. The index notion's native carrier (`Native_Path_Store_Indexes`: the path store, searched by
+  `path_term`) is searched by a path, and an address offers none. The join of the data's address-form fields with the
+  observation's anchor-form fields is 11's whole content beyond the observation; over these presentations it is
+  quadratic in every implementation. A host-side index shortens no derivation: a state is a node of the certificate's
+  search, and the certificate is the checked program's.
+- *The native forms that would make 11 linear, each a change of a notion.* (i) The material observation's incidence and
+  attachment fields stated in address payloads (or a second, address-form observation): a change of the Factor
+  language's material-premise semantics, reaching every material premise (1's, 10's, 45's, the incidence queries), R1
+  and the finite proof checker, the grammar's material readers (the five-field instantiation 62), the payload audit's
+  material rows, the leaf and placeholder maps, the clause match's material fields and R6's material sockets at 10 and
+  45 — the library from `Factor_Material_Observation` up. (ii) The artifact's data class referring to atoms by a
+  structural key (positions as paths): a class of the artifact notion, but 10 still meets the observation's payload
+  addresses through the same join, so it needs (i) as well. Either changes the given's value (the readers' packages hold
+  10's and 11's clauses), the posing, the whole table and every given-specific record at 10, 11 and 45.
+- *Figures.* 11 at the given's rows once 27.3 M → ≈ 2.15 M states (#831: the fit's linear part), the table's ≈ 31–34 M
+  → ≈ 6–9 M; a candidate's added row of 110 addresses ≈ 63 K → ≈ 8 K. The one-time part runs in parallel over the rows
+  (#831); the per-judgment part is the added rows' 11s, which (c) leaves as a judgment's largest part.
+- *Disposition.* A notion change: the planner's, not this decision's. Recommended not before GT6 and R7; its trigger R7's
+  control candidate, if the added rows' 11s make a judgment unaffordable, or GT6's measured production unplaceable.
+
+**(b) 26's key uniqueness over a sorted presentation: not taken.**
+- 26 (`environment_admission_schema`) checks unique use keys and unique source-slot keys through 21
+  (`keyed_list_cons_schema`: each head key absent from its tail through 20 and data inequality): ((R + m)² + (B + b)²)/2
+  comparisons, ≈ 0.43 M at the given's size (R = 261 rows, B ≈ 886 bindings).
+- *As a class.* The environment value class admits every complete enumeration (`environment_value_presents`). A class
+  admitting only enumerations sorted by use is exact and complete, but not closed under use permutations — a renamed
+  sorted enumeration is not sorted — so non-nominality's construction (#383: the argument class closed under the use
+  action, `Presentation_Equivariance.renaming_action`, `Factor_Use_Actions.environment_renaming_action`) fails at it;
+  and it orders uses, which the given's readers compare for equality only (#376, #381). Rejected.
+- *As an implementation exact to 21's notion.* An index of the keys (the index notion at the path store: a use is
+  structure, unary natural words, so its path is native; a source-slot key holds a slot payload and is not) saves 26's
+  comparisons at the given once, ≈ 0.4 M of ≈ 30 M states, and at a candidate nothing once (c) is taken: a candidate's
+  keys are checked only where it adds them. It would change 20 and 21, low in the lineage (a rebuild of nearly the whole
+  library), the given's value, the posing and the table. Not taken; its trigger a measured need (GT6's figures showing
+  26's part material, or a keyed table at a candidate's size).
+
+**(c) The asked relation reads a candidate by its additions: taken.**
+- *The notion.* A candidate of the first problem is native content added to the given: its environment extends the
+  given's by artifact rows at uses the given does not hold and by bindings of those rows' slots, and its site is a site
+  of that extension. *The additions of an environment to another* are that material presented as data — the added
+  artifact rows and the added bindings in the environment value's own row presentations, every enumeration admitted —
+  with the candidate's site. The class is exact relative to the given (the additions and the given determine the
+  candidate's environment E_g ⊕ A: `merge_environment`, formed exactly when `environment_merge_formed_iff` holds,
+  including E_g, `environment_included_merge_left`; bindings at previously unbound slots, `add_source_bindings_formed`;
+  fresh uses, `RRA_Fresh_Uses.disjoint_environment_extension`) and complete over the candidates it concerns: every
+  environment including the given's whose added bindings are sourced at the uses it adds has its additions.
+- *The asked relation.* The guard reads the pair (the given's site value, the candidate's additions); its requirements
+  are unchanged, each read at (g, g ⊕ a):
+  - G1, retention: the additions form a formed extension of the given's environment. Read: 26 at the given's value (a
+    table entry), each added row admitted (22: 19 and 11), each added use absent among the given's use keys (20 against
+    the given's rows) and among the other added rows (21), each added binding supported (its source among the added
+    rows, its slot in that artifact's carrier, its target among the added rows or the given's, the latter by 37 at the
+    given's value), the added binding keys unique (21). Exact to 113 at (the given's environment value, a value of
+    E_g ⊕ A) by the merge's formation and inclusion.
+  - G2, formation and closure: the package at the candidate's site in E_g ⊕ A exists. At a site of an added use: the
+    root family and the added definitions are read in the additions' least environment — the added rows, the given rows
+    the added bindings target (each read by 37 at the given's value, its artifact produced by 12's input production at
+    37.0/2, so that its admission is the table's entry) and the added bindings; the added part's closure is bounded by
+    the given's uses (every callee of each added definition is in the added part's bound or stands at a given use); each
+    given callee's package is formed in the given's environment (83 at (g, d), the table's, where d is a member of the
+    given's package; 80 at the given's value at d otherwise). At a site of a given use: 80 at the given's value (the
+    table's at the given's site). Exact to package admission (80) at the candidate's site value by package locality
+    under formed inclusion (`Factor_Package_Locality`, `Factor_Package_Dependencies.native_package_environment_included`,
+    `Factor_Presentation_Dependencies`: an added definition's reading reads only the additions' least environment, and a
+    given definition's reading is unchanged by additions whose bindings leave given uses unbound) and by the closure of a
+    formed package. The added part's bound is a least witness: handed in for an admission (the producer knows its
+    package) and collected for a refusal by a registration of W2's family form — base the root family's added sites,
+    step an added definition's callees at added uses — its completeness proved once in W4a's form, as 77's
+    (`Factor_Reader_Witness_Registrations.bound_witness_registration_complete`).
+  - G3, the callee boundary: G2's package exists, each of its added members stands at a use of no given artifact (20
+    against the given's rows), and each given callee is a member of the given's package (83 at (g, d), the table's); the
+    given's package being closed, every given member reached is then the given's. Exact to 392 at (g, c)
+    (`package_additions_profile` at `use_absence_schema`).
+  - G4, the octet audit: G2's package exists, and each added member, and each given member outside the given's package,
+    states no payload but the empty one (505 at the additions' least environment; at the given's value for the latter).
+    Exact to 525.
+  - The guard is installed as today (`Factor_Requirement_Installation.requirement_guard_extension`, four sockets on the
+    whole pair, a fresh entry). Its contract is `first_problem_guard_contract` read at (g, g ⊕ a), each socket its
+    predecessor's relation there, a refusal naming its socket (`first_problem_guard_refusals`); its equivariance is at the
+    product of the site-context action and the additions' action (the environment action on their rows and bindings),
+    stated once with the notion; its new programs state the empty payload alone.
+- *Where proved once.* The additions and G1's reader with the notion of additions (AX1); the package at a site of an
+  extension and its registration with that notion (AX2); the guard over additions with the asked relation (AX3).
+- *What it keeps.* The owner's least form (an asked relation and a given, the relation read at the pair of a given and a
+  candidate); the four requirements, exact on every candidate the additions present; refusal by socket; the table, its
+  readers' part the given's calls, all consumed; the two phases (#831's decision 4), their first phase the additions'
+  shared calls (11 at the added rows, the admission of the additions' least environment); 77's hand-in for an admission
+  and W5's collection for a refusal, at the added part's closure; non-nominality (#383), the octet audit, the
+  verification frame's parts; every recorded word of the bootstrap loop.
+- *What it changes.* The given: nothing — its value, its installation and the given's readers stand. The asked relation:
+  its program (the guard over additions and the two notions' readers joined with the given's readers, rooted at the new
+  entry), its finite presentation, its installation over the given's reader package
+  (`Development_Given_Extensions.given_readers_extension`) and its installed meaning (`Development_First_Problem_Asked`);
+  the posing over it recorded again through #562's recording
+  (`Development_Owner_Records.development_citing_row_generation_certified`), the old posing's record kept as history.
+  The candidate: an executor's answer is transported, read and judged as its additions (#401, #399); an admitted
+  answer's payload presents the candidate by its additions, its predecessor the posing generation, which presents the
+  given. The candidate's domain: a candidate that removes or changes given material has no additions, and fails G1
+  today; one that adds a binding at an address of a given artifact (inclusion kept) has no additions either, though the
+  guard may admit it today — a restriction of the asked relation's domain, a residual choice for the planner.
+- *Figures* (#831's in brackets). A judgment at a candidate adding m rows (k₁ … k_m addresses) and b bindings sourced at
+  them, citing t distinct given rows: the added rows' 11, 7 and 12 unchanged (Σ 4.54 kᵢ² + 75 kᵢ − 40, ≈ 63 K a row of
+  110 addresses); besides them m·R key absences (≈ 261 comparisons an added row), t lookups of the given's rows (≈ R/2
+  rows each), ((m + t)² + b²)/2 key comparisons in the additions' least environment, the added definitions read once and
+  their given callees checked (83, entries), 505 at the added definitions: at m = 5, t = 20, b = 30 about 5 K comparisons
+  and walk steps with the added definitions' readings, of the order of 10⁴–10⁵ states [2–5 M: 26 at the candidate's
+  value ≈ 0.43 M comparisons and its bindings' walks, 113 ≈ 0.07 M and 0.8 M, 76 at the candidate ≤ 0.6–0.9 M]. With
+  five added rows of mean size a judgment is ≈ 0.35 M states, about 35–45 minutes at D1's predicted 6–8 ms a step
+  [3–11 hours], the added rows' 11s its largest part — (a)'s trigger. At the given as its own candidate (no additions,
+  the given's site): the table's entries and a few states [≈ 1–1.5 M]. The table once: its readers' part unchanged
+  (≈ 30–32.5 M); its guard part at (g, g) no longer an entry [≈ 1–1.5 M]: GT6's 52–85 hours on one worker ≈ 3–5 % less.
+- *What it re-derives of the landed given-specific work.* Declarations, frames, modes and productions at the given's
+  readers (R6's records, `Development_Given_Frames`, `Development_Given_Modes`, `Development_Given_Productions`): none;
+  a new reader's clause that commits is declared in its build. Registrations at the given's readers, the rooted readers
+  and the first request's program (`Development_Given_Registrations`, `Development_Rooted_Registrations`,
+  `Development_First_Request_Registrations`): none. At the asked program (`Development_Asked_Registrations`): re-derived
+  at the new asked program by agreement; 392's and 525's are no longer read by the guard at a candidate (G3 and G4 read
+  the added members); the added part's closure registration is added (AX2), its completeness at the committing instance
+  through VK2's discharge. The one record and the input record at the asked relation's installation
+  (`Development_Given_Installed_Declarations`, `Development_Given_Installed_Productions` at 526) and V3's asked instance
+  (`Development_Installed_Presentations`, its control): re-derived at the new installation; at 561 none. The table's
+  calls (GT5, `Development_Given_Table`): the readers' part stands; the guard's part, certified at `finite_asked_program`,
+  is retired, the guard at the given with no additions being the table's entries — and with it the guard's certificate
+  at the asked program.
+
+**Where an implementation was held fixed because it was installed, and the disposition.**
+- Decisions, each marked at its head: task 495's entry (the requirement withdrawn; the resolver builds' scope kept);
+  "The least witness has no complete construction" (its course set aside on Q28's words, which stand); "Committed
+  choice, for refusals" (the builds' scope; 11's size on (a)'s ground); "The given's remaining producers", "The resolver
+  at the given's size", "The step at the given's depth" (the builds' scope); #831's section ("What is the owner's"
+  decided here; its guard part retired); task 496's entry (its decision stands on Q28's words, the readers checking as
+  they stand), its "Registrations and declarations reach an installed package …" (the owner's words bear (d) out), #790's
+  section (RD1 stands on its ground), "77's least bound …" (the candidate's part read by (c)), its "What it relies on" and
+  "What the builds must respect" (as they stand); #378's entry (the candidate by its additions, the posing recorded
+  again). #376's entry states the given's readers installed beside the package and no reader fixed: unmarked.
+- Open tasks whose briefs carry "the given's readers (exactly) as installed": GT6 #878 (#879) and #875 stand — the
+  readers' part is the table, the guard part at (g, g) is not produced, and neither waits on this decision; VK2 #924
+  stands in its (1)–(3) and (5)–(8), its (4)'s asked-program instance ("the one #399 cites") moving to AX4 at the new
+  asked program with AX2's closure registration, 392's and 525's refusals at a candidate no longer the guard's; R7 #542,
+  #707 (#708) are rewritten after AX4 — the guard at the given with no additions and a control candidate presented by
+  its additions, R7 after GT6 as now; #399 (#709, #710) is rewritten after AX4 — the candidate read as its additions,
+  refusal by the additions guard's sockets, the two phases' first phase the additions' shared calls; #401, #443 and #445
+  state the answer's form (its additions) in the packet and the transport's reader contract; #549, #551, #553, #447 and
+  #449 sample at pairs (g, a) with the use and octet actions on additions; #547 stands (561 is not the asked relation);
+  GT3 #876 (#877), GT2b #889 and #922, D1b #903 and #926 (#904, #927), D1d #905 (#906), WC2b #914 and WC3 #916 stand,
+  their "no clause of any program changes" read as their scope. Each brief's "as installed" reads "as they stand".
+
+**Weighed and not taken, for (c).**
+- *The candidate presented whole, the given's lists as suffixes* (#831's saving of the presentation): the calls at the
+  suffixes become entries, but 26's binding checks carry the candidate's whole artifact table as context, and 113, 156,
+  79 and 76 read the candidate's whole value: ≈ 1.5–2.5 M a judgment remain.
+- *A fast-path clause per socket over that presentation, the general clause kept*: exact, but a refusal explores the
+  general clause too, 2–5 M at every refused candidate.
+- *An edit class with removals*: complete over every candidate, but a removal fails G1 today and the other sockets would
+  read the given's calls in a changed environment; the answer notion adds.
+- *A context-weakening clause at 25* (a binding supported in a sub-table is supported in the table): exact, but a clause
+  alternative at every binding list multiplies the search.
+- *The candidate's whole environment built inside the guard* (the merge a premise-only witness) and the old sockets
+  called there: the whole-value calls again.
+
+**What the builds must respect.**
+- Each new implementation exact to its predecessor's notion, its contract proved once with the notion; every landed
+  statement kept by name and statement; the given's readers as they stand (none changed by this decision); the route's
+  generic machinery unchanged.
+- The additions presented in the environment value's row presentations, no tagged form; payloads inert (the new
+  programs state the empty payload alone), sites compared for equality, uses as structure; nothing reads the bootstrap
+  loop's datatypes, rows, loci or keys.
+- Least witnesses produced beside the checker: the added part's bound handed in or collected by its registration, the
+  checker checking it; unresolved never refutes and never admits.
+- The posing recorded again through #562's recording, the old record kept as history; no recorded word of the bootstrap
+  loop changes.
+
+**What it relies on** (task 376's test): the additions read by the environment value's own row presentations; freshness
+by key absence, a data inequality of use presentations; the extension's formation and inclusion by RRA's merge; package
+locality under formed inclusion; package membership (83); the audit (505); 37's lookup comparing uses for equality.
+
+**The builds.**
+
+| Build | Theories | What it establishes | Re-derives | After | Size |
+|---|---|---|---|---|---|
+| AX1 | `Factor_Environment_Additions` (new, the builder's name), `ROOT`, `THEORY_MAP.md` | the additions of an environment to another: the class (added rows and bindings in the environment value's row presentations, the site) exact relative to a given environment value, complete over its extensions; G1's reader (the extension's formation) over 20, 21, 22, 24, 26 and 37, exact to 113 at (e_g, a value of E_g ⊕ A) from the merge facts; the additions' use action and equivariance; payloads | nothing | — (beside D1b, GT2b and VK1: new theories above the readers, none of the resolver's) | ≈ 250K |
+| AX2 | `Factor_Extension_Packages` (new, the builder's name) | the additions' least environment (the cited given rows by 37 at the given's value); the closure bounded by the given's uses (a closure admission with a boundary, its contract as `native_package_finite_closed_bound`'s); the given callees' packages (83, else 80 at the given's value); the package at a site of an extension exact to 80 at the candidate's site value by package locality; the bound's registration in W2's family form, its completeness in W4a's; payloads, equivariance | nothing | AX1 | ≈ 350K (divisible at the registration) |
+| AX3 | `Development_First_Problem_Additions` (new, the builder's name), `Development_First_Problem_Asked`, `Development_First_Problem`, `Development_First_Problem_Execution`, a control theory | the guard over additions (four sockets through `requirement_guard_extension` at a fresh entry; G3 and G4 the additions of the extension's package), its contract as `first_problem_guard_contract` at (g, g ⊕ a) and the refusals by socket, equivariance, payloads; the asked program re-rooted at the new entry, its finite presentation, installation and installed meaning; the posing recorded again (the old record kept); controls at small fixtures in one evaluation imported by no theory | the asked program and its installation; the posing's record | AX2 | ≈ 350K |
+| AX4 | `Development_Given_Table`, `Development_Asked_Registrations`, `Development_Given_Installed_Declarations`, `Development_Given_Installed_Productions`, `Development_Installed_Presentations`, `Development_Installed_Presentations_Execution` | GT5's guard part retired; the one record and the input record carried to the new installation; V3's asked instance; the registrations at the new asked program by agreement and AX2's at the committing instance (VK2's discharge) | the given-specific work at the asked relation's installation | AX3, VK2 #924 | ≈ 300K |
+
+Order. AX1 → AX2 → AX3 → AX4, AX1 startable now beside the running builds. GT6 #878 and #875 do not wait on them (the
+readers' part; the guard part not produced). VK2 #924 before AX4. R7 #542 after AX4 and GT6; #707, #399 and the briefs
+named above rewritten for AX4. The longest chain (VK1 → GT2b → … → R7 → #707 → #399 …, and D1b → D1d → GT3 → GT6 → R7)
+is not lengthened while AX1–AX4 and their reviews run beside it.
+
+**Left to the planner.** (a), a notion change, with the recommendation above; the candidate domain of (c) (bindings
+sourced only at added uses) as a residual choice, or added bindings at given addresses admitted, G1 checking their keys
+against the given's and G2 reading a given definition whose use gains a binding in its extended least environment (a
+build more); the old guard and asked program over pairs of site values kept as landed content, no longer the asked
+relation, retired at their next edit; the working rule in HANDOFF.md that the given's readers "stay as installed, no
+clause refined or restated" corrected there.
+
+Recorded 2026-09-27 (task 928's decision; a design, no theory changes).

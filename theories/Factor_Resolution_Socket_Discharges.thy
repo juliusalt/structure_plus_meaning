@@ -141,9 +141,9 @@ qed simp
 
 text \<open>
   At a state, the parent node's premises in its context are pending in the focus of the committed goal, which is one of
-  them, or closed with a ground instance: the support makes each pending one true, the subtree acceptance or the parent's
-  linkage each closed one (@{text finite_closed_premise_true}), and the instance of the parent clause under the parent's
-  bindings is true.
+  them, or have a ground instance, open or closed: the support makes each pending one true, and each other one is true by
+  the goals pending under it, which lie in the focus, and its sub-derivation (@{text finite_open_premise_true}); the
+  instance of the parent clause under the parent's bindings is true.
 \<close>
 
 lemma finite_framed_instance_true:
@@ -178,9 +178,13 @@ proof -
   qed
   have prem_cases: "Resolution_Call_Goal (?pos@[s]) (Some (resolution_node_site np,resolution_node_clause np,s)) e
       (finite_pattern_substitute ?\<beta> p) |\<in>| resolution_pending st \<or>
-      (resolution_pending_under st (?pos@[s]) = {||} \<and> finite_pattern_variables (finite_pattern_substitute ?\<beta> p) = {||})"
+      finite_pattern_variables (finite_pattern_substitute ?\<beta> p) = {||}"
     if "(s,e,p) |\<in>| finite_schema_premises ?S" for s e p
     using closed that unfolding finite_children_framed_def by auto
+  have underF: "resolution_pending_under st (?pos@[s]) |\<subseteq>| finite_focus_pending F st" for s
+  proof (rule resolution_pending_under_focused)
+    show "resolution_focused F (?pos@[s])" using resolution_focused_sibling[OF focused nf q, of s] np by simp
+  qed
   have mat_cases: "Resolution_Material_Goal (?pos@[s]) (resolution_node_site np,resolution_node_clause np,s)
       (finite_material_pattern_substitute ?\<beta> N) |\<in>| resolution_pending st \<or>
       resolution_pending_under st (?pos@[s]) = {||}"
@@ -197,9 +201,8 @@ proof -
       by (rule resolution_supported_at_holds[OF sup inF[OF h]]) simp
     then show ?thesis by (simp add: finite_goal_holds_def)
   next
-    assume c: "resolution_pending_under st (?pos@[s]) = {||} \<and>
-      finite_pattern_variables (finite_pattern_substitute ?\<beta> p0) = {||}"
-    show ?thesis by (rule finite_closed_premise_true(1)[OF I nd c[THEN conjunct1] m c[THEN conjunct2]])
+    assume c: "finite_pattern_variables (finite_pattern_substitute ?\<beta> p0) = {||}"
+    show ?thesis by (rule finite_open_premise_true[OF I sup nd underF m c])
   qed
   have mat: "finite_material_ground_satisfied (finite_material_pattern_substitute (resolution_substitution \<theta>)
       (finite_material_pattern_substitute ?\<beta> N0))"

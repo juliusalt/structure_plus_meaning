@@ -1,5 +1,5 @@
 theory Factor_Indexed_Resolution
-  imports Factor_Resolution_Acceptance Tree_Map_Indexes Ordered_Finite_Terms Listed_Set_Unions Finite_Set_Transformations
+  imports Factor_Resolution_Acceptance Tree_Map_Indexes Ordered_Finite_Terms Listed_Set_Unions Finite_Set_Transformations Factor_Search_Representations
 begin
 
 section \<open>A tree of finite sets by key\<close>
@@ -100,27 +100,63 @@ lemma tree_buckets_formed_put:
   shows "tree_buckets_formed (tree_bucket_put t q G) F"
   using assms tree_buckets_nonempty_put[of t q G] by (auto simp: tree_buckets_formed_def)
 
-lemma tree_buckets_is_empty:
-  assumes formed: "tree_buckets_formed t F"
-  shows "RBT.is_empty t \<longleftrightarrow> tree_buckets t = {||}"
+text \<open>
+  The values a tree holds, at every key. A tree is empty exactly when it holds no value, and a bucket tree whose
+  buckets are nonempty exactly when its buckets hold no element: they are the union of its values.
+\<close>
+
+definition tree_values :: "('k::linorder, 'v) rbt \<Rightarrow> 'v fset" where
+  "tree_values t = fset_of_list (map snd (RBT.entries t))"
+
+lemma tree_values_member: "v |\<in>| tree_values t \<longleftrightarrow> (\<exists>k. RBT.lookup t k = Some v)"
+  by (force simp: tree_values_def fset_of_list_elem RBT.lookup_in_tree)
+
+lemma tree_values_empty [simp]: "tree_values RBT.empty = {||}"
+  by (rule fset_eqI) (simp add: tree_values_member)
+
+lemma rbt_is_empty_values: "RBT.is_empty t \<longleftrightarrow> tree_values t = {||}"
 proof
   assume "RBT.is_empty t"
   then have "t = RBT.empty" by simp
-  then show "tree_buckets t = {||}" by simp
+  then show "tree_values t = {||}" by simp
 next
-  assume none: "tree_buckets t = {||}"
-  have "RBT.lookup t q = None" for q
-  proof (cases "RBT.lookup t q")
-    case (Some G)
-    then have "G \<noteq> {||}" using formed by (auto simp: tree_buckets_formed_def tree_buckets_nonempty_def)
-    then obtain x where x: "x |\<in>| G" by (metis all_not_fin_conv)
-    then have "x |\<in>| tree_bucket t q" using Some by (simp add: tree_bucket_def)
-    then have "x |\<in>| tree_buckets t" by (auto simp: tree_buckets_member)
-    then show ?thesis using none by simp
+  assume e: "tree_values t = {||}"
+  have "RBT.lookup t k = None" for k
+  proof (cases "RBT.lookup t k")
+    case (Some v)
+    then have "v |\<in>| tree_values t" by (auto simp: tree_values_member)
+    then show ?thesis using e by simp
   qed simp
   then have "RBT.lookup t = Map.empty" by (intro ext) simp
   then have "t = RBT.empty" by (simp only: RBT.lookup_empty_empty)
   then show "RBT.is_empty t" by simp
+qed
+
+lemma rbt_empty_values: "t = RBT.empty \<longleftrightarrow> tree_values t = {||}"
+  using rbt_is_empty_values[of t] by simp
+
+lemma tree_buckets_values: "tree_buckets t = ffUnion (tree_values t)"
+  by (simp add: tree_buckets_def tree_values_def)
+
+lemma tree_buckets_is_empty:
+  assumes formed: "tree_buckets_formed t F"
+  shows "RBT.is_empty t \<longleftrightarrow> tree_buckets t = {||}"
+proof -
+  have ne: "G \<noteq> {||}" if "G |\<in>| tree_values t" for G
+    using that formed by (auto simp: tree_values_member tree_buckets_formed_def tree_buckets_nonempty_def)
+  have "ffUnion (tree_values t) = {||} \<longleftrightarrow> tree_values t = {||}"
+  proof
+    assume u: "ffUnion (tree_values t) = {||}"
+    show "tree_values t = {||}"
+    proof (rule ccontr)
+      assume "tree_values t \<noteq> {||}"
+      then obtain G where G: "G |\<in>| tree_values t" by (metis all_not_fin_conv)
+      then obtain x where x: "x |\<in>| G" using ne by (metis all_not_fin_conv)
+      have "x |\<in>| ffUnion (tree_values t)" using G x by (auto simp: ffUnion.rep_eq)
+      then show False using u by simp
+    qed
+  qed simp
+  then show ?thesis by (simp add: rbt_empty_values tree_buckets_values)
 qed
 
 text \<open>
@@ -198,6 +234,11 @@ qed
 lemma tree_add [simp]:
   "tree_bucket (tree_add q K h) p = (if p |\<in>| K then finsert q (tree_bucket h p) else tree_bucket h p)"
   by (auto simp: tree_add_def fset_eq_iff bucket_tree_fold)
+
+lemma tree_add_fold_member:
+  "q |\<in>| tree_bucket (fold (\<lambda>z t. tree_add (fst z) (f (snd z)) t) xs t0) p \<longleftrightarrow>
+    q |\<in>| tree_bucket t0 p \<or> (\<exists>h. (q,h) \<in> set xs \<and> p |\<in>| f h)"
+  by (induction xs arbitrary: t0) auto
 
 lemma bucket_tree_carrier_index:
   "carrier_index (\<lambda>rows p q. (p,q)\<in>set rows) (\<lambda>_. True) (UNIV::'k::linorder set) id bucket_tree
@@ -1258,9 +1299,10 @@ section \<open>The tests R3's selection reads, through the indexes\<close>
 text \<open>
   Each test of R3's selection (@{const finite_pruned}, @{const finite_reusable}, @{const finite_goal_waits},
   @{const finite_independent_goal}, @{const finite_held}, @{const finite_registration_ready},
-  @{const finite_constructed}) is read here through the indexes and the caches, and is proved equal to R3's test at
-  the projection. A ground call is pruned by the nodes at the prefixes of its position; it is closed by reuse or waits
-  by the nodes and goals the index of calls finds at its key; a node is solved when the count at its position is zero.
+  @{const finite_constructed}) is the representation's test (@{text Factor_Search_Representations}) read through the
+  access of an indexed state, and is R3's test at the projection by the access's formation. A ground call is pruned by
+  the nodes at the prefixes of its position; it is closed by reuse or waits by the nodes and goals the index of calls
+  finds at its key; a node is solved when the count at its position is zero.
 \<close>
 
 lemma indexed_node_in_set: "hn |\<in>| tree_bucket (indexed_nodes r) q \<Longrightarrow> indexed_node_value hn |\<in>| indexed_node_set r"
@@ -1299,411 +1341,6 @@ lemma indexed_node_call_found:
     and ground: "finite_pattern_variables (resolution_node_call (indexed_node_value hn)) = {||}"
   shows "q |\<in>| tree_bucket (indexed_node_calls r) (resolution_call_key (resolution_node_call (indexed_node_value hn)))"
   by (rule indexed_recorded(4)[OF r node_call_keys_member[OF hn ground]])
-
-subsection \<open>Pruning, reuse and waiting\<close>
-
-definition indexed_pruned :: "('a,'s::linorder,'d,'c) indexed_state \<Rightarrow> ('a,'s,'d,'c) indexed_goal \<Rightarrow> bool" where
-  "indexed_pruned r hg = (case indexed_goal_value hg of
-      Resolution_Call_Goal q rr d p \<Rightarrow> indexed_goal_variables hg = {||} \<and>
-        list_ex (\<lambda>i. fBex (tree_bucket (indexed_nodes r) (take i q)) (\<lambda>hn.
-          resolution_node_site (indexed_node_value hn) = d \<and> resolution_node_call (indexed_node_value hn) = p))
-          [0..<length q]
-    | Resolution_Material_Goal q rr M \<Rightarrow> False)"
-
-lemma indexed_pruned:
-  assumes r: "indexed_formed \<kappa> P r" and hg: "hg |\<in>| tree_bucket (indexed_goals r) q0"
-  shows "indexed_pruned r hg \<longleftrightarrow> finite_pruned (indexed_project r) (indexed_goal_value hg)"
-proof (cases "indexed_goal_value hg")
-  case (Resolution_Call_Goal q rr d p)
-  have vars: "indexed_goal_variables hg = finite_pattern_variables p"
-    using indexed_goal_variables_at(1)[OF r hg] Resolution_Call_Goal by simp
-  have "(\<exists>i\<in>set [0..<length q]. fBex (tree_bucket (indexed_nodes r) (take i q))
-        (\<lambda>hn. resolution_node_site (indexed_node_value hn) = d \<and> resolution_node_call (indexed_node_value hn) = p)) \<longleftrightarrow>
-      fBex (indexed_node_set r) (\<lambda>nd. length (resolution_node_position nd) < length q \<and>
-        take (length (resolution_node_position nd)) q = resolution_node_position nd \<and>
-        resolution_node_site nd = d \<and> resolution_node_call nd = p)"
-  proof
-    assume "\<exists>i\<in>set [0..<length q]. fBex (tree_bucket (indexed_nodes r) (take i q))
-        (\<lambda>hn. resolution_node_site (indexed_node_value hn) = d \<and> resolution_node_call (indexed_node_value hn) = p)"
-    then obtain i hn where i: "i < length q" and hn: "hn |\<in>| tree_bucket (indexed_nodes r) (take i q)"
-      and m: "resolution_node_site (indexed_node_value hn) = d" "resolution_node_call (indexed_node_value hn) = p"
-      by auto
-    have pos: "resolution_node_position (indexed_node_value hn) = take i q" by (rule indexed_node_at(2)[OF r hn])
-    have len: "length (take i q) = i" using i by simp
-    show "fBex (indexed_node_set r) (\<lambda>nd. length (resolution_node_position nd) < length q \<and>
-        take (length (resolution_node_position nd)) q = resolution_node_position nd \<and>
-        resolution_node_site nd = d \<and> resolution_node_call nd = p)"
-    proof (rule rev_bexI[OF indexed_node_in_set[OF hn]])
-      show "length (resolution_node_position (indexed_node_value hn)) < length q \<and>
-          take (length (resolution_node_position (indexed_node_value hn))) q = resolution_node_position (indexed_node_value hn) \<and>
-          resolution_node_site (indexed_node_value hn) = d \<and> resolution_node_call (indexed_node_value hn) = p"
-        using pos len i m by simp
-    qed
-  next
-    assume "fBex (indexed_node_set r) (\<lambda>nd. length (resolution_node_position nd) < length q \<and>
-        take (length (resolution_node_position nd)) q = resolution_node_position nd \<and>
-        resolution_node_site nd = d \<and> resolution_node_call nd = p)"
-    then obtain nd where nd: "nd |\<in>| indexed_node_set r" "length (resolution_node_position nd) < length q"
-        "take (length (resolution_node_position nd)) q = resolution_node_position nd"
-        "resolution_node_site nd = d" "resolution_node_call nd = p" by auto
-    obtain hn where hn: "hn |\<in>| tree_bucket (indexed_nodes r) (resolution_node_position nd)" "indexed_node_value hn = nd"
-      by (rule indexed_node_set_at[OF r nd(1)])
-    show "\<exists>i\<in>set [0..<length q]. fBex (tree_bucket (indexed_nodes r) (take i q))
-        (\<lambda>hn. resolution_node_site (indexed_node_value hn) = d \<and> resolution_node_call (indexed_node_value hn) = p)"
-      using nd hn by (intro bexI[of _ "length (resolution_node_position nd)"]) auto
-  qed
-  then show ?thesis using vars Resolution_Call_Goal by (simp add: indexed_pruned_def finite_pruned_def list_ex_iff)
-qed (simp add: indexed_pruned_def finite_pruned_def)
-
-definition indexed_reusable :: "('a,'s::linorder,'d,'c) indexed_state \<Rightarrow> ('a,'s,'d,'c) indexed_goal \<Rightarrow> bool" where
-  "indexed_reusable r hg = (case indexed_goal_value hg of
-      Resolution_Call_Goal q rr d p \<Rightarrow> indexed_goal_variables hg = {||} \<and>
-        fBex (tree_bucket (indexed_node_calls r) (resolution_call_key p)) (\<lambda>q'. finite_position_left q' q \<and>
-          tree_count (indexed_open r) q' = 0 \<and> fBex (tree_bucket (indexed_nodes r) q') (\<lambda>hn.
-            resolution_node_site (indexed_node_value hn) = d \<and> resolution_node_call (indexed_node_value hn) = p))
-    | Resolution_Material_Goal q rr M \<Rightarrow> False)"
-
-lemma indexed_reusable:
-  assumes r: "indexed_formed \<kappa> P r" and hg: "hg |\<in>| tree_bucket (indexed_goals r) q0"
-  shows "indexed_reusable r hg \<longleftrightarrow> finite_reusable (indexed_project r) (indexed_goal_value hg)"
-proof (cases "indexed_goal_value hg")
-  case (Resolution_Call_Goal q rr d p)
-  have vars: "indexed_goal_variables hg = finite_pattern_variables p"
-    using indexed_goal_variables_at(1)[OF r hg] Resolution_Call_Goal by simp
-  have eq: "fBex (tree_bucket (indexed_node_calls r) (resolution_call_key p)) (\<lambda>q'. finite_position_left q' q \<and>
-        tree_count (indexed_open r) q' = 0 \<and> fBex (tree_bucket (indexed_nodes r) q') (\<lambda>hn.
-          resolution_node_site (indexed_node_value hn) = d \<and> resolution_node_call (indexed_node_value hn) = p)) \<longleftrightarrow>
-      fBex (indexed_node_set r) (\<lambda>nd. finite_position_left (resolution_node_position nd) q \<and>
-        finite_solved_node (indexed_project r) nd \<and> resolution_node_site nd = d \<and> resolution_node_call nd = p)"
-    if ground: "finite_pattern_variables p = {||}"
-  proof
-    assume "fBex (tree_bucket (indexed_node_calls r) (resolution_call_key p)) (\<lambda>q'. finite_position_left q' q \<and>
-        tree_count (indexed_open r) q' = 0 \<and> fBex (tree_bucket (indexed_nodes r) q') (\<lambda>hn.
-          resolution_node_site (indexed_node_value hn) = d \<and> resolution_node_call (indexed_node_value hn) = p))"
-    then obtain q' hn where q': "finite_position_left q' q" "tree_count (indexed_open r) q' = 0"
-      and hn: "hn |\<in>| tree_bucket (indexed_nodes r) q'"
-      and m: "resolution_node_site (indexed_node_value hn) = d" "resolution_node_call (indexed_node_value hn) = p"
-      by auto
-    have pos: "resolution_node_position (indexed_node_value hn) = q'" by (rule indexed_node_at(2)[OF r hn])
-    have "finite_solved_node (indexed_project r) (indexed_node_value hn)"
-      using indexed_solved[OF r, of "indexed_node_value hn"] pos q'(2) by simp
-    then show "fBex (indexed_node_set r) (\<lambda>nd. finite_position_left (resolution_node_position nd) q \<and>
-        finite_solved_node (indexed_project r) nd \<and> resolution_node_site nd = d \<and> resolution_node_call nd = p)"
-      using indexed_node_in_set[OF hn] pos q'(1) m by auto
-  next
-    assume "fBex (indexed_node_set r) (\<lambda>nd. finite_position_left (resolution_node_position nd) q \<and>
-        finite_solved_node (indexed_project r) nd \<and> resolution_node_site nd = d \<and> resolution_node_call nd = p)"
-    then obtain nd where nd: "nd |\<in>| indexed_node_set r" "finite_position_left (resolution_node_position nd) q"
-        "finite_solved_node (indexed_project r) nd" "resolution_node_site nd = d" "resolution_node_call nd = p" by auto
-    obtain hn where hn: "hn |\<in>| tree_bucket (indexed_nodes r) (resolution_node_position nd)" "indexed_node_value hn = nd"
-      by (rule indexed_node_set_at[OF r nd(1)])
-    have found: "resolution_node_position nd |\<in>| tree_bucket (indexed_node_calls r) (resolution_call_key p)"
-      using indexed_node_call_found[OF r hn(1)] hn(2) nd(5) ground by simp
-    have "tree_count (indexed_open r) (resolution_node_position nd) = 0" using indexed_solved[OF r] nd(3) by simp
-    then show "fBex (tree_bucket (indexed_node_calls r) (resolution_call_key p)) (\<lambda>q'. finite_position_left q' q \<and>
-        tree_count (indexed_open r) q' = 0 \<and> fBex (tree_bucket (indexed_nodes r) q') (\<lambda>hn.
-          resolution_node_site (indexed_node_value hn) = d \<and> resolution_node_call (indexed_node_value hn) = p))"
-      using found nd hn by auto
-  qed
-  show ?thesis
-  proof (cases "finite_pattern_variables p = {||}")
-    case True
-    then show ?thesis using eq[OF True] vars Resolution_Call_Goal by (simp add: indexed_reusable_def finite_reusable_def)
-  next
-    case False
-    then show ?thesis using vars Resolution_Call_Goal by (simp add: indexed_reusable_def finite_reusable_def)
-  qed
-qed (simp add: indexed_reusable_def finite_reusable_def)
-
-definition indexed_waits :: "('a,'s::linorder,'d,'c) indexed_state \<Rightarrow> ('a,'s,'d,'c) indexed_goal \<Rightarrow> bool" where
-  "indexed_waits r hg = (case indexed_goal_value hg of
-      Resolution_Call_Goal q rr d p \<Rightarrow> indexed_goal_variables hg = {||} \<and>
-        (fBex (tree_bucket (indexed_goal_calls r) (resolution_call_key p)) (\<lambda>q'. finite_position_less q' q \<and>
-           fBex (tree_bucket (indexed_goals r) q') (\<lambda>h. case indexed_goal_value h of
-             Resolution_Call_Goal q'' r'' d' p' \<Rightarrow> d' = d \<and> p' = p
-           | Resolution_Material_Goal q'' r'' M \<Rightarrow> False)) \<or>
-         fBex (tree_bucket (indexed_node_calls r) (resolution_call_key p)) (\<lambda>q'. finite_position_left q' q \<and>
-           tree_count (indexed_open r) q' \<noteq> 0 \<and> fBex (tree_bucket (indexed_nodes r) q') (\<lambda>hn.
-             resolution_node_site (indexed_node_value hn) = d \<and> resolution_node_call (indexed_node_value hn) = p)))
-    | Resolution_Material_Goal q rr M \<Rightarrow> False)"
-
-lemma indexed_waits:
-  assumes r: "indexed_formed \<kappa> P r" and hg: "hg |\<in>| tree_bucket (indexed_goals r) q0"
-  shows "indexed_waits r hg \<longleftrightarrow> finite_goal_waits (indexed_project r) (indexed_goal_value hg)"
-proof (cases "indexed_goal_value hg")
-  case (Resolution_Call_Goal q rr d p)
-  have vars: "indexed_goal_variables hg = finite_pattern_variables p"
-    using indexed_goal_variables_at(1)[OF r hg] Resolution_Call_Goal by simp
-  have goals: "fBex (tree_bucket (indexed_goal_calls r) (resolution_call_key p)) (\<lambda>q'. finite_position_less q' q \<and>
-        fBex (tree_bucket (indexed_goals r) q') (\<lambda>h. case indexed_goal_value h of
-          Resolution_Call_Goal q'' r'' d' p' \<Rightarrow> d' = d \<and> p' = p | Resolution_Material_Goal q'' r'' M \<Rightarrow> False)) \<longleftrightarrow>
-      fBex (indexed_pending r) (\<lambda>h. case h of
-          Resolution_Call_Goal q' r' d' p' \<Rightarrow> d' = d \<and> p' = p \<and> finite_position_less q' q
-        | Resolution_Material_Goal q' r' M \<Rightarrow> False)"
-    if ground: "finite_pattern_variables p = {||}"
-  proof
-    assume "fBex (tree_bucket (indexed_goal_calls r) (resolution_call_key p)) (\<lambda>q'. finite_position_less q' q \<and>
-        fBex (tree_bucket (indexed_goals r) q') (\<lambda>h. case indexed_goal_value h of
-          Resolution_Call_Goal q'' r'' d' p' \<Rightarrow> d' = d \<and> p' = p | Resolution_Material_Goal q'' r'' M \<Rightarrow> False))"
-    then obtain q' h where q': "finite_position_less q' q" and h: "h |\<in>| tree_bucket (indexed_goals r) q'"
-      and m: "case indexed_goal_value h of Resolution_Call_Goal q'' r'' d' p' \<Rightarrow> d' = d \<and> p' = p
-        | Resolution_Material_Goal q'' r'' M \<Rightarrow> False" by auto
-    have pos: "resolution_goal_position (indexed_goal_value h) = q'" by (rule indexed_goal_at(2)[OF r h])
-    show "fBex (indexed_pending r) (\<lambda>h. case h of
-          Resolution_Call_Goal q' r' d' p' \<Rightarrow> d' = d \<and> p' = p \<and> finite_position_less q' q
-        | Resolution_Material_Goal q' r' M \<Rightarrow> False)"
-    proof (rule rev_bexI[OF indexed_goal_in_pending[OF h]])
-      show "case indexed_goal_value h of Resolution_Call_Goal q' r' d' p' \<Rightarrow> d' = d \<and> p' = p \<and> finite_position_less q' q
-          | Resolution_Material_Goal q' r' M \<Rightarrow> False"
-        using pos q' m by (cases "indexed_goal_value h") auto
-    qed
-  next
-    assume "fBex (indexed_pending r) (\<lambda>h. case h of
-          Resolution_Call_Goal q' r' d' p' \<Rightarrow> d' = d \<and> p' = p \<and> finite_position_less q' q
-        | Resolution_Material_Goal q' r' M \<Rightarrow> False)"
-    then obtain h' where h': "h' |\<in>| indexed_pending r" and m: "case h' of
-          Resolution_Call_Goal q' r' d' p' \<Rightarrow> d' = d \<and> p' = p \<and> finite_position_less q' q
-        | Resolution_Material_Goal q' r' M \<Rightarrow> False" by auto
-    then obtain q' r' where e: "h' = Resolution_Call_Goal q' r' d p" and less: "finite_position_less q' q"
-      by (cases h') auto
-    obtain h where h: "h |\<in>| tree_bucket (indexed_goals r) (resolution_goal_position h')" "indexed_goal_value h = h'"
-      by (rule indexed_pending_at[OF r h'])
-    have "indexed_goal_variables h = {||}" using indexed_goal_variables_at(1)[OF r h(1)] h(2) e ground by simp
-    then have "resolution_call_key p |\<in>| goal_call_keys (tree_bucket (indexed_goals r) q')"
-      using goal_call_keys_member[of h _ q' r' d p] h e by simp
-    then have "q' |\<in>| tree_bucket (indexed_goal_calls r) (resolution_call_key p)" by (rule indexed_recorded(3)[OF r])
-    then show "fBex (tree_bucket (indexed_goal_calls r) (resolution_call_key p)) (\<lambda>q'. finite_position_less q' q \<and>
-        fBex (tree_bucket (indexed_goals r) q') (\<lambda>h. case indexed_goal_value h of
-          Resolution_Call_Goal q'' r'' d' p' \<Rightarrow> d' = d \<and> p' = p | Resolution_Material_Goal q'' r'' M \<Rightarrow> False))"
-    proof (rule rev_bexI)
-      have hq: "h |\<in>| tree_bucket (indexed_goals r) q'" using h(1) e by simp
-      have "case indexed_goal_value h of Resolution_Call_Goal q'' r'' d' p' \<Rightarrow> d' = d \<and> p' = p
-          | Resolution_Material_Goal q'' r'' M \<Rightarrow> False" using h(2) e by simp
-      then show "finite_position_less q' q \<and> fBex (tree_bucket (indexed_goals r) q') (\<lambda>h. case indexed_goal_value h of
-          Resolution_Call_Goal q'' r'' d' p' \<Rightarrow> d' = d \<and> p' = p | Resolution_Material_Goal q'' r'' M \<Rightarrow> False)"
-        using less hq by blast
-    qed
-  qed
-  have nodes: "fBex (tree_bucket (indexed_node_calls r) (resolution_call_key p)) (\<lambda>q'. finite_position_left q' q \<and>
-        tree_count (indexed_open r) q' \<noteq> 0 \<and> fBex (tree_bucket (indexed_nodes r) q') (\<lambda>hn.
-          resolution_node_site (indexed_node_value hn) = d \<and> resolution_node_call (indexed_node_value hn) = p)) \<longleftrightarrow>
-      fBex (indexed_node_set r) (\<lambda>nd. resolution_node_site nd = d \<and> resolution_node_call nd = p \<and>
-        finite_position_left (resolution_node_position nd) q \<and>
-        \<not> finite_solved_node (indexed_project r) nd)"
-    if ground: "finite_pattern_variables p = {||}"
-  proof
-    assume "fBex (tree_bucket (indexed_node_calls r) (resolution_call_key p)) (\<lambda>q'. finite_position_left q' q \<and>
-        tree_count (indexed_open r) q' \<noteq> 0 \<and> fBex (tree_bucket (indexed_nodes r) q') (\<lambda>hn.
-          resolution_node_site (indexed_node_value hn) = d \<and> resolution_node_call (indexed_node_value hn) = p))"
-    then obtain q' hn where q': "finite_position_left q' q" "tree_count (indexed_open r) q' \<noteq> 0"
-      and hn: "hn |\<in>| tree_bucket (indexed_nodes r) q'"
-      and m: "resolution_node_site (indexed_node_value hn) = d" "resolution_node_call (indexed_node_value hn) = p"
-      by auto
-    have pos: "resolution_node_position (indexed_node_value hn) = q'" by (rule indexed_node_at(2)[OF r hn])
-    have "\<not> finite_solved_node (indexed_project r) (indexed_node_value hn)"
-      using indexed_solved[OF r, of "indexed_node_value hn"] pos q'(2) by simp
-    then show "fBex (indexed_node_set r) (\<lambda>nd. resolution_node_site nd = d \<and> resolution_node_call nd = p \<and>
-        finite_position_left (resolution_node_position nd) q \<and>
-        \<not> finite_solved_node (indexed_project r) nd)"
-      using indexed_node_in_set[OF hn] pos q'(1) m by auto
-  next
-    assume "fBex (indexed_node_set r) (\<lambda>nd. resolution_node_site nd = d \<and> resolution_node_call nd = p \<and>
-        finite_position_left (resolution_node_position nd) q \<and>
-        \<not> finite_solved_node (indexed_project r) nd)"
-    then obtain nd where nd: "nd |\<in>| indexed_node_set r" "resolution_node_site nd = d" "resolution_node_call nd = p"
-        "finite_position_left (resolution_node_position nd) q"
-        "\<not> finite_solved_node (indexed_project r) nd" by auto
-    obtain hn where hn: "hn |\<in>| tree_bucket (indexed_nodes r) (resolution_node_position nd)" "indexed_node_value hn = nd"
-      by (rule indexed_node_set_at[OF r nd(1)])
-    have found: "resolution_node_position nd |\<in>| tree_bucket (indexed_node_calls r) (resolution_call_key p)"
-      using indexed_node_call_found[OF r hn(1)] hn(2) nd(3) ground by simp
-    have "tree_count (indexed_open r) (resolution_node_position nd) \<noteq> 0" using indexed_solved[OF r] nd(5) by simp
-    then show "fBex (tree_bucket (indexed_node_calls r) (resolution_call_key p)) (\<lambda>q'. finite_position_left q' q \<and>
-        tree_count (indexed_open r) q' \<noteq> 0 \<and> fBex (tree_bucket (indexed_nodes r) q') (\<lambda>hn.
-          resolution_node_site (indexed_node_value hn) = d \<and> resolution_node_call (indexed_node_value hn) = p))"
-      using found nd hn by auto
-  qed
-  show ?thesis
-  proof (cases "finite_pattern_variables p = {||}")
-    case True
-    then show ?thesis using goals[OF True] nodes[OF True] vars Resolution_Call_Goal
-      by (simp add: indexed_waits_def finite_goal_waits_def)
-  next
-    case False
-    then show ?thesis using vars Resolution_Call_Goal by (simp add: indexed_waits_def finite_goal_waits_def)
-  qed
-qed (simp add: indexed_waits_def finite_goal_waits_def)
-
-subsection \<open>Independence and holding\<close>
-
-definition indexed_independent :: "('a,'s::linorder,'d,'c) indexed_state \<Rightarrow> ('a,'s,'d,'c) indexed_goal \<Rightarrow> bool" where
-  "indexed_independent r hg = (case indexed_goal_value hg of
-      Resolution_Call_Goal q rr d p \<Rightarrow> indexed_goal_variables hg \<noteq> {||} \<and>
-        fBall (indexed_goal_variables hg) (\<lambda>x. fBall (tree_bucket (indexed_holders r) (fst (fst x)))
-          (\<lambda>q'. fBall (tree_bucket (indexed_goals r) q') (\<lambda>h. h = hg \<or> x |\<notin>| indexed_goal_variables h)))
-    | Resolution_Material_Goal q rr M \<Rightarrow> False)"
-
-lemma indexed_independent:
-  assumes r: "indexed_formed \<kappa> P r" and hg: "hg |\<in>| tree_bucket (indexed_goals r) q0"
-  shows "indexed_independent r hg \<longleftrightarrow> finite_independent_goal (indexed_pending r) (indexed_goal_value hg)"
-proof (cases "indexed_goal_value hg")
-  case (Resolution_Call_Goal q rr d p)
-  have vars: "indexed_goal_variables hg = finite_pattern_variables p"
-    using indexed_goal_variables_at(1)[OF r hg] Resolution_Call_Goal by simp
-  have eq: "fBall (indexed_goal_variables hg) (\<lambda>x. fBall (tree_bucket (indexed_holders r) (fst (fst x)))
-          (\<lambda>q'. fBall (tree_bucket (indexed_goals r) q') (\<lambda>h. h = hg \<or> x |\<notin>| indexed_goal_variables h))) \<longleftrightarrow>
-      fBall (indexed_pending r) (\<lambda>h. h = indexed_goal_value hg \<or>
-        resolution_goal_variables h |\<inter>| resolution_goal_variables (indexed_goal_value hg) = {||})"
-  proof
-    assume all: "fBall (indexed_goal_variables hg) (\<lambda>x. fBall (tree_bucket (indexed_holders r) (fst (fst x)))
-          (\<lambda>q'. fBall (tree_bucket (indexed_goals r) q') (\<lambda>h. h = hg \<or> x |\<notin>| indexed_goal_variables h)))"
-    show "fBall (indexed_pending r) (\<lambda>h. h = indexed_goal_value hg \<or>
-        resolution_goal_variables h |\<inter>| resolution_goal_variables (indexed_goal_value hg) = {||})"
-    proof
-      fix h' assume h': "h' \<in> fset (indexed_pending r)"
-      obtain h where h: "h |\<in>| tree_bucket (indexed_goals r) (resolution_goal_position h')" "indexed_goal_value h = h'"
-        by (rule indexed_pending_at[OF r h'])
-      show "h' = indexed_goal_value hg \<or>
-          resolution_goal_variables h' |\<inter>| resolution_goal_variables (indexed_goal_value hg) = {||}"
-      proof (cases "h' = indexed_goal_value hg")
-        case False
-        note ne = False
-        have "x |\<notin>| resolution_goal_variables h'" if x: "x |\<in>| resolution_goal_variables (indexed_goal_value hg)" for x
-        proof
-          assume xh: "x |\<in>| resolution_goal_variables h'"
-          have xh': "x |\<in>| indexed_goal_variables h" using xh h indexed_goal_variables_at(1)[OF r h(1)] by simp
-          have xg: "x |\<in>| indexed_goal_variables hg" using x indexed_goal_variables_at(1)[OF r hg] by simp
-          have "resolution_goal_position h' |\<in>| tree_bucket (indexed_holders r) (fst (fst x))"
-            by (rule indexed_recorded(1)[OF r h(1) xh'])
-          then have "h = hg \<or> x |\<notin>| indexed_goal_variables h" using all xg h(1) by blast
-          then show False using ne h(2) xh' by auto
-        qed
-        then have "resolution_goal_variables h' |\<inter>| resolution_goal_variables (indexed_goal_value hg) = {||}"
-          unfolding fset_eq_iff finter_iff fempty_iff by blast
-        then show ?thesis by simp
-      qed simp
-    qed
-  next
-    assume all: "fBall (indexed_pending r) (\<lambda>h. h = indexed_goal_value hg \<or>
-        resolution_goal_variables h |\<inter>| resolution_goal_variables (indexed_goal_value hg) = {||})"
-    show "fBall (indexed_goal_variables hg) (\<lambda>x. fBall (tree_bucket (indexed_holders r) (fst (fst x)))
-          (\<lambda>q'. fBall (tree_bucket (indexed_goals r) q') (\<lambda>h. h = hg \<or> x |\<notin>| indexed_goal_variables h)))"
-    proof (intro ballI)
-      fix x q' h assume x: "x \<in> fset (indexed_goal_variables hg)"
-        and q': "q' \<in> fset (tree_bucket (indexed_holders r) (fst (fst x)))"
-        and h: "h \<in> fset (tree_bucket (indexed_goals r) q')"
-      show "h = hg \<or> x |\<notin>| indexed_goal_variables h"
-      proof (cases "h = hg")
-        case False
-        then have ne: "indexed_goal_value h \<noteq> indexed_goal_value hg" using indexed_goal_unique(1)[OF r h hg] by blast
-        have "indexed_goal_value h |\<in>| indexed_pending r" by (rule indexed_goal_in_pending[OF h])
-        then have dj: "resolution_goal_variables (indexed_goal_value h) |\<inter>|
-            resolution_goal_variables (indexed_goal_value hg) = {||}"
-          using all ne by blast
-        have "x |\<in>| resolution_goal_variables (indexed_goal_value hg)"
-          using x indexed_goal_variables_at(1)[OF r hg] by simp
-        then have "x |\<notin>| resolution_goal_variables (indexed_goal_value h)" using dj by (metis finter_iff fempty_iff)
-        then have "x |\<notin>| indexed_goal_variables h" using indexed_goal_variables_at(1)[OF r h] by simp
-        then show ?thesis by simp
-      qed simp
-    qed
-  qed
-  then show ?thesis using vars Resolution_Call_Goal by (simp add: indexed_independent_def finite_independent_goal_def)
-qed (simp add: indexed_independent_def finite_independent_goal_def)
-
-definition indexed_held :: "('a,'s,'d,'c) finite_witness_construction \<Rightarrow> ('a,'s::linorder,'d,'c) indexed_state \<Rightarrow>
-    ('a,'s,'d,'c) indexed_goal \<Rightarrow> bool" where
-  "indexed_held \<kappa> r hg = fBex (indexed_goal_variables hg) (\<lambda>x. snd (fst x) \<and>
-    fBex (tree_bucket (indexed_nodes r) (fst (fst x))) (\<lambda>hn. snd x |\<in>| finite_free_registered \<kappa> (indexed_node_value hn)))"
-
-lemma indexed_held:
-  assumes r: "indexed_formed \<kappa> P r" and hg: "hg |\<in>| tree_bucket (indexed_goals r) q0"
-  shows "indexed_held \<kappa> r hg \<longleftrightarrow> finite_held \<kappa> (indexed_project r) (indexed_goal_value hg)"
-proof -
-  have vars: "indexed_goal_variables hg = resolution_goal_variables (indexed_goal_value hg)"
-    by (rule indexed_goal_variables_at(1)[OF r hg])
-  show ?thesis
-  proof
-    assume "indexed_held \<kappa> r hg"
-    then obtain x hn where x: "x |\<in>| indexed_goal_variables hg" "snd (fst x)"
-      and hn: "hn |\<in>| tree_bucket (indexed_nodes r) (fst (fst x))"
-      and a: "snd x |\<in>| finite_free_registered \<kappa> (indexed_node_value hn)"
-      unfolding indexed_held_def by blast
-    have pos: "resolution_node_position (indexed_node_value hn) = fst (fst x)" by (rule indexed_node_at(2)[OF r hn])
-    have xe: "((resolution_node_position (indexed_node_value hn), True), snd x) = x" using x(2) pos by (cases x) auto
-    show "finite_held \<kappa> (indexed_project r) (indexed_goal_value hg)"
-      unfolding finite_held_def using indexed_node_in_set[OF hn] a x(1) xe vars by force
-  next
-    assume "finite_held \<kappa> (indexed_project r) (indexed_goal_value hg)"
-    then obtain nd a where nd: "nd |\<in>| indexed_node_set r" and a: "a |\<in>| finite_free_registered \<kappa> nd"
-      and x: "((resolution_node_position nd,True),a) |\<in>| resolution_goal_variables (indexed_goal_value hg)"
-      by (auto simp: finite_held_def)
-    obtain hn where hn: "hn |\<in>| tree_bucket (indexed_nodes r) (resolution_node_position nd)" "indexed_node_value hn = nd"
-      by (rule indexed_node_set_at[OF r nd])
-    show "indexed_held \<kappa> r hg" unfolding indexed_held_def using hn a x vars by force
-  qed
-qed
-
-subsection \<open>Readiness and construction\<close>
-
-definition indexed_goal_holders :: "('a,'s::linorder,'d,'c) indexed_state \<Rightarrow> ('s,'a) resolution_variable \<Rightarrow>
-    ('a,'s,'d,'c) indexed_goal fset" where
-  "indexed_goal_holders r x = ffilter (\<lambda>h. x |\<in>| indexed_goal_variables h)
-    (ffUnion (fimage (tree_bucket (indexed_goals r)) (tree_bucket (indexed_holders r) (fst (fst x)))))"
-
-lemma indexed_goal_holders_at:
-  "h |\<in>| indexed_goal_holders r x \<longleftrightarrow>
-    (\<exists>q. q |\<in>| tree_bucket (indexed_holders r) (fst (fst x)) \<and> h |\<in>| tree_bucket (indexed_goals r) q) \<and>
-    x |\<in>| indexed_goal_variables h"
-  by (auto simp: indexed_goal_holders_def ffilter.rep_eq ffUnion.rep_eq fimage.rep_eq)
-
-lemma indexed_goal_holders:
-  assumes r: "indexed_formed \<kappa> P r"
-  shows "fimage indexed_goal_value (indexed_goal_holders r x) = finite_goal_holders (indexed_pending r) x"
-proof -
-  have "g |\<in>| fimage indexed_goal_value (indexed_goal_holders r x) \<longleftrightarrow> g |\<in>| finite_goal_holders (indexed_pending r) x" for g
-  proof
-    assume "g |\<in>| fimage indexed_goal_value (indexed_goal_holders r x)"
-    then obtain h q where h: "h |\<in>| tree_bucket (indexed_goals r) q" "x |\<in>| indexed_goal_variables h" "g = indexed_goal_value h"
-      by (auto simp: indexed_goal_holders_at fimage.rep_eq)
-    then show "g |\<in>| finite_goal_holders (indexed_pending r) x"
-      using indexed_goal_in_pending[OF h(1)] indexed_goal_variables_at(1)[OF r h(1)]
-      by (auto simp: finite_goal_holders_def ffilter.rep_eq)
-  next
-    assume "g |\<in>| finite_goal_holders (indexed_pending r) x"
-    then have g: "g |\<in>| indexed_pending r" "x |\<in>| resolution_goal_variables g"
-      by (auto simp: finite_goal_holders_def ffilter.rep_eq)
-    obtain h where h: "h |\<in>| tree_bucket (indexed_goals r) (resolution_goal_position g)" "indexed_goal_value h = g"
-      by (rule indexed_pending_at[OF r g(1)])
-    have xh: "x |\<in>| indexed_goal_variables h" using g(2) h indexed_goal_variables_at(1)[OF r h(1)] by simp
-    have "resolution_goal_position g |\<in>| tree_bucket (indexed_holders r) (fst (fst x))"
-      by (rule indexed_recorded(1)[OF r h(1) xh])
-    then have "h |\<in>| indexed_goal_holders r x" using h(1) xh by (auto simp: indexed_goal_holders_at)
-    then show "g |\<in>| fimage indexed_goal_value (indexed_goal_holders r x)" using h(2) by (force simp: fimage.rep_eq)
-  qed
-  then show ?thesis by (auto simp: fset_eq_iff)
-qed
-
-definition indexed_ready :: "('a,'s::linorder,'d,'c) indexed_state \<Rightarrow> ('a,'s,'d,'c) resolution_node \<Rightarrow> 'a \<Rightarrow> bool" where
-  "indexed_ready r nd a = (let x = ((resolution_node_position nd,True),a); H = indexed_goal_holders r x in
-    H \<noteq> {||} \<and> fBall H (\<lambda>h. indexed_goal_variables h |\<subseteq>| {|x|}))"
-
-lemma indexed_ready:
-  assumes r: "indexed_formed \<kappa> P r"
-  shows "indexed_ready r nd a \<longleftrightarrow> finite_registration_ready (indexed_pending r) nd a"
-proof -
-  let ?x = "((resolution_node_position nd,True),a)"
-  let ?H = "indexed_goal_holders r ?x"
-  have H: "finite_goal_holders (indexed_pending r) ?x = fimage indexed_goal_value ?H"
-    by (rule indexed_goal_holders[OF r, symmetric])
-  have v: "indexed_goal_variables h = resolution_goal_variables (indexed_goal_value h)" if "h |\<in>| ?H" for h
-    using that indexed_goal_variables_at(1)[OF r] by (auto simp: indexed_goal_holders_at)
-  have e: "fimage indexed_goal_value ?H = {||} \<longleftrightarrow> ?H = {||}" by (auto simp: fset_eq_iff fimage.rep_eq)
-  have b: "fBall (fimage indexed_goal_value ?H) (\<lambda>g. resolution_goal_variables g |\<subseteq>| {|?x|}) \<longleftrightarrow>
-      fBall ?H (\<lambda>h. indexed_goal_variables h |\<subseteq>| {|?x|})"
-    using v by (auto simp: fimage.rep_eq)
-  show ?thesis unfolding indexed_ready_def finite_registration_ready_def Let_def H e b by simp
-qed
 
 text \<open>
   F4: a value the construction returned is read beside its node, and asked of the construction only where none is
@@ -1764,17 +1401,6 @@ proof -
     by (auto simp: indexed_value_none_def indexed_unconstructed_formed_def)
 qed
 
-definition indexed_constructed :: "('a,'s,'d,'c) finite_witness_construction \<Rightarrow> ('a,'s,'d,'c) finite_schema_system \<Rightarrow>
-    ('a,'s::linorder,'d,'c) indexed_state \<Rightarrow> ('a,'s,'d,'c) resolution_node \<Rightarrow> 'a fset" where
-  "indexed_constructed \<kappa> P r nd = ffilter (\<lambda>a. indexed_ready r nd a \<and> \<not> indexed_value_none \<kappa> P r nd a)
-    (finite_free_registered \<kappa> nd)"
-
-lemma indexed_constructed:
-  assumes r: "indexed_formed \<kappa> P r" and nd: "nd |\<in>| indexed_node_set r"
-  shows "indexed_constructed \<kappa> P r nd = finite_constructed \<kappa> P (indexed_pending r) nd"
-  by (auto simp: fset_eq_iff indexed_constructed_def finite_constructed_def ffilter.rep_eq indexed_ready[OF r]
-      indexed_value_none[OF r nd])
-
 definition indexed_registered_positions :: "('a,'s::linorder,'d,'c) indexed_state \<Rightarrow> 's list fset" where
   "indexed_registered_positions r = fset_of_list (RBT.keys (indexed_registered r))"
 
@@ -1795,56 +1421,312 @@ proof -
   show ?thesis using keys ne f by (simp add: indexed_registered_formed_def)
 qed
 
+subsection \<open>The access of an indexed state\<close>
+
+text \<open>
+  F2b1's tests, selection and search are the representation's (@{text Factor_Search_Representations}), read through
+  the access of an indexed state. The goal access presents what the state holds: its goals and nodes by position with
+  their caches, a node closing a goal's ground call and two goals making the same call by site and call term, the
+  indexes of ground calls by key, the holder index, the counts and the registered positions. It reads no
+  construction: no node leaves a registered variable free, and none has a value. The indexed access adds the
+  construction's reading of a node: the registered variables it leaves free, and whether the construction returns
+  nothing for one, read beside the node first (@{const indexed_value_none}). A goal's key is the key of its call; a
+  material goal makes none, and no test reads its key. Every goal of the state may be held back.
+\<close>
+
+definition indexed_goal_access :: "('a,'s::linorder,'d,'c) indexed_state \<Rightarrow>
+    (('a,'s,'d,'c) indexed_goal, ('a,'s,'d,'c) indexed_node, ordered_factor_term, 'a, 's, 'd, 'c) search_access" where
+  "indexed_goal_access r = \<lparr>access_goals = tree_buckets (indexed_goals r),
+     access_goals_at = tree_bucket (indexed_goals r),
+     access_nodes_at = tree_bucket (indexed_nodes r),
+     access_goal = indexed_goal_value,
+     access_node = indexed_node_value,
+     access_goal_position = (\<lambda>h. resolution_goal_position (indexed_goal_value h)),
+     access_node_position = (\<lambda>hn. resolution_node_position (indexed_node_value hn)),
+     access_variables = indexed_goal_variables,
+     access_alternatives = indexed_goal_alternatives,
+     access_is_call = (\<lambda>h. resolution_is_call (indexed_goal_value h)),
+     access_solvable = (\<lambda>h. finite_solvable_material_goal (indexed_goal_value h)),
+     access_leaf = (\<lambda>h. finite_leaf_call_goal (indexed_goal_value h)),
+     access_key = (\<lambda>h. case indexed_goal_value h of Resolution_Call_Goal q rr d p \<Rightarrow> resolution_call_key p
+       | Resolution_Material_Goal q rr M \<Rightarrow> Ordered_Factor_Term (Finite_Payload [])),
+     access_closes = (\<lambda>hn h. case indexed_goal_value h of Resolution_Call_Goal q rr d p \<Rightarrow>
+         resolution_node_site (indexed_node_value hn) = d \<and> resolution_node_call (indexed_node_value hn) = p
+       | Resolution_Material_Goal q rr M \<Rightarrow> False),
+     access_same = (\<lambda>h' h. case indexed_goal_value h of Resolution_Call_Goal q rr d p \<Rightarrow>
+         (case indexed_goal_value h' of Resolution_Call_Goal q' r' d' p' \<Rightarrow> d' = d \<and> p' = p
+         | Resolution_Material_Goal q' r' M \<Rightarrow> False)
+       | Resolution_Material_Goal q rr M \<Rightarrow> False),
+     access_goal_calls = tree_bucket (indexed_goal_calls r),
+     access_node_calls = tree_bucket (indexed_node_calls r),
+     access_open = tree_count (indexed_open r),
+     access_holders = tree_bucket (indexed_holders r),
+     access_free = (\<lambda>hn. {||}),
+     access_value_none = (\<lambda>hn a. True),
+     access_registered = indexed_registered_positions r,
+     access_holdable = (\<lambda>h. True),
+     access_witnesses = indexed_witnesses r\<rparr>"
+
+lemma indexed_goal_access_simps [simp]:
+  "access_goals (indexed_goal_access r) = tree_buckets (indexed_goals r)"
+  "access_goals_at (indexed_goal_access r) = tree_bucket (indexed_goals r)"
+  "access_nodes_at (indexed_goal_access r) = tree_bucket (indexed_nodes r)"
+  "access_goal (indexed_goal_access r) = indexed_goal_value"
+  "access_node (indexed_goal_access r) = indexed_node_value"
+  "access_goal_position (indexed_goal_access r) h = resolution_goal_position (indexed_goal_value h)"
+  "access_node_position (indexed_goal_access r) hn = resolution_node_position (indexed_node_value hn)"
+  "access_variables (indexed_goal_access r) = indexed_goal_variables"
+  "access_alternatives (indexed_goal_access r) = indexed_goal_alternatives"
+  "access_is_call (indexed_goal_access r) h \<longleftrightarrow> resolution_is_call (indexed_goal_value h)"
+  "access_solvable (indexed_goal_access r) h \<longleftrightarrow> finite_solvable_material_goal (indexed_goal_value h)"
+  "access_leaf (indexed_goal_access r) h \<longleftrightarrow> finite_leaf_call_goal (indexed_goal_value h)"
+  "access_key (indexed_goal_access r) h = (case indexed_goal_value h of Resolution_Call_Goal q rr d p \<Rightarrow>
+      resolution_call_key p | Resolution_Material_Goal q rr M \<Rightarrow> Ordered_Factor_Term (Finite_Payload []))"
+  "access_closes (indexed_goal_access r) hn h \<longleftrightarrow> (case indexed_goal_value h of Resolution_Call_Goal q rr d p \<Rightarrow>
+      resolution_node_site (indexed_node_value hn) = d \<and> resolution_node_call (indexed_node_value hn) = p
+    | Resolution_Material_Goal q rr M \<Rightarrow> False)"
+  "access_same (indexed_goal_access r) h' h \<longleftrightarrow> (case indexed_goal_value h of Resolution_Call_Goal q rr d p \<Rightarrow>
+      (case indexed_goal_value h' of Resolution_Call_Goal q' r' d' p' \<Rightarrow> d' = d \<and> p' = p
+      | Resolution_Material_Goal q' r' M \<Rightarrow> False)
+    | Resolution_Material_Goal q rr M \<Rightarrow> False)"
+  "access_goal_calls (indexed_goal_access r) = tree_bucket (indexed_goal_calls r)"
+  "access_node_calls (indexed_goal_access r) = tree_bucket (indexed_node_calls r)"
+  "access_open (indexed_goal_access r) = tree_count (indexed_open r)"
+  "access_holders (indexed_goal_access r) = tree_bucket (indexed_holders r)"
+  "access_free (indexed_goal_access r) hn = {||}"
+  "access_value_none (indexed_goal_access r) hn a"
+  "access_registered (indexed_goal_access r) = indexed_registered_positions r"
+  "access_holdable (indexed_goal_access r) h"
+  "access_witnesses (indexed_goal_access r) = indexed_witnesses r"
+  by (simp_all add: indexed_goal_access_def)
+
+definition indexed_access :: "('a,'s,'d,'c) finite_witness_construction \<Rightarrow> ('a,'s,'d,'c) finite_schema_system \<Rightarrow>
+    ('a,'s::linorder,'d,'c) indexed_state \<Rightarrow>
+    (('a,'s,'d,'c) indexed_goal, ('a,'s,'d,'c) indexed_node, ordered_factor_term, 'a, 's, 'd, 'c) search_access" where
+  "indexed_access \<kappa> P r = (indexed_goal_access r)\<lparr>access_free := (\<lambda>hn. finite_free_registered \<kappa> (indexed_node_value hn)),
+    access_value_none := (\<lambda>hn a. indexed_value_none \<kappa> P r (indexed_node_value hn) a)\<rparr>"
+
+lemma indexed_access_simps [simp]:
+  "access_goals (indexed_access \<kappa> P r) = tree_buckets (indexed_goals r)"
+  "access_goals_at (indexed_access \<kappa> P r) = tree_bucket (indexed_goals r)"
+  "access_nodes_at (indexed_access \<kappa> P r) = tree_bucket (indexed_nodes r)"
+  "access_goal (indexed_access \<kappa> P r) = indexed_goal_value"
+  "access_node (indexed_access \<kappa> P r) = indexed_node_value"
+  "access_goal_position (indexed_access \<kappa> P r) h = resolution_goal_position (indexed_goal_value h)"
+  "access_node_position (indexed_access \<kappa> P r) hn = resolution_node_position (indexed_node_value hn)"
+  "access_variables (indexed_access \<kappa> P r) = indexed_goal_variables"
+  "access_alternatives (indexed_access \<kappa> P r) = indexed_goal_alternatives"
+  "access_is_call (indexed_access \<kappa> P r) h \<longleftrightarrow> resolution_is_call (indexed_goal_value h)"
+  "access_solvable (indexed_access \<kappa> P r) h \<longleftrightarrow> finite_solvable_material_goal (indexed_goal_value h)"
+  "access_leaf (indexed_access \<kappa> P r) h \<longleftrightarrow> finite_leaf_call_goal (indexed_goal_value h)"
+  "access_key (indexed_access \<kappa> P r) = access_key (indexed_goal_access r)"
+  "access_closes (indexed_access \<kappa> P r) = access_closes (indexed_goal_access r)"
+  "access_same (indexed_access \<kappa> P r) = access_same (indexed_goal_access r)"
+  "access_goal_calls (indexed_access \<kappa> P r) = tree_bucket (indexed_goal_calls r)"
+  "access_node_calls (indexed_access \<kappa> P r) = tree_bucket (indexed_node_calls r)"
+  "access_open (indexed_access \<kappa> P r) = tree_count (indexed_open r)"
+  "access_holders (indexed_access \<kappa> P r) = tree_bucket (indexed_holders r)"
+  "access_free (indexed_access \<kappa> P r) hn = finite_free_registered \<kappa> (indexed_node_value hn)"
+  "access_value_none (indexed_access \<kappa> P r) hn a \<longleftrightarrow> indexed_value_none \<kappa> P r (indexed_node_value hn) a"
+  "access_registered (indexed_access \<kappa> P r) = indexed_registered_positions r"
+  "access_holdable (indexed_access \<kappa> P r) h"
+  "access_witnesses (indexed_access \<kappa> P r) = indexed_witnesses r"
+  by (simp_all add: indexed_access_def)
+
+text \<open>
+  The tests of goals, the goal holders, readiness, the classes and the choice read no construction: they are the
+  goal access's; holding back reads the construction's free variables alone.
+\<close>
+
+lemma indexed_access_goal_tests:
+  "access_pruned (indexed_access \<kappa> P r) = access_pruned (indexed_goal_access r)"
+  "access_reusable (indexed_access \<kappa> P r) = access_reusable (indexed_goal_access r)"
+  "access_waits (indexed_access \<kappa> P r) = access_waits (indexed_goal_access r)"
+  "access_independent (indexed_access \<kappa> P r) = access_independent (indexed_goal_access r)"
+  "access_goal_holders (indexed_access \<kappa> P r) = access_goal_holders (indexed_goal_access r)"
+  "access_ready (indexed_access \<kappa> P r) = access_ready (indexed_goal_access r)"
+  "access_goal_selection (indexed_access \<kappa> P r) = access_goal_selection (indexed_goal_access r)"
+  "access_waiting_selection (indexed_access \<kappa> P r) = access_waiting_selection (indexed_goal_access r)"
+  "access_goal_choice rp (indexed_access \<kappa> P r) = access_goal_choice rp (indexed_goal_access r)"
+  "access_held (indexed_access \<kappa> P r) =
+    access_held ((indexed_goal_access r)\<lparr>access_free := (\<lambda>hn. finite_free_registered \<kappa> (indexed_node_value hn))\<rparr>)"
+  by (simp_all add: fun_eq_iff Let_def indexed_access_def access_pruned_def[abs_def] access_pruned_among_def[abs_def]
+      access_ground_def[abs_def] access_reusable_def[abs_def] access_waits_def[abs_def]
+      access_independent_def[abs_def] access_goal_holders_def[abs_def] access_ready_def[abs_def]
+      access_goal_selection_def[abs_def] access_waiting_selection_def[abs_def] access_goal_choice_def[abs_def]
+      access_first_goals_def[abs_def] access_held_def[abs_def])
+
+lemma indexed_access_goal: "hg |\<in>| tree_bucket (indexed_goals r) q \<Longrightarrow> hg |\<in>| access_goals (indexed_access \<kappa> P r)"
+  by (auto simp: tree_buckets_member)
+
+lemma indexed_goal_call_found:
+  assumes r: "indexed_formed \<kappa> P r" and h: "h |\<in>| tree_bucket (indexed_goals r) q"
+    and v: "indexed_goal_value h = Resolution_Call_Goal q' rr d p" and g: "finite_pattern_variables p = {||}"
+  shows "q |\<in>| tree_bucket (indexed_goal_calls r) (resolution_call_key p)"
+proof -
+  have "indexed_goal_variables h = {||}" using indexed_goal_variables_at(1)[OF r h] v g by simp
+  then show ?thesis by (rule indexed_recorded(3)[OF r goal_call_keys_member[OF h v]])
+qed
+
+theorem indexed_access_formed:
+  assumes r: "indexed_formed \<kappa> P r"
+  shows "access_formed \<kappa> P (indexed_access \<kappa> P r) (indexed_project r)"
+  apply unfold_locales
+  subgoal by (simp add: indexed_pending_def)
+  subgoal for h q using indexed_goal_at(2)[OF r] by (auto simp: tree_buckets_member)
+  subgoal for h h' using indexed_goal_unique(1)[OF r] by (auto simp: tree_buckets_member)
+  subgoal by simp
+  subgoal for h using indexed_goal_variables_at(1)[OF r] by (auto simp: tree_buckets_member)
+  subgoal for h using indexed_goal_variables_at(2)[OF r] by (auto simp: tree_buckets_member)
+  subgoal by simp
+  subgoal by simp
+  subgoal by simp
+  subgoal by simp
+  subgoal for nd using indexed_node_in_set by (auto elim!: indexed_node_set_at[OF r])
+  subgoal for n q by (simp add: indexed_node_at(2)[OF r])
+  subgoal by simp
+  subgoal premises a for n q a' using indexed_value_none[OF r indexed_node_in_set[OF a[simplified]]] by simp
+  subgoal by simp
+  subgoal premises a for h q rr d p n q'
+  proof -
+    have n: "n |\<in>| tree_bucket (indexed_nodes r) q'" using a(4) by simp
+    have c: "resolution_node_site (indexed_node_value n) = d" "resolution_node_call (indexed_node_value n) = p"
+      using a(2,5) by simp_all
+    have g: "finite_pattern_variables (resolution_node_call (indexed_node_value n)) = {||}" using c(2) a(3) by simp
+    show ?thesis using indexed_node_call_found[OF r n g] a(2) c(2) by simp
+  qed
+  subgoal by simp
+  subgoal premises a for h h' q rr d p
+  proof -
+    obtain q'' where h': "h' |\<in>| tree_bucket (indexed_goals r) q''" using a(2) by (auto simp: tree_buckets_member)
+    obtain q' r' where v': "indexed_goal_value h' = Resolution_Call_Goal q' r' d p"
+      using a(3,5) by (cases "indexed_goal_value h'") auto
+    show ?thesis using indexed_goal_call_found[OF r h' v' a(4)] indexed_goal_at(2)[OF r h'] a(3) by simp
+  qed
+  subgoal using indexed_solved[OF r] by simp
+  subgoal premises a for h x
+  proof -
+    obtain q where hq: "h |\<in>| tree_bucket (indexed_goals r) q" using a(1) by (auto simp: tree_buckets_member)
+    show ?thesis using indexed_recorded(1)[OF r hq] a(2) indexed_goal_at(2)[OF r hq] by simp
+  qed
+  subgoal premises a for g z b
+  proof -
+    obtain hg where hg: "hg |\<in>| tree_bucket (indexed_goals r) (resolution_goal_position g)" "indexed_goal_value hg = g"
+      using indexed_pending_at[OF r] a(1) by auto
+    have x: "((z,True),b) |\<in>| indexed_goal_variables hg" using a(2) hg indexed_goal_variables_at(1)[OF r hg(1)] by simp
+    have "z |\<in>| goal_registered_positions (tree_bucket (indexed_goals r) (resolution_goal_position g))"
+      unfolding goal_registered_positions_member using hg(1) x by force
+    then have "\<exists>q. z |\<in>| goal_registered_positions (tree_bucket (indexed_goals r) q)" by blast
+    then show ?thesis by (simp add: indexed_registered_positions_member[OF r])
+  qed
+  subgoal by simp
+  done
+
+subsection \<open>Pruning, reuse and waiting\<close>
+
+definition indexed_pruned :: "('a,'s::linorder,'d,'c) indexed_state \<Rightarrow> ('a,'s,'d,'c) indexed_goal \<Rightarrow> bool" where
+  "indexed_pruned r hg \<longleftrightarrow> access_pruned (indexed_goal_access r) hg"
+
+lemma indexed_pruned:
+  assumes r: "indexed_formed \<kappa> P r" and hg: "hg |\<in>| tree_bucket (indexed_goals r) q0"
+  shows "indexed_pruned r hg \<longleftrightarrow> finite_pruned (indexed_project r) (indexed_goal_value hg)"
+  using access_formed.pruned[OF indexed_access_formed[OF r] indexed_access_goal[OF hg]]
+  by (simp add: indexed_pruned_def indexed_access_goal_tests)
+
+definition indexed_reusable :: "('a,'s::linorder,'d,'c) indexed_state \<Rightarrow> ('a,'s,'d,'c) indexed_goal \<Rightarrow> bool" where
+  "indexed_reusable r hg \<longleftrightarrow> access_reusable (indexed_goal_access r) hg"
+
+lemma indexed_reusable:
+  assumes r: "indexed_formed \<kappa> P r" and hg: "hg |\<in>| tree_bucket (indexed_goals r) q0"
+  shows "indexed_reusable r hg \<longleftrightarrow> finite_reusable (indexed_project r) (indexed_goal_value hg)"
+  using access_formed.reusable[OF indexed_access_formed[OF r] indexed_access_goal[OF hg]]
+  by (simp add: indexed_reusable_def indexed_access_goal_tests)
+
+definition indexed_waits :: "('a,'s::linorder,'d,'c) indexed_state \<Rightarrow> ('a,'s,'d,'c) indexed_goal \<Rightarrow> bool" where
+  "indexed_waits r hg \<longleftrightarrow> access_waits (indexed_goal_access r) hg"
+
+lemma indexed_waits:
+  assumes r: "indexed_formed \<kappa> P r" and hg: "hg |\<in>| tree_bucket (indexed_goals r) q0"
+  shows "indexed_waits r hg \<longleftrightarrow> finite_goal_waits (indexed_project r) (indexed_goal_value hg)"
+  using access_formed.waits[OF indexed_access_formed[OF r] indexed_access_goal[OF hg]]
+  by (simp add: indexed_waits_def indexed_access_goal_tests)
+
+subsection \<open>Independence and holding\<close>
+
+definition indexed_independent :: "('a,'s::linorder,'d,'c) indexed_state \<Rightarrow> ('a,'s,'d,'c) indexed_goal \<Rightarrow> bool" where
+  "indexed_independent r hg \<longleftrightarrow> access_independent (indexed_goal_access r) hg"
+
+lemma indexed_independent:
+  assumes r: "indexed_formed \<kappa> P r" and hg: "hg |\<in>| tree_bucket (indexed_goals r) q0"
+  shows "indexed_independent r hg \<longleftrightarrow> finite_independent_goal (indexed_pending r) (indexed_goal_value hg)"
+  using access_formed.independent[OF indexed_access_formed[OF r] indexed_access_goal[OF hg]]
+  by (simp add: indexed_independent_def indexed_access_goal_tests)
+
+definition indexed_held :: "('a,'s,'d,'c) finite_witness_construction \<Rightarrow> ('a,'s::linorder,'d,'c) indexed_state \<Rightarrow>
+    ('a,'s,'d,'c) indexed_goal \<Rightarrow> bool" where
+  "indexed_held \<kappa> r hg \<longleftrightarrow>
+    access_held ((indexed_goal_access r)\<lparr>access_free := (\<lambda>hn. finite_free_registered \<kappa> (indexed_node_value hn))\<rparr>) hg"
+
+lemma indexed_held:
+  assumes r: "indexed_formed \<kappa> P r" and hg: "hg |\<in>| tree_bucket (indexed_goals r) q0"
+  shows "indexed_held \<kappa> r hg \<longleftrightarrow> finite_held \<kappa> (indexed_project r) (indexed_goal_value hg)"
+  using access_formed.held[OF indexed_access_formed[OF r] indexed_access_goal[OF hg]]
+  by (simp add: indexed_held_def indexed_access_goal_tests)
+
+subsection \<open>Readiness and construction\<close>
+
+definition indexed_goal_holders :: "('a,'s::linorder,'d,'c) indexed_state \<Rightarrow> ('s,'a) resolution_variable \<Rightarrow>
+    ('a,'s,'d,'c) indexed_goal fset" where
+  "indexed_goal_holders r x = access_goal_holders (indexed_goal_access r) x"
+
+lemma indexed_goal_holders_at:
+  "h |\<in>| indexed_goal_holders r x \<longleftrightarrow>
+    (\<exists>q. q |\<in>| tree_bucket (indexed_holders r) (fst (fst x)) \<and> h |\<in>| tree_bucket (indexed_goals r) q) \<and>
+    x |\<in>| indexed_goal_variables h"
+  by (simp add: indexed_goal_holders_def access_goal_holders_at)
+
+lemma indexed_goal_holders:
+  assumes r: "indexed_formed \<kappa> P r"
+  shows "fimage indexed_goal_value (indexed_goal_holders r x) = finite_goal_holders (indexed_pending r) x"
+  using access_formed.goal_holders[OF indexed_access_formed[OF r], of x]
+  by (simp add: indexed_goal_holders_def indexed_access_goal_tests)
+
+definition indexed_ready :: "('a,'s::linorder,'d,'c) indexed_state \<Rightarrow> ('a,'s,'d,'c) resolution_node \<Rightarrow> 'a \<Rightarrow> bool" where
+  "indexed_ready r nd a \<longleftrightarrow> access_ready (indexed_goal_access r) (resolution_node_position nd) a"
+
+lemma indexed_ready:
+  assumes r: "indexed_formed \<kappa> P r"
+  shows "indexed_ready r nd a \<longleftrightarrow> finite_registration_ready (indexed_pending r) nd a"
+  using access_formed.ready[OF indexed_access_formed[OF r], of nd a]
+  by (simp add: indexed_ready_def indexed_access_goal_tests)
+
+definition indexed_constructed :: "('a,'s,'d,'c) finite_witness_construction \<Rightarrow> ('a,'s,'d,'c) finite_schema_system \<Rightarrow>
+    ('a,'s::linorder,'d,'c) indexed_state \<Rightarrow> ('a,'s,'d,'c) resolution_node \<Rightarrow> 'a fset" where
+  "indexed_constructed \<kappa> P r nd = access_constructed (indexed_access \<kappa> P r) (index_node nd)"
+
+lemma indexed_constructed:
+  assumes r: "indexed_formed \<kappa> P r" and nd: "nd |\<in>| indexed_node_set r"
+  shows "indexed_constructed \<kappa> P r nd = finite_constructed \<kappa> P (indexed_pending r) nd"
+proof -
+  obtain hn where hn: "hn |\<in>| tree_bucket (indexed_nodes r) (resolution_node_position nd)" "indexed_node_value hn = nd"
+    by (rule indexed_node_set_at[OF r nd])
+  have "access_constructed (indexed_access \<kappa> P r) hn = finite_constructed \<kappa> P (indexed_pending r) nd"
+    using access_formed.constructed[OF indexed_access_formed[OF r], of hn "resolution_node_position nd"] hn by simp
+  then show ?thesis using hn(2) by (simp add: indexed_constructed_def access_constructed_def)
+qed
+
 definition indexed_construction_nodes :: "('a,'s,'d,'c) finite_witness_construction \<Rightarrow>
     ('a,'s,'d,'c) finite_schema_system \<Rightarrow> ('a,'s::linorder,'d,'c) indexed_state \<Rightarrow> ('a,'s,'d,'c) indexed_node fset" where
-  "indexed_construction_nodes \<kappa> P r = ffilter (\<lambda>hn. indexed_constructed \<kappa> P r (indexed_node_value hn) \<noteq> {||})
-    (ffUnion (fimage (tree_bucket (indexed_nodes r)) (indexed_registered_positions r)))"
+  "indexed_construction_nodes \<kappa> P r = access_construction_nodes (indexed_access \<kappa> P r)"
 
 lemma indexed_construction_nodes:
   assumes r: "indexed_formed \<kappa> P r"
   shows "fimage indexed_node_value (indexed_construction_nodes \<kappa> P r) =
       ffilter (\<lambda>nd. finite_constructed \<kappa> P (indexed_pending r) nd \<noteq> {||}) (indexed_node_set r)"
     and "hn |\<in>| indexed_construction_nodes \<kappa> P r \<Longrightarrow> \<exists>q. hn |\<in>| tree_bucket (indexed_nodes r) q"
-proof -
-  have cand: "\<exists>q. hn |\<in>| tree_bucket (indexed_nodes r) q" if "hn |\<in>| indexed_construction_nodes \<kappa> P r" for hn
-    using that by (auto simp: indexed_construction_nodes_def ffilter.rep_eq ffUnion.rep_eq fimage.rep_eq)
-  then show "hn |\<in>| indexed_construction_nodes \<kappa> P r \<Longrightarrow> \<exists>q. hn |\<in>| tree_bucket (indexed_nodes r) q" .
-  have "nd |\<in>| fimage indexed_node_value (indexed_construction_nodes \<kappa> P r) \<longleftrightarrow>
-      nd |\<in>| indexed_node_set r \<and> finite_constructed \<kappa> P (indexed_pending r) nd \<noteq> {||}" for nd
-  proof
-    assume "nd |\<in>| fimage indexed_node_value (indexed_construction_nodes \<kappa> P r)"
-    then obtain hn where hn: "hn |\<in>| indexed_construction_nodes \<kappa> P r" "nd = indexed_node_value hn"
-      by (auto simp: fimage.rep_eq)
-    obtain q where q: "hn |\<in>| tree_bucket (indexed_nodes r) q" using cand[OF hn(1)] by blast
-    have "indexed_constructed \<kappa> P r nd \<noteq> {||}" using hn by (auto simp: indexed_construction_nodes_def ffilter.rep_eq)
-    then show "nd |\<in>| indexed_node_set r \<and> finite_constructed \<kappa> P (indexed_pending r) nd \<noteq> {||}"
-      using indexed_node_in_set[OF q] hn(2) indexed_constructed[OF r] by auto
-  next
-    assume a: "nd |\<in>| indexed_node_set r \<and> finite_constructed \<kappa> P (indexed_pending r) nd \<noteq> {||}"
-    then obtain b where b: "b |\<in>| finite_constructed \<kappa> P (indexed_pending r) nd" by (metis all_not_fin_conv)
-    let ?x = "((resolution_node_position nd,True),b)"
-    have "finite_goal_holders (indexed_pending r) ?x \<noteq> {||}"
-      using b by (auto simp: finite_constructed_def finite_registration_ready_def Let_def ffilter.rep_eq)
-    then obtain g where g: "g |\<in>| indexed_pending r" "?x |\<in>| resolution_goal_variables g"
-      by (auto simp: finite_goal_holders_def ffilter.rep_eq fset_eq_iff)
-    obtain h where h: "h |\<in>| tree_bucket (indexed_goals r) (resolution_goal_position g)" "indexed_goal_value h = g"
-      by (rule indexed_pending_at[OF r g(1)])
-    have xh: "?x |\<in>| indexed_goal_variables h" using g(2) h indexed_goal_variables_at(1)[OF r h(1)] by simp
-    have "resolution_node_position nd |\<in>| goal_registered_positions (tree_bucket (indexed_goals r) (resolution_goal_position g))"
-      unfolding goal_registered_positions_member using h(1) xh by force
-    then have pos: "resolution_node_position nd |\<in>| indexed_registered_positions r"
-      unfolding indexed_registered_positions_member[OF r] by blast
-    obtain hn where hn: "hn |\<in>| tree_bucket (indexed_nodes r) (resolution_node_position nd)" "indexed_node_value hn = nd"
-      by (rule indexed_node_set_at[OF r conjunct1[OF a]])
-    have "indexed_constructed \<kappa> P r nd \<noteq> {||}" using a indexed_constructed[OF r] by simp
-    then have "hn |\<in>| indexed_construction_nodes \<kappa> P r"
-      using hn pos by (force simp: indexed_construction_nodes_def ffilter.rep_eq ffUnion.rep_eq fimage.rep_eq)
-    then show "nd |\<in>| fimage indexed_node_value (indexed_construction_nodes \<kappa> P r)" using hn(2) by (force simp: fimage.rep_eq)
-  qed
-  then show "fimage indexed_node_value (indexed_construction_nodes \<kappa> P r) =
-      ffilter (\<lambda>nd. finite_constructed \<kappa> P (indexed_pending r) nd \<noteq> {||}) (indexed_node_set r)"
-    by (auto simp: fset_eq_iff ffilter.rep_eq)
-qed
+  using access_formed.construction_nodes[OF indexed_access_formed[OF r]]
+    access_construction_nodes_at[of hn "indexed_access \<kappa> P r"]
+  by (simp_all add: indexed_construction_nodes_def)
 
 subsection \<open>The construction step\<close>
 
@@ -1860,7 +1742,7 @@ definition indexed_construction_substitution :: "('a,'s,'d,'c) finite_witness_co
 definition indexed_construction_step :: "('a,'s,'d,'c) finite_witness_construction \<Rightarrow>
     ('a,'s,'d,'c) finite_schema_system \<Rightarrow> ('a,'s::linorder,'d,'c) indexed_state \<Rightarrow> ('a,'s,'d,'c) indexed_node \<Rightarrow>
     ('a,'s,'d,'c) indexed_state" where
-  "indexed_construction_step \<kappa> P r hn = (let nd = indexed_node_value hn; C = indexed_constructed \<kappa> P r nd in
+  "indexed_construction_step \<kappa> P r hn = (let nd = indexed_node_value hn; C = access_constructed (indexed_access \<kappa> P r) hn in
     indexed_substitute P (indexed_construction_substitution \<kappa> P r nd C)
       (fimage (\<lambda>a. ((resolution_node_position nd,True),a)) C)
       (r\<lparr>indexed_witnesses := indexed_witnesses r |\<union>| ffUnion (fimage (\<lambda>a. case indexed_value \<kappa> P r nd a of
@@ -1880,8 +1762,10 @@ theorem indexed_construction_step:
 proof -
   let ?nd = "indexed_node_value hn"
   let ?G = "indexed_pending r"
-  let ?C = "indexed_constructed \<kappa> P r ?nd"
-  have C: "?C = finite_constructed \<kappa> P ?G ?nd" by (rule indexed_constructed[OF r indexed_node_in_set[OF hn]])
+  let ?C = "access_constructed (indexed_access \<kappa> P r) hn"
+  have hn': "hn |\<in>| access_nodes_at (indexed_access \<kappa> P r) q0" using hn by simp
+  have C: "?C = finite_constructed \<kappa> P ?G ?nd"
+    using access_formed.constructed[OF indexed_access_formed[OF r] hn'] by simp
   let ?W = "indexed_witnesses r |\<union>| ffUnion (fimage (\<lambda>a. case indexed_value \<kappa> P r ?nd a of
           Some v \<Rightarrow> {|(((resolution_node_position ?nd,True),a),v)|} | None \<Rightarrow> {||}) ?C)"
   let ?r = "r\<lparr>indexed_witnesses := ?W\<rparr>"
@@ -2161,91 +2045,65 @@ qed
 section \<open>The selection\<close>
 
 text \<open>
-  The selection reads R3's selection (@{const finite_resolution_select_at}) through the tests above: every class of
-  @{const finite_goal_choice} is a filter of indexed goals by a test equal to R3's on the goals of a formed state, the
-  alternatives read from each goal's cache, and the constructions from the positions holding registered variables.
-  A filter commutes with the image of the goals' values, so the selection projects to R3's.
+  The selection is the representation's (@{const access_select}) read through the access of an indexed state, and by
+  the access's formation it projects to R3's selection (@{const finite_resolution_select_at}): every class of
+  @{const finite_goal_choice} is the access's filter of goals by a test equal to R3's on the goals of a formed state.
+  The order of goals and of nodes reads the positions of their values alone: it is the goal access's at every state,
+  and is stated at the empty one.
 \<close>
 
 definition indexed_first_goals :: "('a,'s::linorder,'d,'c) indexed_goal fset \<Rightarrow> ('a,'s,'d,'c) indexed_goal fset" where
-  "indexed_first_goals H = ffilter (\<lambda>h. \<not> fBex H (\<lambda>h'. finite_position_less
-    (resolution_goal_position (indexed_goal_value h')) (resolution_goal_position (indexed_goal_value h)))) H"
+  "indexed_first_goals H = access_first_goals (indexed_goal_access (indexed_empty {||})) H"
 
 lemma indexed_first_goals:
   "fimage indexed_goal_value (indexed_first_goals H) = finite_first_goals (fimage indexed_goal_value H)"
   "h |\<in>| indexed_first_goals H \<Longrightarrow> h |\<in>| H"
-  by (auto simp: indexed_first_goals_def finite_first_goals_def fset_eq_iff fimage.rep_eq ffilter.rep_eq)
+  by (auto simp: indexed_first_goals_def access_first_goals_def finite_first_goals_def fset_eq_iff fimage.rep_eq
+      ffilter.rep_eq)
 
 definition indexed_first_nodes :: "('a,'s::linorder,'d,'c) indexed_node fset \<Rightarrow> ('a,'s,'d,'c) indexed_node fset" where
-  "indexed_first_nodes N = ffilter (\<lambda>hn. \<not> fBex N (\<lambda>m. finite_position_less
-    (resolution_node_position (indexed_node_value m)) (resolution_node_position (indexed_node_value hn)))) N"
+  "indexed_first_nodes N = access_first_nodes (indexed_goal_access (indexed_empty {||})) N"
 
 lemma indexed_first_nodes:
   "fimage indexed_node_value (indexed_first_nodes N) = finite_first_nodes (fimage indexed_node_value N)"
   "hn |\<in>| indexed_first_nodes N \<Longrightarrow> hn |\<in>| N"
-  by (auto simp: indexed_first_nodes_def finite_first_nodes_def fset_eq_iff fimage.rep_eq ffilter.rep_eq)
+  by (auto simp: indexed_first_nodes_def access_first_nodes_def finite_first_nodes_def fset_eq_iff fimage.rep_eq
+      ffilter.rep_eq)
 
 subsection \<open>R3's classes and the waiting rule\<close>
 
 definition indexed_goal_selection :: "('a,'s::linorder,'d,'c) indexed_state \<Rightarrow> ('a,'s,'d,'c) indexed_goal fset \<Rightarrow>
     ('a,'s,'d,'c) indexed_goal fset" where
-  "indexed_goal_selection r A = (let c1 = ffilter (\<lambda>h. finite_ground_call_goal (indexed_goal_value h)) A;
-      c2 = ffilter (indexed_independent r) A; c3 = ffilter (\<lambda>h. finite_solvable_material_goal (indexed_goal_value h)) A;
-      c4 = ffilter (\<lambda>h. finite_leaf_call_goal (indexed_goal_value h)) A in
-    indexed_first_goals (if c1\<noteq>{||} then c1 else if c2\<noteq>{||} then c2 else if c3\<noteq>{||} then c3 else c4))"
+  "indexed_goal_selection r A = access_goal_selection (indexed_goal_access r) A"
 
 lemma indexed_goal_selection_member: "h |\<in>| indexed_goal_selection r A \<Longrightarrow> h |\<in>| A"
-  by (auto simp: indexed_goal_selection_def Let_def ffilter.rep_eq dest: indexed_first_goals(2) split: if_splits)
+  unfolding indexed_goal_selection_def by (rule access_goal_selection_member)
 
 lemma indexed_goal_selection:
   assumes r: "indexed_formed \<kappa> P r" and A: "\<And>h. h |\<in>| A \<Longrightarrow> h |\<in>| tree_buckets (indexed_goals r)"
   shows "fimage indexed_goal_value (indexed_goal_selection r A) =
       finite_goal_selection (indexed_pending r) (fimage indexed_goal_value A)"
 proof -
-  have ind: "ffilter (indexed_independent r) A =
-      ffilter (\<lambda>h. finite_independent_goal (indexed_pending r) (indexed_goal_value h)) A"
-  proof (rule ffilter_cong_on)
-    fix h assume "h |\<in>| A"
-    then obtain q where q: "h |\<in>| tree_bucket (indexed_goals r) q" using A by (auto simp: tree_buckets_member)
-    show "indexed_independent r h \<longleftrightarrow> finite_independent_goal (indexed_pending r) (indexed_goal_value h)"
-      by (rule indexed_independent[OF r q])
-  qed
-  show "fimage indexed_goal_value (indexed_goal_selection r A) =
-      finite_goal_selection (indexed_pending r) (fimage indexed_goal_value A)"
-    unfolding indexed_goal_selection_def finite_goal_selection_def Let_def ind
-    by (simp add: fimage_ffilter_value indexed_first_goals(1) if_distrib[of "fimage indexed_goal_value"])
+  have A': "\<And>h. h |\<in>| A \<Longrightarrow> h |\<in>| access_goals (indexed_access \<kappa> P r)" using A by simp
+  show ?thesis using access_formed.goal_selection[OF indexed_access_formed[OF r] A']
+    by (simp add: indexed_goal_selection_def indexed_access_goal_tests)
 qed
 
 definition indexed_waiting_selection :: "('a,'s::linorder,'d,'c) indexed_state \<Rightarrow> ('a,'s,'d,'c) indexed_goal fset \<Rightarrow>
     ('a,'s,'d,'c) indexed_goal fset" where
-  "indexed_waiting_selection r A = (let W = indexed_goal_selection r (ffilter (\<lambda>h. \<not> indexed_waits r h) A) in
-    if W \<noteq> {||} then W else indexed_goal_selection r A)"
+  "indexed_waiting_selection r A = access_waiting_selection (indexed_goal_access r) A"
 
 lemma indexed_waiting_selection_member: "h |\<in>| indexed_waiting_selection r A \<Longrightarrow> h |\<in>| A"
-  by (auto simp: indexed_waiting_selection_def Let_def ffilter.rep_eq dest: indexed_goal_selection_member split: if_splits)
+  unfolding indexed_waiting_selection_def by (rule access_waiting_selection_member)
 
 lemma indexed_waiting_selection:
   assumes r: "indexed_formed \<kappa> P r" and A: "\<And>h. h |\<in>| A \<Longrightarrow> h |\<in>| tree_buckets (indexed_goals r)"
   shows "fimage indexed_goal_value (indexed_waiting_selection r A) =
       finite_waiting_selection (indexed_project r) (indexed_pending r) (fimage indexed_goal_value A)"
 proof -
-  let ?A = "ffilter (\<lambda>h. \<not> finite_goal_waits (indexed_project r) (indexed_goal_value h)) A"
-  have w: "ffilter (\<lambda>h. \<not> indexed_waits r h) A = ?A"
-  proof (rule ffilter_cong_on)
-    fix h assume "h |\<in>| A"
-    then obtain q where q: "h |\<in>| tree_bucket (indexed_goals r) q" using A by (auto simp: tree_buckets_member)
-    show "(\<not> indexed_waits r h) \<longleftrightarrow> (\<not> finite_goal_waits (indexed_project r) (indexed_goal_value h))"
-      using indexed_waits[OF r q] by simp
-  qed
-  have A': "\<And>h. h |\<in>| ?A \<Longrightarrow> h |\<in>| tree_buckets (indexed_goals r)" using A by (simp add: ffilter.rep_eq)
-  note s1 = indexed_goal_selection[where A="ffilter (\<lambda>h. \<not> finite_goal_waits (indexed_project r) (indexed_goal_value h)) A",
-      OF r A']
-    and s2 = indexed_goal_selection[where A=A, OF r A]
-  show "fimage indexed_goal_value (indexed_waiting_selection r A) =
-      finite_waiting_selection (indexed_project r) (indexed_pending r) (fimage indexed_goal_value A)"
-    unfolding indexed_waiting_selection_def finite_waiting_selection_def Let_def w
-    using s1(1)[symmetric] s2(1)[symmetric]
-    by (simp add: fimage_ffilter_value if_distrib[of "fimage indexed_goal_value"])
+  have A': "\<And>h. h |\<in>| A \<Longrightarrow> h |\<in>| access_goals (indexed_access \<kappa> P r)" using A by simp
+  show ?thesis using access_formed.waiting_selection[OF indexed_access_formed[OF r] A']
+    by (simp add: indexed_waiting_selection_def indexed_access_goal_tests)
 qed
 
 subsection \<open>The choice at a priority\<close>
@@ -2257,17 +2115,10 @@ text \<open>
 
 definition indexed_goal_choice :: "(('a,'s::linorder,'d,'c) indexed_state \<Rightarrow> ('a,'s,'d,'c) indexed_goal \<Rightarrow> bool) \<Rightarrow>
     ('a,'s,'d,'c) indexed_state \<Rightarrow> ('a,'s,'d,'c) indexed_goal fset \<Rightarrow> ('a,'s,'d,'c) indexed_goal fset" where
-  "indexed_goal_choice rp r A = (let C = ffilter (\<lambda>h. finite_candidate_goal (indexed_goal_value h)) A;
-      c0 = ffilter (\<lambda>h. indexed_goal_alternatives h = 0 \<or> indexed_pruned r h \<or> indexed_reusable r h) C in
-    if c0 \<noteq> {||} then indexed_first_goals c0
-    else let cp = ffilter (rp r) C in if cp \<noteq> {||} then indexed_first_goals cp
-    else let c1 = ffilter (\<lambda>h. indexed_goal_alternatives h = 1 \<and> \<not> indexed_waits r h) C in
-      if c1 \<noteq> {||} then indexed_first_goals c1
-    else indexed_waiting_selection r A)"
+  "indexed_goal_choice rp r A = access_goal_choice (rp r) (indexed_goal_access r) A"
 
 lemma indexed_goal_choice_member: "h |\<in>| indexed_goal_choice rp r A \<Longrightarrow> h |\<in>| A"
-  by (auto simp: indexed_goal_choice_def Let_def ffilter.rep_eq
-    dest: indexed_first_goals(2) indexed_waiting_selection_member split: if_splits)
+  unfolding indexed_goal_choice_def by (rule access_goal_choice_member)
 
 lemma indexed_goal_choice:
   assumes r: "indexed_formed \<kappa> P r" and A: "\<And>h. h |\<in>| A \<Longrightarrow> h |\<in>| tree_buckets (indexed_goals r)"
@@ -2275,40 +2126,11 @@ lemma indexed_goal_choice:
   shows "fimage indexed_goal_value (indexed_goal_choice rp r A) =
       finite_goal_choice pr P (indexed_project r) (indexed_pending r) (fimage indexed_goal_value A)"
 proof -
-  let ?C = "ffilter (\<lambda>h. finite_candidate_goal (indexed_goal_value h)) A"
-  have at: "\<And>h. h |\<in>| ?C \<Longrightarrow> \<exists>q. h |\<in>| tree_bucket (indexed_goals r) q"
-    using A by (auto simp: tree_buckets_member ffilter.rep_eq)
-  have c0: "ffilter (\<lambda>h. indexed_goal_alternatives h = 0 \<or> indexed_pruned r h \<or> indexed_reusable r h) ?C =
-      ffilter (\<lambda>h. finite_goal_alternatives P (indexed_goal_value h) = 0 \<or>
-        finite_pruned (indexed_project r) (indexed_goal_value h) \<or>
-        finite_reusable (indexed_project r) (indexed_goal_value h)) ?C"
-  proof (rule ffilter_cong_on)
-    fix h assume "h |\<in>| ?C"
-    then obtain q where q: "h |\<in>| tree_bucket (indexed_goals r) q" using at by blast
-    show "(indexed_goal_alternatives h = 0 \<or> indexed_pruned r h \<or> indexed_reusable r h) \<longleftrightarrow>
-        (finite_goal_alternatives P (indexed_goal_value h) = 0 \<or>
-        finite_pruned (indexed_project r) (indexed_goal_value h) \<or>
-        finite_reusable (indexed_project r) (indexed_goal_value h))"
-      using indexed_goal_variables_at(2)[OF r q] indexed_pruned[OF r q] indexed_reusable[OF r q] by simp
-  qed
-  have cp: "ffilter (rp r) ?C = ffilter (\<lambda>h. pr (indexed_project r) (indexed_goal_value h)) ?C"
-    by (rule ffilter_cong_on) (use rp in \<open>auto simp: ffilter.rep_eq\<close>)
-  have c1: "ffilter (\<lambda>h. indexed_goal_alternatives h = 1 \<and> \<not> indexed_waits r h) ?C =
-      ffilter (\<lambda>h. finite_goal_alternatives P (indexed_goal_value h) = 1 \<and>
-        \<not> finite_goal_waits (indexed_project r) (indexed_goal_value h)) ?C"
-  proof (rule ffilter_cong_on)
-    fix h assume "h |\<in>| ?C"
-    then obtain q where q: "h |\<in>| tree_bucket (indexed_goals r) q" using at by blast
-    show "(indexed_goal_alternatives h = 1 \<and> \<not> indexed_waits r h) \<longleftrightarrow>
-        (finite_goal_alternatives P (indexed_goal_value h) = 1 \<and>
-        \<not> finite_goal_waits (indexed_project r) (indexed_goal_value h))"
-      using indexed_goal_variables_at(2)[OF r q] indexed_waits[OF r q] by simp
-  qed
-  note w = indexed_waiting_selection[OF r A]
-  show "fimage indexed_goal_value (indexed_goal_choice rp r A) =
-      finite_goal_choice pr P (indexed_project r) (indexed_pending r) (fimage indexed_goal_value A)"
-    unfolding indexed_goal_choice_def finite_goal_choice_def Let_def fimage_snd_keyed c0 cp c1
-    by (simp add: fimage_ffilter_value indexed_first_goals(1) w(1) if_distrib[of "fimage indexed_goal_value"])
+  have A': "\<And>h. h |\<in>| A \<Longrightarrow> h |\<in>| access_goals (indexed_access \<kappa> P r)" using A by simp
+  have rp': "\<And>h. h |\<in>| A \<Longrightarrow> rp r h \<longleftrightarrow> pr (indexed_project r) (access_goal (indexed_access \<kappa> P r) h)"
+    using rp by simp
+  show ?thesis using access_formed.goal_choice[where rp="rp r" and pr=pr, OF indexed_access_formed[OF r] A' rp']
+    by (simp add: indexed_goal_choice_def indexed_access_goal_tests)
 qed
 
 subsection \<open>The selection and its projection\<close>
@@ -2326,10 +2148,8 @@ fun indexed_selection_value :: "('a,'s,'d,'c) indexed_selection \<Rightarrow> ('
 definition indexed_select :: "(('a,'s::linorder,'d,'c) indexed_state \<Rightarrow> ('a,'s,'d,'c) indexed_goal \<Rightarrow> bool) \<Rightarrow>
     ('a,'s,'d,'c) finite_witness_construction \<Rightarrow> ('a,'s,'d,'c) finite_schema_system \<Rightarrow>
     ('a,'s,'d,'c) indexed_state \<Rightarrow> ('a,'s,'d,'c) indexed_selection" where
-  "indexed_select rp \<kappa> P r = (let N = indexed_construction_nodes \<kappa> P r in
-    if N \<noteq> {||} then Indexed_Construction (indexed_first_nodes N)
-    else let S = indexed_goal_choice rp r (ffilter (\<lambda>h. \<not> indexed_held \<kappa> r h) (tree_buckets (indexed_goals r))) in
-      if S = {||} then Indexed_None else Indexed_Goals S)"
+  "indexed_select rp \<kappa> P r = (case access_select (rp r) (indexed_access \<kappa> P r) of
+      Access_Construction N \<Rightarrow> Indexed_Construction N | Access_Goals G \<Rightarrow> Indexed_Goals G | Access_None \<Rightarrow> Indexed_None)"
 
 theorem indexed_select:
   assumes r: "indexed_formed \<kappa> P r"
@@ -2338,43 +2158,25 @@ theorem indexed_select:
     and "indexed_select rp \<kappa> P r = Indexed_Construction N \<Longrightarrow> hn |\<in>| N \<Longrightarrow> \<exists>q. hn |\<in>| tree_bucket (indexed_nodes r) q"
     and "indexed_select rp \<kappa> P r = Indexed_Goals G \<Longrightarrow> hg |\<in>| G \<Longrightarrow> \<exists>q. hg |\<in>| tree_bucket (indexed_goals r) q"
 proof -
-  let ?H = "ffilter (\<lambda>h. \<not> indexed_held \<kappa> r h) (tree_buckets (indexed_goals r))"
-  have H: "\<And>h. h |\<in>| ?H \<Longrightarrow> h |\<in>| tree_buckets (indexed_goals r)" by (simp add: ffilter.rep_eq)
-  have "?H = ffilter (\<lambda>h. \<not> finite_held \<kappa> (indexed_project r) (indexed_goal_value h)) (tree_buckets (indexed_goals r))"
-  proof (rule ffilter_cong_on)
-    fix h assume "h |\<in>| tree_buckets (indexed_goals r)"
-    then obtain q where q: "h |\<in>| tree_bucket (indexed_goals r) q" by (auto simp: tree_buckets_member)
-    show "(\<not> indexed_held \<kappa> r h) \<longleftrightarrow> (\<not> finite_held \<kappa> (indexed_project r) (indexed_goal_value h))"
-      using indexed_held[OF r q] by simp
-  qed
-  then have held: "fimage indexed_goal_value ?H =
-      ffilter (\<lambda>g. \<not> finite_held \<kappa> (indexed_project r) g) (indexed_pending r)"
-    by (simp add: indexed_pending_def fimage_ffilter_value)
-  have rpH: "\<And>h. h |\<in>| ?H \<Longrightarrow> rp r h \<longleftrightarrow> pr (indexed_project r) (indexed_goal_value h)" using rp by simp
-  note cn = indexed_construction_nodes[OF r]
-    and ch = indexed_goal_choice[where A="ffilter (\<lambda>h. \<not> indexed_held \<kappa> r h) (tree_buckets (indexed_goals r))"
-      and rp=rp and pr=pr, OF r H rpH]
+  let ?V = "indexed_access \<kappa> P r"
+  have rp': "\<And>h. h |\<in>| access_goals ?V \<Longrightarrow> rp r h \<longleftrightarrow> pr (indexed_project r) (access_goal ?V h)" using rp by simp
+  note s = access_formed.select[where rp="rp r" and pr=pr, OF indexed_access_formed[OF r] rp']
   show "indexed_selection_value (indexed_select rp \<kappa> P r) = finite_resolution_select_at pr \<kappa> P (indexed_project r)"
-    unfolding indexed_select_def finite_resolution_select_at_def Let_def
-    using cn(1)[symmetric] held[symmetric] ch(1)[symmetric]
-    by (simp add: indexed_first_nodes(1) if_distrib[of indexed_selection_value])
+    using s(1) by (cases "access_select (rp r) ?V") (simp_all add: indexed_select_def)
   show "indexed_select rp \<kappa> P r = Indexed_Construction N \<Longrightarrow> hn |\<in>| N \<Longrightarrow> \<exists>q. hn |\<in>| tree_bucket (indexed_nodes r) q"
-    by (auto simp: indexed_select_def Let_def dest: indexed_first_nodes(2) cn(2) split: if_splits)
+    using s(2)[of N hn] access_construction_nodes_at[of hn ?V]
+    by (cases "access_select (rp r) ?V") (auto simp: indexed_select_def)
   show "indexed_select rp \<kappa> P r = Indexed_Goals G \<Longrightarrow> hg |\<in>| G \<Longrightarrow> \<exists>q. hg |\<in>| tree_bucket (indexed_goals r) q"
-  proof -
-    assume "indexed_select rp \<kappa> P r = Indexed_Goals G" "hg |\<in>| G"
-    then have "hg |\<in>| indexed_goal_choice rp r ?H" by (auto simp: indexed_select_def Let_def split: if_splits)
-    then have "hg |\<in>| ?H" by (rule indexed_goal_choice_member)
-    then show ?thesis using H by (auto simp: tree_buckets_member)
-  qed
+    using s(3)[of G hg] by (cases "access_select (rp r) ?V") (auto simp: indexed_select_def tree_buckets_member)
 qed
 
 section \<open>The search\<close>
 
 text \<open>
-  The indexed search is R3's search over the indexed state: it refreshes F4's kept constructions before it selects,
-  steps through the indexed construction step and the indexed successors, and diagnoses at the projection. By
-  induction on the bound over the step theorems it is R3's search at the refined priority, and at the default
+  The indexed search is the representation's search (@{const represented_search}) over the indexed state. Its goal
+  representation reads no construction: its access is the goal access, it refreshes nothing and constructs nothing.
+  The indexed representation adds the construction: the indexed access, F4's refresh and the indexed construction
+  step. By the step theorems and the access's formation it is R3's search at the refined priority, and at the default
   priority it is R3's search itself, which it computes as its code equation.
 \<close>
 
@@ -2386,107 +2188,104 @@ proof -
   show ?thesis using tree_buckets_is_empty[OF f] by (simp add: indexed_pending_def)
 qed
 
+definition indexed_goal_representation :: "('a,'s,'d,'c) finite_schema_system \<Rightarrow>
+    (('a,'s::linorder,'d,'c) indexed_state, ('a,'s,'d,'c) indexed_goal, ('a,'s,'d,'c) indexed_node, ordered_factor_term,
+      'a, 's, 'd, 'c) resolution_representation" where
+  "indexed_goal_representation P = \<lparr>rep_access = indexed_goal_access, rep_empty = (\<lambda>r. RBT.is_empty (indexed_goals r)),
+    rep_project = indexed_project, rep_refresh = (\<lambda>r. r), rep_construct = (\<lambda>r hn. r),
+    rep_successors = indexed_goal_successors P\<rparr>"
+
+definition indexed_representation :: "('a,'s,'d,'c) finite_witness_construction \<Rightarrow> ('a,'s,'d,'c) finite_schema_system \<Rightarrow>
+    (('a,'s::linorder,'d,'c) indexed_state, ('a,'s,'d,'c) indexed_goal, ('a,'s,'d,'c) indexed_node, ordered_factor_term,
+      'a, 's, 'd, 'c) resolution_representation" where
+  "indexed_representation \<kappa> P = (indexed_goal_representation P)\<lparr>rep_access := indexed_access \<kappa> P,
+    rep_refresh := indexed_refresh \<kappa> P, rep_construct := indexed_construction_step \<kappa> P\<rparr>"
+
+lemma indexed_representation_simps [simp]:
+  "rep_access (indexed_representation \<kappa> P) = indexed_access \<kappa> P"
+  "rep_empty (indexed_representation \<kappa> P) r \<longleftrightarrow> RBT.is_empty (indexed_goals r)"
+  "rep_project (indexed_representation \<kappa> P) = indexed_project"
+  "rep_refresh (indexed_representation \<kappa> P) = indexed_refresh \<kappa> P"
+  "rep_construct (indexed_representation \<kappa> P) = indexed_construction_step \<kappa> P"
+  "rep_successors (indexed_representation \<kappa> P) = indexed_goal_successors P"
+  by (simp_all add: indexed_representation_def indexed_goal_representation_def)
+
 definition indexed_goal_outcome :: "(('a,'s::linorder,'d,'c) indexed_state \<Rightarrow> ('a,'s,'d,'c) resolution_outcome) \<Rightarrow>
     ('a,'s,'d,'c) finite_schema_system \<Rightarrow> ('a,'s,'d,'c) indexed_state \<Rightarrow> ('a,'s,'d,'c) indexed_goal \<Rightarrow>
     ('a,'s,'d,'c) resolution_outcome" where
-  "indexed_goal_outcome rec P r hg = (if indexed_pruned r hg then Resolution_Outcome {||} {||} else
-    let S = indexed_goal_successors P r hg in
-    if S = {||} then (if indexed_witnesses r = {||} then Resolution_Outcome {||} {||}
-      else Resolution_Outcome {||} {|Resolution_Witnessed (indexed_witnesses r) (indexed_goal_value hg)|})
-    else finite_outcome_union (fimage rec S))"
+  "indexed_goal_outcome rec P r hg = represented_goal_outcome (indexed_goal_representation P) rec r (indexed_goal_access r) hg"
 
 lemma indexed_goal_outcome:
   assumes r: "indexed_formed \<kappa> P r" and hg: "hg |\<in>| tree_bucket (indexed_goals r) q0"
     and rec: "\<And>s. indexed_formed \<kappa> P s \<Longrightarrow> recI s = recA (indexed_project s)"
   shows "indexed_goal_outcome recI P r hg = finite_goal_outcome recA P (indexed_project r) (indexed_goal_value hg)"
 proof -
-  let ?S = "indexed_goal_successors P r hg"
-  note sc = indexed_goal_successors[OF r hg]
-  have img: "fimage recI ?S = fimage recA (fimage indexed_project ?S)"
-    unfolding fset.map_comp comp_def by (rule fimage_cong_on) (simp add: rec sc(2))
-  show ?thesis using img sc(1)[symmetric]
-    by (simp add: indexed_goal_outcome_def finite_goal_outcome_def Let_def indexed_pruned[OF r hg])
+  let ?R = "indexed_representation \<kappa> P"
+  have e: "indexed_goal_outcome recI P r hg = represented_goal_outcome ?R recI r (rep_access ?R r) hg"
+    by (simp add: indexed_goal_outcome_def represented_goal_outcome_def indexed_goal_representation_def
+        indexed_access_goal_tests Let_def)
+  have o: "represented_goal_outcome ?R recI r (rep_access ?R r) hg =
+      finite_goal_outcome recA P (rep_project ?R r) (access_goal (rep_access ?R r) hg)"
+  proof (rule represented_goal_outcome)
+    show "access_formed \<kappa> P (rep_access ?R r) (rep_project ?R r)" using indexed_access_formed[OF r] by simp
+    show "hg |\<in>| access_goals (rep_access ?R r)" using hg by (auto simp: tree_buckets_member)
+    show "fimage (rep_project ?R) (rep_successors ?R r hg) =
+        finite_goal_successors P (rep_project ?R r) (access_goal (rep_access ?R r) hg)"
+      using indexed_goal_successors(1)[OF r hg] by simp
+    show "\<And>s. s |\<in>| rep_successors ?R r hg \<Longrightarrow> recI s = recA (rep_project ?R s)"
+      using rec indexed_goal_successors(2)[OF r hg] by simp
+  qed
+  show ?thesis using e o by simp
 qed
 
-primrec indexed_search :: "(('a,'s::linorder,'d,'c) indexed_state \<Rightarrow> ('a,'s,'d,'c) indexed_goal \<Rightarrow> bool) \<Rightarrow>
+definition indexed_search :: "(('a,'s::linorder,'d,'c) indexed_state \<Rightarrow> ('a,'s,'d,'c) indexed_goal \<Rightarrow> bool) \<Rightarrow>
     ('a,'s,'d,'c) finite_witness_construction \<Rightarrow> ('a,'s,'d,'c) finite_schema_system \<Rightarrow> nat \<Rightarrow>
     ('a,'s,'d,'c) indexed_state \<Rightarrow> ('a,'s,'d,'c) resolution_outcome" where
-  "indexed_search rp \<kappa> P 0 r = (if RBT.is_empty (indexed_goals r) then Resolution_Outcome {|indexed_project r|} {||}
-    else Resolution_Outcome {||} {|Resolution_Cut (indexed_pending r)|})"
-| "indexed_search rp \<kappa> P (Suc n) r = (if RBT.is_empty (indexed_goals r) then Resolution_Outcome {|indexed_project r|} {||}
-    else let r' = indexed_refresh \<kappa> P r in (case indexed_select rp \<kappa> P r' of
-      Indexed_Construction N \<Rightarrow>
-        finite_outcome_union (fimage (\<lambda>hn. indexed_search rp \<kappa> P n (indexed_construction_step \<kappa> P r' hn)) N)
-    | Indexed_Goals G \<Rightarrow> finite_outcome_union (fimage (indexed_goal_outcome (indexed_search rp \<kappa> P n) P r') G)
-    | Indexed_None \<Rightarrow> Resolution_Outcome {||}
-        (finsert (Resolution_Stuck (indexed_pending r')) (finite_unconstructed \<kappa> P (indexed_project r')))))"
+  "indexed_search rp \<kappa> P n r = represented_search (indexed_representation \<kappa> P) rp \<kappa> P n r"
 
 theorem indexed_search:
   assumes r: "indexed_formed \<kappa> P r"
     and rp: "\<And>s h. rp s h \<longleftrightarrow> pr (indexed_project s) (indexed_goal_value h)"
   shows "indexed_search rp \<kappa> P n r =
       finite_resolution_search_by (finite_resolution_select_at pr \<kappa> P) \<kappa> P n (indexed_project r)"
-  using r
-proof (induction n arbitrary: r)
-  case 0
-  then show ?case using indexed_empty_goals[OF 0] by simp
-next
-  case (Suc n)
-  let ?r = "indexed_refresh \<kappa> P r"
-  let ?rec = "finite_resolution_search_by (finite_resolution_select_at pr \<kappa> P) \<kappa> P n"
-  have f: "indexed_formed \<kappa> P ?r" and p: "indexed_project ?r = indexed_project r"
-    using indexed_refresh[OF Suc.prems] by simp_all
-  have pp: "indexed_pending ?r = indexed_pending r" using p by (metis indexed_project_fields(1))
-  have rp': "\<And>h. rp ?r h \<longleftrightarrow> pr (indexed_project ?r) (indexed_goal_value h)" by (rule rp)
-  note sel = indexed_select[where rp=rp and pr=pr, OF f rp']
-  have rec: "\<And>s. indexed_formed \<kappa> P s \<Longrightarrow> indexed_search rp \<kappa> P n s = ?rec (indexed_project s)"
-    by (rule Suc.IH)
-  show ?case
-  proof (cases "indexed_pending r = {||}")
-    case True
-    then show ?thesis using indexed_empty_goals[OF Suc.prems] by simp
-  next
-    case False
-    have ne: "\<not> RBT.is_empty (indexed_goals r)" using False indexed_empty_goals[OF Suc.prems] by simp
-    show ?thesis
-    proof (cases "indexed_select rp \<kappa> P ?r")
-      case (Indexed_Construction N)
-      have s: "finite_resolution_select_at pr \<kappa> P (indexed_project r) = Select_Construction (fimage indexed_node_value N)"
-        using sel(1) Indexed_Construction p by simp
-      have "fimage (\<lambda>hn. indexed_search rp \<kappa> P n (indexed_construction_step \<kappa> P ?r hn)) N =
-          fimage ?rec (fimage (finite_construction_step \<kappa> P (indexed_project r)) (fimage indexed_node_value N))"
-        unfolding fset.map_comp comp_def
-      proof (rule fimage_cong_on)
-        fix hn assume "hn |\<in>| N"
-        then obtain q where q: "hn |\<in>| tree_bucket (indexed_nodes ?r) q" using sel(2)[OF Indexed_Construction] by blast
-        show "indexed_search rp \<kappa> P n (indexed_construction_step \<kappa> P ?r hn) =
-            ?rec (finite_construction_step \<kappa> P (indexed_project r) (indexed_node_value hn))"
-          using rec[OF indexed_construction_step(1)[OF f q]] indexed_construction_step(2)[OF f q] p by simp
-      qed
-      then show ?thesis using ne False s Indexed_Construction by (simp add: Let_def)
-    next
-      case (Indexed_Goals G)
-      have s: "finite_resolution_select_at pr \<kappa> P (indexed_project r) = Select_Goals (fimage indexed_goal_value G)"
-        using sel(1) Indexed_Goals p by simp
-      have "fimage (indexed_goal_outcome (indexed_search rp \<kappa> P n) P ?r) G =
-          fimage (finite_goal_outcome ?rec P (indexed_project r)) (fimage indexed_goal_value G)"
-        unfolding fset.map_comp comp_def
-      proof (rule fimage_cong_on)
-        fix hg assume "hg |\<in>| G"
-        then obtain q where q: "hg |\<in>| tree_bucket (indexed_goals ?r) q" using sel(3)[OF Indexed_Goals] by blast
-        show "indexed_goal_outcome (indexed_search rp \<kappa> P n) P ?r hg =
-            finite_goal_outcome ?rec P (indexed_project r) (indexed_goal_value hg)"
-          using indexed_goal_outcome[where recI="indexed_search rp \<kappa> P n"
-            and recA="finite_resolution_search_by (finite_resolution_select_at pr \<kappa> P) \<kappa> P n", OF f q rec] p by simp
-      qed
-      then show ?thesis using ne False s Indexed_Goals by (simp add: Let_def)
-    next
-      case Indexed_None
-      have s: "finite_resolution_select_at pr \<kappa> P (indexed_project r) = Select_None"
-        using sel(1) Indexed_None p by simp
-      then show ?thesis using ne False Indexed_None p pp by (simp add: Let_def)
+proof -
+  let ?R = "indexed_representation \<kappa> P"
+  have "represented_search ?R rp \<kappa> P n r =
+      finite_resolution_search_by (finite_resolution_select_at pr \<kappa> P) \<kappa> P n (rep_project ?R r)"
+  proof (rule represented_search[where F = "indexed_formed \<kappa> P"])
+    show "indexed_formed \<kappa> P r" by (rule r)
+    show "\<And>s. indexed_formed \<kappa> P s \<Longrightarrow> access_formed \<kappa> P (rep_access ?R s) (rep_project ?R s)"
+      using indexed_access_formed by simp
+    show "\<And>s. indexed_formed \<kappa> P s \<Longrightarrow> rep_empty ?R s \<longleftrightarrow> resolution_pending (rep_project ?R s) = {||}"
+      using indexed_empty_goals by simp
+    show "\<And>s. indexed_formed \<kappa> P s \<Longrightarrow>
+        indexed_formed \<kappa> P (rep_refresh ?R s) \<and> rep_project ?R (rep_refresh ?R s) = rep_project ?R s"
+      using indexed_refresh by simp
+    show "\<And>s m. indexed_formed \<kappa> P s \<Longrightarrow> m |\<in>| access_construction_nodes (rep_access ?R s) \<Longrightarrow>
+        indexed_formed \<kappa> P (rep_construct ?R s m) \<and>
+        rep_project ?R (rep_construct ?R s m) = finite_construction_step \<kappa> P (rep_project ?R s) (access_node (rep_access ?R s) m)"
+    proof -
+      fix s m assume s: "indexed_formed \<kappa> P s" and m: "m |\<in>| access_construction_nodes (rep_access ?R s)"
+      obtain q where q: "m |\<in>| tree_bucket (indexed_nodes s) q" using access_construction_nodes_at[OF m] by auto
+      show "indexed_formed \<kappa> P (rep_construct ?R s m) \<and>
+          rep_project ?R (rep_construct ?R s m) = finite_construction_step \<kappa> P (rep_project ?R s) (access_node (rep_access ?R s) m)"
+        using indexed_construction_step[OF s q] by simp
     qed
+    show "\<And>s h. indexed_formed \<kappa> P s \<Longrightarrow> h |\<in>| access_goals (rep_access ?R s) \<Longrightarrow>
+        fimage (rep_project ?R) (rep_successors ?R s h) = finite_goal_successors P (rep_project ?R s) (access_goal (rep_access ?R s) h) \<and>
+        (\<forall>s'. s' |\<in>| rep_successors ?R s h \<longrightarrow> indexed_formed \<kappa> P s')"
+    proof -
+      fix s h assume s: "indexed_formed \<kappa> P s" and h: "h |\<in>| access_goals (rep_access ?R s)"
+      obtain q where q: "h |\<in>| tree_bucket (indexed_goals s) q" using h by (auto simp: tree_buckets_member)
+      show "fimage (rep_project ?R) (rep_successors ?R s h) = finite_goal_successors P (rep_project ?R s) (access_goal (rep_access ?R s) h) \<and>
+          (\<forall>s'. s' |\<in>| rep_successors ?R s h \<longrightarrow> indexed_formed \<kappa> P s')"
+        using indexed_goal_successors[OF s q] by simp
+    qed
+    show "\<And>s h. indexed_formed \<kappa> P s \<Longrightarrow> h |\<in>| access_goals (rep_access ?R s) \<Longrightarrow>
+        rp s h \<longleftrightarrow> pr (rep_project ?R s) (access_goal (rep_access ?R s) h)"
+      using rp by simp
   qed
+  then show ?thesis by (simp add: indexed_search_def)
 qed
 
 text \<open>

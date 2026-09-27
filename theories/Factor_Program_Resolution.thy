@@ -322,12 +322,14 @@ lemma finite_call_successors_alternatives:
   unfolding finite_call_successors_def finite_call_alternative_set_def
   by (simp add: fimage_distributes finite_call_alternative_state_def split_def cong: if_cong option.case_cong)
 
+definition finite_solution_alternatives where
+  "finite_solution_alternatives M Ws = ffUnion (fimage (\<lambda>W. ffUnion (fimage (\<lambda>E.
+      case finite_unify_pairs E of None \<Rightarrow> {||} | Some u \<Rightarrow> {|(E,u)|})
+    (finite_material_instance_pairs W M))) Ws)"
+
 definition finite_material_alternative_set where
   "finite_material_alternative_set M = (case finite_material_resolution M of
-      Material_Waits \<Rightarrow> {||}
-    | Material_Solutions Ws \<Rightarrow> ffUnion (fimage (\<lambda>W. ffUnion (fimage (\<lambda>E.
-        case finite_unify_pairs E of None \<Rightarrow> {||} | Some u \<Rightarrow> {|(E,u)|})
-      (finite_material_instance_pairs W M))) Ws))"
+      Material_Waits \<Rightarrow> {||} | Material_Solutions Ws \<Rightarrow> finite_solution_alternatives M Ws)"
 
 definition finite_material_alternative_state where
   "finite_material_alternative_state st q r M z = (case z of (E,u) \<Rightarrow> resolution_state_substitute
@@ -335,12 +337,28 @@ definition finite_material_alternative_state where
     (Resolution_State (resolution_pending st |-| {|Resolution_Material_Goal q r M|})
       (resolution_nodes st) (resolution_witnesses st)))"
 
+text \<open>
+  The successors of a material goal at R1's solutions @{term Ws} are the states of the unifying instance pairs of the
+  solutions, stated once for the goal's successors and for a committed premise's (@{text finite_solution_successors}).
+\<close>
+
+lemma finite_solution_alternatives_states:
+  "ffUnion (fimage (\<lambda>W. ffUnion (fimage (\<lambda>E.
+      case finite_unify_pairs E of
+        None \<Rightarrow> {||}
+      | Some u \<Rightarrow> {|resolution_state_substitute (finite_binding_substitution u)
+          (Resolution_State (resolution_pending st |-| {|Resolution_Material_Goal q r M|})
+            (resolution_nodes st) (resolution_witnesses st))|})
+    (finite_material_instance_pairs W M))) Ws) =
+    fimage (finite_material_alternative_state st q r M) (finite_solution_alternatives M Ws)"
+  unfolding finite_solution_alternatives_def
+  by (simp add: fimage_distributes finite_material_alternative_state_def cong: option.case_cong split: option.split)
+
 lemma finite_material_successors_alternatives:
   "finite_material_successors st q r M =
     fimage (finite_material_alternative_state st q r M) (finite_material_alternative_set M)"
   unfolding finite_material_successors_def finite_material_alternative_set_def
-  by (simp add: fimage_distributes finite_material_alternative_state_def cong: option.case_cong
-    split: finite_material_outcome.split)
+  by (cases "finite_material_resolution M") (use finite_solution_alternatives_states[of st q r M] in simp_all)
 
 fun finite_goal_alternatives ::
     "('a,'s,'d,'c) finite_schema_system \<Rightarrow> ('a,'s,'d,'c) resolution_goal \<Rightarrow> nat" where

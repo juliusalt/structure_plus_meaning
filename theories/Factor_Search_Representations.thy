@@ -804,7 +804,7 @@ proof -
        else if fimage (access_goal V) ?Dp \<noteq> {||} then finite_first_goals (fimage (access_goal V) ?Dp)
        else if fimage (access_goal V) ?D1 \<noteq> {||} then finite_first_goals (fimage (access_goal V) ?D1)
        else finite_waiting_selection st (resolution_pending st) (fimage (access_goal V) A))"
-    unfolding finite_goal_choice_def Let_def fimage_snd_keyed by (simp add: fimage_ffilter_value)
+    unfolding finite_goal_choice_in_def Let_def fimage_snd_keyed by (simp add: fimage_ffilter_value)
   have f0: "fimage (access_goal V) (access_first_goals V ?D0) = finite_first_goals (fimage (access_goal V) ?D0)"
     by (rule first_goals) (use A in \<open>auto simp: ffilter.rep_eq\<close>)
   have fp: "fimage (access_goal V) (access_first_goals V ?Dp) = finite_first_goals (fimage (access_goal V) ?Dp)"
@@ -837,7 +837,7 @@ proof -
       finite_first_nodes (fimage (access_node V) (access_construction_nodes V))"
     by (rule first_nodes) (rule access_construction_nodes_at)
   show "access_selection_value V (access_select rp V) = finite_resolution_select_at pr \<kappa> P st"
-    unfolding access_select_def finite_resolution_select_at_def Let_def
+    unfolding access_select_def finite_resolution_select_in_def Let_def
     using cn[symmetric] hd[symmetric] ch[symmetric] fn
     by (simp add: if_distrib[of "access_selection_value V"])
   show "access_select rp V = Access_Construction N \<Longrightarrow> n |\<in>| N \<Longrightarrow> n |\<in>| access_construction_nodes V"
@@ -904,7 +904,7 @@ proof -
   have img: "fimage recI (rep_successors R r h) = fimage recA (fimage (rep_project R) (rep_successors R r h))"
     unfolding fset.map_comp comp_def by (rule fset.map_cong0) (simp add: rec)
   show ?thesis using img succ[symmetric] pruned[OF h] witnesses
-    by (simp add: represented_goal_outcome_def finite_goal_outcome_def Let_def)
+    by (simp add: represented_goal_outcome_def finite_goal_outcome_in_def Let_def)
 qed
 
 theorem represented_search:

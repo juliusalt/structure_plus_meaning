@@ -724,19 +724,19 @@ proof -
   let ?N = "resolution_nodes st"
   have Pf: "finite_system_formed P" and placed: "resolution_nodes_placed P d t st"
     and distinct: "resolution_positions_distinct st"
-    using I by (simp_all add: resolution_invariant_def)
+    using I by (simp_all add: resolution_invariant_in_def)
   have dist: "\<And>m m'. m |\<in>| ?N \<Longrightarrow> m' |\<in>| ?N \<Longrightarrow> resolution_node_position m=resolution_node_position m' \<Longrightarrow> m=m'"
     using distinct by (simp add: resolution_positions_distinct_def)
   have rootsite: "resolution_node_site nd=d" and rootcall: "resolution_node_call nd=finite_exact_term_pattern t"
-    using placed nd root by (simp_all add: resolution_nodes_placed_def)
+    using placed nd root by (simp_all add: resolution_nodes_placed_in_def)
   have clauses: "finite_relation_functional (finite_system_clauses P)" using Pf by (simp add: finite_system_formed_def)
   have each: "finite_relation_functional (finite_node_links ?N n) \<and>
       finite_admitted_schema_instance P (resolution_node_site n) (resolution_node_clause n) (finite_node_values n)
         (finite_residual_term (resolution_node_call n)) (finite_node_link_claims ?N n)" if n: "n |\<in>| ?N" for n
   proof -
-    have linked: "resolution_node_linked P st n" using placed n by (simp add: resolution_nodes_placed_def)
+    have linked: "resolution_node_linked P st n" using placed n by (simp add: resolution_nodes_placed_in_def)
     have clause: "((resolution_node_site n,resolution_node_clause n),resolution_node_schema n) |\<in>| finite_system_clauses P"
-      using linked by (simp add: resolution_node_linked_def)
+      using linked by (simp add: resolution_node_linked_in_def)
     have prem: "finite_relation_functional (finite_schema_premises (resolution_node_schema n))"
       using finite_system_clause_formed[OF Pf clause] by (simp add: finite_schema_formed_def)
     have links: "finite_relation_functional (finite_node_links ?N n)" by (rule finite_node_links_functional[OF dist prem])
@@ -833,7 +833,7 @@ proof -
   have "finite_state_verdicts P d t st = fimage (\<lambda>nd. (finite_node_proof (fcard ?N) ?N nd,
       finite_checks_schema_proof P (finite_node_proof (fcard ?N) ?N nd) d t)) (ffilter (\<lambda>nd. resolution_node_position nd=[]) ?N)"
     by (simp add: finite_state_verdicts_def Let_def)
-  then show ?thesis by (simp add: finite_state_proofs_def fset.map_comp comp_def)
+  then show ?thesis by (simp add: finite_state_proofs_def finite_state_proofs_in_def fset.map_comp comp_def)
 qed
 
 lemma finite_outcome_result_verdicts [code]:
@@ -852,7 +852,7 @@ proof -
   have A: "fimage fst (ffilter snd (fimage (\<lambda>c. (c,finite_checks_schema_proof P c d t)) ?C)) =
       ffilter (\<lambda>p. finite_checks_schema_proof P p d t) ?C"
     by (rule fset_eqI) (force simp: resolution_fset_simps)
-  show ?thesis unfolding finite_outcome_result_def Let_def V C A ..
+  show ?thesis unfolding finite_outcome_result_def finite_outcome_result_in_def finite_state_proofs_empty Let_def V C A ..
 qed
 
 declare finite_program_resolution_outcome [code]
@@ -948,7 +948,7 @@ proof -
     if "x |\<in>| ffilter (\<lambda>nd. resolution_node_position nd=[]) ?N" for x
     using that by (simp add: finite_certificate_table_proof)
   from fimage_cong[where N="ffilter (\<lambda>nd. resolution_node_position nd=[]) ?N", OF refl this] show ?thesis
-    by (simp add: finite_state_proofs_def Let_def)
+    by (simp add: finite_state_proofs_def finite_state_proofs_in_def Let_def)
 qed
 
 section \<open>The check linear in the nodes: the found state indexed\<close>
@@ -1845,7 +1845,7 @@ next
     show ?thesis by (rule finite_indexed_certificates_exact[OF listed xN, symmetric])
   qed
   from fimage_cong[where N="ffilter (\<lambda>nd. resolution_node_position nd=[]) ?N", OF refl this] show ?thesis
-    using Some by (simp add: finite_state_proofs_def finite_indexed_links_rows_exact[OF listed] Let_def)
+    using Some by (simp add: finite_state_proofs_def finite_state_proofs_in_def finite_indexed_links_rows_exact[OF listed] Let_def)
 qed
 
 subsection \<open>The found states' verdicts united without comparing certificates\<close>

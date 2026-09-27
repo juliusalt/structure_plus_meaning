@@ -2311,7 +2311,7 @@ proof -
       finite_resolution_search_by (finite_resolution_select_at (\<lambda>st g. False) \<kappa> P) \<kappa> P n
         (indexed_project (index_state P st))"
     by (rule indexed_search[OF index_state(1)]) simp
-  then show ?thesis by (simp add: finite_resolution_search_def index_state(2))
+  then show ?thesis by (simp add: finite_resolution_search_def finite_resolution_search_in_def index_state(2))
 qed
 
 export_code finite_resolution_search checking SML

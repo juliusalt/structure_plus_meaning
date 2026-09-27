@@ -1181,7 +1181,7 @@ proof -
     using sc gq by (auto simp: finite_socket_commitment_framed_def split: option.splits prod.splits)
   have gF': "?g |\<in>| finite_focus_pending F st" using gF gq by simp
   have nf: "F \<noteq> Some q" using nf0 gq by simp
-  have dist: "resolution_positions_distinct st" using I by (simp add: resolution_invariant_def)
+  have dist: "resolution_positions_distinct st" using I by (simp add: resolution_invariant_in_def)
   have same: "m = nd" if "m |\<in>| resolution_nodes st" "resolution_node_position m = butlast q" for m
   proof -
     have "resolution_node_position m = resolution_node_position nd" using that(2) np by simp

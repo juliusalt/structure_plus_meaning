@@ -144,7 +144,7 @@ lemma finite_committed_goal_alone:
   shows "finite_focus_pending (Some (resolution_goal_position g)) st = {|g|}"
 proof -
   let ?q = "resolution_goal_position g"
-  have dist: "resolution_positions_distinct st" using I unfolding resolution_invariant_def by blast
+  have dist: "resolution_positions_distinct st" using I unfolding resolution_invariant_in_def by blast
   obtain q0 r0 e0 p0 where gc: "g = Resolution_Call_Goal q0 r0 e0 p0" using g(2) by (cases g) auto
   have unique_goal: "h = g" if h: "h |\<in>| resolution_pending st" "take (length ?q) (resolution_goal_position h) = ?q" for h
   proof (cases "resolution_goal_position h = ?q")
@@ -225,8 +225,8 @@ proof -
       using parent False unfolding finite_goal_premise_def by auto
     have posq: "resolution_node_position np @ [last q] = q" using np(2) False by simp
     have dist: "resolution_positions_distinct st" and nplaced: "resolution_nodes_placed P d t st"
-      using I unfolding resolution_invariant_def by blast+
-    have linked: "resolution_node_linked P st np" using nplaced np(1) unfolding resolution_nodes_placed_def by blast
+      using I unfolding resolution_invariant_in_def by blast+
+    have linked: "resolution_node_linked P st np" using nplaced np(1) unfolding resolution_nodes_placed_in_def by blast
     obtain \<beta> where bind: "resolution_node_bindings np =
         fimage (\<lambda>a. (a,\<beta> a)) (finite_schema_variables (resolution_node_schema np))"
       and prem\<beta>: "\<forall>s e p. (s,e,p) |\<in>| finite_schema_premises (resolution_node_schema np) \<longrightarrow>
@@ -235,7 +235,7 @@ proof -
         (\<exists>m. m |\<in>| resolution_nodes st \<and> resolution_node_position m=resolution_node_position np@[s] \<and>
           resolution_node_site m=e \<and> resolution_node_call m=finite_pattern_substitute \<beta> p) \<or>
         resolution_premise_reused st (resolution_node_position np@[s]) e (finite_pattern_substitute \<beta> p)"
-      using linked unfolding resolution_node_linked_def by blast
+      using linked unfolding resolution_node_linked_in_def by blast
     have no_node_q: "resolution_node_position m \<noteq> q" if "m |\<in>| resolution_nodes st" for m
       by (rule resolution_call_goal_no_node[OF I g that])
     have noreuse: "\<not> resolution_premise_reused st (resolution_node_position np@[last q]) e0 (finite_pattern_substitute \<beta> p0)"
@@ -243,7 +243,7 @@ proof -
       assume "resolution_premise_reused st (resolution_node_position np@[last q]) e0 (finite_pattern_substitute \<beta> p0)"
       then have A: "\<forall>x. x |\<in>| resolution_pending st \<longrightarrow> resolution_is_call x \<longrightarrow>
           resolution_goal_position x \<noteq> resolution_node_position np@[last q]"
-        unfolding resolution_premise_reused_def fBex_member_iff by blast
+        unfolding resolution_premise_closed_in_def resolution_table.sel fBex_member_iff by blast
       have "resolution_goal_position (Resolution_Call_Goal q r e p) \<noteq> resolution_node_position np@[last q]"
         by (rule A[rule_format, OF g]) simp
       then have "q \<noteq> resolution_node_position np@[last q]" by simp
@@ -294,7 +294,7 @@ proof -
         fimage (\<lambda>(a,x). (a,finite_pattern_substitute \<sigma> x)) (resolution_node_bindings np)"
       by (cases np; simp)+
     have linked': "resolution_node_linked P s ?np"
-      using Is np's unfolding resolution_invariant_def resolution_nodes_placed_def by blast
+      using Is np's unfolding resolution_invariant_in_def resolution_nodes_placed_in_def by blast
     obtain \<beta>' where bind': "resolution_node_bindings ?np =
         fimage (\<lambda>a. (a,\<beta>' a)) (finite_schema_variables (resolution_node_schema ?np))"
       and prem\<beta>': "\<forall>k e p. (k,e,p) |\<in>| finite_schema_premises (resolution_node_schema ?np) \<longrightarrow>
@@ -303,7 +303,7 @@ proof -
         (\<exists>m. m |\<in>| resolution_nodes s \<and> resolution_node_position m=resolution_node_position ?np@[k] \<and>
           resolution_node_site m=e \<and> resolution_node_call m=finite_pattern_substitute \<beta>' p) \<or>
         resolution_premise_reused s (resolution_node_position ?np@[k]) e (finite_pattern_substitute \<beta>' p)"
-      using linked' unfolding resolution_node_linked_def by blast
+      using linked' unfolding resolution_node_linked_in_def by blast
     let ?SV = "finite_schema_variables (resolution_node_schema np)"
     have b': "resolution_node_bindings ?np = fimage (\<lambda>a. (a,finite_pattern_substitute \<sigma> (\<beta> a))) ?SV"
     proof -
@@ -371,7 +371,7 @@ proof -
       next
         case reused
         then obtain m where "m |\<in>| resolution_nodes s" "finite_solved_node s m" "resolution_node_site m=e0"
-          "resolution_node_call m=finite_pattern_substitute \<beta>' p0" unfolding resolution_premise_reused_def by blast
+          "resolution_node_call m=finite_pattern_substitute \<beta>' p0" unfolding resolution_premise_closed_in_def resolution_table.sel by blast
         then show thesis using that e0 \<beta>'p0 by simp
       qed
     qed

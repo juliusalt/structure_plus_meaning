@@ -86,32 +86,36 @@ proof -
   then show ?thesis using artifact_identity_reflexive by simp
 qed
 
-lemma lookup_input_productions:
-  "productions_discharged (positive_meaning (decode_finite_system finite_rooted_given_readers))
-    finite_rooted_given_readers m lookup_input_declarations"
+text \<open>
+  The lookup record's production is discharged at any meaning at which 12 is reflexive, at any program; at the rooted
+  readers it is by @{thm [source] given_rooted_identity_reflexive}, and at the numbered and installed programs of
+  @{text Development_Given_Installed_Productions} by their own reflexivity.
+\<close>
+
+lemma lookup_input_productions_at:
+  assumes reflexive: "producer_reflexive M 12 view_identity"
+  shows "productions_discharged M P m lookup_input_declarations"
 proof (rule input_productions_discharged)
   fix e S s keep Vp Vh R
   assume sock: "(e,S,s,keep,Vp,Vh) |\<in>| declared_sockets lookup_input_declarations"
     and p: "declared_production lookup_input_declarations e S s = Some R"
   have R: "R = identity_input_registration" and V: "Vp = view_identity" using sock p by simp_all
-  have fields: "registration_site identity_input_registration = 12"
-    "registration_schema identity_input_registration = identity_socket_schema"
-    "registration_variable identity_input_registration = 1" by (simp_all add: identity_input_registration_def)
   show "(R = input_registration (registration_site R) (registration_schema R) Vp (registration_variable R) \<and>
         head_registration Vp (registration_schema R) (registration_variable R) \<and>
-        producer_reflexive (positive_meaning (decode_finite_system finite_rooted_given_readers)) (registration_site R) Vp \<and>
-        (\<forall>x. declared_narrowing lookup_input_declarations e S s x)) \<or>
+        producer_reflexive M (registration_site R) Vp \<and> (\<forall>x. declared_narrowing lookup_input_declarations e S s x)) \<or>
       (head_registration Vp (registration_schema R) (registration_variable R) \<and>
-        head_registration_produces (finite_collection_construction [R] m) finite_rooted_given_readers
-          (registration_site R) (registration_schema R) (registration_variable R)
-          (declared_narrowing lookup_input_declarations e S s) \<and>
-        head_registration_answers (positive_meaning (decode_finite_system finite_rooted_given_readers))
-          (finite_collection_construction [R] m) finite_rooted_given_readers (registration_site R)
+        head_registration_produces (finite_collection_construction [R] m) P (registration_site R) (registration_schema R)
+          (registration_variable R) (declared_narrowing lookup_input_declarations e S s) \<and>
+        head_registration_answers M (finite_collection_construction [R] m) P (registration_site R)
           (registration_schema R) Vp (registration_variable R))"
-    unfolding R V fields
-    using identity_input_registration_head given_rooted_identity_reflexive
-    by (simp add: identity_input_registration_def)
+    unfolding R V identity_input_registration_fields(1-3)
+    using identity_input_registration_head reflexive by (simp add: identity_input_registration_def)
 qed
+
+lemma lookup_input_productions:
+  "productions_discharged (positive_meaning (decode_finite_system finite_rooted_given_readers))
+    finite_rooted_given_readers m lookup_input_declarations"
+  by (rule lookup_input_productions_at[OF given_rooted_identity_reflexive])
 
 section \<open>The given's record with 12's input production\<close>
 

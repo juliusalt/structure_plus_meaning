@@ -872,6 +872,52 @@ lemma given_declarations_sites_Q:
 lemma given_narrowed_frame_sites_Q: "frame_sites given_narrowed_frames \<subseteq> system_definitions (decode_finite_system Q)"
   using given_narrowed_frame_sites by (auto intro: rooted_in_Q)
 
+text \<open>
+  A produced record and its frames discharged at the rooted readers, with their sites there, are discharged at the
+  numbered program by the agreement on the shared definitions; its productions at the numbered program, which read
+  the record's own registrations, are the record's premise of the committed registrations. The given's record is its
+  instance here (@{text given_declarations_discharged_Q}, @{text committed_registrations_Q}), the given's input
+  record in @{text Development_Given_Installed_Productions}.
+\<close>
+
+lemma produced_record_discharged_Q:
+  assumes discharged: "narrowed_declarations_discharged (positive_meaning given_rooted_readers_system)
+      (narrowed_declarations.truncate ND) corr"
+    and frames: "narrowed_frames_discharged (positive_meaning given_rooted_readers_system)
+      (narrowed_declarations.truncate ND) \<Phi>"
+    and sites: "declared_sites (resolution_declarations.truncate ND) \<subseteq> system_definitions given_rooted_readers_system"
+  shows "narrowed_declarations_discharged (positive_meaning (decode_finite_system Q))
+      (narrowed_declarations.truncate ND) corr"
+    and "narrowed_frames_discharged (positive_meaning (decode_finite_system Q)) (narrowed_declarations.truncate ND) \<Phi>"
+proof -
+  have closed: "system_dependency_closed given_rooted_readers_system
+      (system_definitions given_rooted_readers_system \<inter> system_definitions (decode_finite_system Q))"
+    by (rule systems_agree_on_intersection_closed[OF given_rooted_readers_formed target_formed rooted_shared])
+  have sites': "declared_sites (resolution_declarations.truncate (narrowed_declarations.truncate ND)) \<subseteq>
+      system_definitions given_rooted_readers_system \<inter> system_definitions (decode_finite_system Q)"
+    using sites by (auto intro: rooted_in_Q)
+  show "narrowed_declarations_discharged (positive_meaning (decode_finite_system Q))
+      (narrowed_declarations.truncate ND) corr"
+    by (rule narrowed_declarations_agree_discharged[OF given_rooted_readers_formed target_formed rooted_shared closed
+      sites' discharged])
+  show "narrowed_frames_discharged (positive_meaning (decode_finite_system Q)) (narrowed_declarations.truncate ND) \<Phi>"
+    by (rule narrowed_frames_agree_discharged[OF given_rooted_readers_formed target_formed rooted_shared closed
+      sites' frames])
+qed
+
+theorem produced_committed_registrations_Q:
+  assumes \<kappa>: "finite_witness_construction_formed \<kappa>" and complete: "finite_construction_complete \<kappa> Q"
+    and discharged: "narrowed_declarations_discharged (positive_meaning given_rooted_readers_system)
+      (narrowed_declarations.truncate ND) corr"
+    and frames: "narrowed_frames_discharged (positive_meaning given_rooted_readers_system)
+      (narrowed_declarations.truncate ND) \<Phi>"
+    and sites: "declared_sites (resolution_declarations.truncate ND) \<subseteq> system_definitions given_rooted_readers_system"
+    and productions: "productions_discharged (positive_meaning (decode_finite_system Q)) Q m ND"
+    and declared: "narrowed_productions_declared ND"
+  shows "committed_registrations \<kappa> Q m ND \<Phi> corr"
+  by (rule committed_registrations.intro[OF \<kappa> complete produced_record_discharged_Q[OF discharged frames sites]
+    productions declared])
+
 lemma given_declarations_discharged_Q:
   "narrowed_declarations_discharged (positive_meaning (decode_finite_system Q))
     (narrowed_declarations.truncate given_declarations) given_declarations_correspondence"
@@ -879,20 +925,14 @@ lemma given_declarations_discharged_Q:
     (narrowed_declarations.truncate given_declarations) given_narrowed_frames"
   "productions_discharged (positive_meaning (decode_finite_system Q)) Q m given_declarations"
 proof -
-  have closed: "system_dependency_closed given_rooted_readers_system
-      (system_definitions given_rooted_readers_system \<inter> system_definitions (decode_finite_system Q))"
-    by (rule systems_agree_on_intersection_closed[OF given_rooted_readers_formed target_formed rooted_shared])
-  have sites: "declared_sites (resolution_declarations.truncate (narrowed_declarations.truncate given_declarations)) \<subseteq>
-      system_definitions given_rooted_readers_system \<inter> system_definitions (decode_finite_system Q)"
-    using given_declarations_sites by (auto intro: rooted_in_Q)
+  note carried = produced_record_discharged_Q[OF given_declarations_discharged(1) given_narrowed_frames_discharged
+    given_declarations_sites]
   show "narrowed_declarations_discharged (positive_meaning (decode_finite_system Q))
       (narrowed_declarations.truncate given_declarations) given_declarations_correspondence"
-    by (rule narrowed_declarations_agree_discharged[OF given_rooted_readers_formed target_formed rooted_shared closed
-      sites given_declarations_discharged(1)])
+    by (rule carried(1))
   show "narrowed_frames_discharged (positive_meaning (decode_finite_system Q))
       (narrowed_declarations.truncate given_declarations) given_narrowed_frames"
-    by (rule narrowed_frames_agree_discharged[OF given_rooted_readers_formed target_formed rooted_shared closed
-      sites given_narrowed_frames_discharged])
+    by (rule carried(2))
   show "productions_discharged (positive_meaning (decode_finite_system Q)) Q m given_declarations"
     unfolding given_declarations_def by (rule produced_join_productions[OF union_productions_at[OF union_meanings_Q]])
 qed
@@ -900,7 +940,9 @@ qed
 theorem committed_registrations_Q:
   assumes \<kappa>: "finite_witness_construction_formed \<kappa>" and complete: "finite_construction_complete \<kappa> Q"
   shows "committed_registrations \<kappa> Q m given_declarations given_narrowed_frames given_declarations_correspondence"
-  by (rule committed_registrations.intro[OF \<kappa> complete given_declarations_discharged_Q given_declarations_discharged(3)])
+  by (rule produced_committed_registrations_Q[OF \<kappa> complete given_declarations_discharged(1)
+    given_narrowed_frames_discharged given_declarations_sites given_declarations_discharged_Q(3)
+    given_declarations_discharged(3)])
 
 subsection \<open>The record relocated: 48's sockets at the placed sites\<close>
 
@@ -1029,54 +1071,79 @@ theorem installed_agree:
     (produced_relocated installed_placement given_declarations)"
   by (rule varied_narrowings_agree_within[OF installed_presentation_formed(2,1) installed_union_sources relocated_within])
 
-subsection \<open>48's registration at the placed and installed programs\<close>
+subsection \<open>A site of one rooted clause: one placed clause, one installed clause, one source\<close>
 
-lemma placed_union_clause:
-  "((installed_placement 48,c),S) |\<in>| finite_system_clauses (finite_rename_system installed_placement Q) \<longleftrightarrow>
-    c = 0 \<and> S = finite_rename_schema id id installed_placement union_schema"
+text \<open>
+  A site of the rooted readers whose clause family is the one clause of a finite schema has at the placed program the
+  one clause of that schema relocated, at the installed program one clause, which that schema matches, and one source
+  for every socket varied there. 48's clause is its instance here (@{text placed_union_clause},
+  @{text installed_union_clause}); 37's and 12's are its instances in
+  @{text Development_Given_Installed_Productions}. The five sites of 48's callers are not: each has several clauses,
+  told apart by their callees (@{thm [source] installed_union_sources}).
+\<close>
+
+theorem installed_single_clause:
+  assumes site: "d \<in> system_definitions given_rooted_readers_system"
+    and one: "\<And>c S. ((d,c),S) \<in> system_clauses given_rooted_readers_system \<longleftrightarrow> c = 0 \<and> S = decode_finite_schema X"
+  shows "((installed_placement d,a),Z) |\<in>| finite_system_clauses (finite_rename_system installed_placement Q) \<longleftrightarrow>
+      a = 0 \<and> Z = finite_rename_schema id id installed_placement X"
+    and "\<exists>c1 T1 f1 h1. ((installed_placement d,c1),T1) |\<in>| finite_system_clauses installed_presentation \<and>
+      finite_schema_match (finite_rename_schema id id installed_placement X) T1 = Some (f1,h1) \<and>
+      (\<forall>c T. ((installed_placement d,c),T) |\<in>| finite_system_clauses installed_presentation \<longrightarrow> c = c1 \<and> T = T1)"
+    and "finite_varied_sources_unique_at {installed_placement d} (finite_rename_system installed_placement Q)
+      installed_presentation"
 proof -
-  have r48: "48 \<in> system_definitions given_rooted_readers_system" by (rule given_rooted_declared_sites) simp
-  have Q48: "((48,c),X) |\<in>| finite_system_clauses Q \<longleftrightarrow> c = 0 \<and> X = union_schema" for c X
+  have Qd: "((d,c),Y) |\<in>| finite_system_clauses Q \<longleftrightarrow> c = 0 \<and> Y = X" for c Y
   proof -
-    have "((48,c),X) |\<in>| finite_system_clauses Q \<longleftrightarrow>
-        ((48,c),decode_finite_schema X) \<in> system_clauses given_rooted_readers_system"
-      by (simp only: finite_system_clause_decoded rooted_clauses_Q[OF r48])
-    also have "\<dots> \<longleftrightarrow> c = 0 \<and> decode_finite_schema X = data_union_schema"
-      by (simp only: given_union_site_clauses(6) singleton_iff prod.inject)
-    also have "\<dots> \<longleftrightarrow> c = 0 \<and> X = union_schema"
-      by (simp only: union_schema_decoded[symmetric] decode_finite_schema_injective)
+    have "((d,c),Y) |\<in>| finite_system_clauses Q \<longleftrightarrow>
+        ((d,c),decode_finite_schema Y) \<in> system_clauses given_rooted_readers_system"
+      by (simp only: finite_system_clause_decoded rooted_clauses_Q[OF site])
+    also have "\<dots> \<longleftrightarrow> c = 0 \<and> decode_finite_schema Y = decode_finite_schema X" by (rule one)
+    also have "\<dots> \<longleftrightarrow> c = 0 \<and> Y = X" by (simp only: decode_finite_schema_injective)
     finally show ?thesis .
   qed
-  show ?thesis
+  have placed: "((installed_placement d,c),S) |\<in>| finite_system_clauses (finite_rename_system installed_placement Q) \<longleftrightarrow>
+      c = 0 \<and> S = finite_rename_schema id id installed_placement X" for c S
   proof
-    assume "((installed_placement 48,c),S) |\<in>| finite_system_clauses (finite_rename_system installed_placement Q)"
-    then obtain d c0 S0 where o: "((d,c0),S0) |\<in>| finite_system_clauses Q" "installed_placement d = installed_placement 48"
-        "c = c0" "S = finite_rename_schema id id installed_placement S0"
+    assume "((installed_placement d,c),S) |\<in>| finite_system_clauses (finite_rename_system installed_placement Q)"
+    then obtain d' c0 S0 where o: "((d',c0),S0) |\<in>| finite_system_clauses Q"
+        "installed_placement d' = installed_placement d" "c = c0" "S = finite_rename_schema id id installed_placement S0"
       by (auto simp: finite_rename_system_def)
-    have "d \<in> system_definitions (decode_finite_system Q)"
+    have "d' \<in> system_definitions (decode_finite_system Q)"
       using target_formed[unfolded schema_system_formed_def] o(1)[unfolded finite_system_clause_decoded] by blast
-    then have "d = 48" using inj_onD[OF installation(5) o(2)] rooted_in_Q[OF r48] by blast
-    then show "c = 0 \<and> S = finite_rename_schema id id installed_placement union_schema" using o Q48 by auto
+    then have "d' = d" using inj_onD[OF installation(5) o(2)] rooted_in_Q[OF site] by blast
+    then show "c = 0 \<and> S = finite_rename_schema id id installed_placement X" using o Qd by auto
   next
-    assume "c = 0 \<and> S = finite_rename_schema id id installed_placement union_schema"
-    then show "((installed_placement 48,c),S) |\<in>| finite_system_clauses (finite_rename_system installed_placement Q)"
-      using fimageI[OF iffD2[OF Q48[of 0 union_schema]],
+    assume "c = 0 \<and> S = finite_rename_schema id id installed_placement X"
+    then show "((installed_placement d,c),S) |\<in>| finite_system_clauses (finite_rename_system installed_placement Q)"
+      using fimageI[OF iffD2[OF Qd[of 0 X]],
         of "map_prod (map_prod installed_placement id) (finite_rename_schema id id installed_placement)"]
       by (simp add: finite_rename_system_def)
   qed
-qed
-
-lemma installed_union_clause:
-  "\<exists>c1 T1 f1 h1. ((installed_placement 48,c1),T1) |\<in>| finite_system_clauses installed_presentation \<and>
-    finite_schema_match (finite_rename_schema id id installed_placement union_schema) T1 = Some (f1,h1) \<and>
-    (\<forall>c T. ((installed_placement 48,c),T) |\<in>| finite_system_clauses installed_presentation \<longrightarrow> c = c1 \<and> T = T1)"
-proof -
+  show "((installed_placement d,a),Z) |\<in>| finite_system_clauses (finite_rename_system installed_placement Q) \<longleftrightarrow>
+      a = 0 \<and> Z = finite_rename_schema id id installed_placement X"
+    by (rule placed)
+  show "finite_varied_sources_unique_at {installed_placement d} (finite_rename_system installed_placement Q)
+      installed_presentation"
+    unfolding finite_varied_sources_unique_at_def
+  proof (intro allI impI)
+    fix e c S c' S' c'' T f h f' h'
+    assume e: "e \<in> {installed_placement d}"
+      and S: "((e,c),S) |\<in>| finite_system_clauses (finite_rename_system installed_placement Q)"
+      and S': "((e,c'),S') |\<in>| finite_system_clauses (finite_rename_system installed_placement Q)"
+    have "e = installed_placement d" using e by simp
+    then show "S = S'" using S S' by (simp add: placed)
+  qed
+  show "\<exists>c1 T1 f1 h1. ((installed_placement d,c1),T1) |\<in>| finite_system_clauses installed_presentation \<and>
+      finite_schema_match (finite_rename_schema id id installed_placement X) T1 = Some (f1,h1) \<and>
+      (\<forall>c T. ((installed_placement d,c),T) |\<in>| finite_system_clauses installed_presentation \<longrightarrow> c = c1 \<and> T = T1)"
+  proof -
   let ?P = "decode_finite_system (finite_rename_system installed_placement Q)"
   let ?N = "decode_finite_system installed_presentation"
-  let ?S = "finite_rename_schema id id installed_placement union_schema"
-  have pc: "((installed_placement 48,0),?S) |\<in>| finite_system_clauses (finite_rename_system installed_placement Q)"
-    by (simp add: placed_union_clause)
-  have pcd: "((installed_placement 48,0),decode_finite_schema ?S) \<in> system_clauses ?P"
+  let ?S = "finite_rename_schema id id installed_placement X"
+  have pc: "((installed_placement d,0),?S) |\<in>| finite_system_clauses (finite_rename_system installed_placement Q)"
+    by (simp add: placed)
+  have pcd: "((installed_placement d,0),decode_finite_schema ?S) \<in> system_clauses ?P"
     by (rule iffD1[OF finite_system_clause_decoded pc])
   have alpha: "system_alpha_variant ?P ?N" by (rule installed_presentation_variant)
   have Pf: "schema_system_formed ?P" by (rule conjunct1[OF alpha[unfolded system_alpha_variant_def]])
@@ -1089,39 +1156,39 @@ proof -
     if "((d,s),X) \<in> system_clauses ?N" for d s X
     by (rule Nf[unfolded schema_system_formed_def, THEN conjunct2, THEN conjunct2, THEN conjunct2, THEN conjunct2,
       THEN conjunct2, rule_format, OF that])
-  have defined: "installed_placement 48 \<in> system_definitions ?P" by (rule conjunct1[OF Pc[OF pcd]])
-  obtain f k where fk: "inj_on f (pattern_variables (system_interface ?P (installed_placement 48))) \<and>
-      system_interface ?N (installed_placement 48) = rename_pattern f (system_interface ?P (installed_placement 48)) \<and>
-      schema_family_variant k (system_clause_family ?P (installed_placement 48))
-        (system_clause_family ?N (installed_placement 48))"
+  have defined: "installed_placement d \<in> system_definitions ?P" by (rule conjunct1[OF Pc[OF pcd]])
+  obtain f k where fk: "inj_on f (pattern_variables (system_interface ?P (installed_placement d))) \<and>
+      system_interface ?N (installed_placement d) = rename_pattern f (system_interface ?P (installed_placement d)) \<and>
+      schema_family_variant k (system_clause_family ?P (installed_placement d))
+        (system_clause_family ?N (installed_placement d))"
     using bspec[OF alpha[unfolded system_alpha_variant_def, THEN conjunct2, THEN conjunct2, THEN conjunct2] defined]
     by blast
-  have family: "schema_family_variant k (system_clause_family ?P (installed_placement 48))
-      (system_clause_family ?N (installed_placement 48))" by (rule conjunct2[OF conjunct2[OF fk]])
-  have placed_only: "s = 0 \<and> X = decode_finite_schema ?S"
-    if sX: "(s,X) \<in> system_clause_family ?P (installed_placement 48)" for s X
+  have family: "schema_family_variant k (system_clause_family ?P (installed_placement d))
+      (system_clause_family ?N (installed_placement d))" by (rule conjunct2[OF conjunct2[OF fk]])
+  have placed_only: "s = 0 \<and> W = decode_finite_schema ?S"
+    if sW: "(s,W) \<in> system_clause_family ?P (installed_placement d)" for s W
   proof -
-    have cl: "((installed_placement 48,s),X) \<in> system_clauses ?P" using sX by (simp only: system_clause_member)
-    have Xf: "schema_formed X" by (rule conjunct1[OF conjunct2[OF Pc[OF cl]]])
-    have "((installed_placement 48,s),finite_schema_of X) |\<in>|
+    have cl: "((installed_placement d,s),W) \<in> system_clauses ?P" using sW by (simp only: system_clause_member)
+    have Wf: "schema_formed W" by (rule conjunct1[OF conjunct2[OF Pc[OF cl]]])
+    have "((installed_placement d,s),finite_schema_of W) |\<in>|
         finite_system_clauses (finite_rename_system installed_placement Q)"
-      unfolding finite_system_clause_decoded decode_finite_schema_of[OF Xf] by (rule cl)
-    then have c: "s = 0 \<and> finite_schema_of X = ?S" by (simp only: placed_union_clause)
-    have "X = decode_finite_schema (finite_schema_of X)" by (rule decode_finite_schema_of[OF Xf, symmetric])
+      unfolding finite_system_clause_decoded decode_finite_schema_of[OF Wf] by (rule cl)
+    then have c: "s = 0 \<and> finite_schema_of W = ?S" by (simp only: placed)
+    have "W = decode_finite_schema (finite_schema_of W)" by (rule decode_finite_schema_of[OF Wf, symmetric])
     also have "\<dots> = decode_finite_schema ?S" by (simp only: conjunct2[OF c])
-    finally have x: "X = decode_finite_schema ?S" .
-    show ?thesis using conjunct1[OF c] x by (rule conjI)
+    finally have w: "W = decode_finite_schema ?S" .
+    show ?thesis using conjunct1[OF c] w by (rule conjI)
   qed
-  have pf: "(0,decode_finite_schema ?S) \<in> system_clause_family ?P (installed_placement 48)"
+  have pf: "(0,decode_finite_schema ?S) \<in> system_clause_family ?P (installed_placement d)"
     using pcd by (simp only: system_clause_member)
-  obtain T0 where T0: "(k 0,T0) \<in> system_clause_family ?N (installed_placement 48)"
+  obtain T0 where T0: "(k 0,T0) \<in> system_clause_family ?N (installed_placement d)"
       "schema_alpha_variant (decode_finite_schema ?S) T0"
     using schema_family_variant_entry[OF family pf] by blast
-  have T0c: "((installed_placement 48,k 0),T0) \<in> system_clauses ?N" using T0(1) by (simp only: system_clause_member)
+  have T0c: "((installed_placement d,k 0),T0) \<in> system_clauses ?N" using T0(1) by (simp only: system_clause_member)
   have T0f: "schema_formed T0" by (rule conjunct1[OF conjunct2[OF Nc[OF T0c]]])
-  have T1a: "((installed_placement 48,k 0),finite_schema_of T0) |\<in>| finite_system_clauses installed_presentation"
+  have T1a: "((installed_placement d,k 0),finite_schema_of T0) |\<in>| finite_system_clauses installed_presentation"
     unfolding finite_system_clause_decoded decode_finite_schema_of[OF T0f] by (rule T0c)
-  obtain T1 where T1: "((installed_placement 48,k 0),T1) |\<in>| finite_system_clauses installed_presentation"
+  obtain T1 where T1: "((installed_placement d,k 0),T1) |\<in>| finite_system_clauses installed_presentation"
       "T0 = decode_finite_schema T1"
     by (rule that[OF T1a decode_finite_schema_of[OF T0f, symmetric]])
   have Sf: "finite_schema_formed ?S" by (rule finite_system_clause_formed[OF installed_presentation_formed(2) pc])
@@ -1129,16 +1196,16 @@ proof -
   have "finite_schema_match ?S T1 \<noteq> None"
     by (rule iffD2[OF finite_schema_match_exact(2)[OF Sf Tf]]) (simp only: T1(2)[symmetric] T0(2))
   then obtain f1 h1 where m: "finite_schema_match ?S T1 = Some (f1,h1)" by (metis not_None_eq surj_pair)
-  have sv: "single_valued (system_clause_family ?N (installed_placement 48))"
+  have sv: "single_valued (system_clause_family ?N (installed_placement d))"
     by (rule system_clause_family_functional[OF Nf])
   have only: "c = k 0 \<and> T = T1"
-    if "((installed_placement 48,c),T) |\<in>| finite_system_clauses installed_presentation" for c T
+    if "((installed_placement d,c),T) |\<in>| finite_system_clauses installed_presentation" for c T
   proof -
-    have cT: "(c,decode_finite_schema T) \<in> system_clause_family ?N (installed_placement 48)"
+    have cT: "(c,decode_finite_schema T) \<in> system_clause_family ?N (installed_placement d)"
       using that by (simp only: system_clause_member finite_system_clause_decoded)
-    obtain s X where sX: "(s,X) \<in> system_clause_family ?P (installed_placement 48)" "c = k s"
+    obtain s W where sW: "(s,W) \<in> system_clause_family ?P (installed_placement d)" "c = k s"
       using schema_family_variant_origin[OF family cT] by blast
-    have c: "c = k 0" using sX(2) conjunct1[OF placed_only[OF sX(1)]] by (simp only:)
+    have c: "c = k 0" using sW(2) conjunct1[OF placed_only[OF sW(1)]] by (simp only:)
     have dT: "decode_finite_schema T = T0" using single_valued_outputs[OF sv cT[unfolded c] T0(1)] .
     have "decode_finite_schema T = decode_finite_schema T1" using dT T1(2) by (simp only:)
     then have "T = T1" by (simp only: decode_finite_schema_injective)
@@ -1146,13 +1213,78 @@ proof -
   qed
   show ?thesis
   proof (intro exI conjI allI impI)
-    show "((installed_placement 48,k 0),T1) |\<in>| finite_system_clauses installed_presentation" by (rule T1(1))
+    show "((installed_placement d,k 0),T1) |\<in>| finite_system_clauses installed_presentation" by (rule T1(1))
     show "finite_schema_match ?S T1 = Some (f1,h1)" by (rule m)
-    fix c T assume a: "((installed_placement 48,c),T) |\<in>| finite_system_clauses installed_presentation"
+    fix c T assume a: "((installed_placement d,c),T) |\<in>| finite_system_clauses installed_presentation"
     show "c = k 0" by (rule conjunct1[OF only[OF a]])
     show "T = T1" by (rule conjunct2[OF only[OF a]])
   qed
+  qed
 qed
+
+text \<open>
+  A registration at the placed site of one rooted clause, whose schema is that clause relocated, varies to exactly one
+  registration at the site's one installed clause: 48's (@{text relocated_carry_uniquely}) and 12's in
+  @{text Development_Given_Installed_Productions} are its instances.
+\<close>
+
+lemma installed_single_registration:
+  assumes site: "d \<in> system_definitions given_rooted_readers_system"
+    and one: "\<And>c S. ((d,c),S) \<in> system_clauses given_rooted_readers_system \<longleftrightarrow> c = 0 \<and> S = decode_finite_schema X"
+    and at: "registration_site R = installed_placement d"
+      "registration_schema R = finite_rename_schema id id installed_placement X"
+  obtains c1 T1 f1 h1 where "((installed_placement d,c1),T1) |\<in>| finite_system_clauses installed_presentation"
+    "finite_schema_match (finite_rename_schema id id installed_placement X) T1 = Some (f1,h1)"
+    "\<forall>c T. ((installed_placement d,c),T) |\<in>| finite_system_clauses installed_presentation \<longrightarrow> c = c1 \<and> T = T1"
+    "registrations_varied (finite_rename_system installed_placement Q) installed_presentation R =
+      {|registration_varied f1 T1 R|}"
+proof -
+  let ?P = "finite_rename_system installed_placement Q"
+  let ?S = "finite_rename_schema id id installed_placement X"
+  have pc: "((installed_placement d,0),?S) |\<in>| finite_system_clauses ?P"
+    by (simp add: installed_single_clause(1)[OF site one])
+  obtain c1 T1 f1 h1 where u: "((installed_placement d,c1),T1) |\<in>| finite_system_clauses installed_presentation"
+      "finite_schema_match ?S T1 = Some (f1,h1)"
+      "\<forall>c T. ((installed_placement d,c),T) |\<in>| finite_system_clauses installed_presentation \<longrightarrow> c = c1 \<and> T = T1"
+    using installed_single_clause(2)[OF site one] by blast
+  have "registrations_varied ?P installed_presentation R = {|registration_varied f1 T1 R|}"
+  proof (rule fset_eqI)
+    fix R'
+    show "R' |\<in>| registrations_varied ?P installed_presentation R \<longleftrightarrow> R' |\<in>| {|registration_varied f1 T1 R|}"
+    proof
+      assume "R' |\<in>| registrations_varied ?P installed_presentation R"
+      then obtain c c' T' f h where r: "((installed_placement d,c),?S) |\<in>| finite_system_clauses ?P"
+          "((installed_placement d,c'),T') |\<in>| finite_system_clauses installed_presentation"
+          "finite_schema_match ?S T' = Some (f,h)" "R' = registration_varied f T' R"
+        unfolding registrations_varied_member at by blast
+      have "c' = c1 \<and> T' = T1" by (rule u(3)[rule_format, OF r(2)])
+      then show "R' |\<in>| {|registration_varied f1 T1 R|}" using r(3,4) u(2) by auto
+    next
+      assume "R' |\<in>| {|registration_varied f1 T1 R|}"
+      then have R': "R' = registration_varied f1 T1 R" by simp
+      show "R' |\<in>| registrations_varied ?P installed_presentation R"
+        unfolding registrations_varied_member at using pc u(1,2) R' by blast
+    qed
+  qed
+  then show ?thesis by (rule that[OF u(1) u(2) u(3)])
+qed
+
+subsection \<open>48's registration at the placed and installed programs\<close>
+
+lemma union_rooted_clause:
+  "((48,c),S) \<in> system_clauses given_rooted_readers_system \<longleftrightarrow> c = 0 \<and> S = decode_finite_schema union_schema"
+  by (simp only: given_union_site_clauses(6) singleton_iff prod.inject union_schema_decoded)
+
+lemma placed_union_clause:
+  "((installed_placement 48,c),S) |\<in>| finite_system_clauses (finite_rename_system installed_placement Q) \<longleftrightarrow>
+    c = 0 \<and> S = finite_rename_schema id id installed_placement union_schema"
+  by (rule installed_single_clause(1)[OF given_rooted_declared_sites union_rooted_clause]) simp
+
+lemma installed_union_clause:
+  "\<exists>c1 T1 f1 h1. ((installed_placement 48,c1),T1) |\<in>| finite_system_clauses installed_presentation \<and>
+    finite_schema_match (finite_rename_schema id id installed_placement union_schema) T1 = Some (f1,h1) \<and>
+    (\<forall>c T. ((installed_placement 48,c),T) |\<in>| finite_system_clauses installed_presentation \<longrightarrow> c = c1 \<and> T = T1)"
+  by (rule installed_single_clause(2)[OF given_rooted_declared_sites union_rooted_clause]) simp
 
 lemma relocated_carry_uniquely:
   "productions_carry_uniquely (finite_rename_system installed_placement Q) installed_presentation
@@ -1164,36 +1296,16 @@ proof (intro allI impI)
     and p: "declared_production (produced_relocated installed_placement given_declarations) e S s = Some R"
   have R: "R = registration_relocated installed_placement union_registration"
     using relocated_at_union(4)[OF m disjI2] p by simp
-  obtain c1 T1 f1 h1 where u: "((installed_placement 48,c1),T1) |\<in>| finite_system_clauses installed_presentation"
-      "finite_schema_match (finite_rename_schema id id installed_placement union_schema) T1 = Some (f1,h1)"
-      "\<forall>c T. ((installed_placement 48,c),T) |\<in>| finite_system_clauses installed_presentation \<longrightarrow> c = c1 \<and> T = T1"
-    using installed_union_clause by blast
   have site: "registration_site R = installed_placement 48"
     "registration_schema R = finite_rename_schema id id installed_placement union_schema"
     unfolding R by (simp_all add: union_registration_def)
-  have "registrations_varied (finite_rename_system installed_placement Q) installed_presentation R =
-      {|registration_varied f1 T1 R|}"
-  proof (rule fset_eqI)
-    fix R'
-    show "R' |\<in>| registrations_varied (finite_rename_system installed_placement Q) installed_presentation R \<longleftrightarrow>
-        R' |\<in>| {|registration_varied f1 T1 R|}"
-    proof
-      assume "R' |\<in>| registrations_varied (finite_rename_system installed_placement Q) installed_presentation R"
-      then obtain c' T f h where r: "((registration_site R,c'),T) |\<in>| finite_system_clauses installed_presentation"
-          "finite_schema_match (registration_schema R) T = Some (f,h)" "R' = registration_varied f T R"
-        unfolding registrations_varied_member by blast
-      have "c' = c1 \<and> T = T1" by (rule u(3)[rule_format, OF r(1)[unfolded site]])
-      then show "R' |\<in>| {|registration_varied f1 T1 R|}" using r(2,3) u(2) site by auto
-    next
-      assume "R' |\<in>| {|registration_varied f1 T1 R|}"
-      then have R': "R' = registration_varied f1 T1 R" by simp
-      have pc: "((installed_placement 48,0),finite_rename_schema id id installed_placement union_schema) |\<in>|
-          finite_system_clauses (finite_rename_system installed_placement Q)"
-        by (simp add: placed_union_clause)
-      show "R' |\<in>| registrations_varied (finite_rename_system installed_placement Q) installed_presentation R"
-        unfolding registrations_varied_member site using pc u(1,2) R' by blast
-    qed
-  qed
+  have r48: "48 \<in> system_definitions given_rooted_readers_system" by (rule given_rooted_declared_sites) simp
+  obtain c1 T1 f1 h1 where "((installed_placement 48,c1),T1) |\<in>| finite_system_clauses installed_presentation"
+      "finite_schema_match (finite_rename_schema id id installed_placement union_schema) T1 = Some (f1,h1)"
+      "\<forall>c T. ((installed_placement 48,c),T) |\<in>| finite_system_clauses installed_presentation \<longrightarrow> c = c1 \<and> T = T1"
+      "registrations_varied (finite_rename_system installed_placement Q) installed_presentation R =
+        {|registration_varied f1 T1 R|}"
+    by (rule installed_single_registration[OF r48 union_rooted_clause site])
   then show "\<exists>R'. registrations_varied (finite_rename_system installed_placement Q) installed_presentation R = {|R'|}"
     by blast
 qed
@@ -1321,20 +1433,8 @@ theorem installed_committed_exact:
     and "(q,r) |\<in>| T \<Longrightarrow> finite_resolution_refutes r \<Longrightarrow> decode_finite_call_term q \<notin> positive_meaning installed_program"
     and "A = Some B \<Longrightarrow> schema_system_formed installed_program \<and>
       fset B = {q\<in>fset R. decode_finite_call_term q \<in> positive_meaning installed_program}"
-proof -
-  note e = native_committed_registrations_exact[OF installed_committed_registrations[OF \<kappa> complete] resolution,
-    unfolded installed_presentation_exact(3)]
-  show "fimage fst T = R" by (rule e(1))
-  show "(q,Finite_Resolved C) |\<in>| T \<Longrightarrow> C \<noteq> {||} \<and>
-      fBall C (\<lambda>p. finite_checks_schema_proof installed_presentation p (fst q) (snd q)) \<and>
-      decode_finite_call_term q \<in> positive_meaning installed_program"
-    by (rule e(2))
-  show "(q,r) |\<in>| T \<Longrightarrow> finite_resolution_refutes r \<Longrightarrow> decode_finite_call_term q \<notin> positive_meaning installed_program"
-    by (rule e(3))
-  show "A = Some B \<Longrightarrow> schema_system_formed installed_program \<and>
-      fset B = {q\<in>fset R. decode_finite_call_term q \<in> positive_meaning installed_program}"
-    by (rule e(4))
-qed
+  using native_committed_registrations_exact[OF installed_committed_registrations[OF \<kappa> complete] resolution,
+    unfolded installed_presentation_exact(3)] by blast+
 
 end
 

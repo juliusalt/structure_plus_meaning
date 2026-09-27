@@ -56,6 +56,21 @@ lemma binding_store_formedD:
 theorem binding_store_empty_formed: "binding_store_formed T binding_store_empty"
   by (simp add: binding_store_formed_def binding_store_empty_def ranked_bindings_def)
 
+text \<open>
+  A store formed over a table stays formed over every table that decodes each of its references as it does: every
+  binding stays a formed pattern, its rank and its collapse as they were (review 900's follow-up 1).
+\<close>
+
+theorem binding_store_formed_extended:
+  assumes S: "binding_store_formed T S" and table: "table_formed T"
+    and ext: "\<forall>i u. reference_term T i = Some u \<longrightarrow> reference_term T' i = Some u"
+  shows "binding_store_formed T' S"
+proof -
+  have "shared_pattern_formed T' p" if "shared_pattern_formed T p" for p
+    using shared_pattern_extended[OF table that ext[rule_format]] by blast
+  then show ?thesis using S unfolding binding_store_formed_def ranked_bindings_def by blast
+qed
+
 
 lemma option_eq_by_Some: "(\<And>v. x = Some v \<longleftrightarrow> y = Some v) \<Longrightarrow> x = y"
   by (cases x; cases y) auto
@@ -591,12 +606,11 @@ theorem store_compress_formed:
   shows "binding_store_formed T' (store_compress S a q)"
 proof -
   let ?M = "binding_map S" and ?n = "binding_next_rank S"
+  have S': "binding_store_formed T' S" by (rule binding_store_formed_extended[OF S table ext])
   have map: "binding_map (store_compress S a q) = ?M(a := Some (ra, q))" using a by (simp add: store_compress_def)
-  have old: "\<forall>b r p. ?M b = Some (r, p) \<longrightarrow> r < ?n \<and> shared_pattern_formed T p \<and> shared_collapsed p \<and>
+  have old: "\<forall>b r p. ?M b = Some (r, p) \<longrightarrow> r < ?n \<and> shared_pattern_formed T' p \<and> shared_collapsed p \<and>
       (\<forall>c r' p'. c |\<in>| shared_pattern_variables p \<longrightarrow> ?M c = Some (r', p') \<longrightarrow> r < r')"
-    using S unfolding binding_store_formed_def ranked_bindings_def by blast
-  have extended: "shared_pattern_formed T' p" if "shared_pattern_formed T p" for p
-    using shared_pattern_extended[OF table that ext[rule_format]] by blast
+    using S' unfolding binding_store_formed_def ranked_bindings_def by blast
   have aq: "a |\<notin>| shared_pattern_variables q" using unbound a by auto
   have dom: "dom (?M(a := Some (ra, q))) = dom ?M" using a by auto
   have bindings: "\<forall>b r p. (?M(a := Some (ra, q))) b = Some (r, p) \<longrightarrow> r < ?n \<and> shared_pattern_formed T' p \<and>
@@ -614,7 +628,7 @@ proof -
     next
       case False
       then have m: "?M b = Some (r, p)" using b by simp
-      have r: "r < ?n" and fp: "shared_pattern_formed T p" and cp: "shared_collapsed p"
+      have r: "r < ?n" and fp: "shared_pattern_formed T' p" and cp: "shared_collapsed p"
         and ranks: "\<forall>c r' p'. c |\<in>| shared_pattern_variables p \<longrightarrow> ?M c = Some (r', p') \<longrightarrow> r < r'"
         using old m by blast+
       have later: "r < r'" if "c |\<in>| shared_pattern_variables p" "(?M(a := Some (ra, q))) c = Some (r', p')"
@@ -628,10 +642,10 @@ proof -
         then have "?M c = Some (r', p')" using that(2) by simp
         with ranks that(1) show ?thesis by blast
       qed
-      show ?thesis using r extended[OF fp] cp later by auto
+      show ?thesis using r fp cp later by auto
     qed
   qed
-  show ?thesis using S map dom bindings
+  show ?thesis using S' map dom bindings
     unfolding binding_store_formed_def ranked_bindings_def by (simp add: store_compress_def)
 qed
 

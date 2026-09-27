@@ -22,6 +22,11 @@ text \<open>
   of an ancestor, which pruning removes, would hold at no smaller round than itself: pruning keeps one branch.
   The search keeps every alternative of every goal it selects, so no goal is resolved once. The empty witness
   construction is the one the statements take; soundness holds for every construction (R3).
+
+  Every form is stated at a table of certified calls (the section "The given's calls are decided once" of task 495's
+  entry, build GT1b), today's the instance at the empty table. A goal the table closes is removed, its successor keeping
+  the support (@{text resolution_closed_lifted_at}), so a refutation is exact at every table and rests on no entry; a
+  resolution is sound at every table, its certificates being the checker's, and they are accepted at a valid one.
 \<close>
 
 section \<open>The lifting of derivations\<close>
@@ -38,15 +43,15 @@ text \<open>
   there under the found one. The ground lifting below is its instance at a support allowing no unplaced variable.
 \<close>
 
-theorem finite_resolution_lifting_by:
+theorem finite_resolution_lifting_by_in:
   assumes selection: "\<And>st G. sel st = Select_Goals G \<Longrightarrow> G \<noteq> {||} \<and>
       (\<forall>g. g |\<in>| G \<longrightarrow> g |\<in>| resolution_pending st \<and> (resolution_is_call g \<or> finite_solvable_material_goal g))"
     and plain: "\<And>st N. sel st \<noteq> Select_Construction N"
     and foreign: "\<And>z. F z \<Longrightarrow> snd z |\<notin>| finite_program_variables P"
-  shows "resolution_pattern_invariant P d \<pi> st \<Longrightarrow> resolution_supported_by F P st \<theta> \<Longrightarrow>
-    (\<exists>st' \<theta>'. st' |\<in>| resolution_found (finite_resolution_search_by sel \<kappa> P n st) \<and>
+  shows "resolution_pattern_invariant_in \<Theta> P d \<pi> st \<Longrightarrow> resolution_supported_by F P st \<theta> \<Longrightarrow>
+    (\<exists>st' \<theta>'. st' |\<in>| resolution_found (finite_resolution_search_by_in \<Theta> sel \<kappa> P n st) \<and>
       resolution_supported_by F P st' \<theta>' \<and> (\<forall>v. resolution_root_value st \<theta> v \<longrightarrow> resolution_root_value st' \<theta>' v)) \<or>
-    resolution_diagnoses (finite_resolution_search_by sel \<kappa> P n st) \<noteq> {||}"
+    resolution_diagnoses (finite_resolution_search_by_in \<Theta> sel \<kappa> P n st) \<noteq> {||}"
 proof (induction n arbitrary: st \<theta>)
   case 0
   show ?case
@@ -78,40 +83,40 @@ next
         and kind: "resolution_is_call g \<or> finite_solvable_material_goal g"
         by (metis all_not_fin_conv)
       show ?thesis
-      proof (rule resolution_goal_lifted_by[OF Suc.prems foreign gp kind])
-      fix st' \<theta>' assume succ: "st' |\<in>| finite_goal_successors P st g" and sup': "resolution_supported_by F P st' \<theta>'"
+      proof (rule resolution_goal_lifted_by_in[OF Suc.prems foreign gp kind])
+      fix st' \<theta>' assume succ: "st' |\<in>| finite_goal_successors_in \<Theta> P st g" and sup': "resolution_supported_by F P st' \<theta>'"
         and rv': "\<And>v. resolution_root_value st \<theta> v \<Longrightarrow> resolution_root_value st' \<theta>' v"
-      have I': "resolution_pattern_invariant P d \<pi> st'" by (rule resolution_pattern_goal_step[OF Suc.prems(1) gp succ])
-      have rec: "(\<exists>st'' \<theta>''. st'' |\<in>| resolution_found (finite_resolution_search_by sel \<kappa> P n st') \<and>
+      have I': "resolution_pattern_invariant_in \<Theta> P d \<pi> st'" by (rule resolution_pattern_goal_step_in[OF Suc.prems(1) gp succ])
+      have rec: "(\<exists>st'' \<theta>''. st'' |\<in>| resolution_found (finite_resolution_search_by_in \<Theta> sel \<kappa> P n st') \<and>
           resolution_supported_by F P st'' \<theta>'' \<and> (\<forall>v. resolution_root_value st' \<theta>' v \<longrightarrow> resolution_root_value st'' \<theta>'' v)) \<or>
-        resolution_diagnoses (finite_resolution_search_by sel \<kappa> P n st') \<noteq> {||}"
+        resolution_diagnoses (finite_resolution_search_by_in \<Theta> sel \<kappa> P n st') \<noteq> {||}"
         by (rule Suc.IH[OF I' sup'])
       have unpruned: "\<not> finite_pruned st g" by (rule resolution_supported_by_unpruned[OF Suc.prems(2) gp])
-      have ne: "finite_goal_successors P st g \<noteq> {||}" using succ by auto
-      define Og where "Og = finite_goal_outcome (finite_resolution_search_by sel \<kappa> P n) P st g"
-      have Oeq: "Og = finite_outcome_union (fimage (finite_resolution_search_by sel \<kappa> P n) (finite_goal_successors P st g))"
+      have ne: "finite_goal_successors_in \<Theta> P st g \<noteq> {||}" using succ by auto
+      define Og where "Og = finite_goal_outcome_in \<Theta> (finite_resolution_search_by_in \<Theta> sel \<kappa> P n) P st g"
+      have Oeq: "Og = finite_outcome_union (fimage (finite_resolution_search_by_in \<Theta> sel \<kappa> P n) (finite_goal_successors_in \<Theta> P st g))"
         unfolding Og_def finite_goal_outcome_in_def using unpruned ne by (simp add: Let_def)
-      have mem: "finite_resolution_search_by sel \<kappa> P n st' |\<in>|
-          fimage (finite_resolution_search_by sel \<kappa> P n) (finite_goal_successors P st g)"
+      have mem: "finite_resolution_search_by_in \<Theta> sel \<kappa> P n st' |\<in>|
+          fimage (finite_resolution_search_by_in \<Theta> sel \<kappa> P n) (finite_goal_successors_in \<Theta> P st g)"
         by (rule fimageI[OF succ])
-      have memg: "Og |\<in>| fimage (finite_goal_outcome (finite_resolution_search_by sel \<kappa> P n) P st) G"
+      have memg: "Og |\<in>| fimage (finite_goal_outcome_in \<Theta> (finite_resolution_search_by_in \<Theta> sel \<kappa> P n) P st) G"
         unfolding Og_def by (rule fimageI[OF g])
-      have eqS: "finite_resolution_search_by sel \<kappa> P (Suc n) st =
-          finite_outcome_union (fimage (finite_goal_outcome (finite_resolution_search_by sel \<kappa> P n) P st) G)"
+      have eqS: "finite_resolution_search_by_in \<Theta> sel \<kappa> P (Suc n) st =
+          finite_outcome_union (fimage (finite_goal_outcome_in \<Theta> (finite_resolution_search_by_in \<Theta> sel \<kappa> P n) P st) G)"
         using False Select_Goals by simp
       from rec show ?thesis
       proof (elim disjE exE conjE)
-        fix st'' \<theta>'' assume f: "st'' |\<in>| resolution_found (finite_resolution_search_by sel \<kappa> P n st')"
+        fix st'' \<theta>'' assume f: "st'' |\<in>| resolution_found (finite_resolution_search_by_in \<Theta> sel \<kappa> P n st')"
           and s'': "resolution_supported_by F P st'' \<theta>''"
           and r'': "\<forall>v. resolution_root_value st' \<theta>' v \<longrightarrow> resolution_root_value st'' \<theta>'' v"
         have "st'' |\<in>| resolution_found Og"
           unfolding Oeq finite_outcome_union_fields by (rule resolution_union_member[OF mem]) (rule f)
-        then have "st'' |\<in>| resolution_found (finite_resolution_search_by sel \<kappa> P (Suc n) st)"
+        then have "st'' |\<in>| resolution_found (finite_resolution_search_by_in \<Theta> sel \<kappa> P (Suc n) st)"
           unfolding eqS finite_outcome_union_fields by (rule resolution_union_member[OF memg])
         moreover have "\<forall>v. resolution_root_value st \<theta> v \<longrightarrow> resolution_root_value st'' \<theta>'' v" using r'' rv' by blast
         ultimately show ?thesis using s'' by blast
       next
-        assume "resolution_diagnoses (finite_resolution_search_by sel \<kappa> P n st') \<noteq> {||}"
+        assume "resolution_diagnoses (finite_resolution_search_by_in \<Theta> sel \<kappa> P n st') \<noteq> {||}"
         then have "resolution_diagnoses Og \<noteq> {||}"
           using resolution_union_nonempty[OF mem, of resolution_diagnoses] unfolding Oeq finite_outcome_union_fields by blast
         then show ?thesis unfolding eqS finite_outcome_union_fields
@@ -122,38 +127,44 @@ next
   qed
 qed
 
-theorem finite_resolution_lifting:
+lemmas finite_resolution_lifting_by = finite_resolution_lifting_by_in[where \<Theta>=resolution_empty_table]
+
+theorem finite_resolution_lifting_in:
   assumes selection: "\<And>st G. sel st = Select_Goals G \<Longrightarrow> G \<noteq> {||} \<and>
       (\<forall>g. g |\<in>| G \<longrightarrow> g |\<in>| resolution_pending st \<and> (resolution_is_call g \<or> finite_solvable_material_goal g))"
     and plain: "\<And>st N. sel st \<noteq> Select_Construction N"
-  shows "resolution_invariant P d t st \<Longrightarrow> resolution_supported P st \<theta> \<Longrightarrow>
-    resolution_found (finite_resolution_search_by sel \<kappa> P n st) \<noteq> {||} \<or>
-    resolution_diagnoses (finite_resolution_search_by sel \<kappa> P n st) \<noteq> {||}"
+  shows "resolution_invariant_in \<Theta> P d t st \<Longrightarrow> resolution_supported P st \<theta> \<Longrightarrow>
+    resolution_found (finite_resolution_search_by_in \<Theta> sel \<kappa> P n st) \<noteq> {||} \<or>
+    resolution_diagnoses (finite_resolution_search_by_in \<Theta> sel \<kappa> P n st) \<noteq> {||}"
 proof -
-  assume I: "resolution_invariant P d t st" and sup: "resolution_supported P st \<theta>"
-  have "(\<exists>st' \<theta>'. st' |\<in>| resolution_found (finite_resolution_search_by sel \<kappa> P n st) \<and>
+  assume I: "resolution_invariant_in \<Theta> P d t st" and sup: "resolution_supported P st \<theta>"
+  have "(\<exists>st' \<theta>'. st' |\<in>| resolution_found (finite_resolution_search_by_in \<Theta> sel \<kappa> P n st) \<and>
       resolution_supported_by (\<lambda>_. False) P st' \<theta>' \<and>
       (\<forall>v. resolution_root_value st \<theta> v \<longrightarrow> resolution_root_value st' \<theta>' v)) \<or>
-    resolution_diagnoses (finite_resolution_search_by sel \<kappa> P n st) \<noteq> {||}"
-    by (rule finite_resolution_lifting_by[OF selection plain resolution_no_foreign
-      I[unfolded resolution_invariant_pattern] sup[unfolded resolution_supported_none]])
-  then show "resolution_found (finite_resolution_search_by sel \<kappa> P n st) \<noteq> {||} \<or>
-      resolution_diagnoses (finite_resolution_search_by sel \<kappa> P n st) \<noteq> {||}" by auto
+    resolution_diagnoses (finite_resolution_search_by_in \<Theta> sel \<kappa> P n st) \<noteq> {||}"
+    by (rule finite_resolution_lifting_by_in[OF selection plain resolution_no_foreign
+      I[unfolded resolution_invariant_pattern_in] sup[unfolded resolution_supported_none]])
+  then show "resolution_found (finite_resolution_search_by_in \<Theta> sel \<kappa> P n st) \<noteq> {||} \<or>
+      resolution_diagnoses (finite_resolution_search_by_in \<Theta> sel \<kappa> P n st) \<noteq> {||}" by auto
 qed
+
+lemmas finite_resolution_lifting = finite_resolution_lifting_in[where \<Theta>=resolution_empty_table]
 
 section \<open>The selection meets the lifting's conditions\<close>
 
 
-lemma finite_resolution_select_lifts:
-  assumes sel: "finite_resolution_select_at pr \<kappa> P st = Select_Goals G"
+lemma finite_resolution_select_lifts_in:
+  assumes sel: "finite_resolution_select_in \<Theta> pr \<kappa> P st = Select_Goals G"
   shows "G \<noteq> {||} \<and>
     (\<forall>g. g |\<in>| G \<longrightarrow> g |\<in>| resolution_pending st \<and> (resolution_is_call g \<or> finite_solvable_material_goal g))"
-  using finite_resolution_select_at_exact(1)[OF sel] by (simp add: finite_candidate_goal_def)
+  using finite_resolution_select_at_exact_in(1)[OF sel] by (simp add: finite_candidate_goal_def)
+
+lemmas finite_resolution_select_lifts = finite_resolution_select_lifts_in[where \<Theta>=resolution_empty_table]
 
 section \<open>Exactness of the per-call result\<close>
 
-theorem finite_program_resolution_refutation_exact:
-  assumes refuted: "finite_program_resolution no_witness_construction P d t n = Finite_Refuted"
+theorem finite_program_resolution_refutation_exact_in:
+  assumes refuted: "finite_program_resolution_in \<Theta> no_witness_construction P d t n = Finite_Refuted"
   shows "(d,decode_finite_term t) \<notin> positive_meaning (decode_finite_system P)"
 proof
   assume holds: "(d,decode_finite_term t) \<in> positive_meaning (decode_finite_system P)"
@@ -162,36 +173,45 @@ proof
   have tf: "finite_term_formed t"
     using positive_meaning_formed[OF holds]
     by (auto simp: schema_call_formed_def pattern_accepts_def finite_term_formed_correct)
-  let ?sel = "finite_resolution_select no_witness_construction P"
-  let ?R = "finite_resolution_search no_witness_construction P n (finite_initial_state d t)"
-  have R: "?R = finite_resolution_search_by ?sel no_witness_construction P n (finite_initial_state d t)"
-    by (simp add: finite_resolution_search_def finite_resolution_search_in_def)
-  have I0: "resolution_invariant P d t (finite_initial_state d t)" by (rule resolution_initial_invariant[OF Pf tf])
+  let ?sel = "finite_resolution_select_in \<Theta> (\<lambda>st g. False) no_witness_construction P"
+  let ?R = "finite_resolution_search_in \<Theta> no_witness_construction P n (finite_initial_state d t)"
+  have R: "?R = finite_resolution_search_by_in \<Theta> ?sel no_witness_construction P n (finite_initial_state d t)"
+    by (simp add: finite_resolution_search_in_def)
+  have I0: "resolution_invariant_in \<Theta> P d t (finite_initial_state d t)" by (rule resolution_initial_invariant_in[OF Pf tf])
   have S0: "resolution_supported P (finite_initial_state d t) (\<lambda>_. Finite_Payload [])"
-    using holds by (simp add: resolution_supported_def finite_initial_state_def resolution_value_ground)
+    using holds by (simp add: resolution_supported_def resolution_supported_by_def finite_initial_state_def
+      resolution_value_ground)
+  have none: "\<And>st N. ?sel st \<noteq> Select_Construction N"
+    by (metis finite_resolution_select_at_exact_in(2) finite_resolution_select_none_construction)
   have "resolution_found ?R \<noteq> {||} \<or> resolution_diagnoses ?R \<noteq> {||}"
-    unfolding R
-    by (rule finite_resolution_lifting[OF finite_resolution_select_lifts finite_resolution_select_none_construction I0 S0])
+    unfolding R by (rule finite_resolution_lifting_in[OF finite_resolution_select_lifts_in none I0 S0])
   moreover have diag: "resolution_diagnoses ?R = {||}"
-    and C: "ffUnion (fimage finite_state_proofs (resolution_found ?R)) = {||}"
-    using refuted finite_program_resolution_certificates[OF Pf tf no_witness_construction_formed, of d n]
-    by (auto simp: Let_def split: if_splits)
+    and C: "ffUnion (fimage (finite_state_proofs_in \<Theta>) (resolution_found ?R)) = {||}"
+    using refuted by (auto simp: finite_program_resolution_in_def finite_outcome_result_in_def Let_def split: if_splits)
   ultimately obtain st' where st': "st' |\<in>| resolution_found ?R" by (metis all_not_fin_conv)
-  have "resolution_invariant P d t st' \<and> resolution_pending st' = {||}"
-    using finite_resolution_search_found[OF no_witness_construction_formed I0] st'
-    by (simp add: finite_resolution_search_def finite_resolution_search_in_def)
+  have "resolution_invariant_in \<Theta> P d t st' \<and> resolution_pending st' = {||}"
+    using finite_resolution_search_found_in[OF no_witness_construction_formed I0] st'
+    by (simp add: finite_resolution_search_in_def)
   then obtain nd where nd: "nd |\<in>| resolution_nodes st'" "resolution_node_position nd = []"
     by (auto simp: resolution_invariant_in_def resolution_root_held_def)
-  then have "finite_node_proof (fcard (resolution_nodes st')) (resolution_nodes st') nd |\<in>| finite_state_proofs st'"
-    by (auto simp: finite_state_proofs_def finite_state_proofs_in_def)
-  then have "finite_state_proofs st' \<noteq> {||}" by auto
-  with st' C show False using resolution_union_nonempty[of st' "resolution_found ?R" finite_state_proofs] by blast
+  then have "finite_node_proof_in \<Theta> (fcard (resolution_nodes st')) (resolution_nodes st') nd |\<in>| finite_state_proofs_in \<Theta> st'"
+    by (auto simp: finite_state_proofs_in_def)
+  then have "finite_state_proofs_in \<Theta> st' \<noteq> {||}" by auto
+  with st' C show False using resolution_union_nonempty[of st' "resolution_found ?R" "finite_state_proofs_in \<Theta>"] by blast
 qed
+
+theorem finite_program_resolution_refutation_exact:
+  assumes refuted: "finite_program_resolution no_witness_construction P d t n = Finite_Refuted"
+  shows "(d,decode_finite_term t) \<notin> positive_meaning (decode_finite_system P)"
+  by (rule finite_program_resolution_refutation_exact_in[OF refuted[unfolded finite_program_resolution_def]])
 
 text \<open>
   The contract the route consumes: a resolved call holds, for every witness construction (R3), and a call
   refuted at the empty construction does not.
 \<close>
+
+lemmas finite_program_resolution_exact_in =
+  finite_program_resolution_sound_in(2) finite_program_resolution_refutation_exact_in
 
 lemmas finite_program_resolution_exact =
   finite_program_resolution_sound(2) finite_program_resolution_refutation_exact
@@ -202,21 +222,26 @@ definition finite_resolution_verdict :: "('a,'s,'d,'c) finite_resolution_result 
   "finite_resolution_verdict r = (case r of Finite_Resolved C \<Rightarrow> Some True | Finite_Refuted \<Rightarrow> Some False
     | Finite_Unresolved D \<Rightarrow> None)"
 
-lemma finite_resolution_verdict_exact:
-  assumes "finite_resolution_verdict (finite_program_resolution no_witness_construction P d t n) = Some b"
+lemma finite_resolution_verdict_exact_in:
+  assumes "finite_resolution_verdict (finite_program_resolution_in \<Theta> no_witness_construction P d t n) = Some b"
   shows "b \<longleftrightarrow> (d,decode_finite_term t) \<in> positive_meaning (decode_finite_system P)"
-proof (cases "finite_program_resolution no_witness_construction P d t n")
+proof (cases "finite_program_resolution_in \<Theta> no_witness_construction P d t n")
   case (Finite_Resolved C)
-  with assms show ?thesis using finite_program_resolution_sound(2)[OF Finite_Resolved]
+  with assms show ?thesis using finite_program_resolution_sound_in(2)[OF Finite_Resolved]
     by (simp add: finite_resolution_verdict_def)
 next
   case Finite_Refuted
-  with assms show ?thesis using finite_program_resolution_refutation_exact[OF Finite_Refuted]
+  with assms show ?thesis using finite_program_resolution_refutation_exact_in[OF Finite_Refuted]
     by (simp add: finite_resolution_verdict_def)
 next
   case (Finite_Unresolved D)
   with assms show ?thesis by (simp add: finite_resolution_verdict_def)
 qed
+
+lemma finite_resolution_verdict_exact:
+  assumes "finite_resolution_verdict (finite_program_resolution no_witness_construction P d t n) = Some b"
+  shows "b \<longleftrightarrow> (d,decode_finite_term t) \<in> positive_meaning (decode_finite_system P)"
+  by (rule finite_resolution_verdict_exact_in[OF assms[unfolded finite_program_resolution_def]])
 
 text \<open>
   Where it answers, the resolver's answer is the program's meaning, so two programs of one meaning, as two
@@ -447,23 +472,28 @@ text \<open>
   then the set of resolved calls, in the shape of @{const finite_program_evaluation}, and nothing otherwise.
 \<close>
 
-definition finite_demand_resolution ::
-    "('a,'s::linorder,'d,'c) finite_schema_system \<Rightarrow> ('d\<times>finite_factor_term) fset \<Rightarrow> nat \<Rightarrow>
+definition finite_demand_resolution_in ::
+    "('a,'s,'d,'c) resolution_table \<Rightarrow> ('a,'s::linorder,'d,'c) finite_schema_system \<Rightarrow> ('d\<times>finite_factor_term) fset \<Rightarrow> nat \<Rightarrow>
       ('d\<times>finite_factor_term) fset option" where
-  "finite_demand_resolution P D n = (let V = fimage (\<lambda>q. (q,finite_resolution_verdict
-      (finite_program_resolution no_witness_construction P (fst q) (snd q) n))) D in
+  "finite_demand_resolution_in \<Theta> P D n = (let V = fimage (\<lambda>q. (q,finite_resolution_verdict
+      (finite_program_resolution_in \<Theta> no_witness_construction P (fst q) (snd q) n))) D in
     if finite_system_formed P \<and> fBall V (\<lambda>(q,v). v \<noteq> None)
     then Some (fimage fst (ffilter (\<lambda>(q,v). v = Some True) V)) else None)"
 
-theorem finite_demand_resolution_exact:
-  assumes result: "finite_demand_resolution P D n = Some A"
+definition finite_demand_resolution ::
+    "('a,'s::linorder,'d,'c) finite_schema_system \<Rightarrow> ('d\<times>finite_factor_term) fset \<Rightarrow> nat \<Rightarrow>
+      ('d\<times>finite_factor_term) fset option" where
+  "finite_demand_resolution P D n = finite_demand_resolution_in resolution_empty_table P D n"
+
+theorem finite_demand_resolution_exact_in:
+  assumes result: "finite_demand_resolution_in \<Theta> P D n = Some A"
   shows "schema_system_formed (decode_finite_system P)"
     "fset A = {q\<in>fset D. decode_finite_call_term q \<in> positive_meaning (decode_finite_system P)}"
 proof -
-  let ?v = "\<lambda>q. finite_resolution_verdict (finite_program_resolution no_witness_construction P (fst q) (snd q) n)"
+  let ?v = "\<lambda>q. finite_resolution_verdict (finite_program_resolution_in \<Theta> no_witness_construction P (fst q) (snd q) n)"
   from result have Pf: "finite_system_formed P" and answered: "\<And>q. q |\<in>| D \<Longrightarrow> ?v q \<noteq> None"
     and A: "A = fimage fst (ffilter (\<lambda>(q,v). v = Some True) (fimage (\<lambda>q. (q,?v q)) D))"
-    by (auto simp: finite_demand_resolution_def Let_def split: if_splits)
+    by (auto simp: finite_demand_resolution_in_def Let_def split: if_splits)
   show "schema_system_formed (decode_finite_system P)" using Pf by (simp add: finite_system_formed_correct)
   have key: "\<And>q. q |\<in>| D \<Longrightarrow>
       ?v q = Some True \<longleftrightarrow> decode_finite_call_term q \<in> positive_meaning (decode_finite_system P)"
@@ -471,7 +501,7 @@ proof -
     fix q assume q: "q |\<in>| D"
     obtain b where b: "?v q = Some b" using answered[OF q] by auto
     have "b \<longleftrightarrow> (fst q,decode_finite_term (snd q)) \<in> positive_meaning (decode_finite_system P)"
-      by (rule finite_resolution_verdict_exact[OF b])
+      by (rule finite_resolution_verdict_exact_in[OF b])
     then show "?v q = Some True \<longleftrightarrow> decode_finite_call_term q \<in> positive_meaning (decode_finite_system P)"
       using b by (simp add: decode_finite_call_term_fields)
   qed
@@ -479,6 +509,12 @@ proof -
     unfolding A fimage_fst_filter_graph ffilter.rep_eq Set.filter_eq
     by (rule Collect_cong) (simp add: key cong: conj_cong)
 qed
+
+theorem finite_demand_resolution_exact:
+  assumes result: "finite_demand_resolution P D n = Some A"
+  shows "schema_system_formed (decode_finite_system P)"
+    "fset A = {q\<in>fset D. decode_finite_call_term q \<in> positive_meaning (decode_finite_system P)}"
+  using finite_demand_resolution_exact_in[OF result[unfolded finite_demand_resolution_def]] by blast+
 
 text \<open>
   Where both answer, the resolver and @{const finite_program_evaluation} agree: an equation of results, both
@@ -506,13 +542,63 @@ text \<open>
 type_synonym native_resolution_result =
   "(local_address,local_address,local_address option definition_site,local_address) finite_resolution_result"
 
+definition native_call_resolution_in ::
+    "(local_address,local_address,local_address option definition_site,local_address) resolution_table \<Rightarrow>
+      local_address option finite_native_system \<Rightarrow> (local_address option definition_site\<times>finite_factor_term) fset \<Rightarrow>
+      nat \<Rightarrow> ((local_address option definition_site\<times>finite_factor_term)\<times>native_resolution_result) fset\<times>
+        (local_address option definition_site\<times>finite_factor_term) fset option" where
+  "native_call_resolution_in \<Theta> P R n =
+    (fimage (\<lambda>q. (q,finite_program_resolution_in \<Theta> no_witness_construction P (fst q) (snd q) n)) R,
+     finite_demand_resolution_in \<Theta> P R n)"
+
 definition native_call_resolution ::
     "local_address option finite_native_system \<Rightarrow> (local_address option definition_site\<times>finite_factor_term) fset \<Rightarrow>
       nat \<Rightarrow> ((local_address option definition_site\<times>finite_factor_term)\<times>native_resolution_result) fset\<times>
         (local_address option definition_site\<times>finite_factor_term) fset option" where
-  "native_call_resolution P R n =
-    (fimage (\<lambda>q. (q,finite_program_resolution no_witness_construction P (fst q) (snd q) n)) R,
-     finite_demand_resolution P R n)"
+  "native_call_resolution P R n = native_call_resolution_in resolution_empty_table P R n"
+
+theorem native_call_resolution_exact_in:
+  assumes result: "native_call_resolution_in \<Theta> P R n = (T,A)"
+  shows "fimage fst T = R"
+    and "(q,Finite_Resolved C) |\<in>| T \<Longrightarrow> C \<noteq> {||} \<and> fBall C (\<lambda>p. finite_checks_schema_proof P p (fst q) (snd q)) \<and>
+      decode_finite_call_term q \<in> positive_meaning (decode_finite_system P)"
+    and "(q,Finite_Refuted) |\<in>| T \<Longrightarrow> decode_finite_call_term q \<notin> positive_meaning (decode_finite_system P)"
+    and "A = Some B \<Longrightarrow> schema_system_formed (decode_finite_system P) \<and>
+      fset B = {q\<in>fset R. decode_finite_call_term q \<in> positive_meaning (decode_finite_system P)}"
+proof -
+  have T: "T = fimage (\<lambda>q. (q,finite_program_resolution_in \<Theta> no_witness_construction P (fst q) (snd q) n)) R"
+    and A: "A = finite_demand_resolution_in \<Theta> P R n"
+    using result by (simp_all add: native_call_resolution_in_def)
+  show "fimage fst T = R" unfolding T fset.map_comp by (simp add: comp_def)
+  show "(q,Finite_Resolved C) |\<in>| T \<Longrightarrow> C \<noteq> {||} \<and> fBall C (\<lambda>p. finite_checks_schema_proof P p (fst q) (snd q)) \<and>
+      decode_finite_call_term q \<in> positive_meaning (decode_finite_system P)"
+  proof -
+    assume "(q,Finite_Resolved C) |\<in>| T"
+    then have res: "finite_program_resolution_in \<Theta> no_witness_construction P (fst q) (snd q) n = Finite_Resolved C"
+      unfolding T by auto
+    show "C \<noteq> {||} \<and> fBall C (\<lambda>p. finite_checks_schema_proof P p (fst q) (snd q)) \<and>
+        decode_finite_call_term q \<in> positive_meaning (decode_finite_system P)"
+      using finite_program_resolution_sound_in[OF res] finite_program_resolution_accepted_in[OF res]
+      by (simp add: decode_finite_call_term_fields)
+  qed
+  show "(q,Finite_Refuted) |\<in>| T \<Longrightarrow> decode_finite_call_term q \<notin> positive_meaning (decode_finite_system P)"
+  proof -
+    assume "(q,Finite_Refuted) |\<in>| T"
+    then have res: "finite_program_resolution_in \<Theta> no_witness_construction P (fst q) (snd q) n = Finite_Refuted"
+      unfolding T by auto
+    show "decode_finite_call_term q \<notin> positive_meaning (decode_finite_system P)"
+      using finite_program_resolution_refutation_exact_in[OF res] by (simp add: decode_finite_call_term_fields)
+  qed
+  show "A = Some B \<Longrightarrow> schema_system_formed (decode_finite_system P) \<and>
+      fset B = {q\<in>fset R. decode_finite_call_term q \<in> positive_meaning (decode_finite_system P)}"
+  proof -
+    assume "A = Some B"
+    then have res: "finite_demand_resolution_in \<Theta> P R n = Some B" using A by simp
+    show "schema_system_formed (decode_finite_system P) \<and>
+        fset B = {q\<in>fset R. decode_finite_call_term q \<in> positive_meaning (decode_finite_system P)}"
+      using finite_demand_resolution_exact_in[OF res] by simp
+  qed
+qed
 
 theorem native_call_resolution_exact:
   assumes result: "native_call_resolution P R n = (T,A)"
@@ -522,39 +608,6 @@ theorem native_call_resolution_exact:
     and "(q,Finite_Refuted) |\<in>| T \<Longrightarrow> decode_finite_call_term q \<notin> positive_meaning (decode_finite_system P)"
     and "A = Some B \<Longrightarrow> schema_system_formed (decode_finite_system P) \<and>
       fset B = {q\<in>fset R. decode_finite_call_term q \<in> positive_meaning (decode_finite_system P)}"
-proof -
-  have T: "T = fimage (\<lambda>q. (q,finite_program_resolution no_witness_construction P (fst q) (snd q) n)) R"
-    and A: "A = finite_demand_resolution P R n"
-    using result by (simp_all add: native_call_resolution_def)
-  show "fimage fst T = R" unfolding T fset.map_comp by (simp add: comp_def)
-  show "(q,Finite_Resolved C) |\<in>| T \<Longrightarrow> C \<noteq> {||} \<and> fBall C (\<lambda>p. finite_checks_schema_proof P p (fst q) (snd q)) \<and>
-      decode_finite_call_term q \<in> positive_meaning (decode_finite_system P)"
-  proof -
-    assume "(q,Finite_Resolved C) |\<in>| T"
-    then have res: "finite_program_resolution no_witness_construction P (fst q) (snd q) n = Finite_Resolved C"
-      unfolding T by auto
-    show "C \<noteq> {||} \<and> fBall C (\<lambda>p. finite_checks_schema_proof P p (fst q) (snd q)) \<and>
-        decode_finite_call_term q \<in> positive_meaning (decode_finite_system P)"
-      using finite_program_resolution_sound[OF res] finite_program_resolution_accepted[OF res]
-      by (simp add: decode_finite_call_term_fields)
-  qed
-  show "(q,Finite_Refuted) |\<in>| T \<Longrightarrow> decode_finite_call_term q \<notin> positive_meaning (decode_finite_system P)"
-  proof -
-    assume "(q,Finite_Refuted) |\<in>| T"
-    then have res: "finite_program_resolution no_witness_construction P (fst q) (snd q) n = Finite_Refuted"
-      unfolding T by auto
-    show "decode_finite_call_term q \<notin> positive_meaning (decode_finite_system P)"
-      using finite_program_resolution_refutation_exact[OF res] by (simp add: decode_finite_call_term_fields)
-  qed
-  show "A = Some B \<Longrightarrow> schema_system_formed (decode_finite_system P) \<and>
-      fset B = {q\<in>fset R. decode_finite_call_term q \<in> positive_meaning (decode_finite_system P)}"
-  proof -
-    assume "A = Some B"
-    then have res: "finite_demand_resolution P R n = Some B" using A by simp
-    show "schema_system_formed (decode_finite_system P) \<and>
-        fset B = {q\<in>fset R. decode_finite_call_term q \<in> positive_meaning (decode_finite_system P)}"
-      using finite_demand_resolution_exact[OF res] by simp
-  qed
-qed
+  using native_call_resolution_exact_in[OF result[unfolded native_call_resolution_def]] by blast+
 
 end

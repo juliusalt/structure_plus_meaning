@@ -18,10 +18,22 @@ text \<open>
   A goal holding no registered variable is never held back, so the selection tests only the goals that hold one.
 \<close>
 
+text \<open>
+  It also keeps three classes of the selection (task 865): the candidate goals, the settled ones and the single ones,
+  each a tree from the positions of its goals to their entries, so that the selection reads the first of a class in the
+  order of positions and a step updates the classes only at the goals it touches.
+\<close>
+
+record (overloaded) ('a,'s::linorder,'d,'c) goal_classes =
+  class_candidates :: "('s list, ('a,'s,'d,'c) shared_goal_entry) rbt"
+  class_settled :: "('s list, ('a,'s,'d,'c) shared_goal_entry) rbt"
+  class_single :: "('s list, ('a,'s,'d,'c) shared_goal_entry) rbt"
+
 record (overloaded) ('a,'s::linorder,'d,'c) shared_search =
   search_state :: "('a,'s,'d,'c) shared_state"
   search_registered :: "('s list, 's list fset) rbt"
   search_values :: "('s list, (('a,'s,'d,'c) shared_derivation \<times> 'a \<times> finite_factor_term) fset) rbt"
+  search_classes :: "('a,'s,'d,'c) goal_classes"
 
 abbreviation search_table :: "('a,'s::linorder,'d,'c) shared_search \<Rightarrow> shape list" where
   "search_table r \<equiv> shared_state_table (search_state r)"
@@ -200,11 +212,21 @@ qed simp
 
 section \<open>The access of a shared search state\<close>
 
-definition shared_access :: "('a,'s,'d,'c) finite_witness_construction \<Rightarrow> ('a,'s,'d,'c) finite_schema_system \<Rightarrow>
-    ('a,'s::linorder,'d,'c) shared_search \<Rightarrow>
+text \<open>
+  What a search reads of its shared state alone is the state's access; the search's access adds what the witness
+  construction and the kept values give: the registered variables a node leaves free, the values not constructed, the
+  registered positions and the goals the selection may hold back.
+\<close>
+
+text \<open>
+  The access over a given goal set: the state's access holds the state's goals, and a test of one goal, which reads no
+  goal set, is made over the empty one (@{text state_access_goal_tests}), so that it never walks the goal tree.
+\<close>
+
+definition state_access_over :: "('a,'s,'d,'c) shared_goal_entry fset \<Rightarrow> ('a,'s::linorder,'d,'c) shared_state \<Rightarrow>
     (('a,'s,'d,'c) shared_goal_entry, ('a,'s,'d,'c) shared_node_entry, nat, 'a, 's, 'd, 'c) search_access" where
-  "shared_access \<kappa> P r = (let s = search_state r; T = shared_state_table s in
-    \<lparr>access_goals = tree_values (shared_goals s),
+  "state_access_over G s = (let T = shared_state_table s in
+    \<lparr>access_goals = G,
      access_goals_at = \<lambda>q. option_fset (RBT.lookup (shared_goals s) q),
      access_nodes_at = \<lambda>q. option_fset (RBT.lookup (shared_nodes s) q),
      access_goal = \<lambda>h. shared_goal_project T (shared_entry_goal h),
@@ -223,12 +245,22 @@ definition shared_access :: "('a,'s,'d,'c) finite_witness_construction \<Rightar
      access_node_calls = tree_bucket (shared_node_calls s),
      access_open = tree_count (shared_open s),
      access_holders = tree_bucket (shared_holders s),
-     access_free = \<lambda>hn. shared_free_registered \<kappa> (shared_entry_node hn),
-     access_value_none = \<lambda>hn a. a |\<in>| tree_bucket (shared_unconstructed s) (shared_derivation_position (shared_entry_node hn))
+     access_free = \<lambda>hn. {||}, access_value_none = \<lambda>hn a. True, access_registered = {||},
+     access_holdable = \<lambda>h. False, access_witnesses = shared_witnesses s\<rparr>)"
+
+definition state_access :: "('a,'s::linorder,'d,'c) shared_state \<Rightarrow>
+    (('a,'s,'d,'c) shared_goal_entry, ('a,'s,'d,'c) shared_node_entry, nat, 'a, 's, 'd, 'c) search_access" where
+  "state_access s = state_access_over (tree_values (shared_goals s)) s"
+
+definition shared_access :: "('a,'s,'d,'c) finite_witness_construction \<Rightarrow> ('a,'s,'d,'c) finite_schema_system \<Rightarrow>
+    ('a,'s::linorder,'d,'c) shared_search \<Rightarrow>
+    (('a,'s,'d,'c) shared_goal_entry, ('a,'s,'d,'c) shared_node_entry, nat, 'a, 's, 'd, 'c) search_access" where
+  "shared_access \<kappa> P r = (let s = search_state r in (state_access s)\<lparr>
+     access_free := \<lambda>hn. shared_free_registered \<kappa> (shared_entry_node hn),
+     access_value_none := \<lambda>hn a. a |\<in>| tree_bucket (shared_unconstructed s) (shared_derivation_position (shared_entry_node hn))
        \<or> search_value \<kappa> P r (shared_entry_node hn) a = None,
-     access_registered = fset_of_list (RBT.keys (search_registered r)),
-     access_holdable = \<lambda>h. shared_goal_registered h \<noteq> {||},
-     access_witnesses = shared_witnesses s\<rparr>)"
+     access_registered := fset_of_list (RBT.keys (search_registered r)),
+     access_holdable := \<lambda>h. shared_goal_registered h \<noteq> {||}\<rparr>)"
 
 lemma shared_access_simps:
   "access_goals (shared_access \<kappa> P r) = tree_values (shared_goals (search_state r))"
@@ -257,7 +289,7 @@ lemma shared_access_simps:
   "access_registered (shared_access \<kappa> P r) = fset_of_list (RBT.keys (search_registered r))"
   "access_holdable (shared_access \<kappa> P r) h \<longleftrightarrow> shared_goal_registered h \<noteq> {||}"
   "access_witnesses (shared_access \<kappa> P r) = shared_witnesses (search_state r)"
-  by (simp_all add: shared_access_def Let_def)
+  by (simp_all add: shared_access_def state_access_def state_access_over_def Let_def)
 
 lemma shared_goal_lookup_position:
   assumes s: "shared_state_formed \<kappa> P s" and at: "RBT.lookup (shared_goals s) q = Some h"
@@ -268,6 +300,49 @@ lemma shared_node_lookup_position:
   assumes s: "shared_state_formed \<kappa> P s" and at: "RBT.lookup (shared_nodes s) q = Some hn"
   shows "shared_derivation_position (shared_entry_node hn) = q"
   using shared_entries_formed(2)[OF s at] by (simp add: node_entry_formed_def)
+
+text \<open>
+  A formed state holds a pending goal under a position exactly when its goal tree holds a key under it, and its open
+  count there is zero exactly when it holds none: the solvedness of a node read from the tree's keys.
+\<close>
+
+lemma shared_pending_under:
+  assumes s: "shared_state_formed \<kappa> P s"
+  shows "fBex (resolution_pending (shared_state_project s)) (\<lambda>g. take (length p) (resolution_goal_position g) = p) \<longleftrightarrow>
+    (\<exists>q. RBT.lookup (shared_goals s) q \<noteq> None \<and> take (length p) q = p)"
+proof
+  assume "fBex (resolution_pending (shared_state_project s)) (\<lambda>g. take (length p) (resolution_goal_position g) = p)"
+  then obtain g where g: "g |\<in>| resolution_pending (shared_state_project s)"
+    "take (length p) (resolution_goal_position g) = p" by blast
+  then obtain q h where at: "RBT.lookup (shared_goals s) q = Some h"
+    and e: "shared_goal_project (shared_state_table s) (shared_entry_goal h) = g"
+    unfolding shared_state_project_member(1) by blast
+  have "resolution_goal_position g = q"
+    using e shared_goal_lookup_position[OF s at] by (cases "shared_entry_goal h") auto
+  then show "\<exists>q. RBT.lookup (shared_goals s) q \<noteq> None \<and> take (length p) q = p" using at g(2) by auto
+next
+  assume "\<exists>q. RBT.lookup (shared_goals s) q \<noteq> None \<and> take (length p) q = p"
+  then obtain q h where at: "RBT.lookup (shared_goals s) q = Some h" and pre: "take (length p) q = p" by auto
+  have m: "shared_goal_project (shared_state_table s) (shared_entry_goal h) |\<in>| resolution_pending (shared_state_project s)"
+    unfolding shared_state_project_member(1) using at by blast
+  have "resolution_goal_position (shared_goal_project (shared_state_table s) (shared_entry_goal h)) = q"
+    using shared_goal_lookup_position[OF s at] by (cases "shared_entry_goal h") auto
+  then show "fBex (resolution_pending (shared_state_project s)) (\<lambda>g. take (length p) (resolution_goal_position g) = p)"
+    using m pre by blast
+qed
+
+lemma shared_open_zero:
+  assumes s: "shared_state_formed \<kappa> P s"
+  shows "tree_count (shared_open s) p = 0 \<longleftrightarrow> \<not> (\<exists>q. RBT.lookup (shared_goals s) q \<noteq> None \<and> take (length p) q = p)"
+proof -
+  have c: "tree_count (shared_open s) p = card (tree_keys_under (shared_goals s) p)"
+    using s by (simp add: shared_state_formed_def)
+  have "tree_count (shared_open s) p = 0 \<longleftrightarrow> tree_keys_under (shared_goals s) p = {}"
+    by (simp add: c card_0_eq[OF tree_keys_under_finite])
+  also have "\<dots> \<longleftrightarrow> \<not> (\<exists>q. RBT.lookup (shared_goals s) q \<noteq> None \<and> take (length p) q = p)"
+    unfolding tree_keys_under_def Collect_empty_eq by blast
+  finally show ?thesis .
+qed
 
 theorem shared_access_formed:
   assumes r: "search_formed \<kappa> P r"
@@ -461,40 +536,9 @@ proof -
         tree_bucket (shared_goal_calls ?s) (shared_call_key (shared_entry_goal h))" using e i by simp
   next
     fix nd assume nd: "nd |\<in>| resolution_nodes (search_project r)"
-    have c: "tree_count (shared_open ?s) p = card (tree_keys_under (shared_goals ?s) p)" for p
-      using s by (simp add: shared_state_formed_def)
-    have "tree_count (shared_open ?s) (resolution_node_position nd) = 0 \<longleftrightarrow>
-        tree_keys_under (shared_goals ?s) (resolution_node_position nd) = {}"
-      by (simp add: c card_0_eq[OF tree_keys_under_finite])
-    also have "\<dots> \<longleftrightarrow> \<not> fBex (resolution_pending (search_project r)) (\<lambda>g.
-        take (length (resolution_node_position nd)) (resolution_goal_position g) = resolution_node_position nd)"
-    proof -
-      let ?p = "resolution_node_position nd"
-      have "(\<exists>q. RBT.lookup (shared_goals ?s) q \<noteq> None \<and> take (length ?p) q = ?p) \<longleftrightarrow>
-          fBex (resolution_pending (search_project r)) (\<lambda>g. take (length ?p) (resolution_goal_position g) = ?p)"
-      proof
-        assume "\<exists>q. RBT.lookup (shared_goals ?s) q \<noteq> None \<and> take (length ?p) q = ?p"
-        then obtain q h where q: "RBT.lookup (shared_goals ?s) q = Some h" "take (length ?p) q = ?p" by auto
-        have m: "shared_goal_project ?T (shared_entry_goal h) |\<in>| resolution_pending (search_project r)"
-          unfolding shared_state_project_member(1) using q(1) by blast
-        have "resolution_goal_position (shared_goal_project ?T (shared_entry_goal h)) = q" using gpos[OF q(1)] by simp
-        then show "fBex (resolution_pending (search_project r)) (\<lambda>g. take (length ?p) (resolution_goal_position g) = ?p)"
-          using m q(2) by blast
-      next
-        assume "fBex (resolution_pending (search_project r)) (\<lambda>g. take (length ?p) (resolution_goal_position g) = ?p)"
-        then obtain g where g: "g |\<in>| resolution_pending (search_project r)"
-          "take (length ?p) (resolution_goal_position g) = ?p" by blast
-        then obtain q h where at: "RBT.lookup (shared_goals ?s) q = Some h"
-          and e: "shared_goal_project ?T (shared_entry_goal h) = g"
-          unfolding shared_state_project_member(1) by blast
-        have "resolution_goal_position g = q" using e gpos[OF at] by auto
-        then show "\<exists>q. RBT.lookup (shared_goals ?s) q \<noteq> None \<and> take (length ?p) q = ?p" using at g(2) by auto
-      qed
-      then show ?thesis unfolding tree_keys_under_def Collect_empty_eq by blast
-    qed
-    finally show "tree_count (shared_open ?s) (resolution_node_position nd) = 0 \<longleftrightarrow>
+    show "tree_count (shared_open ?s) (resolution_node_position nd) = 0 \<longleftrightarrow>
         finite_solved_node (search_project r) nd"
-      by (simp add: finite_solved_node_def)
+      by (simp only: finite_solved_node_def shared_open_zero[OF s] shared_pending_under[OF s])
   next
     fix h x
     assume h: "RBT.lookup (shared_goals ?s) (shared_goal_position (shared_entry_goal h)) = Some h"
@@ -519,6 +563,560 @@ proof -
   qed
 qed
 
+section \<open>The selection's classes kept in the search\<close>
+
+text \<open>
+  #830's fix (1) (b), task 865: the choice's classes (@{thm [source] access_goal_choice_classes}) kept in the search.
+  A class is a tree from the positions of the goals that pass its test to their entries; it is formed at a state when
+  it holds exactly the goals of the state passing the test, the tests being R3's of the goals' values at the state's
+  projection (@{text classes_formed}). A test of a ground call reads only the nodes and the goals making that call and
+  the solvedness of those nodes (@{thm [source] goal_tests_frame}), so a step changing the goal and the node at one
+  position changes only the tests of that position's goal and of the goals making a ground call whose presence the step
+  changes: the call the goal or the node there makes, when its ground key changes, and the call a node at a prefix of the
+  position makes, when the step changes whether a goal stands there and the prefix's open count moves between zero and
+  nonzero; the goals the goal-call index finds for those references are the ones the step touches
+  (@{text classes_touched}). A step that keeps every such key and presence, as a substitution does, touches its own
+  position alone. A step updates the classes there, testing each goal through the state's access, and nowhere
+  else (@{text classes_step}). Formation is established where a search state is made and kept by every step; it is never
+  checked again.
+\<close>
+
+lemma state_access_tests:
+  "access_candidate (shared_access \<kappa> P r) h = access_candidate (state_access (search_state r)) h"
+  "access_settled (shared_access \<kappa> P r) h = access_settled (state_access (search_state r)) h"
+  "access_single (shared_access \<kappa> P r) h = access_single (state_access (search_state r)) h"
+  by (simp_all add: shared_access_def Let_def access_candidate_def access_settled_def access_single_def
+      access_pruned_def access_pruned_among_def access_reusable_def access_waits_def access_ground_def)
+
+lemma state_access_goal_tests:
+  "access_candidate (state_access s) h = access_candidate (state_access_over {||} s) h"
+  "access_settled (state_access s) h = access_settled (state_access_over {||} s) h"
+  "access_single (state_access s) h = access_single (state_access_over {||} s) h"
+  by (simp_all add: state_access_def state_access_over_def Let_def access_candidate_def access_settled_def
+      access_single_def access_pruned_def access_pruned_among_def access_reusable_def access_waits_def access_ground_def)
+
+definition class_value :: "('e \<Rightarrow> bool) \<Rightarrow> ('k::linorder,'e) rbt \<Rightarrow> 'k \<Rightarrow> 'e option" where
+  "class_value Q G p = (case RBT.lookup G p of None \<Rightarrow> None | Some h \<Rightarrow> if Q h then Some h else None)"
+
+definition kept_candidate :: "shape list \<Rightarrow> ('a,'s,'d,'c) shared_goal_entry \<Rightarrow> bool" where
+  "kept_candidate T h \<longleftrightarrow> finite_candidate_goal (shared_goal_project T (shared_entry_goal h))"
+
+definition kept_settled :: "shape list \<Rightarrow> ('a,'s::linorder,'d,'c) resolution_state \<Rightarrow> ('a,'s,'d,'c) shared_goal_entry \<Rightarrow> bool" where
+  "kept_settled T st h \<longleftrightarrow> kept_candidate T h \<and>
+    goal_settled (shared_entry_alternatives h) st (shared_goal_project T (shared_entry_goal h))"
+
+definition kept_single :: "shape list \<Rightarrow> ('a,'s::linorder,'d,'c) resolution_state \<Rightarrow> ('a,'s,'d,'c) shared_goal_entry \<Rightarrow> bool" where
+  "kept_single T st h \<longleftrightarrow> kept_candidate T h \<and>
+    goal_single (shared_entry_alternatives h) st (shared_goal_project T (shared_entry_goal h))"
+
+definition classes_formed :: "('a,'s::linorder,'d,'c) shared_state \<Rightarrow> ('a,'s,'d,'c) goal_classes \<Rightarrow> bool" where
+  "classes_formed s K \<longleftrightarrow>
+    (\<forall>p. RBT.lookup (class_candidates K) p = class_value (kept_candidate (shared_state_table s)) (shared_goals s) p) \<and>
+    (\<forall>p. RBT.lookup (class_settled K) p =
+      class_value (kept_settled (shared_state_table s) (shared_state_project s)) (shared_goals s) p) \<and>
+    (\<forall>p. RBT.lookup (class_single K) p =
+      class_value (kept_single (shared_state_table s) (shared_state_project s)) (shared_goals s) p)"
+
+abbreviation search_classes_formed :: "('a,'s::linorder,'d,'c) shared_search \<Rightarrow> bool" where
+  "search_classes_formed r \<equiv> classes_formed (search_state r) (search_classes r)"
+
+definition empty_classes :: "('a,'s::linorder,'d,'c) goal_classes" where
+  "empty_classes = \<lparr>class_candidates = RBT.empty, class_settled = RBT.empty, class_single = RBT.empty\<rparr>"
+
+definition class_put :: "bool \<Rightarrow> 'k::linorder \<Rightarrow> 'e \<Rightarrow> ('k,'e) rbt \<Rightarrow> ('k,'e) rbt" where
+  "class_put b q h t = (if b then RBT.insert q h t else RBT.delete q t)"
+
+definition classes_at :: "('a,'s::linorder,'d,'c) shared_state \<Rightarrow> 's list \<Rightarrow> ('a,'s,'d,'c) goal_classes \<Rightarrow>
+    ('a,'s,'d,'c) goal_classes" where
+  "classes_at s q K = (case RBT.lookup (shared_goals s) q of
+      None \<Rightarrow> \<lparr>class_candidates = RBT.delete q (class_candidates K), class_settled = RBT.delete q (class_settled K),
+        class_single = RBT.delete q (class_single K)\<rparr>
+    | Some h \<Rightarrow> (let V = state_access_over {||} s; c = access_candidate V h in
+        \<lparr>class_candidates = class_put c q h (class_candidates K),
+         class_settled = class_put (c \<and> access_settled V h) q h (class_settled K),
+         class_single = class_put (c \<and> access_single V h) q h (class_single K)\<rparr>))"
+
+definition classes_update :: "'s list list \<Rightarrow> ('a,'s::linorder,'d,'c) shared_state \<Rightarrow> ('a,'s,'d,'c) goal_classes \<Rightarrow>
+    ('a,'s,'d,'c) goal_classes" where
+  "classes_update ps s K = fold (classes_at s) ps K"
+
+lemma classes_at_lookup:
+  "RBT.lookup (class_candidates (classes_at s q K)) p = (if p = q then
+      class_value (access_candidate (state_access s)) (shared_goals s) p else RBT.lookup (class_candidates K) p)"
+  "RBT.lookup (class_settled (classes_at s q K)) p = (if p = q then
+      class_value (\<lambda>h. access_candidate (state_access s) h \<and> access_settled (state_access s) h) (shared_goals s) p
+    else RBT.lookup (class_settled K) p)"
+  "RBT.lookup (class_single (classes_at s q K)) p = (if p = q then
+      class_value (\<lambda>h. access_candidate (state_access s) h \<and> access_single (state_access s) h) (shared_goals s) p
+    else RBT.lookup (class_single K) p)"
+  by (auto simp: classes_at_def class_put_def class_value_def Let_def state_access_goal_tests split: option.split)
+
+lemma classes_update_lookup:
+  "RBT.lookup (class_candidates (classes_update ps s K)) p = (if p \<in> set ps then
+      class_value (access_candidate (state_access s)) (shared_goals s) p else RBT.lookup (class_candidates K) p)"
+  "RBT.lookup (class_settled (classes_update ps s K)) p = (if p \<in> set ps then
+      class_value (\<lambda>h. access_candidate (state_access s) h \<and> access_settled (state_access s) h) (shared_goals s) p
+    else RBT.lookup (class_settled K) p)"
+  "RBT.lookup (class_single (classes_update ps s K)) p = (if p \<in> set ps then
+      class_value (\<lambda>h. access_candidate (state_access s) h \<and> access_single (state_access s) h) (shared_goals s) p
+    else RBT.lookup (class_single K) p)"
+  by (induction ps arbitrary: K) (auto simp: classes_update_def classes_at_lookup)
+
+text \<open>A goal's tests through the state's access are R3's tests of its value at a formed search.\<close>
+
+lemma kept_tests:
+  assumes r: "search_formed \<kappa> P r" and at: "RBT.lookup (shared_goals (search_state r)) p = Some h"
+  shows "access_candidate (state_access (search_state r)) h \<longleftrightarrow> kept_candidate (search_table r) h"
+    and "access_candidate (state_access (search_state r)) h \<and> access_settled (state_access (search_state r)) h \<longleftrightarrow>
+      kept_settled (search_table r) (search_project r) h"
+    and "access_candidate (state_access (search_state r)) h \<and> access_single (state_access (search_state r)) h \<longleftrightarrow>
+      kept_single (search_table r) (search_project r) h"
+proof -
+  interpret V: access_formed \<kappa> P "shared_access \<kappa> P r" "search_project r" by (rule shared_access_formed[OF r])
+  have h: "h |\<in>| access_goals (shared_access \<kappa> P r)" using at by (auto simp: shared_access_simps tree_values_member)
+  note t = state_access_tests[of \<kappa> P r h, symmetric]
+  show "access_candidate (state_access (search_state r)) h \<longleftrightarrow> kept_candidate (search_table r) h"
+    using V.candidate[OF h] t(1) by (simp add: kept_candidate_def shared_access_simps)
+  show "access_candidate (state_access (search_state r)) h \<and> access_settled (state_access (search_state r)) h \<longleftrightarrow>
+      kept_settled (search_table r) (search_project r) h"
+    using V.candidate[OF h] V.settled[OF h] t(1,2) by (simp add: kept_settled_def kept_candidate_def shared_access_simps)
+  show "access_candidate (state_access (search_state r)) h \<and> access_single (state_access (search_state r)) h \<longleftrightarrow>
+      kept_single (search_table r) (search_project r) h"
+    using V.candidate[OF h] V.single[OF h] t(1,3) by (simp add: kept_single_def kept_candidate_def shared_access_simps)
+qed
+
+lemma classes_update_formed:
+  assumes r: "search_formed \<kappa> P r"
+    and out: "\<And>p. p \<notin> set ps \<Longrightarrow>
+      RBT.lookup (class_candidates K) p = class_value (kept_candidate (search_table r)) (shared_goals (search_state r)) p \<and>
+      RBT.lookup (class_settled K) p =
+        class_value (kept_settled (search_table r) (search_project r)) (shared_goals (search_state r)) p \<and>
+      RBT.lookup (class_single K) p =
+        class_value (kept_single (search_table r) (search_project r)) (shared_goals (search_state r)) p"
+  shows "classes_formed (search_state r) (classes_update ps (search_state r) K)"
+proof -
+  let ?G = "shared_goals (search_state r)" and ?V = "state_access (search_state r)"
+  have v: "class_value (access_candidate ?V) ?G p = class_value (kept_candidate (search_table r)) ?G p \<and>
+      class_value (\<lambda>h. access_candidate ?V h \<and> access_settled ?V h) ?G p =
+        class_value (kept_settled (search_table r) (search_project r)) ?G p \<and>
+      class_value (\<lambda>h. access_candidate ?V h \<and> access_single ?V h) ?G p =
+        class_value (kept_single (search_table r) (search_project r)) ?G p" for p
+  proof (cases "RBT.lookup ?G p")
+    case None
+    then show ?thesis by (simp add: class_value_def)
+  next
+    case (Some h)
+    then show ?thesis using kept_tests[OF r Some] by (simp add: class_value_def)
+  qed
+  show ?thesis unfolding classes_formed_def using out v by (auto simp: classes_update_lookup)
+qed
+
+subsection \<open>The goals a step touches\<close>
+
+text \<open>
+  The ground key of a goal or a node is the site and the reference of the call it makes when that call is ground, and
+  nothing otherwise: at a formed entry it says exactly whether the entry makes a given ground call
+  (@{text goal_ground_key_project}, @{text node_ground_key_project}), and at a position of a formed state whether the
+  state holds a pending goal or a node making it there (@{text goal_ground_key_pending}, @{text node_ground_key_nodes}).
+  A step names the references of the keys it changes (@{text changed_refs}).
+\<close>
+
+definition goal_ground_key :: "('a,'s,'d,'c) shared_goal_entry option \<Rightarrow> ('d \<times> nat) option" where
+  "goal_ground_key go = (case go of None \<Rightarrow> None | Some h \<Rightarrow> (case shared_entry_goal h of
+      Shared_Call_Goal q r d x \<Rightarrow> (case x of Shared_Ground i \<Rightarrow> Some (d,i) | Shared_Variable a \<Rightarrow> None
+        | Shared_Node A p r' \<Rightarrow> None)
+    | Shared_Material_Goal q r M \<Rightarrow> None))"
+
+definition node_ground_key :: "('a,'s,'d,'c) shared_node_entry option \<Rightarrow> ('d \<times> nat) option" where
+  "node_ground_key no = (case no of None \<Rightarrow> None | Some hn \<Rightarrow> (case shared_derivation_call (shared_entry_node hn) of
+      Shared_Ground i \<Rightarrow> Some (shared_derivation_site (shared_entry_node hn), i) | Shared_Variable a \<Rightarrow> None
+    | Shared_Node A p r \<Rightarrow> None))"
+
+definition key_refs :: "('d \<times> nat) option \<Rightarrow> nat fset" where
+  "key_refs k = (case k of None \<Rightarrow> {||} | Some di \<Rightarrow> {|snd di|})"
+
+definition changed_refs :: "('d \<times> nat) option \<Rightarrow> ('d \<times> nat) option \<Rightarrow> nat fset" where
+  "changed_refs k k' = (if k = k' then {||} else key_refs k |\<union>| key_refs k')"
+
+lemma goal_ground_key_project:
+  fixes h :: "('a,'s,'d,'c) shared_goal_entry"
+  assumes tf: "table_formed T" and hf: "goal_entry_formed P T q h"
+    and gf: "shared_pattern_formed T (Shared_Ground i :: ('s,'a) resolution_variable shared_pattern)"
+      "shared_collapsed (Shared_Ground i :: ('s,'a) resolution_variable shared_pattern)"
+      "shared_pattern_variables (Shared_Ground i :: ('s,'a) resolution_variable shared_pattern) = {||}"
+    and gp: "shared_pattern_project T (Shared_Ground i :: ('s,'a) resolution_variable shared_pattern) = pc"
+  shows "(\<exists>r'. shared_goal_project T (shared_entry_goal h) = Resolution_Call_Goal q r' d pc) \<longleftrightarrow>
+    goal_ground_key (Some h) = Some (d,i)"
+proof (cases "shared_entry_goal h")
+  case (Shared_Call_Goal q0 r0 d0 x)
+  have q0: "q0 = q" and xf: "shared_pattern_formed T x" "shared_collapsed x"
+    using hf Shared_Call_Goal by (simp_all add: goal_entry_formed_def)
+  have eq: "shared_pattern_project T x = pc \<longleftrightarrow> x = Shared_Ground i"
+    by (subst gp[symmetric]) (rule collapsed_ground_project_eq[OF tf gf xf])
+  show ?thesis using Shared_Call_Goal q0 eq by (cases x) (auto simp: goal_ground_key_def)
+next
+  case (Shared_Material_Goal q0 r0 M)
+  then show ?thesis by (simp add: goal_ground_key_def)
+qed
+
+lemma node_ground_key_project:
+  fixes hn :: "('a,'s,'d,'c) shared_node_entry"
+  assumes tf: "table_formed T" and nf: "node_entry_formed T q hn"
+    and gf: "shared_pattern_formed T (Shared_Ground i :: ('s,'a) resolution_variable shared_pattern)"
+      "shared_collapsed (Shared_Ground i :: ('s,'a) resolution_variable shared_pattern)"
+      "shared_pattern_variables (Shared_Ground i :: ('s,'a) resolution_variable shared_pattern) = {||}"
+    and gp: "shared_pattern_project T (Shared_Ground i :: ('s,'a) resolution_variable shared_pattern) = pc"
+  shows "resolution_node_site (shared_derivation_project T (shared_entry_node hn)) = d \<and>
+      resolution_node_call (shared_derivation_project T (shared_entry_node hn)) = pc \<longleftrightarrow>
+    node_ground_key (Some hn) = Some (d,i)"
+proof -
+  obtain x where x: "shared_derivation_call (shared_entry_node hn) = x" by blast
+  have xf: "shared_pattern_formed T x" "shared_collapsed x"
+    using nf x by (simp_all add: node_entry_formed_def shared_derivation_formed_def)
+  have eq: "shared_pattern_project T x = pc \<longleftrightarrow> x = Shared_Ground i"
+    by (subst gp[symmetric]) (rule collapsed_ground_project_eq[OF tf gf xf])
+  show ?thesis using x eq by (cases x) (auto simp: node_ground_key_def shared_derivation_project_def)
+qed
+
+lemma goal_ground_key_pending:
+  fixes s :: "('a,'s::linorder,'d,'c) shared_state"
+  assumes s: "shared_state_formed \<kappa> P s"
+    and gf: "shared_pattern_formed (shared_state_table s) (Shared_Ground i :: ('s,'a) resolution_variable shared_pattern)"
+      "shared_collapsed (Shared_Ground i :: ('s,'a) resolution_variable shared_pattern)"
+      "shared_pattern_variables (Shared_Ground i :: ('s,'a) resolution_variable shared_pattern) = {||}"
+    and gp: "shared_pattern_project (shared_state_table s) (Shared_Ground i :: ('s,'a) resolution_variable shared_pattern) = pc"
+  shows "(\<exists>r'. Resolution_Call_Goal q' r' d pc |\<in>| resolution_pending (shared_state_project s)) \<longleftrightarrow>
+    goal_ground_key (RBT.lookup (shared_goals s) q') = Some (d,i)"
+proof -
+  have tf: "table_formed (shared_state_table s)" using shared_entries_formed(4)[OF s] .
+  have k: "(\<exists>r'. shared_goal_project (shared_state_table s) (shared_entry_goal h) = Resolution_Call_Goal p2 r' d pc) \<longleftrightarrow>
+      goal_ground_key (Some h) = Some (d,i)" if "RBT.lookup (shared_goals s) p2 = Some h" for p2 h
+    by (rule goal_ground_key_project[OF tf shared_entries_formed(1)[OF s that] gf gp])
+  have pos: "q'' = p2" if "RBT.lookup (shared_goals s) p2 = Some h"
+      "shared_goal_project (shared_state_table s) (shared_entry_goal h) = Resolution_Call_Goal q'' r' d pc" for p2 h q'' r'
+    using shared_goal_lookup_position[OF s that(1)] that(2) by (cases "shared_entry_goal h") simp_all
+  show ?thesis
+  proof
+    assume "\<exists>r'. Resolution_Call_Goal q' r' d pc |\<in>| resolution_pending (shared_state_project s)"
+    then obtain r' p2 h where a: "RBT.lookup (shared_goals s) p2 = Some h"
+      and e: "shared_goal_project (shared_state_table s) (shared_entry_goal h) = Resolution_Call_Goal q' r' d pc"
+      unfolding shared_state_project_member(1) by blast
+    have "q' = p2" by (rule pos[OF a e])
+    then show "goal_ground_key (RBT.lookup (shared_goals s) q') = Some (d,i)" using k[OF a] e a by auto
+  next
+    assume key: "goal_ground_key (RBT.lookup (shared_goals s) q') = Some (d,i)"
+    then obtain h where a: "RBT.lookup (shared_goals s) q' = Some h"
+      by (cases "RBT.lookup (shared_goals s) q'") (simp_all add: goal_ground_key_def)
+    obtain r' where "shared_goal_project (shared_state_table s) (shared_entry_goal h) = Resolution_Call_Goal q' r' d pc"
+      using k[OF a] key a by auto
+    then show "\<exists>r'. Resolution_Call_Goal q' r' d pc |\<in>| resolution_pending (shared_state_project s)"
+      unfolding shared_state_project_member(1) using a by blast
+  qed
+qed
+
+lemma node_ground_key_nodes:
+  fixes s :: "('a,'s::linorder,'d,'c) shared_state"
+  assumes s: "shared_state_formed \<kappa> P s"
+    and gf: "shared_pattern_formed (shared_state_table s) (Shared_Ground i :: ('s,'a) resolution_variable shared_pattern)"
+      "shared_collapsed (Shared_Ground i :: ('s,'a) resolution_variable shared_pattern)"
+      "shared_pattern_variables (Shared_Ground i :: ('s,'a) resolution_variable shared_pattern) = {||}"
+    and gp: "shared_pattern_project (shared_state_table s) (Shared_Ground i :: ('s,'a) resolution_variable shared_pattern) = pc"
+  shows "(\<exists>nd. nd |\<in>| resolution_nodes (shared_state_project s) \<and> resolution_node_position nd = q' \<and>
+      resolution_node_site nd = d \<and> resolution_node_call nd = pc) \<longleftrightarrow>
+    node_ground_key (RBT.lookup (shared_nodes s) q') = Some (d,i)"
+proof -
+  let ?T = "shared_state_table s"
+  have tf: "table_formed ?T" using shared_entries_formed(4)[OF s] .
+  have k: "resolution_node_site (shared_derivation_project ?T (shared_entry_node hn)) = d \<and>
+      resolution_node_call (shared_derivation_project ?T (shared_entry_node hn)) = pc \<longleftrightarrow>
+      node_ground_key (Some hn) = Some (d,i)" if "RBT.lookup (shared_nodes s) p2 = Some hn" for p2 hn
+    by (rule node_ground_key_project[OF tf shared_entries_formed(2)[OF s that] gf gp])
+  have pos: "resolution_node_position (shared_derivation_project ?T (shared_entry_node hn)) = p2"
+    if "RBT.lookup (shared_nodes s) p2 = Some hn" for p2 hn
+    using shared_node_lookup_position[OF s that] by (simp add: shared_derivation_project_def)
+  show ?thesis
+  proof
+    assume "\<exists>nd. nd |\<in>| resolution_nodes (shared_state_project s) \<and> resolution_node_position nd = q' \<and>
+      resolution_node_site nd = d \<and> resolution_node_call nd = pc"
+    then obtain p2 hn where a: "RBT.lookup (shared_nodes s) p2 = Some hn"
+      and e: "resolution_node_position (shared_derivation_project ?T (shared_entry_node hn)) = q'"
+        "resolution_node_site (shared_derivation_project ?T (shared_entry_node hn)) = d"
+        "resolution_node_call (shared_derivation_project ?T (shared_entry_node hn)) = pc"
+      unfolding shared_state_project_member(2) by blast
+    have "p2 = q'" using pos[OF a] e(1) by simp
+    then show "node_ground_key (RBT.lookup (shared_nodes s) q') = Some (d,i)" using k[OF a] e(2,3) a by auto
+  next
+    assume key: "node_ground_key (RBT.lookup (shared_nodes s) q') = Some (d,i)"
+    then obtain hn where a: "RBT.lookup (shared_nodes s) q' = Some hn"
+      by (cases "RBT.lookup (shared_nodes s) q'") (simp_all add: node_ground_key_def)
+    have "resolution_node_site (shared_derivation_project ?T (shared_entry_node hn)) = d \<and>
+        resolution_node_call (shared_derivation_project ?T (shared_entry_node hn)) = pc" using k[OF a] key a by simp
+    then show "\<exists>nd. nd |\<in>| resolution_nodes (shared_state_project s) \<and> resolution_node_position nd = q' \<and>
+        resolution_node_site nd = d \<and> resolution_node_call nd = pc"
+      unfolding shared_state_project_member(2) using a pos[OF a] by blast
+  qed
+qed
+
+text \<open>
+  A step at a position touches the references of the ground keys it changes there, of the goal and of the node, and, when
+  it changes whether a goal stands there, the references of the nodes at the prefixes of the position whose open count
+  moves between zero and nonzero: the only nodes whose solvedness it changes.
+\<close>
+
+definition classes_keys :: "'s list \<Rightarrow> ('a,'s::linorder,'d,'c) shared_state \<Rightarrow> ('a,'s,'d,'c) shared_state \<Rightarrow> nat fset" where
+  "classes_keys q s s' =
+    changed_refs (goal_ground_key (RBT.lookup (shared_goals s) q)) (goal_ground_key (RBT.lookup (shared_goals s') q)) |\<union>|
+    changed_refs (node_ground_key (RBT.lookup (shared_nodes s) q)) (node_ground_key (RBT.lookup (shared_nodes s') q)) |\<union>|
+    (if (RBT.lookup (shared_goals s) q = None) = (RBT.lookup (shared_goals s') q = None) then {||}
+     else ffUnion (fset_of_list (map (\<lambda>p. if (tree_count (shared_open s) p = 0) = (tree_count (shared_open s') p = 0)
+       then {||} else key_refs (node_ground_key (RBT.lookup (shared_nodes s') p))) (position_prefixes q))))"
+
+definition classes_touched :: "'s list \<Rightarrow> ('a,'s::linorder,'d,'c) shared_state \<Rightarrow> ('a,'s,'d,'c) shared_state \<Rightarrow> 's list list" where
+  "classes_touched q s s' = q # concat (map (\<lambda>i. sorted_list_of_fset (tree_bucket (shared_goal_calls s') i))
+    (sorted_list_of_fset (classes_keys q s s')))"
+
+lemma classes_touched_member:
+  "p \<in> set (classes_touched q s s') \<longleftrightarrow> p = q \<or> (\<exists>i. i |\<in>| classes_keys q s s' \<and> p |\<in>| tree_bucket (shared_goal_calls s') i)"
+  by (auto simp: classes_touched_def sorted_list_of_fset.rep_eq)
+
+lemma changed_refs_intro: "k \<noteq> k' \<Longrightarrow> k = Some (d,i) \<or> k' = Some (d,i) \<Longrightarrow> i |\<in>| changed_refs k k'"
+  by (auto simp: changed_refs_def key_refs_def)
+
+lemma classes_keys_goal:
+  assumes "goal_ground_key (RBT.lookup (shared_goals s) q) \<noteq> goal_ground_key (RBT.lookup (shared_goals s') q)"
+    and "goal_ground_key (RBT.lookup (shared_goals s) q) = Some (d,i) \<or>
+      goal_ground_key (RBT.lookup (shared_goals s') q) = Some (d,i)"
+  shows "i |\<in>| classes_keys q s s'"
+  using changed_refs_intro[OF assms] unfolding classes_keys_def by simp
+
+lemma classes_keys_node:
+  assumes "node_ground_key (RBT.lookup (shared_nodes s) q) \<noteq> node_ground_key (RBT.lookup (shared_nodes s') q)"
+    and "node_ground_key (RBT.lookup (shared_nodes s) q) = Some (d,i) \<or>
+      node_ground_key (RBT.lookup (shared_nodes s') q) = Some (d,i)"
+  shows "i |\<in>| classes_keys q s s'"
+  using changed_refs_intro[OF assms] unfolding classes_keys_def by simp
+
+lemma classes_keys_prefix:
+  assumes pre: "take (length p) q = p"
+    and pres: "(RBT.lookup (shared_goals s) q = None) \<noteq> (RBT.lookup (shared_goals s') q = None)"
+    and flip: "(tree_count (shared_open s) p = 0) \<noteq> (tree_count (shared_open s') p = 0)"
+    and key: "node_ground_key (RBT.lookup (shared_nodes s') p) = Some (d,i)"
+  shows "i |\<in>| classes_keys q s s'"
+proof -
+  let ?f = "\<lambda>p. if (tree_count (shared_open s) p = 0) = (tree_count (shared_open s') p = 0)
+    then {||} else key_refs (node_ground_key (RBT.lookup (shared_nodes s') p))"
+  have m: "p \<in> set (position_prefixes q)" using pre by (simp add: position_prefixes_member)
+  have b: "i |\<in>| ?f p" using flip key by (simp add: key_refs_def)
+  have a: "?f p |\<in>| fset_of_list (map ?f (position_prefixes q))"
+    unfolding fset_of_list.rep_eq set_map by (rule rev_image_eqI[OF m]) (rule refl)
+  have union: "a' |\<in>| A \<Longrightarrow> x |\<in>| a' \<Longrightarrow> x |\<in>| ffUnion A" for x :: nat and a' A
+    by (auto simp: ffUnion.rep_eq)
+  have u: "i |\<in>| ffUnion (fset_of_list (map ?f (position_prefixes q)))" by (rule union[OF a b])
+  have e: "(if (RBT.lookup (shared_goals s) q = None) = (RBT.lookup (shared_goals s') q = None) then {||} else U) = U"
+    for U :: "nat fset" using pres by auto
+  show ?thesis unfolding classes_keys_def e using u by simp
+qed
+
+lemmas classes_keys_intro = classes_keys_goal classes_keys_node classes_keys_prefix
+
+text \<open>
+  A goal at a position the step does not touch keeps its tests: its call is ground and collapsed, so it is one reference.
+  The tests read the nodes and the pending goals making that call by their positions, and the solvedness of those nodes
+  (@{thm [source] goal_tests_frame}); at a position the ground key of a formed entry says whether it makes the call
+  (@{thm [source] goal_ground_key_pending}, @{thm [source] node_ground_key_nodes}). A goal or a node making the call at the
+  step's position changes its key, and a node making it at a prefix of the step's position changes its solvedness, only
+  where the reference is among the keys the touched positions include (@{thm [source] classes_keys_intro}).
+\<close>
+
+lemma classes_frame:
+  assumes r: "search_formed \<kappa> P r" and r': "search_formed \<kappa> P r'"
+    and ext: "table_extends (search_table r) (search_table r')"
+    and goals: "\<And>p. p \<noteq> q \<Longrightarrow> RBT.lookup (shared_goals (search_state r')) p = RBT.lookup (shared_goals (search_state r)) p"
+    and nodes: "\<And>p. p \<noteq> q \<Longrightarrow> RBT.lookup (shared_nodes (search_state r')) p = RBT.lookup (shared_nodes (search_state r)) p"
+    and at: "RBT.lookup (shared_goals (search_state r)) p = Some h"
+    and out: "p \<notin> set (classes_touched q (search_state r) (search_state r'))"
+  shows "kept_candidate (search_table r') h \<longleftrightarrow> kept_candidate (search_table r) h"
+    and "kept_settled (search_table r') (search_project r') h \<longleftrightarrow> kept_settled (search_table r) (search_project r) h"
+    and "kept_single (search_table r') (search_project r') h \<longleftrightarrow> kept_single (search_table r) (search_project r) h"
+proof -
+  let ?s = "search_state r" and ?s' = "search_state r'" and ?T = "search_table r" and ?T' = "search_table r'"
+  let ?st = "search_project r" and ?st' = "search_project r'"
+  have s: "shared_state_formed \<kappa> P ?s" and s': "shared_state_formed \<kappa> P ?s'" using search_formedD(1) r r' by blast+
+  have tf: "table_formed ?T" and tf': "table_formed ?T'" using shared_entries_formed(4) s s' by blast+
+  have pq: "p \<noteq> q" using out by (simp add: classes_touched_member)
+  have at': "RBT.lookup (shared_goals ?s') p = Some h" using goals[OF pq] at by simp
+  have hf: "goal_entry_formed P ?T p h" by (rule shared_entries_formed(1)[OF s at])
+  have proj: "shared_goal_project ?T' (shared_entry_goal h) = shared_goal_project ?T (shared_entry_goal h)"
+    using goal_entry_extends[OF tf hf ext] by simp
+  let ?g = "shared_goal_project ?T (shared_entry_goal h)"
+  have tests: "(finite_pruned ?st' ?g \<longleftrightarrow> finite_pruned ?st ?g) \<and> (finite_reusable ?st' ?g \<longleftrightarrow> finite_reusable ?st ?g) \<and>
+      (finite_goal_waits ?st' ?g \<longleftrightarrow> finite_goal_waits ?st ?g)"
+  proof (cases ?g)
+    case (Resolution_Material_Goal q0 rr M)
+    then show ?thesis by (simp add: finite_pruned_def finite_reusable_def finite_goal_waits_def)
+  next
+    case (Resolution_Call_Goal q0 rr d pc)
+    show ?thesis
+    proof (cases "finite_pattern_variables pc = {||}")
+      case False
+      then show ?thesis using Resolution_Call_Goal by (simp add: finite_pruned_def finite_reusable_def finite_goal_waits_def)
+    next
+      case True
+      obtain gp where hg: "shared_entry_goal h = Shared_Call_Goal q0 rr d gp" and gpp: "shared_pattern_project ?T gp = pc"
+        using Resolution_Call_Goal by (cases "shared_entry_goal h") auto
+      have gpf: "shared_pattern_formed ?T gp" "shared_collapsed gp" using hf hg by (simp_all add: goal_entry_formed_def)
+      have gv: "shared_pattern_variables gp = {||}" using goal_entry_variables[OF hf] hg gpp True by simp
+      then obtain i where gi: "gp = Shared_Ground i" using shared_collapsed_ground[OF gpf(2)] by blast
+      have "shared_recorded_at ?s' p" using s' by (simp add: shared_state_formed_def)
+      then have rec: "p |\<in>| tree_bucket (shared_goal_calls ?s') i" using at' hg gi by (simp add: shared_recorded_at_def)
+      have ik: "i |\<notin>| classes_keys q ?s ?s'" using out rec by (auto simp: classes_touched_member)
+      have gf: "shared_pattern_formed ?T (Shared_Ground i)" "shared_collapsed (Shared_Ground i)"
+          "shared_pattern_variables (Shared_Ground i) = {||}"
+        and gr: "shared_pattern_project ?T (Shared_Ground i) = pc"
+        using gpf gv gpp gi by simp_all
+      have gf': "shared_pattern_formed ?T' (Shared_Ground i)" by (rule shared_pattern_extends(1)[OF tf gf(1) ext])
+      have gr': "shared_pattern_project ?T' (Shared_Ground i) = pc"
+        using shared_pattern_extends(2)[OF tf gf(1) ext] gr by (rule trans)
+      note Gk = goal_ground_key_pending[OF s gf gr] and Gk' = goal_ground_key_pending[OF s' gf' gf(2,3) gr']
+      note Nk = node_ground_key_nodes[OF s gf gr] and Nk' = node_ground_key_nodes[OF s' gf' gf(2,3) gr']
+      have gq: "goal_ground_key (RBT.lookup (shared_goals ?s') q) = Some (d,i) \<longleftrightarrow>
+          goal_ground_key (RBT.lookup (shared_goals ?s) q) = Some (d,i)"
+      proof (cases "goal_ground_key (RBT.lookup (shared_goals ?s) q) = goal_ground_key (RBT.lookup (shared_goals ?s') q)")
+        case True
+        then show ?thesis by simp
+      next
+        case False
+        have "goal_ground_key (RBT.lookup (shared_goals ?s) q) \<noteq> Some (d,i) \<and>
+            goal_ground_key (RBT.lookup (shared_goals ?s') q) \<noteq> Some (d,i)"
+          using classes_keys_goal[OF False] ik by blast
+        then show ?thesis by simp
+      qed
+      have nq: "node_ground_key (RBT.lookup (shared_nodes ?s') q) = Some (d,i) \<longleftrightarrow>
+          node_ground_key (RBT.lookup (shared_nodes ?s) q) = Some (d,i)"
+      proof (cases "node_ground_key (RBT.lookup (shared_nodes ?s) q) = node_ground_key (RBT.lookup (shared_nodes ?s') q)")
+        case True
+        then show ?thesis by simp
+      next
+        case False
+        have "node_ground_key (RBT.lookup (shared_nodes ?s) q) \<noteq> Some (d,i) \<and>
+            node_ground_key (RBT.lookup (shared_nodes ?s') q) \<noteq> Some (d,i)"
+          using classes_keys_node[OF False] ik by blast
+        then show ?thesis by simp
+      qed
+      have G: "(\<exists>r'. Resolution_Call_Goal q' r' d pc |\<in>| resolution_pending ?st') \<longleftrightarrow>
+          (\<exists>r'. Resolution_Call_Goal q' r' d pc |\<in>| resolution_pending ?st)" for q'
+        unfolding Gk Gk' using gq goals[of q'] by (cases "q' = q") auto
+      have N: "(\<exists>nd. nd |\<in>| resolution_nodes ?st' \<and> resolution_node_position nd = q' \<and> resolution_node_site nd = d \<and>
+            resolution_node_call nd = pc) \<longleftrightarrow>
+          (\<exists>nd. nd |\<in>| resolution_nodes ?st \<and> resolution_node_position nd = q' \<and> resolution_node_site nd = d \<and>
+            resolution_node_call nd = pc)" for q'
+        unfolding Nk Nk' using nq nodes[of q'] by (cases "q' = q") auto
+      have S: "fBex (resolution_pending ?st') (\<lambda>g. take (length q') (resolution_goal_position g) = q') \<longleftrightarrow>
+          fBex (resolution_pending ?st) (\<lambda>g. take (length q') (resolution_goal_position g) = q')"
+        if n: "\<exists>nd. nd |\<in>| resolution_nodes ?st \<and> resolution_node_position nd = q' \<and> resolution_node_site nd = d \<and>
+          resolution_node_call nd = pc" for q'
+      proof -
+        have k0: "node_ground_key (RBT.lookup (shared_nodes ?s) q') = Some (d,i)" using n Nk by blast
+        have k: "node_ground_key (RBT.lookup (shared_nodes ?s') q') = Some (d,i)"
+          using k0 nq nodes[of q'] by (cases "q' = q") auto
+        have u: "(\<exists>p2. RBT.lookup (shared_goals ?s') p2 \<noteq> None \<and> take (length q') p2 = q') \<longleftrightarrow>
+            (\<exists>p2. RBT.lookup (shared_goals ?s) p2 \<noteq> None \<and> take (length q') p2 = q')"
+        proof (cases "take (length q') q = q' \<and>
+            (RBT.lookup (shared_goals ?s) q = None) \<noteq> (RBT.lookup (shared_goals ?s') q = None)")
+          case True
+          have "(tree_count (shared_open ?s) q' = 0) = (tree_count (shared_open ?s') q' = 0)"
+            using classes_keys_intro(3)[OF conjunct1[OF True] conjunct2[OF True] _ k] ik by blast
+          note c = this
+          have flipped: "\<And>c c' A A'. c = c' \<Longrightarrow> c = (\<not> A) \<Longrightarrow> c' = (\<not> A') \<Longrightarrow> A' = A" by blast
+          show ?thesis by (rule flipped[OF c shared_open_zero[OF s] shared_open_zero[OF s']])
+        next
+          case False
+          have "RBT.lookup (shared_goals ?s') p2 \<noteq> None \<longleftrightarrow> RBT.lookup (shared_goals ?s) p2 \<noteq> None"
+            if "take (length q') p2 = q'" for p2
+            using False goals[of p2] that by (cases "p2 = q") auto
+          then show ?thesis by blast
+        qed
+        show ?thesis unfolding shared_pending_under[OF s] shared_pending_under[OF s'] by (rule u)
+      qed
+      have fr: "(finite_pruned ?st' (Resolution_Call_Goal q0 rr d pc) \<longleftrightarrow> finite_pruned ?st (Resolution_Call_Goal q0 rr d pc)) \<and>
+          (finite_reusable ?st' (Resolution_Call_Goal q0 rr d pc) \<longleftrightarrow> finite_reusable ?st (Resolution_Call_Goal q0 rr d pc)) \<and>
+          (finite_goal_waits ?st' (Resolution_Call_Goal q0 rr d pc) \<longleftrightarrow> finite_goal_waits ?st (Resolution_Call_Goal q0 rr d pc))"
+        by (intro conjI goal_tests_frame[OF N S G])
+      show ?thesis unfolding Resolution_Call_Goal by (rule fr)
+    qed
+  qed
+  show "kept_candidate ?T' h \<longleftrightarrow> kept_candidate ?T h" using proj by (simp add: kept_candidate_def)
+  show "kept_settled ?T' ?st' h \<longleftrightarrow> kept_settled ?T ?st h"
+    using proj tests by (simp add: kept_settled_def kept_candidate_def goal_settled_def)
+  show "kept_single ?T' ?st' h \<longleftrightarrow> kept_single ?T ?st h"
+    using proj tests by (simp add: kept_single_def kept_candidate_def goal_single_def)
+qed
+
+lemma classes_step:
+  assumes r: "search_formed \<kappa> P r" and r': "search_formed \<kappa> P r'"
+    and ext: "table_extends (search_table r) (search_table r')"
+    and goals: "\<And>p. p \<noteq> q \<Longrightarrow> RBT.lookup (shared_goals (search_state r')) p = RBT.lookup (shared_goals (search_state r)) p"
+    and nodes: "\<And>p. p \<noteq> q \<Longrightarrow> RBT.lookup (shared_nodes (search_state r')) p = RBT.lookup (shared_nodes (search_state r)) p"
+    and K: "classes_formed (search_state r) K"
+  shows "classes_formed (search_state r')
+    (classes_update (classes_touched q (search_state r) (search_state r')) (search_state r') K)"
+proof (rule classes_update_formed[OF r'])
+  fix p assume out: "p \<notin> set (classes_touched q (search_state r) (search_state r'))"
+  have pq: "p \<noteq> q" using out by (simp add: classes_touched_member)
+  show "RBT.lookup (class_candidates K) p = class_value (kept_candidate (search_table r')) (shared_goals (search_state r')) p \<and>
+      RBT.lookup (class_settled K) p =
+        class_value (kept_settled (search_table r') (search_project r')) (shared_goals (search_state r')) p \<and>
+      RBT.lookup (class_single K) p =
+        class_value (kept_single (search_table r') (search_project r')) (shared_goals (search_state r')) p"
+  proof (cases "RBT.lookup (shared_goals (search_state r)) p")
+    case None
+    then show ?thesis using K goals[OF pq] unfolding classes_formed_def by (simp add: class_value_def)
+  next
+    case (Some h)
+    note f = classes_frame[OF r r' ext goals nodes Some out]
+    show ?thesis using K goals[OF pq] Some f unfolding classes_formed_def by (simp add: class_value_def)
+  qed
+qed
+
+text \<open>A step that extends the table and keeps the goals, the pending goals and the nodes keeps the classes formed.\<close>
+
+lemma classes_formed_extends:
+  assumes r: "search_formed \<kappa> P r" and K: "search_classes_formed r"
+    and ext: "table_extends (search_table r) (search_table r')"
+    and g: "shared_goals (search_state r') = shared_goals (search_state r)"
+    and pd: "resolution_pending (search_project r') = resolution_pending (search_project r)"
+    and nd: "resolution_nodes (search_project r') = resolution_nodes (search_project r)"
+    and c: "search_classes r' = search_classes r"
+  shows "search_classes_formed r'"
+proof -
+  have s: "shared_state_formed \<kappa> P (search_state r)" using search_formedD(1)[OF r] .
+  have tf: "table_formed (search_table r)" using shared_entries_formed(4)[OF s] .
+  have t: "goal_settled n (search_project r') x = goal_settled n (search_project r) x"
+    "goal_single n (search_project r') x = goal_single n (search_project r) x" for n x
+    by (cases x; simp add: goal_settled_def goal_single_def finite_pruned_def finite_reusable_def finite_goal_waits_def
+        finite_solved_node_def pd nd)+
+  have v: "kept_candidate (search_table r') h = kept_candidate (search_table r) h \<and>
+      kept_settled (search_table r') (search_project r') h = kept_settled (search_table r) (search_project r) h \<and>
+      kept_single (search_table r') (search_project r') h = kept_single (search_table r) (search_project r) h"
+    if "RBT.lookup (shared_goals (search_state r)) p = Some h" for p h
+    using goal_entry_extends[OF tf shared_entries_formed(1)[OF s that] ext] t
+    by (simp add: kept_candidate_def kept_settled_def kept_single_def)
+  have cv: "class_value (kept_candidate (search_table r')) (shared_goals (search_state r)) p =
+        class_value (kept_candidate (search_table r)) (shared_goals (search_state r)) p \<and>
+      class_value (kept_settled (search_table r') (search_project r')) (shared_goals (search_state r)) p =
+        class_value (kept_settled (search_table r) (search_project r)) (shared_goals (search_state r)) p \<and>
+      class_value (kept_single (search_table r') (search_project r')) (shared_goals (search_state r)) p =
+        class_value (kept_single (search_table r) (search_project r)) (shared_goals (search_state r)) p" for p
+  proof (cases "RBT.lookup (shared_goals (search_state r)) p")
+    case None
+    then show ?thesis by (simp add: class_value_def)
+  next
+    case (Some h)
+    then show ?thesis using v[OF Some] by (simp add: class_value_def)
+  qed
+  show ?thesis using K g c cv unfolding classes_formed_def by simp
+qed
+
 section \<open>Steps over the shared search state\<close>
 
 text \<open>
@@ -531,7 +1129,7 @@ definition search_update :: "'s list \<Rightarrow> ('a,'s,'d,'c) shared_state \<
     ('a,'s,'d,'c) shared_search" where
   "search_update q s' r = r\<lparr>search_state := s', search_registered := tree_move q
     (option_registered (RBT.lookup (shared_goals (search_state r)) q)) (option_registered (RBT.lookup (shared_goals s') q))
-    (search_registered r)\<rparr>"
+    (search_registered r), search_classes := classes_update (classes_touched q (search_state r) s') s' (search_classes r)\<rparr>"
 
 lemma search_values_extends:
   assumes v: "search_values_formed \<kappa> P r" and tf: "table_formed (search_table r)"
@@ -581,7 +1179,12 @@ proof -
     qed
   qed
   have vf: "search_values_formed \<kappa> P (search_update q s' r)"
-    unfolding search_update_def by (rule search_values_extends[OF v tf ext])
+  proof -
+    have "search_values_formed \<kappa> P (search_update q s' r) =
+        search_values_formed \<kappa> P (r\<lparr>search_state := s', search_registered := search_registered r\<rparr>)"
+      by (simp add: search_values_formed_def search_update_def)
+    then show ?thesis using search_values_extends[OF v tf ext, where t = "search_registered r"] by simp
+  qed
   show ?thesis using s' rf vf by (simp add: search_formed_def search_update_def)
 qed
 
@@ -598,7 +1201,8 @@ definition search_remove_goal :: "'s list \<Rightarrow> ('a,'s::linorder,'d,'c) 
 
 definition search_put_node :: "'s list \<Rightarrow> ('a,'s,'d,'c) shared_node_entry \<Rightarrow> ('a,'s::linorder,'d,'c) shared_search \<Rightarrow>
     ('a,'s,'d,'c) shared_search" where
-  "search_put_node q hn r = r\<lparr>search_state := shared_put_node q hn (search_state r)\<rparr>"
+  "search_put_node q hn r = (let s' = shared_put_node q hn (search_state r) in
+    r\<lparr>search_state := s', search_classes := classes_update (classes_touched q (search_state r) s') s' (search_classes r)\<rparr>)"
 
 lemma search_put_goal:
   assumes r: "search_formed \<kappa> P r" and h: "goal_entry_formed P (search_table r) q h"
@@ -636,12 +1240,59 @@ proof -
     and t: "shared_sharing (shared_put_node q hn (search_state r)) = shared_sharing (search_state r)"
     by (simp_all add: shared_put_node_def)
   have rf: "search_registered_formed (search_put_node q hn r)"
-    using reg g by (simp add: search_registered_formed_def search_put_node_def)
-  have tb: "search_table (search_put_node q hn r) = search_table r" using t by (simp add: search_put_node_def)
-  have vv: "search_values (search_put_node q hn r) = search_values r" by (simp add: search_put_node_def)
+    using reg g by (simp add: search_registered_formed_def search_put_node_def Let_def)
+  have tb: "search_table (search_put_node q hn r) = search_table r" using t by (simp add: search_put_node_def Let_def)
+  have vv: "search_values (search_put_node q hn r) = search_values r" by (simp add: search_put_node_def Let_def)
   have vf: "search_values_formed \<kappa> P (search_put_node q hn r)" using v unfolding search_values_formed_def tb vv .
-  show "search_formed \<kappa> P (search_put_node q hn r)" using s' rf vf by (simp add: search_formed_def search_put_node_def)
-  show "search_state (search_put_node q hn r) = shared_put_node q hn (search_state r)" by (simp add: search_put_node_def)
+  show "search_formed \<kappa> P (search_put_node q hn r)" using s' rf vf by (simp add: search_formed_def search_put_node_def Let_def)
+  show "search_state (search_put_node q hn r) = shared_put_node q hn (search_state r)" by (simp add: search_put_node_def Let_def)
+qed
+
+subsection \<open>The classes kept by the steps\<close>
+
+text \<open>
+  Each step that changes the goal or the node at one position updates the classes at the goals it touches
+  (@{thm [source] classes_step}), and keeps them formed whenever it leaves the search formed.
+\<close>
+
+lemma search_update_classes:
+  assumes r: "search_formed \<kappa> P r" and K: "search_classes_formed r" and r': "search_formed \<kappa> P (search_update q s' r)"
+    and ext: "table_extends (search_table r) (shared_state_table s')"
+    and goals: "\<And>p. p \<noteq> q \<Longrightarrow> RBT.lookup (shared_goals s') p = RBT.lookup (shared_goals (search_state r)) p"
+    and nodes: "\<And>p. p \<noteq> q \<Longrightarrow> RBT.lookup (shared_nodes s') p = RBT.lookup (shared_nodes (search_state r)) p"
+  shows "search_classes_formed (search_update q s' r)"
+proof -
+  have "classes_formed (search_state (search_update q s' r)) (classes_update
+      (classes_touched q (search_state r) (search_state (search_update q s' r))) (search_state (search_update q s' r))
+      (search_classes r))"
+    by (rule classes_step[OF r r' _ _ _ K]) (use ext goals nodes in simp_all)
+  then show ?thesis by (simp add: search_update_def)
+qed
+
+lemma search_put_goal_classes:
+  assumes r: "search_formed \<kappa> P r" and K: "search_classes_formed r" and r': "search_formed \<kappa> P (search_put_goal q h r)"
+  shows "search_classes_formed (search_put_goal q h r)"
+  unfolding search_put_goal_def
+  by (rule search_update_classes[OF r K r'[unfolded search_put_goal_def]]) (simp_all add: shared_put_goal_def)
+
+lemma search_remove_goal_classes:
+  assumes r: "search_formed \<kappa> P r" and K: "search_classes_formed r"
+    and at: "RBT.lookup (shared_goals (search_state r)) q = Some h"
+  shows "search_classes_formed (search_remove_goal q r)"
+  unfolding search_remove_goal_def
+  by (rule search_update_classes[OF r K search_remove_goal(1)[OF r at, unfolded search_remove_goal_def]])
+    (simp_all add: shared_remove_goal_def)
+
+lemma search_put_node_classes:
+  assumes r: "search_formed \<kappa> P r" and K: "search_classes_formed r" and r': "search_formed \<kappa> P (search_put_node q hn r)"
+  shows "search_classes_formed (search_put_node q hn r)"
+proof -
+  have e: "search_state (search_put_node q hn r) = shared_put_node q hn (search_state r)"
+    by (simp add: search_put_node_def Let_def)
+  have "classes_formed (search_state (search_put_node q hn r)) (classes_update (classes_touched q (search_state r)
+      (search_state (search_put_node q hn r))) (search_state (search_put_node q hn r)) (search_classes r))"
+    by (rule classes_step[OF r r' _ _ _ K]) (simp_all add: e shared_put_node_def)
+  then show ?thesis by (simp add: search_put_node_def Let_def)
 qed
 
 subsection \<open>Substitution\<close>
@@ -704,6 +1355,48 @@ proof -
       resolution_state_substitute (\<lambda>a. shared_pattern_project (search_table r) (\<sigma> a)) (search_project r)"
     using shared_state_substitute(3)[OF s \<sigma>f \<sigma>c out] by simp
 qed
+
+lemma search_substitute_at_classes:
+  assumes r: "search_formed \<kappa> P r" and K: "search_classes_formed r"
+    and r': "search_formed \<kappa> P (search_substitute_at P \<sigma> D q r)"
+    and ext: "table_extends (search_table r) (search_table (search_substitute_at P \<sigma> D q r))"
+  shows "search_classes_formed (search_substitute_at P \<sigma> D q r)"
+  unfolding search_substitute_at_def
+  by (rule search_update_classes[OF r K r'[unfolded search_substitute_at_def]])
+    (use ext in \<open>simp_all add: search_substitute_at_def shared_substitute_at_def shared_reshare_def Let_def\<close>)
+
+lemma search_substitute_fold_classes:
+  assumes r: "search_formed \<kappa> P r" and K: "search_classes_formed r" and tf0: "table_formed T0"
+    and ext0: "table_extends T0 (search_table r)"
+    and \<sigma>f: "\<And>a. shared_pattern_formed T0 (\<sigma> a)" and \<sigma>c: "\<And>a. shared_collapsed (\<sigma> a)"
+    and out: "\<And>a. a |\<notin>| D \<Longrightarrow> \<sigma> a = Shared_Variable a"
+  shows "search_classes_formed (fold (search_substitute_at P \<sigma> D) qs r)"
+  using r K ext0
+proof (induction qs arbitrary: r)
+  case Nil
+  then show ?case by simp
+next
+  case (Cons q qs)
+  let ?r1 = "search_substitute_at P \<sigma> D q r"
+  have tfr: "table_formed (search_table r)" using shared_entries_formed(4)[OF search_formedD(1)[OF Cons.prems(1)]] .
+  have \<sigma>fr: "shared_pattern_formed (search_table r) (\<sigma> a)" for a using shared_pattern_extends(1)[OF tf0 \<sigma>f Cons.prems(3)] .
+  have f0: "search_formed \<kappa> P ?r1 \<and> table_extends T0 (search_table ?r1)"
+    using search_substitute_fold[OF Cons.prems(1) tf0 Cons.prems(3) \<sigma>f \<sigma>c out, where qs = "[q]"] by simp
+  have f1: "table_extends (search_table r) (search_table ?r1)"
+    using search_substitute_fold[OF Cons.prems(1) tfr table_extends_refl \<sigma>fr \<sigma>c out, where qs = "[q]"] by simp
+  have k1: "search_classes_formed ?r1"
+    by (rule search_substitute_at_classes[OF Cons.prems(1) Cons.prems(2) conjunct1[OF f0] f1])
+  show ?case using Cons.IH[OF conjunct1[OF f0] k1 conjunct2[OF f0]] by simp
+qed
+
+lemma search_substitute_classes:
+  assumes r: "search_formed \<kappa> P r" and K: "search_classes_formed r"
+    and \<sigma>f: "\<And>a. shared_pattern_formed (search_table r) (\<sigma> a)" and \<sigma>c: "\<And>a. shared_collapsed (\<sigma> a)"
+    and out: "\<And>a. a |\<notin>| D \<Longrightarrow> \<sigma> a = Shared_Variable a"
+  shows "search_classes_formed (search_substitute P \<sigma> D r)"
+  unfolding search_substitute_def
+  by (rule search_substitute_fold_classes[OF r K _ table_extends_refl \<sigma>f \<sigma>c out])
+    (rule shared_entries_formed(4)[OF search_formedD(1)[OF r]])
 
 subsection \<open>A plain substitution, its ground terms shared first\<close>
 
@@ -799,6 +1492,42 @@ text \<open>
   pattern. It is tabulated once per bound variable: the graph of the values over the bound variables, read at each
   occurrence by the variable's fibre, which is the value itself (@{text fset_graph_lookup}), so no statement changes.
 \<close>
+
+lemma search_reshare_classes:
+  assumes r: "search_formed \<kappa> P r" and K: "search_classes_formed r"
+  shows "search_classes_formed (search_reshare G r)"
+  by (rule classes_formed_extends[OF r K]) (use search_reshare[OF r, where G = G] in \<open>simp_all add: search_reshare_def\<close>)
+
+lemma search_substitute_plain_classes:
+  assumes r: "search_formed \<kappa> P r" and K: "search_classes_formed r"
+    and out: "\<And>a. a |\<notin>| D \<Longrightarrow> \<tau> a = Finite_Variable a"
+  shows "search_classes_formed (search_substitute_plain P \<tau> D r)"
+proof -
+  let ?r1 = "search_reshare (plain_grounds \<tau> D) r"
+  note r1 = search_reshare[OF r, where G = "plain_grounds \<tau> D"]
+  let ?x = "shared_sharing (search_state ?r1)"
+  have xf: "share_state_formed ?x" using shared_entries_formed(3)[OF search_formedD(1)[OF r1(1)]] .
+  have rep: "keyed_state_represents ?x (search_table ?r1)" and tf1: "table_formed (search_table ?r1)"
+    using share_state_formed_table[OF xf] by simp_all
+  have held: "table_holds (search_table ?r1) t" if "t |\<in>| pattern_grounds (\<tau> a)" for a t
+  proof (cases "a |\<in>| D")
+    case True
+    then have "t |\<in>| plain_grounds \<tau> D" using that by (auto simp: plain_grounds_def ffUnion.rep_eq fimage.rep_eq)
+    then show ?thesis by (rule r1(4))
+  next
+    case False
+    then show ?thesis using that out by simp
+  qed
+  have ex: "shared_pattern_formed (search_table ?r1) (keyed_pattern_at ?x (\<tau> a)) \<and>
+      shared_collapsed (keyed_pattern_at ?x (\<tau> a))" for a
+  proof -
+    have "\<And>t. t |\<in>| pattern_grounds (\<tau> a) \<Longrightarrow> table_holds (search_table ?r1) t" by (rule held)
+    then show ?thesis using keyed_pattern_at_exact[OF rep tf1, of "\<tau> a"] by blast
+  qed
+  have k1: "search_classes_formed ?r1" by (rule search_reshare_classes[OF r K])
+  show ?thesis unfolding search_substitute_plain_def Let_def
+    by (rule search_substitute_classes[OF r1(1) k1]) (use ex out in auto)
+qed
 
 lemma fset_graph_lookup:
   "(case finite_singleton_option (fimage snd (ffilter (\<lambda>z. fst z = a) (fimage (\<lambda>a. (a, g a)) D))) of
@@ -923,12 +1652,26 @@ definition search_bind :: "('a,'s,'d,'c) finite_schema_system \<Rightarrow>
   "search_bind P s r = (case keyed_collapse_bindings s (shared_sharing (search_state r)) of (s', x) \<Rightarrow>
     search_substitute P (shared_binding_substitution s') (shared_binding_domain s') (search_share x r))"
 
-theorem search_bind:
+lemma search_share_classes:
+  assumes r: "search_formed \<kappa> P r" and x: "share_state_formed x"
+    and ext: "table_extends (search_table r) (share_state_table x)" and K: "search_classes_formed r"
+  shows "search_classes_formed (search_share x r)"
+  by (rule classes_formed_extends[OF r K]) (use search_share[OF r x ext] ext in \<open>simp_all add: search_share_def\<close>)
+
+text \<open>
+  Binding shares the unifier's bindings collapsed against the search's sharing state and substitutes them at their
+  holders; its parts are stated once, for the search's formation and its classes.
+\<close>
+
+lemma search_bind_parts:
   assumes r: "search_formed \<kappa> P r" and sf: "shared_bindings_formed (search_table r) s"
-  shows "search_formed \<kappa> P (search_bind P s r)"
-    and "search_project (search_bind P s r) =
-      resolution_state_substitute (finite_binding_substitution (shared_bindings_project (search_table r) s)) (search_project r)"
-    and "table_extends (search_table r) (search_table (search_bind P s r))"
+  shows "\<exists>s' x. search_bind P s r = search_substitute P (shared_binding_substitution s') (shared_binding_domain s')
+      (search_share x r) \<and> share_state_formed x \<and> table_extends (search_table r) (share_state_table x) \<and>
+    shared_bindings_formed (share_state_table x) s' \<and>
+    shared_bindings_project (share_state_table x) s' = shared_bindings_project (search_table r) s \<and>
+    (\<forall>a. shared_pattern_formed (share_state_table x) (shared_binding_substitution s' a)) \<and>
+    (\<forall>a. shared_collapsed (shared_binding_substitution s' a)) \<and>
+    (\<forall>a. a |\<notin>| shared_binding_domain s' \<longrightarrow> shared_binding_substitution s' a = Shared_Variable a)"
 proof -
   let ?x = "shared_sharing (search_state r)"
   have st: "shared_state_formed \<kappa> P (search_state r)" using search_formedD[OF r] by simp
@@ -939,11 +1682,8 @@ proof -
       shared_bindings_project (share_state_table x') s' = shared_bindings_project (share_state_table ?x) s \<and>
       (\<forall>z\<in>set s'. shared_collapsed (snd z))"
     using keyed_collapse_bindings[OF x sf] k by simp
-  have x': "share_state_formed x'" and ext: "table_extends (search_table r) (share_state_table x')" using c by simp_all
-  note h = search_share[OF r x' ext]
-  let ?r1 = "search_share x' r"
-  have \<sigma>f: "\<And>a. shared_pattern_formed (search_table ?r1) (shared_binding_substitution s' a)"
-    using shared_binding_substitution_formed[of "share_state_table x'" s'] c h(3) by simp
+  have \<sigma>f: "shared_pattern_formed (share_state_table x') (shared_binding_substitution s' a)" for a
+    using shared_binding_substitution_formed[of "share_state_table x'" s'] c by simp
   have cs: "\<forall>z\<in>set s'. shared_collapsed (snd z)" using c by simp
   have \<sigma>c: "shared_collapsed (shared_binding_substitution s' a)" for a
   proof (cases "map_of s' a")
@@ -953,21 +1693,65 @@ proof -
   qed (simp add: shared_binding_substitution_def)
   have out: "\<And>a. a |\<notin>| shared_binding_domain s' \<Longrightarrow> shared_binding_substitution s' a = Shared_Variable a"
     by (rule shared_binding_substitution_outside)
-  note k2 = search_substitute[OF h(1) \<sigma>f \<sigma>c out]
-  have eq: "search_bind P s r = search_substitute P (shared_binding_substitution s') (shared_binding_domain s') ?r1"
+  have eq: "search_bind P s r = search_substitute P (shared_binding_substitution s') (shared_binding_domain s')
+      (search_share x' r)"
     by (simp add: search_bind_def k)
+  show ?thesis by (rule exI[where x = s'], rule exI[where x = x'], use eq c \<sigma>f \<sigma>c out in simp)
+qed
+
+theorem search_bind:
+  assumes r: "search_formed \<kappa> P r" and sf: "shared_bindings_formed (search_table r) s"
+  shows "search_formed \<kappa> P (search_bind P s r)"
+    and "search_project (search_bind P s r) =
+      resolution_state_substitute (finite_binding_substitution (shared_bindings_project (search_table r) s)) (search_project r)"
+    and "table_extends (search_table r) (search_table (search_bind P s r))"
+proof -
+  obtain s' x where eq: "search_bind P s r = search_substitute P (shared_binding_substitution s') (shared_binding_domain s')
+      (search_share x r)"
+    and x: "share_state_formed x" and ext: "table_extends (search_table r) (share_state_table x)"
+    and bf: "shared_bindings_formed (share_state_table x) s'"
+    and bp: "shared_bindings_project (share_state_table x) s' = shared_bindings_project (search_table r) s"
+    and \<sigma>f0: "\<forall>a. shared_pattern_formed (share_state_table x) (shared_binding_substitution s' a)"
+    and \<sigma>c0: "\<forall>a. shared_collapsed (shared_binding_substitution s' a)"
+    and out0: "\<forall>a. a |\<notin>| shared_binding_domain s' \<longrightarrow> shared_binding_substitution s' a = Shared_Variable a"
+    using search_bind_parts[OF r sf] by (elim exE conjE) (rule that; assumption)
+  note \<sigma>f = \<sigma>f0[rule_format] and \<sigma>c = \<sigma>c0[rule_format] and out = out0[rule_format]
+  note h = search_share[OF r x ext]
+  let ?r1 = "search_share x r"
+  have \<sigma>f': "shared_pattern_formed (search_table ?r1) (shared_binding_substitution s' a)" for a using \<sigma>f h(3) by simp
+  note k2 = search_substitute[OF h(1) \<sigma>f' \<sigma>c out]
   show "search_formed \<kappa> P (search_bind P s r)" using k2(1) eq by simp
-  have e2: "table_extends (share_state_table x')
+  have e2: "table_extends (share_state_table x)
       (search_table (search_substitute P (shared_binding_substitution s') (shared_binding_domain s') ?r1))"
     using k2(2) h(3) by simp
   show "table_extends (search_table r) (search_table (search_bind P s r))"
     using table_extends_trans[OF ext e2] eq by simp
   have "(\<lambda>a. shared_pattern_project (search_table ?r1) (shared_binding_substitution s' a)) =
       finite_binding_substitution (shared_bindings_project (search_table r) s)"
-    using c h(3) by (simp add: fun_eq_iff shared_binding_substitution_project)
+    using bf bp h(3) by (simp add: fun_eq_iff shared_binding_substitution_project)
   then show "search_project (search_bind P s r) =
       resolution_state_substitute (finite_binding_substitution (shared_bindings_project (search_table r) s)) (search_project r)"
     using k2(3) h(2) eq by simp
+qed
+
+lemma search_bind_classes:
+  assumes r: "search_formed \<kappa> P r" and sf: "shared_bindings_formed (search_table r) s" and K: "search_classes_formed r"
+  shows "search_classes_formed (search_bind P s r)"
+proof -
+  obtain s' x where eq: "search_bind P s r = search_substitute P (shared_binding_substitution s') (shared_binding_domain s')
+      (search_share x r)"
+    and x: "share_state_formed x" and ext: "table_extends (search_table r) (share_state_table x)"
+    and bf: "shared_bindings_formed (share_state_table x) s'"
+    and bp: "shared_bindings_project (share_state_table x) s' = shared_bindings_project (search_table r) s"
+    and \<sigma>f0: "\<forall>a. shared_pattern_formed (share_state_table x) (shared_binding_substitution s' a)"
+    and \<sigma>c0: "\<forall>a. shared_collapsed (shared_binding_substitution s' a)"
+    and out0: "\<forall>a. a |\<notin>| shared_binding_domain s' \<longrightarrow> shared_binding_substitution s' a = Shared_Variable a"
+    using search_bind_parts[OF r sf] by (elim exE conjE) (rule that; assumption)
+  note \<sigma>f = \<sigma>f0[rule_format] and \<sigma>c = \<sigma>c0[rule_format] and out = out0[rule_format]
+  note h = search_share[OF r x ext]
+  have \<sigma>f': "shared_pattern_formed (search_table (search_share x r)) (shared_binding_substitution s' a)" for a
+    using \<sigma>f h(3) by simp
+  show ?thesis unfolding eq by (rule search_substitute_classes[OF h(1) search_share_classes[OF r x ext K] \<sigma>f' \<sigma>c out])
 qed
 
 subsection \<open>F4: every value the construction returned is kept, computed once\<close>
@@ -989,7 +1773,7 @@ definition search_ready :: "('a,'s::linorder,'d,'c) shared_search \<Rightarrow> 
     H \<noteq> {||} \<and> fBall H (\<lambda>h. shared_goal_variables (shared_entry_goal h) |\<subseteq>| {|x|}))"
 
 lemma search_ready: "search_ready r p a = access_ready (shared_access \<kappa> P r) p a"
-  by (simp add: search_ready_def search_goal_holders_def access_ready_def access_goal_holders_def shared_access_def Let_def)
+  by (simp add: search_ready_def search_goal_holders_def access_ready_def access_goal_holders_def shared_access_def state_access_def state_access_over_def Let_def)
 
 definition search_refresh_at :: "('a,'s,'d,'c) finite_witness_construction \<Rightarrow> ('a,'s,'d,'c) finite_schema_system \<Rightarrow>
     's::linorder list \<Rightarrow> ('a,'s,'d,'c) shared_search \<Rightarrow> ('a,'s,'d,'c) shared_search" where
@@ -1102,6 +1886,41 @@ proof -
   then show ?thesis using r by (simp add: search_refresh_def)
 qed
 
+lemma search_refresh_at_classes:
+  assumes r: "search_formed \<kappa> P r" and K: "search_classes_formed r"
+  shows "search_classes_formed (search_refresh_at \<kappa> P p r)"
+proof (rule classes_formed_extends[OF r K])
+  show "table_extends (search_table r) (search_table (search_refresh_at \<kappa> P p r))"
+    by (simp add: search_refresh_at_def Let_def split: option.split)
+  show "shared_goals (search_state (search_refresh_at \<kappa> P p r)) = shared_goals (search_state r)"
+    by (simp add: search_refresh_at_def Let_def split: option.split)
+  show "resolution_pending (search_project (search_refresh_at \<kappa> P p r)) = resolution_pending (search_project r)"
+    using search_refresh_at[OF r, of p] by simp
+  show "resolution_nodes (search_project (search_refresh_at \<kappa> P p r)) = resolution_nodes (search_project r)"
+    using search_refresh_at[OF r, of p] by simp
+  show "search_classes (search_refresh_at \<kappa> P p r) = search_classes r"
+    by (simp add: search_refresh_at_def Let_def split: option.split)
+qed
+
+lemma search_refresh_classes:
+  assumes r: "search_formed \<kappa> P r" and K: "search_classes_formed r"
+  shows "search_classes_formed (search_refresh \<kappa> P r)"
+proof -
+  have "search_formed \<kappa> P (fold (search_refresh_at \<kappa> P) ps t) \<and> search_classes_formed (fold (search_refresh_at \<kappa> P) ps t)"
+    if "search_formed \<kappa> P t" "search_classes_formed t" for ps t
+    using that
+  proof (induction ps arbitrary: t)
+    case Nil
+    then show ?case by simp
+  next
+    case (Cons p ps)
+    have "search_formed \<kappa> P (search_refresh_at \<kappa> P p t)" using search_refresh_at[OF Cons.prems(1)] by simp
+    moreover have "search_classes_formed (search_refresh_at \<kappa> P p t)" by (rule search_refresh_at_classes[OF Cons.prems])
+    ultimately show ?case using Cons.IH by simp
+  qed
+  then show ?thesis unfolding search_refresh_def using r K by blast
+qed
+
 subsection \<open>The construction step\<close>
 
 definition search_construct :: "('a,'s,'d,'c) finite_witness_construction \<Rightarrow> ('a,'s,'d,'c) finite_schema_system \<Rightarrow>
@@ -1161,6 +1980,38 @@ proof -
     using k(2) e by simp
   show "search_project (search_construct \<kappa> P r hn) = finite_construction_step \<kappa> P (search_project r) ?n"
     unfolding p1 unfolding w unfolding \<sigma> Wv finite_construction_step_def Let_def by (rule refl)
+qed
+
+lemma search_witnesses_classes:
+  assumes r: "search_formed \<kappa> P r" and K: "search_classes_formed r"
+  shows "search_classes_formed (r\<lparr>search_state := (search_state r)\<lparr>shared_witnesses := W\<rparr>\<rparr>)"
+  by (rule classes_formed_extends[OF r K]) (simp_all add: shared_state_project_fields)
+
+lemma search_construct_classes:
+  assumes r: "search_formed \<kappa> P r" and K: "search_classes_formed r"
+  shows "search_classes_formed (search_construct \<kappa> P r hn)"
+proof -
+  have k1: "\<And>W. search_classes_formed (r\<lparr>search_state := (search_state r)\<lparr>shared_witnesses := W\<rparr>\<rparr>)"
+    by (rule search_witnesses_classes[OF r K])
+  have f1: "\<And>W. search_formed \<kappa> P (r\<lparr>search_state := (search_state r)\<lparr>shared_witnesses := W\<rparr>\<rparr>)"
+    by (rule search_witnesses_update(1)[THEN iffD2, OF r])
+  let ?q = "shared_derivation_position (shared_entry_node hn)" and ?C = "access_constructed (shared_access \<kappa> P r) hn"
+  have out: "(case z of ((q',b),a) \<Rightarrow> if b \<and> q' = ?q \<and> a |\<in>| ?C then
+      (case search_value \<kappa> P r (shared_entry_node hn) a of Some v \<Rightarrow> finite_exact_term_pattern v | None \<Rightarrow> Finite_Variable z)
+      else Finite_Variable z) = Finite_Variable z"
+    if "z |\<notin>| fimage (\<lambda>a. ((?q,True),a)) ?C" for z
+  proof -
+    obtain q' b a where zz: "z = ((q',b),a)" by (cases z) auto
+    have "\<not> (b \<and> q' = ?q \<and> a |\<in>| ?C)"
+    proof
+      assume "b \<and> q' = ?q \<and> a |\<in>| ?C"
+      then have "z |\<in>| fimage (\<lambda>a. ((?q,True),a)) ?C" using zz fimageI[of a ?C "\<lambda>a. ((?q,True),a)"] by simp
+      then show False using that by simp
+    qed
+    then show ?thesis using zz by auto
+  qed
+  show ?thesis unfolding search_construct_def Let_def
+    by (rule search_substitute_plain_classes[OF f1 k1], rule out, assumption)
 qed
 
 section \<open>One goal and one node at a position\<close>
@@ -1484,6 +2335,53 @@ text \<open>
   substitutes its unifier, shared first, into the placed state.
 \<close>
 
+lemma search_place_goals_classes:
+  assumes t: "search_formed \<kappa> P t" and K: "search_classes_formed t" and d: "distinct (map fst rows)"
+    and free: "\<And>q g. (q,g) \<in> set rows \<Longrightarrow> RBT.lookup (shared_goals (search_state t)) q = None"
+    and pos: "\<And>q g. (q,g) \<in> set rows \<Longrightarrow> resolution_goal_position g = q"
+    and held: "\<And>q g u. (q,g) \<in> set rows \<Longrightarrow> u |\<in>| goal_grounds g \<Longrightarrow> table_holds (search_table t) u"
+  shows "search_classes_formed (search_place_goals P rows t)"
+  using t K d free pos held
+proof (induction rows arbitrary: t)
+  case Nil
+  then show ?case by (simp add: search_place_goals_def)
+next
+  case (Cons z rows)
+  obtain q g where z: "z = (q,g)" by (cases z)
+  let ?h = "Shared_Goal_Entry (shared_goal_of (shared_sharing (search_state t)) g) (finite_goal_alternatives P g)"
+  let ?t1 = "search_put_goal q ?h t"
+  have one: "search_place_goals P [(q,g)] t = ?t1" by (simp add: search_place_goals_def)
+  have "search_formed \<kappa> P (search_place_goals P [(q,g)] t)"
+  proof (rule conjunct1[OF search_place_goals[OF Cons.prems(1)]])
+    show "distinct (map fst [(q,g)])" by simp
+    show "RBT.lookup (shared_goals (search_state t)) q' = None" if "(q',g') \<in> set [(q,g)]" for q' g'
+      using that Cons.prems(4)[of q g] z by simp
+    show "resolution_goal_position g' = q'" if "(q',g') \<in> set [(q,g)]" for q' g'
+      using that Cons.prems(5)[of q g] z by simp
+    show "table_holds (search_table t) u" if "(q',g') \<in> set [(q,g)]" "u |\<in>| goal_grounds g'" for q' g' u
+      using that Cons.prems(6)[of q g u] z by simp
+  qed
+  then have f1: "search_formed \<kappa> P ?t1" using one by simp
+  have k1: "search_classes_formed ?t1" by (rule search_put_goal_classes[OF Cons.prems(1,2) f1])
+  have st1: "search_state ?t1 = shared_put_goal q ?h (search_state t)" by (simp add: search_put_goal_def)
+  have tb: "search_table ?t1 = search_table t" using st1 by (simp add: shared_put_goal_def)
+  have qn: "q \<notin> fst ` set rows" using Cons.prems(3) z by simp
+  have IH: "search_classes_formed (search_place_goals P rows ?t1)"
+  proof (rule Cons.IH[OF f1 k1])
+    show "distinct (map fst rows)" using Cons.prems(3) by simp
+    show "RBT.lookup (shared_goals (search_state ?t1)) q' = None" if "(q',g') \<in> set rows" for q' g'
+    proof -
+      have "q' \<noteq> q" using that qn by force
+      then show ?thesis using Cons.prems(4)[of q' g'] that st1 by (simp add: shared_put_goal_def)
+    qed
+    show "resolution_goal_position g' = q'" if "(q',g') \<in> set rows" for q' g' using Cons.prems(5)[of q' g'] that by simp
+    show "table_holds (search_table ?t1) u" if "(q',g') \<in> set rows" "u |\<in>| goal_grounds g'" for q' g' u
+      using Cons.prems(6)[of q' g' u] that tb by simp
+  qed
+  have "search_place_goals P (z # rows) t = search_place_goals P rows ?t1" by (simp add: search_place_goals_def z)
+  then show ?case using IH by simp
+qed
+
 definition search_call_place :: "('a,'s,'d,'c) finite_schema_system \<Rightarrow> ('a,'s::linorder,'d,'c) shared_search \<Rightarrow>
     's list \<Rightarrow> 'd \<Rightarrow> 'c \<Rightarrow> ('a,'s,'d) finite_factor_schema \<Rightarrow> ('a,'s,'d,'c) shared_search" where
   "search_call_place P r q d c S = (let G = finite_clause_goals q d c S; nd = finite_clause_node q d c S;
@@ -1512,7 +2410,7 @@ lemma call_alternative_clause:
   using assms unfolding finite_call_alternative_set_def
   by (auto simp: ffUnion.rep_eq fimage.rep_eq split: if_splits option.splits)
 
-theorem search_call_place:
+theorem search_call_place_classed:
   assumes r: "search_formed \<kappa> P r" and pl: "search_placeable (search_project r)" and sock: "clause_sockets_distinct P"
     and at: "RBT.lookup (shared_goals (search_state r)) q = Some h"
     and g: "shared_goal_project (search_table r) (shared_entry_goal h) = Resolution_Call_Goal q rr d p"
@@ -1523,6 +2421,7 @@ theorem search_call_place:
       (finsert (finite_clause_node q d c S) (resolution_nodes (search_project r))) (resolution_witnesses (search_project r))"
     and "search_placeable (search_project (search_call_place P r q d c S))"
     and "table_extends (search_table r) (search_table (search_call_place P r q d c S))"
+    and "search_classes_formed r \<Longrightarrow> search_classes_formed (search_call_place P r q d c S)"
 proof -
   have f1: "finite_relation_functional (finite_schema_premises S)"
     and f2: "finite_relation_functional (finite_schema_materials S)"
@@ -1632,6 +2531,15 @@ proof -
     show ?thesis using g3 n3 w3 by (cases "search_project ?r3") simp
   qed
   have e: "search_call_place P r q d c S = ?r3" by (simp add: search_call_place_def Let_def)
+  show "search_classes_formed r \<Longrightarrow> search_classes_formed (search_call_place P r q d c S)"
+  proof -
+    assume K: "search_classes_formed r"
+    have k0: "search_classes_formed ?r0" by (rule search_remove_goal_classes[OF r K at])
+    have k1: "search_classes_formed ?r1" by (rule search_reshare_classes[OF r0(1) k0])
+    have k2: "search_classes_formed ?r2" by (rule search_place_goals_classes[OF r1(1) k1 rd rfree rpos rheld])
+    have k3: "search_classes_formed ?r3" by (rule search_put_node_classes[OF conjunct1[OF r2] k2 r3(1)])
+    then show ?thesis using e by simp
+  qed
   show "search_formed \<kappa> P (search_call_place P r q d c S)" using r3(1) e by simp
   show "search_project (search_call_place P r q d c S) =
       Resolution_State (?G |\<union>| (resolution_pending ?st |-| {|?g|})) (finsert ?nd (resolution_nodes ?st)) (resolution_witnesses ?st)"
@@ -1642,6 +2550,19 @@ proof -
   have t3: "search_table ?r3 = search_table ?r1" using r3(2) x2 by (simp add: shared_put_node_def)
   show "table_extends (search_table r) (search_table (search_call_place P r q d c S))" using r1(3) t0 t3 e by simp
 qed
+
+theorem search_call_place:
+  assumes r: "search_formed \<kappa> P r" and pl: "search_placeable (search_project r)" and sock: "clause_sockets_distinct P"
+    and at: "RBT.lookup (shared_goals (search_state r)) q = Some h"
+    and g: "shared_goal_project (search_table r) (shared_entry_goal h) = Resolution_Call_Goal q rr d p"
+    and cl: "((d,c),S) |\<in>| finite_system_clauses P"
+  shows "search_formed \<kappa> P (search_call_place P r q d c S)"
+    and "search_project (search_call_place P r q d c S) = Resolution_State
+      (finite_clause_goals q d c S |\<union>| (resolution_pending (search_project r) |-| {|Resolution_Call_Goal q rr d p|}))
+      (finsert (finite_clause_node q d c S) (resolution_nodes (search_project r))) (resolution_witnesses (search_project r))"
+    and "search_placeable (search_project (search_call_place P r q d c S))"
+    and "table_extends (search_table r) (search_table (search_call_place P r q d c S))"
+  by (rule search_call_place_classed[OF r pl sock at g cl])+
 
 theorem search_call_state:
   assumes r: "search_formed \<kappa> P r" and pl: "search_placeable (search_project r)" and sock: "clause_sockets_distinct P"
@@ -1852,7 +2773,7 @@ definition search_call_successors :: "('a,'s,'d,'c) finite_schema_system \<Right
     fimage (\<lambda>(i,c,S,s). search_bind P s (search_call_place P r0 q d c S))
       (shared_call_alternatives P (shared_sharing (search_state r0)) q d gp))"
 
-theorem search_call_successors:
+theorem search_call_successors_classed:
   assumes r: "search_formed \<kappa> P r" and pl: "search_placeable (search_project r)" and sock: "clause_sockets_distinct P"
     and at: "RBT.lookup (shared_goals (search_state r)) q = Some h"
     and g: "shared_entry_goal h = Shared_Call_Goal q rr d gp"
@@ -1860,6 +2781,7 @@ theorem search_call_successors:
       fimage (finite_call_alternative_state (search_project r) q rr d (shared_pattern_project (search_table r) gp))
         (finite_call_alternative_set P q d (shared_pattern_project (search_table r) gp))"
     and "s' |\<in>| search_call_successors P r q d gp \<Longrightarrow> search_formed \<kappa> P s' \<and> search_placeable (search_project s')"
+    and "s' |\<in>| search_call_successors P r q d gp \<Longrightarrow> search_classes_formed r \<Longrightarrow> search_classes_formed s'"
 proof -
   let ?p = "shared_pattern_project (search_table r) gp" and ?st = "search_project r"
   let ?r0 = "search_reshare (search_call_grounds P q d) r"
@@ -1901,6 +2823,20 @@ proof -
   qed
   have eq: "search_call_successors P r q d gp = fimage ?F (shared_call_alternatives P ?x q d gp)"
     by (simp add: search_call_successors_def Let_def)
+  show "s' |\<in>| search_call_successors P r q d gp \<Longrightarrow> search_classes_formed r \<Longrightarrow> search_classes_formed s'"
+  proof -
+    assume s': "s' |\<in>| search_call_successors P r q d gp" and K: "search_classes_formed r"
+    obtain z where z: "z |\<in>| shared_call_alternatives P ?x q d gp" and e: "s' = ?F z" using s' eq by auto
+    obtain i c S s where zz: "z = (i,c,S,s)" and cl: "((d,c),S) |\<in>| finite_system_clauses P"
+      and sf: "shared_bindings_formed (share_state_table ?x) s" using A(2)[OF z] by blast
+    note pc = search_call_place_classed[OF h0(1) pl0 sock at0 g0 cl]
+    have sf0: "shared_bindings_formed ?T0 s" using sf by simp
+    note sb = shared_bindings_extends[OF tf0 pc(4) sf0]
+    have k0: "search_classes_formed ?r0" by (rule search_reshare_classes[OF r K])
+    have "search_classes_formed (search_bind P s (search_call_place P ?r0 q d c S))"
+      by (rule search_bind_classes[OF pc(1) conjunct1[OF sb] pc(5)[OF k0]])
+    then show ?thesis using e zz by simp
+  qed
   have m: "fimage search_project (fimage ?F (shared_call_alternatives P ?x q d gp)) =
       fimage (finite_call_alternative_state ?st q rr d ?p) (fimage ?f (shared_call_alternatives P ?x q d gp))"
     unfolding fset.map_comp comp_def by (rule fset.map_cong0) (use step in blast)
@@ -1929,6 +2865,16 @@ definition shared_solution_alternatives :: "share_state \<Rightarrow> 'a shared_
   "shared_solution_alternatives x gM M Ws = (let T = share_state_table x in ffUnion (fimage (\<lambda>W. ffUnion (fimage (\<lambda>E.
       case shared_unify_pairs T (shared_material_pairs x gM E) of None \<Rightarrow> {||} | Some s \<Rightarrow> {|(E,s)|})
     (finite_material_instance_pairs W M))) Ws))"
+
+theorem search_call_successors:
+  assumes r: "search_formed \<kappa> P r" and pl: "search_placeable (search_project r)" and sock: "clause_sockets_distinct P"
+    and at: "RBT.lookup (shared_goals (search_state r)) q = Some h"
+    and g: "shared_entry_goal h = Shared_Call_Goal q rr d gp"
+  shows "fimage search_project (search_call_successors P r q d gp) =
+      fimage (finite_call_alternative_state (search_project r) q rr d (shared_pattern_project (search_table r) gp))
+        (finite_call_alternative_set P q d (shared_pattern_project (search_table r) gp))"
+    and "s' |\<in>| search_call_successors P r q d gp \<Longrightarrow> search_formed \<kappa> P s' \<and> search_placeable (search_project s')"
+  by (rule search_call_successors_classed[OF r pl sock at g])+
 
 lemma shared_solution_alternatives_member:
   "z |\<in>| shared_solution_alternatives x gM M Ws \<longleftrightarrow> (\<exists>W E s. z = (E,s) \<and> W |\<in>| Ws \<and>
@@ -2056,7 +3002,7 @@ definition search_solution_successors :: "('a,'s,'d,'c) finite_schema_system \<R
   "search_solution_successors P r q gM M Ws = (let r0 = search_reshare (solution_grounds Ws M) r in
     fimage (\<lambda>(E,s). search_bind P s (search_remove_goal q r0)) (shared_solution_alternatives (shared_sharing (search_state r0)) gM M Ws))"
 
-theorem search_solution_successors:
+theorem search_solution_successors_classed:
   assumes r: "search_formed \<kappa> P r" and pl: "search_placeable (search_project r)"
     and at: "RBT.lookup (shared_goals (search_state r)) q = Some h"
     and g: "shared_entry_goal h = Shared_Material_Goal q rr gM"
@@ -2065,6 +3011,8 @@ theorem search_solution_successors:
         (finite_solution_alternatives (shared_material_project (search_table r) gM) Ws)"
     and "s' |\<in>| search_solution_successors P r q gM (shared_material_project (search_table r) gM) Ws \<Longrightarrow>
       search_formed \<kappa> P s' \<and> search_placeable (search_project s')"
+    and "s' |\<in>| search_solution_successors P r q gM (shared_material_project (search_table r) gM) Ws \<Longrightarrow>
+      search_classes_formed r \<Longrightarrow> search_classes_formed s'"
 proof -
   let ?M = "shared_material_project (search_table r) gM" and ?st = "search_project r"
   let ?r0 = "search_reshare (solution_grounds Ws ?M) r"
@@ -2094,6 +3042,18 @@ proof -
     using sr0(2-4) r0(2) g0 h0(2) by (cases "search_project (search_remove_goal q ?r0)") simp
   have trm: "search_table (search_remove_goal q ?r0) = ?T0" using r0(2) by (simp add: shared_remove_goal_def shared_replace_def)
   have plr: "search_placeable (search_project (search_remove_goal q ?r0))" using search_placeable_fewer[OF pl] p0 by simp
+  show "s' |\<in>| search_solution_successors P r q gM ?M Ws \<Longrightarrow> search_classes_formed r \<Longrightarrow> search_classes_formed s'"
+  proof -
+    assume s': "s' |\<in>| search_solution_successors P r q gM ?M Ws" and K: "search_classes_formed r"
+    obtain z where z: "z |\<in>| shared_solution_alternatives ?x gM ?M Ws" and e: "s' = ?F z"
+      using s' by (auto simp: search_solution_successors_def Let_def)
+    obtain E s where zz: "z = (E,s)" and sf: "shared_bindings_formed (share_state_table ?x) s" using A2[OF z] by blast
+    have k0: "search_classes_formed ?r0" by (rule search_reshare_classes[OF r K])
+    have kr: "search_classes_formed (search_remove_goal q ?r0)" by (rule search_remove_goal_classes[OF h0(1) k0 at0])
+    have sfr: "shared_bindings_formed (search_table (search_remove_goal q ?r0)) s" using sf trm by simp
+    have "search_classes_formed (search_bind P s (search_remove_goal q ?r0))" by (rule search_bind_classes[OF r0(1) sfr kr])
+    then show ?thesis using e zz by simp
+  qed
   have step: "search_formed \<kappa> P (?F z) \<and> search_project (?F z) = finite_material_alternative_state ?st q rr ?M (?f z) \<and>
       search_placeable (search_project (?F z))"
     if z: "z |\<in>| shared_solution_alternatives ?x gM ?M Ws" for z
@@ -2143,12 +3103,24 @@ definition search_successors :: "('a,'s,'d,'c) finite_witness_construction \<Rig
         case finite_material_resolution M of Material_Waits \<Rightarrow> {||}
         | Material_Solutions Ws \<Rightarrow> search_solution_successors P r q gM M Ws))"
 
-theorem search_successors:
+theorem search_solution_successors:
+  assumes r: "search_formed \<kappa> P r" and pl: "search_placeable (search_project r)"
+    and at: "RBT.lookup (shared_goals (search_state r)) q = Some h"
+    and g: "shared_entry_goal h = Shared_Material_Goal q rr gM"
+  shows "fimage search_project (search_solution_successors P r q gM (shared_material_project (search_table r) gM) Ws) =
+      fimage (finite_material_alternative_state (search_project r) q rr (shared_material_project (search_table r) gM))
+        (finite_solution_alternatives (shared_material_project (search_table r) gM) Ws)"
+    and "s' |\<in>| search_solution_successors P r q gM (shared_material_project (search_table r) gM) Ws \<Longrightarrow>
+      search_formed \<kappa> P s' \<and> search_placeable (search_project s')"
+  by (rule search_solution_successors_classed[OF r pl at g])+
+
+theorem search_successors_classed:
   assumes r: "search_formed \<kappa> P r" and pl: "search_placeable (search_project r)" and sock: "clause_sockets_distinct P"
     and h: "h |\<in>| access_goals (shared_access \<kappa> P r)"
   shows "fimage search_project (search_successors \<kappa> P r h) =
       finite_goal_successors P (search_project r) (access_goal (shared_access \<kappa> P r) h)"
     and "s' |\<in>| search_successors \<kappa> P r h \<Longrightarrow> search_formed \<kappa> P s' \<and> search_placeable (search_project s')"
+    and "s' |\<in>| search_successors \<kappa> P r h \<Longrightarrow> search_classes_formed r \<Longrightarrow> search_classes_formed s'"
 proof -
   interpret access_formed \<kappa> P "shared_access \<kappa> P r" "search_project r" by (rule shared_access_formed[OF r])
   let ?T = "search_table r" let ?st = "search_project r"
@@ -2163,6 +3135,32 @@ proof -
     if "RBT.lookup (shared_goals (search_state r)) q = Some h'" "shared_goal_project ?T (shared_entry_goal h') = g" for q h' g
     using search_remove_goal(1)[OF r that(1)] closed[OF that] search_placeable_fewer[OF pl]
     by (simp add: finite_goal_closed_def)
+  show "s' |\<in>| search_successors \<kappa> P r h \<Longrightarrow> search_classes_formed r \<Longrightarrow> search_classes_formed s'"
+  proof -
+    assume s': "s' |\<in>| search_successors \<kappa> P r h" and K: "search_classes_formed r"
+    show ?thesis
+    proof (cases "shared_entry_goal h")
+      case (Shared_Call_Goal q rr d gp)
+      have atq: "RBT.lookup (shared_goals (search_state r)) q = Some h" using at Shared_Call_Goal by simp
+      show ?thesis
+      proof (cases "access_reusable (shared_access \<kappa> P r) h")
+        case True
+        then have "s' = search_remove_goal q r" using s' Shared_Call_Goal by (simp add: search_successors_def)
+        then show ?thesis using search_remove_goal_classes[OF r K atq] by simp
+      next
+        case False
+        then have "s' |\<in>| search_call_successors P r q d gp" using s' Shared_Call_Goal by (simp add: search_successors_def)
+        then show ?thesis using search_call_successors_classed(3)[OF r pl sock atq Shared_Call_Goal] K by blast
+      qed
+    next
+      case (Shared_Material_Goal q rr gM)
+      have atq: "RBT.lookup (shared_goals (search_state r)) q = Some h" using at Shared_Material_Goal by simp
+      obtain Ws where "s' |\<in>| search_solution_successors P r q gM (shared_material_project (search_table r) gM) Ws"
+        using s' Shared_Material_Goal
+        by (auto simp: search_successors_def Let_def split: finite_material_outcome.splits)
+      then show ?thesis using search_solution_successors_classed(3)[OF r pl atq Shared_Material_Goal] K by blast
+    qed
+  qed
   show "fimage search_project (search_successors \<kappa> P r h) = finite_goal_successors P ?st (access_goal (shared_access \<kappa> P r) h)"
   proof (cases "shared_entry_goal h")
     case (Shared_Call_Goal q rr d gp)
@@ -2214,6 +3212,14 @@ proof -
   qed
 qed
 
+theorem search_successors:
+  assumes r: "search_formed \<kappa> P r" and pl: "search_placeable (search_project r)" and sock: "clause_sockets_distinct P"
+    and h: "h |\<in>| access_goals (shared_access \<kappa> P r)"
+  shows "fimage search_project (search_successors \<kappa> P r h) =
+      finite_goal_successors P (search_project r) (access_goal (shared_access \<kappa> P r) h)"
+    and "s' |\<in>| search_successors \<kappa> P r h \<Longrightarrow> search_formed \<kappa> P s' \<and> search_placeable (search_project s')"
+  by (rule search_successors_classed[OF r pl sock h])+
+
 section \<open>The shared search\<close>
 
 text \<open>
@@ -2227,7 +3233,8 @@ definition search_of :: "('a,'s,'d,'c) finite_schema_system \<Rightarrow> ('a,'s
     ('a,'s,'d,'c) shared_search" where
   "search_of P st = (let s = share_resolution_state P st in
     \<lparr>search_state = s, search_registered = fold (\<lambda>z t. tree_add (fst z) (shared_goal_registered (snd z)) t)
-      (RBT.entries (shared_goals s)) RBT.empty, search_values = RBT.empty\<rparr>)"
+      (RBT.entries (shared_goals s)) RBT.empty, search_values = RBT.empty,
+     search_classes = classes_update (map fst (RBT.entries (shared_goals s))) s empty_classes\<rparr>)"
 
 lemma search_of:
   assumes d: "resolution_positions_distinct st"
@@ -2241,6 +3248,19 @@ proof -
   have vf: "search_values_formed \<kappa> P (search_of P st)" by (simp add: search_values_formed_def search_of_def Let_def)
   show "search_formed \<kappa> P (search_of P st)" using s rf vf by (simp add: search_formed_def search_of_def Let_def)
   show "search_project (search_of P st) = st" using p by (simp add: search_of_def Let_def)
+qed
+
+lemma search_of_classes:
+  assumes d: "resolution_positions_distinct st"
+  shows "search_classes_formed (search_of P st)"
+proof -
+  have none: "RBT.lookup t p = None" if "p \<notin> set (map fst (RBT.entries t))" for t :: "('x::linorder,'y) rbt" and p
+    using that by (cases "RBT.lookup t p") (force simp: RBT.lookup_in_tree)+
+  have "classes_formed (search_state (search_of P st))
+      (classes_update (map fst (RBT.entries (shared_goals (search_state (search_of P st))))) (search_state (search_of P st))
+        empty_classes)"
+    by (rule classes_update_formed[OF search_of(1)[OF d]]) (simp add: none empty_classes_def class_value_def)
+  then show ?thesis by (simp add: search_of_def Let_def)
 qed
 
 definition shared_representation :: "('a,'s,'d,'c) finite_witness_construction \<Rightarrow> ('a,'s,'d,'c) finite_schema_system \<Rightarrow>
@@ -2306,13 +3326,236 @@ text \<open>
   general type.
 \<close>
 
+section \<open>The selection over the kept classes\<close>
+
+text \<open>
+  The selection reads the kept classes (task 865): the first settled goal, else the goals the priority names among the
+  candidates, else the first single goal, each first in the order of positions and outside the goals held back, and only
+  then the waiting rule over every goal not held back (@{thm [source] access_goal_choice_classes}). The goals held back
+  are found through the registered index: only a registered position whose node leaves a registered variable free can
+  hold a goal back, and a goal holding such a variable is in that position's bucket (@{text search_held}). The
+  construction nodes are read as the access reads them. At every formed search with formed classes the selection is
+  the access's (@{text search_select}), at every priority.
+\<close>
+
+definition search_held :: "('a,'s,'d,'c) finite_witness_construction \<Rightarrow> ('a,'s,'d,'c) finite_schema_system \<Rightarrow>
+    ('a,'s::linorder,'d,'c) shared_search \<Rightarrow> ('a,'s,'d,'c) shared_goal_entry fset" where
+  "search_held \<kappa> P r = (let V = shared_access \<kappa> P r in ffUnion (fimage (\<lambda>p.
+      if fBex (access_nodes_at V p) (\<lambda>n. access_free V n \<noteq> {||})
+      then ffilter (\<lambda>h. access_holdable V h \<and> access_held V h) (ffUnion (fimage (access_goals_at V) (tree_bucket (search_registered r) p)))
+      else {||}) (fset_of_list (map fst (RBT.entries (search_registered r))))))"
+
+lemma search_held:
+  assumes r: "search_formed \<kappa> P r"
+  shows "search_held \<kappa> P r = ffilter (\<lambda>h. access_holdable (shared_access \<kappa> P r) h \<and> access_held (shared_access \<kappa> P r) h)
+    (access_goals (shared_access \<kappa> P r))"
+proof (rule fset_eqI)
+  let ?V = "shared_access \<kappa> P r" and ?G = "shared_goals (search_state r)"
+  have reg: "search_registered_formed r" using search_formedD(2)[OF r] .
+  fix h
+  show "h |\<in>| search_held \<kappa> P r \<longleftrightarrow>
+      h |\<in>| ffilter (\<lambda>h. access_holdable ?V h \<and> access_held ?V h) (access_goals ?V)"
+  proof
+    assume "h |\<in>| search_held \<kappa> P r"
+    then obtain p where "h |\<in>| ffilter (\<lambda>h. access_holdable ?V h \<and> access_held ?V h)
+        (ffUnion (fimage (access_goals_at ?V) (tree_bucket (search_registered r) p)))"
+      by (auto simp: search_held_def Let_def ffUnion.rep_eq fimage.rep_eq split: if_splits)
+    then show "h |\<in>| ffilter (\<lambda>h. access_holdable ?V h \<and> access_held ?V h) (access_goals ?V)"
+      by (auto simp: ffilter.rep_eq ffUnion.rep_eq fimage.rep_eq shared_access_simps tree_values_member option_fset_def
+          split: option.splits)
+  next
+    assume "h |\<in>| ffilter (\<lambda>h. access_holdable ?V h \<and> access_held ?V h) (access_goals ?V)"
+    then have hg: "h |\<in>| access_goals ?V" and ho: "access_holdable ?V h" and hh: "access_held ?V h"
+      by (simp_all add: ffilter.rep_eq)
+    obtain x where x: "x |\<in>| access_variables ?V h" "snd (fst x)"
+      and nx: "fBex (access_nodes_at ?V (fst (fst x))) (\<lambda>n. snd x |\<in>| access_free ?V n)"
+      using hh by (auto simp: access_held_def)
+    obtain q where q: "RBT.lookup ?G q = Some h" using hg by (auto simp: shared_access_simps tree_values_member)
+    have "fst (fst x) |\<in>| shared_goal_registered h"
+      using x by (cases x) (auto simp: shared_goal_registered_member shared_access_simps)
+    then have qb: "q |\<in>| tree_bucket (search_registered r) (fst (fst x))" using reg q by (simp add: search_registered_formed_def)
+    then have key: "fst (fst x) \<in> set (map fst (RBT.entries (search_registered r)))"
+      by (cases "RBT.lookup (search_registered r) (fst (fst x))") (force simp: tree_bucket_def RBT.lookup_in_tree)+
+    have ne: "fBex (access_nodes_at ?V (fst (fst x))) (\<lambda>n. access_free ?V n \<noteq> {||})" using nx by blast
+    have "h |\<in>| ffilter (\<lambda>h. access_holdable ?V h \<and> access_held ?V h)
+        (ffUnion (fimage (access_goals_at ?V) (tree_bucket (search_registered r) (fst (fst x)))))"
+      using qb q ho hh by (force simp: ffilter.rep_eq ffUnion.rep_eq fimage.rep_eq shared_access_simps)
+    then show "h |\<in>| search_held \<kappa> P r"
+      using key ne by (force simp: search_held_def Let_def ffUnion.rep_eq fimage.rep_eq fset_of_list.rep_eq)
+  qed
+qed
+
+definition class_first :: "'e fset \<Rightarrow> ('k::linorder,'e) rbt \<Rightarrow> 'e fset" where
+  "class_first H t = (case find (\<lambda>h. h |\<notin>| H) (map snd (RBT.entries t)) of None \<Rightarrow> {||} | Some h \<Rightarrow> {|h|})"
+
+lemma finite_position_less_list: "finite_position_less p q \<longleftrightarrow> p < q"
+  by (simp add: finite_position_less_def list_less_def)
+
+lemma class_tree_member:
+  assumes t: "\<And>p. RBT.lookup t p = class_value Q G p"
+  shows "h \<in> set (map snd (RBT.entries t)) \<longleftrightarrow> h |\<in>| tree_values G \<and> Q h"
+proof -
+  have "h \<in> set (map snd (RBT.entries t)) \<longleftrightarrow> (\<exists>p. RBT.lookup t p = Some h)" by (force simp: RBT.lookup_in_tree)
+  also have "\<dots> \<longleftrightarrow> (\<exists>p. RBT.lookup G p = Some h \<and> Q h)" using t by (auto simp: class_value_def split: option.splits)
+  also have "\<dots> \<longleftrightarrow> h |\<in>| tree_values G \<and> Q h" by (auto simp: tree_values_member)
+  finally show ?thesis .
+qed
+
+text \<open>A class's tree lists its goals in the order of their positions, so its first goal outside a set is read at once.\<close>
+
+lemma class_first:
+  assumes t: "\<And>p. RBT.lookup t p = class_value Q G p" and pos: "\<And>p h. RBT.lookup G p = Some h \<Longrightarrow> pos h = p"
+  shows "positioned_first pos (ffilter Q (tree_values G |-| H)) = class_first H t"
+    and "class_first H t = {||} \<longleftrightarrow> ffilter Q (tree_values G |-| H) = {||}"
+proof -
+  let ?E = "RBT.entries t"
+  have E: "map (\<lambda>z. pos (snd z)) ?E = map fst ?E"
+  proof (rule map_cong[OF refl])
+    fix z assume z: "z \<in> set ?E"
+    obtain k v where zz: "z = (k,v)" by (cases z)
+    have "RBT.lookup t k = Some v" using z zz by (simp add: RBT.lookup_in_tree)
+    then have "RBT.lookup G k = Some v" using t[of k] by (auto simp: class_value_def split: option.splits if_splits)
+    then show "pos (snd z) = fst z" using pos zz by simp
+  qed
+  have so: "sorted_wrt (<) (map fst ?E)" using RBT.sorted_entries[of t] RBT.distinct_entries[of t] by (simp add: strict_sorted_iff)
+  have "sorted_wrt (<) (map (\<lambda>z. pos (snd z)) ?E)" unfolding E by (rule so)
+  then have sw: "sorted_wrt (\<lambda>x y. finite_position_less (pos x) (pos y)) (map snd ?E)"
+    by (simp add: sorted_wrt_map finite_position_less_list)
+  have f: "fset_of_list (filter (\<lambda>h. h |\<notin>| H) (map snd ?E)) = ffilter Q (tree_values G |-| H)"
+    by (rule fset_eqI) (use class_tree_member[OF t] in \<open>auto simp: fset_of_list.rep_eq ffilter.rep_eq\<close>)
+  show "positioned_first pos (ffilter Q (tree_values G |-| H)) = class_first H t"
+    using positioned_first_sorted[OF sw, of "\<lambda>h. h |\<notin>| H"] f by (simp add: class_first_def)
+  have "class_first H t = {||} \<longleftrightarrow> find (\<lambda>h. h |\<notin>| H) (map snd ?E) = None"
+    by (cases "find (\<lambda>h. h |\<notin>| H) (map snd ?E)") (simp_all add: class_first_def)
+  also have "\<dots> \<longleftrightarrow> fset_of_list (filter (\<lambda>h. h |\<notin>| H) (map snd ?E)) = {||}"
+    by (auto simp: find_None_iff fset_eq_iff fset_of_list.rep_eq)
+  also have "\<dots> \<longleftrightarrow> ffilter Q (tree_values G |-| H) = {||}" by (simp only: f)
+  finally show "class_first H t = {||} \<longleftrightarrow> ffilter Q (tree_values G |-| H) = {||}" .
+qed
+
+definition search_select :: "('a,'s,'d,'c) finite_witness_construction \<Rightarrow> ('a,'s,'d,'c) finite_schema_system \<Rightarrow>
+    (('a,'s,'d,'c) shared_goal_entry \<Rightarrow> bool) \<Rightarrow> ('a,'s::linorder,'d,'c) shared_search \<Rightarrow>
+    (('a,'s,'d,'c) shared_node_entry, ('a,'s,'d,'c) shared_goal_entry) access_selection" where
+  "search_select \<kappa> P rp r = (let V = shared_access \<kappa> P r; N = access_construction_nodes V in
+    if N \<noteq> {||} then Access_Construction (access_first_nodes V N)
+    else let H = search_held \<kappa> P r; K = search_classes r; c0 = class_first H (class_settled K);
+      S = (if c0 \<noteq> {||} then c0 else
+        let cp = ffilter rp (fset_of_list (map snd (RBT.entries (class_candidates K))) |-| H) in
+        if cp \<noteq> {||} then access_first_goals V cp else
+        let c1 = class_first H (class_single K) in
+        if c1 \<noteq> {||} then c1 else access_waiting_selection V (access_goals V |-| H)) in
+      if S = {||} then Access_None else Access_Goals S)"
+
+theorem search_select:
+  assumes r: "search_formed \<kappa> P r" and K: "search_classes_formed r"
+  shows "search_select \<kappa> P rp r = access_select rp (shared_access \<kappa> P r)"
+proof -
+  let ?V = "shared_access \<kappa> P r" and ?s = "search_state r" and ?K = "search_classes r"
+  let ?G = "shared_goals ?s" and ?H = "search_held \<kappa> P r"
+  have s: "shared_state_formed \<kappa> P ?s" using search_formedD(1)[OF r] .
+  have goals: "access_goals ?V = tree_values ?G" by (simp add: shared_access_simps)
+  have pos: "access_goal_position ?V h = p" if "RBT.lookup ?G p = Some h" for p h
+    using shared_goal_lookup_position[OF s that] by (simp add: shared_access_simps)
+  have A: "ffilter (\<lambda>h. \<not> (access_holdable ?V h \<and> access_held ?V h)) (access_goals ?V) = access_goals ?V |-| ?H"
+    unfolding search_held[OF r] by (rule fset_eqI) (auto simp: ffilter.rep_eq)
+  have tst: "access_candidate ?V h = access_candidate (state_access ?s) h \<and>
+      access_settled ?V h = access_settled (state_access ?s) h \<and> access_single ?V h = access_single (state_access ?s) h" for h
+    using state_access_tests[of \<kappa> P r h] by simp
+  have kk: "RBT.lookup (class_candidates ?K) p = class_value (access_candidate ?V) ?G p \<and>
+      RBT.lookup (class_settled ?K) p = class_value (\<lambda>h. access_candidate ?V h \<and> access_settled ?V h) ?G p \<and>
+      RBT.lookup (class_single ?K) p = class_value (\<lambda>h. access_candidate ?V h \<and> access_single ?V h) ?G p" for p
+  proof (cases "RBT.lookup ?G p")
+    case None
+    then show ?thesis using K by (simp add: classes_formed_def class_value_def)
+  next
+    case (Some h)
+    then show ?thesis using K kept_tests[OF r Some] tst[of h] by (simp add: classes_formed_def class_value_def)
+  qed
+  have tc: "\<And>p. RBT.lookup (class_candidates ?K) p = class_value (access_candidate ?V) ?G p" using kk by simp
+  have t0: "\<And>p. RBT.lookup (class_settled ?K) p = class_value (\<lambda>h. access_candidate ?V h \<and> access_settled ?V h) ?G p"
+    using kk by simp
+  have t1: "\<And>p. RBT.lookup (class_single ?K) p = class_value (\<lambda>h. access_candidate ?V h \<and> access_single ?V h) ?G p"
+    using kk by simp
+  note c0 = class_first[OF t0 pos, where H = "search_held \<kappa> P r"]
+    and c1 = class_first[OF t1 pos, where H = "search_held \<kappa> P r"]
+  have e0: "class_first ?H (class_settled ?K) =
+      access_first_goals ?V (ffilter (\<lambda>h. access_candidate ?V h \<and> access_settled ?V h) (access_goals ?V |-| ?H))"
+    using c0(1) goals by (simp add: access_first_goals_def)
+  have n0: "access_first_goals ?V (ffilter (\<lambda>h. access_candidate ?V h \<and> access_settled ?V h) (access_goals ?V |-| ?H)) = {||}
+      \<longleftrightarrow> ffilter (\<lambda>h. access_candidate ?V h \<and> access_settled ?V h) (access_goals ?V |-| ?H) = {||}"
+    using c0 goals by (simp add: access_first_goals_def)
+  have e1: "class_first ?H (class_single ?K) =
+      access_first_goals ?V (ffilter (\<lambda>h. access_candidate ?V h \<and> access_single ?V h) (access_goals ?V |-| ?H))"
+    using c1(1) goals by (simp add: access_first_goals_def)
+  have n1: "access_first_goals ?V (ffilter (\<lambda>h. access_candidate ?V h \<and> access_single ?V h) (access_goals ?V |-| ?H)) = {||}
+      \<longleftrightarrow> ffilter (\<lambda>h. access_candidate ?V h \<and> access_single ?V h) (access_goals ?V |-| ?H) = {||}"
+    using c1 goals by (simp add: access_first_goals_def)
+  have ecp: "fset_of_list (map snd (RBT.entries (class_candidates ?K))) |-| ?H =
+      ffilter (access_candidate ?V) (access_goals ?V |-| ?H)"
+    by (rule fset_eqI) (use class_tree_member[OF tc] in \<open>auto simp: fset_of_list.rep_eq ffilter.rep_eq goals\<close>)
+  have ch: "access_goal_choice rp ?V (access_goals ?V |-| ?H) =
+      (if class_first ?H (class_settled ?K) \<noteq> {||} then class_first ?H (class_settled ?K)
+       else if ffilter rp (ffilter (access_candidate ?V) (access_goals ?V |-| ?H)) \<noteq> {||}
+         then access_first_goals ?V (ffilter rp (ffilter (access_candidate ?V) (access_goals ?V |-| ?H)))
+       else if class_first ?H (class_single ?K) \<noteq> {||} then class_first ?H (class_single ?K)
+       else access_waiting_selection ?V (access_goals ?V |-| ?H))"
+    by (simp only: access_goal_choice_classes Let_def e0 e1 n0 n1)
+  show ?thesis by (simp only: search_select_def access_select_def Let_def A ecp ch)
+qed
+
+theorem shared_kept_search:
+  assumes sock: "clause_sockets_distinct P" and pl: "search_placeable st"
+  shows "selected_search (shared_representation \<kappa> P) (search_select \<kappa> P (\<lambda>h. False)) \<kappa> P n (search_of P st) =
+      finite_resolution_search \<kappa> P n st"
+proof -
+  have d: "resolution_positions_distinct st" using pl by (simp add: search_placeable_def)
+  let ?R = "shared_representation \<kappa> P"
+  let ?F = "\<lambda>r. search_formed \<kappa> P r \<and> search_placeable (search_project r) \<and> search_classes_formed r"
+  have "selected_search ?R (search_select \<kappa> P (\<lambda>h. False)) \<kappa> P n (search_of P st) =
+      represented_search ?R (\<lambda>r h. False) \<kappa> P n (search_of P st)"
+  proof (rule selected_search[where F = ?F])
+    show "?F (search_of P st)" using search_of[OF d] search_of_classes[OF d] pl by simp
+  next
+    fix s assume f: "?F s"
+    then show "?F (rep_refresh ?R s)"
+      using search_refresh[OF conjunct1[OF f]] search_refresh_classes[of \<kappa> P s] by (simp add: shared_representation_def)
+  next
+    fix s m assume f: "?F s" and m: "m |\<in>| access_construction_nodes (rep_access ?R s)"
+    obtain q0 where n: "m |\<in>| access_nodes_at (shared_access \<kappa> P s) q0"
+      using access_construction_nodes_at[of m "shared_access \<kappa> P s"] m by (auto simp: shared_representation_def)
+    note c = search_construct[OF conjunct1[OF f] n]
+    have "search_placeable (search_project (search_construct \<kappa> P s m))"
+      unfolding c(2) finite_construction_step_def Let_def
+      by (rule search_placeable_substitute, rule search_placeable_witnesses[OF conjunct1[OF conjunct2[OF f]]])
+    then show "?F (rep_construct ?R s m)"
+      using c(1) search_construct_classes[of \<kappa> P s m] f by (simp add: shared_representation_def)
+  next
+    fix s h s' assume f: "?F s" and h: "h |\<in>| access_goals (rep_access ?R s)" and s': "s' |\<in>| rep_successors ?R s h"
+    have h': "h |\<in>| access_goals (shared_access \<kappa> P s)" and s'': "s' |\<in>| search_successors \<kappa> P s h"
+      using h s' by (simp_all add: shared_representation_def)
+    show "?F s'" using search_successors_classed(2,3)[OF conjunct1[OF f] conjunct1[OF conjunct2[OF f]] sock h' s''] f
+      by simp
+  next
+    fix s assume f: "?F s"
+    show "search_select \<kappa> P (\<lambda>h. False) s = access_select ((\<lambda>r h. False) s) (rep_access ?R s)"
+      using search_select[OF conjunct1[OF f] conjunct2[OF conjunct2[OF f]]] by (simp add: shared_representation_def)
+  qed
+  also have "\<dots> = finite_resolution_search \<kappa> P n st" by (rule shared_search[OF sock pl])
+  finally show ?thesis .
+qed
+
+text \<open>
+  The search over the kept classes is R3's search where R3's search keeps one goal and one node at a position, and
+  F2b1's indexed search computes it elsewhere; the equation holds at every input, at the search's general type.
+\<close>
+
 declare finite_resolution_search_code [code del]
 
 lemma finite_resolution_search_shared_code [code]:
   "finite_resolution_search \<kappa> P n st = (if clause_sockets_distinct P \<and> search_placeable st
-    then represented_search (shared_representation \<kappa> P) (\<lambda>r h. False) \<kappa> P n (search_of P st)
+    then selected_search (shared_representation \<kappa> P) (search_select \<kappa> P (\<lambda>h. False)) \<kappa> P n (search_of P st)
     else indexed_search (\<lambda>r h. False) \<kappa> P n (index_state P st))"
-  using shared_search[of P st \<kappa> n] finite_resolution_search_code[of \<kappa> P n st] by simp
+  using shared_kept_search[of P st \<kappa> n] finite_resolution_search_code[of \<kappa> P n st] by simp
 
 export_code finite_resolution_search checking SML
 

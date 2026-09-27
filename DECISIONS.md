@@ -20319,3 +20319,22 @@ step's own cost is 0 (no goal admitted); the new guard admits 5.6–20.9 % of th
 admitted 99.9 %; the index and raisers cost under a millisecond a call. Limits: with the given's whole frames the framed
 tests' repeated decodes (review 868's 2–3) dominate (3.1 ms a step at 10 rows); the re-sharing of a committed
 sub-search's found states is not exercised by these fixtures.
+## The kept classes are maintained where a step changes a test
+
+Task 865 (#830's fix (1) (b), task 495's F1/F2: the choice's classes kept as the steps change them, their formation
+established by the constructors and kept by every step). A ground call's pruned, reusable and waiting tests read the
+state only through the positions at which the nodes and the pending goals making the call stand and the solvedness of
+those nodes (`Factor_Search_Representations.goal_tests_frame`, premises by position). So a step at one position changes
+the tests of other goals only through the ground keys of the goal and the node there — the site and reference of the
+ground call each makes, or none — and, when it changes whether a goal stands there, the solvedness of the nodes at the
+prefixes whose open count moves between zero and nonzero (`Factor_Shared_Search.classes_keys`, `classes_frame`). A
+substitution keeps the goal's presence; it re-tests its own goal, and also every goal making a ground call when it grounds
+the call of the goal or the node at its position (a formed collapsed ground call is `Shared_Ground i`, so the key moves
+from none to the call's site and reference: the new ground goal can make those goals wait). A goal is tested over the
+state's access without its goal set (`state_access_over {||}`), which no test reads. Evidence: at #830's fixtures the
+library search takes 15.2 s at 20 rows against 26.3 s without kept classes and 33.6 s with the whole goal-call buckets
+re-tested; the maintenance costs about 6.5 s of it and saves about 19 s of selection, 3.1 s of the maintenance at the
+48,169 substitution updates (65 µs each, 2 µs without classes) and the rest at the puts and removals that change a
+goal's presence (`.build/tasks/865/measurement.md`). Limit: the tests of a touched goal read the call's goal and node
+buckets, so grounding substitutions and presence changes cost with the buckets they touch; the held goals and
+construction nodes are computed each step.

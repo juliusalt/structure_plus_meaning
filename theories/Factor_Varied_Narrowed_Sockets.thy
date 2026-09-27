@@ -414,29 +414,72 @@ definition finite_varied_sources_unique ::
     ((e,c'),S') |\<in>| finite_system_clauses P \<longrightarrow> ((e,c''),T) |\<in>| finite_system_clauses N \<longrightarrow>
     finite_schema_match S T = Some (f,h) \<longrightarrow> finite_schema_match S' T = Some (f',h') \<longrightarrow> S = S')"
 
-lemma varied_narrowings_agree_unique:
+text \<open>
+  Uniqueness of the sources is needed only where the record narrows: at a site where every declared socket's class is
+  every answer, two sources of one carried socket carry the same class whatever their clauses. Stated at a set A of
+  sites (@{text finite_varied_sources_unique_at}) beside the record's narrowing within A (@{text narrowings_within}),
+  the agreement follows as at every site, the unrestricted form its instance at every site (task 798: the given's
+  installed programs, where the clauses of one definition are told apart at 48's callers only).
+\<close>
+
+definition finite_varied_sources_unique_at where
+  "finite_varied_sources_unique_at A P N \<longleftrightarrow> (\<forall>e c S c' S' c'' T f h f' h'. e \<in> A \<longrightarrow>
+    ((e,c),S) |\<in>| finite_system_clauses P \<longrightarrow> ((e,c'),S') |\<in>| finite_system_clauses P \<longrightarrow>
+    ((e,c''),T) |\<in>| finite_system_clauses N \<longrightarrow>
+    finite_schema_match S T = Some (f,h) \<longrightarrow> finite_schema_match S' T = Some (f',h') \<longrightarrow> S = S')"
+
+definition narrowings_within where
+  "narrowings_within A ND \<longleftrightarrow> (\<forall>e S s keep Vp Vh. (e,S,s,keep,Vp,Vh) |\<in>| declared_sockets ND \<longrightarrow> e \<notin> A \<longrightarrow>
+    declared_narrowing ND e S s = (\<lambda>_. True))"
+
+lemma finite_varied_sources_unique_everywhere:
+  "finite_varied_sources_unique P N \<longleftrightarrow> finite_varied_sources_unique_at UNIV P N"
+  unfolding finite_varied_sources_unique_def finite_varied_sources_unique_at_def by blast
+
+lemma narrowings_within_everywhere: "narrowings_within UNIV ND"
+  by (simp add: narrowings_within_def)
+
+lemma varied_narrowings_agree_within:
   assumes Pf: "finite_system_formed P" and Nf: "finite_system_formed N"
-    and unique: "finite_varied_sources_unique P N"
+    and unique: "finite_varied_sources_unique_at A P N" and within: "narrowings_within A ND"
   shows "varied_narrowings_agree P N ND"
   unfolding varied_narrowings_agree_def
 proof (intro allI impI)
   fix e T t S s S' s'
   assume a: "(S,s) |\<in>| varied_socket_sources P N (declared_sockets ND) e T t"
     and b: "(S',s') |\<in>| varied_socket_sources P N (declared_sockets ND) e T t"
-  obtain c c' f h where ma: "((e,c),S) |\<in>| finite_system_clauses P" "s \<in> schema_sockets (decode_finite_schema S)"
+  obtain keep Vp Vh c c' f h where ma: "(e,S,s,keep,Vp,Vh) |\<in>| declared_sockets ND"
+      "((e,c),S) |\<in>| finite_system_clauses P" "s \<in> schema_sockets (decode_finite_schema S)"
       "((e,c'),T) |\<in>| finite_system_clauses N" "finite_schema_match S T = Some (f,h)" "t = h s"
     using a unfolding varied_socket_sources_member by blast
-  obtain c1 c1' f' h' where mb: "((e,c1),S') |\<in>| finite_system_clauses P" "s' \<in> schema_sockets (decode_finite_schema S')"
+  obtain keep' Vp' Vh' c1 c1' f' h' where mb: "(e,S',s',keep',Vp',Vh') |\<in>| declared_sockets ND"
+      "((e,c1),S') |\<in>| finite_system_clauses P" "s' \<in> schema_sockets (decode_finite_schema S')"
       "((e,c1'),T) |\<in>| finite_system_clauses N" "finite_schema_match S' T = Some (f',h')" "t = h' s'"
     using b unfolding varied_socket_sources_member by blast
-  have SS: "S' = S" using unique ma(1,3,4) mb(1,4) unfolding finite_varied_sources_unique_def by blast
-  interpret matched: finite_schema_matched S T f h
-    by (rule finite_schema_matched.intro[OF finite_system_clause_formed[OF Pf ma(1)]
-      finite_system_clause_formed[OF Nf ma(3)] ma(4)])
-  have hh: "h' = h" using mb(4) ma(4) SS by simp
-  have "s' = s" by (rule inj_onD[OF matched.sockets]) (use ma mb SS hh in auto)
-  then show "declared_narrowing ND e S s = declared_narrowing ND e S' s'" using SS by simp
+  show "declared_narrowing ND e S s = declared_narrowing ND e S' s'"
+  proof (cases "e \<in> A")
+    case False
+    have "declared_narrowing ND e S s = (\<lambda>_. True)" "declared_narrowing ND e S' s' = (\<lambda>_. True)"
+      using within ma(1) mb(1) False unfolding narrowings_within_def by blast+
+    then show ?thesis by simp
+  next
+    case True
+    have SS: "S' = S" using unique True ma(2,4,5) mb(2,5) unfolding finite_varied_sources_unique_at_def by blast
+    interpret matched: finite_schema_matched S T f h
+      by (rule finite_schema_matched.intro[OF finite_system_clause_formed[OF Pf ma(2)]
+        finite_system_clause_formed[OF Nf ma(4)] ma(5)])
+    have hh: "h' = h" using mb(5) ma(5) SS by simp
+    have "s' = s" by (rule inj_onD[OF matched.sockets]) (use ma mb SS hh in auto)
+    then show ?thesis using SS by simp
+  qed
 qed
+
+lemma varied_narrowings_agree_unique:
+  assumes Pf: "finite_system_formed P" and Nf: "finite_system_formed N"
+    and unique: "finite_varied_sources_unique P N"
+  shows "varied_narrowings_agree P N ND"
+  by (rule varied_narrowings_agree_within[OF Pf Nf unique[unfolded finite_varied_sources_unique_everywhere]
+    narrowings_within_everywhere])
 
 lemma varied_narrowings_agree_top:
   assumes top: "\<And>e S s. declared_narrowing ND e S s = (\<lambda>_. True)"

@@ -657,14 +657,14 @@ end
 
 text \<open>The given's record at the asked relation's installed guard and at the first request's installed program.\<close>
 
-theorem asked_installed_declarations_discharged:
+theorem asked_installed_plain_declarations_discharged:
   "declarations_discharged (positive_meaning asked_program)
     (asked_extension.extension_installed_record given_plain_declarations)
     (placed_correspondence asked_extension.installed_placement given_plain_declarations given_declarations_correspondence)"
   using asked_extension.extension_record_discharged(3)[OF given_plain_declarations_discharged(2) given_plain_declarations_sites]
     asked_installed_presentation_exact(3) unfolding asked_installed_presentation_def by simp
 
-theorem first_request_installed_declarations_discharged:
+theorem first_request_installed_plain_declarations_discharged:
   "declarations_discharged (positive_meaning first_request_program)
     (first_request_extension.extension_installed_record given_plain_declarations)
     (placed_correspondence first_request_extension.installed_placement given_plain_declarations
@@ -816,9 +816,15 @@ lemma given_union_socket_views:
   using assms by (auto simp: given_union_sockets_def quotation_union_sockets_def instantiation_union_sockets_def
     prospective_union_sockets_def vector_union_sockets_def premise_rows_union_sockets_def)
 
-theorem given_union_productions:
-  "productions_discharged (positive_meaning (decode_finite_system finite_rooted_given_readers))
-    finite_rooted_given_readers m (union_produced given_union_sockets)"
+text \<open>At any program whose meanings at 48 and 5 are the union's and selection's: stated once, the rooted readers and
+  every extension's numbered program its instances.\<close>
+
+theorem union_productions_at:
+  fixes P :: "(nat,nat,nat,'c) finite_schema_system"
+  assumes union: "\<And>t. (48,t) \<in> positive_meaning (decode_finite_system P) \<longleftrightarrow> (48,t) \<in> positive_meaning data_union_system"
+    and selection: "\<And>t. (5,t) \<in> positive_meaning (decode_finite_system P) \<longleftrightarrow>
+      (5,t) \<in> positive_meaning bag_comparison_system"
+  shows "productions_discharged (positive_meaning (decode_finite_system P)) P m (union_produced given_union_sockets)"
   unfolding productions_discharged_def
 proof (intro allI impI)
   fix e S s keep Vp Vh R
@@ -828,18 +834,23 @@ proof (intro allI impI)
   have V: "Vp = join_view" using sock given_union_socket_views by simp
   have fields: "registration_site union_registration = 48" "registration_schema union_registration = union_schema"
     "registration_variable union_registration = 2" by (simp_all add: union_registration_def)
-  have ans: "head_registration_answers (positive_meaning (decode_finite_system finite_rooted_given_readers))
-      (union_construction m) finite_rooted_given_readers 48 union_schema join_view 2"
-    by (rule union_registration_answers[OF given_rooted_union_meanings])
+  have ans: "head_registration_answers (positive_meaning (decode_finite_system P))
+      (union_construction m) P 48 union_schema join_view 2"
+    by (rule union_registration_answers[OF union selection])
   show "head_registration Vp (registration_schema R) (registration_variable R) \<and>
-      head_registration_produces (finite_collection_construction [R] m) finite_rooted_given_readers (registration_site R)
+      head_registration_produces (finite_collection_construction [R] m) P (registration_site R)
         (registration_schema R) (registration_variable R) (declared_narrowing (union_produced given_union_sockets) e S s) \<and>
-      head_registration_answers (positive_meaning (decode_finite_system finite_rooted_given_readers))
-        (finite_collection_construction [R] m) finite_rooted_given_readers (registration_site R) (registration_schema R) Vp
+      head_registration_answers (positive_meaning (decode_finite_system P))
+        (finite_collection_construction [R] m) P (registration_site R) (registration_schema R) Vp
         (registration_variable R)"
     unfolding R V fields union_produced_simps
     using union_head_registration union_registration_produces ans by blast
 qed
+
+theorem given_union_productions:
+  "productions_discharged (positive_meaning (decode_finite_system finite_rooted_given_readers))
+    finite_rooted_given_readers m (union_produced given_union_sockets)"
+  by (rule union_productions_at[OF given_rooted_union_meanings])
 
 theorem given_declarations_productions:
   "productions_discharged (positive_meaning (decode_finite_system finite_rooted_given_readers))

@@ -706,7 +706,7 @@ proof -
     by (rule finite_framed_socket_class_context[where Nc="declared_narrowing D", OF I sup gF formedD
       produced_framed_viewed[OF discharged frames] produced_framed_calls[OF discharged frames] call sc cn nf0])
   have eqs: "q2 = q" "r2 = r" "e2 = e" "p2 = p" using gq2 gq by simp_all
-  have dist: "resolution_positions_distinct st" using I by (simp add: resolution_invariant_def)
+  have dist: "resolution_positions_distinct st" using I by (simp add: resolution_invariant_in_def)
   have nd2eq: "nd2 = nd"
   proof -
     have "resolution_node_position nd2 = resolution_node_position nd" using nd(2) nd2(2) eqs qq by simp
@@ -791,14 +791,14 @@ proof (intro allI notI)
   obtain np z where np: "np |\<in>| resolution_nodes st" "resolution_node_position np = butlast (resolution_goal_position g)"
       and z: "z |\<in>| finite_schema_materials (resolution_node_schema np)" "fst z = last (resolution_goal_position g)"
     using prem qne unfolding finite_material_premise_def fBex_member_iff by blast
-  have dist: "resolution_positions_distinct st" using I by (simp add: resolution_invariant_def)
+  have dist: "resolution_positions_distinct st" using I by (simp add: resolution_invariant_in_def)
   have npnd: "np = nd"
   proof -
     have "resolution_node_position np = resolution_node_position nd" using np(2) nd(2) by simp
     then show ?thesis using dist np(1) nd(1) unfolding resolution_positions_distinct_def by blast
   qed
-  have nplaced: "resolution_nodes_placed P d t st" using I by (simp add: resolution_invariant_def)
-  have linked: "resolution_node_linked P st nd" using nplaced nd(1) unfolding resolution_nodes_placed_def by blast
+  have nplaced: "resolution_nodes_placed P d t st" using I by (simp add: resolution_invariant_in_def)
+  have linked: "resolution_node_linked P st nd" using nplaced nd(1) unfolding resolution_nodes_placed_in_def by blast
   have formed: "schema_formed (decode_finite_schema (resolution_node_schema nd))"
     by (rule finite_linked_schema_formed[OF I linked])
   obtain M0 where zM: "z = (last (resolution_goal_position g),M0)" using z(2) by (cases z) simp
@@ -890,7 +890,7 @@ proof (intro allI impI conjI)
       and tup: "(resolution_node_site nd0,resolution_node_schema nd0,last q,keep,Vp,Vh) |\<in>| declared_sockets D"
     using decl unfolding finite_socket_declared_framed_def finite_socket_kept_framed_def finite_socket_free_framed_def
       fBex_member_iff by auto
-  have dist: "resolution_positions_distinct st" using I by (simp add: resolution_invariant_def)
+  have dist: "resolution_positions_distinct st" using I by (simp add: resolution_invariant_in_def)
   have ndeq: "nd = nd0"
   proof -
     have "resolution_node_position nd = resolution_node_position nd0" using nd(2) nd0(2) gq by simp

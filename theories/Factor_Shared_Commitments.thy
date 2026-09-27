@@ -1120,7 +1120,7 @@ proof -
       (search_of P st) = finite_committed_search_by (finite_resolution_select_at (\<lambda>st g. False) \<kappa> P) \<kappa> no_commitment P n None {||} st"
     by (rule shared_committed_search[OF sock pl]) (simp add: no_commitment_def)
   show ?thesis using e shared_search[OF sock pl] finite_committed_search_by_plain[OF free]
-    by (simp add: finite_resolution_search_def)
+    by (simp add: finite_resolution_search_def finite_resolution_search_in_def)
 qed
 
 text \<open>

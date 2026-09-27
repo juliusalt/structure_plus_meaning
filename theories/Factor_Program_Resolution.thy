@@ -196,16 +196,78 @@ definition finite_goal_closed ::
     "('a,'s,'d,'c) resolution_state \<Rightarrow> ('a,'s,'d,'c) resolution_goal \<Rightarrow> ('a,'s,'d,'c) resolution_state" where
   "finite_goal_closed st g = Resolution_State (resolution_pending st |-| {|g|}) (resolution_nodes st) (resolution_witnesses st)"
 
-fun finite_goal_successors ::
+text \<open>
+  A variable left free when every goal is resolved was constrained by nothing, and takes the empty
+  payload; on a ground pattern this reading is the term the pattern presents.
+\<close>
+
+fun finite_residual_term :: "'v finite_term_pattern \<Rightarrow> finite_factor_term" where
+  "finite_residual_term (Finite_Variable v) = Finite_Payload []"
+| "finite_residual_term (Finite_Pattern_Target t) = Finite_Target t"
+| "finite_residual_term (Finite_Pattern_Payload v) = Finite_Payload v"
+| "finite_residual_term (Finite_Pattern_Pair p q) = Finite_Pair (finite_residual_term p) (finite_residual_term q)"
+
+subsection \<open>A table of certified calls\<close>
+
+text \<open>
+  A table of certified calls (the section "The given's calls are decided once" of task 495's entry) maps ground calls, a
+  site and a term, to certificates; its representation is the caller's, read here by lookup alone. A pending call goal
+  below the root whose pattern is ground and whose site and term are a call of the table is closed by it as by reuse:
+  one successor, the goal removed, nothing substituted, no clause alternative kept. The step, the selection and the
+  search read only whether a call is the table's; an entry's certificate is read where a certificate is assembled
+  (@{text finite_socket_proofs}) and where the table's validity is read. The empty table closes nothing, and the step,
+  the search and their forms at it are today's.
+\<close>
+
+datatype ('a,'s,'d,'c) resolution_table =
+  Resolution_Table (resolution_table_lookup: "'d \<times> finite_factor_term \<Rightarrow> ('a,'s,'c) finite_schema_proof option")
+
+abbreviation resolution_empty_table :: "('a,'s,'d,'c) resolution_table" where
+  "resolution_empty_table \<equiv> Resolution_Table Map.empty"
+
+definition finite_table_closes :: "('a,'s,'d,'c) resolution_table \<Rightarrow> ('a,'s,'d,'c) resolution_goal \<Rightarrow> bool" where
+  "finite_table_closes \<Theta> g = (case g of
+      Resolution_Call_Goal q r d p \<Rightarrow> q \<noteq> [] \<and> finite_pattern_variables p={||} \<and>
+        (case resolution_table_lookup \<Theta> (d,finite_residual_term p) of None \<Rightarrow> False | Some c \<Rightarrow> True)
+    | Resolution_Material_Goal q r M \<Rightarrow> False)"
+
+lemma finite_table_closes_call:
+  "finite_table_closes \<Theta> (Resolution_Call_Goal q r d p) \<longleftrightarrow>
+    q \<noteq> [] \<and> finite_pattern_variables p={||} \<and> resolution_table_lookup \<Theta> (d,finite_residual_term p) \<noteq> None"
+  by (simp add: finite_table_closes_def split: option.split)
+
+lemma finite_table_closes_material [simp]: "\<not> finite_table_closes \<Theta> (Resolution_Material_Goal q r M)"
+  by (simp add: finite_table_closes_def)
+
+lemma finite_table_closes_empty [simp]: "\<not> finite_table_closes resolution_empty_table g"
+  by (cases g) (simp_all add: finite_table_closes_def)
+
+fun finite_goal_successors_in ::
+    "('a,'s,'d,'c) resolution_table \<Rightarrow> ('a,'s::linorder,'d,'c) finite_schema_system \<Rightarrow> ('a,'s,'d,'c) resolution_state \<Rightarrow>
+      ('a,'s,'d,'c) resolution_goal \<Rightarrow> ('a,'s,'d,'c) resolution_state fset" where
+  "finite_goal_successors_in \<Theta> P st (Resolution_Call_Goal q r d p) =
+    (if finite_reusable st (Resolution_Call_Goal q r d p) \<or> finite_table_closes \<Theta> (Resolution_Call_Goal q r d p)
+    then {|finite_goal_closed st (Resolution_Call_Goal q r d p)|} else finite_call_successors P st q r d p)"
+| "finite_goal_successors_in \<Theta> P st (Resolution_Material_Goal q r M) = finite_material_successors st q r M"
+
+abbreviation finite_goal_successors ::
     "('a,'s::linorder,'d,'c) finite_schema_system \<Rightarrow> ('a,'s,'d,'c) resolution_state \<Rightarrow>
       ('a,'s,'d,'c) resolution_goal \<Rightarrow> ('a,'s,'d,'c) resolution_state fset" where
-  "finite_goal_successors P st (Resolution_Call_Goal q r d p) = (if finite_reusable st (Resolution_Call_Goal q r d p)
-    then {|finite_goal_closed st (Resolution_Call_Goal q r d p)|} else finite_call_successors P st q r d p)"
-| "finite_goal_successors P st (Resolution_Material_Goal q r M) = finite_material_successors st q r M"
+  "finite_goal_successors \<equiv> finite_goal_successors_in resolution_empty_table"
+
+lemma finite_closed_successors:
+  "finite_reusable st g \<or> finite_table_closes \<Theta> g \<Longrightarrow> finite_goal_successors_in \<Theta> P st g = {|finite_goal_closed st g|}"
+  by (cases g) (auto simp: finite_reusable_def)
 
 lemma finite_reusable_successors:
   "finite_reusable st g \<Longrightarrow> finite_goal_successors P st g = {|finite_goal_closed st g|}"
-  by (cases g) (simp_all add: finite_reusable_def)
+  by (simp add: finite_closed_successors)
+
+lemma finite_goal_successors_unreused_in:
+  "\<not> finite_reusable st g \<Longrightarrow> \<not> finite_table_closes \<Theta> g \<Longrightarrow> finite_goal_successors_in \<Theta> P st g = (case g of
+      Resolution_Call_Goal q r d p \<Rightarrow> finite_call_successors P st q r d p
+    | Resolution_Material_Goal q r M \<Rightarrow> finite_material_successors st q r M)"
+  by (cases g) simp_all
 
 lemma finite_goal_successors_unreused:
   "\<not> finite_reusable st g \<Longrightarrow> finite_goal_successors P st g = (case g of
@@ -376,19 +438,25 @@ proof -
 qed
 
 text \<open>
-  The contract holds where the goal is not closed by reuse, which gives one successor whatever its alternatives.
+  The contract holds where the goal is not closed by reuse or by the table, either of which gives one successor
+  whatever its alternatives.
 \<close>
+
+lemma finite_goal_alternatives_none_in:
+  "\<not> finite_reusable st g \<Longrightarrow> \<not> finite_table_closes \<Theta> g \<Longrightarrow>
+    finite_goal_alternatives P g = 0 \<longleftrightarrow> finite_goal_successors_in \<Theta> P st g = {||}"
+  by (cases g) (simp_all add: finite_call_successors_alternatives finite_material_successors_alternatives)
 
 lemma finite_goal_alternatives_none:
   "\<not> finite_reusable st g \<Longrightarrow> finite_goal_alternatives P g = 0 \<longleftrightarrow> finite_goal_successors P st g = {||}"
   by (cases g) (simp_all add: finite_call_successors_alternatives finite_material_successors_alternatives)
 
-lemma finite_goal_alternatives_one:
+lemma finite_goal_alternatives_one_in:
   assumes "finite_goal_alternatives P g = 1"
-  shows "\<exists>s. finite_goal_successors P st g = {|s|}"
-proof (cases "finite_reusable st g")
+  shows "\<exists>s. finite_goal_successors_in \<Theta> P st g = {|s|}"
+proof (cases "finite_reusable st g \<or> finite_table_closes \<Theta> g")
   case True
-  then show ?thesis by (simp add: finite_reusable_successors)
+  then show ?thesis using finite_closed_successors[OF True] by blast
 next
   case False
   then show ?thesis
@@ -404,6 +472,11 @@ next
   then show ?thesis using False by (simp add: Resolution_Material_Goal finite_material_successors_alternatives)
 qed
 qed
+
+lemma finite_goal_alternatives_one:
+  assumes "finite_goal_alternatives P g = 1"
+  shows "\<exists>s. finite_goal_successors P st g = {|s|}"
+  using assms by (rule finite_goal_alternatives_one_in)
 
 section \<open>The witness construction\<close>
 
@@ -423,17 +496,6 @@ record ('a,'s,'d,'c) finite_witness_construction =
 
 definition no_witness_construction :: "('a,'s,'d,'c) finite_witness_construction" where
   "no_witness_construction = \<lparr>witness_registered=(\<lambda>d S. {||}), witness_value=(\<lambda>P d S B a. None)\<rparr>"
-
-text \<open>
-  A variable left free when every goal is resolved was constrained by nothing, and takes the empty
-  payload; on a ground pattern this reading is the term the pattern presents.
-\<close>
-
-fun finite_residual_term :: "'v finite_term_pattern \<Rightarrow> finite_factor_term" where
-  "finite_residual_term (Finite_Variable v) = Finite_Payload []"
-| "finite_residual_term (Finite_Pattern_Target t) = Finite_Target t"
-| "finite_residual_term (Finite_Pattern_Payload v) = Finite_Payload v"
-| "finite_residual_term (Finite_Pattern_Pair p q) = Finite_Pair (finite_residual_term p) (finite_residual_term q)"
 
 definition finite_node_ground_bindings ::
     "('a,'s,'d,'c) resolution_node \<Rightarrow> ('a \<times> finite_factor_term) fset" where
@@ -498,8 +560,8 @@ text \<open>
   A registered variable ready for its construction is constructed before any goal, and a goal holding a
   free registered variable is not selected. Among the other pending goals that are calls or material goals
   R1 can solve (the candidates), selection takes in order (F1 of the addition "The resolver at the given's
-  size" to task 495's entry): a goal the search settles at once — with no alternative, pruned, or closed by reuse
-  (F3); a goal a priority names; a goal with one alternative that does not wait; then R3's classes, reading a goal's
+  size" to task 495's entry): a goal the search settles at once — with no alternative, pruned, closed by reuse (F3)
+  or by the table; a goal a priority names; a goal with one alternative that does not wait; then R3's classes, reading a goal's
   groundness and where its variables occur — a ground goal, a call goal whose free variables occur in no other pending
   goal, a material goal R1 can solve, a call goal with a ground part — over the goals that do not wait first. A ground
   call waits when it is equal to a pending goal at a lesser position, or to the call of a node left of it whose subtree
@@ -621,39 +683,56 @@ text \<open>
   taken with one alternative; it stands in R3's classes, taken there only when no goal that does not wait can be.
 \<close>
 
-definition finite_goal_choice ::
-    "(('a,'s,'d,'c) resolution_state \<Rightarrow> ('a,'s,'d,'c) resolution_goal \<Rightarrow> bool) \<Rightarrow>
+definition finite_goal_choice_in ::
+    "('a,'s,'d,'c) resolution_table \<Rightarrow> (('a,'s,'d,'c) resolution_state \<Rightarrow> ('a,'s,'d,'c) resolution_goal \<Rightarrow> bool) \<Rightarrow>
       ('a,'s::linorder,'d,'c) finite_schema_system \<Rightarrow> ('a,'s,'d,'c) resolution_state \<Rightarrow>
       ('a,'s,'d,'c) resolution_goal fset \<Rightarrow> ('a,'s,'d,'c) resolution_goal fset \<Rightarrow> ('a,'s,'d,'c) resolution_goal fset" where
-  "finite_goal_choice pr P st G A = (let C = ffilter finite_candidate_goal A;
+  "finite_goal_choice_in \<Theta> pr P st G A = (let C = ffilter finite_candidate_goal A;
       K = fimage (\<lambda>g. (finite_goal_alternatives P g,g)) C;
-      c0 = fimage snd (ffilter (\<lambda>z. fst z = 0 \<or> finite_pruned st (snd z) \<or> finite_reusable st (snd z)) K) in
+      c0 = fimage snd (ffilter (\<lambda>z. fst z = 0 \<or> finite_pruned st (snd z) \<or> finite_reusable st (snd z) \<or>
+        finite_table_closes \<Theta> (snd z)) K) in
     if c0 \<noteq> {||} then finite_first_goals c0
     else let cp = ffilter (pr st) C in if cp \<noteq> {||} then finite_first_goals cp
     else let c1 = fimage snd (ffilter (\<lambda>z. fst z = 1 \<and> \<not> finite_goal_waits st (snd z)) K) in
       if c1 \<noteq> {||} then finite_first_goals c1
     else finite_waiting_selection st G A)"
 
-lemma finite_goal_choice_candidate:
-  "g |\<in>| finite_goal_choice pr P st G A \<Longrightarrow> g |\<in>| A \<and> finite_candidate_goal g"
-  unfolding finite_goal_choice_def Let_def
+abbreviation finite_goal_choice ::
+    "(('a,'s,'d,'c) resolution_state \<Rightarrow> ('a,'s,'d,'c) resolution_goal \<Rightarrow> bool) \<Rightarrow>
+      ('a,'s::linorder,'d,'c) finite_schema_system \<Rightarrow> ('a,'s,'d,'c) resolution_state \<Rightarrow>
+      ('a,'s,'d,'c) resolution_goal fset \<Rightarrow> ('a,'s,'d,'c) resolution_goal fset \<Rightarrow> ('a,'s,'d,'c) resolution_goal fset" where
+  "finite_goal_choice \<equiv> finite_goal_choice_in resolution_empty_table"
+
+lemma finite_goal_choice_candidate_in:
+  "g |\<in>| finite_goal_choice_in \<Theta> pr P st G A \<Longrightarrow> g |\<in>| A \<and> finite_candidate_goal g"
+  unfolding finite_goal_choice_in_def Let_def
   using finite_waiting_selection_candidate[of g st G A]
   by (auto simp: finite_first_goals_def fimage.rep_eq ffilter.rep_eq split: if_splits)
+
+lemma finite_goal_choice_candidate:
+  "g |\<in>| finite_goal_choice pr P st G A \<Longrightarrow> g |\<in>| A \<and> finite_candidate_goal g"
+  by (rule finite_goal_choice_candidate_in)
 
 datatype ('a,'s,'d,'c) resolution_selection =
     Select_Construction "('a,'s,'d,'c) resolution_node fset"
   | Select_Goals "('a,'s,'d,'c) resolution_goal fset"
   | Select_None
 
-definition finite_resolution_select_at ::
+definition finite_resolution_select_in ::
+    "('a,'s,'d,'c) resolution_table \<Rightarrow> (('a,'s,'d,'c) resolution_state \<Rightarrow> ('a,'s,'d,'c) resolution_goal \<Rightarrow> bool) \<Rightarrow>
+      ('a,'s::linorder,'d,'c) finite_witness_construction \<Rightarrow> ('a,'s,'d,'c) finite_schema_system \<Rightarrow>
+      ('a,'s,'d,'c) resolution_state \<Rightarrow> ('a,'s,'d,'c) resolution_selection" where
+  "finite_resolution_select_in \<Theta> pr \<kappa> P st = (let G = resolution_pending st;
+      N = ffilter (\<lambda>nd. finite_constructed \<kappa> P G nd\<noteq>{||}) (resolution_nodes st) in
+    if N\<noteq>{||} then Select_Construction (finite_first_nodes N)
+    else let S = finite_goal_choice_in \<Theta> pr P st G (ffilter (\<lambda>g. \<not> finite_held \<kappa> st g) G) in
+      if S={||} then Select_None else Select_Goals S)"
+
+abbreviation finite_resolution_select_at ::
     "(('a,'s,'d,'c) resolution_state \<Rightarrow> ('a,'s,'d,'c) resolution_goal \<Rightarrow> bool) \<Rightarrow>
       ('a,'s::linorder,'d,'c) finite_witness_construction \<Rightarrow> ('a,'s,'d,'c) finite_schema_system \<Rightarrow>
       ('a,'s,'d,'c) resolution_state \<Rightarrow> ('a,'s,'d,'c) resolution_selection" where
-  "finite_resolution_select_at pr \<kappa> P st = (let G = resolution_pending st;
-      N = ffilter (\<lambda>nd. finite_constructed \<kappa> P G nd\<noteq>{||}) (resolution_nodes st) in
-    if N\<noteq>{||} then Select_Construction (finite_first_nodes N)
-    else let S = finite_goal_choice pr P st G (ffilter (\<lambda>g. \<not> finite_held \<kappa> st g) G) in
-      if S={||} then Select_None else Select_Goals S)"
+  "finite_resolution_select_at \<equiv> finite_resolution_select_in resolution_empty_table"
 
 abbreviation finite_resolution_select ::
     "('a,'s::linorder,'d,'c) finite_witness_construction \<Rightarrow> ('a,'s,'d,'c) finite_schema_system \<Rightarrow>
@@ -665,24 +744,32 @@ text \<open>
   where R3's default does: the premises of the liftings, whatever the priority names.
 \<close>
 
-lemma finite_resolution_select_at_exact:
-  shows "finite_resolution_select_at pr \<kappa> P st = Select_Goals G \<Longrightarrow> G \<noteq> {||} \<and>
+lemma finite_resolution_select_at_exact_in:
+  shows "finite_resolution_select_in \<Theta> pr \<kappa> P st = Select_Goals G \<Longrightarrow> G \<noteq> {||} \<and>
       (\<forall>g. g |\<in>| G \<longrightarrow> g |\<in>| resolution_pending st \<and> \<not> finite_held \<kappa> st g \<and> finite_candidate_goal g)"
-    and "finite_resolution_select_at pr \<kappa> P st = Select_Construction N \<longleftrightarrow>
+    and "finite_resolution_select_in \<Theta> pr \<kappa> P st = Select_Construction N \<longleftrightarrow>
       finite_resolution_select \<kappa> P st = Select_Construction N"
   subgoal
-    using finite_goal_choice_candidate[of _ pr P st "resolution_pending st"
+    using finite_goal_choice_candidate_in[of _ \<Theta> pr P st "resolution_pending st"
       "ffilter (\<lambda>g. \<not> finite_held \<kappa> st g) (resolution_pending st)"]
-    by (auto simp: finite_resolution_select_at_def Let_def split: if_splits)
-  subgoal by (auto simp: finite_resolution_select_at_def Let_def split: if_splits)
+    by (auto simp: finite_resolution_select_in_def Let_def split: if_splits)
+  subgoal by (auto simp: finite_resolution_select_in_def Let_def split: if_splits)
   done
 
-definition finite_plain_selection ::
+lemmas finite_resolution_select_at_exact = finite_resolution_select_at_exact_in[where \<Theta>=resolution_empty_table]
+
+definition finite_plain_selection_in ::
+    "('a,'s,'d,'c) resolution_table \<Rightarrow> (('a,'s,'d,'c) resolution_state \<Rightarrow> ('a,'s,'d,'c) resolution_goal \<Rightarrow> bool) \<Rightarrow>
+      ('a,'s::linorder,'d,'c) finite_schema_system \<Rightarrow> ('a,'s,'d,'c) resolution_state \<Rightarrow>
+      ('a,'s,'d,'c) resolution_selection" where
+  "finite_plain_selection_in \<Theta> pr P st = (let G = resolution_pending st; S = finite_goal_choice_in \<Theta> pr P st G G in
+    if S={||} then Select_None else Select_Goals S)"
+
+abbreviation finite_plain_selection ::
     "(('a,'s,'d,'c) resolution_state \<Rightarrow> ('a,'s,'d,'c) resolution_goal \<Rightarrow> bool) \<Rightarrow>
       ('a,'s::linorder,'d,'c) finite_schema_system \<Rightarrow> ('a,'s,'d,'c) resolution_state \<Rightarrow>
       ('a,'s,'d,'c) resolution_selection" where
-  "finite_plain_selection pr P st = (let G = resolution_pending st; S = finite_goal_choice pr P st G G in
-    if S={||} then Select_None else Select_Goals S)"
+  "finite_plain_selection \<equiv> finite_plain_selection_in resolution_empty_table"
 
 section \<open>The search\<close>
 
@@ -727,34 +814,57 @@ definition finite_unconstructed ::
         (finite_free_registered \<kappa> nd)))
     (resolution_nodes st)))"
 
-definition finite_goal_outcome ::
-    "(('a,'s,'d,'c) resolution_state \<Rightarrow> ('a,'s,'d,'c) resolution_outcome) \<Rightarrow>
+definition finite_goal_outcome_in ::
+    "('a,'s,'d,'c) resolution_table \<Rightarrow> (('a,'s,'d,'c) resolution_state \<Rightarrow> ('a,'s,'d,'c) resolution_outcome) \<Rightarrow>
       ('a,'s::linorder,'d,'c) finite_schema_system \<Rightarrow> ('a,'s,'d,'c) resolution_state \<Rightarrow>
       ('a,'s,'d,'c) resolution_goal \<Rightarrow> ('a,'s,'d,'c) resolution_outcome" where
-  "finite_goal_outcome rec P st g = (if finite_pruned st g then Resolution_Outcome {||} {||} else
-    let S = finite_goal_successors P st g in
+  "finite_goal_outcome_in \<Theta> rec P st g = (if finite_pruned st g then Resolution_Outcome {||} {||} else
+    let S = finite_goal_successors_in \<Theta> P st g in
     if S={||} then (if resolution_witnesses st={||} then Resolution_Outcome {||} {||}
       else Resolution_Outcome {||} {|Resolution_Witnessed (resolution_witnesses st) g|})
     else finite_outcome_union (fimage rec S))"
 
-primrec finite_resolution_search_by ::
+abbreviation finite_goal_outcome ::
+    "(('a,'s,'d,'c) resolution_state \<Rightarrow> ('a,'s,'d,'c) resolution_outcome) \<Rightarrow>
+      ('a,'s::linorder,'d,'c) finite_schema_system \<Rightarrow> ('a,'s,'d,'c) resolution_state \<Rightarrow>
+      ('a,'s,'d,'c) resolution_goal \<Rightarrow> ('a,'s,'d,'c) resolution_outcome" where
+  "finite_goal_outcome \<equiv> finite_goal_outcome_in resolution_empty_table"
+
+text \<open>
+  The search at a table, its selection a parameter; R3's search is its instance at the empty table.
+\<close>
+
+primrec finite_resolution_search_by_in ::
+    "('a,'s,'d,'c) resolution_table \<Rightarrow> (('a,'s::linorder,'d,'c) resolution_state \<Rightarrow> ('a,'s,'d,'c) resolution_selection) \<Rightarrow>
+      ('a,'s,'d,'c) finite_witness_construction \<Rightarrow> ('a,'s,'d,'c) finite_schema_system \<Rightarrow> nat \<Rightarrow>
+      ('a,'s,'d,'c) resolution_state \<Rightarrow> ('a,'s,'d,'c) resolution_outcome" where
+  "finite_resolution_search_by_in \<Theta> sel \<kappa> P 0 st = (if resolution_pending st={||}
+    then Resolution_Outcome {|st|} {||} else Resolution_Outcome {||} {|Resolution_Cut (resolution_pending st)|})"
+| "finite_resolution_search_by_in \<Theta> sel \<kappa> P (Suc n) st = (if resolution_pending st={||}
+    then Resolution_Outcome {|st|} {||} else (case sel st of
+      Select_Construction N \<Rightarrow> finite_outcome_union
+        (fimage (finite_resolution_search_by_in \<Theta> sel \<kappa> P n) (fimage (finite_construction_step \<kappa> P st) N))
+    | Select_Goals G \<Rightarrow> finite_outcome_union
+        (fimage (finite_goal_outcome_in \<Theta> (finite_resolution_search_by_in \<Theta> sel \<kappa> P n) P st) G)
+    | Select_None \<Rightarrow> Resolution_Outcome {||}
+        (finsert (Resolution_Stuck (resolution_pending st)) (finite_unconstructed \<kappa> P st))))"
+
+abbreviation finite_resolution_search_by ::
     "(('a,'s::linorder,'d,'c) resolution_state \<Rightarrow> ('a,'s,'d,'c) resolution_selection) \<Rightarrow>
       ('a,'s,'d,'c) finite_witness_construction \<Rightarrow> ('a,'s,'d,'c) finite_schema_system \<Rightarrow> nat \<Rightarrow>
       ('a,'s,'d,'c) resolution_state \<Rightarrow> ('a,'s,'d,'c) resolution_outcome" where
-  "finite_resolution_search_by sel \<kappa> P 0 st = (if resolution_pending st={||}
-    then Resolution_Outcome {|st|} {||} else Resolution_Outcome {||} {|Resolution_Cut (resolution_pending st)|})"
-| "finite_resolution_search_by sel \<kappa> P (Suc n) st = (if resolution_pending st={||}
-    then Resolution_Outcome {|st|} {||} else (case sel st of
-      Select_Construction N \<Rightarrow> finite_outcome_union
-        (fimage (finite_resolution_search_by sel \<kappa> P n) (fimage (finite_construction_step \<kappa> P st) N))
-    | Select_Goals G \<Rightarrow> finite_outcome_union (fimage (finite_goal_outcome (finite_resolution_search_by sel \<kappa> P n) P st) G)
-    | Select_None \<Rightarrow> Resolution_Outcome {||}
-        (finsert (Resolution_Stuck (resolution_pending st)) (finite_unconstructed \<kappa> P st))))"
+  "finite_resolution_search_by \<equiv> finite_resolution_search_by_in resolution_empty_table"
+
+definition finite_resolution_search_in ::
+    "('a,'s,'d,'c) resolution_table \<Rightarrow> ('a,'s::linorder,'d,'c) finite_witness_construction \<Rightarrow>
+      ('a,'s,'d,'c) finite_schema_system \<Rightarrow> nat \<Rightarrow> ('a,'s,'d,'c) resolution_state \<Rightarrow> ('a,'s,'d,'c) resolution_outcome" where
+  "finite_resolution_search_in \<Theta> \<kappa> P =
+    finite_resolution_search_by_in \<Theta> (finite_resolution_select_in \<Theta> (\<lambda>st g. False) \<kappa> P) \<kappa> P"
 
 definition finite_resolution_search ::
     "('a,'s::linorder,'d,'c) finite_witness_construction \<Rightarrow> ('a,'s,'d,'c) finite_schema_system \<Rightarrow> nat \<Rightarrow>
       ('a,'s,'d,'c) resolution_state \<Rightarrow> ('a,'s,'d,'c) resolution_outcome" where
-  "finite_resolution_search \<kappa> P = finite_resolution_search_by (finite_resolution_select \<kappa> P) \<kappa> P"
+  "finite_resolution_search \<kappa> P = finite_resolution_search_in resolution_empty_table \<kappa> P"
 
 section \<open>The empty construction\<close>
 
@@ -772,26 +882,36 @@ lemma no_witness_constructed [simp]: "finite_constructed no_witness_construction
 lemma no_witness_held [simp]: "\<not> finite_held no_witness_construction st g"
   by (simp add: finite_held_def)
 
-theorem no_witness_selection:
-  "finite_resolution_select_at pr no_witness_construction P st = finite_plain_selection pr P st"
+theorem no_witness_selection_in:
+  "finite_resolution_select_in \<Theta> pr no_witness_construction P st = finite_plain_selection_in \<Theta> pr P st"
 proof -
   have "ffilter (\<lambda>g. \<not> finite_held no_witness_construction st g) (resolution_pending st) = resolution_pending st"
     by (simp add: fset_eq_iff)
-  then show ?thesis by (simp add: finite_resolution_select_at_def finite_plain_selection_def Let_def)
+  then show ?thesis by (simp add: finite_resolution_select_in_def finite_plain_selection_in_def Let_def)
 qed
+
+theorem no_witness_selection:
+  "finite_resolution_select_at pr no_witness_construction P st = finite_plain_selection pr P st"
+  by (rule no_witness_selection_in)
 
 lemma finite_resolution_select_none_construction:
   "finite_resolution_select_at pr no_witness_construction P st \<noteq> Select_Construction N"
-  by (simp add: no_witness_selection finite_plain_selection_def Let_def)
+  by (simp add: no_witness_selection finite_plain_selection_in_def Let_def)
+
+theorem no_witness_search_in:
+  "finite_resolution_search_in \<Theta> no_witness_construction P =
+    finite_resolution_search_by_in \<Theta> (finite_plain_selection_in \<Theta> (\<lambda>st g. False) P) no_witness_construction P"
+proof -
+  have "finite_resolution_select_in \<Theta> (\<lambda>st g. False) no_witness_construction P =
+      finite_plain_selection_in \<Theta> (\<lambda>st g. False) P"
+    by (rule ext) (rule no_witness_selection_in)
+  then show ?thesis by (simp add: finite_resolution_search_in_def)
+qed
 
 theorem no_witness_search:
   "finite_resolution_search no_witness_construction P =
     finite_resolution_search_by (finite_plain_selection (\<lambda>st g. False) P) no_witness_construction P"
-proof -
-  have "finite_resolution_select no_witness_construction P = finite_plain_selection (\<lambda>st g. False) P"
-    by (rule ext) (rule no_witness_selection)
-  then show ?thesis by (simp add: finite_resolution_search_def)
-qed
+  unfolding finite_resolution_search_def by (rule no_witness_search_in)
 
 section \<open>The ground certificate and the result per call\<close>
 
@@ -800,7 +920,8 @@ text \<open>
   bindings of the clause's own variables, residual variables at the empty payload, and at each premise socket
   the certificate of the node at the socket's position or, where none stands (a ground call closed by reuse), of
   the node at the least position left of the socket whose call is the premise's instance and whose site the
-  premise's: the certificate is the unfolded derivation, and its soundness the checker's.
+  premise's, or, where neither stands (a ground call closed by the table), the table's certificate at the premise's
+  instance: the certificate is the unfolded derivation, and its soundness the checker's.
 \<close>
 
 definition finite_node_values :: "('a,'s,'d,'c) resolution_node \<Rightarrow> ('a \<times> finite_factor_term) fset" where
@@ -815,12 +936,37 @@ definition finite_premise_nodes ::
       C = ffilter (\<lambda>m. resolution_node_position m=q) F in
     if C \<noteq> {||} then C else finite_first_nodes (ffilter (\<lambda>m. finite_position_left (resolution_node_position m) q) F))"
 
-primrec finite_node_proof ::
-    "nat \<Rightarrow> ('a,'s::linorder,'d,'c) resolution_node fset \<Rightarrow> ('a,'s,'d,'c) resolution_node \<Rightarrow> ('a,'s,'c) finite_schema_proof" where
-  "finite_node_proof 0 N nd = Schema_Proof (resolution_node_clause nd) (finite_node_values nd) {||}"
-| "finite_node_proof (Suc k) N nd = Schema_Proof (resolution_node_clause nd) (finite_node_values nd)
-    (ffUnion (fimage (\<lambda>(s,e,p). fimage (\<lambda>m. (s,finite_node_proof k N m)) (finite_premise_nodes N nd s e p))
+definition finite_table_proofs ::
+    "('a,'s,'d,'c) resolution_table \<Rightarrow> ('a,'s,'d,'c) resolution_node \<Rightarrow> 'd \<Rightarrow> 'a finite_term_pattern \<Rightarrow>
+      ('a,'s,'c) finite_schema_proof fset" where
+  "finite_table_proofs \<Theta> nd e p = ffUnion (fimage (\<lambda>u. case resolution_table_lookup \<Theta> (e,u) of None \<Rightarrow> {||} | Some c \<Rightarrow> {|c|})
+    (finite_pattern_instances (finite_node_values nd) p))"
+
+definition finite_socket_proofs ::
+    "('a,'s,'d,'c) resolution_table \<Rightarrow> (('a,'s,'d,'c) resolution_node \<Rightarrow> ('a,'s,'c) finite_schema_proof) \<Rightarrow>
+      ('a,'s::linorder,'d,'c) resolution_node fset \<Rightarrow> ('a,'s,'d,'c) resolution_node \<Rightarrow> 's \<Rightarrow> 'd \<Rightarrow> 'a finite_term_pattern \<Rightarrow>
+      ('s \<times> ('a,'s,'c) finite_schema_proof) fset" where
+  "finite_socket_proofs \<Theta> f N nd s e p = (let M = finite_premise_nodes N nd s e p in
+    if M={||} then fimage (Pair s) (finite_table_proofs \<Theta> nd e p) else fimage (\<lambda>m. (s,f m)) M)"
+
+lemma finite_table_proofs_empty [simp]: "finite_table_proofs resolution_empty_table nd e p = {||}"
+  by (simp add: finite_table_proofs_def fset_eq_iff ffUnion.rep_eq fimage.rep_eq)
+
+lemma finite_socket_proofs_empty [simp]:
+  "finite_socket_proofs resolution_empty_table f N nd s e p = fimage (\<lambda>m. (s,f m)) (finite_premise_nodes N nd s e p)"
+  by (auto simp: finite_socket_proofs_def Let_def)
+
+primrec finite_node_proof_in ::
+    "('a,'s,'d,'c) resolution_table \<Rightarrow> nat \<Rightarrow> ('a,'s::linorder,'d,'c) resolution_node fset \<Rightarrow>
+      ('a,'s,'d,'c) resolution_node \<Rightarrow> ('a,'s,'c) finite_schema_proof" where
+  "finite_node_proof_in \<Theta> 0 N nd = Schema_Proof (resolution_node_clause nd) (finite_node_values nd) {||}"
+| "finite_node_proof_in \<Theta> (Suc k) N nd = Schema_Proof (resolution_node_clause nd) (finite_node_values nd)
+    (ffUnion (fimage (\<lambda>(s,e,p). finite_socket_proofs \<Theta> (\<lambda>m. finite_node_proof_in \<Theta> k N m) N nd s e p)
       (finite_schema_premises (resolution_node_schema nd))))"
+
+abbreviation finite_node_proof ::
+    "nat \<Rightarrow> ('a,'s::linorder,'d,'c) resolution_node fset \<Rightarrow> ('a,'s,'d,'c) resolution_node \<Rightarrow> ('a,'s,'c) finite_schema_proof" where
+  "finite_node_proof \<equiv> finite_node_proof_in resolution_empty_table"
 
 text \<open>
   A nonempty set of nodes at distinct positions has one node at its least position.
@@ -874,9 +1020,16 @@ proof -
   then show ?thesis by blast
 qed
 
-definition finite_state_proofs :: "('a,'s::linorder,'d,'c) resolution_state \<Rightarrow> ('a,'s,'c) finite_schema_proof fset" where
-  "finite_state_proofs st = fimage (finite_node_proof (fcard (resolution_nodes st)) (resolution_nodes st))
+definition finite_state_proofs_in ::
+    "('a,'s,'d,'c) resolution_table \<Rightarrow> ('a,'s::linorder,'d,'c) resolution_state \<Rightarrow> ('a,'s,'c) finite_schema_proof fset" where
+  "finite_state_proofs_in \<Theta> st = fimage (finite_node_proof_in \<Theta> (fcard (resolution_nodes st)) (resolution_nodes st))
     (ffilter (\<lambda>nd. resolution_node_position nd=[]) (resolution_nodes st))"
+
+definition finite_state_proofs :: "('a,'s::linorder,'d,'c) resolution_state \<Rightarrow> ('a,'s,'c) finite_schema_proof fset" where
+  "finite_state_proofs st = finite_state_proofs_in resolution_empty_table st"
+
+lemma finite_state_proofs_empty: "finite_state_proofs_in resolution_empty_table = finite_state_proofs"
+  by (rule ext) (simp only: finite_state_proofs_def)
 
 definition finite_initial_state :: "'d \<Rightarrow> finite_factor_term \<Rightarrow> ('a,'s,'d,'c) resolution_state" where
   "finite_initial_state d t = Resolution_State {|Resolution_Call_Goal [] None d (finite_exact_term_pattern t)|} {||} {||}"
@@ -887,53 +1040,99 @@ datatype ('a,'s,'d,'c) finite_resolution_result =
   | Finite_Unresolved "('a,'s,'d,'c) resolution_diagnosis fset"
 
 text \<open>
-  The result for a call: resolved with the certificates of its successful branches that the finite
-  proof checker accepts; refuted when no branch succeeded and none was cut, stuck or refuted at a
-  constructed value; unresolved otherwise, with its diagnosis, which also keeps a certificate the checker
-  refused.
+  The result R3 gives a search's outcome at a call, stated once for any outcome and at a table: resolved with the
+  certificates the finite proof checker accepts; refuted when no branch succeeded and none was cut, stuck or refuted
+  at a constructed value; unresolved otherwise, with its diagnosis, which also keeps a certificate the checker refused.
+  The result for a call is the result of the search from the call's initial state; today's are the instances at the
+  empty table.
 \<close>
 
-definition finite_program_resolution ::
-    "('a,'s::linorder,'d,'c) finite_witness_construction \<Rightarrow> ('a,'s,'d,'c) finite_schema_system \<Rightarrow>
-      'd \<Rightarrow> finite_factor_term \<Rightarrow> nat \<Rightarrow> ('a,'s,'d,'c) finite_resolution_result" where
-  "finite_program_resolution \<kappa> P d t n = (let R = finite_resolution_search \<kappa> P n (finite_initial_state d t);
-      C = ffUnion (fimage finite_state_proofs (resolution_found R));
+definition finite_outcome_result_in ::
+    "('a,'s,'d,'c) resolution_table \<Rightarrow> ('a,'s::linorder,'d,'c) finite_schema_system \<Rightarrow> 'd \<Rightarrow> finite_factor_term \<Rightarrow>
+      ('a,'s,'d,'c) resolution_outcome \<Rightarrow> ('a,'s,'d,'c) finite_resolution_result" where
+  "finite_outcome_result_in \<Theta> P d t R = (let C = ffUnion (fimage (finite_state_proofs_in \<Theta>) (resolution_found R));
       A = ffilter (\<lambda>p. finite_checks_schema_proof P p d t) C in
     if A\<noteq>{||} then Finite_Resolved A
     else if resolution_diagnoses R={||} \<and> C={||} then Finite_Refuted
     else Finite_Unresolved (resolution_diagnoses R |\<union>| fimage Resolution_Refused C))"
 
+definition finite_outcome_result ::
+    "('a,'s::linorder,'d,'c) finite_schema_system \<Rightarrow> 'd \<Rightarrow> finite_factor_term \<Rightarrow> ('a,'s,'d,'c) resolution_outcome \<Rightarrow>
+      ('a,'s,'d,'c) finite_resolution_result" where
+  "finite_outcome_result P d t R = finite_outcome_result_in resolution_empty_table P d t R"
+
+definition finite_program_resolution_in ::
+    "('a,'s,'d,'c) resolution_table \<Rightarrow> ('a,'s::linorder,'d,'c) finite_witness_construction \<Rightarrow>
+      ('a,'s,'d,'c) finite_schema_system \<Rightarrow> 'd \<Rightarrow> finite_factor_term \<Rightarrow> nat \<Rightarrow> ('a,'s,'d,'c) finite_resolution_result" where
+  "finite_program_resolution_in \<Theta> \<kappa> P d t n =
+    finite_outcome_result_in \<Theta> P d t (finite_resolution_search_in \<Theta> \<kappa> P n (finite_initial_state d t))"
+
+definition finite_program_resolution ::
+    "('a,'s::linorder,'d,'c) finite_witness_construction \<Rightarrow> ('a,'s,'d,'c) finite_schema_system \<Rightarrow>
+      'd \<Rightarrow> finite_factor_term \<Rightarrow> nat \<Rightarrow> ('a,'s,'d,'c) finite_resolution_result" where
+  "finite_program_resolution \<kappa> P d t n = finite_program_resolution_in resolution_empty_table \<kappa> P d t n"
+
+lemma finite_program_resolution_outcome:
+  "finite_program_resolution \<kappa> P d t n = finite_outcome_result P d t (finite_resolution_search \<kappa> P n (finite_initial_state d t))"
+  by (simp only: finite_program_resolution_def finite_program_resolution_in_def finite_outcome_result_def
+    finite_resolution_search_def)
+
 section \<open>Soundness through the finite proof checker\<close>
 
 text \<open>
   Every certificate of a resolved call is accepted by the existing finite proof checker, whatever
-  construction supplied the values in its bindings; the call then holds in the program's positive
-  meaning by the checker's exactness and the soundness of schema proofs. Soundness is the checker's.
+  construction supplied the values in its bindings and whatever table closed its premises: the result keeps only
+  the certificates the checker accepts. The call then holds in the program's positive meaning by the checker's
+  exactness and the soundness of schema proofs. Soundness is the checker's.
 \<close>
+
+theorem finite_outcome_result_sound_in:
+  assumes res: "finite_outcome_result_in \<Theta> P d t R = Finite_Resolved C"
+  shows "C\<noteq>{||}" and "\<And>p. p |\<in>| C \<Longrightarrow> finite_checks_schema_proof P p d t"
+    and "(d,decode_finite_term t) \<in> positive_meaning (decode_finite_system P)"
+proof -
+  show nonempty: "C\<noteq>{||}" using res unfolding finite_outcome_result_in_def Let_def by (auto split: if_splits)
+  show accepted: "\<And>p. p |\<in>| C \<Longrightarrow> finite_checks_schema_proof P p d t"
+    using res unfolding finite_outcome_result_in_def Let_def by (auto split: if_splits)
+  from nonempty obtain p where "p |\<in>| C" by (metis all_not_fin_conv)
+  then have "checks_schema_proof (decode_finite_system P) (decode_finite_proof p) d (decode_finite_term t)"
+    using accepted by (simp only: finite_checks_schema_proof_exact)
+  then show "(d,decode_finite_term t) \<in> positive_meaning (decode_finite_system P)" by (rule schema_proof_sound)
+qed
+
+theorem finite_outcome_result_sound:
+  assumes res: "finite_outcome_result P d t R = Finite_Resolved C"
+  shows "C\<noteq>{||}" and "\<And>p. p |\<in>| C \<Longrightarrow> finite_checks_schema_proof P p d t"
+    and "(d,decode_finite_term t) \<in> positive_meaning (decode_finite_system P)"
+  using finite_outcome_result_sound_in[OF res[unfolded finite_outcome_result_def]] by blast+
+
+theorem finite_program_resolution_accepted_in:
+  assumes "finite_program_resolution_in \<Theta> \<kappa> P d t n = Finite_Resolved C" and "p |\<in>| C"
+  shows "finite_checks_schema_proof P p d t"
+  by (rule finite_outcome_result_sound_in(2)[OF assms(1)[unfolded finite_program_resolution_in_def] assms(2)])
+
+theorem finite_program_resolution_sound_in:
+  assumes res: "finite_program_resolution_in \<Theta> \<kappa> P d t n = Finite_Resolved C"
+  shows "C\<noteq>{||}" and "(d,decode_finite_term t) \<in> positive_meaning (decode_finite_system P)"
+  using finite_outcome_result_sound_in[OF res[unfolded finite_program_resolution_in_def]] by blast+
 
 theorem finite_program_resolution_accepted:
   assumes "finite_program_resolution \<kappa> P d t n = Finite_Resolved C" and "p |\<in>| C"
   shows "finite_checks_schema_proof P p d t"
-  using assms unfolding finite_program_resolution_def Let_def by (auto split: if_splits)
+  using assms unfolding finite_program_resolution_def by (rule finite_program_resolution_accepted_in)
 
 theorem finite_program_resolution_sound:
   assumes res: "finite_program_resolution \<kappa> P d t n = Finite_Resolved C"
   shows "C\<noteq>{||}" and "(d,decode_finite_term t) \<in> positive_meaning (decode_finite_system P)"
-proof -
-  show nonempty: "C\<noteq>{||}" using res unfolding finite_program_resolution_def Let_def by (auto split: if_splits)
-  then obtain p where member: "p |\<in>| C" by (metis all_not_fin_conv)
-  have "finite_checks_schema_proof P p d t" by (rule finite_program_resolution_accepted[OF res member])
-  then have "checks_schema_proof (decode_finite_system P) (decode_finite_proof p) d (decode_finite_term t)"
-    by (simp only: finite_checks_schema_proof_exact)
-  then show "(d,decode_finite_term t) \<in> positive_meaning (decode_finite_system P)" by (rule schema_proof_sound)
-qed
+  using finite_program_resolution_sound_in[OF res[unfolded finite_program_resolution_def]] by blast+
 
 theorem finite_program_resolution_refuted:
   "finite_program_resolution \<kappa> P d t n = Finite_Refuted \<longleftrightarrow>
     (let R = finite_resolution_search \<kappa> P n (finite_initial_state d t) in
       ffUnion (fimage finite_state_proofs (resolution_found R))={||} \<and> resolution_diagnoses R={||})"
-  unfolding finite_program_resolution_def Let_def by auto
+  unfolding finite_program_resolution_outcome finite_outcome_result_def finite_outcome_result_in_def
+    finite_state_proofs_empty Let_def by auto
 
-export_code finite_program_resolution no_witness_construction checking SML
+export_code finite_program_resolution finite_program_resolution_in no_witness_construction checking SML
 
 end

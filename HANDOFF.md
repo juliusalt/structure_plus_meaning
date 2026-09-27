@@ -67,8 +67,10 @@ into the briefs #522 and #523 corrected, or recorded superseded there.
   bindings re-shared at every application at the given, K2's route projecting the whole state (180 ms a step at the
   given) — and its fixes are placed from #852: σ tabulated with F2a's shared unifier #861, and the commitment's tests
   over the access #867 → F2c's committed step over them #869 (after OS2; review 824's 1 and 834's 4), before K3 #825;
-  the pruning test through the node-call index #863 (review 792's 1 and 2, next-edits 343 and 344) → the selection's
-  classes kept #865 → in F2c #871, before #542. #792 landed F2b1 as the access's instance (`0d8768ae`); next-edits 339
+  the pruning test through the node-call index landed (#863, `356cf673`: a step at 20 rows 5.86 → 2.17 ms, the
+  selection still 81 % of it; the shared search's fallback stays F2b1's indexed search, reached by no executed call,
+  the planner's answer) → the selection's
+  classes kept #865 (review 864's 2 and 3 with it) → in F2c #871, before #542. #792 landed F2b1 as the access's instance (`0d8768ae`); next-edits 339
   and 348 are low moves.
 - The guard's calls at the given (#829's attribution, accepted): #810's 45 s was a fixture mismatch, no landing
   multiplies; R5's own step recomputes 77's registration value, the goal choice and the pruning sets at every state
@@ -154,7 +156,7 @@ by a task of their own (Open 100).
 
 **Shape.** No build waits on a review task. The route's longest chain, 15 deep, runs OS2 #855 → #867 → #869 → K3 #825
 (the consolidation #832 beside it, after GT1a #837 → GT1b #839) → GT2 #843 → GT3 #876 (GT5 #845 beside it) → GT6 #878
-→ R7 #542 → #707 → #399 → #709 → the record #553 → #447 → #449 → #450; #861, #863 → #865 → #871 → the investigation
+→ R7 #542 → #707 → #399 → #709 → the record #553 → #447 → #449 → #450; #861 → #865 → #871 → the investigation
 #875, GT4 #841, I3b #817 and the rewrite brief (continuing #874) are spliced before #542, #547, #707 and #399 with slack
 against it.
 Nothing is added after the route's tail until it shortens (the status line gives the depths); the approval build (Open
@@ -162,7 +164,7 @@ Nothing is added after the route's tail until it shortens (the status line gives
 
 **Order** (the queue holds it; the planner's choice, a residual until the native answer to the selection problem
 exists, Q2): the slots are one pool, each free slot going to the first task in the queue that can start, every review
-right after its build. The running tasks first (OS2 #855, GT1a #837, #861, #863, I3b #817), then the rewrite brief
+right after its build. The running tasks first (OS2 #855, GT1a #837, #861, I3b #817), then the rewrite brief
 (continuing #874 while its session is warm), then by slack on the longest chain: #867 → #869, #865 → #871, GT1b #839,
 GT4 #841, the investigation #875; K3 #825, the consolidation #832, GT2 #843, GT3 #876, GT5 #845, W5 #847, GT6 #878; R7
 #542, #707, #399, #709, #547; the route in its chains'
@@ -399,7 +401,7 @@ under `.build/plans/plan-69/`, `plan-81/` and `plan-86/`.
   `Factor_Narrowed_Commitments`, `Factor_Narrowed_Productions` (R5f2, #774); controls in `Factor_Resolution_Controls`,
   `Factor_Commitment_Controls` and `Factor_Narrowed_Controls`.
 - **The resolver's states** (#683's addition): F2a `Factor_Shared_Patterns` (#697, #713), F2b1
-  `Factor_Indexed_Resolution` (#699; (c) #769; the access's instance #792), F2b2 (a) `Factor_Shared_Resolution` (#755) and (b)
+  `Factor_Indexed_Resolution` (#699; (c) #769; the access's instance #792; the pruning test through the node-call index and `positioned_first`, #863), F2b2 (a) `Factor_Shared_Resolution` (#755) and (b)
   `Factor_Search_Representations` with `Factor_Shared_Search` (#771: the search once over a representation, the shared
   instance's code equation); F2c `Factor_Shared_Commitments` (#701: R5's committed search over that representation, its
   projection R5's at every priority, the code equation admitting every goal); F2d (#810: `position_index_extend_code`,
@@ -549,9 +551,9 @@ planner searches for a theory before briefing a task that edits it.
 
 ## Now
 
-- **Under way**: OS2 #855, GT1a #837, #861, #863 and I3b #817 build; #874's proposal placed (#875–#879), #542 and #543
+- **Under way**: OS2 #855, GT1a #837, #861 and I3b #817 build; #874's proposal placed (#875–#879), #542 and #543
   rewritten from its files; the rewrite brief of #547, #707 and #399 continues #874.
-- **What the next events ask**: the hand-overs of OS2, GT1a, #861, #863 and I3b; the rewrite brief's files placed by
+- **What the next events ask**: the hand-overs of OS2, GT1a, #861 and I3b; the rewrite brief's files placed by
   edit (#547, #707, #399, their reviews where needed, and GT2 #843 if it is to state the forms' dependence on the table's
   calls alone), from #831's section (Q33 (d); #399's admission conditional on the table's validity, discharged by GT6's
   record `validation/given-table.json`), correction (15), #830's follow-ups and review 799's 3. GT6 asks the planner its

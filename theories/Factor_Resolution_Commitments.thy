@@ -1192,7 +1192,7 @@ lemma finite_resolution_select_unheld:
 
 lemma finite_resolution_select_construction:
   "finite_resolution_select_at pr \<kappa> P st = Select_Construction N \<Longrightarrow> N |\<subseteq>| resolution_nodes st"
-  by (auto simp: finite_resolution_select_at_def finite_first_nodes_def Let_def resolution_fset_simps split: if_splits)
+  by (auto simp: finite_resolution_select_in_def finite_first_nodes_def Let_def resolution_fset_simps split: if_splits)
 
 text \<open>
   A selection frames a committed search when every goal it selects is pending and every node it constructs is the
@@ -1251,7 +1251,7 @@ proof (induction n arbitrary: F B st st')
 next
   case (Suc n)
   let ?rec = "finite_committed_search_by sel \<kappa> K P n"
-  have distinct: "resolution_positions_distinct st" using Suc.prems(1) unfolding resolution_invariant_def by blast
+  have distinct: "resolution_positions_distinct st" using Suc.prems(1) unfolding resolution_invariant_in_def by blast
   show ?case
   proof (cases "finite_focus_pending F st={||}")
     case True
@@ -1316,57 +1316,7 @@ lemma finite_committed_search_found_held:
     resolution_registrations_held \<kappa> st'"
   using assms by (rule finite_committed_search_by_found_held[where sel="finite_committed_select \<kappa> K P", OF _ finite_resolution_select_at_framed finite_resolution_select_at_unheld])
 
-text \<open>A closed state's certificates are accepted: every found state of a search from a call's initial state is one.\<close>
-
-lemma finite_closed_state_proofs_accepted:
-  assumes I: "resolution_invariant P d t st" and closed: "resolution_pending st={||}"
-    and cert: "p |\<in>| finite_state_proofs st"
-  shows "finite_checks_schema_proof P p d t"
-proof -
-  obtain nd where nd: "nd |\<in>| resolution_nodes st" "resolution_node_position nd=[]"
-    and p: "p=finite_node_proof (fcard (resolution_nodes st)) (resolution_nodes st) nd"
-    using cert by (auto simp: finite_state_proofs_def resolution_fset_simps)
-  have root: "resolution_node_site nd=d" "resolution_node_call nd=finite_exact_term_pattern t"
-    using I nd unfolding resolution_invariant_def resolution_nodes_placed_def by blast+
-  have "fcard (resolution_reach (resolution_nodes st) nd) \<le> fcard (resolution_nodes st)"
-    by (rule fcard_mono) auto
-  from finite_node_proof_accepted[OF I closed nd(1) this] show ?thesis by (simp add: p root)
-qed
-
-section \<open>The result of a search, and the committed resolution per call\<close>
-
-text \<open>
-  The result R3 gives a search's outcome at a call (@{const finite_program_resolution}), stated once for any
-  outcome: resolved with the certificates the checker accepts, refuted when nothing was found and nothing
-  diagnosed, unresolved otherwise.
-\<close>
-
-definition finite_outcome_result ::
-    "('a,'s::linorder,'d,'c) finite_schema_system \<Rightarrow> 'd \<Rightarrow> finite_factor_term \<Rightarrow> ('a,'s,'d,'c) resolution_outcome \<Rightarrow>
-      ('a,'s,'d,'c) finite_resolution_result" where
-  "finite_outcome_result P d t R = (let C = ffUnion (fimage finite_state_proofs (resolution_found R));
-      A = ffilter (\<lambda>p. finite_checks_schema_proof P p d t) C in
-    if A\<noteq>{||} then Finite_Resolved A
-    else if resolution_diagnoses R={||} \<and> C={||} then Finite_Refuted
-    else Finite_Unresolved (resolution_diagnoses R |\<union>| fimage Resolution_Refused C))"
-
-lemma finite_program_resolution_outcome:
-  "finite_program_resolution \<kappa> P d t n = finite_outcome_result P d t (finite_resolution_search \<kappa> P n (finite_initial_state d t))"
-  by (simp add: finite_program_resolution_def finite_outcome_result_def Let_def)
-
-theorem finite_outcome_result_sound:
-  assumes res: "finite_outcome_result P d t R = Finite_Resolved C"
-  shows "C\<noteq>{||}" and "\<And>p. p |\<in>| C \<Longrightarrow> finite_checks_schema_proof P p d t"
-    and "(d,decode_finite_term t) \<in> positive_meaning (decode_finite_system P)"
-proof -
-  show nonempty: "C\<noteq>{||}" using res unfolding finite_outcome_result_def Let_def by (auto split: if_splits)
-  show accepted: "\<And>p. p |\<in>| C \<Longrightarrow> finite_checks_schema_proof P p d t"
-    using res unfolding finite_outcome_result_def Let_def by (auto split: if_splits)
-  from nonempty obtain p where "p |\<in>| C" by (metis all_not_fin_conv)
-  then have "checks_schema_proof (decode_finite_system P) (decode_finite_proof p) d (decode_finite_term t)"
-    using accepted by (simp only: finite_checks_schema_proof_exact)
-  then show "(d,decode_finite_term t) \<in> positive_meaning (decode_finite_system P)" by (rule schema_proof_sound)
-qed
+section \<open>The committed resolution per call\<close>
 
 text \<open>
   The committed resolution at a selection parameter: the result of the committed search at a selection. The per-call,
@@ -1410,7 +1360,7 @@ proof -
     show ?thesis by (rule finite_closed_state_proofs_accepted[OF I closed_s p])
   qed
   have all: "ffilter (\<lambda>p. finite_checks_schema_proof P p d t) ?C = ?C" using accepted by (auto simp: fset_eq_iff)
-  show ?thesis by (auto simp: finite_committed_resolution_by_def finite_outcome_result_def Let_def all)
+  show ?thesis by (auto simp: finite_committed_resolution_by_def finite_outcome_result_def finite_outcome_result_in_def finite_state_proofs_empty Let_def all)
 qed
 
 definition finite_committed_resolution ::
@@ -2742,7 +2692,7 @@ proof -
   have st': "st' = resolution_state_substitute \<sigma> (Resolution_State G N (resolution_witnesses st))"
     by (simp add: st0 \<sigma>_def G_def N_def)
   have nonode: "resolution_node_position m \<noteq> q'" if "m |\<in>| resolution_nodes st" for m
-    using I g that unfolding resolution_invariant_def resolution_positions_distinct_def by fastforce
+    using I g that unfolding resolution_invariant_in_def resolution_positions_distinct_def by fastforce
   have fresh: "\<not> resolution_placed st z" if "fst (fst z) = q'" for z
     using nonode that unfolding resolution_placed_def by auto
   have node_at: "\<exists>nd. nd |\<in>| N \<and> resolution_node_position nd = q'"
@@ -3389,7 +3339,7 @@ next
             case nq: False
             have gs: "s1 |\<in>| finite_goal_successors P st g"
               using s1 nq
-              by (auto simp del: finite_goal_successors.simps simp: finite_committed_successors_def Resolution_Call_Goal)
+              by (auto simp del: finite_goal_successors_in.simps simp: finite_committed_successors_def Resolution_Call_Goal)
             show ?thesis
             proof (cases "finite_reusable st g")
               case True
@@ -3662,7 +3612,7 @@ proof -
   have step: "?st' = resolution_state_substitute ?\<sigma> (Resolution_State (resolution_pending st) (resolution_nodes st) W)"
     by (simp add: finite_construction_step_def W_def Let_def)
   have clause: "((resolution_node_site nd,resolution_node_clause nd),resolution_node_schema nd) |\<in>| finite_system_clauses P"
-    using I nd unfolding resolution_invariant_def resolution_nodes_placed_def resolution_node_linked_def by blast
+    using I nd unfolding resolution_invariant_in_def resolution_nodes_placed_in_def resolution_node_linked_in_def by blast
   have exact_vars: "finite_pattern_variables (finite_exact_term_pattern v) = {||}" for v :: finite_factor_term
     by (induction v) auto
   have vars\<sigma>: "fset (finite_pattern_variables (?\<sigma> y)) \<subseteq> {y}" for y
@@ -3760,7 +3710,7 @@ next
   case (Suc n)
   let ?rec = "finite_committed_search_by sel \<kappa> K P n"
   have I: "resolution_invariant P d t st" and H: "resolution_registrations_held \<kappa> st" by (rule Suc.prems)+
-  have distinct: "resolution_positions_distinct st" using I unfolding resolution_invariant_def by blast
+  have distinct: "resolution_positions_distinct st" using I unfolding resolution_invariant_in_def by blast
   show ?case
   proof (cases "finite_focus_pending (Some q) st={||}")
     case True
@@ -3840,7 +3790,7 @@ next
             case nq: False
             have gs: "s1 |\<in>| finite_goal_successors P st g"
               using s1 nq
-              by (auto simp del: finite_goal_successors.simps simp: finite_committed_successors_def Resolution_Call_Goal)
+              by (auto simp del: finite_goal_successors_in.simps simp: finite_committed_successors_def Resolution_Call_Goal)
             show ?thesis
             proof (cases "finite_reusable st g")
               case True
@@ -3907,7 +3857,7 @@ proof -
     using reg by (cases z) (auto simp: finite_registered_at_def)
   have pl: "resolution_placed st z" using m za unfolding resolution_placed_def by auto
   have clause: "((resolution_node_site m,resolution_node_clause m),resolution_node_schema m) |\<in>| finite_system_clauses P"
-    using I m unfolding resolution_invariant_def resolution_nodes_placed_def resolution_node_linked_def by blast
+    using I m unfolding resolution_invariant_in_def resolution_nodes_placed_in_def resolution_node_linked_in_def by blast
   have nf: "z \<notin> finite_focus_variables ?q st"
   proof
     assume "z \<in> finite_focus_variables ?q st"
@@ -4368,7 +4318,7 @@ proof -
   proof -
     have "resolution_root_goal d t |\<in>| resolution_pending st \<or>
         (\<exists>nd. nd |\<in>| resolution_nodes st \<and> resolution_node_position nd = [])"
-      using I unfolding resolution_invariant_def resolution_root_held_def by blast
+      using I unfolding resolution_invariant_in_def resolution_root_held_def by blast
     then show ?thesis
     proof
       assume "resolution_root_goal d t |\<in>| resolution_pending st"
@@ -4379,19 +4329,19 @@ proof -
       assume "\<exists>nd. nd |\<in>| resolution_nodes st \<and> resolution_node_position nd = []"
       then obtain nd where nd: "nd |\<in>| resolution_nodes st" "resolution_node_position nd = []" by blast
       have "resolution_node_call nd = finite_exact_term_pattern t"
-        using I nd unfolding resolution_invariant_def resolution_nodes_placed_def by blast
+        using I nd unfolding resolution_invariant_in_def resolution_nodes_placed_in_def by blast
       then show ?thesis using rv nd unfolding resolution_root_value_def by (auto simp: resolution_value_ground)
     qed
   qed
   have goals: "resolution_value \<theta>' p = t" if "Resolution_Call_Goal [] r e p |\<in>| resolution_pending s" for r e p
   proof -
     have "Resolution_Call_Goal [] r e p = resolution_root_goal d t"
-      using Is that unfolding resolution_invariant_def resolution_goals_placed_def by fastforce
+      using Is that unfolding resolution_invariant_in_def resolution_goals_placed_def by fastforce
     then show ?thesis by (simp add: resolution_root_goal_def resolution_value_ground)
   qed
   have nodes: "resolution_value \<theta>' (resolution_node_call nd) = t"
     if "nd |\<in>| resolution_nodes s" "resolution_node_position nd = []" for nd
-    using Is that unfolding resolution_invariant_def resolution_nodes_placed_def by (auto simp: resolution_value_ground)
+    using Is that unfolding resolution_invariant_in_def resolution_nodes_placed_in_def by (auto simp: resolution_value_ground)
   show ?thesis unfolding resolution_root_value_def v using goals nodes by blast
 qed
 
@@ -4480,7 +4430,7 @@ proof -
       and s': "s' |\<in>| finite_committed_successors K P F s g"
     have I: "resolution_invariant P d t s" and H: "resolution_registrations_held \<kappa> s" using J by blast+
     have pending: "g |\<in>| resolution_pending s" using selected(1)[OF sel g] finite_focus_pending_subset by blast
-    have distinct: "resolution_positions_distinct s" using I unfolding resolution_invariant_def by blast
+    have distinct: "resolution_positions_distinct s" using I unfolding resolution_invariant_in_def by blast
     show "resolution_invariant P d t s' \<and> resolution_registrations_held \<kappa> s'"
       using finite_committed_successor_invariant[OF I pending s']
         finite_committed_successor_held[OF distinct H pending selected(2)[OF sel g] s'] by blast
@@ -4710,9 +4660,9 @@ proof
     have "resolution_invariant P d t st' \<and> finite_focus_pending None st' = {||}"
       by (rule finite_committed_search_by_found[OF \<kappa> goals I0 st'])
     then obtain nd where nd: "nd |\<in>| resolution_nodes st'" "resolution_node_position nd = []"
-      by (auto simp: resolution_invariant_def resolution_root_held_def)
+      by (auto simp: resolution_invariant_in_def resolution_root_held_def)
     then have "finite_node_proof (fcard (resolution_nodes st')) (resolution_nodes st') nd |\<in>| finite_state_proofs st'"
-      by (auto simp: finite_state_proofs_def)
+      by (auto simp: finite_state_proofs_def finite_state_proofs_in_def)
     then have "?C \<noteq> {||}" using resolution_union_nonempty[of st' "resolution_found ?R" finite_state_proofs] st' by auto
     then show False using res refutes by (simp add: finite_resolution_refutes_def)
   next

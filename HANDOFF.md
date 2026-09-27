@@ -355,7 +355,9 @@ REASONING_REUSE.md, how each went in `PLANNING_LOG.md`.
   `Development_Given_Productions`, `Development_Given_Installed_Productions` (the input record at 526 and 561,
   12's production present at the installed lookup socket, #881); liveness
   `Development_Socket_Liveness_Execution`.
-- **The least witnesses**: `Factor_Least_Collections`, `Factor_Least_Witness_Facts`, `Factor_Construction_Holders`,
+- **The least witnesses**: `Factor_Least_Collections` (since W5 #847 W2's queries at a query's parameters — table,
+  priority, commitment — their completeness under the named premise `finite_query_search_keeps`, discharged at the plain
+  instance, VK2's at the given's committing instance), `Factor_Least_Witness_Facts`, `Factor_Construction_Holders`,
   `Factor_Least_Witness_Registrations`, `Development_Given_Registrations`, `Development_Asked_Registrations`,
   `Development_First_Request_Registrations`, `Development_Rooted_Registrations`.
 - **The clause match**: `Factor_Finite_Schema_Matching`, `Factor_Varied_Constructions`, `Factor_Varied_Declarations`,
@@ -442,7 +444,7 @@ a theory before briefing a task that edits it.
 - **Under way**: D1c #901 continued from its tree, withdrawing its kept held goals and construction nodes (q162
   answered (b): as built they made the step slower at every scale, `.build/tasks/901/measurement.md`; the counts, the
   pruned index, the class trees and `enter_goal` land; keeping them waits on #875's figures; D1b #903, FI #892 and
-  #875 mailed); W5 #847 (mailed task 918's answer 3); the brief of task 918's builds; FI #892 after D1c.
+  #875 mailed); the brief #919 of task 918's builds (review 848's follow-ups 1–6 mailed to it); FI #892 after D1c.
 - **Task 918 accepted** (`.build/tasks/918/verdict.md`): the root-kept restriction, the valued exchange and the lifting
   with a two-flag outcome beside WC2a's; its builds briefed together — VK1 first (startable at once), GT2b #889's pass
   valued and divided by theory where beyond its room, VK2 after GT2b and W5, before #399 (mailed); W5 hands over its

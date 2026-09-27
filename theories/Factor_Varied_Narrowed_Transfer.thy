@@ -364,11 +364,16 @@ definition productions_carry_uniquely ::
   "productions_carry_uniquely P N PD \<longleftrightarrow> (\<forall>e S s keep Vp Vh R. (e,S,s,keep,Vp,Vh) |\<in>| declared_sockets PD \<longrightarrow>
     declared_production PD e S s = Some R \<longrightarrow> (\<exists>R'. registrations_varied P N R = {|R'|}))"
 
-theorem narrowed_productions_declared_varied:
+text \<open>
+  The static premise where the record narrows only within a set of sites whose sources are unique: a carried socket
+  whose class is not every answer has a source narrowing it, at a site of the set, where the sources are one.
+\<close>
+
+theorem narrowed_productions_declared_varied_within:
   fixes P :: "('a,'s::linorder,'d,'c) finite_schema_system" and N :: "('b,'t::linorder,'d,'e) finite_schema_system"
     and PD :: "('a,'s,'d,'v) produced_declarations"
   assumes Pf: "finite_system_formed P" and Nf: "finite_system_formed N"
-    and unique: "finite_varied_sources_unique P N"
+    and unique: "finite_varied_sources_unique_at A P N" and within: "narrowings_within A PD"
     and declared: "narrowed_productions_declared PD" and carry: "productions_carry_uniquely P N PD"
   shows "narrowed_productions_declared (produced_declarations_varied P N PD)"
   unfolding narrowed_productions_declared_def
@@ -383,12 +388,13 @@ proof (intro allI impI)
   have m1: "(e,S,s,keep,Vp,Vh) |\<in>| declared_sockets PD" using m(1) by simp
   have src: "(S,s) |\<in>| varied_socket_sources P N (declared_sockets PD) e T t"
     unfolding varied_socket_sources_member using m1 m(2-6) by blast
-  have agree: "varied_narrowings_agree P N PD" by (rule varied_narrowings_agree_unique[OF Pf Nf unique])
+  have agree: "varied_narrowings_agree P N PD" by (rule varied_narrowings_agree_within[OF Pf Nf unique within])
   have K: "declared_narrowing (produced_declarations_varied P N PD) e T t = declared_narrowing PD e S s"
     using narrowing_varied_source[OF agree src] by (simp add: produced_declarations_varied_fields)
-  have "declared_narrowing PD e S s \<noteq> (\<lambda>_. True)" using nt K by simp
-  then obtain R where R: "declared_production PD e S s = Some R"
-    using declared m1 unfolding narrowed_productions_declared_def by blast
+  have n: "declared_narrowing PD e S s \<noteq> (\<lambda>_. True)" using nt K by simp
+  have eA: "e \<in> A" using within m1 n unfolding narrowings_within_def by blast
+  obtain R where R: "declared_production PD e S s = Some R"
+    using declared m1 n unfolding narrowed_productions_declared_def by blast
   obtain R' where R': "registrations_varied P N R = {|R'|}"
     using carry m1 R unfolding productions_carry_uniquely_def by blast
   interpret matched: finite_schema_matched S T f h
@@ -404,7 +410,7 @@ proof (intro allI impI)
           "((e,c1),S') |\<in>| finite_system_clauses P" "s' \<in> schema_sockets (decode_finite_schema S')"
           "((e,c1'),T) |\<in>| finite_system_clauses N" "finite_schema_match S' T = Some (f',h')" "t = h' s'"
         using z[unfolded zs varied_socket_sources_member] by blast
-      have SS: "S' = S" using unique m(2,4,5) mb(2,5) unfolding finite_varied_sources_unique_def by blast
+      have SS: "S' = S" using unique eA m(2,4,5) mb(2,5) unfolding finite_varied_sources_unique_at_def by blast
       have hh: "h' = h" using mb(5) m(5) SS by simp
       have "s' = s" by (rule inj_onD[OF matched.sockets]) (use m mb SS hh in auto)
       then show "z |\<in>| {|(S,s)|}" using zs SS by simp
@@ -418,6 +424,16 @@ proof (intro allI impI)
   then show "declared_production (produced_declarations_varied P N PD) e T t \<noteq> None"
     by (simp add: produced_declarations_varied_fields)
 qed
+
+theorem narrowed_productions_declared_varied:
+  fixes P :: "('a,'s::linorder,'d,'c) finite_schema_system" and N :: "('b,'t::linorder,'d,'e) finite_schema_system"
+    and PD :: "('a,'s,'d,'v) produced_declarations"
+  assumes Pf: "finite_system_formed P" and Nf: "finite_system_formed N"
+    and unique: "finite_varied_sources_unique P N"
+    and declared: "narrowed_productions_declared PD" and carry: "productions_carry_uniquely P N PD"
+  shows "narrowed_productions_declared (produced_declarations_varied P N PD)"
+  by (rule narrowed_productions_declared_varied_within[OF Pf Nf
+    unique[unfolded finite_varied_sources_unique_everywhere] narrowings_within_everywhere declared carry])
 
 section \<open>The narrowed frames along the match\<close>
 

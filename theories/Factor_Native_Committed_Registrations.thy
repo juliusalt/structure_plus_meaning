@@ -1179,11 +1179,22 @@ text \<open>
 locale relocated_registrations_in = relocated_registrations E P Q pu pr N g Inst F u \<kappa> m ND \<Phi> corr D' \<nu> m'
   for E P Q pu pr N g Inst F u \<kappa> m ND \<Phi> corr D' \<nu> m' +
   fixes \<Theta> :: "(local_address,local_address,local_address option definition_site,local_address) resolution_table"
-  assumes installed_lifts: "finite_construction_lifts_in \<Theta> (\<lambda>_. False)
+  assumes installed_true: "finite_table_true Inst \<Theta>"
+begin
+
+text \<open>
+  The block's two premises at the table, each rc's at the installed program (task 942): the construction premise by
+  the complete construction's lifting at the table, the exchange by the installed record's
+  (@{text relocated_registrations.installed_exchanges_true}).
+\<close>
+
+lemma installed_lifts: "finite_construction_lifts_in \<Theta> (\<lambda>_. False)
       (finite_varied_construction (finite_rename_system (finite_program_coordinates E (finite_system_definitions P)
         (finite_system_definitions Q) g) Q) Inst (finite_relocated_construction (finite_program_coordinates E
         (finite_system_definitions P) (finite_system_definitions Q) g) Q \<kappa>)) Inst"
-    and installed_exchanges: "\<And>prio. finite_commitment_exchanges_at_in \<Theta> prio (\<lambda>_. False)
+  by (rule finite_construction_complete_lifts_in[OF committed_registrations.complete[OF registrations_installed]])
+
+lemma installed_exchanges: "finite_commitment_exchanges_at_in \<Theta> prio (\<lambda>_. False)
       (finite_varied_construction (finite_rename_system (finite_program_coordinates E (finite_system_definitions P)
         (finite_system_definitions Q) g) Q) Inst (finite_relocated_construction (finite_program_coordinates E
         (finite_system_definitions P) (finite_system_definitions Q) g) Q \<kappa>))
@@ -1192,7 +1203,7 @@ locale relocated_registrations_in = relocated_registrations E P Q pu pr N g Inst
         (frames_varied (finite_rename_system (finite_program_coordinates E (finite_system_definitions P)
           (finite_system_definitions Q) g) Q) Inst (frames_relocated (finite_program_coordinates E
           (finite_system_definitions P) (finite_system_definitions Q) g) \<Phi>))) Inst"
-begin
+  by (rule committed_registrations.exchanges_at_true[OF registrations_installed installed_true])
 
 lemma registrations_installed_in:
   "committed_registrations_in (finite_varied_construction goal Inst (finite_relocated_construction placement Q \<kappa>))
@@ -1223,12 +1234,10 @@ lemma installed_exchanges_true:
 
 lemma registrations_installed_true:
   assumes true: "finite_table_true Inst \<Theta>"
-    and lifts: "finite_construction_lifts_in \<Theta> (\<lambda>_. False)
-      (finite_varied_construction goal Inst (finite_relocated_construction placement Q \<kappa>)) Inst"
   shows "committed_registrations_in (finite_varied_construction goal Inst (finite_relocated_construction placement Q \<kappa>))
     Inst m' (produced_declarations_varied goal Inst D') (frames_varied goal Inst (frames_relocated placement \<Phi>))
     (corr \<circ> inv_into (declared_sites (resolution_declarations.truncate ND)) placement) \<Theta>"
-  by (rule committed_registrations_in_true[OF registrations_installed true lifts])
+  by (rule committed_registrations_in_true[OF registrations_installed true])
 
 end
 

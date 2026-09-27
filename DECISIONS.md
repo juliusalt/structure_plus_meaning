@@ -19905,7 +19905,12 @@ Task 613, from #566's review (follow-ups 2, 3, 6), after F1 #693 and F3 #695.
   call's initial state); the committed forms are their instances at the committed selection.
 - R4's `finite_resolution_lifting_by` keeps its induction (the planner, q141): deriving it from the committed lifting
   needs the committed search below Completeness, a move of Commitments' views and committed-search sections that #611,
-  #777, #779 and #701 meet; it is the follow-up task 613's result states.
+  #777, #779 and #701 meet; it is the follow-up task 613's result states. [Task 793 moved them into
+  `Factor_Resolution_Lifting`, below Completeness; the derivation there meets the lifting's premise
+  `finite_ground_founds_by`, added after task 613 with the first join below a ground focus, which is not vacuous at no
+  commitment and is discharged only at the ground call's invariant with the holders invariant (q150).]
+
+Recorded 2026-09-26 (task 613).
 
 ## The given's one record is a keyed join: the plain record overridden at 48's narrowed sockets' keys
 

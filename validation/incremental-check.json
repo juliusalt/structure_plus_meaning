@@ -1,6 +1,6 @@
 {
- "base_receipt_sha256": "ac3c76b354799eaf6d1e915cf3ede50848fb3208c2f5bf4d23f95dad93176053",
- "checked_content_sha256": "73617835b49e3ae4c9cc271a687fa6898b198ced60bd1029a7d5f00694832ee3",
+ "base_receipt_sha256": "d33a4488c65a8dee97edfc19917d8654355364f17c1776b4951f923686489ff3",
+ "checked_content_sha256": "e1e0ad57236215ebfd2679ede2519954bb51ab0260d706b90ab21330257ccdd7",
  "host_tests": {
   "kernel": {
    "exit_code": 0,
@@ -17,78 +17,24 @@
    "ran": 309,
    "skipped": 0,
    "tail": [
-    "{\"status\": \"failed\", \"error\": \"[Errno 2] No such file or directory: '/tmp/tmpyf0fm2ia/no-project/theories/Development_Answer_a2d8d6490cc2.thy'\"}"
+    "{\"status\": \"failed\", \"error\": \"[Errno 2] No such file or directory: '/tmp/tmp1qi9tn3s/no-project/theories/Development_Answer_a2d8d6490cc2.thy'\"}"
    ]
   }
  },
  "phases": {
-  "base_and_impact": 0.42,
+  "base_and_impact": 0.4,
   "execution_impact": 0.0,
   "export": 0.0,
-  "proof": 1491.98,
-  "recipe_impact": 0.45,
-  "recipes_and_host_tests": 11.29
+  "proof": 104.5,
+  "recipe_impact": 0.4,
+  "recipes_and_host_tests": 11.35
  },
  "rebuilt_theories": [
-  "Development_Asked_Registrations",
-  "Development_First_Request_Registrations",
-  "Development_Given_Carried_Declarations",
   "Development_Given_Checks_Execution",
-  "Development_Given_Declarations",
   "Development_Given_Declarations_Execution",
-  "Development_Given_Execution_Fixtures",
-  "Development_Given_Frames",
-  "Development_Given_Installed_Declarations",
-  "Development_Given_Installed_Productions",
-  "Development_Given_Modes",
-  "Development_Given_Modes_Execution",
-  "Development_Given_Productions",
-  "Development_Given_Productions_Execution",
-  "Development_Given_Registrations",
-  "Development_Installed_Presentations",
-  "Development_Installed_Presentations_Execution",
-  "Development_Rooted_Registrations",
-  "Development_Socket_Liveness_Execution",
-  "Factor_Access_Commitments",
-  "Factor_Artifact_Citation_Declarations",
+  "Development_Given_Table",
   "Factor_Check_Controls",
-  "Factor_Commitment_Controls",
-  "Factor_Committed_Registrations",
-  "Factor_Definition_Reading_Declarations",
-  "Factor_Framed_Commitment_Index",
-  "Factor_Input_Production_Controls",
-  "Factor_Input_Productions",
-  "Factor_Instantiation_Declarations",
-  "Factor_Least_Witness_Registrations",
-  "Factor_Material_Reading_Controls",
-  "Factor_Mode_Controls",
-  "Factor_Narrowed_Commitments",
-  "Factor_Narrowed_Controls",
-  "Factor_Narrowed_Productions",
-  "Factor_Narrowed_Sockets",
-  "Factor_Native_Committed_Registrations",
-  "Factor_Producer_Correspondences",
-  "Factor_Reader_Witness_Registrations",
-  "Factor_Resolution_Carriers",
-  "Factor_Resolution_Checks",
-  "Factor_Resolution_Commitments",
-  "Factor_Resolution_Controls",
-  "Factor_Resolution_Graph_Checks",
-  "Factor_Resolution_Material_Discharge",
-  "Factor_Resolution_Modes",
-  "Factor_Resolution_Producer_Discharge",
-  "Factor_Resolution_Socket_Discharges",
-  "Factor_Resolution_Views",
-  "Factor_Root_Family_Declarations",
-  "Factor_Row_Selection_Socket_Declarations",
-  "Factor_Row_Value_Socket_Declarations",
-  "Factor_Schema_Instantiation_Declarations",
-  "Factor_Shared_Commitments",
-  "Factor_Union_Declarations",
-  "Factor_Varied_Constructions",
-  "Factor_Varied_Declarations",
-  "Factor_Varied_Narrowed_Sockets",
-  "Factor_Varied_Narrowed_Transfer"
+  "Factor_Resolution_Checks"
  ],
  "recipes": {
   "allocated-environments": {
@@ -248,19 +194,19 @@
    "status": "unchanged"
   }
  },
- "reused_theories": 1921,
- "seconds": 1517.63,
+ "reused_theories": 1976,
+ "seconds": 122.09,
  "source_checks": {
   "missing_theory_files": [],
   "proof_escape_matches": [],
   "refusals": [],
-  "theory_count": 1980,
+  "theory_count": 1981,
   "unlisted_theories": []
  },
  "status": "accepted",
- "theories": 1980,
+ "theories": 1981,
  "validation_inputs": {
-  "ROOT": "04f68b1b6d100cf11ea7cace1c02dd005acb5ec5667597d723a84731fefe69dd",
+  "ROOT": "378926a24a37a32bd4fd8e667a6142f83cc4af0604e8abc191731c173df53335",
   "tools/check.py": "71c91573138e10d317e5d920f5776af39687d313836a5552bbb0ec1d2d580381",
   "tools/incremental_check.py": "7f57110d9b4e04a7eb01215c21ea098fffcff71410454a248f6eb122909a1d98"
  }

@@ -234,6 +234,23 @@ said "ok"):
 > Are these options consistent with the following - checkers do not solve anything they only check if what is provided
 > is what is expected - the difficult part of producing is not done by the checker
 
+On what restricts a notion's implementation, the owner answered owner question Q33 of the ledger on 2026-09-27. Q33,
+asked that day by plan-115 from design #831, set out the first problem's route at the given's size — the given's table
+of certified calls produced once at about 31–34 million resolution states, 27.3 million of them 11's derivation over the
+given's 261 artifact rows, 87 % of which is site 8's walk over an artifact's carrier rows, and every candidate's judgment
+about 2–5 million — and three courses that would cut these, each changing a given reader or the asked relation, "which
+your answer to Q28 keeps as installed": (a) site 8's lookup made an index, (b) 26's key uniqueness checked over a sorted
+presentation, (c) the asked relation reading a candidate as the given's value and its additions; and beside them (d),
+the table's calls held true at the asked relation's and the first request's installations through the numbered table's
+check and the installation's proved meaning correspondence; and asked: "do you want (a), (b) or (c) taken, and is (d)
+acceptable?" The answer (2026-09-27 12:46, from the console):
+
+> The summary line under Q28 was written by an agent and said "…the least witnesses are produced outside the checker and
+> checked, the given's readers unchanged…" - those were not my words. I never limited the actual implementation of any
+> notion in any way except that is has to correctly implement the notion. The key is that a notions definition is
+> completely independent and prior to the notions implementation, but there is no requirement that keeps a notions
+> implementation restricted arbitrarily because "it was already installed".
+
 ## The development process
 
 There is one process, and every problem goes through it:
@@ -1263,6 +1280,23 @@ certificate, a derivation in the given's readers, is checked by the existing fin
 the given's check alone; a refusal at a least witness rests on the production's completeness, proved once per
 registration; elsewhere a failed check leaves the call unresolved. The guard's package sockets and the first request are
 then decided by the given's own clauses.
+
+[Marked by task 928 after the owner's answer to Q33 (2026-09-27): "the given's readers check it exactly as installed"
+above is not the owner's; it came from a summary of Q28 the owner disowned. The owner's words at Q28 stand: a checker
+only checks whether what is provided is what is expected, and the difficult part of producing is not the checker's. The
+given's readers check a provided witness as they stand, each an implementation of its notion.]
+
+The owner's answer to owner question Q33 (2026-09-27 12:46), quoted under [Owner directions](#owner-directions), is that
+nothing restricts a notion's implementation but implementing the notion correctly: its definition is independent of and
+prior to its implementation, and being installed restricts nothing. This paragraph is the plan's reading, generated and
+without owner authority. DECISIONS.md "The given's readers and the asked relation are implementations of their notions:
+…" decides Q33's courses. The asked relation reads a candidate by its additions over the given, its four requirements
+unchanged on the candidate the additions present: the given's calls are the table's, decided once, a candidate's part is
+linear in what it adds, and the posing is recorded again over the new asked relation. Site 8's lookup stays: over the
+present presentations no implementation exact to its notions is sub-quadratic, and the native forms that would be — an
+address-form material observation, or atoms keyed by structure in the artifact's data class — change a notion, the
+planner's. 26's key uniqueness stays: a sorted class is not closed under use permutations, and an index would save only
+at the table once the candidate is read by its additions.
 
 Each tagged presentation still in use stays exact and replaceable and is recorded as a use of octets as structure
 until it is retired. The order and the bound on the HOL loop are the owner's (Q7, 2026-09-24), and so are the first

@@ -351,11 +351,13 @@ qed
 
 lemmas resolution_pattern_goal_ancestor_node = resolution_pattern_goal_ancestor_node_in[where \<Theta>=resolution_empty_table]
 
-lemma resolution_goal_ancestor_node:
-  assumes I: "resolution_invariant P d t st" and h: "h |\<in>| resolution_pending st"
+lemma resolution_goal_ancestor_node_in:
+  assumes I: "resolution_invariant_in \<Theta> P d t st" and h: "h |\<in>| resolution_pending st"
     and before: "resolution_before a (resolution_goal_position h)"
   shows "\<exists>nd. nd |\<in>| resolution_nodes st \<and> resolution_node_position nd = a"
-  using assms unfolding resolution_invariant_pattern by (rule resolution_pattern_goal_ancestor_node)
+  using assms unfolding resolution_invariant_pattern_in by (rule resolution_pattern_goal_ancestor_node_in)
+
+lemmas resolution_goal_ancestor_node = resolution_goal_ancestor_node_in[where \<Theta>=resolution_empty_table]
 
 lemma resolution_pattern_call_goal_no_node_in:
   assumes I: "resolution_pattern_invariant_in \<Theta> P d \<pi> st" and g: "Resolution_Call_Goal q r e p |\<in>| resolution_pending st"
@@ -365,11 +367,13 @@ lemma resolution_pattern_call_goal_no_node_in:
 
 lemmas resolution_pattern_call_goal_no_node = resolution_pattern_call_goal_no_node_in[where \<Theta>=resolution_empty_table]
 
-lemma resolution_call_goal_no_node:
-  assumes I: "resolution_invariant P d t st" and g: "Resolution_Call_Goal q r e p |\<in>| resolution_pending st"
+lemma resolution_call_goal_no_node_in:
+  assumes I: "resolution_invariant_in \<Theta> P d t st" and g: "Resolution_Call_Goal q r e p |\<in>| resolution_pending st"
     and nd: "nd |\<in>| resolution_nodes st"
   shows "resolution_node_position nd \<noteq> q"
-  using assms unfolding resolution_invariant_pattern by (rule resolution_pattern_call_goal_no_node)
+  using assms unfolding resolution_invariant_pattern_in by (rule resolution_pattern_call_goal_no_node_in)
+
+lemmas resolution_call_goal_no_node = resolution_call_goal_no_node_in[where \<Theta>=resolution_empty_table]
 
 section \<open>A support of a state\<close>
 
@@ -2167,18 +2171,20 @@ lemma finite_committed_successors_focus_in:
   "finite_committed_successors_in \<Theta> K P (Some q) st (Resolution_Call_Goal q r e p) = finite_call_successors P st q r e p"
   by (simp add: finite_committed_successors_in_def)
 
-lemma finite_committed_successor_invariant:
-  assumes I: "resolution_invariant P d t st" and pending: "g |\<in>| resolution_pending st"
-    and s: "s |\<in>| finite_committed_successors K P F st g"
-  shows "resolution_invariant P d t s"
+lemma finite_committed_successor_invariant_in:
+  assumes I: "resolution_invariant_in \<Theta> P d t st" and pending: "g |\<in>| resolution_pending st"
+    and s: "s |\<in>| finite_committed_successors_in \<Theta> K P F st g"
+  shows "resolution_invariant_in \<Theta> P d t s"
   using s
-proof (cases rule: finite_committed_successors_cases)
+proof (cases rule: finite_committed_successors_cases_in)
   case goal
-  then show ?thesis by (rule resolution_goal_step[OF I pending])
+  then show ?thesis by (rule resolution_goal_step_in[OF I pending])
 next
   case (focus q r e p)
-  show ?thesis by (rule resolution_call_step[OF I pending[unfolded focus(1)] focus(3)])
+  show ?thesis by (rule resolution_call_step_in[OF I pending[unfolded focus(1)] focus(3)])
 qed
+
+lemmas finite_committed_successor_invariant = finite_committed_successor_invariant_in[where \<Theta>=resolution_empty_table]
 
 lemma no_commitment_successors_in [simp]:
   "finite_committed_successors_in \<Theta> no_commitment P None st g = finite_goal_successors_in \<Theta> P st g"
@@ -2350,17 +2356,19 @@ next
   qed
 qed
 
-lemma finite_produced_state_invariant:
-  assumes I: "resolution_invariant P d t st"
-  shows "resolution_invariant P d t (finite_produced_state K F st g)"
+lemma finite_produced_state_invariant_in:
+  assumes I: "resolution_invariant_in \<Theta> P d t st"
+  shows "resolution_invariant_in \<Theta> P d t (finite_produced_state K F st g)"
 proof (cases rule: finite_produced_state_cases[of K F st g])
   case unchanged
   then show ?thesis using I by simp
 next
   case (produced \<sigma>)
   have "finite_pattern_formed (\<sigma> x)" for x using produced(2)[of x] by auto
-  then show ?thesis unfolding produced(1) by (rule resolution_invariant_substitute[OF I])
+  then show ?thesis unfolding produced(1) by (rule resolution_invariant_substitute_in[OF I])
 qed
+
+lemmas finite_produced_state_invariant = finite_produced_state_invariant_in[where \<Theta>=resolution_empty_table]
 
 text \<open>
   One barring rule for every committed step (task 621, q112): a committed goal, a committed material premise and a

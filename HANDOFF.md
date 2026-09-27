@@ -119,7 +119,9 @@ pending, so the framed test at 55.2/2 and 55.2/3 fails for good and the inner un
 order, not a step's cost; its prototype waiting class refutes depth 2 in 4,806 selections. The design D2 #907 decides
 that class (a correction of F1 and the modes), its builds before #542 and #547 (#707 and #399 through #542), with
 review 828's follow-up 1 and `given_union_control`'s revision; review 828's follow-ups 3–5 (the committed trace out of a chain of three evaluating
-theories, about 90 s a check) are the fix #898.
+theories, about 90 s a check) were the fix #898, landed (`ae6ded12`: `committed_trace` in `Factor_Committed_Traces`,
+which evaluates nothing); review 898's 1 went to #887, its 2 and 3 are the fix #908 (no execution theory importing
+another, one evaluation per theory), its 4 to D2 (the trace at a margin once the order moves the course).
 
 **Retired** on #376's and #378's entries: the decomposition line (#325–#334), N1a, N1b, N3a, N3b, N4a, N4b, #371, #377,
 the designation by locus (#169, #170), the index form's retirement (#92, #93), the machinery's native verification
@@ -134,7 +136,8 @@ under Open and in `.build/plans/next-edits.md`.
 #876 → GT6 #878 → R7 #542 → #707 → #399 → #709 → #553 → #447 → #449 → #450, and GT2a #843 → GT2c #888 → D1d → … as long,
 D1's builds and GT2's division spliced as detail; nothing is added after its tail until it shortens (the approval build,
 Open 142, waits for that). The queue is the planner's choice, a residual until the selection problem's native answer
-(Q2): running tasks first, the design D2 #907, GT2a's review, D1c, D1a, GT2c, D1b, FI and D1d each with its review,
+(Q2): running tasks first, the design D2 #907, the fix #908, GT2a's review, D1c, D1a, GT2c, D1b, FI and D1d each with
+its review,
 GT2b, #875, the route in
 its chains' order, the consolidation #887 after GT6's review (nothing waits on it). Word changes are serialized; none is
 queued.
@@ -406,9 +409,10 @@ a theory before briefing a task that edits it.
 
 ## Now
 
-- **Under way**: GT2a #843, continued from its tree (review 844's fix made probe-clean, its hand-over (12)); the fix #898
-  (review 828's 3–5); D1c #901 and D1a #899; the design D2 #907 (F1's waiting class, #896's finding); FI #892 after D1c
-  (review 891's 3 and 4, plan-127's mail); GT2c #888 and GT2b #889 after GT2a, each mailed review 844's follow-up.
+- **Under way**: GT2a #843, continued from its tree (review 844's fix made probe-clean, its hand-over (12)); D1c #901
+  and D1a #899; the design D2 #907 (F1's waiting class, #896's finding; review 898's 4 mailed); the fix #908 (review
+  898's 2–3); FI #892 after D1c (review 891's 3 and 4, plan-127's mail); GT2c #888 and GT2b #889 after GT2a, each mailed
+  review 844's follow-up.
 - **What the next events ask**: GT2a's hand-over (its item (12)): what GT2b and GT2c consume, and whether it stated the
   check forms' definitions at a table (GT3 stays after GT2c through D1d, which edits `Factor_Resolution_Checks` after
   it); GT2c's answer on

@@ -85,6 +85,19 @@ abbreviation finite_moded_resolution ::
       'd \<Rightarrow> finite_factor_term \<Rightarrow> nat \<Rightarrow> ('a,'s,'d,'c) finite_resolution_result" where
   "finite_moded_resolution \<kappa> K D M P \<equiv> finite_committed_resolution_by (finite_moded_select \<kappa> K D M P) \<kappa> K P"
 
+text \<open>The moded resolution at a table (GT2a (1)): today's is its instance at the empty table.\<close>
+
+abbreviation finite_moded_resolution_in ::
+    "('a,'s,'d,'c) resolution_table \<Rightarrow> ('a,'s::linorder,'d,'c) finite_witness_construction \<Rightarrow>
+      ('a,'s,'d,'c) resolution_commitment \<Rightarrow> ('a,'s,'d) resolution_declarations \<Rightarrow> 'd resolution_modes \<Rightarrow>
+      ('a,'s,'d,'c) finite_schema_system \<Rightarrow> 'd \<Rightarrow> finite_factor_term \<Rightarrow> nat \<Rightarrow> ('a,'s,'d,'c) finite_resolution_result" where
+  "finite_moded_resolution_in \<Theta> \<kappa> K D M P \<equiv>
+    finite_committed_resolution_by_in \<Theta> (finite_resolution_select_in \<Theta> (finite_moded_priority K D M) \<kappa> P) \<kappa> K P"
+
+lemma finite_moded_resolution_in_empty:
+  "finite_moded_resolution_in resolution_empty_table \<kappa> K D M P d t n = finite_moded_resolution \<kappa> K D M P d t n"
+  by (rule finite_committed_resolution_by_in_empty)
+
 text \<open>At no modes the moded priority is R5's default, and the moded search is R5's committed search.\<close>
 
 lemma finite_moded_priority_none [simp]: "finite_moded_priority K D {||} = finite_commitment_priority K"

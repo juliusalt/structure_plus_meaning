@@ -1979,6 +1979,69 @@ lemma finite_checks_call_formed:
     finite_admitted_schema_instance_def)
 
 text \<open>
+  A table whose every entry's call is true: what a valid table's entries give (their certificates accepted, the checker
+  sound), and all that a reading of the table by its calls alone needs. Every true call has a finite certificate the
+  checker accepts (an accepted tree binds formed terms only, so its finite copy decodes back to it), so the same calls
+  certified form a valid table. Stated by GT4c in @{text Factor_Resolution_Graph_Checks}, placed here beside validity by
+  GT2a.
+\<close>
+
+definition finite_table_true ::
+    "('a,'s::linorder,'d,'c) finite_schema_system \<Rightarrow> ('a,'s,'d,'c) resolution_table \<Rightarrow> bool" where
+  "finite_table_true P \<Theta> \<longleftrightarrow> (\<forall>d t c. resolution_table_lookup \<Theta> (d,t) = Some c \<longrightarrow>
+    (d,decode_finite_term t) \<in> positive_meaning (decode_finite_system P))"
+
+lemma finite_table_valid_true:
+  assumes valid: "finite_table_valid P \<Theta>"
+  shows "finite_table_true P \<Theta>"
+  unfolding finite_table_true_def
+proof (intro allI impI)
+  fix e u c assume "resolution_table_lookup \<Theta> (e,u) = Some c"
+  then have "finite_checks_schema_proof P c e u" by (rule finite_table_valid_entry[OF valid])
+  then show "(e,decode_finite_term u) \<in> positive_meaning (decode_finite_system P)"
+    unfolding finite_checks_schema_proof_exact by (rule schema_proof_sound)
+qed
+
+lemma checks_schema_proof_values_decoded:
+  "checks_schema_proof Q tree d t \<Longrightarrow> map_inference_proof id id id (decode_finite_term \<circ> finite_term_of) tree = tree"
+proof (induction tree arbitrary: d t rule: measure_induct_rule[where f=size])
+  case (less tree)
+  obtain c V B where tree: "tree = Schema_Proof c V B" by (cases tree)
+  obtain H where adm: "admitted_schema_instance Q d c (fset V) t H"
+    and children: "\<forall>(s,F)\<in>fset (fimage (map_prod id (checks_schema_proof Q)) B). \<exists>e x. (s,e,x) \<in> H \<and> F e x"
+    using less.prems by (auto simp: tree)
+  have Vf: "term_formed v" if "(a,v) \<in> fset V" for a v
+    using adm that by (auto simp: admitted_schema_instance_def schema_instance_def term_bindings_formed_def)
+  have Bf: "map_inference_proof id id id (decode_finite_term \<circ> finite_term_of) p = p" if sp: "(s,p) \<in> fset B" for s p
+  proof -
+    obtain e x where "checks_schema_proof Q p e x" using children sp unfolding fimage_pair_forall by blast
+    then show ?thesis using less.IH[OF schema_proof_child_size[OF sp, of c V, folded tree]] by blast
+  qed
+  have hV: "map_prod id (decode_finite_term \<circ> finite_term_of) z = z" if "z \<in> fset V" for z
+    using that Vf decode_finite_term_of by (cases z) auto
+  have hB: "map_prod id (map_inference_proof id id id (decode_finite_term \<circ> finite_term_of)) z = z" if "z \<in> fset B" for z
+    using that Bf by (cases z) auto
+  have V: "fimage (map_prod id (decode_finite_term \<circ> finite_term_of)) V = V"
+    by (rule fset_eqI) (use hV in \<open>force simp: resolution_fset_simps\<close>)
+  have B: "fimage (map_prod id (map_inference_proof id id id (decode_finite_term \<circ> finite_term_of))) B = B"
+    by (rule fset_eqI) (use hB in \<open>force simp: resolution_fset_simps\<close>)
+  show ?case unfolding tree using V B by (simp add: id_def comp_def)
+qed
+
+lemma finite_checks_schema_proof_complete:
+  assumes "(d,decode_finite_term t) \<in> positive_meaning (decode_finite_system P)"
+  shows "\<exists>c. finite_checks_schema_proof P c d t"
+proof -
+  obtain tree where tr: "checks_schema_proof (decode_finite_system P) tree d (decode_finite_term t)"
+    using schema_proof_complete[OF assms] by blast
+  have "decode_finite_proof (map_inference_proof id id id finite_term_of tree) = tree"
+    using checks_schema_proof_values_decoded[OF tr] by (simp add: decode_finite_proof_def inference_proof.map_comp)
+  then have "finite_checks_schema_proof P (map_inference_proof id id id finite_term_of tree) d t"
+    by (simp add: finite_checks_schema_proof_exact tr)
+  then show ?thesis by blast
+qed
+
+text \<open>
   At a valid table a solved node's certificate is accepted: a premise at whose socket a node stands reads that node, one
   closed by reuse the node left of it, and one closed by the table the entry's certificate, which validity accepts.
 \<close>

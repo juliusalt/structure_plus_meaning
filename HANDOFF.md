@@ -50,9 +50,11 @@ refusal. One-time ≈ 31–34 M states, a judgment's part ≈ 2–5 M. Builds: G
 in R3, R3b, the committed step, search and lifting and R4; refutation exact and a resolution's certificates sound at
 every table, a valid table deciding only which calls resolve — the entry's addition; review 840's 1–6 mailed to GT4,
 GT2, W5 and GT6) and GT4 #841 (`99e45393`: C at a table, validity checked over graphs; its verdict at a table
-tree-checks the entries a judgment reads) → GT4b #882 (review 842's 1–4, continuing #841: the verdict at a table read
+tree-checks the entries a judgment reads) and GT4b #882 (`f0d6e6fd`, review 842's 1–4: the verdict at a table read
 from the graph alone, exact at a valid table and sound where its calls are true; the table's checks over indexed
-certificates, the reach once) → GT2 #843 (the committed and check forms over GT4b's verdict, rc's
+certificates) → GT4c #883 (review 882's 1–4 and 6, continuing #882: the graph reading at found states under the
+entries' calls' formation or truth, for an installation's relocated table; the premise named; one fold checking and
+producing the table for GT6) → GT2 #843 (the committed and check forms over GT4b's verdict, rc's
 forms, the transfers, the table read by its calls alone and — by q155 — the committed search's frame and position lemmas
 at a table; after K3 #825 and the consolidation #832) → GT5 #845 (the given's table) and W5 #847; GT3 #876 (the table in
 F2's shared representation, after GT2, GT4 and #830's fixes) → GT6 #878 (the table produced once, a run of hours parked
@@ -357,13 +359,14 @@ a theory before briefing a task that edits it.
 ## Now
 
 - **Under way**: #869 (#867 having landed); #865 continued from its tree (partial: its maintenance narrowed before it
-  lands); GT4b #882 (continuing #841), before GT2.
-- **What the next events ask**: the hand-overs of #865, GT4b and #869 (its step measured at the given decides review
+  lands); GT4c #883 (continuing #882), before GT2.
+- **What the next events ask**: the hand-overs of #865, GT4c and #869 (its step measured at the given decides review
   868's 4, the linear scans); GT6's prediction and worker count before its run; #709's brief rewritten before it
   starts; #861's question decided on #875's figures before GT6 (provisional (c)). Q33 is the owner's.
 - **Planners stopped**: plan-120 and plan-121 were stopped by a classifier declining a turn, before their notes; this
   file and `PLANNING_LOG.md` carried all they settled. Keep both current at every event.
-- **Briefs nearest their rooms**: #542, #399 and the samples build #551; GT2 #843 at 340K — if handed back, its (9) with
+- **Briefs nearest their rooms**: #542, #399 and the samples build #551; GT2 #843 at 340K with review 840's, 842's and
+  882's mails (its forms over GT4b's verdict, the premise by GT4c's name) — if handed back, its (9) with
   the truth-soundness becomes a task after it and before GT3, GT5 and W5 (#880's Remains 1). A brief written before its
   theories grew may be refused at its start, and is resized or divided then.
 - **The harness's gaps met by this run's tasks** are owed to the owner and listed in `PLANNING_LOG.md` (2026-09-26,

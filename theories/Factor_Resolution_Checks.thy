@@ -92,7 +92,7 @@ proof -
     show ?thesis by (rule finite_closed_state_proofs_accepted[OF I closed_s p])
   qed
   have all: "ffilter (\<lambda>p. finite_checks_schema_proof P p d t) ?C = ?C" using accepted by (auto simp: fset_eq_iff)
-  show ?thesis by (auto simp: finite_check_resolution_by_def finite_outcome_result_def Let_def all)
+  show ?thesis by (auto simp: finite_check_resolution_by_def finite_outcome_result_def finite_outcome_result_in_def finite_state_proofs_empty Let_def all)
 qed
 
 theorem finite_check_resolution_by_refutation_exact:
@@ -130,9 +130,9 @@ proof
     have "resolution_invariant P d t st' \<and> finite_focus_pending (Some []) st' = {||}"
       by (rule finite_committed_search_by_found[OF \<kappa> goals I0 st'])
     then obtain nd where nd: "nd |\<in>| resolution_nodes st'" "resolution_node_position nd = []"
-      by (auto simp: finite_check_root_focus resolution_invariant_def resolution_root_held_def)
+      by (auto simp: finite_check_root_focus resolution_invariant_in_def resolution_root_held_def)
     then have "finite_node_proof (fcard (resolution_nodes st')) (resolution_nodes st') nd |\<in>| finite_state_proofs st'"
-      by (auto simp: finite_state_proofs_def)
+      by (auto simp: finite_state_proofs_def finite_state_proofs_in_def)
     then have "?C \<noteq> {||}" using resolution_union_nonempty[of st' "resolution_found ?R" finite_state_proofs] st' by auto
     then show False using res refutes by (simp add: finite_resolution_refutes_def)
   next

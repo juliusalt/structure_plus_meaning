@@ -90,7 +90,7 @@ next
       have ne: "finite_goal_successors P st g \<noteq> {||}" using succ by auto
       define Og where "Og = finite_goal_outcome (finite_resolution_search_by sel \<kappa> P n) P st g"
       have Oeq: "Og = finite_outcome_union (fimage (finite_resolution_search_by sel \<kappa> P n) (finite_goal_successors P st g))"
-        unfolding Og_def finite_goal_outcome_def using unpruned ne by (simp add: Let_def)
+        unfolding Og_def finite_goal_outcome_in_def using unpruned ne by (simp add: Let_def)
       have mem: "finite_resolution_search_by sel \<kappa> P n st' |\<in>|
           fimage (finite_resolution_search_by sel \<kappa> P n) (finite_goal_successors P st g)"
         by (rule fimageI[OF succ])
@@ -165,7 +165,7 @@ proof
   let ?sel = "finite_resolution_select no_witness_construction P"
   let ?R = "finite_resolution_search no_witness_construction P n (finite_initial_state d t)"
   have R: "?R = finite_resolution_search_by ?sel no_witness_construction P n (finite_initial_state d t)"
-    by (simp add: finite_resolution_search_def)
+    by (simp add: finite_resolution_search_def finite_resolution_search_in_def)
   have I0: "resolution_invariant P d t (finite_initial_state d t)" by (rule resolution_initial_invariant[OF Pf tf])
   have S0: "resolution_supported P (finite_initial_state d t) (\<lambda>_. Finite_Payload [])"
     using holds by (simp add: resolution_supported_def finite_initial_state_def resolution_value_ground)
@@ -179,11 +179,11 @@ proof
   ultimately obtain st' where st': "st' |\<in>| resolution_found ?R" by (metis all_not_fin_conv)
   have "resolution_invariant P d t st' \<and> resolution_pending st' = {||}"
     using finite_resolution_search_found[OF no_witness_construction_formed I0] st'
-    by (simp add: finite_resolution_search_def)
+    by (simp add: finite_resolution_search_def finite_resolution_search_in_def)
   then obtain nd where nd: "nd |\<in>| resolution_nodes st'" "resolution_node_position nd = []"
-    by (auto simp: resolution_invariant_def resolution_root_held_def)
+    by (auto simp: resolution_invariant_in_def resolution_root_held_def)
   then have "finite_node_proof (fcard (resolution_nodes st')) (resolution_nodes st') nd |\<in>| finite_state_proofs st'"
-    by (auto simp: finite_state_proofs_def)
+    by (auto simp: finite_state_proofs_def finite_state_proofs_in_def)
   then have "finite_state_proofs st' \<noteq> {||}" by auto
   with st' C show False using resolution_union_nonempty[of st' "resolution_found ?R" finite_state_proofs] by blast
 qed
@@ -289,7 +289,7 @@ proof -
   let ?sel = "finite_resolution_select no_witness_construction P"
   let ?st0 = "finite_pattern_state d \<pi> :: ('a,'b,'c,'d) resolution_state"
   let ?R = "finite_resolution_search no_witness_construction P n ?st0"
-  have R: "?R = finite_resolution_search_by ?sel no_witness_construction P n ?st0" by (simp add: finite_resolution_search_def)
+  have R: "?R = finite_resolution_search_by ?sel no_witness_construction P n ?st0" by (simp add: finite_resolution_search_def finite_resolution_search_in_def)
   have I0: "resolution_pattern_invariant P d \<pi> ?st0" by (rule resolution_pattern_initial_invariant[OF Pf \<pi>f])
   have S0: "resolution_supported_by (\<lambda>z. snd z |\<notin>| finite_program_variables P) P ?st0 \<theta>"
     unfolding resolution_supported_by_def using holds foreign by (auto simp: finite_pattern_state_def)
@@ -311,12 +311,12 @@ proof -
       and rv: "\<forall>v. resolution_root_value ?st0 \<theta> v \<longrightarrow> resolution_root_value st' \<theta>' v"
     have "resolution_pattern_invariant P d \<pi> st' \<and> resolution_pending st' = {||}"
       using finite_resolution_pattern_search_found[OF no_witness_construction_formed I0] found
-      by (simp add: finite_resolution_search_def)
+      by (simp add: finite_resolution_search_def finite_resolution_search_in_def)
     then have I: "resolution_pattern_invariant P d \<pi> st'" and closed: "resolution_pending st' = {||}" by blast+
     obtain nd where nd: "nd |\<in>| resolution_nodes st'" "resolution_node_position nd = []"
-      using I closed by (auto simp: resolution_pattern_invariant_def resolution_pattern_root_held_def)
+      using I closed by (auto simp: resolution_pattern_invariant_in_def resolution_pattern_root_held_def)
     obtain \<rho> where site: "resolution_node_site nd = d" and call: "resolution_node_call nd = finite_pattern_substitute \<rho> \<pi>"
-      using I nd unfolding resolution_pattern_invariant_def resolution_pattern_nodes_placed_def by blast
+      using I nd unfolding resolution_pattern_invariant_in_def resolution_pattern_nodes_placed_in_def by blast
     have "resolution_value \<theta>' (resolution_node_call nd) = resolution_value \<theta> \<pi>"
       using rv V0 nd unfolding resolution_root_value_def by blast
     then show ?thesis using found nd site call by blast
@@ -344,10 +344,10 @@ proof -
     using answer unfolding finite_pattern_answer_def by blast
   have "resolution_pattern_invariant P d \<pi> st \<and> resolution_pending st = {||}"
     using finite_resolution_pattern_search_found[OF \<kappa> resolution_pattern_initial_invariant[OF Pf \<pi>f]] found
-    by (simp add: finite_resolution_search_def)
+    by (simp add: finite_resolution_search_def finite_resolution_search_in_def)
   then have I: "resolution_pattern_invariant P d \<pi> st" and closed: "resolution_pending st = {||}" by blast+
   obtain \<rho> where site: "resolution_node_site nd = d" and call: "resolution_node_call nd = finite_pattern_substitute \<rho> \<pi>"
-    using I nd unfolding resolution_pattern_invariant_def resolution_pattern_nodes_placed_def by blast
+    using I nd unfolding resolution_pattern_invariant_in_def resolution_pattern_nodes_placed_in_def by blast
   have eq: "finite_pattern_substitute (resolution_substitution \<theta>) (resolution_node_call nd) = finite_exact_term_pattern x"
     using resolution_value_exact[of \<theta> "resolution_node_call nd"] x by simp
   have vars_formed: "finite_term_formed (\<theta> z)" if z: "z |\<in>| finite_pattern_variables (resolution_node_call nd)" for z

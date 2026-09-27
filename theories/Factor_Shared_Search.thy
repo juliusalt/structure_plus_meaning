@@ -1656,7 +1656,7 @@ proof -
   next
     fix s h show "False \<longleftrightarrow> False" by simp
   qed
-  then show ?thesis using search_of(2)[OF d] by (simp add: finite_resolution_search_def shared_representation_def)
+  then show ?thesis using search_of(2)[OF d] by (simp add: finite_resolution_search_def finite_resolution_search_in_def shared_representation_def)
 qed
 
 text \<open>

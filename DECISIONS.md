@@ -20971,3 +20971,40 @@ access built again inside `search_held` — is the kept search's, left to the fi
   changes a statement, and is the planner's.
 - Evidence (held, `.build/tasks/891/measurement.md`): the route at the given, 77 at the check form, bound 30:
   0.555–0.621 s before, 0.260–0.365 s after; bound 10: 0.314 → 0.293 s; 77/1 at 200 unchanged (0.12–0.14 s).
+
+## The committed step at a proper focus reads the focus as a key range of the kept class trees
+
+Task 892 (q157: #871's Remains and review 872's finding 1, the focused instance q156's answer asked).
+
+- A range is an operation of the index notion (`Ranged_Carrier_Indexes`). A range of an ordered key is given by its two
+  sides, the keys before it (down-closed) and the keys after it (up-closed) (`key_range`); an index read at a range
+  returns exactly the pairs its search finds inside, keys strictly increasing (`ranged_carrier_index`), so a carrier's
+  content in the range is the keyed image of what it holds there (`range_content`, `range_query`, `range_values`),
+  stated once for every carrier interpreting it. The sides, not a membership test, are what is read, so the tree's
+  instance (`rbt_range`, `tree_map_ranges`) prunes a subtree at a key before or after the range. The form chosen is
+  the key interval by its sides, a prefix its instance: in the lexicographic order the lists extending a prefix are the
+  interval whose side before is the lists less than it and whose side after is the lists greater than it that do not
+  extend it (`prefix_range`, `prefix_inside`), so the positions under a focus are one range of a position-keyed tree
+  (`tree_prefix`).
+- At a proper focus (every committed sub-search) the committed step reads the focus's goals as the range of the goal
+  tree under the focus (`shared_focused`: the focused access at goals given, `access_focused_by`, equal to
+  `access_focused` at a formed search) and the candidates as the range of the kept candidate class. The candidate test
+  does not read the focus; the settled and single tests read the counts of open nodes and the goals at a position,
+  which the focus changes (a node outside it counts as solved), so they are asked again at the focused access, of the
+  range's candidates alone, the first taken along the range's order of positions (`focused_kept_select`). It is proved
+  equal to `access_select` over the focused access at every formed search with formed classes, at every priority class
+  that filters the focus's goals (theorem `focused_kept_select`); `committed_kept_select` keeps its statement and now
+  selects through the kept classes at every focus, which is #871's acceptance (1) at a proper focus.
+- The route builds the focused record once a step at a proper focus and gives it to the priority's class and to the
+  selection (`route_select`'s definition, review 891's follow-up 3); `route_select_code` (task 891) is retired, the
+  definition now saying it. R5's committed search's code goes through the same selection (`kept_tests_select`). Every
+  statement of R3–R5, K2 and F2a–F2d is kept.
+- Not taken: the focus's emptiness (`shared_focus_empty`) still filters every goal at a proper focus. Its lemma holds
+  with no formation premise, and the range equals the filter only at a formed state, so reading it through the range
+  changes the emptiness R5's and the route's code equations pass to the search: a restatement of those equations at the
+  formed states, the planner's.
+- Evidence (held, `.build/tasks/892/measurement.md`): 77/1 with `given_input_declarations` at 200 runs 219 committed
+  steps, 120 of them (55 %) at a proper focus, with 12.2 goals and 11.0 candidates under the focus on average; 0.117–0.127 s
+  before, 0.109–0.121 s after. The given's first 30 steps are all at the whole focus: 0.228–0.252 s before, 0.194–0.251 s
+  after, equal within the run's spread. Every verdict equal. Limit: at this fixture a focus holds a dozen goals, so the
+  filter the range replaces is small; the saving grows with the goals outside the focus, as at the given's size.

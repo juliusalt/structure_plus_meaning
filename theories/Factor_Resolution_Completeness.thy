@@ -358,6 +358,23 @@ definition finite_pattern_answer ::
     (\<exists>st nd \<theta>. st |\<in>| resolution_found (finite_resolution_search \<kappa> P n (finite_pattern_state d \<pi>)) \<and>
       nd |\<in>| resolution_nodes st \<and> resolution_node_position nd = [] \<and> resolution_value \<theta> (resolution_node_call nd) = x)"
 
+text \<open>
+  The answers of an outcome at its root (VK1, next-edits 207): the formed values its found root calls take under some
+  valuation. R4's answer at a pattern goal is its instance at R4's search (@{text finite_pattern_answer_outcome});
+  where every found root call is ground, an answer is the residual term of a found root call, the set W2's query
+  instances compute (@{text Factor_Least_Collections}).
+\<close>
+
+definition finite_outcome_answer :: "('a,'s,'d,'c) resolution_outcome \<Rightarrow> finite_factor_term \<Rightarrow> bool" where
+  "finite_outcome_answer R x \<longleftrightarrow> finite_term_formed x \<and>
+    (\<exists>st nd \<theta>. st |\<in>| resolution_found R \<and> nd |\<in>| resolution_nodes st \<and> resolution_node_position nd = [] \<and>
+      resolution_value \<theta> (resolution_node_call nd) = x)"
+
+lemma finite_pattern_answer_outcome:
+  "finite_pattern_answer \<kappa> P d \<pi> n x \<longleftrightarrow>
+    finite_outcome_answer (finite_resolution_search \<kappa> P n (finite_pattern_state d \<pi>)) x"
+  unfolding finite_pattern_answer_def finite_outcome_answer_def by (rule refl)
+
 theorem finite_pattern_answer_true:
   assumes Pf: "finite_system_formed P" and \<pi>f: "finite_pattern_formed \<pi>"
     and \<kappa>: "finite_witness_construction_formed \<kappa>" and answer: "finite_pattern_answer \<kappa> P d \<pi> n x"

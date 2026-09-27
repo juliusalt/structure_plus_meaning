@@ -151,9 +151,6 @@ text \<open>
   images. A default frame is not read; material sockets order nothing.
 \<close>
 
-definition finite_node_image ::
-    "('a,'s,'d,'c) resolution_node \<Rightarrow> 'a fset \<Rightarrow> ('s,'a) resolution_variable fset" where
-  "finite_node_image nd A = ffUnion (fimage (\<lambda>a. finite_pattern_variables (finite_node_binding nd a)) A)"
 
 definition finite_socket_waits ::
     "('a,'s,'d) resolution_declarations \<Rightarrow> ('a,'s,'d) resolution_frames \<Rightarrow> 'd resolution_modes \<Rightarrow>

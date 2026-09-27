@@ -57,7 +57,7 @@ text \<open>
   hold a at which V returns v, those premises hold at some formed value of a exactly when they hold at v. A witnessed
   failure at v then refutes the premises at every value. A construction is complete at a program when every
   variable it registers at a clause of the program is complete with the construction's values; a W2 registration is
-  complete when its collection value is (@{const finite_registration_value}), W2's construction returning a value
+  complete when its collection value is (@{const finite_registration_value_in}), W2's construction returning a value
   only where its queries were complete.
 \<close>
 
@@ -76,11 +76,16 @@ definition finite_construction_complete ::
       a |\<in>| witness_registered \<kappa> d S \<longrightarrow> a |\<notin>| finite_pattern_variables (finite_schema_conclusion S) \<and>
       finite_value_complete P S a (\<lambda>B. witness_value \<kappa> P d S B a))"
 
-definition finite_registration_complete ::
-    "('a,'s::linorder,'d,'c) finite_schema_system \<Rightarrow> nat \<Rightarrow> ('a,'s,'d,'v) collection_registration \<Rightarrow> bool" where
-  "finite_registration_complete P n R \<longleftrightarrow>
+definition finite_registration_complete_in ::
+    "('a,'s,'d,'c,'v) query_parameters \<Rightarrow> ('a,'s::linorder,'d,'c) finite_schema_system \<Rightarrow> nat \<Rightarrow> ('a,'s,'d,'v) collection_registration \<Rightarrow> bool" where
+  "finite_registration_complete_in \<Xi> P n R \<longleftrightarrow>
     registration_variable R |\<notin>| finite_pattern_variables (finite_schema_conclusion (registration_schema R)) \<and>
-    finite_value_complete P (registration_schema R) (registration_variable R) (finite_registration_value P n R)"
+    finite_value_complete P (registration_schema R) (registration_variable R) (finite_registration_value_in \<Xi> P n R)"
+
+abbreviation finite_registration_complete where
+  "finite_registration_complete \<equiv> finite_registration_complete_in plain_query_parameters"
+
+lemmas finite_registration_complete_def = finite_registration_complete_in_def[of plain_query_parameters]
 
 text \<open>The empty construction registers nothing and is complete at every program.\<close>
 
@@ -123,13 +128,13 @@ qed
 
 theorem finite_collection_construction_value_at:
   assumes "finite_registrations_distinct Rs" and "R \<in> set Rs"
-  shows "witness_value (finite_collection_construction Rs n) P (registration_site R) (registration_schema R) B
-      (registration_variable R) = finite_registration_value P n R B"
+  shows "witness_value (finite_collection_construction_in \<Xi> Rs n) P (registration_site R) (registration_schema R) B
+      (registration_variable R) = finite_registration_value_in \<Xi> P n R B"
 proof -
   have f: "find (\<lambda>R'. finite_registration_matches (registration_site R) (registration_schema R) R' \<and>
       registration_variable R' = registration_variable R) Rs = Some R"
     by (rule finite_registrations_distinct_find[OF assms])
-  show ?thesis unfolding finite_collection_construction_def finite_witness_construction.select_convs f
+  show ?thesis unfolding finite_collection_construction_in_def finite_witness_construction.select_convs f
     by (simp only: option.case)
 qed
 
@@ -142,13 +147,13 @@ text \<open>
 theorem finite_collection_construction_complete_at:
   assumes complete: "\<And>R c. R \<in> set Rs \<Longrightarrow>
       ((registration_site R,c),registration_schema R) |\<in>| finite_system_clauses P \<Longrightarrow>
-      finite_registration_complete P n R"
-  shows "finite_construction_complete (finite_collection_construction Rs n) P"
+      finite_registration_complete_in \<Xi> P n R"
+  shows "finite_construction_complete (finite_collection_construction_in \<Xi> Rs n) P"
   unfolding finite_construction_complete_def
 proof (intro allI impI)
   fix d c S a
   assume clause: "((d,c),S) |\<in>| finite_system_clauses P"
-    and "a |\<in>| witness_registered (finite_collection_construction Rs n) d S"
+    and "a |\<in>| witness_registered (finite_collection_construction_in \<Xi> Rs n) d S"
   then have "\<exists>R\<in>set Rs. finite_registration_matches d S R \<and> registration_variable R = a"
     by (simp only: finite_collection_construction_registered)
   then have "find (\<lambda>R. finite_registration_matches d S R \<and> registration_variable R = a) Rs \<noteq> None"
@@ -159,22 +164,22 @@ proof (intro allI impI)
     using f by (auto simp: find_Some_iff)
   have S: "registration_schema R = S" and site: "registration_site R = d"
     using R(2) by (simp_all add: finite_registration_matches_def)
-  have "\<And>B. witness_value (finite_collection_construction Rs n) P d S B a = finite_registration_value P n R B"
+  have "\<And>B. witness_value (finite_collection_construction_in \<Xi> Rs n) P d S B a = finite_registration_value_in \<Xi> P n R B"
   proof -
-    fix B show "witness_value (finite_collection_construction Rs n) P d S B a = finite_registration_value P n R B"
-      unfolding finite_collection_construction_def finite_witness_construction.select_convs f by (simp only: option.case)
+    fix B show "witness_value (finite_collection_construction_in \<Xi> Rs n) P d S B a = finite_registration_value_in \<Xi> P n R B"
+      unfolding finite_collection_construction_in_def finite_witness_construction.select_convs f by (simp only: option.case)
   qed
-  then have eq: "(\<lambda>B. witness_value (finite_collection_construction Rs n) P d S B a) = finite_registration_value P n R"
+  then have eq: "(\<lambda>B. witness_value (finite_collection_construction_in \<Xi> Rs n) P d S B a) = finite_registration_value_in \<Xi> P n R"
     by (rule ext)
-  have "finite_registration_complete P n R" using complete[OF R(1)] clause S site by simp
+  have "finite_registration_complete_in \<Xi> P n R" using complete[OF R(1)] clause S site by simp
   then show "a |\<notin>| finite_pattern_variables (finite_schema_conclusion S) \<and>
-      finite_value_complete P S a (\<lambda>B. witness_value (finite_collection_construction Rs n) P d S B a)"
-    using S R(3) unfolding eq by (simp add: finite_registration_complete_def)
+      finite_value_complete P S a (\<lambda>B. witness_value (finite_collection_construction_in \<Xi> Rs n) P d S B a)"
+    using S R(3) unfolding eq by (simp add: finite_registration_complete_in_def)
 qed
 
 theorem finite_collection_construction_complete:
-  assumes complete: "\<And>R. R \<in> set Rs \<Longrightarrow> finite_registration_complete P n R"
-  shows "finite_construction_complete (finite_collection_construction Rs n) P"
+  assumes complete: "\<And>R. R \<in> set Rs \<Longrightarrow> finite_registration_complete_in \<Xi> P n R"
+  shows "finite_construction_complete (finite_collection_construction_in \<Xi> Rs n) P"
   by (rule finite_collection_construction_complete_at) (rule complete)
 
 section \<open>A determined value's completeness, once for the kind\<close>
@@ -224,11 +229,11 @@ corollary determined_registration_complete:
   assumes det: "registration_families R=Determined_Value p"
     and head: "registration_variable R |\<notin>| finite_pattern_variables (finite_schema_conclusion (registration_schema R))"
     and unique: "determined_value_unique P (registration_schema R) (registration_variable R) p"
-  shows "finite_registration_complete P n R"
+  shows "finite_registration_complete_in \<Xi> P n R"
 proof -
-  have "finite_registration_value P n R=finite_determined_value p"
+  have "finite_registration_value_in \<Xi> P n R=finite_determined_value p"
     by (rule ext) (rule finite_registration_value_determined[OF det])
-  then show ?thesis using head determined_value_complete[OF unique] by (simp add: finite_registration_complete_def)
+  then show ?thesis using head determined_value_complete[OF unique] by (simp add: finite_registration_complete_in_def)
 qed
 
 section \<open>An unconstructed registration\<close>
@@ -1150,15 +1155,15 @@ text \<open>
 \<close>
 
 lemmas finite_registered_resolution_refutation_exact =
-  finite_complete_resolution_refutation_exact[OF _ finite_collection_construction_complete]
+  finite_complete_resolution_refutation_exact[OF finite_collection_construction_formed finite_collection_construction_complete]
 
 lemmas finite_registered_verdict_exact =
-  finite_complete_verdict_exact[OF _ finite_collection_construction_complete]
+  finite_complete_verdict_exact[OF finite_collection_construction_formed finite_collection_construction_complete]
 
 lemmas finite_registered_demand_exact =
-  finite_complete_demand_exact[OF _ finite_collection_construction_complete]
+  finite_complete_demand_exact[OF finite_collection_construction_formed finite_collection_construction_complete]
 
 lemmas native_registered_resolution_exact =
-  native_complete_resolution_exact[OF _ finite_collection_construction_complete]
+  native_complete_resolution_exact[OF finite_collection_construction_formed finite_collection_construction_complete]
 
 end

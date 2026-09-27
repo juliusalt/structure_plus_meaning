@@ -108,42 +108,47 @@ proof -
     by (rule context_list_rule_relation.intro) (unfold e, rule context_list_rule_relation.equation[OF given_readers_listing])
 qed
 
-theorem read_meanings_registrations_complete:
+theorem read_meanings_registrations_complete_in:
   fixes P :: "(nat,nat,nat,'c) finite_schema_system"
-  assumes read: "\<And>d t. d\<in>{5,12,47,76,82,113} \<Longrightarrow>
+  assumes exact: "finite_query_exact \<Xi> P n" and read: "\<And>d t. d\<in>{5,12,47,76,82,113} \<Longrightarrow>
       (d,t)\<in>positive_meaning (decode_finite_system P) \<longleftrightarrow> (d,t)\<in>positive_meaning guard_readers_system"
-  shows "finite_registration_complete P n bound_witness_registration"
-    and "finite_registration_complete P n merge_witness_registration"
+  shows "finite_registration_complete_in \<Xi> P n bound_witness_registration"
+    and "finite_registration_complete_in \<Xi> P n merge_witness_registration"
     and "context_list_rule_relation (positive_meaning (decode_finite_system P)) 390 391 \<Longrightarrow>
-      finite_registration_complete P n (additions_witness_registration 392 391)"
+      finite_registration_complete_in \<Xi> P n (additions_witness_registration 392 391)"
 proof -
   note m=read_meanings_systems[OF read]
-  show "finite_registration_complete P n bound_witness_registration"
-    by (rule bound_witness_registration_complete) (simp_all only: m)
-  show "finite_registration_complete P n merge_witness_registration"
-    by (rule merge_witness_registration_complete) (simp_all only: m)
-  show "finite_registration_complete P n (additions_witness_registration 392 391)"
+  show "finite_registration_complete_in \<Xi> P n bound_witness_registration"
+    by (rule bound_witness_registration_complete_in[OF exact]) (simp_all only: m)
+  show "finite_registration_complete_in \<Xi> P n merge_witness_registration"
+    by (rule merge_witness_registration_complete_in[OF exact]) (simp_all only: m)
+  show "finite_registration_complete_in \<Xi> P n (additions_witness_registration 392 391)"
     if listing: "context_list_rule_relation (positive_meaning (decode_finite_system P)) 390 391"
-    by (rule additions_witness_registration_complete[where element_site=390]) (simp_all only: m listing)
+    by (rule additions_witness_registration_complete_in[OF exact, where element_site=390]) (simp_all only: m listing)
 qed
+
+lemmas read_meanings_registrations_complete = read_meanings_registrations_complete_in[OF finite_query_exact_plain]
 
 subsection \<open>The registrations complete there\<close>
 
-theorem given_readers_registrations_complete:
-  "finite_registration_complete finite_given_readers n bound_witness_registration"
-  "finite_registration_complete finite_given_readers n (additions_witness_registration 392 391)"
-  "finite_registration_complete finite_given_readers n merge_witness_registration"
+theorem given_readers_registrations_complete_in:
+  assumes exact: "finite_query_exact \<Xi> finite_given_readers n"
+  shows "finite_registration_complete_in \<Xi> finite_given_readers n bound_witness_registration"
+  "finite_registration_complete_in \<Xi> finite_given_readers n (additions_witness_registration 392 391)"
+  "finite_registration_complete_in \<Xi> finite_given_readers n merge_witness_registration"
 proof -
   have read: "(d,t)\<in>positive_meaning (decode_finite_system finite_given_readers) \<longleftrightarrow>
       (d,t)\<in>positive_meaning guard_readers_system" for d t
     by (simp only: finite_given_readers_exact)
-  show "finite_registration_complete finite_given_readers n bound_witness_registration"
-    by (rule read_meanings_registrations_complete(1)) (rule read)
-  show "finite_registration_complete finite_given_readers n (additions_witness_registration 392 391)"
-    by (rule read_meanings_registrations_complete(3)) (rule read, simp only: finite_given_readers_exact given_readers_listing)
-  show "finite_registration_complete finite_given_readers n merge_witness_registration"
-    by (rule read_meanings_registrations_complete(2)) (rule read)
+  show "finite_registration_complete_in \<Xi> finite_given_readers n bound_witness_registration"
+    by (rule read_meanings_registrations_complete_in(1)[OF exact]) (rule read)
+  show "finite_registration_complete_in \<Xi> finite_given_readers n (additions_witness_registration 392 391)"
+    by (rule read_meanings_registrations_complete_in(3)[OF exact]) (rule read, simp only: finite_given_readers_exact given_readers_listing)
+  show "finite_registration_complete_in \<Xi> finite_given_readers n merge_witness_registration"
+    by (rule read_meanings_registrations_complete_in(2)[OF exact]) (rule read)
 qed
+
+lemmas given_readers_registrations_complete = given_readers_registrations_complete_in[OF finite_query_exact_plain]
 
 subsection \<open>The clauses the registrations name\<close>
 
@@ -230,16 +235,19 @@ qed
 
 subsection \<open>The construction complete and the resolver exact there\<close>
 
-theorem given_readers_construction_complete:
-  "finite_construction_complete (finite_collection_construction given_witness_registrations n) finite_given_readers"
+theorem given_readers_construction_complete_in:
+  assumes exact: "finite_query_exact \<Xi> finite_given_readers n"
+  shows "finite_construction_complete (finite_collection_construction_in \<Xi> given_witness_registrations n) finite_given_readers"
 proof (rule finite_collection_construction_complete_at)
   fix R c
   assume R: "R \<in> set given_witness_registrations"
     and clause: "((registration_site R,c),registration_schema R) |\<in>| finite_system_clauses finite_given_readers"
-  show "finite_registration_complete finite_given_readers n R"
-    using R clause given_readers_registrations_complete given_readers_registered_clauses(3,4) registration_sites
+  show "finite_registration_complete_in \<Xi> finite_given_readers n R"
+    using R clause given_readers_registrations_complete_in[OF exact] given_readers_registered_clauses(3,4) registration_sites
     by (auto simp: given_witness_registrations_def)
 qed
+
+lemmas given_readers_construction_complete = given_readers_construction_complete_in[OF finite_query_exact_plain]
 
 text \<open>
   The exact forms at that construction, R5's at no commitment (@{thm [source] finite_complete_resolution_refutation_exact}),
@@ -351,18 +359,18 @@ proof -
     by (simp_all only: systems)
 qed
 
-theorem request_registrations_complete:
-  assumes presented: "decode_finite_system P = package_request_system"
-  shows "finite_registration_complete P n merge_witness_registration"
-    and "finite_registration_complete P n bound_witness_registration"
-    and "finite_construction_complete (finite_collection_construction given_witness_registrations n) P"
+theorem request_registrations_complete_in:
+  assumes exact: "finite_query_exact \<Xi> P n" and presented: "decode_finite_system P = package_request_system"
+  shows "finite_registration_complete_in \<Xi> P n merge_witness_registration"
+    and "finite_registration_complete_in \<Xi> P n bound_witness_registration"
+    and "finite_construction_complete (finite_collection_construction_in \<Xi> given_witness_registrations n) P"
 proof -
   have m: "d\<in>system_definitions package_retention_admission_system" if "d\<in>{5,12,47,76,82,113}" for d
     using that by auto
-  show merge: "finite_registration_complete P n merge_witness_registration"
-    by (rule read_meanings_registrations_complete(2)) (simp only: presented request_given_meaning[OF m])
-  show bound: "finite_registration_complete P n bound_witness_registration"
-    by (rule read_meanings_registrations_complete(1)) (simp only: presented request_given_meaning[OF m])
+  show merge: "finite_registration_complete_in \<Xi> P n merge_witness_registration"
+    by (rule read_meanings_registrations_complete_in(2)[OF exact]) (simp only: presented request_given_meaning[OF m])
+  show bound: "finite_registration_complete_in \<Xi> P n bound_witness_registration"
+    by (rule read_meanings_registrations_complete_in(1)[OF exact]) (simp only: presented request_given_meaning[OF m])
   have below: "system_definitions package_retention_admission_system\<subseteq>{..<390}"
     using whole_agreement_definitions[OF given_retention_complete_agreement] complete_below by blast
   have absent: "((d,c),S) |\<notin>| finite_system_clauses P" if d: "d\<in>{392,525}" for d c S
@@ -376,15 +384,17 @@ proof -
       by (simp only: package_request_definitions package_request_list_definitions)
     then show False using d below by auto
   qed
-  show "finite_construction_complete (finite_collection_construction given_witness_registrations n) P"
+  show "finite_construction_complete (finite_collection_construction_in \<Xi> given_witness_registrations n) P"
   proof (rule finite_collection_construction_complete_at)
     fix R c
     assume R: "R \<in> set given_witness_registrations"
       and clause: "((registration_site R,c),registration_schema R) |\<in>| finite_system_clauses P"
-    show "finite_registration_complete P n R"
+    show "finite_registration_complete_in \<Xi> P n R"
       using R clause merge bound absent[of 392] absent[of 525] registration_sites
       by (auto simp: given_witness_registrations_def)
   qed
 qed
+
+lemmas request_registrations_complete = request_registrations_complete_in[OF finite_query_exact_plain]
 
 end

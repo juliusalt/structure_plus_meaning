@@ -150,16 +150,16 @@ definition closure_witness_family :: "'a \<Rightarrow> 'a \<Rightarrow> ('a,nat,
   "closure_witness_family env root=\<lparr>family_base=[witness_selection_query root (Finite_Variable 0) 0],
     family_step=Some (witness_edge_query env,Finite_Variable 1),family_key=(Finite_Variable 0,0),family_identity=None\<rparr>"
 
-theorem closure_witness_family_elements:
-  assumes functional: "finite_relation_functional B" and env: "(env,tx) |\<in>| B" and root: "(root,ty) |\<in>| B"
-    and collect: "finite_family_collection P n (closure_witness_family env root) B=Some (es,cs)"
+theorem closure_witness_family_elements_in:
+  assumes exact: "finite_query_exact \<Xi> P n" and functional: "finite_relation_functional B" and env: "(env,tx) |\<in>| B" and root: "(root,ty) |\<in>| B"
+    and collect: "finite_family_collection_in \<Xi> P n (closure_witness_family env root) B=Some (es,cs)"
   shows "decode_finite_term ` fst ` set es=
     least_closure_bound (positive_meaning (decode_finite_system P)) (decode_finite_term tx) (decode_finite_term ty)"
 proof -
   let ?M="positive_meaning (decode_finite_system P)"
   let ?F="closure_witness_family env root"
   have elements: "fst ` set es=(finite_family_step_answers P ?F B)\<^sup>* `` finite_family_base_answers P ?F B"
-    by (rule finite_family_collection_exact[OF collect]) (simp add: closure_witness_family_def)
+    by (rule finite_family_collection_exact_in[OF exact collect]) (simp add: closure_witness_family_def)
   have base_set: "finite_family_base_answers P ?F B=
       {e. finite_query_holds P (witness_selection_query root (Finite_Variable 0) 0) B [] e}"
     by (simp add: finite_family_base_answers_def closure_witness_family_def)
@@ -192,21 +192,21 @@ definition closure_witness_registration :: "nat \<Rightarrow> (nat,nat,nat) fact
   "closure_witness_registration d S a env root=\<lparr>registration_site=d,registration_schema=finite_schema_of S,
     registration_variable=a,registration_families=Single_Family (closure_witness_family env root)\<rparr>"
 
-theorem closure_witness_registration_value:
-  assumes functional: "finite_relation_functional B" and env: "(env,tx) |\<in>| B" and root: "(root,ty) |\<in>| B"
-    and valued: "finite_registration_value P n (closure_witness_registration d S a env root) B=Some v"
+theorem closure_witness_registration_value_in:
+  assumes exact: "finite_query_exact \<Xi> P n" and functional: "finite_relation_functional B" and env: "(env,tx) |\<in>| B" and root: "(root,ty) |\<in>| B"
+    and valued: "finite_registration_value_in \<Xi> P n (closure_witness_registration d S a env root) B=Some v"
   shows "finite_term_formed v"
     and "\<exists>zs. decode_finite_term v=data_list_term zs \<and>
       set zs=least_closure_bound (positive_meaning (decode_finite_system P)) (decode_finite_term tx) (decode_finite_term ty)"
 proof -
   show "finite_term_formed v" by (rule finite_registration_value_formed[OF valued])
-  obtain es cs where collect: "finite_family_collection P n (closure_witness_family env root) B=Some (es,cs)"
+  obtain es cs where collect: "finite_family_collection_in \<Xi> P n (closure_witness_family env root) B=Some (es,cs)"
     and v: "v=finite_family_value es"
-    using valued by (auto simp: finite_registration_value_def closure_witness_registration_def finite_family_collected_some)
+    using valued by (auto simp: finite_registration_value_in_def closure_witness_registration_def finite_family_collected_some)
   have "set (map (decode_finite_term \<circ> fst) es)=decode_finite_term ` fst ` set es" by (simp only: set_map image_comp)
   then show "\<exists>zs. decode_finite_term v=data_list_term zs \<and>
       set zs=least_closure_bound (positive_meaning (decode_finite_system P)) (decode_finite_term tx) (decode_finite_term ty)"
-    using closure_witness_family_elements[OF functional env root collect] finite_family_value_presents[of es] v
+    using closure_witness_family_elements_in[OF exact functional env root collect] finite_family_value_decode[of es] v
     by (intro exI[of _ "map (decode_finite_term \<circ> fst) es"]) simp
 qed
 
@@ -238,15 +238,15 @@ lemma additions_witness_premises_hold:
   by (simp add: finite_variable_premises_hold_def finite_schema_of_premises_member finite_schema_of_materials_member
     package_additions_schema_def all_conj_distrib)
 
-theorem bound_witness_registration_complete:
+theorem bound_witness_registration_complete_in:
   fixes P :: "(nat,nat,nat,'c) finite_schema_system"
-  assumes selection: "\<And>t. (5,t)\<in>positive_meaning (decode_finite_system P) \<longleftrightarrow> (5,t)\<in>positive_meaning bag_comparison_system"
+  assumes exact: "finite_query_exact \<Xi> P n" and selection: "\<And>t. (5,t)\<in>positive_meaning (decode_finite_system P) \<longleftrightarrow> (5,t)\<in>positive_meaning bag_comparison_system"
     and edges: "\<And>t. (82,t)\<in>positive_meaning (decode_finite_system P) \<longleftrightarrow>
       (82,t)\<in>positive_meaning definition_edge_reading_system"
     and subset: "\<And>t. (47,t)\<in>positive_meaning (decode_finite_system P) \<longleftrightarrow> (47,t)\<in>positive_meaning data_subset_system"
     and bound: "\<And>t. (76,t)\<in>positive_meaning (decode_finite_system P) \<longleftrightarrow>
       (76,t)\<in>positive_meaning definition_callee_list_system"
-  shows "finite_registration_complete P n bound_witness_registration"
+  shows "finite_registration_complete_in \<Xi> P n bound_witness_registration"
 proof -
   let ?S="finite_schema_of package_closure_admission_schema"
   let ?M="positive_meaning (decode_finite_system P)"
@@ -254,13 +254,13 @@ proof -
     by (simp_all add: bound_witness_registration_def closure_witness_registration_def)
   have head: "2 |\<notin>| finite_pattern_variables (finite_schema_conclusion ?S)"
     by (simp add: finite_schema_of_def package_closure_admission_schema_def)
-  have complete: "finite_value_complete P ?S 2 (finite_registration_value P n bound_witness_registration)"
+  have complete: "finite_value_complete P ?S 2 (finite_registration_value_in \<Xi> P n bound_witness_registration)"
     unfolding finite_value_complete_def
   proof (intro allI impI)
     fix B v
     assume functional: "finite_relation_functional B" and "fBall B (\<lambda>(b,t). finite_term_formed t)"
       and "2 |\<notin>| fimage fst B" and scope: "finite_variable_premises_bound ?S 2 (fimage fst B)"
-      and valued: "finite_registration_value P n bound_witness_registration B=Some v"
+      and valued: "finite_registration_value_in \<Xi> P n bound_witness_registration B=Some v"
     have "0 |\<in>| fimage fst B"
       by (rule finite_variable_premises_bound_premise[OF scope, where s=2 and e=76 and
         p="Finite_Pattern_Pair (Finite_Pattern_Pair (Finite_Variable 0) (Finite_Variable 2)) (Finite_Variable 2)"])
@@ -276,8 +276,8 @@ proof -
     note valued'=valued[unfolded bound_witness_registration_def]
     obtain zs where zs: "decode_finite_term v=data_list_term zs"
       "set zs=least_closure_bound ?M (decode_finite_term tx) (decode_finite_term ty)"
-      using closure_witness_registration_value(2)[OF functional tx ty valued'] by blast
-    have formed: "finite_term_formed v" by (rule closure_witness_registration_value(1)[OF functional tx ty valued'])
+      using closure_witness_registration_value_in(2)[OF exact functional tx ty valued'] by blast
+    have formed: "finite_term_formed v" by (rule closure_witness_registration_value_in(1)[OF exact functional tx ty valued'])
     have hold: "finite_variable_premises_hold P ?S 2 ((finite_binding_valuation B)(2:=w)) \<longleftrightarrow>
         (47,Pair_Term (decode_finite_term ty) (decode_finite_term w)) \<in> ?M \<and>
         (76,Pair_Term (Pair_Term (decode_finite_term tx) (decode_finite_term w)) (decode_finite_term w)) \<in> ?M" for w
@@ -300,19 +300,19 @@ proof -
         using formed by blast
     qed
   qed
-  show ?thesis unfolding finite_registration_complete_def fields using head complete by simp
+  show ?thesis unfolding finite_registration_complete_in_def fields using head complete by simp
 qed
 
-theorem additions_witness_registration_complete:
+theorem additions_witness_registration_complete_in:
   fixes P :: "(nat,nat,nat,'c) finite_schema_system"
-  assumes selection: "\<And>t. (5,t)\<in>positive_meaning (decode_finite_system P) \<longleftrightarrow> (5,t)\<in>positive_meaning bag_comparison_system"
+  assumes exact: "finite_query_exact \<Xi> P n" and selection: "\<And>t. (5,t)\<in>positive_meaning (decode_finite_system P) \<longleftrightarrow> (5,t)\<in>positive_meaning bag_comparison_system"
     and edges: "\<And>t. (82,t)\<in>positive_meaning (decode_finite_system P) \<longleftrightarrow>
       (82,t)\<in>positive_meaning definition_edge_reading_system"
     and subset: "\<And>t. (47,t)\<in>positive_meaning (decode_finite_system P) \<longleftrightarrow> (47,t)\<in>positive_meaning data_subset_system"
     and bound: "\<And>t. (76,t)\<in>positive_meaning (decode_finite_system P) \<longleftrightarrow>
       (76,t)\<in>positive_meaning definition_callee_list_system"
     and listing: "context_list_rule_relation (positive_meaning (decode_finite_system P)) element_site list_site"
-  shows "finite_registration_complete P n (additions_witness_registration entry_site list_site)"
+  shows "finite_registration_complete_in \<Xi> P n (additions_witness_registration entry_site list_site)"
 proof -
   let ?S="finite_schema_of (package_additions_schema list_site)"
   let ?R="additions_witness_registration entry_site list_site"
@@ -321,13 +321,13 @@ proof -
     by (simp_all add: additions_witness_registration_def closure_witness_registration_def)
   have head: "5 |\<notin>| finite_pattern_variables (finite_schema_conclusion ?S)"
     by (simp add: finite_schema_of_def package_additions_schema_def)
-  have complete: "finite_value_complete P ?S 5 (finite_registration_value P n ?R)"
+  have complete: "finite_value_complete P ?S 5 (finite_registration_value_in \<Xi> P n ?R)"
     unfolding finite_value_complete_def
   proof (intro allI impI)
     fix B v
     assume functional: "finite_relation_functional B" and "fBall B (\<lambda>(b,t). finite_term_formed t)"
       and "5 |\<notin>| fimage fst B" and scope: "finite_variable_premises_bound ?S 5 (fimage fst B)"
-      and valued: "finite_registration_value P n ?R B=Some v"
+      and valued: "finite_registration_value_in \<Xi> P n ?R B=Some v"
     have "1 |\<in>| fimage fst B"
       by (rule finite_variable_premises_bound_premise[OF scope, where s=4 and e=76 and
         p="Finite_Pattern_Pair (Finite_Pattern_Pair (Finite_Variable 1) (Finite_Variable 5)) (Finite_Variable 5)"])
@@ -343,8 +343,8 @@ proof -
     note valued'=valued[unfolded additions_witness_registration_def]
     obtain zs where zs: "decode_finite_term v=data_list_term zs"
       "set zs=least_closure_bound ?M (decode_finite_term ty) (decode_finite_term tr)"
-      using closure_witness_registration_value(2)[OF functional ty tr valued'] by blast
-    have formed: "finite_term_formed v" by (rule closure_witness_registration_value(1)[OF functional ty tr valued'])
+      using closure_witness_registration_value_in(2)[OF exact functional ty tr valued'] by blast
+    have formed: "finite_term_formed v" by (rule closure_witness_registration_value_in(1)[OF exact functional ty tr valued'])
     let ?c="Pair_Term (decode_finite_term (finite_binding_valuation B 0)) (Pair_Term (decode_finite_term ty)
       (Pair_Term (decode_finite_term (finite_binding_valuation B 2)) (decode_finite_term (finite_binding_valuation B 3))))"
     have hold: "finite_variable_premises_hold P ?S 5 ((finite_binding_valuation B)(5:=w)) \<longleftrightarrow>
@@ -374,7 +374,7 @@ proof -
         using formed by blast
     qed
   qed
-  show ?thesis unfolding finite_registration_complete_def fields using head complete by simp
+  show ?thesis unfolding finite_registration_complete_in_def fields using head complete by simp
 qed
 
 subsection \<open>561's private environment: the rows of the two environments\<close>
@@ -497,8 +497,8 @@ proof -
   then show ?thesis by (simp add: finite_family_key_def row_witness_family_def W(1)[simplified])
 qed
 
-theorem row_witness_family_rows:
-  assumes collect: "finite_family_collection P n (row_witness_family c c' l I) B=Some (es,cs)"
+theorem row_witness_family_rows_in:
+  assumes exact: "finite_query_exact \<Xi> P n" and collect: "finite_family_collection_in \<Xi> P n (row_witness_family c c' l I) B=Some (es,cs)"
     and base: "decode_finite_term ` finite_family_base_answers P (row_witness_family c c' l I) B=R"
     and pairs: "\<forall>u\<in>R. \<exists>k a. u=Pair_Term k a"
   shows "set (map (decode_finite_term \<circ> fst) es) \<subseteq> R"
@@ -527,7 +527,7 @@ proof -
     fix u assume "u \<in> R"
     then obtain e where e: "e \<in> finite_family_base_answers P ?F B" "u=decode_finite_term e" using base by blast
     obtain x where x: "x \<in> fst ` set es" "finite_family_key ?F x=finite_family_key ?F e"
-      using finite_family_collection_complete(1)[OF collect] e(1) unfolding finite_family_covers_def by blast
+      using finite_family_collection_complete_in(1)[OF exact collect] e(1) unfolding finite_family_covers_def by blast
     obtain ke ae where ee: "e=Finite_Pair ke ae" using pair[OF e(1)] by blast
     obtain kx ax where xx: "x=Finite_Pair kx ax" using pair sound x(1) by blast
     have "kx=ke" using x(2) by (simp add: ee xx key)
@@ -557,7 +557,7 @@ proof -
       decode_finite_term x \<in> R \<and> decode_finite_term y \<in> R \<and> \<not> finite_family_identified P ?F x y"
     if conflict: "(x,y) \<in> set cs"
   proof -
-    note c=finite_family_collection_conflicts[OF collect conflict]
+    note c=finite_family_collection_conflicts_in[OF exact collect conflict]
     obtain kx ax where xx: "x=Finite_Pair kx ax" using pair sound c(1) by blast
     obtain ky ay where yy: "y=Finite_Pair ky ay" using pair sound c(2) by blast
     have same: "kx=ky" using c(3) by (simp add: xx yy key)
@@ -572,13 +572,13 @@ lemma artifact_row_witness_identity_holds:
   unfolding finite_identity_holds_def artifact_row_witness_identity_def
   by (rule exI[of _ "\<lambda>v. if v=0 then k else if v=1 then a else b"]) (use assms in simp)
 
-theorem merge_witness_registration_value:
+theorem merge_witness_registration_value_in:
   fixes P :: "(nat,nat,nat,'c) finite_schema_system"
-  assumes selection: "\<And>t. (5,t)\<in>positive_meaning (decode_finite_system P) \<longleftrightarrow> (5,t)\<in>positive_meaning bag_comparison_system"
+  assumes exact: "finite_query_exact \<Xi> P n" and selection: "\<And>t. (5,t)\<in>positive_meaning (decode_finite_system P) \<longleftrightarrow> (5,t)\<in>positive_meaning bag_comparison_system"
     and identity: "\<And>t. (12,t)\<in>positive_meaning (decode_finite_system P) \<longleftrightarrow>
       (12,t)\<in>positive_meaning artifact_identity_system"
     and functional: "finite_relation_functional B" and left: "(0,tx) |\<in>| B" and right: "(4,tv) |\<in>| B"
-    and valued: "finite_registration_value P n merge_witness_registration B=Some v"
+    and valued: "finite_registration_value_in \<Xi> P n merge_witness_registration B=Some v"
     and sources: "environment_value_presents E (decode_finite_term tx)" "environment_value_presents F (decode_finite_term tv)"
     and compatible: "environments_compatible E F"
   shows "environment_value_presents (merge_environment E F) (decode_finite_term v)"
@@ -588,10 +588,10 @@ proof -
   have free: "\<not> row_answers_conflict ?M ?x ?y"
     using environment_row_conflict[OF selection identity sources] compatible by blast
   obtain esA csA esB csB
-    where A: "finite_family_collection P n (row_witness_family 0 4 0 (Some artifact_row_witness_identity)) B=Some (esA,csA)"
-      and Bc: "finite_family_collection P n (row_witness_family 0 4 1 None) B=Some (esB,csB)"
+    where A: "finite_family_collection_in \<Xi> P n (row_witness_family 0 4 0 (Some artifact_row_witness_identity)) B=Some (esA,csA)"
+      and Bc: "finite_family_collection_in \<Xi> P n (row_witness_family 0 4 1 None) B=Some (esB,csB)"
       and v: "v=Finite_Pair (finite_family_value esA) (finite_family_value esB)"
-    using valued by (auto simp: finite_registration_value_def merge_witness_registration_def finite_family_collected_some
+    using valued by (auto simp: finite_registration_value_in_def merge_witness_registration_def finite_family_collected_some
       split: option.splits)
   have baseA: "decode_finite_term ` finite_family_base_answers P (row_witness_family 0 4 0 (Some artifact_row_witness_identity)) B=
       artifact_row_answers ?M ?x \<union> artifact_row_answers ?M ?y"
@@ -610,8 +610,8 @@ proof -
   have pairsB: "\<forall>u\<in>binding_row_answers ?M ?x \<union> binding_row_answers ?M ?y. \<exists>k a. u=Pair_Term k a"
     by (simp only: environment_value_answers(3)[OF selection sources(1)] environment_value_answers(3)[OF selection sources(2)])
       (auto simp: binding_data_def)
-  note rowsA=row_witness_family_rows[OF A baseA pairsA]
-  note rowsB=row_witness_family_rows[OF Bc baseB pairsB]
+  note rowsA=row_witness_family_rows_in[OF exact A baseA pairsA]
+  note rowsB=row_witness_family_rows_in[OF exact Bc baseB pairsB]
   have noneA: "csA=[]"
   proof (rule ccontr)
     assume "csA\<noteq>[]"
@@ -648,7 +648,7 @@ proof -
       (Pair_Term (data_list_term (map (decode_finite_term \<circ> fst) esA)) (data_list_term (map (decode_finite_term \<circ> fst) esB)))"
     by (rule merge_rows_presented[OF selection identity sources free rowsA(1) rowsA(3)[OF noneA] rowsA(2)
       rowsB(1) rowsB(3)[OF noneB] rowsB(2)])
-  then show ?thesis by (simp add: v finite_family_value_presents)
+  then show ?thesis by (simp add: v finite_family_value_decode)
 qed
 
 lemma merge_witness_premises_hold:
@@ -658,14 +658,14 @@ lemma merge_witness_premises_hold:
   by (simp add: finite_variable_premises_hold_def finite_schema_of_premises_member finite_schema_of_materials_member
     package_request_schema_def all_conj_distrib)
 
-theorem merge_witness_registration_complete:
+theorem merge_witness_registration_complete_in:
   fixes P :: "(nat,nat,nat,'c) finite_schema_system"
-  assumes selection: "\<And>t. (5,t)\<in>positive_meaning (decode_finite_system P) \<longleftrightarrow> (5,t)\<in>positive_meaning bag_comparison_system"
+  assumes exact: "finite_query_exact \<Xi> P n" and selection: "\<And>t. (5,t)\<in>positive_meaning (decode_finite_system P) \<longleftrightarrow> (5,t)\<in>positive_meaning bag_comparison_system"
     and identity: "\<And>t. (12,t)\<in>positive_meaning (decode_finite_system P) \<longleftrightarrow>
       (12,t)\<in>positive_meaning artifact_identity_system"
     and inclusion: "\<And>t. (113,t)\<in>positive_meaning (decode_finite_system P) \<longleftrightarrow>
       (113,t)\<in>positive_meaning environment_inclusion_system"
-  shows "finite_registration_complete P n merge_witness_registration"
+  shows "finite_registration_complete_in \<Xi> P n merge_witness_registration"
 proof -
   let ?S="finite_schema_of package_request_schema"
   let ?M="positive_meaning (decode_finite_system P)"
@@ -673,13 +673,13 @@ proof -
     by (simp_all add: merge_witness_registration_def)
   have head: "7 |\<notin>| finite_pattern_variables (finite_schema_conclusion ?S)"
     by (simp add: finite_schema_of_def package_request_schema_def)
-  have complete: "finite_value_complete P ?S 7 (finite_registration_value P n merge_witness_registration)"
+  have complete: "finite_value_complete P ?S 7 (finite_registration_value_in \<Xi> P n merge_witness_registration)"
     unfolding finite_value_complete_def
   proof (intro allI impI)
     fix B v
     assume functional: "finite_relation_functional B" and "fBall B (\<lambda>(b,t). finite_term_formed t)"
       and "7 |\<notin>| fimage fst B" and scope: "finite_variable_premises_bound ?S 7 (fimage fst B)"
-      and valued: "finite_registration_value P n merge_witness_registration B=Some v"
+      and valued: "finite_registration_value_in \<Xi> P n merge_witness_registration B=Some v"
     have "0 |\<in>| fimage fst B"
       by (rule finite_variable_premises_bound_premise[OF scope, where s=4 and e=113 and
         p="Finite_Pattern_Pair (Finite_Variable 0) (Finite_Variable 7)"])
@@ -708,7 +708,7 @@ proof -
           "environment_value_presents F (decode_finite_term tv)" and compatible: "environments_compatible E F"
         using merge_least_witness(1)[OF inclusion] held by blast
       have merged: "environment_value_presents (merge_environment E F) (decode_finite_term v)"
-        by (rule merge_witness_registration_value[OF selection identity functional tx tv valued sources compatible])
+        by (rule merge_witness_registration_value_in[OF exact selection identity functional tx tv valued sources compatible])
       have "(113,Pair_Term (decode_finite_term tx) (decode_finite_term v)) \<in> ?M \<and>
           (113,Pair_Term (decode_finite_term tv) (decode_finite_term v)) \<in> ?M"
         using merge_least_witness(2)[OF inclusion sources merged] held by blast
@@ -719,7 +719,7 @@ proof -
         using formed by blast
     qed
   qed
-  show ?thesis unfolding finite_registration_complete_def fields using head complete by simp
+  show ?thesis unfolding finite_registration_complete_in_def fields using head complete by simp
 qed
 
 subsection \<open>The four registrations over the numbered given's readers\<close>
@@ -739,9 +739,9 @@ lemma given_witness_registrations_distinct: "finite_registrations_distinct given
     bound_witness_registration_def additions_witness_registration_def closure_witness_registration_def
     merge_witness_registration_def)
 
-theorem given_witness_registrations_complete:
+theorem given_witness_registrations_complete_in:
   fixes P :: "(nat,nat,nat,'c) finite_schema_system"
-  assumes selection: "\<And>t. (5,t)\<in>positive_meaning (decode_finite_system P) \<longleftrightarrow> (5,t)\<in>positive_meaning bag_comparison_system"
+  assumes exact: "finite_query_exact \<Xi> P n" and selection: "\<And>t. (5,t)\<in>positive_meaning (decode_finite_system P) \<longleftrightarrow> (5,t)\<in>positive_meaning bag_comparison_system"
     and identity: "\<And>t. (12,t)\<in>positive_meaning (decode_finite_system P) \<longleftrightarrow>
       (12,t)\<in>positive_meaning artifact_identity_system"
     and subset: "\<And>t. (47,t)\<in>positive_meaning (decode_finite_system P) \<longleftrightarrow> (47,t)\<in>positive_meaning data_subset_system"
@@ -753,17 +753,30 @@ theorem given_witness_registrations_complete:
       (113,t)\<in>positive_meaning environment_inclusion_system"
     and listing: "context_list_rule_relation (positive_meaning (decode_finite_system P)) element_391 391"
       "context_list_rule_relation (positive_meaning (decode_finite_system P)) element_524 524"
-  shows "\<And>R. R \<in> set given_witness_registrations \<Longrightarrow> finite_registration_complete P n R"
-    and "finite_construction_complete (finite_collection_construction given_witness_registrations n) P"
+  shows "\<And>R. R \<in> set given_witness_registrations \<Longrightarrow> finite_registration_complete_in \<Xi> P n R"
+    and "finite_construction_complete (finite_collection_construction_in \<Xi> given_witness_registrations n) P"
 proof -
-  show each: "finite_registration_complete P n R" if "R \<in> set given_witness_registrations" for R
-    using that bound_witness_registration_complete[OF selection edges subset bound, of n]
-      additions_witness_registration_complete[OF selection edges subset bound listing(1), of n 392]
-      additions_witness_registration_complete[OF selection edges subset bound listing(2), of n 525]
-      merge_witness_registration_complete[OF selection identity inclusion, of n]
+  show each: "finite_registration_complete_in \<Xi> P n R" if "R \<in> set given_witness_registrations" for R
+    using that bound_witness_registration_complete_in[OF exact selection edges subset bound]
+      additions_witness_registration_complete_in[OF exact selection edges subset bound listing(1), of 392]
+      additions_witness_registration_complete_in[OF exact selection edges subset bound listing(2), of 525]
+      merge_witness_registration_complete_in[OF exact selection identity inclusion]
     by (auto simp: given_witness_registrations_def)
-  show "finite_construction_complete (finite_collection_construction given_witness_registrations n) P"
+  show "finite_construction_complete (finite_collection_construction_in \<Xi> given_witness_registrations n) P"
     by (rule finite_collection_construction_complete[OF each])
 qed
+
+subsection \<open>At the plain parameters, by the names before W5\<close>
+
+text \<open>Each fact above at a query's exact parameters, at the plain ones (@{thm [source] finite_query_exact_plain}).\<close>
+
+lemmas closure_witness_family_elements = closure_witness_family_elements_in[OF finite_query_exact_plain]
+lemmas closure_witness_registration_value = closure_witness_registration_value_in[OF finite_query_exact_plain]
+lemmas bound_witness_registration_complete = bound_witness_registration_complete_in[OF finite_query_exact_plain]
+lemmas additions_witness_registration_complete = additions_witness_registration_complete_in[OF finite_query_exact_plain]
+lemmas row_witness_family_rows = row_witness_family_rows_in[OF finite_query_exact_plain]
+lemmas merge_witness_registration_value = merge_witness_registration_value_in[OF finite_query_exact_plain]
+lemmas merge_witness_registration_complete = merge_witness_registration_complete_in[OF finite_query_exact_plain]
+lemmas given_witness_registrations_complete = given_witness_registrations_complete_in[OF finite_query_exact_plain]
 
 end

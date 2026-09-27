@@ -1,5 +1,5 @@
 theory Factor_Least_Collections
-  imports Factor_Resolution_Completeness Factor_System_Alpha Finite_Presented_Collections Finite_Singleton_Selection
+  imports Factor_Resolution_Commitments Factor_System_Alpha Finite_Presented_Collections Finite_Singleton_Selection
     Finite_Functional_Enumeration
 begin
 
@@ -420,13 +420,85 @@ proof -
   then show ?thesis by (auto simp: finite_query_holds_def)
 qed
 
+section \<open>The resolution a query uses: a table, a priority and a commitment\<close>
+
+text \<open>
+  W2's queries are resolved by R5's committed search at a table (DECISIONS.md, task 496's entry, "77's least bound at
+  the given and at a candidate", and W5 of task 495's builds): a table closing ground calls, a priority the selection
+  takes first and a commitment, the construction's parameters, which its use gives. A query's search runs over the
+  lifted program and each instance it finds is resolved again as a ground call of the program itself, so the
+  parameters are two, one at each variable type (@{text query_parameters}). At the empty table, no priority and no
+  commitment the search is R3's and the resolution R4's (@{text finite_parameters_search_plain},
+  @{text finite_parameters_resolution_plain}); every definition below at the plain parameters is the one of its name
+  before W5 (the last section).
+\<close>
+
+record ('a,'s,'d,'c) resolution_parameters =
+  parameter_table :: "('a,'s,'d,'c) resolution_table"
+  parameter_priority :: "('a,'s,'d,'c) resolution_state \<Rightarrow> ('a,'s,'d,'c) resolution_goal \<Rightarrow> bool"
+  parameter_commitment :: "('a,'s,'d,'c) resolution_commitment"
+
+type_synonym ('a,'s,'d,'c,'v) query_parameters =
+  "('a,'s,'d,'c) resolution_parameters \<times> ('a+'v,'s,'d,'c) resolution_parameters"
+
+definition plain_parameters :: "('a,'s,'d,'c) resolution_parameters" where
+  "plain_parameters=\<lparr>parameter_table=resolution_empty_table,parameter_priority=(\<lambda>st g. False),
+    parameter_commitment=no_commitment\<rparr>"
+
+definition plain_query_parameters :: "('a,'s,'d,'c,'v) query_parameters" where
+  "plain_query_parameters=(plain_parameters,plain_parameters)"
+
+definition finite_parameters_select :: "('a,'s,'d,'c) resolution_parameters \<Rightarrow>
+    ('a,'s::linorder,'d,'c) finite_schema_system \<Rightarrow> ('a,'s,'d,'c) resolution_state \<Rightarrow> ('a,'s,'d,'c) resolution_selection" where
+  "finite_parameters_select Z P=finite_resolution_select_in (parameter_table Z) (parameter_priority Z) no_witness_construction P"
+
+definition finite_parameters_search :: "('a,'s,'d,'c) resolution_parameters \<Rightarrow> ('a,'s::linorder,'d,'c) finite_schema_system \<Rightarrow>
+    nat \<Rightarrow> ('a,'s,'d,'c) resolution_state \<Rightarrow> ('a,'s,'d,'c) resolution_outcome" where
+  "finite_parameters_search Z P n=finite_committed_search_by_in (parameter_table Z) (finite_parameters_select Z P)
+    no_witness_construction (parameter_commitment Z) P n None {||}"
+
+definition finite_parameters_resolution :: "('a,'s,'d,'c) resolution_parameters \<Rightarrow>
+    ('a,'s::linorder,'d,'c) finite_schema_system \<Rightarrow> 'd \<Rightarrow> finite_factor_term \<Rightarrow> nat \<Rightarrow> ('a,'s,'d,'c) finite_resolution_result" where
+  "finite_parameters_resolution Z P d t n=finite_committed_resolution_by_in (parameter_table Z) (finite_parameters_select Z P)
+    no_witness_construction (parameter_commitment Z) P d t n"
+
+lemma finite_parameters_resolution_search:
+  "finite_parameters_resolution Z P d t n=
+    finite_outcome_result_in (parameter_table Z) P d t (finite_parameters_search Z P n (finite_initial_state d t))"
+  by (simp add: finite_parameters_resolution_def finite_committed_resolution_by_in_def finite_parameters_search_def)
+
+lemma finite_parameters_select_plain:
+  "finite_parameters_select plain_parameters P=finite_resolution_select no_witness_construction P"
+  by (simp add: finite_parameters_select_def plain_parameters_def)
+
+lemma finite_parameters_search_plain:
+  "finite_parameters_search plain_parameters P n=finite_resolution_search no_witness_construction P n"
+proof -
+  have "finite_parameters_search plain_parameters P n=finite_committed_search no_witness_construction no_commitment P n None {||}"
+    by (simp add: finite_parameters_search_def finite_parameters_select_def plain_parameters_def finite_committed_search_def)
+  then show ?thesis by (simp add: finite_committed_search_plain[OF finite_resolution_select_none_construction])
+qed
+
+lemma finite_parameters_resolution_plain:
+  "finite_parameters_resolution plain_parameters P d t n=finite_program_resolution no_witness_construction P d t n"
+  by (simp only: finite_parameters_resolution_search finite_parameters_search_plain)
+    (simp add: plain_parameters_def finite_program_resolution_outcome finite_outcome_result_def)
+
+text \<open>A resolved call's certificates are accepted and the call is true, at every parameters (sound at every table).\<close>
+
+lemma finite_parameters_resolution_sound:
+  assumes "finite_parameters_resolution Z P d t n=Finite_Resolved C"
+  shows "C\<noteq>{||}" "fBall C (\<lambda>p. finite_checks_schema_proof P p d t)"
+    "(d,decode_finite_term t) \<in> positive_meaning (decode_finite_system P)"
+  using finite_committed_resolution_by_sound_in[OF assms[unfolded finite_parameters_resolution_def]] by blast+
+
 section \<open>A query's answers: the instances its search finds, each resolved as a ground call\<close>
 
 text \<open>
   The query's search starts at its goal, the equations' values substituted and the rest of its variables the
   query's own (@{text finite_query_variable}), over the lifted program. Every root call a successful branch
-  ends with must be ground; each is resolved again as a ground call of the program by R3's
-  @{const finite_program_resolution}, so the certificate an answer carries is one the finite proof checker
+  ends with must be ground; each is resolved again as a ground call of the program at the program's parameters
+  (@{const finite_parameters_resolution}), so the certificate an answer carries is one the finite proof checker
   accepted at that call in the program itself. An instance refuted is no answer; one unresolved, a diagnosis of the
   search, or a root call left open makes the query incomplete, and no answers are returned.
 \<close>
@@ -434,18 +506,22 @@ text \<open>
 definition finite_query_variable :: "'v \<Rightarrow> ('s,'a+'v) resolution_variable" where
   "finite_query_variable v=(([],True),Inr v)"
 
-definition finite_query_search :: "('a,'s::linorder,'d,'c) finite_schema_system \<Rightarrow> nat \<Rightarrow> 'd \<Rightarrow>
-    ('s,'a+'v) resolution_variable finite_term_pattern \<Rightarrow> ('a+'v,'s,'d,'c) resolution_outcome" where
-  "finite_query_search P n d p=
+definition finite_query_search_in :: "('a,'s,'d,'c,'v) query_parameters \<Rightarrow> ('a,'s::linorder,'d,'c) finite_schema_system \<Rightarrow>
+    nat \<Rightarrow> 'd \<Rightarrow> ('s,'a+'v) resolution_variable finite_term_pattern \<Rightarrow> ('a+'v,'s,'d,'c) resolution_outcome" where
+  "finite_query_search_in \<Xi> P n d p=finite_parameters_search (snd \<Xi>) (finite_query_program P) n (finite_pattern_state d p)"
+
+lemma finite_query_search_plain:
+  "finite_query_search_in plain_query_parameters P n d p=
     finite_resolution_search no_witness_construction (finite_query_program P) n (finite_pattern_state d p)"
+  by (simp add: finite_query_search_in_def plain_query_parameters_def finite_parameters_search_plain)
 
 definition finite_root_calls :: "('a,'s,'d,'c) resolution_outcome \<Rightarrow> ('s,'a) resolution_variable finite_term_pattern fset" where
   "finite_root_calls R=ffUnion (fimage (\<lambda>st. fimage resolution_node_call
     (ffilter (\<lambda>nd. resolution_node_position nd=[]) (resolution_nodes st))) (resolution_found R))"
 
-definition finite_query_instances :: "('a,'s::linorder,'d,'c) finite_schema_system \<Rightarrow> nat \<Rightarrow>
+definition finite_query_instances_in :: "('a,'s,'d,'c,'v) query_parameters \<Rightarrow> ('a,'s::linorder,'d,'c) finite_schema_system \<Rightarrow> nat \<Rightarrow>
     ('a,'d,'v) collection_query \<Rightarrow> ('v\<times>finite_factor_term) fset \<Rightarrow> finite_factor_term list option" where
-  "finite_query_instances P n q W=(let R=finite_query_search P n (query_site q)
+  "finite_query_instances_in \<Xi> P n q W=(let R=finite_query_search_in \<Xi> P n (query_site q)
       (map_finite_term_pattern finite_query_variable (finite_query_pattern q W)); C=finite_root_calls R in
     if resolution_diagnoses R={||} \<and> fBall C (\<lambda>c. finite_pattern_variables c={||})
     then Some (map unordered_factor_term (sorted_list_of_fset (fimage (Ordered_Factor_Term \<circ> finite_residual_term) C)))
@@ -463,13 +539,13 @@ definition finite_query_answer :: "('a,'d,'v) collection_query \<Rightarrow> ('v
       (case finite_query_element q W (fst z) of Some e \<Rightarrow> [(e,fst z,Cs)] | None \<Rightarrow> [])
     | _ \<Rightarrow> [])"
 
-definition finite_query_answers :: "('a,'s::linorder,'d,'c) finite_schema_system \<Rightarrow> nat \<Rightarrow>
+definition finite_query_answers_in :: "('a,'s,'d,'c,'v) query_parameters \<Rightarrow> ('a,'s::linorder,'d,'c) finite_schema_system \<Rightarrow> nat \<Rightarrow>
     ('a,'d,'v) collection_query \<Rightarrow> ('a\<times>finite_factor_term) fset \<Rightarrow> (finite_factor_term\<times>'v finite_term_pattern) list \<Rightarrow>
     ('a,'s,'c) query_answer list option" where
-  "finite_query_answers P n q B E=(case finite_query_inputs q B E of None \<Rightarrow> None | Some ts \<Rightarrow>
+  "finite_query_answers_in \<Xi> P n q B E=(case finite_query_inputs q B E of None \<Rightarrow> None | Some ts \<Rightarrow>
     if \<not> finite_query_formed q ts then None else (case finite_inputs_matching ts of None \<Rightarrow> Some [] | Some W \<Rightarrow>
-      (case finite_query_instances P n q W of None \<Rightarrow> None | Some Ts \<Rightarrow>
-        let rs=map (\<lambda>t. (t,finite_program_resolution no_witness_construction P (query_site q) t n)) Ts in
+      (case finite_query_instances_in \<Xi> P n q W of None \<Rightarrow> None | Some Ts \<Rightarrow>
+        let rs=map (\<lambda>t. (t,finite_parameters_resolution (fst \<Xi>) P (query_site q) t n)) Ts in
         if list_ex (\<lambda>z. finite_resolution_unresolved (snd z)) rs then None
         else Some (concat (map (finite_query_answer q W) rs)))))"
 
@@ -479,27 +555,27 @@ lemma finite_query_answer_member:
   by (cases r) (auto simp: finite_query_answer_def split: option.splits)
 
 lemma finite_query_answers_member:
-  assumes answers: "finite_query_answers P n q B E=Some A" and member: "(e,t,Cs) \<in> set A"
+  assumes answers: "finite_query_answers_in \<Xi> P n q B E=Some A" and member: "(e,t,Cs) \<in> set A"
   obtains ts W where "finite_query_inputs q B E=Some ts" "finite_query_formed q ts" "finite_inputs_matching ts=Some W"
     "finite_query_element q W t=Some e"
-    "finite_program_resolution no_witness_construction P (query_site q) t n=Finite_Resolved Cs"
+    "finite_parameters_resolution (fst \<Xi>) P (query_site q) t n=Finite_Resolved Cs"
 proof -
   obtain ts where inputs: "finite_query_inputs q B E=Some ts"
-    using answers by (cases "finite_query_inputs q B E") (simp_all add: finite_query_answers_def)
-  have formed: "finite_query_formed q ts" using answers inputs by (auto simp: finite_query_answers_def split: if_splits)
+    using answers by (cases "finite_query_inputs q B E") (simp_all add: finite_query_answers_in_def)
+  have formed: "finite_query_formed q ts" using answers inputs by (auto simp: finite_query_answers_in_def split: if_splits)
   obtain W where matching: "finite_inputs_matching ts=Some W"
-    using answers inputs formed member by (cases "finite_inputs_matching ts") (auto simp: finite_query_answers_def split: if_splits)
-  obtain Ts where instances: "finite_query_instances P n q W=Some Ts"
+    using answers inputs formed member by (cases "finite_inputs_matching ts") (auto simp: finite_query_answers_in_def split: if_splits)
+  obtain Ts where instances: "finite_query_instances_in \<Xi> P n q W=Some Ts"
     using answers inputs formed matching
-    by (cases "finite_query_instances P n q W") (auto simp: finite_query_answers_def split: if_splits)
+    by (cases "finite_query_instances_in \<Xi> P n q W") (auto simp: finite_query_answers_in_def split: if_splits)
   have "A=concat (map (finite_query_answer q W)
-      (map (\<lambda>t. (t,finite_program_resolution no_witness_construction P (query_site q) t n)) Ts))"
-    using answers inputs formed matching instances by (auto simp: finite_query_answers_def Let_def split: if_splits)
+      (map (\<lambda>t. (t,finite_parameters_resolution (fst \<Xi>) P (query_site q) t n)) Ts))"
+    using answers inputs formed matching instances by (auto simp: finite_query_answers_in_def Let_def split: if_splits)
   then obtain t' where "t' \<in> set Ts" and "(e,t,Cs) \<in> set (finite_query_answer q W
-      (t',finite_program_resolution no_witness_construction P (query_site q) t' n))"
+      (t',finite_parameters_resolution (fst \<Xi>) P (query_site q) t' n))"
     using member by auto
   then have "finite_query_element q W t=Some e"
-    "finite_program_resolution no_witness_construction P (query_site q) t n=Finite_Resolved Cs"
+    "finite_parameters_resolution (fst \<Xi>) P (query_site q) t n=Finite_Resolved Cs"
     by (auto simp: finite_query_answer_member)
   then show ?thesis using that inputs formed matching by blast
 qed
@@ -529,19 +605,19 @@ qed
 text \<open>(1), soundness: every answer's certificates are accepted at its instance and its element is one the query holds at.\<close>
 
 theorem finite_query_answers_sound:
-  assumes answers: "finite_query_answers P n q B E=Some A" and member: "(e,t,Cs) \<in> set A"
+  assumes answers: "finite_query_answers_in \<Xi> P n q B E=Some A" and member: "(e,t,Cs) \<in> set A"
   shows "Cs\<noteq>{||}" "fBall Cs (\<lambda>p. finite_checks_schema_proof P p (query_site q) t)"
     "finite_query_holds P q B E e" "finite_term_formed e"
 proof -
   obtain ts W where inputs: "finite_query_inputs q B E=Some ts" and formed: "finite_query_formed q ts"
     and matching: "finite_inputs_matching ts=Some W" and element: "finite_query_element q W t=Some e"
-    and resolved: "finite_program_resolution no_witness_construction P (query_site q) t n=Finite_Resolved Cs"
+    and resolved: "finite_parameters_resolution (fst \<Xi>) P (query_site q) t n=Finite_Resolved Cs"
     by (rule finite_query_answers_member[OF answers member])
-  show "Cs\<noteq>{||}" by (rule finite_program_resolution_sound(1)[OF resolved])
+  show "Cs\<noteq>{||}" by (rule finite_parameters_resolution_sound(1)[OF resolved])
   show "fBall Cs (\<lambda>p. finite_checks_schema_proof P p (query_site q) t)"
-    using finite_program_resolution_accepted[OF resolved] by blast
+    by (rule finite_parameters_resolution_sound(2)[OF resolved])
   have true: "(query_site q,decode_finite_term t) \<in> positive_meaning (decode_finite_system P)"
-    by (rule finite_program_resolution_sound(2)[OF resolved])
+    by (rule finite_parameters_resolution_sound(3)[OF resolved])
   show "finite_query_holds P q B E e" "finite_term_formed e"
     by (rule finite_query_checked_holds[OF inputs formed matching element true])+
 qed
@@ -570,8 +646,8 @@ theorem finite_query_search_lifting:
   fixes P :: "('a,'s::linorder,'d,'c) finite_schema_system" and p :: "('s,'a+'v) resolution_variable finite_term_pattern"
   assumes formed: "finite_pattern_formed p" and own: "\<And>z. z |\<in>| finite_pattern_variables p \<Longrightarrow> \<exists>v. snd z=Inr v"
     and holds: "(d,decode_finite_term (resolution_value \<theta> p)) \<in> positive_meaning (decode_finite_system P)"
-  shows "resolution_diagnoses (finite_query_search P n d p)\<noteq>{||} \<or>
-    (\<exists>c \<theta>'. c |\<in>| finite_root_calls (finite_query_search P n d p) \<and> resolution_value \<theta>' c=resolution_value \<theta> p)"
+  shows "resolution_diagnoses (finite_query_search_in plain_query_parameters P n d p)\<noteq>{||} \<or>
+    (\<exists>c \<theta>'. c |\<in>| finite_root_calls (finite_query_search_in plain_query_parameters P n d p) \<and> resolution_value \<theta>' c=resolution_value \<theta> p)"
 proof -
   have Pf: "finite_system_formed P" by (rule finite_true_call_formed(1)[OF holds])
   have Qf: "finite_system_formed (finite_query_program P :: ('a+'v,'s,'d,'c) finite_schema_system)"
@@ -593,7 +669,7 @@ proof -
   proof (elim disjE exE conjE)
     assume "resolution_diagnoses (finite_resolution_search no_witness_construction (finite_query_program P) n
       (finite_pattern_state d p))\<noteq>{||}"
-    then show ?thesis by (simp add: finite_query_search_def)
+    then show ?thesis by (simp add: finite_query_search_plain)
   next
     fix st nd \<theta>' \<rho>
     assume st: "st |\<in>| resolution_found (finite_resolution_search no_witness_construction (finite_query_program P) n
@@ -601,24 +677,115 @@ proof -
       and nd: "nd |\<in>| resolution_nodes st" and pos: "resolution_node_position nd=[]"
       and site: "resolution_node_site nd=d" and call: "resolution_node_call nd=finite_pattern_substitute \<rho> p"
       and valued: "resolution_value \<theta>' (resolution_node_call nd)=resolution_value \<theta> p"
-    have "resolution_node_call nd |\<in>| finite_root_calls (finite_query_search P n d p)"
-      unfolding finite_query_search_def finite_root_calls_def using st nd pos by (force simp: resolution_fset_simps)
+    have "resolution_node_call nd |\<in>| finite_root_calls (finite_query_search_in plain_query_parameters P n d p)"
+      unfolding finite_query_search_plain finite_root_calls_def using st nd pos by (force simp: resolution_fset_simps)
     then show ?thesis using valued by blast
   qed
 qed
 
+text \<open>
+  A query's parameters are exact when every refutation of a ground call at the program's parameters is a false call
+  (@{text finite_parameters_refutes_exact}) and the query's search keeps the root value of every true instance of a
+  pattern over the query's own variables (@{text finite_query_search_keeps}): what a query's completeness and an
+  identity's exactness rest on, one named premise (@{text finite_query_exact}). At the plain parameters they are R4's
+  refutation exactness and the lifting above (@{text finite_query_exact_plain}); the first holds at every parameters
+  where R5's committed forms are exact (@{text finite_parameters_refutes_exact_committed}). The second at a committing
+  lifted part is a value-keeping lifting at a pattern root, which R5 does not state: R5's lifting keeps a root value
+  only where nothing is committed, and its found-state invariant is stated at ground roots (task 847, q161).
+\<close>
+
+definition finite_parameters_refutes_exact :: "('a,'s,'d,'c) resolution_parameters \<Rightarrow>
+    ('a,'s::linorder,'d,'c) finite_schema_system \<Rightarrow> nat \<Rightarrow> bool" where
+  "finite_parameters_refutes_exact Z P n \<longleftrightarrow> (\<forall>d t. finite_parameters_resolution Z P d t n=Finite_Refuted \<longrightarrow>
+    (d,decode_finite_term t) \<notin> positive_meaning (decode_finite_system P))"
+
+definition finite_query_search_keeps :: "('a,'s,'d,'c,'v) query_parameters \<Rightarrow> ('a,'s::linorder,'d,'c) finite_schema_system \<Rightarrow>
+    nat \<Rightarrow> bool" where
+  "finite_query_search_keeps \<Xi> P n \<longleftrightarrow>
+    (\<forall>d (p::('s,'a+'v) resolution_variable finite_term_pattern) \<theta>. finite_pattern_formed p \<longrightarrow>
+      (\<forall>z. z |\<in>| finite_pattern_variables p \<longrightarrow> (\<exists>v. snd z=Inr v)) \<longrightarrow>
+      (d,decode_finite_term (resolution_value \<theta> p)) \<in> positive_meaning (decode_finite_system P) \<longrightarrow>
+      resolution_diagnoses (finite_query_search_in \<Xi> P n d p)\<noteq>{||} \<or>
+      (\<exists>c \<theta>'. c |\<in>| finite_root_calls (finite_query_search_in \<Xi> P n d p) \<and> resolution_value \<theta>' c=resolution_value \<theta> p))"
+
+definition finite_query_exact :: "('a,'s,'d,'c,'v) query_parameters \<Rightarrow> ('a,'s::linorder,'d,'c) finite_schema_system \<Rightarrow>
+    nat \<Rightarrow> bool" where
+  "finite_query_exact \<Xi> P n \<longleftrightarrow> finite_parameters_refutes_exact (fst \<Xi>) P n \<and> finite_query_search_keeps \<Xi> P n"
+
+lemma finite_query_exact_parts:
+  fixes P :: "('a,'s::linorder,'d,'c) finite_schema_system" and \<Xi> :: "('a,'s,'d,'c,'v) query_parameters"
+  shows "finite_query_exact \<Xi> P n \<longleftrightarrow>
+    (\<forall>d t. finite_parameters_resolution (fst \<Xi>) P d t n=Finite_Refuted \<longrightarrow>
+      (d,decode_finite_term t) \<notin> positive_meaning (decode_finite_system P)) \<and>
+    (\<forall>d (p::('s,'a+'v) resolution_variable finite_term_pattern) \<theta>. finite_pattern_formed p \<longrightarrow>
+      (\<forall>z. z |\<in>| finite_pattern_variables p \<longrightarrow> (\<exists>v. snd z=Inr v)) \<longrightarrow>
+      (d,decode_finite_term (resolution_value \<theta> p)) \<in> positive_meaning (decode_finite_system P) \<longrightarrow>
+      resolution_diagnoses (finite_query_search_in \<Xi> P n d p)\<noteq>{||} \<or>
+      (\<exists>c \<theta>'. c |\<in>| finite_root_calls (finite_query_search_in \<Xi> P n d p) \<and> resolution_value \<theta>' c=resolution_value \<theta> p))"
+  by (simp add: finite_query_exact_def finite_parameters_refutes_exact_def finite_query_search_keeps_def)
+
+lemma finite_query_exact_refuted:
+  assumes "finite_query_exact \<Xi> P n" "finite_parameters_resolution (fst \<Xi>) P d t n=Finite_Refuted"
+  shows "(d,decode_finite_term t) \<notin> positive_meaning (decode_finite_system P)"
+  using assms unfolding finite_query_exact_parts by blast
+
+lemma finite_query_exact_search:
+  assumes "finite_query_exact \<Xi> P n" "finite_pattern_formed p" "\<And>z. z |\<in>| finite_pattern_variables p \<Longrightarrow> \<exists>v. snd z=Inr v"
+    "(d,decode_finite_term (resolution_value \<theta> p)) \<in> positive_meaning (decode_finite_system P)"
+  shows "resolution_diagnoses (finite_query_search_in \<Xi> P n d p)\<noteq>{||} \<or>
+    (\<exists>c \<theta>'. c |\<in>| finite_root_calls (finite_query_search_in \<Xi> P n d p) \<and> resolution_value \<theta>' c=resolution_value \<theta> p)"
+  using assms unfolding finite_query_exact_parts by blast
+
+text \<open>
+  The ground part at any parameters where R5's committed forms are exact: its refutation is the committed
+  resolution's, exact by @{thm [source] finite_committed_resolution_by_refutation_exact_in}.
+\<close>
+
+theorem finite_parameters_refutes_exact_committed:
+  assumes exact: "finite_committed_exact_premises_in (parameter_table Z) J (finite_parameters_select Z P)
+      no_witness_construction (parameter_commitment Z) P"
+  shows "finite_parameters_refutes_exact Z P n"
+  unfolding finite_parameters_refutes_exact_def
+proof (intro allI impI)
+  fix d t assume "finite_parameters_resolution Z P d t n=Finite_Refuted"
+  then show "(d,decode_finite_term t) \<notin> positive_meaning (decode_finite_system P)"
+    using finite_committed_resolution_by_refutation_exact_in[OF exact, of d t n]
+    by (simp add: finite_parameters_resolution_def finite_resolution_refutes_def)
+qed
+
+theorem finite_query_exact_plain:
+  "finite_query_exact (plain_query_parameters :: ('a,'s,'d,'c,'v) query_parameters)
+    (P :: ('a,'s::linorder,'d,'c) finite_schema_system) n"
+  unfolding finite_query_exact_parts
+proof (intro conjI allI impI)
+  fix d t
+  assume "finite_parameters_resolution (fst plain_query_parameters) P d t n=Finite_Refuted"
+  then have "finite_program_resolution no_witness_construction P d t n=Finite_Refuted"
+    by (simp add: plain_query_parameters_def finite_parameters_resolution_plain)
+  then show "(d,decode_finite_term t) \<notin> positive_meaning (decode_finite_system P)"
+    by (rule finite_program_resolution_refutation_exact)
+next
+  fix d and p :: "('s,'a+'v) resolution_variable finite_term_pattern" and \<theta>
+  assume formed: "finite_pattern_formed p" and own: "\<forall>z. z |\<in>| finite_pattern_variables p \<longrightarrow> (\<exists>v. snd z=Inr v)"
+    and holds: "(d,decode_finite_term (resolution_value \<theta> p)) \<in> positive_meaning (decode_finite_system P)"
+  show "resolution_diagnoses (finite_query_search_in plain_query_parameters P n d p)\<noteq>{||} \<or>
+      (\<exists>c \<theta>'. c |\<in>| finite_root_calls (finite_query_search_in plain_query_parameters P n d p) \<and>
+        resolution_value \<theta>' c=resolution_value \<theta> p)"
+    by (rule finite_query_search_lifting[OF formed _ holds]) (use own in blast)
+qed
+
 text \<open>(1), completeness: a complete query answers every element it holds at.\<close>
 
-theorem finite_query_answers_complete:
+theorem finite_query_answers_complete_in:
   fixes q :: "('a,'d,'v) collection_query" and P :: "('a,'s::linorder,'d,'c) finite_schema_system"
-  assumes answers: "finite_query_answers P n q B E=Some A" and holds: "finite_query_holds P q B E e"
+  assumes exact: "finite_query_exact \<Xi> P n" and answers: "finite_query_answers_in \<Xi> P n q B E=Some A" and holds: "finite_query_holds P q B E e"
   shows "\<exists>t Cs. (e,t,Cs) \<in> set A"
 proof -
   obtain ts \<theta> where inputs: "finite_query_inputs q B E=Some ts" and elem: "\<theta> (query_element q)=e"
     and evaluated: "\<forall>(t,p)\<in>set ts. resolution_value \<theta> p=t"
     and true: "(query_site q,decode_finite_term (resolution_value \<theta> (query_goal q))) \<in> positive_meaning (decode_finite_system P)"
     using holds unfolding finite_query_holds_def by blast
-  have formed: "finite_query_formed q ts" using answers inputs by (auto simp: finite_query_answers_def split: if_splits)
+  have formed: "finite_query_formed q ts" using answers inputs by (auto simp: finite_query_answers_in_def split: if_splits)
   obtain W where matching: "finite_inputs_matching ts=Some W" and agree: "\<And>x u. (x,u) |\<in>| W \<Longrightarrow> \<theta> x=u"
     by (rule finite_inputs_matching_complete[of ts \<theta>]) (use evaluated formed in \<open>auto simp: finite_query_formed_def list_all_iff\<close>)
   define t0 where "t0=resolution_value \<theta> (query_goal q)"
@@ -639,28 +806,28 @@ proof -
     by (auto simp: finite_pattern_variables_map finite_query_variable_def)
   have Ptrue: "(query_site q,decode_finite_term (resolution_value \<theta>s ?gs)) \<in> positive_meaning (decode_finite_system P)"
     using true by (simp add: gsvalue t0_def)
-  have lifted: "resolution_diagnoses (finite_query_search P n (query_site q) ?gs)\<noteq>{||} \<or>
-      (\<exists>c \<theta>'. c |\<in>| finite_root_calls (finite_query_search P n (query_site q) ?gs) \<and> resolution_value \<theta>' c=t0)"
-    using finite_query_search_lifting[OF gsformed gsvars Ptrue, of n] by (simp only: gsvalue)
-  obtain Ts where instances: "finite_query_instances P n q W=Some Ts"
+  have lifted: "resolution_diagnoses (finite_query_search_in \<Xi> P n (query_site q) ?gs)\<noteq>{||} \<or>
+      (\<exists>c \<theta>'. c |\<in>| finite_root_calls (finite_query_search_in \<Xi> P n (query_site q) ?gs) \<and> resolution_value \<theta>' c=t0)"
+    using finite_query_exact_search[OF exact gsformed gsvars Ptrue] by (simp only: gsvalue)
+  obtain Ts where instances: "finite_query_instances_in \<Xi> P n q W=Some Ts"
     using answers inputs formed matching
-    by (cases "finite_query_instances P n q W") (auto simp: finite_query_answers_def split: if_splits)
-  have clean: "resolution_diagnoses (finite_query_search P n (query_site q) ?gs)={||}"
-    and ground: "fBall (finite_root_calls (finite_query_search P n (query_site q) ?gs)) (\<lambda>c. finite_pattern_variables c={||})"
+    by (cases "finite_query_instances_in \<Xi> P n q W") (auto simp: finite_query_answers_in_def split: if_splits)
+  have clean: "resolution_diagnoses (finite_query_search_in \<Xi> P n (query_site q) ?gs)={||}"
+    and ground: "fBall (finite_root_calls (finite_query_search_in \<Xi> P n (query_site q) ?gs)) (\<lambda>c. finite_pattern_variables c={||})"
     and Ts: "Ts=map unordered_factor_term (sorted_list_of_fset (fimage (Ordered_Factor_Term \<circ> finite_residual_term)
-      (finite_root_calls (finite_query_search P n (query_site q) ?gs))))"
-    using instances by (simp_all add: finite_query_instances_def Let_def split: if_splits)
-  obtain c \<theta>' where c: "c |\<in>| finite_root_calls (finite_query_search P n (query_site q) ?gs)"
+      (finite_root_calls (finite_query_search_in \<Xi> P n (query_site q) ?gs))))"
+    using instances by (simp_all add: finite_query_instances_in_def Let_def split: if_splits)
+  obtain c \<theta>' where c: "c |\<in>| finite_root_calls (finite_query_search_in \<Xi> P n (query_site q) ?gs)"
     and cvalue: "resolution_value \<theta>' c=t0"
     using lifted clean by blast
   have "finite_residual_term c=t0" using resolution_value_ground_pattern[of c \<theta>'] ground c cvalue by auto
   then have t0mem: "t0 \<in> set Ts" unfolding Ts using c by (force simp: fimage_iff)
-  define r where "r=finite_program_resolution no_witness_construction P (query_site q) t0 n"
+  define r where "r=finite_parameters_resolution (fst \<Xi>) P (query_site q) t0 n"
   have A: "A=concat (map (finite_query_answer q W)
-      (map (\<lambda>t. (t,finite_program_resolution no_witness_construction P (query_site q) t n)) Ts))"
+      (map (\<lambda>t. (t,finite_parameters_resolution (fst \<Xi>) P (query_site q) t n)) Ts))"
     and settled: "\<not> list_ex (\<lambda>z. finite_resolution_unresolved (snd z))
-      (map (\<lambda>t. (t,finite_program_resolution no_witness_construction P (query_site q) t n)) Ts)"
-    using answers inputs formed matching instances by (auto simp: finite_query_answers_def Let_def split: if_splits)
+      (map (\<lambda>t. (t,finite_parameters_resolution (fst \<Xi>) P (query_site q) t n)) Ts)"
+    using answers inputs formed matching instances by (auto simp: finite_query_answers_in_def Let_def split: if_splits)
   show ?thesis
   proof (cases r)
     case (Finite_Resolved Cs)
@@ -669,7 +836,7 @@ proof -
     then show ?thesis using t0mem unfolding A r_def by force
   next
     case Finite_Refuted
-    then show ?thesis using finite_program_resolution_refutation_exact[of P "query_site q" t0 n] true
+    then show ?thesis using finite_query_exact_refuted[OF exact, of "query_site q" t0] true
       by (simp add: r_def t0_def)
   next
     case (Finite_Unresolved D)
@@ -1207,8 +1374,8 @@ section \<open>The identity of two elements and its check\<close>
 
 text \<open>
   An identity query matches two elements against two patterns and asks a goal at a site of the same program
-  whose variables those patterns bind. Its check is the ground call's resolution by R3: resolved, the two are
-  identified; refuted, which R4 makes exact, or not matched, they are not; unresolved, or a goal the two
+  whose variables those patterns bind. Its check is the ground call's resolution at the program's parameters (R4's at
+  the plain ones): resolved, the two are identified; refuted, which the parameters' exactness makes exact, or not matched, they are not; unresolved, or a goal the two
   elements do not ground, it gives nothing (@{text finite_identity_check_exact}).
 \<close>
 
@@ -1224,12 +1391,12 @@ definition finite_identity_holds :: "('a,'s,'d,'c) finite_schema_system \<Righta
     resolution_value \<theta> (identity_right I)=y \<and>
     (identity_site I,decode_finite_term (resolution_value \<theta> (identity_goal I))) \<in> positive_meaning (decode_finite_system P))"
 
-definition finite_identity_check :: "('a,'s::linorder,'d,'c) finite_schema_system \<Rightarrow> nat \<Rightarrow>
+definition finite_identity_check_in :: "('a,'s,'d,'c,'v) query_parameters \<Rightarrow> ('a,'s::linorder,'d,'c) finite_schema_system \<Rightarrow> nat \<Rightarrow>
     ('d,'v) collection_identity \<Rightarrow> finite_factor_term \<Rightarrow> finite_factor_term \<Rightarrow> bool option" where
-  "finite_identity_check P n I x y=(if finite_pattern_formed (identity_left I) \<and> finite_pattern_formed (identity_right I)
+  "finite_identity_check_in \<Xi> P n I x y=(if finite_pattern_formed (identity_left I) \<and> finite_pattern_formed (identity_right I)
     then (case finite_inputs_matching [(x,identity_left I),(y,identity_right I)] of None \<Rightarrow> Some False
       | Some W \<Rightarrow> if finite_pattern_variables (identity_goal I) |\<subseteq>| fimage fst W
-        then (case finite_program_resolution no_witness_construction P (identity_site I)
+        then (case finite_parameters_resolution (fst \<Xi>) P (identity_site I)
             (resolution_value (finite_binding_valuation W) (identity_goal I)) n of
           Finite_Resolved Cs \<Rightarrow> Some True | Finite_Refuted \<Rightarrow> Some False | Finite_Unresolved D \<Rightarrow> None)
         else None)
@@ -1254,17 +1421,17 @@ proof (rule resolution_value_cong)
   show "\<theta> x=finite_binding_valuation W x" using agree[OF xz] finite_binding_valuation_member[OF functional xz] by simp
 qed
 
-theorem finite_identity_check_exact:
-  assumes check: "finite_identity_check P n I x y=Some b"
+theorem finite_identity_check_exact_in:
+  assumes exact: "finite_query_exact \<Xi> P n" and check: "finite_identity_check_in \<Xi> P n I x y=Some b"
   shows "b \<longleftrightarrow> finite_identity_holds P I x y"
 proof -
   let ?ts="[(x,identity_left I),(y,identity_right I)]"
   have formed: "finite_pattern_formed (identity_left I)" "finite_pattern_formed (identity_right I)"
-    using check by (auto simp: finite_identity_check_def split: if_splits)
+    using check by (auto simp: finite_identity_check_in_def split: if_splits)
   show ?thesis
   proof (cases "finite_inputs_matching ?ts")
     case None
-    have notb: "\<not> b" using check formed None by (simp add: finite_identity_check_def)
+    have notb: "\<not> b" using check formed None by (simp add: finite_identity_check_in_def)
     have "\<not> finite_identity_holds P I x y"
     proof
       assume "finite_identity_holds P I x y"
@@ -1279,19 +1446,19 @@ proof -
     case (Some W)
     have functional: "finite_relation_functional W" by (rule finite_inputs_matching_some(1)[OF Some])
     have scope: "finite_pattern_variables (identity_goal I) |\<subseteq>| fimage fst W"
-      using check formed Some by (auto simp: finite_identity_check_def split: if_splits)
+      using check formed Some by (auto simp: finite_identity_check_in_def split: if_splits)
     define t where "t=resolution_value (finite_binding_valuation W) (identity_goal I)"
     have l: "resolution_value (finite_binding_valuation W) (identity_left I)=x" by (rule finite_inputs_matching_value[OF Some]) simp
     have r: "resolution_value (finite_binding_valuation W) (identity_right I)=y" by (rule finite_inputs_matching_value[OF Some]) simp
-    have res: "(case finite_program_resolution no_witness_construction P (identity_site I) t n of
+    have res: "(case finite_parameters_resolution (fst \<Xi>) P (identity_site I) t n of
         Finite_Resolved Cs \<Rightarrow> Some True | Finite_Refuted \<Rightarrow> Some False | Finite_Unresolved D \<Rightarrow> None)=Some b"
-      using check formed Some scope by (simp add: finite_identity_check_def t_def)
+      using check formed Some scope by (simp add: finite_identity_check_in_def t_def)
     show ?thesis
-    proof (cases "finite_program_resolution no_witness_construction P (identity_site I) t n")
+    proof (cases "finite_parameters_resolution (fst \<Xi>) P (identity_site I) t n")
       case (Finite_Resolved Cs)
       have "(identity_site I,decode_finite_term (resolution_value (finite_binding_valuation W) (identity_goal I))) \<in>
           positive_meaning (decode_finite_system P)"
-        using finite_program_resolution_sound(2)[OF Finite_Resolved] by (simp add: t_def)
+        using finite_parameters_resolution_sound(3)[OF Finite_Resolved] by (simp add: t_def)
       then have "finite_identity_holds P I x y" unfolding finite_identity_holds_def using l r by blast
       then show ?thesis using res Finite_Resolved by simp
     next
@@ -1309,7 +1476,7 @@ proof -
         note agreeW=agree[unfolded this]
         have "resolution_value \<theta> (identity_goal I)=t"
           unfolding t_def by (rule finite_binding_valuation_agree[OF functional agreeW scope])
-        then show False using true finite_program_resolution_refutation_exact[OF Finite_Refuted] by simp
+        then show False using true finite_query_exact_refuted[OF exact Finite_Refuted] by simp
       qed
       then show ?thesis using res Finite_Refuted by simp
     next
@@ -1340,26 +1507,26 @@ definition finite_family_key :: "('a,'d,'v) collection_family \<Rightarrow> fini
   "finite_family_key F e=(case finite_inputs_matching [(e,fst (family_key F))] of None \<Rightarrow> None
     | Some W \<Rightarrow> finite_relation_option W (snd (family_key F)))"
 
-definition finite_family_identity :: "('a,'s::linorder,'d,'c) finite_schema_system \<Rightarrow> nat \<Rightarrow>
+definition finite_family_identity_in :: "('a,'s,'d,'c,'v) query_parameters \<Rightarrow> ('a,'s::linorder,'d,'c) finite_schema_system \<Rightarrow> nat \<Rightarrow>
     ('a,'d,'v) collection_family \<Rightarrow> finite_factor_term \<Rightarrow> finite_factor_term \<Rightarrow> bool option" where
-  "finite_family_identity P n F x y=(case family_identity F of None \<Rightarrow> Some (x=y)
-    | Some I \<Rightarrow> finite_identity_check P n I x y)"
+  "finite_family_identity_in \<Xi> P n F x y=(case family_identity F of None \<Rightarrow> Some (x=y)
+    | Some I \<Rightarrow> finite_identity_check_in \<Xi> P n I x y)"
 
 definition finite_family_identified :: "('a,'s,'d,'c) finite_schema_system \<Rightarrow> ('a,'d,'v) collection_family \<Rightarrow>
     finite_factor_term \<Rightarrow> finite_factor_term \<Rightarrow> bool" where
   "finite_family_identified P F x y \<longleftrightarrow> (case family_identity F of None \<Rightarrow> x=y
     | Some I \<Rightarrow> finite_identity_holds P I x y)"
 
-lemma finite_family_identity_exact:
-  assumes "finite_family_identity P n F x y=Some b"
+lemma finite_family_identity_exact_in:
+  assumes exact: "finite_query_exact \<Xi> P n" and check: "finite_family_identity_in \<Xi> P n F x y=Some b"
   shows "b \<longleftrightarrow> finite_family_identified P F x y"
 proof (cases "family_identity F")
   case None
-  then show ?thesis using assms by (auto simp: finite_family_identity_def finite_family_identified_def)
+  then show ?thesis using check by (auto simp: finite_family_identity_in_def finite_family_identified_def)
 next
   case (Some I)
-  then show ?thesis using assms finite_identity_check_exact[of P n I x y b]
-    by (simp add: finite_family_identity_def finite_family_identified_def)
+  then show ?thesis using check finite_identity_check_exact_in[OF exact, of I x y b]
+    by (simp add: finite_family_identity_in_def finite_family_identified_def)
 qed
 
 type_synonym ('a,'s,'c) collection_data = "nat\<times>finite_factor_term\<times>('a,'s,'c) finite_schema_proof fset"
@@ -1368,21 +1535,21 @@ definition finite_tag_answers ::
     "nat \<Rightarrow> ('a,'s,'c) query_answer list \<Rightarrow> (finite_factor_term\<times>('a,'s,'c) collection_data) list" where
   "finite_tag_answers i=map (\<lambda>(e,t,Cs). (e,(i,t,Cs)))"
 
-definition finite_family_base :: "('a,'s::linorder,'d,'c) finite_schema_system \<Rightarrow> nat \<Rightarrow> ('a,'d,'v) collection_family \<Rightarrow>
+definition finite_family_base_in :: "('a,'s,'d,'c,'v) query_parameters \<Rightarrow> ('a,'s::linorder,'d,'c) finite_schema_system \<Rightarrow> nat \<Rightarrow> ('a,'d,'v) collection_family \<Rightarrow>
     ('a\<times>finite_factor_term) fset \<Rightarrow> (finite_factor_term\<times>('a,'s,'c) collection_data) list option" where
-  "finite_family_base P n F B=map_option concat (those (map (\<lambda>i. map_option (finite_tag_answers i)
-    (finite_query_answers P n (family_base F!i) B [])) [0..<length (family_base F)]))"
+  "finite_family_base_in \<Xi> P n F B=map_option concat (those (map (\<lambda>i. map_option (finite_tag_answers i)
+    (finite_query_answers_in \<Xi> P n (family_base F!i) B [])) [0..<length (family_base F)]))"
 
-definition finite_family_step :: "('a,'s::linorder,'d,'c) finite_schema_system \<Rightarrow> nat \<Rightarrow> ('a,'d,'v) collection_family \<Rightarrow>
+definition finite_family_step_in :: "('a,'s,'d,'c,'v) query_parameters \<Rightarrow> ('a,'s::linorder,'d,'c) finite_schema_system \<Rightarrow> nat \<Rightarrow> ('a,'d,'v) collection_family \<Rightarrow>
     ('a\<times>finite_factor_term) fset \<Rightarrow> finite_factor_term \<Rightarrow> (finite_factor_term\<times>('a,'s,'c) collection_data) list option" where
-  "finite_family_step P n F B f=(case family_step F of None \<Rightarrow> Some []
-    | Some qp \<Rightarrow> map_option (finite_tag_answers 0) (finite_query_answers P n (fst qp) B [(f,snd qp)]))"
+  "finite_family_step_in \<Xi> P n F B f=(case family_step F of None \<Rightarrow> Some []
+    | Some qp \<Rightarrow> map_option (finite_tag_answers 0) (finite_query_answers_in \<Xi> P n (fst qp) B [(f,snd qp)]))"
 
-definition finite_family_collection :: "('a,'s::linorder,'d,'c) finite_schema_system \<Rightarrow> nat \<Rightarrow> ('a,'d,'v) collection_family \<Rightarrow>
+definition finite_family_collection_in :: "('a,'s,'d,'c,'v) query_parameters \<Rightarrow> ('a,'s::linorder,'d,'c) finite_schema_system \<Rightarrow> nat \<Rightarrow> ('a,'d,'v) collection_family \<Rightarrow>
     ('a\<times>finite_factor_term) fset \<Rightarrow> ((finite_factor_term\<times>finite_factor_term option\<times>('a,'s,'c) collection_data) list\<times>
       (finite_factor_term\<times>finite_factor_term) list) option" where
-  "finite_family_collection P n F B=finite_collect Ordered_Factor_Term (finite_family_key F) (finite_family_identity P n F)
-    (finite_family_base P n F B) (finite_family_step P n F B) n"
+  "finite_family_collection_in \<Xi> P n F B=finite_collect Ordered_Factor_Term (finite_family_key F) (finite_family_identity_in \<Xi> P n F)
+    (finite_family_base_in \<Xi> P n F B) (finite_family_step_in \<Xi> P n F B) n"
 
 definition finite_family_value :: "(finite_factor_term\<times>'x) list \<Rightarrow> finite_factor_term" where
   "finite_family_value es=finite_data_list (map fst es)"
@@ -1401,42 +1568,43 @@ definition finite_family_covers :: "('a,'s,'d,'c) finite_schema_system \<Rightar
     (x=e \<or> finite_family_identified P F x e))"
 
 lemma finite_family_covered:
-  assumes "finite_collect_covered (finite_family_key F) (finite_family_identity P n F) es e"
+  assumes exact: "finite_query_exact \<Xi> P n"
+    and covered: "finite_collect_covered (finite_family_key F) (finite_family_identity_in \<Xi> P n F) es e"
   shows "finite_family_covers P F (fst ` set es) e"
 proof -
   obtain x where x: "x \<in> set es" "finite_family_key F (fst x)=finite_family_key F e"
-    and same: "fst x=e \<or> finite_family_identity P n F (fst x) e=Some True"
-    using assms unfolding finite_collect_covered_def by blast
+    and same: "fst x=e \<or> finite_family_identity_in \<Xi> P n F (fst x) e=Some True"
+    using covered unfolding finite_collect_covered_def by blast
   have "fst x=e \<or> finite_family_identified P F (fst x) e"
-    using same finite_family_identity_exact[of P n F "fst x" e True] by blast
+    using same finite_family_identity_exact_in[OF exact, of F "fst x" e True] by blast
   then show ?thesis unfolding finite_family_covers_def using x by (intro bexI[of _ "fst x"]) auto
 qed
 
 lemma finite_family_base_origin:
-  assumes base: "finite_family_base P n F B=Some A" and member: "(e,i,t,Cs) \<in> set A"
-  obtains Ai where "i<length (family_base F)" "finite_query_answers P n (family_base F!i) B []=Some Ai" "(e,t,Cs) \<in> set Ai"
+  assumes base: "finite_family_base_in \<Xi> P n F B=Some A" and member: "(e,i,t,Cs) \<in> set A"
+  obtains Ai where "i<length (family_base F)" "finite_query_answers_in \<Xi> P n (family_base F!i) B []=Some Ai" "(e,t,Cs) \<in> set Ai"
 proof -
-  let ?g="\<lambda>i. map_option (finite_tag_answers i) (finite_query_answers P n (family_base F!i) B [])"
+  let ?g="\<lambda>i. map_option (finite_tag_answers i) (finite_query_answers_in \<Xi> P n (family_base F!i) B [])"
   obtain As where As: "those (map ?g [0..<length (family_base F)])=Some As" and A: "A=concat As"
-    using base by (auto simp: finite_family_base_def)
+    using base by (auto simp: finite_family_base_in_def)
   obtain L where L: "L \<in> set As" "(e,i,t,Cs) \<in> set L" using member A by auto
   obtain j where j: "j \<in> set [0..<length (family_base F)]" "?g j=Some L" using those_map_some[OF As] L(1) by blast
-  obtain Aj where Aj: "finite_query_answers P n (family_base F!j) B []=Some Aj" "L=finite_tag_answers j Aj"
+  obtain Aj where Aj: "finite_query_answers_in \<Xi> P n (family_base F!j) B []=Some Aj" "L=finite_tag_answers j Aj"
     using j(2) by auto
   have "i=j \<and> (e,t,Cs) \<in> set Aj" using L(2) Aj(2) by (auto simp: finite_tag_answers_def)
   then show ?thesis using that j(1) Aj(1) by auto
 qed
 
 lemma finite_family_base_listed:
-  assumes base: "finite_family_base P n F B=Some A" and i: "i<length (family_base F)"
-  obtains Ai where "finite_query_answers P n (family_base F!i) B []=Some Ai"
+  assumes base: "finite_family_base_in \<Xi> P n F B=Some A" and i: "i<length (family_base F)"
+  obtains Ai where "finite_query_answers_in \<Xi> P n (family_base F!i) B []=Some Ai"
     "\<forall>e t Cs. (e,t,Cs) \<in> set Ai \<longrightarrow> (e,i,t,Cs) \<in> set A"
 proof -
-  let ?g="\<lambda>i. map_option (finite_tag_answers i) (finite_query_answers P n (family_base F!i) B [])"
+  let ?g="\<lambda>i. map_option (finite_tag_answers i) (finite_query_answers_in \<Xi> P n (family_base F!i) B [])"
   obtain As where As: "those (map ?g [0..<length (family_base F)])=Some As" and A: "A=concat As"
-    using base by (auto simp: finite_family_base_def)
+    using base by (auto simp: finite_family_base_in_def)
   obtain L where L: "L \<in> set As" "?g i=Some L" using those_map_some[OF As] i by fastforce
-  obtain Ai where Ai: "finite_query_answers P n (family_base F!i) B []=Some Ai" "L=finite_tag_answers i Ai"
+  obtain Ai where Ai: "finite_query_answers_in \<Xi> P n (family_base F!i) B []=Some Ai" "L=finite_tag_answers i Ai"
     using L(2) by auto
   have "\<forall>e t Cs. (e,t,Cs) \<in> set Ai \<longrightarrow> (e,i,t,Cs) \<in> set A"
   proof (intro allI impI)
@@ -1448,26 +1616,26 @@ proof -
 qed
 
 lemma finite_family_step_origin:
-  assumes step: "finite_family_step P n F B f=Some L" and member: "(e,i,t,Cs) \<in> set L"
-  obtains q p Af where "family_step F=Some (q,p)" "finite_query_answers P n q B [(f,p)]=Some Af" "(e,t,Cs) \<in> set Af"
+  assumes step: "finite_family_step_in \<Xi> P n F B f=Some L" and member: "(e,i,t,Cs) \<in> set L"
+  obtains q p Af where "family_step F=Some (q,p)" "finite_query_answers_in \<Xi> P n q B [(f,p)]=Some Af" "(e,t,Cs) \<in> set Af"
 proof (cases "family_step F")
   case None
-  then show ?thesis using step member by (simp add: finite_family_step_def)
+  then show ?thesis using step member by (simp add: finite_family_step_in_def)
 next
   case (Some qp)
   obtain q p where qp: "qp=(q,p)" by (cases qp)
-  obtain Af where Af: "finite_query_answers P n q B [(f,p)]=Some Af" "L=finite_tag_answers 0 Af"
-    using step Some qp by (auto simp: finite_family_step_def)
+  obtain Af where Af: "finite_query_answers_in \<Xi> P n q B [(f,p)]=Some Af" "L=finite_tag_answers 0 Af"
+    using step Some qp by (auto simp: finite_family_step_in_def)
   have "(e,t,Cs) \<in> set Af" using member Af(2) by (auto simp: finite_tag_answers_def)
   then show ?thesis using that[of q p Af] Some qp Af(1) by simp
 qed
 
 lemma finite_family_step_listed:
-  assumes step: "finite_family_step P n F B f=Some L" and fam: "family_step F=Some (q,p)"
-  obtains Af where "finite_query_answers P n q B [(f,p)]=Some Af" "\<forall>e t Cs. (e,t,Cs) \<in> set Af \<longrightarrow> (e,0,t,Cs) \<in> set L"
+  assumes step: "finite_family_step_in \<Xi> P n F B f=Some L" and fam: "family_step F=Some (q,p)"
+  obtains Af where "finite_query_answers_in \<Xi> P n q B [(f,p)]=Some Af" "\<forall>e t Cs. (e,t,Cs) \<in> set Af \<longrightarrow> (e,0,t,Cs) \<in> set L"
 proof -
-  obtain Af where Af: "finite_query_answers P n q B [(f,p)]=Some Af" "L=finite_tag_answers 0 Af"
-    using step fam by (auto simp: finite_family_step_def)
+  obtain Af where Af: "finite_query_answers_in \<Xi> P n q B [(f,p)]=Some Af" "L=finite_tag_answers 0 Af"
+    using step fam by (auto simp: finite_family_step_in_def)
   have "\<forall>e t Cs. (e,t,Cs) \<in> set Af \<longrightarrow> (e,0,t,Cs) \<in> set L"
   proof (intro allI impI)
     fix e t Cs assume "(e,t,Cs) \<in> set Af"
@@ -1477,15 +1645,15 @@ proof -
 qed
 
 lemma finite_family_collection_invariant:
-  assumes collect: "finite_family_collection P n F B=Some (es,cs)"
-  obtains A where "finite_family_base P n F B=Some A"
-    "finite_collect_invariant (finite_family_key F) (finite_family_identity P n F) A (finite_family_step P n F B) es cs []"
+  assumes collect: "finite_family_collection_in \<Xi> P n F B=Some (es,cs)"
+  obtains A where "finite_family_base_in \<Xi> P n F B=Some A"
+    "finite_collect_invariant (finite_family_key F) (finite_family_identity_in \<Xi> P n F) A (finite_family_step_in \<Xi> P n F B) es cs []"
 proof -
-  obtain A where base: "finite_family_base P n F B=Some A"
-    using collect by (cases "finite_family_base P n F B") (simp_all add: finite_family_collection_def finite_collect_def)
-  have collect': "finite_collect Ordered_Factor_Term (finite_family_key F) (finite_family_identity P n F) (Some A)
-      (finite_family_step P n F B) n=Some (es,cs)"
-    using collect base by (simp add: finite_family_collection_def)
+  obtain A where base: "finite_family_base_in \<Xi> P n F B=Some A"
+    using collect by (cases "finite_family_base_in \<Xi> P n F B") (simp_all add: finite_family_collection_in_def finite_collect_def)
+  have collect': "finite_collect Ordered_Factor_Term (finite_family_key F) (finite_family_identity_in \<Xi> P n F) (Some A)
+      (finite_family_step_in \<Xi> P n F B) n=Some (es,cs)"
+    using collect base by (simp add: finite_family_collection_in_def)
   show ?thesis by (rule that[OF base finite_collect_invariant_result[OF collect']])
 qed
 
@@ -1526,16 +1694,15 @@ proof -
 qed
 
 lemma finite_query_answers_checked:
-  assumes answers: "finite_query_answers P n q B E=Some A" and member: "(e,t,Cs) \<in> set A"
+  assumes answers: "finite_query_answers_in \<Xi> P n q B E=Some A" and member: "(e,t,Cs) \<in> set A"
   shows "finite_query_checked P q B E e t Cs"
 proof -
   obtain ts W where inputs: "finite_query_inputs q B E=Some ts" and formed: "finite_query_formed q ts"
     and matching: "finite_inputs_matching ts=Some W" and element: "finite_query_element q W t=Some e"
-    and resolved: "finite_program_resolution no_witness_construction P (query_site q) t n=Finite_Resolved Cs"
+    and resolved: "finite_parameters_resolution (fst \<Xi>) P (query_site q) t n=Finite_Resolved Cs"
     by (rule finite_query_answers_member[OF answers member])
   show ?thesis unfolding finite_query_checked_def
-    using inputs formed matching element finite_program_resolution_sound(1)[OF resolved]
-      finite_program_resolution_accepted[OF resolved] by simp
+    using inputs formed matching element finite_parameters_resolution_sound(1,2)[OF resolved] by simp
 qed
 
 definition finite_justification_query :: "('a,'d,'v) collection_family \<Rightarrow> finite_factor_term option \<Rightarrow> nat \<Rightarrow>
@@ -1611,13 +1778,13 @@ qed
 text \<open>(3), the justification a collection returns is accepted by the check.\<close>
 
 theorem finite_family_collection_justified:
-  assumes collect: "finite_family_collection P n F B=Some (es,cs)"
+  assumes collect: "finite_family_collection_in \<Xi> P n F B=Some (es,cs)"
   shows "finite_justification_check P F B es"
 proof -
-  obtain A where base: "finite_family_base P n F B=Some A"
-    and inv: "finite_collect_invariant (finite_family_key F) (finite_family_identity P n F) A (finite_family_step P n F B) es cs []"
+  obtain A where base: "finite_family_base_in \<Xi> P n F B=Some A"
+    and inv: "finite_collect_invariant (finite_family_key F) (finite_family_identity_in \<Xi> P n F) A (finite_family_step_in \<Xi> P n F B) es cs []"
     by (rule finite_family_collection_invariant[OF collect])
-  have origin: "\<forall>x\<in>set es. finite_collect_origin A (finite_family_step P n F B) x"
+  have origin: "\<forall>x\<in>set es. finite_collect_origin A (finite_family_step_in \<Xi> P n F B) x"
     using inv unfolding finite_collect_invariant_def by blast
   have earlier: "\<forall>k<length es. \<forall>f. fst (snd (es!k))=Some f \<longrightarrow> f \<in> fst ` set (take k es)"
     using inv unfolding finite_collect_invariant_def by blast
@@ -1625,22 +1792,22 @@ proof -
   proof -
     obtain e src i t Cs where x: "es!k=(e,src,i,t,Cs)" by (rule prod_cases5)
     have xin: "(e,src,i,t,Cs) \<in> set es" using nth_mem[OF k] x by simp
-    have orig: "finite_collect_origin A (finite_family_step P n F B) (e,src,i,t,Cs)" using origin xin by blast
+    have orig: "finite_collect_origin A (finite_family_step_in \<Xi> P n F B) (e,src,i,t,Cs)" using origin xin by blast
     show ?thesis
     proof (cases src)
       case None
       then have "(e,i,t,Cs) \<in> set A" using orig by (simp add: finite_collect_origin_def)
       then obtain Ai where i: "i<length (family_base F)"
-        and Ai: "finite_query_answers P n (family_base F!i) B []=Some Ai" "(e,t,Cs) \<in> set Ai"
+        and Ai: "finite_query_answers_in \<Xi> P n (family_base F!i) B []=Some Ai" "(e,t,Cs) \<in> set Ai"
         by (rule finite_family_base_origin[OF base])
       have "finite_query_checked P (family_base F!i) B [] e t Cs" by (rule finite_query_answers_checked[OF Ai])
       then show ?thesis using None i x by (simp add: finite_justification_entry_def finite_justification_query_def)
     next
       case (Some f)
-      then obtain L where L: "finite_family_step P n F B f=Some L" "(e,i,t,Cs) \<in> set L"
+      then obtain L where L: "finite_family_step_in \<Xi> P n F B f=Some L" "(e,i,t,Cs) \<in> set L"
         using orig by (auto simp: finite_collect_origin_def)
       obtain q p Af where fam: "family_step F=Some (q,p)"
-        and Af: "finite_query_answers P n q B [(f,p)]=Some Af" "(e,t,Cs) \<in> set Af"
+        and Af: "finite_query_answers_in \<Xi> P n q B [(f,p)]=Some Af" "(e,t,Cs) \<in> set Af"
         by (rule finite_family_step_origin[OF L])
       have "finite_query_checked P q B [(f,p)] e t Cs" by (rule finite_query_answers_checked[OF Af])
       moreover have "f \<in> set (map fst (take k es))" using earlier k x Some by force
@@ -1655,7 +1822,7 @@ section \<open>The contract of a family's collection\<close>
 text \<open>(2), soundness: every element lies in the image of the base answers under the step answers' closure.\<close>
 
 theorem finite_family_collection_sound:
-  assumes "finite_family_collection P n F B=Some (es,cs)"
+  assumes "finite_family_collection_in \<Xi> P n F B=Some (es,cs)"
   shows "fst ` set es \<subseteq> (finite_family_step_answers P F B)\<^sup>* `` finite_family_base_answers P F B"
     and "\<forall>x\<in>set es. finite_term_formed (fst x)"
   by (rule finite_justification_sound[OF finite_family_collection_justified[OF assms]])+
@@ -1665,19 +1832,19 @@ text \<open>
   identity query.
 \<close>
 
-theorem finite_family_collection_complete:
+theorem finite_family_collection_complete_in:
   fixes F :: "('a,'d,'v) collection_family" and P :: "('a,'s::linorder,'d,'c) finite_schema_system"
-  assumes collect: "finite_family_collection P n F B=Some (es,cs)"
+  assumes exact: "finite_query_exact \<Xi> P n" and collect: "finite_family_collection_in \<Xi> P n F B=Some (es,cs)"
   shows "\<forall>e\<in>finite_family_base_answers P F B. finite_family_covers P F (fst ` set es) e"
     and "\<forall>f\<in>fst ` set es. \<forall>e. (f,e) \<in> finite_family_step_answers P F B \<longrightarrow> finite_family_covers P F (fst ` set es) e"
 proof -
-  obtain A where base: "finite_family_base P n F B=Some A"
-    and inv: "finite_collect_invariant (finite_family_key F) (finite_family_identity P n F) A (finite_family_step P n F B) es cs []"
+  obtain A where base: "finite_family_base_in \<Xi> P n F B=Some A"
+    and inv: "finite_collect_invariant (finite_family_key F) (finite_family_identity_in \<Xi> P n F) A (finite_family_step_in \<Xi> P n F B) es cs []"
     by (rule finite_family_collection_invariant[OF collect])
-  have covA: "\<forall>a\<in>set A. finite_collect_covered (finite_family_key F) (finite_family_identity P n F) es (fst a)"
+  have covA: "\<forall>a\<in>set A. finite_collect_covered (finite_family_key F) (finite_family_identity_in \<Xi> P n F) es (fst a)"
     using inv unfolding finite_collect_invariant_def by blast
-  have stepped: "\<forall>x\<in>set es. fst x \<notin> set [] \<longrightarrow> (\<exists>L. finite_family_step P n F B (fst x)=Some L \<and>
-      (\<forall>a\<in>set L. finite_collect_covered (finite_family_key F) (finite_family_identity P n F) es (fst a)))"
+  have stepped: "\<forall>x\<in>set es. fst x \<notin> set [] \<longrightarrow> (\<exists>L. finite_family_step_in \<Xi> P n F B (fst x)=Some L \<and>
+      (\<forall>a\<in>set L. finite_collect_covered (finite_family_key F) (finite_family_identity_in \<Xi> P n F) es (fst a)))"
     using inv unfolding finite_collect_invariant_def by blast
   show "\<forall>e\<in>finite_family_base_answers P F B. finite_family_covers P F (fst ` set es) e"
   proof
@@ -1685,15 +1852,15 @@ proof -
     then obtain q where q: "q \<in> set (family_base F)" and holds: "finite_query_holds P q B [] e"
       unfolding finite_family_base_answers_def by blast
     obtain i where i: "i<length (family_base F)" "family_base F!i=q" using q by (auto simp: in_set_conv_nth)
-    obtain Ai where Ai: "finite_query_answers P n (family_base F!i) B []=Some Ai"
+    obtain Ai where Ai: "finite_query_answers_in \<Xi> P n (family_base F!i) B []=Some Ai"
       and listed: "\<forall>e t Cs. (e,t,Cs) \<in> set Ai \<longrightarrow> (e,i,t,Cs) \<in> set A"
       by (rule finite_family_base_listed[OF base i(1)])
     have holdsi: "finite_query_holds P (family_base F!i) B [] e" using holds i(2) by simp
-    obtain t Cs where "(e,t,Cs) \<in> set Ai" using finite_query_answers_complete[OF Ai holdsi] by blast
+    obtain t Cs where "(e,t,Cs) \<in> set Ai" using finite_query_answers_complete_in[OF exact Ai holdsi] by blast
     then have "(e,i,t,Cs) \<in> set A" using listed by blast
-    then have "finite_collect_covered (finite_family_key F) (finite_family_identity P n F) es e"
+    then have "finite_collect_covered (finite_family_key F) (finite_family_identity_in \<Xi> P n F) es e"
       using bspec[OF covA] by fastforce
-    then show "finite_family_covers P F (fst ` set es) e" by (rule finite_family_covered)
+    then show "finite_family_covers P F (fst ` set es) e" by (rule finite_family_covered[OF exact])
   qed
   show "\<forall>f\<in>fst ` set es. \<forall>e. (f,e) \<in> finite_family_step_answers P F B \<longrightarrow> finite_family_covers P F (fst ` set es) e"
   proof (intro ballI allI impI)
@@ -1701,28 +1868,28 @@ proof -
     obtain q p where fam: "family_step F=Some (q,p)" and holds: "finite_query_holds P q B [(f,p)] e"
       using fe unfolding finite_family_step_answers_def by blast
     obtain x where x: "x \<in> set es" "f=fst x" using f by blast
-    have "\<exists>L. finite_family_step P n F B f=Some L \<and>
-        (\<forall>a\<in>set L. finite_collect_covered (finite_family_key F) (finite_family_identity P n F) es (fst a))"
+    have "\<exists>L. finite_family_step_in \<Xi> P n F B f=Some L \<and>
+        (\<forall>a\<in>set L. finite_collect_covered (finite_family_key F) (finite_family_identity_in \<Xi> P n F) es (fst a))"
       using bspec[OF stepped x(1)] x(2) by simp
-    then obtain L where L: "finite_family_step P n F B f=Some L"
-      and covL: "\<forall>a\<in>set L. finite_collect_covered (finite_family_key F) (finite_family_identity P n F) es (fst a)"
+    then obtain L where L: "finite_family_step_in \<Xi> P n F B f=Some L"
+      and covL: "\<forall>a\<in>set L. finite_collect_covered (finite_family_key F) (finite_family_identity_in \<Xi> P n F) es (fst a)"
       by blast
-    obtain Af where Af: "finite_query_answers P n q B [(f,p)]=Some Af"
+    obtain Af where Af: "finite_query_answers_in \<Xi> P n q B [(f,p)]=Some Af"
       and listed: "\<forall>e t Cs. (e,t,Cs) \<in> set Af \<longrightarrow> (e,0,t,Cs) \<in> set L"
       by (rule finite_family_step_listed[OF L fam])
-    obtain t Cs where "(e,t,Cs) \<in> set Af" using finite_query_answers_complete[OF Af holds] by blast
+    obtain t Cs where "(e,t,Cs) \<in> set Af" using finite_query_answers_complete_in[OF exact Af holds] by blast
     then have "(e,0,t,Cs) \<in> set L" using listed by blast
-    then have "finite_collect_covered (finite_family_key F) (finite_family_identity P n F) es e"
+    then have "finite_collect_covered (finite_family_key F) (finite_family_identity_in \<Xi> P n F) es e"
       using bspec[OF covL] by fastforce
-    then show "finite_family_covers P F (fst ` set es) e" by (rule finite_family_covered)
+    then show "finite_family_covers P F (fst ` set es) e" by (rule finite_family_covered[OF exact])
   qed
 qed
 
 text \<open>(2), exactness where the family has no identity query: the elements are exactly the least set.\<close>
 
-theorem finite_family_collection_exact:
+theorem finite_family_collection_exact_in:
   fixes F :: "('a,'d,'v) collection_family" and P :: "('a,'s::linorder,'d,'c) finite_schema_system"
-  assumes collect: "finite_family_collection P n F B=Some (es,cs)"
+  assumes exact: "finite_query_exact \<Xi> P n" and collect: "finite_family_collection_in \<Xi> P n F B=Some (es,cs)"
     and none: "family_identity F=None"
   shows "fst ` set es=(finite_family_step_answers P F B)\<^sup>* `` finite_family_base_answers P F B"
 proof
@@ -1730,7 +1897,7 @@ proof
     by (rule finite_family_collection_sound(1)[OF collect])
   have element: "e \<in> fst ` set es" if "finite_family_covers P F (fst ` set es) e" for e
     using that none by (auto simp: finite_family_covers_def finite_family_identified_def)
-  note complete=finite_family_collection_complete[OF collect]
+  note complete=finite_family_collection_complete_in[OF exact collect]
   show "(finite_family_step_answers P F B)\<^sup>* `` finite_family_base_answers P F B \<subseteq> fst ` set es"
   proof
     fix e assume "e \<in> (finite_family_step_answers P F B)\<^sup>* `` finite_family_base_answers P F B"
@@ -1749,34 +1916,34 @@ qed
 
 text \<open>A conflict presents two answers of one key whose identity the identity query refutes.\<close>
 
-theorem finite_family_collection_conflicts:
-  assumes collect: "finite_family_collection P n F B=Some (es,cs)" and conflict: "(x,y) \<in> set cs"
+theorem finite_family_collection_conflicts_in:
+  assumes exact: "finite_query_exact \<Xi> P n" and collect: "finite_family_collection_in \<Xi> P n F B=Some (es,cs)" and conflict: "(x,y) \<in> set cs"
   shows "x \<in> fst ` set es" "y \<in> fst ` set es" "finite_family_key F x=finite_family_key F y" "x\<noteq>y"
     "\<not> finite_family_identified P F x y"
 proof -
-  obtain A where inv: "finite_collect_invariant (finite_family_key F) (finite_family_identity P n F) A
-      (finite_family_step P n F B) es cs []"
+  obtain A where inv: "finite_collect_invariant (finite_family_key F) (finite_family_identity_in \<Xi> P n F) A
+      (finite_family_step_in \<Xi> P n F B) es cs []"
     by (rule finite_family_collection_invariant[OF collect])
-  have conf: "finite_collect_conflicts (finite_family_key F) (finite_family_identity P n F) es cs"
+  have conf: "finite_collect_conflicts (finite_family_key F) (finite_family_identity_in \<Xi> P n F) es cs"
     using inv unfolding finite_collect_invariant_def by blast
   have c: "x \<in> fst ` set es \<and> y \<in> fst ` set es \<and> finite_family_key F x=finite_family_key F y \<and> x\<noteq>y \<and>
-      finite_family_identity P n F x y=Some False"
+      finite_family_identity_in \<Xi> P n F x y=Some False"
     using bspec[OF conf[unfolded finite_collect_conflicts_def] conflict] by simp
   then show "x \<in> fst ` set es" "y \<in> fst ` set es" "finite_family_key F x=finite_family_key F y" "x\<noteq>y" by simp_all
-  show "\<not> finite_family_identified P F x y" using c finite_family_identity_exact[of P n F x y False] by simp
+  show "\<not> finite_family_identified P F x y" using c finite_family_identity_exact_in[OF exact, of F x y False] by simp
 qed
 
 text \<open>With no conflict the elements are distinct, and the value is the data list of them in the order found.\<close>
 
 theorem finite_family_collection_distinct:
-  assumes collect: "finite_family_collection P n F B=Some (es,[])"
+  assumes collect: "finite_family_collection_in \<Xi> P n F B=Some (es,[])"
   shows "distinct (map fst es)"
 proof -
-  obtain A where base: "finite_family_base P n F B=Some A"
-    using collect by (cases "finite_family_base P n F B") (simp_all add: finite_family_collection_def finite_collect_def)
-  have "finite_collect Ordered_Factor_Term (finite_family_key F) (finite_family_identity P n F) (Some A)
-      (finite_family_step P n F B) n=Some (es,[])"
-    using collect base by (simp add: finite_family_collection_def)
+  obtain A where base: "finite_family_base_in \<Xi> P n F B=Some A"
+    using collect by (cases "finite_family_base_in \<Xi> P n F B") (simp_all add: finite_family_collection_in_def finite_collect_def)
+  have "finite_collect Ordered_Factor_Term (finite_family_key F) (finite_family_identity_in \<Xi> P n F) (Some A)
+      (finite_family_step_in \<Xi> P n F B) n=Some (es,[])"
+    using collect base by (simp add: finite_family_collection_in_def)
   then have "distinct (map (finite_family_key F\<circ>fst) es)" by (rule finite_collect_keys)
   then have "distinct (map (finite_family_key F) (map fst es))" by (simp only: map_map)
   then show ?thesis using distinct_map[of "finite_family_key F" "map fst es"] by blast
@@ -1784,23 +1951,23 @@ qed
 
 
 lemma finite_family_collection_keys:
-  assumes collect: "finite_family_collection P n F B=Some (es,[])"
+  assumes collect: "finite_family_collection_in \<Xi> P n F B=Some (es,[])"
   shows "distinct (map (finite_family_key F \<circ> fst) es)"
 proof -
-  obtain A where base: "finite_family_base P n F B=Some A"
-    using collect by (cases "finite_family_base P n F B") (simp_all add: finite_family_collection_def finite_collect_def)
-  have "finite_collect Ordered_Factor_Term (finite_family_key F) (finite_family_identity P n F) (Some A)
-      (finite_family_step P n F B) n=Some (es,[])"
-    using collect base by (simp add: finite_family_collection_def)
+  obtain A where base: "finite_family_base_in \<Xi> P n F B=Some A"
+    using collect by (cases "finite_family_base_in \<Xi> P n F B") (simp_all add: finite_family_collection_in_def finite_collect_def)
+  have "finite_collect Ordered_Factor_Term (finite_family_key F) (finite_family_identity_in \<Xi> P n F) (Some A)
+      (finite_family_step_in \<Xi> P n F B) n=Some (es,[])"
+    using collect base by (simp add: finite_family_collection_in_def)
   then show ?thesis by (rule finite_collect_keys)
 qed
 
-theorem finite_family_value_presents:
+theorem finite_family_value_decode:
   "decode_finite_term (finite_family_value es)=data_list_term (map (decode_finite_term \<circ> fst) es)"
   by (simp add: finite_family_value_def)
 
 theorem finite_family_collection_presents:
-  assumes collect: "finite_family_collection P n F B=Some (es,[])"
+  assumes collect: "finite_family_collection_in \<Xi> P n F B=Some (es,[])"
   shows "data_collection_presents (\<lambda>x t. t=decode_finite_term x) (fst ` set es) (decode_finite_term (finite_family_value es))"
   unfolding data_collection_presents_def
   by (rule exI[of _ "map fst es"], rule exI[of _ "map decode_finite_term (map fst es)"])
@@ -1835,21 +2002,21 @@ record ('a,'s,'d,'v) collection_registration =
   registration_variable :: 'a
   registration_families :: "('a,'d,'v) registration_families"
 
-definition finite_family_collected :: "('a,'s::linorder,'d,'c) finite_schema_system \<Rightarrow> nat \<Rightarrow>
+definition finite_family_collected_in :: "('a,'s,'d,'c,'v) query_parameters \<Rightarrow> ('a,'s::linorder,'d,'c) finite_schema_system \<Rightarrow> nat \<Rightarrow>
     ('a,'d,'v) collection_family \<Rightarrow> ('a\<times>finite_factor_term) fset \<Rightarrow> finite_factor_term option" where
-  "finite_family_collected P n F B=map_option (\<lambda>c. finite_family_value (fst c)) (finite_family_collection P n F B)"
+  "finite_family_collected_in \<Xi> P n F B=map_option (\<lambda>c. finite_family_value (fst c)) (finite_family_collection_in \<Xi> P n F B)"
 
 lemma finite_family_collected_some:
-  "finite_family_collected P n F B=Some v \<longleftrightarrow>
-    (\<exists>es cs. finite_family_collection P n F B=Some (es,cs) \<and> v=finite_family_value es)"
-  by (auto simp: finite_family_collected_def)
+  "finite_family_collected_in \<Xi> P n F B=Some v \<longleftrightarrow>
+    (\<exists>es cs. finite_family_collection_in \<Xi> P n F B=Some (es,cs) \<and> v=finite_family_value es)"
+  by (auto simp: finite_family_collected_in_def)
 
 lemma finite_family_collected_formed:
-  assumes collected: "finite_family_collected P n F B=Some v"
+  assumes collected: "finite_family_collected_in \<Xi> P n F B=Some v"
   shows "finite_term_formed v"
 proof -
-  obtain c where c: "finite_family_collection P n F B=Some c" and v: "v=finite_family_value (fst c)"
-    using collected by (auto simp: finite_family_collected_def)
+  obtain c where c: "finite_family_collection_in \<Xi> P n F B=Some c" and v: "v=finite_family_value (fst c)"
+    using collected by (auto simp: finite_family_collected_in_def)
   obtain es cs where es: "c=(es,cs)" by (cases c)
   have "\<forall>x\<in>set es. finite_term_formed (fst x)" by (rule finite_family_collection_sound(2)[OF c[unfolded es]])
   then show ?thesis unfolding v es finite_family_value_def by (simp add: finite_data_list_formed list_all_iff)
@@ -1882,33 +2049,33 @@ proof -
   then show ?thesis using assms by (simp add: finite_determined_value_some)
 qed
 
-definition finite_registration_value :: "('a,'s::linorder,'d,'c) finite_schema_system \<Rightarrow> nat \<Rightarrow>
+definition finite_registration_value_in :: "('a,'s,'d,'c,'v) query_parameters \<Rightarrow> ('a,'s::linorder,'d,'c) finite_schema_system \<Rightarrow> nat \<Rightarrow>
     ('a,'s,'d,'v) collection_registration \<Rightarrow> ('a\<times>finite_factor_term) fset \<Rightarrow> finite_factor_term option" where
-  "finite_registration_value P n R B=(case registration_families R of
-      Single_Family F \<Rightarrow> finite_family_collected P n F B
-    | Paired_Families F G \<Rightarrow> (case finite_family_collected P n F B of None \<Rightarrow> None
-        | Some x \<Rightarrow> map_option (Finite_Pair x) (finite_family_collected P n G B))
+  "finite_registration_value_in \<Xi> P n R B=(case registration_families R of
+      Single_Family F \<Rightarrow> finite_family_collected_in \<Xi> P n F B
+    | Paired_Families F G \<Rightarrow> (case finite_family_collected_in \<Xi> P n F B of None \<Rightarrow> None
+        | Some x \<Rightarrow> map_option (Finite_Pair x) (finite_family_collected_in \<Xi> P n G B))
     | Determined_Value p \<Rightarrow> finite_determined_value p B)"
 
 text \<open>A determined registration's value is its determined value, at every program and bound.\<close>
 
 lemma finite_registration_value_determined:
-  "registration_families R=Determined_Value p \<Longrightarrow> finite_registration_value P n R B=finite_determined_value p B"
-  by (simp add: finite_registration_value_def)
+  "registration_families R=Determined_Value p \<Longrightarrow> finite_registration_value_in \<Xi> P n R B=finite_determined_value p B"
+  by (simp add: finite_registration_value_in_def)
 
 lemma finite_registration_value_formed:
-  assumes "finite_registration_value P n R B=Some v"
+  assumes "finite_registration_value_in \<Xi> P n R B=Some v"
   shows "finite_term_formed v"
 proof (cases "registration_families R")
   case (Single_Family F)
-  then show ?thesis using assms finite_family_collected_formed by (simp add: finite_registration_value_def)
+  then show ?thesis using assms finite_family_collected_formed by (simp add: finite_registration_value_in_def)
 next
   case (Paired_Families F G)
-  then show ?thesis using assms finite_family_collected_formed
-    by (auto simp: finite_registration_value_def split: option.splits)
+  then show ?thesis using assms finite_family_collected_formed[of \<Xi>]
+    by (auto simp: finite_registration_value_in_def split: option.splits)
 next
   case (Determined_Value p)
-  then show ?thesis using assms finite_determined_value_formed by (simp add: finite_registration_value_def)
+  then show ?thesis using assms finite_determined_value_formed by (simp add: finite_registration_value_in_def)
 qed
 
 definition finite_registration_matches ::
@@ -1924,39 +2091,39 @@ lemma finite_registered_variables_member:
     (\<exists>R\<in>set Rs. finite_registration_matches d S R \<and> registration_variable R=a)"
   by (auto simp: finite_registered_variables_def fset_of_list_elem)
 
-definition finite_collection_construction ::
-    "('a,'s,'d,'v) collection_registration list \<Rightarrow> nat \<Rightarrow> ('a,'s::linorder,'d,'c) finite_witness_construction" where
-  "finite_collection_construction Rs n=\<lparr>witness_registered=finite_registered_variables Rs,
+definition finite_collection_construction_in ::
+    "('a,'s,'d,'c,'v) query_parameters \<Rightarrow> ('a,'s,'d,'v) collection_registration list \<Rightarrow> nat \<Rightarrow> ('a,'s::linorder,'d,'c) finite_witness_construction" where
+  "finite_collection_construction_in \<Xi> Rs n=\<lparr>witness_registered=finite_registered_variables Rs,
     witness_value=(\<lambda>P d S B a. case find (\<lambda>R. finite_registration_matches d S R \<and> registration_variable R=a) Rs of
-      None \<Rightarrow> None | Some R \<Rightarrow> finite_registration_value P n R B)\<rparr>"
+      None \<Rightarrow> None | Some R \<Rightarrow> finite_registration_value_in \<Xi> P n R B)\<rparr>"
 
 text \<open>(4): the construction registers exactly the registrations' variables, and each value it returns is formed.\<close>
 
 theorem finite_collection_construction_registered:
-  "a |\<in>| witness_registered (finite_collection_construction Rs n) d S \<longleftrightarrow>
+  "a |\<in>| witness_registered (finite_collection_construction_in \<Xi> Rs n) d S \<longleftrightarrow>
     (\<exists>R\<in>set Rs. finite_registration_matches d S R \<and> registration_variable R=a)"
-  by (simp add: finite_collection_construction_def finite_registered_variables_member)
+  by (simp add: finite_collection_construction_in_def finite_registered_variables_member)
 
 theorem finite_collection_construction_value:
-  assumes "witness_value (finite_collection_construction Rs n) P d S B a=Some v"
+  assumes "witness_value (finite_collection_construction_in \<Xi> Rs n) P d S B a=Some v"
   shows "\<exists>R\<in>set Rs. finite_registration_matches d S R \<and> registration_variable R=a \<and>
-    finite_registration_value P n R B=Some v"
+    finite_registration_value_in \<Xi> P n R B=Some v"
 proof -
   obtain R where R: "find (\<lambda>R. finite_registration_matches d S R \<and> registration_variable R=a) Rs=Some R"
-    and v: "finite_registration_value P n R B=Some v"
-    using assms by (auto simp: finite_collection_construction_def split: option.splits)
+    and v: "finite_registration_value_in \<Xi> P n R B=Some v"
+    using assms by (auto simp: finite_collection_construction_in_def split: option.splits)
   have "finite_registration_matches d S R \<and> registration_variable R=a \<and> R \<in> set Rs"
     using R by (auto simp: find_Some_iff)
   then show ?thesis using v by blast
 qed
 
 theorem finite_collection_construction_formed:
-  "finite_witness_construction_formed (finite_collection_construction Rs n)"
+  "finite_witness_construction_formed (finite_collection_construction_in \<Xi> Rs n)"
   unfolding finite_witness_construction_formed_def
 proof (intro allI impI)
-  fix P d S B a v assume "witness_value (finite_collection_construction Rs n) P d S B a=Some v"
+  fix P d S B a v assume "witness_value (finite_collection_construction_in \<Xi> Rs n) P d S B a=Some v"
   then have "\<exists>R\<in>set Rs. finite_registration_matches d S R \<and> registration_variable R=a \<and>
-      finite_registration_value P n R B=Some v"
+      finite_registration_value_in \<Xi> P n R B=Some v"
     by (rule finite_collection_construction_value)
   then show "finite_term_formed v" using finite_registration_value_formed by blast
 qed
@@ -1964,11 +2131,12 @@ qed
 section \<open>A proposer's hand-ins and the resolution with them\<close>
 
 text \<open>
-  A proposer may hand in witnesses, rows of a registration, the ground bindings of its clause's other variables and
-  a value, and whole certificates of the call. The hand-in construction registers the variables of the
-  registrations and of the rows' registrations, so a clause no registration names can be handed a witness; at each
-  point it returns the formed handed-in value of a row that matches, and otherwise the construction's own
-  production. The resolution with hand-ins checks the handed-in
+  A proposer may hand in witnesses, and whole certificates of the call. A row names the site, the schema and the
+  variable it is for, the bindings its value relies on and the value; it matches at a node whose ground bindings
+  contain those bindings, so a row does not depend on the order in which the search bound the node's other variables
+  (next-edits 215). The hand-in construction registers the variables of the registrations and of the rows, so a clause
+  no registration names can be handed a witness; at each point it returns the formed handed-in value of a row that
+  matches, and otherwise the construction's own production. The resolution with hand-ins checks the handed-in
   certificates with the finite proof checker as they are; failing those, it is the resolution with the hand-in
   construction where that resolves, and otherwise the resolution with the construction's own production, the first
   run's diagnoses kept in an unresolved result. It resolves only with certificates the checker accepts
@@ -1976,57 +2144,69 @@ text \<open>
   production refutes (@{text finite_handin_resolution_refuted}): a handed-in witness never refutes.
 \<close>
 
-type_synonym ('a,'s,'d,'v) handin_table =
-  "(('a,'s,'d,'v) collection_registration\<times>('a\<times>finite_factor_term) fset\<times>finite_factor_term) list"
+type_synonym ('a,'s,'d) handin_row =
+  "'d\<times>('a,'s,'d) finite_factor_schema\<times>'a\<times>('a\<times>finite_factor_term) fset\<times>finite_factor_term"
+
+type_synonym ('a,'s,'d) handin_table = "('a,'s,'d) handin_row list"
 
 definition finite_handin_row :: "'d \<Rightarrow> ('a,'s,'d) finite_factor_schema \<Rightarrow> ('a\<times>finite_factor_term) fset \<Rightarrow> 'a \<Rightarrow>
-    ('a,'s,'d,'v) collection_registration\<times>('a\<times>finite_factor_term) fset\<times>finite_factor_term \<Rightarrow> bool" where
-  "finite_handin_row d S B a h \<longleftrightarrow> finite_registration_matches d S (fst h) \<and> registration_variable (fst h)=a \<and>
-    fst (snd h)=B \<and> finite_term_formed (snd (snd h))"
+    ('a,'s,'d) handin_row \<Rightarrow> bool" where
+  "finite_handin_row d S B a h \<longleftrightarrow> (case h of (e,T,b,W,v) \<Rightarrow>
+    e=d \<and> T=S \<and> b=a \<and> W |\<subseteq>| B \<and> finite_term_formed v)"
 
-definition finite_handin_construction :: "('a,'s,'d,'v) collection_registration list \<Rightarrow> ('a,'s,'d,'v) handin_table \<Rightarrow>
+definition finite_handin_value :: "('a,'s,'d) handin_row \<Rightarrow> finite_factor_term" where
+  "finite_handin_value h=(case h of (e,T,b,W,v) \<Rightarrow> v)"
+
+definition finite_handin_variables :: "'d \<Rightarrow> ('a,'s,'d) finite_factor_schema \<Rightarrow> ('a,'s,'d) handin_table \<Rightarrow> 'a fset" where
+  "finite_handin_variables d S H=fset_of_list (map (\<lambda>(e,T,b,W,v). b) (filter (\<lambda>(e,T,b,W,v). e=d \<and> T=S) H))"
+
+lemma finite_handin_variables_member:
+  "a |\<in>| finite_handin_variables d S H \<longleftrightarrow> (\<exists>W v. (d,S,a,W,v) \<in> set H)"
+  by (force simp: finite_handin_variables_def fset_of_list_elem)
+
+definition finite_handin_construction_in :: "('a,'s,'d,'c,'v) query_parameters \<Rightarrow> ('a,'s,'d,'v) collection_registration list \<Rightarrow> ('a,'s,'d) handin_table \<Rightarrow>
     nat \<Rightarrow> ('a,'s::linorder,'d,'c) finite_witness_construction" where
-  "finite_handin_construction Rs H n=\<lparr>witness_registered=finite_registered_variables (Rs@map fst H),
+  "finite_handin_construction_in \<Xi> Rs H n=\<lparr>witness_registered=(\<lambda>d S. finite_registered_variables Rs d S |\<union>| finite_handin_variables d S H),
     witness_value=(\<lambda>P d S B a. case find (finite_handin_row d S B a) H of
-      Some h \<Rightarrow> Some (snd (snd h))
-    | None \<Rightarrow> witness_value (finite_collection_construction Rs n) P d S B a)\<rparr>"
+      Some h \<Rightarrow> Some (finite_handin_value h)
+    | None \<Rightarrow> witness_value (finite_collection_construction_in \<Xi> Rs n) P d S B a)\<rparr>"
 
 theorem finite_handin_construction_registered:
-  "a |\<in>| witness_registered (finite_handin_construction Rs H n) d S \<longleftrightarrow>
-    (\<exists>R\<in>set Rs \<union> fst ` set H. finite_registration_matches d S R \<and> registration_variable R=a)"
-  by (auto simp: finite_handin_construction_def finite_registered_variables_member)
+  "a |\<in>| witness_registered (finite_handin_construction_in \<Xi> Rs H n) d S \<longleftrightarrow>
+    (\<exists>R\<in>set Rs. finite_registration_matches d S R \<and> registration_variable R=a) \<or> (\<exists>W v. (d,S,a,W,v) \<in> set H)"
+  by (simp add: finite_handin_construction_in_def finite_registered_variables_member finite_handin_variables_member)
 
 theorem finite_handin_construction_formed:
-  "finite_witness_construction_formed (finite_handin_construction Rs H n)"
+  "finite_witness_construction_formed (finite_handin_construction_in \<Xi> Rs H n)"
   unfolding finite_witness_construction_formed_def
 proof (intro allI impI)
-  fix P d S B a v assume v: "witness_value (finite_handin_construction Rs H n) P d S B a=Some v"
+  fix P d S B a v assume v: "witness_value (finite_handin_construction_in \<Xi> Rs H n) P d S B a=Some v"
   show "finite_term_formed v"
   proof (cases "find (finite_handin_row d S B a) H")
     case None
-    then have "witness_value (finite_collection_construction Rs n) P d S B a=Some v"
-      using v by (simp add: finite_handin_construction_def)
+    then have "witness_value (finite_collection_construction_in \<Xi> Rs n) P d S B a=Some v"
+      using v by (simp add: finite_handin_construction_in_def)
     then have "\<exists>R\<in>set Rs. finite_registration_matches d S R \<and> registration_variable R=a \<and>
-        finite_registration_value P n R B=Some v"
+        finite_registration_value_in \<Xi> P n R B=Some v"
       by (rule finite_collection_construction_value)
     then show ?thesis using finite_registration_value_formed by blast
   next
     case (Some h)
-    then have vh: "v=snd (snd h)" using v by (simp add: finite_handin_construction_def)
+    then have vh: "v=finite_handin_value h" using v by (simp add: finite_handin_construction_in_def)
     have "finite_handin_row d S B a h" using Some by (auto simp: find_Some_iff)
-    then show ?thesis using vh by (simp add: finite_handin_row_def)
+    then show ?thesis using vh by (cases h) (simp add: finite_handin_row_def finite_handin_value_def)
   qed
 qed
 
-definition finite_handin_resolution :: "('a,'s,'d,'v) collection_registration list \<Rightarrow> ('a,'s,'d,'v) handin_table \<Rightarrow>
+definition finite_handin_resolution_in :: "('a,'s,'d,'c,'v) query_parameters \<Rightarrow> ('a,'s,'d,'v) collection_registration list \<Rightarrow> ('a,'s,'d) handin_table \<Rightarrow>
     ('a,'s,'c) finite_schema_proof fset \<Rightarrow> ('a,'s::linorder,'d,'c) finite_schema_system \<Rightarrow> 'd \<Rightarrow> finite_factor_term \<Rightarrow>
     nat \<Rightarrow> ('a,'s,'d,'c) finite_resolution_result" where
-  "finite_handin_resolution Rs H Cs P d t n=(let A=ffilter (\<lambda>p. finite_checks_schema_proof P p d t) Cs in
+  "finite_handin_resolution_in \<Xi> Rs H Cs P d t n=(let A=ffilter (\<lambda>p. finite_checks_schema_proof P p d t) Cs in
     if A\<noteq>{||} then Finite_Resolved A else
-    (case finite_program_resolution (finite_handin_construction Rs H n) P d t n of
+    (case finite_program_resolution (finite_handin_construction_in \<Xi> Rs H n) P d t n of
       Finite_Resolved C \<Rightarrow> Finite_Resolved C
-    | Finite_Refuted \<Rightarrow> finite_program_resolution (finite_collection_construction Rs n) P d t n
-    | Finite_Unresolved D \<Rightarrow> (case finite_program_resolution (finite_collection_construction Rs n) P d t n of
+    | Finite_Refuted \<Rightarrow> finite_program_resolution (finite_collection_construction_in \<Xi> Rs n) P d t n
+    | Finite_Unresolved D \<Rightarrow> (case finite_program_resolution (finite_collection_construction_in \<Xi> Rs n) P d t n of
         Finite_Resolved C \<Rightarrow> Finite_Resolved C
       | Finite_Refuted \<Rightarrow> Finite_Refuted
       | Finite_Unresolved D' \<Rightarrow> Finite_Unresolved (D' |\<union>| D))))"
@@ -2035,7 +2215,7 @@ text \<open>(5): resolved only with certificates the checker accepts, so the cal
 
 theorem finite_handin_resolution_accepted:
   fixes P :: "('a,'s::linorder,'d,'c) finite_schema_system"
-  assumes resolved: "finite_handin_resolution Rs H Cs P d t n=Finite_Resolved C"
+  assumes resolved: "finite_handin_resolution_in \<Xi> Rs H Cs P d t n=Finite_Resolved C"
   shows "C\<noteq>{||}" "fBall C (\<lambda>p. finite_checks_schema_proof P p d t)"
     "(d,decode_finite_term t) \<in> positive_meaning (decode_finite_system P)"
 proof -
@@ -2045,24 +2225,24 @@ proof -
   have both: "C\<noteq>{||} \<and> fBall C (\<lambda>p. finite_checks_schema_proof P p d t)"
   proof (cases "ffilter (\<lambda>p. finite_checks_schema_proof P p d t) Cs\<noteq>{||}")
     case True
-    then show ?thesis using resolved by (auto simp: finite_handin_resolution_def Let_def)
+    then show ?thesis using resolved by (auto simp: finite_handin_resolution_in_def Let_def)
   next
     case False
     show ?thesis
-    proof (cases "finite_program_resolution (finite_handin_construction Rs H n) P d t n")
+    proof (cases "finite_program_resolution (finite_handin_construction_in \<Xi> Rs H n) P d t n")
       case (Finite_Resolved C1)
-      then have "finite_program_resolution (finite_handin_construction Rs H n) P d t n=Finite_Resolved C"
-        using resolved False by (simp add: finite_handin_resolution_def Let_def)
+      then have "finite_program_resolution (finite_handin_construction_in \<Xi> Rs H n) P d t n=Finite_Resolved C"
+        using resolved False by (simp add: finite_handin_resolution_in_def Let_def)
       then show ?thesis by (rule run)
     next
       case Finite_Refuted
-      then have "finite_program_resolution (finite_collection_construction Rs n) P d t n=Finite_Resolved C"
-        using resolved False by (simp add: finite_handin_resolution_def Let_def)
+      then have "finite_program_resolution (finite_collection_construction_in \<Xi> Rs n) P d t n=Finite_Resolved C"
+        using resolved False by (simp add: finite_handin_resolution_in_def Let_def)
       then show ?thesis by (rule run)
     next
       case (Finite_Unresolved D)
-      then have "finite_program_resolution (finite_collection_construction Rs n) P d t n=Finite_Resolved C"
-        using resolved False by (simp add: finite_handin_resolution_def Let_def split: finite_resolution_result.splits)
+      then have "finite_program_resolution (finite_collection_construction_in \<Xi> Rs n) P d t n=Finite_Resolved C"
+        using resolved False by (simp add: finite_handin_resolution_in_def Let_def split: finite_resolution_result.splits)
       then show ?thesis by (rule run)
     qed
   qed
@@ -2075,11 +2255,44 @@ qed
 text \<open>(5): refuted only where the resolution with the construction's own production refutes.\<close>
 
 theorem finite_handin_resolution_refuted:
-  assumes "finite_handin_resolution Rs H Cs P d t n=Finite_Refuted"
-  shows "finite_program_resolution (finite_collection_construction Rs n) P d t n=Finite_Refuted"
-  using assms by (auto simp: finite_handin_resolution_def Let_def split: if_splits finite_resolution_result.splits)
+  assumes "finite_handin_resolution_in \<Xi> Rs H Cs P d t n=Finite_Refuted"
+  shows "finite_program_resolution (finite_collection_construction_in \<Xi> Rs n) P d t n=Finite_Refuted"
+  using assms by (auto simp: finite_handin_resolution_in_def Let_def split: if_splits finite_resolution_result.splits)
 
-export_code finite_family_collection finite_justification_check finite_collection_construction
-  finite_handin_construction finite_handin_resolution checking SML
+section \<open>The plain parameters, by the names before W5\<close>
+
+text \<open>
+  At the plain parameters every definition above is the one of its name before W5, and every fact stated there with a
+  query's exactness is its instance at @{thm [source] finite_query_exact_plain}: the names stand for those instances,
+  so what reads them reads R4's resolution as before.
+\<close>
+
+abbreviation finite_query_search where "finite_query_search \<equiv> finite_query_search_in plain_query_parameters"
+abbreviation finite_query_instances where "finite_query_instances \<equiv> finite_query_instances_in plain_query_parameters"
+abbreviation finite_query_answers where "finite_query_answers \<equiv> finite_query_answers_in plain_query_parameters"
+abbreviation finite_identity_check where "finite_identity_check \<equiv> finite_identity_check_in plain_query_parameters"
+abbreviation finite_family_identity where "finite_family_identity \<equiv> finite_family_identity_in plain_query_parameters"
+abbreviation finite_family_base where "finite_family_base \<equiv> finite_family_base_in plain_query_parameters"
+abbreviation finite_family_step where "finite_family_step \<equiv> finite_family_step_in plain_query_parameters"
+abbreviation finite_family_collection where "finite_family_collection \<equiv> finite_family_collection_in plain_query_parameters"
+abbreviation finite_family_collected where "finite_family_collected \<equiv> finite_family_collected_in plain_query_parameters"
+abbreviation finite_registration_value where "finite_registration_value \<equiv> finite_registration_value_in plain_query_parameters"
+abbreviation finite_collection_construction where
+  "finite_collection_construction \<equiv> finite_collection_construction_in plain_query_parameters"
+abbreviation finite_handin_construction where
+  "finite_handin_construction \<equiv> finite_handin_construction_in plain_query_parameters"
+abbreviation finite_handin_resolution where "finite_handin_resolution \<equiv> finite_handin_resolution_in plain_query_parameters"
+
+lemmas finite_registration_value_def = finite_registration_value_in_def[of plain_query_parameters]
+lemmas finite_collection_construction_def = finite_collection_construction_in_def[of plain_query_parameters]
+lemmas finite_query_answers_complete = finite_query_answers_complete_in[OF finite_query_exact_plain]
+lemmas finite_identity_check_exact = finite_identity_check_exact_in[OF finite_query_exact_plain]
+lemmas finite_family_identity_exact = finite_family_identity_exact_in[OF finite_query_exact_plain]
+lemmas finite_family_collection_complete = finite_family_collection_complete_in[OF finite_query_exact_plain]
+lemmas finite_family_collection_exact = finite_family_collection_exact_in[OF finite_query_exact_plain]
+lemmas finite_family_collection_conflicts = finite_family_collection_conflicts_in[OF finite_query_exact_plain]
+
+export_code finite_family_collection_in finite_justification_check finite_collection_construction_in
+  finite_handin_construction_in finite_handin_resolution_in plain_query_parameters checking SML
 
 end

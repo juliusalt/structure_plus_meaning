@@ -289,7 +289,7 @@ proof -
     then show False by (simp add: union_at_family_key)
   qed
   show "distinct (map fst es)"
-    using finite_family_collection_distinct[of P n "union_family_at s a b" B es] collect c by simp
+    using finite_family_collection_distinct[of plain_query_parameters P n "union_family_at s a b" B es] collect c by simp
 qed
 
 lemma union_at_registration_collected:
@@ -322,7 +322,7 @@ proof (intro allI impI)
   obtain es where c: "finite_family_collection P n (union_family_at s a b) B = Some (es,[])" "v = finite_family_value es"
     by (rule union_at_registration_collected[OF val])
   have "union_class (decode_finite_term v)"
-    unfolding union_class_def c(2) finite_family_value_presents using union_at_value_distinct[OF c(1)] by blast
+    unfolding union_class_def c(2) finite_family_value_decode using union_at_value_distinct[OF c(1)] by blast
   then show "finite_term_formed v \<and> union_class (decode_finite_term v)"
     using finite_registration_value_formed[OF val] by simp
 qed
@@ -408,7 +408,7 @@ proof -
   qed
   have elements: "data_elements (map (decode_finite_term \<circ> fst) es)" using set first(2) second(2) by auto
   have v: "decode_finite_term v = data_list_term (map (decode_finite_term \<circ> fst) es)"
-    using c(2) by (simp only: finite_family_value_presents)
+    using c(2) by (simp only: finite_family_value_decode)
   show ?thesis
     by (rule exI[of _ "map (decode_finite_term \<circ> fst) es"])
       (use v elements set union_at_value_distinct[OF c(1)] first(2) second(2) in auto)

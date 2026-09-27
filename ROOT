@@ -1333,6 +1333,7 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Factor_Resolution_Commitments
     Factor_Resolution_Graph_Checks
     Factor_Resolution_Modes
+    Factor_Socket_Waiting
     Factor_Resolution_Producer_Discharge
     Factor_Resolution_Material_Discharge
     Factor_Resolution_Socket_Discharges
@@ -1966,6 +1967,7 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Development_Given_Productions_Execution
     Development_Given_Checks_Execution
     Development_Native_State
+    Development_Given_Table
     Development_First_Problem
     Development_Bounded_Recording_Execution
     Development_Native_State_Execution

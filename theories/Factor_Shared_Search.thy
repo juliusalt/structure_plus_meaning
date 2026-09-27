@@ -1588,11 +1588,6 @@ definition search_of :: "('a,'s,'d,'c) finite_schema_system \<Rightarrow> ('a,'s
     \<lparr>search_state = s, search_registered = fold (\<lambda>z t. tree_add (fst z) (shared_goal_registered (snd z)) t)
       (RBT.entries (shared_goals s)) RBT.empty, search_values = RBT.empty\<rparr>)"
 
-lemma tree_add_fold_member:
-  "q |\<in>| tree_bucket (fold (\<lambda>z t. tree_add (fst z) (f (snd z)) t) xs t0) p \<longleftrightarrow>
-    q |\<in>| tree_bucket t0 p \<or> (\<exists>h. (q,h) \<in> set xs \<and> p |\<in>| f h)"
-  by (induction xs arbitrary: t0) auto
-
 lemma search_of:
   assumes d: "resolution_positions_distinct st"
   shows "search_formed \<kappa> P (search_of P st)" and "search_project (search_of P st) = st"
@@ -1613,27 +1608,6 @@ definition shared_representation :: "('a,'s,'d,'c) finite_witness_construction \
   "shared_representation \<kappa> P = \<lparr>rep_access = shared_access \<kappa> P, rep_empty = (\<lambda>r. RBT.is_empty (shared_goals (search_state r))),
     rep_project = (\<lambda>r. search_project r), rep_refresh = search_refresh \<kappa> P, rep_construct = search_construct \<kappa> P,
     rep_successors = search_successors \<kappa> P\<rparr>"
-
-lemma rbt_is_empty_values: "RBT.is_empty t \<longleftrightarrow> tree_values t = {||}"
-proof
-  assume "RBT.is_empty t"
-  then have "t = RBT.empty" by simp
-  then show "tree_values t = {||}" by simp
-next
-  assume e: "tree_values t = {||}"
-  have "RBT.lookup t k = None" for k
-  proof (cases "RBT.lookup t k")
-    case (Some v)
-    then have "v |\<in>| tree_values t" by (auto simp: tree_values_member)
-    then show ?thesis using e by simp
-  qed simp
-  then have "RBT.lookup t = Map.empty" by (intro ext) simp
-  then have "t = RBT.empty" by (simp only: RBT.lookup_empty_empty)
-  then show "RBT.is_empty t" by simp
-qed
-
-lemma rbt_empty_values: "t = RBT.empty \<longleftrightarrow> tree_values t = {||}"
-  using rbt_is_empty_values[of t] by simp
 
 theorem shared_search:
   assumes sock: "clause_sockets_distinct P" and pl: "search_placeable st"

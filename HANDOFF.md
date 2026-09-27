@@ -76,7 +76,7 @@ into the briefs #522 and #523 corrected, or recorded superseded there.
   decides the given's part once, a table of certified ground calls every judgment's search closes (one successor, no
   alternative, a committed focus never closed), its validity checked once over the graphs and retained; a judgment in
   two phases; 77's bound handed in for an admission, W5 for a refusal; one-time ≈ 31–34 M states, a judgment's part
-  ≈ 2–5 M. Its builds GT1–GT6 and W5: GT1, GT2, GT4, GT5 and W5 briefed by #836; GT3 (after #830's fix) and GT6 (the
+  ≈ 2–5 M. Its builds GT1–GT6 and W5: GT1 (as GT1a #837 and GT1b #839), GT2 #843, GT4 #841, GT5 #845 and W5 #847 placed from #836's proposal; GT3 (after #830's fix) and GT6 (the
   production, a run of hours) after #830 reports. The planner's answers are in its `verdict.md`; the three courses
   that change a given reader or the asked relation, and the table's truth at an installation, are Q33.
 - Correction (12) (#787): O1–O4 landed (O4 `Development_Given_Modes`, the given's modes; at 77 the moded selection is
@@ -107,14 +107,19 @@ into the briefs #522 and #523 corrected, or recorded superseded there.
   `given_union_registration`; review 797's 1–3, its 1 decided as q138: the union registration's facts at the varied
   relocated registration, discharged from the agreements alone) → #707, #547 and #399 (q144). #784 landed (review 783's 4, 5 and 8); its control of 55's
   two-union clause is c55 #827 (q146, review 785's 1–3), after K3, off the route.
-- #831's builds (the brief #836, a stand-in before #542, #547, #707 and #399; GT3 and GT6 after #830), then R7 #542
-  (the numbered course) → its native part #707 → #399 → its controls #709 (before #401, #403 and #553); #547 → #443.
-- Off the route: the controls #718 (after C, RD1 and K1; whether its ground calls take K2's check forms is its brief's)
-  and c55 #827 (a held run, so queued last); #724 (review 677's follow-ups, words equal; after O2, C, RD1 and K1;
-  its brief gains next-edits 306 and 312 when nearer, if they fit its room); the move #793 (q141, review 614's 1 and 4:
-  the committed lifting and R4's below Completeness; after #724, F2c, #782, O2, RD1 and K1; at the queue's head while it
-  checks); the consolidation #832 (review 824's 2, 3, 6, 7, 9: the check and committed forms' exactness once over a
-  focus, the transfers from one relocated meaning; after #703, I3a, #793 and K3).
+- #831's builds, placed from #836: GT1a #837 (the table in R3's step, search and resolution and R3b's certificate;
+  after #793, #792 and #833) → GT1b #839 (the committed step, search and lifting, R4 their instance) → GT4 #841 (C at a
+  table, after #833) → #542; GT2 #843 (the committed and check forms and the transfers; after GT1b, K3 #825, the design
+  #835 as a stand-in for its builds, and #832) → GT5 #845 (the given's table, after #798) → #542, #547, #707; W5 #847
+  (after GT2 and #798) → #399; GT3 and GT6 after #830 reports. Then R7 #542 (the numbered course) → its native part
+  #707 → #399 → its controls #709 (before #401, #403 and #553); #547 → #443.
+- Off the route: the controls #718 (77 over #636's installation and 79 at five roots do not return — #605's cause at
+  37's lookup, #835's — so it hands over with them as Remains, #834 named for it, their re-run after #835's builds)
+  and c55 #827 (a held run, so queued last). Now on the route: the move #793 (q141, review 614's 1 and 4: the committed
+  lifting and R4's below Completeness; review 724's 1, 4 and 5 mailed, if they fit beside the move; at the queue's head
+  while it checks), before GT1a; the consolidation #832 (review 824's 2, 3, 6, 7, 9: the check and committed forms'
+  exactness once over a focus, the transfers from one relocated meaning; review 724's 2 and next-edits 340 at the row it
+  edits; after #703, I3a, #793 and K3), before GT2, so the table enters the forms once.
 **Retired** on #376's and #378's entries (their tables): the decomposition line (#325–#334), N1a, N1b, N3a, N3b, N4a
 and N4b as briefed, #371, #377, the designation by locus (#169, #170), the index form's retirement (#92, #93) and the
 machinery's verification stage judged natively (#193, #194).
@@ -129,22 +134,21 @@ line, a row at a locus; the decomposition's schema and library; the digit layout
 **Word changes are serialized** (Decisions): none is queued. A word change's records are re-recorded after its landing
 by a task of their own (Open 100).
 
-**Shape.** No build waits on a review task. The route's longest chain, 10 deep, runs the design #835 (or the fix #834)
-→ K3 #825 → R7 #542 → #707 → #399 → #709 → the record #553 → #447 → #449 → #450; the investigation #830, the brief
-#836 (a stand-in before #542, #547, #707 and #399), the graph check's fix #833, I3b and #798 are spliced before #542,
-#547 and #707 with slack against it. #831's builds lengthen it when placed, as splices: GT2 after K3, then GT3 (after
-#830's fix) and GT6 (the production) before #542.
+**Shape.** No build waits on a review task. The route's longest chain, 13 deep, runs the design #835 → K3 #825 → the
+consolidation #832 → GT2 #843 → GT5 #845 → R7 #542 → #707 → #399 → #709 → the record #553 → #447 → #449 → #450, and as
+deep the move #793 → GT1a #837 → GT1b #839 → GT2; the investigation #830, the fixes #833 and #834, GT4 #841, I3b and
+#798 are spliced before #542, #547 and #707 with slack against it. GT3 (after #830's fix) and GT6 (the production)
+lengthen it when placed, as splices before #542.
 Nothing is added after the route's tail until it shortens (the status line gives the depths); the approval build (Open
 142) after #407 and #447 waits for that.
 
 **Order** (the queue holds it; the planner's choice, a residual until the native answer to the selection problem
 exists, Q2): the slots are one pool, each free slot going to the first task in the queue that can start, every review
 right after its build. Uncertainty first (the investigation #830, the design #835), then by slack on the longest chain:
-the fix #834, the graph check's fix #833, the brief #836; #798 as it runs; K3 #825; I3b #817; R7 #542, #707, #399,
-#709, #547; the
+the fixes #834 and #833, the move #793 (at the head while it checks), GT1a #837, GT1b #839, GT4 #841; #798 as it runs;
+I3b #817; K3 #825, the consolidation #832, GT2 #843, GT5 #845, W5 #847; R7 #542, #707, #399, #709, #547; the
 route in its chains'
-order (#551, #549, #553, #401, #403, #443, #447, #407, #445, #449); the controls #718, c55 #827, #792, #724, the move
-and the consolidation #832 last.
+order (#551, #549, #553, #401, #403, #443, #447, #407, #445, #449); the controls #718, c55 #827 and #792 last.
 ## Decisions
 
 Taken by the planning episodes, where they are not entries of `DECISIONS.md`.
@@ -368,7 +372,8 @@ under `.build/plans/plan-69/`, `plan-81/` and `plan-86/`.
   `Factor_Program_Resolution` (with F1's selection at a priority #693, F3's reuse #695 and its waiting rule #757), R3b
   `Factor_Resolution_Acceptance`, R4 `Factor_Resolution_Completeness`; R5 `Factor_Resolution_Commitments` (declarations
   at views, the committed search under one barring rule, the socket test at inputs and at frames, the production at a
-  narrowed socket #734 with #765 and #767, the lifting and forms at a selection parameter #613), its discharges
+  narrowed socket #734 with #765 and #767, the lifting and forms at a selection parameter #613, the free premise-only variable stated once beside the test
+  #724), its discharges
   `Factor_Resolution_Producer_Discharge`, `Factor_Resolution_Socket_Discharges`, `Factor_Resolution_Material_Discharge`,
   the forms and transfers `Factor_Resolution_Views`, `Factor_Resolution_Carriers`, `Factor_Narrowed_Sockets` (R5e),
   `Factor_Narrowed_Commitments`, `Factor_Narrowed_Productions` (R5f2, #774); controls in `Factor_Resolution_Controls`,
@@ -521,12 +526,13 @@ planner searches for a theory before briefing a task that edits it.
 ## Now
 
 - **Under way**: #798 builds and the controls #718 run; the investigation #830 (a step's cost at the given's size) and
-  the design #835 (12's input production at 37.0/2 met at the given) run; the fixes #833 and #834 and the brief #836
-  (GT1, GT2, GT4, GT5, W5) start as slots free; #792 and #724 off the route. No event is left unhandled by plan-115.
+  the design #835 (12's input production at 37.0/2 met at the given) run; the fixes #833, #834 and #792 and the move
+  #793 start as slots free, then GT1a #837. Unhandled by plan-115: #718 ended partial (`.build/tasks/718/result.md`)
+  — split it into tasks over what exists or re-plan it; its 77 and 79 controls re-run after #835's builds.
 - **What the next events ask**: #830's causes, each fix spliced before GT3 and #542 (review 824's 1, the guard reading
   a goal's raising socket, is a statement change of F2c's, the planner's, from its figures), then the brief of GT3 and
-  GT6 (the production's run placed then); #835's entry and builds, spliced before K3 #825 and GT5/GT6; #836's
-  proposal; the hand-overs of #798, #718, #833 and #834; then K3. The briefs of #825, #542, #547, #707 and #399 are
+  GT6 (the production's run placed then); #835's entry and builds, spliced before K3 #825 (and GT2 #843, which waits on #835 as a stand-in, re-pointed onto
+  them), with the re-run of #718's 77 and 79 controls; the hand-overs of #798, #718, #833, #834 and #793; then K3. The briefs of #825, #542, #547, #707 and #399 are
   rewritten from #831's section and #835's entry before they start (#542's takes review 816's 6, the exchange at the
   moded priority, unless #817 states it). Q33 is the owner's.
 - **Briefs written before their theories grew** may be refused at their start (#596 was; #607 was divided by #678):

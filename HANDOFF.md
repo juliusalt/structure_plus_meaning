@@ -62,18 +62,22 @@ for its completion, its record `validation/given-table.json`, after GT5 and the 
 #707, #399. GT6 asks the planner its prediction and worker count before its run. Q33 is the owner's.
 
 **A search step's cost** (#830's attribution, its fixes placed from #852): landed σ tabulated with F2a's shared unifier
-(#861) and the pruning test through the node-call index (#863); open the selection's classes kept #865 (at no focus,
-q156; the held goals and construction nodes recomputed over `search_registered`, mailed to #875; its first session's
-maintenance made the search 26 % slower at 20 rows, so it continues from its tree, narrowing the maintenance to what
-changes a test, before it lands) → in F2c #871 (the focused instance, q156; since #869 also the admitted focused goals
+(#861), the pruning test through the node-call index (#863) and the selection's classes kept (#865, `a888fea7`, at no
+focus: 15.2 s at 20 rows against 26.3, a step 0.13–0.98 ms from 3 to 20 rows) → in F2c #871 (the focused instance,
+q156, with review 866's first follow-ups mailed; since #869 also the admitted focused goals
 and their priority kept as a class, the guard asked once a step, `clause_sockets_distinct` once a call, review 870's
 2–4). The commitment's tests over the access (#867, `b805e7c8`) with F2c's committed step over them (#869, `20f3bdf3`)
 put the route at #830's 10 rows with the given's whole frames at 3.12 ms a step, above the old route there (prepare
 61 %, priority 32 %; 1.24 s against 9.11 s at the given): the access tests' goal decoded once per test is the fix #884
-(review 870's 1 with 868's 2–3), beside #871 and before #875. K3 #825 measures meanwhile (review 870's 5 mailed). #861's
-question — a production binding a variable that occurs nowhere pays a keyed walk: (a) a term-level substitution, (b) an
-order at the given's variable type, (c) kept, provisional — and review 862's 2–4 are the investigation #875's to
-measure (mailed); their fixes are placed before GT6.
+(review 870's 1 with 868's 2–3), beside #871 and before #875; after #871 the fix #885, continuing #865 (#866's
+re-review: per-call counts so a touched goal's tests are one lookup, the held goals and the waiting fallback not
+recomputed each step, `class_first`), before #875 and GT3. K3 #825 found the step at the given's term size the next cost
+on the route (held run B: 77 over `given_environment` at the check form, a chain of 3–9 pending goals, 0.02–0.21 s a
+step, about 70 times the 1.6 ms a state at #779's fixtures; one call hours, GT6's 31–34 M states weeks): the
+investigation #886 attributes it at HEAD — the keyed walks of bound values (#861's question: (a) a term-level
+substitution, (b) an order at the given's variable type, (c) kept, provisional), the access tests' decodes as #884
+leaves them, review 862's 2–4 — and GT6 waits on it; its fixes are placed before GT6. #875 keeps the position-keyed
+trees' polymorphic cost after #830's fixes.
 
 **Corrections (12)–(15)** have landed but for K3 #825 (the given at the check forms after #869: 77/1, 77/2,
 113/7) → GT2, and the consolidation #832 (review 824's 2, 3, 6, 7, 9) before GT2. I3b #817 and its fix #881
@@ -95,8 +99,8 @@ under Open and in `.build/plans/next-edits.md`.
 **Shape and order.** No build waits on a review. The longest chain, 12 deep: K3 #825 → GT2 #843 → GT3 #876 → GT6
 #878 → R7 #542 → #707 → #399 → #709 → #553 → #447 → #449 → #450; nothing is added after its tail until it shortens (the
 approval build, Open 142, waits for that). The queue is the planner's choice, a residual until the selection problem's
-native answer (Q2): running tasks first, then by slack on the longest chain — K3, #832 and the fix #884 before #871 and
-#875, whose way to GT3 and GT6 has hours of slack against K3 → GT2 — the route in its chains' order, the off-route
+native answer (Q2): running tasks first, the investigation #886 after them (GT6 waits on it), then by slack on the longest chain — K3, #832, the fix #884, #871 and the fix
+#885 before #875, whose way to GT3 and GT6 has hours of slack against K3 → GT2 — the route in its chains' order, the off-route
 held run #827 last. Word changes are serialized; none is queued.
 
 ## Decisions
@@ -273,7 +277,8 @@ REASONING_REUSE.md, how each went in `PLANNING_LOG.md`.
   `Factor_Resolution_Controls`, `Factor_Commitment_Controls`, `Factor_Narrowed_Controls`, `Factor_Mode_Controls`,
   `Factor_Check_Controls`.
 - **The resolver's states**: F2a `Factor_Shared_Patterns`, F2b1 `Factor_Indexed_Resolution`, F2b2
-  `Factor_Shared_Resolution`, `Factor_Search_Representations` and `Factor_Shared_Search`, F2c
+  `Factor_Shared_Resolution`, `Factor_Search_Representations` and `Factor_Shared_Search` (the selection's classes kept,
+  #865), F2c
   `Factor_Shared_Commitments` (its committed step over the access tests since #869), the commitment's tests over the
   access `Factor_Access_Commitments` (#867), C `Factor_Resolution_Graph_Checks` (at a table since GT4 #841; the
   verdict from the graph alone, GT4b #882; the reading at a true table and one checking fold, GT4c #883).
@@ -361,13 +366,15 @@ a theory before briefing a task that edits it.
 
 ## Now
 
-- **Under way**: K3 #825; #865 continued from its tree (partial, its maintenance narrowed, in review); the
-  consolidation #832 and the fix #884 as slots free.
-- **What the next events ask**: the hand-overs of #865, #884, #832 and K3 (K3's figures read against #869's, with
+- **Under way**: K3 #825, the consolidation #832, #871 and the fix #884; the fix #885 after #871; the investigation #886
+  (the step at the given's term size, K3's escalation) next in the queue, GT6 waiting on it. No event is unhandled.
+- **What the next events ask**: the hand-overs of #871 (what its step leaves of the held goals, the waiting fallback and
+  `class_first`, for #885), #884, #832 and K3 (K3's figures read against #869's, with
   `rep_share` counted where a production commits, review 870's 5); GT2 #843's answer on `finite_table_true` at the
   relocated table (#883's review 1: else the formation-only form is placed); GT6's prediction, with the checking fold
-  measured at samples, and its worker count before its run; #709's brief rewritten before it starts; #861's question
-  decided on #875's figures before GT6 (provisional (c)). Q33 is the owner's.
+  measured at samples, and its worker count before its run; #709's brief rewritten before it starts; #886's result
+  — the fix at each cause of the step at the given's term size placed before GT6, with GT3 where it edits GT3's
+  theories, and #861's question decided on its figures (provisional (c)). Q33 is the owner's.
 - **Planners stopped**: plan-120 and plan-121 were stopped by a classifier declining a turn, before their notes; this
   file and `PLANNING_LOG.md` carried all they settled. Keep both current at every event.
 - **Briefs nearest their rooms**: #542, #399 and the samples build #551; GT2 #843 at 340K with review 840's, 842's and

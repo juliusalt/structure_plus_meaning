@@ -1465,7 +1465,8 @@ definition indexed_goal_access :: "('a,'s::linorder,'d,'c) indexed_state \<Right
      access_value_none = (\<lambda>hn a. True),
      access_registered = indexed_registered_positions r,
      access_holdable = (\<lambda>h. True),
-     access_witnesses = indexed_witnesses r\<rparr>"
+     access_witnesses = indexed_witnesses r,
+     access_call_variables = (\<lambda>hn. finite_pattern_variables (resolution_node_call (indexed_node_value hn)))\<rparr>"
 
 lemma indexed_goal_access_simps [simp]:
   "access_goals (indexed_goal_access r) = tree_buckets (indexed_goals r)"
@@ -1498,6 +1499,7 @@ lemma indexed_goal_access_simps [simp]:
   "access_registered (indexed_goal_access r) = indexed_registered_positions r"
   "access_holdable (indexed_goal_access r) h"
   "access_witnesses (indexed_goal_access r) = indexed_witnesses r"
+  "access_call_variables (indexed_goal_access r) hn = finite_pattern_variables (resolution_node_call (indexed_node_value hn))"
   by (simp_all add: indexed_goal_access_def)
 
 definition indexed_access :: "('a,'s,'d,'c) finite_witness_construction \<Rightarrow> ('a,'s,'d,'c) finite_schema_system \<Rightarrow>
@@ -1581,6 +1583,7 @@ theorem indexed_access_formed:
   subgoal by simp
   subgoal by simp
   subgoal by simp
+  subgoal by (simp add: indexed_access_def)
   subgoal by simp
   subgoal for nd using indexed_node_in_set by (auto elim!: indexed_node_set_at[OF r])
   subgoal for n q by (simp add: indexed_node_at(2)[OF r])

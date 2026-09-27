@@ -45,6 +45,7 @@ record ('g,'n,'k,'a,'s,'d,'c) search_access =
   access_registered :: "'s list fset"
   access_holdable :: "'g \<Rightarrow> bool"
   access_witnesses :: "(('s,'a) resolution_variable \<times> finite_factor_term) fset"
+  access_call_variables :: "'n \<Rightarrow> ('s,'a) resolution_variable fset"
 
 text \<open>
   An access is formed at a state when its goals are the state's pending goals, one handle for each, found at their
@@ -68,6 +69,8 @@ locale access_formed =
     and is_call: "h |\<in>| access_goals V \<Longrightarrow> access_is_call V h \<longleftrightarrow> resolution_is_call (access_goal V h)"
     and solvable: "h |\<in>| access_goals V \<Longrightarrow> access_solvable V h \<longleftrightarrow> finite_solvable_material_goal (access_goal V h)"
     and leaf: "h |\<in>| access_goals V \<Longrightarrow> access_leaf V h \<longleftrightarrow> finite_leaf_call_goal (access_goal V h)"
+    and node_call_variables: "n |\<in>| access_nodes_at V q \<Longrightarrow>
+      access_call_variables V n = finite_pattern_variables (resolution_node_call (access_node V n))"
     and holdable: "h |\<in>| access_goals V \<Longrightarrow> finite_held \<kappa> st (access_goal V h) \<Longrightarrow> access_holdable V h"
     and nodes: "nd |\<in>| resolution_nodes st \<longleftrightarrow>
       (\<exists>n. n |\<in>| access_nodes_at V (resolution_node_position nd) \<and> access_node V n = nd)"
@@ -914,6 +917,25 @@ proof -
   show ?thesis
     unfolding access_goal_choice_def access_candidate_def access_settled_def access_single_def Let_def by (simp add: e)
 qed
+
+text \<open>
+  The choice at a priority given as a class of the candidates rather than a test of each (task 871): the choice at a
+  test is its instance where the class filters the candidates by that test (@{text access_goal_choice_by}).
+\<close>
+
+definition access_goal_choice_by ::
+    "('g fset \<Rightarrow> 'g fset) \<Rightarrow> ('g,'n,'k,'a,'s::linorder,'d,'c) search_access \<Rightarrow> 'g fset \<Rightarrow> 'g fset" where
+  "access_goal_choice_by pc V A = (let c0 = ffilter (\<lambda>h. access_candidate V h \<and> access_settled V h) A in
+    if c0 \<noteq> {||} then access_first_goals V c0
+    else let cp = pc (ffilter (access_candidate V) A) in if cp \<noteq> {||} then access_first_goals V cp
+    else let c1 = ffilter (\<lambda>h. access_candidate V h \<and> access_single V h) A in
+      if c1 \<noteq> {||} then access_first_goals V c1
+    else access_waiting_selection V A)"
+
+lemma access_goal_choice_by:
+  assumes "pc (ffilter (access_candidate V) A) = ffilter rp (ffilter (access_candidate V) A)"
+  shows "access_goal_choice_by pc V A = access_goal_choice rp V A"
+  by (simp only: access_goal_choice_by_def access_goal_choice_classes Let_def assms)
 
 definition goal_settled :: "nat \<Rightarrow> ('a,'s::linorder,'d,'c) resolution_state \<Rightarrow> ('a,'s,'d,'c) resolution_goal \<Rightarrow> bool" where
   "goal_settled n st g \<longleftrightarrow> n = 0 \<or> finite_pruned st g \<or> finite_reusable st g"

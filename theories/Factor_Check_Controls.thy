@@ -62,7 +62,7 @@ definition tested_counted_step where
 lemma tested_counted_step_outcome:
   assumes rec: "\<And>F' B' s. fst (rec F' B' s) = rec' F' B' s"
   shows "fst (tested_counted_step R T gd \<kappa> P rec F B r) = tested_committed_step R T gd \<kappa> P rec' F B r"
-  unfolding tested_counted_step_def tested_committed_step_def Let_def
+  unfolding tested_counted_step_def tested_committed_step_def selected_committed_step_def Let_def
   by (simp add: rec tested_counted_goal_outcome[OF rec] fset.map_comp comp_def split: access_selection.split if_split)
 
 primrec tested_counted_search where

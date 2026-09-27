@@ -92,8 +92,9 @@ groundness counters wait on #875's figures. The brief #897 writes D1a–D1d and 
 `.build/tasks/890/verdict.md` (D1a at once; D1c after F234; D1b after D1a, F234 and D1c, carrying D1c's join; D1d after
 D1b, FI and GT2c); GT3 and #875 wait on #897 until its proposal re-points them onto D1's builds. Findings 2–4 (the root
 node decoded at every step, `enter_goal`'s decode, the table reversed at every access build; 24 to 6–8 ms a first step
-predicted) are the fix F234 #891 after #885, with review 872's consolidation of #871's bodies; #861's question is
-settled, (c) kept. q157 is FI #892, the kept classes' focused instance (a range read of the class trees as an operation
+predicted) are the fix F234 #891 after #885, with review 872's consolidation of #871's bodies — findings 2 and 4 and the
+consolidation handed over from its tree, finding 3 (`enter_goal` through the shared unifier, which changes
+`enter_goal_formed`'s statement) folded into D1c with 113/7 at #830's rows; #861's question is settled, (c) kept. q157 is FI #892, the kept classes' focused instance (a range read of the class trees as an operation
 of the index notion, the committed selection at a proper focus over it), after F234, before GT3. #875, rewritten again,
 measures the deferred route held after D1's builds, beside GT3, and supplies GT6's prediction, its worker count and
 D1e's trigger.
@@ -398,8 +399,9 @@ a theory before briefing a task that edits it.
 
 ## Now
 
-- **Under way**: F234 #891 and the investigation #896 (55's refutation at depth 2, with review 828's 1, 2 and 6); GT2a
-  #843, continued from its tree (review 844's fix made probe-clean, its hand-over (12)); the brief #897 of D1's builds
+- **Under way**: the investigation #896 (55's refutation at depth 2, with review 828's 1, 2 and 6); F234 #891 and GT2a
+  #843, each continued from its tree (F234 handing over findings 2 and 4, its finding 3 folded into D1c; GT2a's review
+  844 fix made probe-clean, its hand-over (12)); the brief #897 of D1's builds
   (D1a–D1d, GT3's brief rewritten); the fix #898 (review 828's 3–5); GT2c #888 and GT2b #889 after GT2a, each mailed
   review 844's follow-up; FI #892 after F234.
 - **What the next events ask**: #897's proposal placed (D1a first; GT3 #876 and #875 re-pointed onto D1's builds, FI

@@ -88,14 +88,18 @@ it is placed. D1 #890 decided it (accepted; its addition to task 495's entry, "T
 kept as placed under a binding store (D1a, a notion), the deferred search a third instance of the search representation
 (D1b), the goal side's operations bounded a step (D1c), the deferred committed search and the route through it (D1d);
 6–8 ms a step predicted at 30, 300 and 350 steps, GT6 52–85 h on one worker; the goal side numbered (D1e) and the
-groundness counters wait on #875's figures. The brief #897 writes D1a–D1d and rewrites GT3's brief, in the order of
-`.build/tasks/890/verdict.md` (D1a at once; D1c after F234; D1b after D1a, F234 and D1c, carrying D1c's join; D1d after
-D1b, FI and GT2c); GT3 and #875 wait on #897 until its proposal re-points them onto D1's builds. Findings 2–4 (the root
+groundness counters wait on #875's figures. Placed from the brief #897 (its `result.md` gives each edge's reason), each
+with its review: D1a #899 (the binding store, `Shared_Binding_Stores`, at once), D1c #901 (with F234's finding 3, 113/7
+and next-edits 316 and 338), D1b #903 (after D1a and D1c, over D1c's `search_update`), D1d #905 (after D1b, FI and GT2c;
+review 891's 1 and next-edits 375's #871 part); GT3 #876 (its brief rewritten from #897's: D1's deferred searches,
+GT2a's calls lemmas, the graph verdicts at a table of true calls) and #875 wait on D1d. Findings 2–4 (the root
 node decoded at every step, `enter_goal`'s decode, the table reversed at every access build; 24 to 6–8 ms a first step
 predicted) are the fix F234 #891 after #885, with review 872's consolidation of #871's bodies — findings 2 and 4 and the
-consolidation handed over from its tree, finding 3 (`enter_goal` through the shared unifier, which changes
+consolidation landed (`c0d51080`; review 891's follow-ups 1 and 5 mailed to #897, 2 to #875, 3 and 4 to FI), finding
+3 (`enter_goal` through the shared unifier, which changes
 `enter_goal_formed`'s statement) folded into D1c with 113/7 at #830's rows; #861's question is settled, (c) kept. q157 is FI #892, the kept classes' focused instance (a range read of the class trees as an operation
-of the index notion, the committed selection at a proper focus over it), after F234, before GT3. #875, rewritten again,
+of the index notion, the committed selection at a proper focus over it), after D1c #901 (both restate `kept_select_by`;
+its first session, started at 09:12, stopped when the proposal was placed), before D1d and GT3. #875, rewritten again,
 measures the deferred route held after D1's builds, beside GT3, and supplies GT6's prediction, its worker count and
 D1e's trigger.
 
@@ -109,9 +113,12 @@ the installed carrying of a produced record stated once); review 818's 5 and #88
 and 369. Off the route: #857 re-ran #718's 77 and 79 fixtures after OS2 (`5fd0f1b0`: still not returning, their cost
 W5's and the table's; the re-run with review 858's attributions at W5's landing, next-edits 364–366). c55 #827 landed
 (`1b9bea86`): 55's pair clause at the given at depth 2, the true call resolved and the false one not refuted within
-bounds (unresolved at 800, not returned at 1500); the investigation #896 attributes that refutation at nested patterns
-before #542 and #399 rest on refusals at the given, with review 828's follow-ups 1, 2 and 6 (55's inner unions selected
-and not committed at the check form); its follow-ups 3–5 (the committed trace out of a chain of three evaluating
+bounds (unresolved at 800, not returned at 1500). #896 attributed it (accepted, `.build/tasks/896/result.md`): F1's
+order at a pair node expands its one-clause premises while 34, which binds the sockets' input, has alternatives
+pending, so the framed test at 55.2/2 and 55.2/3 fails for good and the inner unions enumerate every presentation — an
+order, not a step's cost; its prototype waiting class refutes depth 2 in 4,806 selections. The design D2 #907 decides
+that class (a correction of F1 and the modes), its builds before #542 and #547 (#707 and #399 through #542), with
+review 828's follow-up 1 and `given_union_control`'s revision; review 828's follow-ups 3–5 (the committed trace out of a chain of three evaluating
 theories, about 90 s a check) are the fix #898.
 
 **Retired** on #376's and #378's entries: the decomposition line (#325–#334), N1a, N1b, N3a, N3b, N4a, N4b, #371, #377,
@@ -123,12 +130,12 @@ request construction over rows, the incremental assessment, the rows line, the d
 digit layout, the rule programs' law, the shared-subterm engine (B1–B6), the exporter's obligations. Their remains are
 under Open and in `.build/plans/next-edits.md`.
 
-**Shape and order.** No build waits on a review. The longest chain, 12 deep until #897's proposal is placed: F234 #891
-→ FI #892 → GT3 #876 → GT6 #878 → R7 #542 → #707 → #399 → #709 → #553 → #447 → #449 → #450 (#897 → GT3, and GT2a #843 →
-GT2c #888 → GT3, one shorter); once placed, F234 → D1c → D1b → D1d → GT3 → … is 14, D1's builds and GT2's division
-spliced as detail; nothing is added after its tail until it shortens (the approval build, Open 142, waits for that). The
-queue is the planner's choice, a residual until the selection problem's native answer (Q2): running tasks first, GT2a's
-continuation #843, the brief #897, the fix #898, GT2a's review, GT2c and GT2b with their reviews, FI, #875, the route in
+**Shape and order.** No build waits on a review. The longest chain, 13 deep: D1c #901 → D1b #903 → D1d #905 → GT3
+#876 → GT6 #878 → R7 #542 → #707 → #399 → #709 → #553 → #447 → #449 → #450, and GT2a #843 → GT2c #888 → D1d → … as long,
+D1's builds and GT2's division spliced as detail; nothing is added after its tail until it shortens (the approval build,
+Open 142, waits for that). The queue is the planner's choice, a residual until the selection problem's native answer
+(Q2): running tasks first, the design D2 #907, GT2a's review, D1c, D1a, GT2c, D1b, FI and D1d each with its review,
+GT2b, #875, the route in
 its chains' order, the consolidation #887 after GT6's review (nothing waits on it). Word changes are serialized; none is
 queued.
 
@@ -399,17 +406,15 @@ a theory before briefing a task that edits it.
 
 ## Now
 
-- **Under way**: the investigation #896 (55's refutation at depth 2, with review 828's 1, 2 and 6); F234 #891 and GT2a
-  #843, each continued from its tree (F234 handing over findings 2 and 4, its finding 3 folded into D1c; GT2a's review
-  844 fix made probe-clean, its hand-over (12)); the brief #897 of D1's builds
-  (D1a–D1d, GT3's brief rewritten); the fix #898 (review 828's 3–5); GT2c #888 and GT2b #889 after GT2a, each mailed
-  review 844's follow-up; FI #892 after F234.
-- **What the next events ask**: #897's proposal placed (D1a first; GT3 #876 and #875 re-pointed onto D1's builds, FI
-  re-pointed if D1c and FI share a definition); GT2a's hand-over (its item (12)): what GT2b and GT2c consume, and whether
-  it stated the check forms' definitions at a table (then GT3 re-pointed off GT2c, and D1d with it); GT2c's answer on
+- **Under way**: GT2a #843, continued from its tree (review 844's fix made probe-clean, its hand-over (12)); the fix #898
+  (review 828's 3–5); D1c #901 and D1a #899; the design D2 #907 (F1's waiting class, #896's finding); FI #892 after D1c
+  (review 891's 3 and 4, plan-127's mail); GT2c #888 and GT2b #889 after GT2a, each mailed review 844's follow-up.
+- **What the next events ask**: GT2a's hand-over (its item (12)): what GT2b and GT2c consume, and whether it stated the
+  check forms' definitions at a table (GT3 stays after GT2c through D1d, which edits `Factor_Resolution_Checks` after
+  it); GT2c's answer on
   `finite_table_true` at the relocated table (#883's review 1: else the formation-only form is placed); GT6's prediction
   and worker count from #875 before its run, with the checking fold measured at samples; #709's brief rewritten before it
-  starts; review 828's follow-up 1 (55's unions produced at the check form) placed from #896's result. Q33 is the owner's.
+  starts; D2 #907's builds placed from its table before #542 and #547, their edges to D2 re-pointed. Q33 is the owner's.
 - **Planners stopped**: plan-120 and plan-121 were stopped by a classifier declining a turn, before their notes; this
   file and `PLANNING_LOG.md` carried all they settled. Keep both current at every event.
 - **Briefs nearest their rooms**: #542, #399 and the samples build #551; GT2b #889 at 350K beside the discharge
@@ -420,7 +425,7 @@ a theory before briefing a task that edits it.
 - **Ledger entries that can leave** (the harness's `v2.py ledger`): Q7's and Q2's questions and answers, recorded in
   the plan; the owner's words of 17:50, 18:12, 18:36 and 18:53, recorded by #378.
 - **Trees without a running task**: the retired #169's, #325's, #371's and #324's; the investigations' (#425, #430,
-  #481, #559, #644, #764, #779, #829, #830, #851); `.build/trees/143` holds task 143's uncommitted note;
+  #481, #559, #644, #764, #779, #829, #830, #851, #886, #896); `.build/trees/143` holds task 143's uncommitted note;
   `.build/trees/176` is superseded and holds uncommitted changes, which makes the open-tree overlap checks inexact until
   it is removed — the harness's or the owner's.
 - **The base** lives at `.build/tasks/base-lasting/`, advanced by the harness at every landing;

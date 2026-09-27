@@ -1,5 +1,5 @@
 theory Factor_Input_Productions
-  imports Factor_Varied_Narrowed_Transfer Factor_Artifact_Citation_Declarations
+  imports Factor_Varied_Narrowed_Transfer Factor_Artifact_Citation_Declarations Factor_Native_Committed_Registrations
 begin
 
 text \<open>
@@ -261,6 +261,18 @@ proof -
 qed
 
 end
+
+text \<open>
+  By relocation, the registration's sites mapped as the record's (@{const registration_relocated}): a relocated input
+  registration is the input registration of the renamed clause at the mapped site, as along the clause match
+  (@{thm [source] finite_schema_matched.input_registration_varied}); the renamed clause's head reads the same input
+  (@{thm [source] head_registration_relocated}).
+\<close>
+
+lemma input_registration_relocated_eq:
+  "registration_relocated g (input_registration d S Vc a) =
+    input_registration (g d) (finite_rename_schema id id g S) Vc a"
+  by (simp add: registration_relocated_def input_registration_def finite_rename_schema_def finite_term_pattern.map_id)
 
 section \<open>12's instance: artifact identity produces its input at 37.0/2\<close>
 

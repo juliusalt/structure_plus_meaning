@@ -152,40 +152,6 @@ text \<open>
   depend on an order of the family, which a finite set does not give.
 \<close>
 
-lemma share_term_present:
-  assumes tf: "table_formed T"
-  shows "reference_term T i = Some t \<Longrightarrow> share_term t T = (i, T)"
-proof (induction t arbitrary: i)
-  case (Finite_Pair u v)
-  obtain j k where read: "value_reference_read T i = Some (Pair_Shape j k)"
-    and u: "reference_term T j = Some u" and v: "reference_term T k = Some v"
-    using Finite_Pair.prems
-  proof (cases rule: reference_term_cases)
-    case (leaf l)
-    then show ?thesis by (cases l) simp_all
-  next
-    case (pair j k x y)
-    then show ?thesis by (auto intro: that)
-  qed
-  have "value_reference_index (Pair_Shape j k) T = Some i"
-    using value_reference_index_distinct_read[OF _ read] tf by (simp add: table_formed_def)
-  with Finite_Pair.IH(1)[OF u] Finite_Pair.IH(2)[OF v] show ?case by (simp add: value_reference_step_def)
-next
-  case (Finite_Payload v)
-  have "reference_term T i = Some (leaf_term (Payload_Leaf v))" using Finite_Payload.prems by simp
-  then have "value_reference_read T i = Some (Leaf_Shape (Payload_Leaf v))" by (rule reference_factor_leaf_read)
-  then have "value_reference_index (Leaf_Shape (Payload_Leaf v)) T = Some i"
-    using tf by (intro value_reference_index_distinct_read) (simp_all add: table_formed_def)
-  then show ?case by (simp add: value_reference_step_def)
-next
-  case (Finite_Target a)
-  have "reference_term T i = Some (leaf_term (Target_Leaf a))" using Finite_Target.prems by simp
-  then have "value_reference_read T i = Some (Leaf_Shape (Target_Leaf a))" by (rule reference_factor_leaf_read)
-  then have "value_reference_index (Leaf_Shape (Target_Leaf a)) T = Some i"
-    using tf by (intro value_reference_index_distinct_read) (simp_all add: table_formed_def)
-  then show ?case by (simp add: value_reference_step_def)
-qed
-
 lemma keyed_share_shape_present:
   assumes rep: "keyed_state_represents q T" and found: "value_reference_index s T = Some i"
   shows "keyed_share_shape s q = (i, q)"
@@ -835,17 +801,182 @@ proof -
     by (cases nd) (auto simp: shared_derivation_formed_def shared_derivation_project_def)
 qed
 
+subsection \<open>A call goal's alternatives, computed by the shared unifier\<close>
+
+text \<open>
+  A call goal's alternatives are computed on its shared pattern: the ground terms of the definition's renamed
+  interfaces and clause heads are shared first, and each clause is unified by F2a's unifier (@{const shared_unify_pairs})
+  against the goal's pattern as it stands, so a variable is bound to the reference of the goal's ground subterm, never
+  to its decoded copy. Each shared alternative projects to R2's (@{text shared_call_alternatives_project}), one for each
+  clause the goal unifies with, so a goal entry counts its alternatives on its shared pattern
+  (@{text shared_call_alternatives_count}): a substituted goal is never decoded to be counted (#886's finding 3).
+\<close>
+
+definition search_call_grounds :: "('a,'s,'d,'c) finite_schema_system \<Rightarrow> 's list \<Rightarrow> 'd \<Rightarrow> finite_factor_term fset" where
+  "search_call_grounds P q d =
+    ffUnion (fimage (\<lambda>(e,i). if e \<noteq> d then {||} else pattern_grounds (finite_rename_apart (q,False) i))
+      (finite_system_interfaces P)) |\<union>|
+    ffUnion (fimage (\<lambda>((e,c),S). if e \<noteq> d then {||} else
+      pattern_grounds (finite_rename_apart (q,True) (finite_schema_conclusion S))) (finite_system_clauses P))"
+
+definition shared_call_pairs :: "share_state \<Rightarrow> 's list \<Rightarrow> 'a finite_term_pattern \<Rightarrow> ('a,'s,'d) finite_factor_schema \<Rightarrow>
+    ('s,'a) resolution_variable shared_pattern \<Rightarrow> ('s,'a) resolution_variable shared_pattern_pairs" where
+  "shared_call_pairs x q i S gp = [(keyed_pattern_at x (finite_rename_apart (q,False) i), gp),
+    (keyed_pattern_at x (finite_rename_apart (q,True) (finite_schema_conclusion S)), gp)]"
+
+definition shared_call_alternatives :: "('a,'s,'d,'c) finite_schema_system \<Rightarrow> share_state \<Rightarrow> 's list \<Rightarrow> 'd \<Rightarrow>
+    ('s,'a) resolution_variable shared_pattern \<Rightarrow> ('a finite_term_pattern \<times> 'c \<times> ('a,'s,'d) finite_factor_schema \<times>
+      (('s,'a) resolution_variable \<times> ('s,'a) resolution_variable shared_pattern) list) fset" where
+  "shared_call_alternatives P x q d gp = (let T = share_state_table x in
+    ffUnion (fimage (\<lambda>(e,i). if e \<noteq> d then {||} else
+      ffUnion (fimage (\<lambda>((e',c),S). if e' \<noteq> d then {||} else
+        (case shared_unify_pairs T (shared_call_pairs x q i S gp) of None \<Rightarrow> {||} | Some s \<Rightarrow> {|(i,c,S,s)|}))
+        (finite_system_clauses P)))
+    (finite_system_interfaces P)))"
+
+lemma shared_call_alternatives_member:
+  "z |\<in>| shared_call_alternatives P x q d gp \<longleftrightarrow> (\<exists>i c S s. z = (i,c,S,s) \<and> (d,i) |\<in>| finite_system_interfaces P \<and>
+    ((d,c),S) |\<in>| finite_system_clauses P \<and> shared_unify_pairs (share_state_table x) (shared_call_pairs x q i S gp) = Some s)"
+  (is "?l \<longleftrightarrow> ?r")
+proof
+  assume ?l
+  then show ?r unfolding shared_call_alternatives_def Let_def
+    by (auto simp: ffUnion.rep_eq fimage.rep_eq split: if_splits option.splits)
+next
+  assume ?r
+  then show ?l unfolding shared_call_alternatives_def Let_def by (force simp: ffUnion.rep_eq fimage.rep_eq)
+qed
+
+lemma finite_call_alternative_set_member:
+  "z |\<in>| finite_call_alternative_set P q d p \<longleftrightarrow> (\<exists>i c S u. z = (i,c,S,u) \<and> (d,i) |\<in>| finite_system_interfaces P \<and>
+    ((d,c),S) |\<in>| finite_system_clauses P \<and> finite_unify_pairs [(finite_rename_apart (q,False) i,p),
+      (finite_rename_apart (q,True) (finite_schema_conclusion S),p)] = Some u)"
+  (is "?l \<longleftrightarrow> ?r")
+proof
+  assume ?l
+  then show ?r unfolding finite_call_alternative_set_def
+    by (auto simp: ffUnion.rep_eq fimage.rep_eq split: if_splits option.splits)
+next
+  assume ?r
+  then show ?l unfolding finite_call_alternative_set_def by (force simp: ffUnion.rep_eq fimage.rep_eq)
+qed
+
+lemma shared_call_pairs_exact:
+  assumes x: "share_state_formed x" and gp: "shared_pattern_formed (share_state_table x) gp"
+    and hi: "\<And>t. t |\<in>| pattern_grounds (finite_rename_apart (q,False) i) \<Longrightarrow> table_holds (share_state_table x) t"
+    and hS: "\<And>t. t |\<in>| pattern_grounds (finite_rename_apart (q,True) (finite_schema_conclusion S)) \<Longrightarrow>
+      table_holds (share_state_table x) t"
+  shows "shared_pairs_formed (share_state_table x) (shared_call_pairs x q i S gp) \<and>
+    shared_pairs_project (share_state_table x) (shared_call_pairs x q i S gp) =
+      [(finite_rename_apart (q,False) i, shared_pattern_project (share_state_table x) gp),
+       (finite_rename_apart (q,True) (finite_schema_conclusion S), shared_pattern_project (share_state_table x) gp)]"
+proof -
+  have rep: "keyed_state_represents x (share_state_table x)" and tf: "table_formed (share_state_table x)"
+    using share_state_formed_table[OF x] by simp_all
+  note k1 = keyed_pattern_at_exact[OF rep tf, where p = "finite_rename_apart (q,False) i", OF hi]
+    and k2 = keyed_pattern_at_exact[OF rep tf, where p = "finite_rename_apart (q,True) (finite_schema_conclusion S)", OF hS]
+  show ?thesis using k1 k2 gp by (simp add: shared_call_pairs_def)
+qed
+
+lemma shared_call_alternatives_project:
+  assumes x: "share_state_formed x" and gp: "shared_pattern_formed (share_state_table x) gp"
+    and held: "\<forall>t. t |\<in>| search_call_grounds P q d \<longrightarrow> table_holds (share_state_table x) t"
+  shows "fimage (\<lambda>(i,c,S,s). (i,c,S,shared_bindings_project (share_state_table x) s)) (shared_call_alternatives P x q d gp) =
+      finite_call_alternative_set P q d (shared_pattern_project (share_state_table x) gp)"
+    and "z |\<in>| shared_call_alternatives P x q d gp \<Longrightarrow> \<exists>i c S s. z = (i,c,S,s) \<and>
+      ((d,c),S) |\<in>| finite_system_clauses P \<and> shared_bindings_formed (share_state_table x) s"
+proof -
+  let ?T = "share_state_table x" and ?p = "shared_pattern_project (share_state_table x) gp"
+  let ?f = "\<lambda>(i,c,S,s). (i,c,S,shared_bindings_project ?T s)"
+  have tf: "table_formed ?T" using share_state_formed_table(1)[OF x] .
+  have pairs: "shared_pairs_formed ?T (shared_call_pairs x q i S gp) \<and>
+      shared_pairs_project ?T (shared_call_pairs x q i S gp) =
+        [(finite_rename_apart (q,False) i, ?p), (finite_rename_apart (q,True) (finite_schema_conclusion S), ?p)]"
+    if "(d,i) |\<in>| finite_system_interfaces P" "((d,c),S) |\<in>| finite_system_clauses P" for i c S
+  proof (rule shared_call_pairs_exact[OF x gp])
+    fix t assume "t |\<in>| pattern_grounds (finite_rename_apart (q,False) i)"
+    then have "t |\<in>| search_call_grounds P q d" using that(1)
+      by (force simp: search_call_grounds_def ffUnion.rep_eq fimage.rep_eq)
+    then show "table_holds ?T t" using held by blast
+  next
+    fix t assume "t |\<in>| pattern_grounds (finite_rename_apart (q,True) (finite_schema_conclusion S))"
+    then have "t |\<in>| search_call_grounds P q d" using that(2)
+      by (force simp: search_call_grounds_def ffUnion.rep_eq fimage.rep_eq)
+    then show "table_holds ?T t" using held by blast
+  qed
+  note un = shared_unify_pairs_exact[OF tf]
+  show "fimage ?f (shared_call_alternatives P x q d gp) = finite_call_alternative_set P q d ?p"
+  proof (rule fset_eqI)
+    fix z
+    show "z |\<in>| fimage ?f (shared_call_alternatives P x q d gp) \<longleftrightarrow> z |\<in>| finite_call_alternative_set P q d ?p"
+    proof
+      assume "z |\<in>| fimage ?f (shared_call_alternatives P x q d gp)"
+      then obtain y where y: "y |\<in>| shared_call_alternatives P x q d gp" and zy: "z = ?f y" by (auto simp: fimage_iff)
+      then obtain i c S s where yy: "y = (i,c,S,s)" and ii: "(d,i) |\<in>| finite_system_interfaces P"
+        and cc: "((d,c),S) |\<in>| finite_system_clauses P"
+        and us: "shared_unify_pairs ?T (shared_call_pairs x q i S gp) = Some s"
+        by (auto simp: shared_call_alternatives_member)
+      have "finite_unify_pairs [(finite_rename_apart (q,False) i, ?p), (finite_rename_apart (q,True) (finite_schema_conclusion S), ?p)] =
+          Some (shared_bindings_project ?T s)"
+        using un[OF conjunct1[OF pairs[OF ii cc]]] conjunct2[OF pairs[OF ii cc]] us by simp
+      then show "z |\<in>| finite_call_alternative_set P q d ?p" using yy zy ii cc by (simp add: finite_call_alternative_set_member)
+    next
+      assume "z |\<in>| finite_call_alternative_set P q d ?p"
+      then obtain i c S u where zz: "z = (i,c,S,u)" and ii: "(d,i) |\<in>| finite_system_interfaces P"
+        and cc: "((d,c),S) |\<in>| finite_system_clauses P"
+        and uu: "finite_unify_pairs [(finite_rename_apart (q,False) i, ?p),
+          (finite_rename_apart (q,True) (finite_schema_conclusion S), ?p)] = Some u"
+        by (auto simp: finite_call_alternative_set_member)
+      have "map_option (shared_bindings_project ?T) (shared_unify_pairs ?T (shared_call_pairs x q i S gp)) = Some u"
+        using un[OF conjunct1[OF pairs[OF ii cc]]] conjunct2[OF pairs[OF ii cc]] uu by simp
+      then obtain s where us: "shared_unify_pairs ?T (shared_call_pairs x q i S gp) = Some s"
+        and su: "shared_bindings_project ?T s = u" by auto
+      have m: "(i,c,S,s) |\<in>| shared_call_alternatives P x q d gp" using ii cc us by (simp add: shared_call_alternatives_member)
+      show "z |\<in>| fimage ?f (shared_call_alternatives P x q d gp)" using fimageI[OF m, of ?f] zz su by simp
+    qed
+  qed
+  show "\<exists>i c S s. z = (i,c,S,s) \<and> ((d,c),S) |\<in>| finite_system_clauses P \<and> shared_bindings_formed ?T s"
+    if mz: "z |\<in>| shared_call_alternatives P x q d gp"
+  proof -
+    obtain i c S s where zz: "z = (i,c,S,s)" and ii: "(d,i) |\<in>| finite_system_interfaces P"
+      and cc: "((d,c),S) |\<in>| finite_system_clauses P"
+      and us: "shared_unify_pairs ?T (shared_call_pairs x q i S gp) = Some s"
+      using mz unfolding shared_call_alternatives_member by blast
+    show ?thesis using un[OF conjunct1[OF pairs[OF ii cc]]] us zz cc by blast
+  qed
+qed
+
+text \<open>
+  A clause gives at most one shared alternative, and its projection keeps the clause, so the projection is injective
+  on the alternatives: they are as many as R2's.
+\<close>
+
+lemma shared_call_alternatives_count:
+  assumes x: "share_state_formed x" and gp: "shared_pattern_formed (share_state_table x) gp"
+    and held: "\<forall>t. t |\<in>| search_call_grounds P q d \<longrightarrow> table_holds (share_state_table x) t"
+  shows "fcard (shared_call_alternatives P x q d gp) =
+    fcard (finite_call_alternative_set P q d (shared_pattern_project (share_state_table x) gp))"
+proof -
+  let ?f = "\<lambda>(i,c,S,s). (i,c,S,shared_bindings_project (share_state_table x) s)"
+  have inj: "inj_on ?f (fset (shared_call_alternatives P x q d gp))"
+    by (rule inj_onI) (auto simp: shared_call_alternatives_member)
+  have "fcard (fimage ?f (shared_call_alternatives P x q d gp)) = fcard (shared_call_alternatives P x q d gp)"
+    by (simp add: fcard.rep_eq fimage.rep_eq card_image[OF inj])
+  then show ?thesis using shared_call_alternatives_project(1)[OF x gp held] by simp
+qed
+
 section \<open>The shared state\<close>
 
 text \<open>
   The shared state holds one goal and one node by position, in the order of positions, each with its caches: a goal
   its count of alternatives (its variables are its patterns' caches), a node its variables. It keeps F2b1's indexes
   over them: the holder index from the position part of a variable to the positions holding or having held a variable
-  there (a superset index: an entry is never removed), the count of goal positions at or under each position, the
-  construction's kept failures, and the positions of the ground calls of goals and of nodes, keyed by the call's
-  reference, a number. Beside the sharing state it holds an index of the table by position, equal to the table, so a
-  reference is read without walking the list. It is formed when these are what they keep; its projection to R3's state
-  decodes every entry and forgets the caches and the indexes.
+  there (a superset index: an entry is never removed), the count at each position of its goal and of its children under
+  which a goal stands, the construction's kept failures, and the positions of the ground calls of goals and of nodes,
+  keyed by the call's reference, a number (the goals' index pruned where a goal leaves its call). Beside the sharing
+  state it holds an index of the table by position, equal to the table, so a reference is read without walking the
+  list. It is formed when these are what they keep; its projection to R3's state decodes every entry and forgets the
+  caches and the indexes.
 \<close>
 
 subsection \<open>Entries\<close>
@@ -856,9 +987,19 @@ datatype ('a,'s,'d,'c) shared_goal_entry = Shared_Goal_Entry
 datatype ('a,'s,'d,'c) shared_node_entry = Shared_Node_Entry
   (shared_entry_node: "('a,'s,'d,'c) shared_derivation") (shared_entry_variables: "('s,'a) resolution_variable fset")
 
-definition enter_goal :: "('a,'s,'d,'c) finite_schema_system \<Rightarrow> shape list \<Rightarrow> ('a,'s,'d,'c) shared_goal \<Rightarrow>
-    ('a,'s,'d,'c) shared_goal_entry" where
-  "enter_goal P T g = Shared_Goal_Entry g (finite_goal_alternatives P (shared_goal_project T g))"
+text \<open>
+  A goal enters with its count of alternatives: a call goal's counted by the shared unifier on its shared pattern, the
+  definition's ground terms shared into the sharing state first, which the entry returns; a material goal's counted
+  on its projection.
+\<close>
+
+definition enter_goal :: "('a,'s,'d,'c) finite_schema_system \<Rightarrow> share_state \<Rightarrow> ('a,'s,'d,'c) shared_goal \<Rightarrow>
+    ('a,'s,'d,'c) shared_goal_entry \<times> share_state" where
+  "enter_goal P x g = (case g of
+      Shared_Call_Goal q r d p \<Rightarrow> (let x' = keyed_share_grounds (search_call_grounds P q d) x in
+        (Shared_Goal_Entry g (fcard (shared_call_alternatives P x' q d p)), x'))
+    | Shared_Material_Goal q r M \<Rightarrow>
+        (Shared_Goal_Entry g (finite_goal_alternatives P (shared_goal_project (share_state_table x) g)), x))"
 
 definition enter_node :: "('a,'s,'d,'c) shared_derivation \<Rightarrow> ('a,'s,'d,'c) shared_node_entry" where
   "enter_node nd = Shared_Node_Entry nd (shared_derivation_variables nd)"
@@ -873,15 +1014,33 @@ definition node_entry_formed :: "shape list \<Rightarrow> 's list \<Rightarrow> 
     shared_derivation_position (shared_entry_node hn) = q \<and> shared_entry_variables hn = shared_derivation_variables (shared_entry_node hn)"
 
 lemma enter_goal_formed:
-  "shared_goal_formed T g \<Longrightarrow> shared_goal_position g = q \<Longrightarrow> goal_entry_formed P T q (enter_goal P T g)"
-  by (simp add: goal_entry_formed_def enter_goal_def)
+  assumes x: "share_state_formed x" and g: "shared_goal_formed (share_state_table x) g"
+    and q: "shared_goal_position g = q"
+  shows "share_state_formed (snd (enter_goal P x g)) \<and>
+    table_extends (share_state_table x) (share_state_table (snd (enter_goal P x g))) \<and>
+    goal_entry_formed P (share_state_table (snd (enter_goal P x g))) q (fst (enter_goal P x g))"
+proof (cases g)
+  case (Shared_Call_Goal q0 r d p)
+  let ?G = "search_call_grounds P q0 d"
+  let ?x' = "keyed_share_grounds ?G x"
+  note k = keyed_share_grounds[OF x, where G = ?G]
+  have tf: "table_formed (share_state_table x)" using share_state_formed_table(1)[OF x] .
+  note e = shared_goal_extends[OF tf g k(2)]
+  have pf: "shared_pattern_formed (share_state_table ?x') p" using e Shared_Call_Goal by simp
+  have held: "\<forall>t. t |\<in>| ?G \<longrightarrow> table_holds (share_state_table ?x') t" using k(3) by blast
+  note c = shared_call_alternatives_count[OF k(1) pf held]
+  show ?thesis using k(1,2) e c q Shared_Call_Goal by (simp add: enter_goal_def goal_entry_formed_def Let_def)
+next
+  case (Shared_Material_Goal q0 r M)
+  then show ?thesis using x g q by (simp add: enter_goal_def goal_entry_formed_def)
+qed
 
 lemma enter_node_formed:
   "shared_derivation_formed T nd \<Longrightarrow> shared_derivation_position nd = q \<Longrightarrow> node_entry_formed T q (enter_node nd)"
   by (simp add: node_entry_formed_def enter_node_def)
 
-lemma enter_goal_fields [simp]: "shared_entry_goal (enter_goal P T g) = g"
-  by (simp add: enter_goal_def)
+lemma enter_goal_fields [simp]: "shared_entry_goal (fst (enter_goal P x g)) = g"
+  by (cases g) (simp_all add: enter_goal_def Let_def)
 
 lemma enter_node_fields [simp]: "shared_entry_node (enter_node nd) = nd"
   by (simp add: enter_node_def)
@@ -1206,6 +1365,69 @@ next
   qed
 qed
 
+text \<open>
+  The open count at a position is one for a goal there and one for each child under which a goal stands (D1c): it is
+  zero exactly where no goal stands at or under the position (@{text open_count_zero}), the solvedness of a node there.
+  A goal appearing or leaving changes it at its position, and at the parent only where a count reaches or leaves zero.
+\<close>
+
+definition open_children :: "('s::linorder list,'v) rbt \<Rightarrow> 's list \<Rightarrow> 's set" where
+  "open_children t p = {x. tree_keys_under t (p @ [x]) \<noteq> {}}"
+
+definition open_count :: "('s::linorder list,'v) rbt \<Rightarrow> 's list \<Rightarrow> nat" where
+  "open_count t p = (if RBT.lookup t p = None then 0 else 1) + card (open_children t p)"
+
+lemma tree_keys_under_mono:
+  assumes pre: "take (length p) p' = p"
+  shows "tree_keys_under t p' \<subseteq> tree_keys_under t p"
+proof
+  fix q assume "q \<in> tree_keys_under t p'"
+  then have q: "RBT.lookup t q \<noteq> None" "take (length p') q = p'" by (simp_all add: tree_keys_under_def)
+  have le: "length p \<le> length p'" using pre by (metis length_take min.cobounded1)
+  have "take (length p) q = take (length p) (take (length p') q)" using le by (simp add: min_absorb1)
+  also have "\<dots> = p" using q(2) pre by simp
+  finally show "q \<in> tree_keys_under t p" using q(1) by (simp add: tree_keys_under_def)
+qed
+
+lemma open_children_finite: "finite (open_children t p)"
+proof (rule finite_subset[of _ "(\<lambda>q. q ! length p) ` dom (RBT.lookup t)"])
+  show "open_children t p \<subseteq> (\<lambda>q. q ! length p) ` dom (RBT.lookup t)"
+  proof
+    fix x assume "x \<in> open_children t p"
+    then obtain q where q: "RBT.lookup t q \<noteq> None" "take (Suc (length p)) q = p @ [x]"
+      by (auto simp: open_children_def tree_keys_under_def)
+    have "q ! length p = take (Suc (length p)) q ! length p" by simp
+    also have "\<dots> = x" using q(2) by simp
+    finally have "x = q ! length p" ..
+    moreover have "q \<in> dom (RBT.lookup t)" using q(1) by auto
+    ultimately show "x \<in> (\<lambda>q. q ! length p) ` dom (RBT.lookup t)" by blast
+  qed
+qed (rule finite_imageI, simp)
+
+lemma open_count_zero: "open_count t p = 0 \<longleftrightarrow> tree_keys_under t p = {}"
+proof
+  assume z: "open_count t p = 0"
+  then have none: "RBT.lookup t p = None" and ch: "open_children t p = {}"
+    using open_children_finite[of t p] by (simp_all add: open_count_def split: if_splits)
+  show "tree_keys_under t p = {}"
+  proof (rule ccontr)
+    assume "tree_keys_under t p \<noteq> {}"
+    then obtain q where q: "RBT.lookup t q \<noteq> None" "take (length p) q = p" by (auto simp: tree_keys_under_def)
+    have "q \<noteq> p" using q(1) none by auto
+    then have lt: "length p < length q" using q(2) by (metis not_less take_all)
+    have "take (Suc (length p)) q = p @ [q ! length p]" using lt q(2) by (simp add: take_Suc_conv_app_nth)
+    then have "q \<in> tree_keys_under t (p @ [q ! length p])" using q(1) by (simp add: tree_keys_under_def)
+    then have "q ! length p \<in> open_children t p" by (auto simp: open_children_def)
+    with ch show False by simp
+  qed
+next
+  assume e: "tree_keys_under t p = {}"
+  have none: "RBT.lookup t p = None" using e by (auto simp: tree_keys_under_def)
+  have "tree_keys_under t (p @ [x]) = {}" for x using tree_keys_under_mono[of p "p @ [x]" t] e by simp
+  then have "open_children t p = {}" by (simp add: open_children_def)
+  then show "open_count t p = 0" using none by (simp add: open_count_def)
+qed
+
 definition shared_recorded_at :: "('a,'s::linorder,'d,'c) shared_state \<Rightarrow> 's list \<Rightarrow> bool" where
   "shared_recorded_at s q \<longleftrightarrow>
     (\<forall>h x. RBT.lookup (shared_goals s) q = Some h \<longrightarrow> x |\<in>| shared_goal_variables (shared_entry_goal h) \<longrightarrow>
@@ -1226,7 +1448,7 @@ definition shared_state_formed :: "('a,'s,'d,'c) finite_witness_construction \<R
     (\<forall>i x. x |\<in>| tree_bucket (shared_goal_calls s) i \<longrightarrow> i < length (shared_state_table s)) \<and>
     (\<forall>i x. x |\<in>| tree_bucket (shared_node_calls s) i \<longrightarrow> i < length (shared_state_table s)) \<and>
     (\<forall>q. shared_recorded_at s q) \<and>
-    (\<forall>p. tree_count (shared_open s) p = card (tree_keys_under (shared_goals s) p)) \<and>
+    (\<forall>p. tree_count (shared_open s) p = open_count (shared_goals s) p) \<and>
     (\<forall>q a hn. a |\<in>| tree_bucket (shared_unconstructed s) q \<longrightarrow> RBT.lookup (shared_nodes s) q = Some hn \<longrightarrow>
       finite_registered_value \<kappa> P (shared_derivation_project (shared_state_table s) (shared_entry_node hn)) a = None)"
 
@@ -1241,9 +1463,11 @@ lemma shared_entries_formed:
 section \<open>Replacing, placing and removing the entries at a position\<close>
 
 text \<open>
-  Every change of the entries is one operation, as in F2b1: the goal and the node at one position are replaced, the
-  count of goal positions is adjusted along the position's prefixes where a goal appears or disappears there, and the
-  new entries' variables and ground call references are recorded. It keeps the formation.
+  Every change of the entries is one operation, as in F2b1: the goal and the node at one position are replaced; where
+  a goal appears or disappears there the open count is adjusted at the position and carried to the parent only where a
+  count reaches or leaves zero (@{text open_carry}), so a step pays an adjustment a level whose count moves between zero
+  and nonzero, not one at every prefix; the new entries' variables and ground call references are recorded, and the
+  position leaves the goal-call index at the references its goal no longer makes. It keeps the formation.
 \<close>
 
 definition option_fset :: "'a option \<Rightarrow> 'a fset" where
@@ -1259,23 +1483,324 @@ lemma tree_option_put_lookup [simp]:
   "RBT.lookup (tree_option_put t q x) p = (if p = q then x else RBT.lookup t p)"
   by (cases x) (simp_all add: tree_option_put_def)
 
-definition presence_count_put :: "('s::linorder list, 'v) rbt \<Rightarrow> ('s list, nat) rbt \<Rightarrow> 's list \<Rightarrow> bool \<Rightarrow>
-    ('s list, nat) rbt" where
-  "presence_count_put t c q b = (if (RBT.lookup t q = None) = (\<not> b) then c
-    else tree_count_adjust (if b then Suc else (\<lambda>n. n - 1)) (position_prefixes q) c)"
+definition count_put :: "('k::linorder,nat) rbt \<Rightarrow> 'k \<Rightarrow> nat \<Rightarrow> ('k,nat) rbt" where
+  "count_put c p k = (if k = 0 then RBT.delete p c else RBT.insert p k c)"
 
-lemma presence_count_put_formed:
-  assumes counts: "\<And>p. tree_count c p = card (tree_keys_under t p)"
-  shows "tree_count (presence_count_put t c q (x \<noteq> None)) p = card (tree_keys_under (tree_option_put t q x) p)"
+lemma count_put [simp]: "tree_count (count_put c p k) p' = (if p' = p then k else tree_count c p')"
+  by (auto simp: count_put_def tree_count_def)
+
+text \<open>
+  The carry walks from a position towards the root, adjusting each count by one, and stops at the first count that
+  neither reaches nor leaves zero.
+\<close>
+
+primrec open_carry :: "bool \<Rightarrow> 's::linorder list \<Rightarrow> nat \<Rightarrow> ('s list, nat) rbt \<Rightarrow> ('s list, nat) rbt" where
+  "open_carry b q 0 c = c"
+| "open_carry b q (Suc n) c = (let k = tree_count c (take n q); k' = (if b then Suc k else k - 1);
+    c' = count_put c (take n q) k' in if (k = 0) = (k' = 0) then c' else open_carry b q n c')"
+
+definition open_count_put :: "('s::linorder list, 'v) rbt \<Rightarrow> ('s list, nat) rbt \<Rightarrow> 's list \<Rightarrow> bool \<Rightarrow>
+    ('s list, nat) rbt" where
+  "open_count_put t c q b = (if (RBT.lookup t q = None) = (\<not> b) then c else open_carry b q (Suc (length q)) c)"
+
+text \<open>
+  The carry computes every count exactly when the level it starts at changes by one, each level above changes exactly
+  where the count below it moved between zero and nonzero, and a level whose count keeps its zeroness keeps the
+  zeroness of every level above it.
+\<close>
+
+lemma open_carry:
+  assumes n: "n \<le> length q"
+    and out: "\<And>p. \<forall>j\<le>n. p \<noteq> take j q \<Longrightarrow> tree_count c p = F' p"
+    and at: "\<And>j. j \<le> n \<Longrightarrow> tree_count c (take j q) = F (take j q)"
+    and here: "F' (take n q) = (if b then Suc (F (take n q)) else F (take n q) - 1)"
+    and up: "\<And>j. j < n \<Longrightarrow> F' (take j q) = (if (F (take (Suc j) q) = 0) = (F' (take (Suc j) q) = 0)
+      then F (take j q) else if b then Suc (F (take j q)) else F (take j q) - 1)"
+    and mono: "\<And>i j. j \<le> i \<Longrightarrow> i \<le> n \<Longrightarrow> (F (take i q) = 0) = (F' (take i q) = 0) \<Longrightarrow>
+      (F (take j q) = 0) = (F' (take j q) = 0)"
+  shows "tree_count (open_carry b q (Suc n) c) p = F' p"
+  using n out at here up mono
+proof (induction n arbitrary: c)
+  case 0
+  let ?k' = "if b then Suc (tree_count c (take 0 q)) else tree_count c (take 0 q) - 1"
+  have e: "open_carry b q (Suc 0) c = count_put c (take 0 q) ?k'" by (simp add: Let_def)
+  have k: "?k' = F' (take 0 q)" using "0.prems"(3)[of 0] "0.prems"(4) by simp
+  show ?case
+  proof (cases "p = take 0 q")
+    case True
+    then show ?thesis using e k by simp
+  next
+    case False
+    then have "tree_count c p = F' p" using "0.prems"(2)[of p] by simp
+    then show ?thesis using e False by simp
+  qed
+next
+  case (Suc m)
+  let ?p = "take (Suc m) q"
+  let ?k = "tree_count c ?p"
+  let ?k' = "if b then Suc ?k else ?k - 1"
+  let ?c' = "count_put c ?p ?k'"
+  have k: "?k = F ?p" using Suc.prems(3)[of "Suc m"] by simp
+  have hk: "(if b then Suc (F ?p) else F ?p - 1) = F' ?p" using Suc.prems(4) by simp
+  have k': "?k' = F' ?p" by (simp only: k hk)
+  have ne: "take j q \<noteq> ?p" if "j \<le> m" for j
+  proof
+    assume "take j q = ?p"
+    then have "length (take j q) = length ?p" by simp
+    then show False using that Suc.prems(1) by (simp add: min_def split: if_splits)
+  qed
+  show ?case
+  proof (cases "(?k = 0) = (?k' = 0)")
+    case True
+    have e: "open_carry b q (Suc (Suc m)) c = ?c'"
+      by (simp only: open_carry.simps(2)[of b q "Suc m" c] Let_def if_P[OF True])
+    have tr: "(F ?p = 0) = (F' ?p = 0)" using True by (simp only: k hk)
+    have z: "(F (take j q) = 0) = (F' (take j q) = 0)" if "j \<le> Suc m" for j
+      using Suc.prems(6)[OF that order_refl tr] .
+    show ?thesis
+    proof (cases "\<exists>j\<le>Suc m. p = take j q")
+      case False
+      then have "tree_count c p = F' p" using Suc.prems(2)[of p] by blast
+      moreover have "p \<noteq> ?p" using False le_refl[of "Suc m"] by blast
+      ultimately show ?thesis using e by simp
+    next
+      case True
+      then obtain j where j: "j \<le> Suc m" "p = take j q" by blast
+      show ?thesis
+      proof (cases "j = Suc m")
+        case True
+        then have pp: "p = ?p" using j(2) by simp
+        show ?thesis unfolding pp e count_put if_P[OF refl] k' by (rule refl)
+      next
+        case False
+        then have jm: "j < Suc m" and jm': "j \<le> m" using j(1) by simp_all
+        have zj: "(F (take (Suc j) q) = 0) = (F' (take (Suc j) q) = 0)" using z[of "Suc j"] jm by simp
+        have "F' (take j q) = F (take j q)" using Suc.prems(5)[OF jm] by (simp only: if_P[OF zj])
+        moreover have "tree_count c (take j q) = F (take j q)" using Suc.prems(3)[of j] j(1) by simp
+        ultimately show ?thesis using e j(2) ne[OF jm'] by simp
+      qed
+    qed
+  next
+    case False
+    have e: "open_carry b q (Suc (Suc m)) c = open_carry b q (Suc m) ?c'"
+      by (simp only: open_carry.simps(2)[of b q "Suc m" c] Let_def if_not_P[OF False])
+    have fl: "\<not> ((F ?p = 0) = (F' ?p = 0))" using False by (simp only: k hk not_False_eq_True)
+    have IH: "tree_count (open_carry b q (Suc m) ?c') p = F' p"
+    proof (rule Suc.IH)
+      show "m \<le> length q" using Suc.prems(1) by simp
+    next
+      fix p' assume o: "\<forall>j\<le>m. p' \<noteq> take j q"
+      show "tree_count ?c' p' = F' p'"
+      proof (cases "p' = ?p")
+        case True
+        show ?thesis unfolding True count_put if_P[OF refl] k' by (rule refl)
+      next
+        case False
+        then have "\<forall>j\<le>Suc m. p' \<noteq> take j q" using o by (auto simp: le_Suc_eq)
+        then show ?thesis using Suc.prems(2)[of p'] False by simp
+      qed
+    next
+      fix j assume "j \<le> m"
+      then show "tree_count ?c' (take j q) = F (take j q)" using Suc.prems(3)[of j] ne[of j] by simp
+    next
+      show "F' (take m q) = (if b then Suc (F (take m q)) else F (take m q) - 1)"
+        using Suc.prems(5)[OF lessI] by (simp only: if_not_P[OF fl])
+    next
+      fix j assume "j < m"
+      then show "F' (take j q) = (if (F (take (Suc j) q) = 0) = (F' (take (Suc j) q) = 0)
+          then F (take j q) else if b then Suc (F (take j q)) else F (take j q) - 1)" using Suc.prems(5)[of j] by simp
+    next
+      fix i j assume "j \<le> i" "i \<le> m" "(F (take i q) = 0) = (F' (take i q) = 0)"
+      then show "(F (take j q) = 0) = (F' (take j q) = 0)" using Suc.prems(6)[of j i] by simp
+    qed
+    show ?thesis using e IH by simp
+  qed
+qed
+
+text \<open>A change of the goal tree away from a position's prefixes keeps its open count; its own count and its
+  parent's change as the carry adjusts them.\<close>
+
+lemma open_count_keys:
+  assumes "\<And>p. (RBT.lookup t' p = None) = (RBT.lookup t p = None)"
+  shows "open_count t' p = open_count t p"
+  by (simp add: open_count_def open_children_def tree_keys_under_def assms)
+
+lemma tree_keys_under_off:
+  assumes same: "\<And>p'. p' \<noteq> q \<Longrightarrow> RBT.lookup t' p' = RBT.lookup t p'" and off: "take (length p) q \<noteq> p"
+  shows "tree_keys_under t' p = tree_keys_under t p"
+proof (rule set_eqI)
+  fix q'
+  show "q' \<in> tree_keys_under t' p \<longleftrightarrow> q' \<in> tree_keys_under t p"
+  proof (cases "q' = q")
+    case True
+    then show ?thesis using off by (simp add: tree_keys_under_def)
+  next
+    case False
+    then show ?thesis using same[OF False] by (simp add: tree_keys_under_def)
+  qed
+qed
+
+lemma open_count_off:
+  assumes same: "\<And>p'. p' \<noteq> q \<Longrightarrow> RBT.lookup t' p' = RBT.lookup t p'" and off: "take (length p) q \<noteq> p"
+  shows "open_count t' p = open_count t p"
 proof -
-  let ?t0 = "RBT.map (\<lambda>k v. {|v|}) t"
-  have keys: "\<And>p. tree_keys_under ?t0 p = tree_keys_under t p" by (simp add: tree_keys_under_def)
-  have c0: "\<And>p. tree_count c p = card (tree_keys_under ?t0 p)" using counts keys by simp
-  have eq: "presence_count_put t c q (x \<noteq> None) = tree_bucket_count_put ?t0 c q (option_fset x)"
-    by (cases x) (simp_all add: presence_count_put_def tree_bucket_count_put_def)
-  have k2: "tree_keys_under (tree_bucket_put ?t0 q (option_fset x)) p = tree_keys_under (tree_option_put t q x) p"
-    by (cases x) (auto simp: tree_keys_under_def tree_bucket_put_def)
-  show ?thesis using tree_bucket_count_put[where t = ?t0 and c = c, OF c0] eq k2 by simp
+  have pq: "p \<noteq> q" using off by auto
+  have "take (length (p @ [x])) q \<noteq> p @ [x]" for x
+  proof
+    assume e: "take (length (p @ [x])) q = p @ [x]"
+    have "take (length p) q = take (length p) (take (length (p @ [x])) q)" by (simp add: min_def)
+    also have "\<dots> = p" using e by simp
+    finally show False using off by simp
+  qed
+  then have "open_children t' p = open_children t p"
+    by (simp add: open_children_def tree_keys_under_off[OF same])
+  then show ?thesis using same[OF pq] by (simp add: open_count_def)
+qed
+
+lemma open_count_self:
+  assumes same: "\<And>p'. p' \<noteq> q \<Longrightarrow> RBT.lookup t' p' = RBT.lookup t p'"
+  shows "open_count t' q = (if RBT.lookup t' q = None then 0 else 1) + card (open_children t q)"
+proof -
+  have "take (length (q @ [x])) q \<noteq> q @ [x]" for x by simp
+  then have "open_children t' q = open_children t q"
+    by (simp add: open_children_def tree_keys_under_off[OF same])
+  then show ?thesis by (simp add: open_count_def)
+qed
+
+lemma open_count_parent:
+  assumes same: "\<And>p'. p' \<noteq> q \<Longrightarrow> RBT.lookup t' p' = RBT.lookup t p'" and j: "j < length q"
+  shows "open_count t' (take j q) =
+    (if (tree_keys_under t (take (Suc j) q) = {}) = (tree_keys_under t' (take (Suc j) q) = {}) then open_count t (take j q)
+     else if tree_keys_under t (take (Suc j) q) = {} then Suc (open_count t (take j q)) else open_count t (take j q) - 1)"
+proof -
+  let ?p = "take j q" and ?y = "q ! j" and ?c = "take (Suc j) q"
+  let ?S = "open_children t ?p" and ?S' = "open_children t' ?p"
+  have cy: "?c = ?p @ [?y]" using j by (simp add: take_Suc_conv_app_nth)
+  have pq: "?p \<noteq> q"
+  proof
+    assume "?p = q"
+    then have "length ?p = length q" by simp
+    then show False using j by (simp add: min_def)
+  qed
+  have lk: "RBT.lookup t' ?p = RBT.lookup t ?p" using same[OF pq] .
+  have fin: "finite ?S" by (rule open_children_finite)
+  have other: "z \<in> ?S' \<longleftrightarrow> z \<in> ?S" if "z \<noteq> ?y" for z
+  proof -
+    have "take (length (?p @ [z])) q \<noteq> ?p @ [z]"
+    proof
+      assume "take (length (?p @ [z])) q = ?p @ [z]"
+      then have "?c = ?p @ [z]" using j by (simp add: min_def)
+      with cy that show False by simp
+    qed
+    then show ?thesis by (simp add: open_children_def tree_keys_under_off[OF same])
+  qed
+  have yS: "?y \<in> ?S \<longleftrightarrow> tree_keys_under t ?c \<noteq> {}" by (simp add: open_children_def cy)
+  have yS': "?y \<in> ?S' \<longleftrightarrow> tree_keys_under t' ?c \<noteq> {}" by (simp add: open_children_def cy)
+  have S': "?S' = (if tree_keys_under t' ?c \<noteq> {} then insert ?y ?S else ?S - {?y})"
+  proof (rule set_eqI)
+    fix z
+    show "z \<in> ?S' \<longleftrightarrow> z \<in> (if tree_keys_under t' ?c \<noteq> {} then insert ?y ?S else ?S - {?y})"
+    proof (cases "z = ?y")
+      case True
+      then show ?thesis using yS' by simp
+    next
+      case False
+      then show ?thesis using other[OF False] by simp
+    qed
+  qed
+  have base: "open_count t (take j q) = (if RBT.lookup t ?p = None then 0 else 1) + card ?S"
+    by (simp add: open_count_def)
+  have base': "open_count t' (take j q) = (if RBT.lookup t ?p = None then 0 else 1) + card ?S'"
+    using lk by (simp add: open_count_def)
+  show ?thesis
+  proof (cases "tree_keys_under t ?c = {}"; cases "tree_keys_under t' ?c = {}")
+    assume a: "tree_keys_under t ?c = {}" and b: "tree_keys_under t' ?c = {}"
+    then have "?S' = ?S" using S' yS by auto
+    then show ?thesis using a b base base' by simp
+  next
+    assume a: "tree_keys_under t ?c = {}" and b: "tree_keys_under t' ?c \<noteq> {}"
+    then have "card ?S' = Suc (card ?S)" using S' yS fin by simp
+    then show ?thesis using a b base base' by simp
+  next
+    assume a: "tree_keys_under t ?c \<noteq> {}" and b: "tree_keys_under t' ?c = {}"
+    have c: "card ?S' = card ?S - 1" using S' yS fin a b by (simp add: card_Diff_singleton)
+    have pos: "card ?S \<noteq> 0" using yS a fin by auto
+    show ?thesis using a b base base' c pos by simp
+  next
+    assume a: "tree_keys_under t ?c \<noteq> {}" and b: "tree_keys_under t' ?c \<noteq> {}"
+    then have "?S' = ?S" using S' yS by auto
+    then show ?thesis using a b base base' by simp
+  qed
+qed
+
+lemma open_count_put_formed:
+  assumes counts: "\<And>p. tree_count c p = open_count t p"
+  shows "tree_count (open_count_put t c q (x \<noteq> None)) p = open_count (tree_option_put t q x) p"
+proof (cases "(RBT.lookup t q = None) = (\<not> (x \<noteq> None))")
+  case True
+  have "(RBT.lookup (tree_option_put t q x) p' = None) = (RBT.lookup t p' = None)" for p'
+    using True by auto
+  then have "open_count (tree_option_put t q x) p = open_count t p" by (rule open_count_keys)
+  then show ?thesis by (simp only: open_count_put_def if_P[OF True] counts)
+next
+  case False
+  let ?t' = "tree_option_put t q x" and ?b = "x \<noteq> None"
+  have same: "\<And>p'. p' \<noteq> q \<Longrightarrow> RBT.lookup ?t' p' = RBT.lookup t p'" by simp
+  have e: "open_count_put t c q ?b = open_carry ?b q (Suc (length q)) c"
+    by (simp only: open_count_put_def if_not_P[OF False])
+  have b0: "(RBT.lookup t q \<noteq> None) = (\<not> ?b)" using False by auto
+  have ut: "q \<in> tree_keys_under t (take j q) \<longleftrightarrow> \<not> ?b" if "j \<le> length q" for j
+    using that b0 by (simp add: tree_keys_under_def min_def)
+  have ut': "q \<in> tree_keys_under ?t' (take j q) \<longleftrightarrow> ?b" if "j \<le> length q" for j
+    using that by (simp add: tree_keys_under_def min_def)
+  have ot: "open_count t q = (if RBT.lookup t q = None then 0 else 1) + card (open_children t q)"
+    by (simp add: open_count_def)
+  show ?thesis unfolding e
+  proof (rule open_carry[where F = "open_count t" and F' = "open_count ?t'"])
+    show "length q \<le> length q" by simp
+  next
+    fix p' assume o: "\<forall>j\<le>length q. p' \<noteq> take j q"
+    have "take (length p') q \<noteq> p'"
+    proof
+      assume a: "take (length p') q = p'"
+      have "length p' \<le> length q" using a by (metis length_take min.cobounded1)
+      with o a show False by auto
+    qed
+    then show "tree_count c p' = open_count ?t' p'" using counts open_count_off[OF same] by simp
+  next
+    fix j assume "j \<le> length q"
+    then show "tree_count c (take j q) = open_count t (take j q)" using counts by simp
+  next
+    show "open_count ?t' (take (length q) q) =
+        (if ?b then Suc (open_count t (take (length q) q)) else open_count t (take (length q) q) - 1)"
+      using open_count_self[OF same] ot b0 by (cases x) auto
+  next
+    fix j assume j: "j < length q"
+    have hb: "tree_keys_under ?t' (take (Suc j) q) \<noteq> {}" if ?b using ut'[of "Suc j"] j that by auto
+    have hn: "tree_keys_under t (take (Suc j) q) \<noteq> {}" if "\<not> ?b" using ut[of "Suc j"] j that by auto
+    have pj: "open_count ?t' (take j q) =
+      (if (tree_keys_under t (take (Suc j) q) = {}) = (tree_keys_under ?t' (take (Suc j) q) = {}) then open_count t (take j q)
+       else if tree_keys_under t (take (Suc j) q) = {} then Suc (open_count t (take j q)) else open_count t (take j q) - 1)"
+      by (rule open_count_parent[OF same j])
+    show "open_count ?t' (take j q) = (if (open_count t (take (Suc j) q) = 0) = (open_count ?t' (take (Suc j) q) = 0)
+        then open_count t (take j q) else if ?b then Suc (open_count t (take j q)) else open_count t (take j q) - 1)"
+    proof (cases ?b)
+      case True
+      then have "tree_keys_under ?t' (take (Suc j) q) \<noteq> {}" by (rule hb)
+      then show ?thesis using pj True by (simp add: open_count_zero)
+    next
+      case False
+      then have "tree_keys_under t (take (Suc j) q) \<noteq> {}" by (rule hn)
+      then show ?thesis using pj False by (simp add: open_count_zero)
+    qed
+  next
+    fix i j assume ji: "j \<le> i" and i: "i \<le> length q"
+      and z: "(open_count t (take i q) = 0) = (open_count ?t' (take i q) = 0)"
+    have pre: "take (length (take j q)) (take i q) = take j q" using ji i by (simp add: min_def)
+    note sub = tree_keys_under_mono[OF pre, of t] tree_keys_under_mono[OF pre, of ?t']
+    show "(open_count t (take j q) = 0) = (open_count ?t' (take j q) = 0)"
+      using z sub ut[OF i] ut'[OF i] unfolding open_count_zero by blast
+  qed
 qed
 
 definition shared_replace :: "'s::linorder list \<Rightarrow> ('a,'s,'d,'c) shared_goal_entry option \<Rightarrow>
@@ -1285,8 +1810,10 @@ definition shared_replace :: "'s::linorder list \<Rightarrow> ('a,'s,'d,'c) shar
     shared_holders := tree_add q (variable_positions
       (case_option {||} (\<lambda>h. shared_goal_variables (shared_entry_goal h)) go |\<union>| case_option {||} shared_entry_variables no))
       (shared_holders s),
-    shared_open := presence_count_put (shared_goals s) (shared_open s) q (go \<noteq> None),
-    shared_goal_calls := tree_add q (case_option {||} (\<lambda>h. shared_goal_call_refs (shared_entry_goal h)) go) (shared_goal_calls s),
+    shared_open := open_count_put (shared_goals s) (shared_open s) q (go \<noteq> None),
+    shared_goal_calls := tree_move q
+      (case_option {||} (\<lambda>h. shared_goal_call_refs (shared_entry_goal h)) (RBT.lookup (shared_goals s) q))
+      (case_option {||} (\<lambda>h. shared_goal_call_refs (shared_entry_goal h)) go) (shared_goal_calls s),
     shared_node_calls := tree_add q (case_option {||} (\<lambda>hn. shared_call_refs (shared_derivation_call (shared_entry_node hn))) no)
       (shared_node_calls s),
     shared_unconstructed := RBT.delete q (shared_unconstructed s)\<rparr>"
@@ -1318,11 +1845,12 @@ proof -
   have rec: "shared_recorded_at ?s' p" for p
   proof (cases "p = q")
     case True
-    then show ?thesis by (cases go; cases no) (auto simp: shared_recorded_at_def shared_replace_def variable_positions_member)
+    then show ?thesis
+      by (cases go; cases no) (auto simp: shared_recorded_at_def shared_replace_def variable_positions_member tree_move)
   next
     case False
     have "shared_recorded_at s p" using s by (simp add: shared_state_formed_def)
-    with False show ?thesis by (auto simp: shared_recorded_at_def shared_replace_def)
+    with False show ?thesis by (auto simp: shared_recorded_at_def shared_replace_def tree_move)
   qed
   have gcalls: "i < length ?T" if "x |\<in>| tree_bucket (shared_goal_calls ?s') i" for i x
   proof (cases "i |\<in>| case_option {||} (\<lambda>h. shared_goal_call_refs (shared_entry_goal h)) go")
@@ -1331,7 +1859,8 @@ proof -
     then show ?thesis using go shared_goal_call_refs_formed[of ?T] by (auto simp: goal_entry_formed_def)
   next
     case False
-    then have "x |\<in>| tree_bucket (shared_goal_calls s) i" using that by (simp add: shared_replace_def)
+    then have "x |\<in>| tree_bucket (shared_goal_calls s) i" using that
+      by (auto simp: shared_replace_def tree_move split: if_splits)
     then show ?thesis using s by (auto simp: shared_state_formed_def)
   qed
   have ncalls: "i < length ?T" if "x |\<in>| tree_bucket (shared_node_calls ?s') i" for i x
@@ -1344,11 +1873,11 @@ proof -
     then have "x |\<in>| tree_bucket (shared_node_calls s) i" using that by (simp add: shared_replace_def)
     then show ?thesis using s by (auto simp: shared_state_formed_def)
   qed
-  have counts: "tree_count (shared_open ?s') p = card (tree_keys_under (shared_goals ?s') p)" for p
+  have counts: "tree_count (shared_open ?s') p = open_count (shared_goals ?s') p" for p
   proof -
-    have "\<And>p. tree_count (shared_open s) p = card (tree_keys_under (shared_goals s) p)"
+    have "\<And>p. tree_count (shared_open s) p = open_count (shared_goals s) p"
       using s by (simp add: shared_state_formed_def)
-    from presence_count_put_formed[OF this, of q go p] show ?thesis by (simp add: shared_replace_def)
+    from open_count_put_formed[OF this, of q go p] show ?thesis by (simp add: shared_replace_def)
   qed
   have unc: "finite_registered_value \<kappa> P (shared_derivation_project ?T (shared_entry_node hn)) a = None"
     if "a |\<in>| tree_bucket (shared_unconstructed ?s') p" "RBT.lookup (shared_nodes ?s') p = Some hn" for p a hn
@@ -1368,7 +1897,7 @@ proof -
     using gs by simp
   have n1: "\<forall>p hn. RBT.lookup (shared_nodes ?s') p = Some hn \<longrightarrow> node_entry_formed (shared_state_table ?s') p hn"
     using ns by simp
-  have o1: "\<forall>p. tree_count (shared_open ?s') p = card (tree_keys_under (shared_goals ?s') p)" using counts by simp
+  have o1: "\<forall>p. tree_count (shared_open ?s') p = open_count (shared_goals ?s') p" using counts by simp
   have u1: "\<forall>p a hn. a |\<in>| tree_bucket (shared_unconstructed ?s') p \<longrightarrow> RBT.lookup (shared_nodes ?s') p = Some hn \<longrightarrow>
       finite_registered_value \<kappa> P (shared_derivation_project (shared_state_table ?s') (shared_entry_node hn)) a = None"
     using unc by simp
@@ -1573,7 +2102,7 @@ proof -
     using ge by (simp add: shared_reshare_def)
   have n1: "\<forall>q hn. RBT.lookup (shared_nodes ?s') q = Some hn \<longrightarrow> node_entry_formed ?T' q hn"
     using ne by (simp add: shared_reshare_def)
-  have o1: "\<forall>p. tree_count (shared_open ?s') p = card (tree_keys_under (shared_goals ?s') p)"
+  have o1: "\<forall>p. tree_count (shared_open ?s') p = open_count (shared_goals ?s') p"
     using s by (simp add: shared_reshare_def shared_state_formed_def)
   have u1: "\<forall>q a hn. a |\<in>| tree_bucket (shared_unconstructed ?s') q \<longrightarrow> RBT.lookup (shared_nodes ?s') q = Some hn \<longrightarrow>
       finite_registered_value \<kappa> P (shared_derivation_project ?T' (shared_entry_node hn)) a = None"
@@ -1598,7 +2127,7 @@ definition shared_goal_entry_substitute :: "('a,'s,'d,'c) finite_schema_system \
     (('s,'a) resolution_variable \<Rightarrow> ('s,'a) resolution_variable shared_pattern) \<Rightarrow> ('s,'a) resolution_variable fset \<Rightarrow>
     ('a,'s,'d,'c) shared_goal_entry \<Rightarrow> share_state \<Rightarrow> ('a,'s,'d,'c) shared_goal_entry \<times> share_state" where
   "shared_goal_entry_substitute P \<sigma> D h x = (if shared_goal_variables (shared_entry_goal h) |\<inter>| D = {||} then (h, x)
-    else (case shared_goal_substitute \<sigma> D (shared_entry_goal h) x of (g', x') \<Rightarrow> (enter_goal P (share_state_table x') g', x')))"
+    else (case shared_goal_substitute \<sigma> D (shared_entry_goal h) x of (g', x') \<Rightarrow> enter_goal P x' g'))"
 
 definition shared_node_entry_substitute ::
     "(('s,'a) resolution_variable \<Rightarrow> ('s,'a) resolution_variable shared_pattern) \<Rightarrow> ('s,'a) resolution_variable fset \<Rightarrow>
@@ -1635,10 +2164,21 @@ next
   obtain g' x' where e: "shared_goal_substitute \<sigma> D ?g x = (g', x')" by (cases "shared_goal_substitute \<sigma> D ?g x") auto
   have gf: "shared_goal_formed (share_state_table x) ?g" using h by (simp add: goal_entry_formed_def)
   note k = shared_goal_substitute_exact[where q = x and g = ?g and \<sigma> = \<sigma> and D = D, OF x gf \<sigma>f \<sigma>c out]
+  have k': "share_state_formed x' \<and> table_extends (share_state_table x) (share_state_table x') \<and>
+      shared_goal_formed (share_state_table x') g' \<and>
+      shared_goal_project (share_state_table x') g' =
+        resolution_goal_substitute (\<lambda>a. shared_pattern_project (share_state_table x) (\<sigma> a))
+          (shared_goal_project (share_state_table x) ?g)"
+    using k e by simp
   have pos: "shared_goal_position g' = q" using shared_goal_substitute_position[of \<sigma> D ?g x] e h
     by (simp add: goal_entry_formed_def)
-  show ?thesis using False e k pos enter_goal_formed[of "share_state_table x'" g' q P]
-    by (simp add: shared_goal_entry_substitute_def)
+  have tf': "table_formed (share_state_table x')" using share_state_formed_table(1)[OF conjunct1[OF k']] .
+  note n = enter_goal_formed[OF conjunct1[OF k'] conjunct1[OF conjunct2[OF conjunct2[OF k']]] pos, of P]
+  have pe: "shared_goal_project (share_state_table (snd (enter_goal P x' g'))) g' = shared_goal_project (share_state_table x') g'"
+    using shared_goal_extends[OF tf' conjunct1[OF conjunct2[OF conjunct2[OF k']]] conjunct1[OF conjunct2[OF n]]] by simp
+  have tx: "table_extends (share_state_table x) (share_state_table (snd (enter_goal P x' g')))"
+    by (rule table_extends_trans[OF conjunct1[OF conjunct2[OF k']] conjunct1[OF conjunct2[OF n]]])
+  show ?thesis using False e k' n pe tx by (simp add: shared_goal_entry_substitute_def)
 qed
 
 lemma shared_node_entry_substitute:
@@ -2098,7 +2638,7 @@ proof -
   have rec: "\<forall>q. shared_recorded_at (shared_empty x W) q" by (simp add: shared_recorded_at_def sel)
   show "shared_state_formed \<kappa> P (shared_empty x W)"
     unfolding shared_state_formed_def using x pos rec
-    by (simp add: sel tree_bucket_def tree_count_def tree_keys_under_def)
+    by (simp add: sel tree_bucket_def tree_count_def open_count_def open_children_def tree_keys_under_def)
   show "shared_state_project (shared_empty x W) = Resolution_State {||} {||} W"
     by (simp add: shared_state_project_def shared_empty_def)
   show "RBT.lookup (shared_goals (shared_empty x W)) p = None" "RBT.lookup (shared_nodes (shared_empty x W)) p = None"
@@ -2114,7 +2654,8 @@ definition shared_place_nodes :: "('s list \<times> ('a,'s,'d,'c) resolution_nod
 definition shared_place_goals :: "('a,'s,'d,'c) finite_schema_system \<Rightarrow> ('s list \<times> ('a,'s,'d,'c) resolution_goal) list \<Rightarrow>
     ('a,'s::linorder,'d,'c) shared_state \<Rightarrow> ('a,'s,'d,'c) shared_state" where
   "shared_place_goals P rows s =
-    fold (\<lambda>(q,g) t. shared_put_goal q (enter_goal P (shared_state_table t) (shared_goal_of (shared_sharing t) g)) t) rows s"
+    fold (\<lambda>(q,g) t. shared_put_goal q
+      (Shared_Goal_Entry (shared_goal_of (shared_sharing t) g) (finite_goal_alternatives P g)) t) rows s"
 
 lemma shared_place_nodes:
   assumes t: "shared_state_formed \<kappa> P t" and d: "distinct (map fst rows)"
@@ -2191,8 +2732,8 @@ next
   case (Cons r rows)
   obtain q g where r: "r = (q,g)" by (cases r)
   let ?x = "shared_sharing t" and ?T = "shared_state_table t"
-  let ?h = "enter_goal P (shared_state_table t) (shared_goal_of (shared_sharing t) g)"
-  let ?t' = "shared_put_goal q (enter_goal P (shared_state_table t) (shared_goal_of (shared_sharing t) g)) t"
+  let ?h = "Shared_Goal_Entry (shared_goal_of (shared_sharing t) g) (finite_goal_alternatives P g)"
+  let ?t' = "shared_put_goal q (Shared_Goal_Entry (shared_goal_of (shared_sharing t) g) (finite_goal_alternatives P g)) t"
   have xf: "share_state_formed ?x" using shared_entries_formed(3)[OF Cons.prems(1)] .
   have rep: "keyed_state_represents ?x ?T" and tf: "table_formed ?T"
     using share_state_formed_table[OF xf] by simp_all
@@ -2201,7 +2742,7 @@ next
     using shared_goal_of_exact[OF rep tf hd] .
   have pq: "shared_goal_position (shared_goal_of ?x g) = q"
     using Cons.prems(4)[of q g] r ex shared_goal_project_position[of ?T "shared_goal_of ?x g"] by simp
-  have hf: "goal_entry_formed P ?T q ?h" using enter_goal_formed[OF conjunct1[OF ex] pq] .
+  have hf: "goal_entry_formed P ?T q ?h" using ex pq by (simp add: goal_entry_formed_def)
   have fr: "RBT.lookup (shared_goals t) q = None" using Cons.prems(3)[of q g] r by simp
   note put = shared_put_goal[OF Cons.prems(1) hf fr]
   have sh: "shared_sharing ?t' = ?x" by (simp add: shared_put_goal_def)

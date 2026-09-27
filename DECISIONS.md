@@ -18929,6 +18929,22 @@ restated with its lemmas' statements kept.
    `kept_select_by` read it (review 885's follow-up 3).
 5. *The construction nodes kept* likewise: the registered positions whose node constructs, re-tested at the registered
    variables a step touches.
+[Correction (task 901, the build): (1)–(3) and (6) are taken. The child count is stated from the goal keys
+(`open_count`), its zero set the old one (`open_count_zero`); `classes_keys_prefix` states the carried chain at formed
+states, where alone it is contiguous (planner, plan-128); `presence_count_put` and its lemma, unused since, are retired.
+(4) and (5) were built and not taken (planner, q162). Built, the kept held goals and construction positions were fields
+of the class record, supersets read of the state alone (a goal holding a registered variable its node binds to itself,
+a position whose node binds one to itself), their formation a clause of `search_classes_formed`, re-tested where a step
+touched them and filtered by their tests at the selection, since the tests read the witness construction and the
+program, which `search_update` does not take. Held against main they made the search slower at every scale measured
+(`.build/tasks/901/measurement.md`: #830's 20 rows 12.5 to 19.6 s, 77/1 at 200 0.12 to 0.21 s, the given at 300 steps
+14.2 to 33.0 s). Poly/ML's profile placed the cost in the re-tests: a held re-test reads a goal's whole variable set
+and, for each registered variable, the node's bindings through list membership comparing variables whose positions
+grow with the depth (`shared_goal_variables` 108 to 10,455 ticks, nat equality 5,647 to 14,129 at the given); a
+construction re-test builds the state's access; both ran at every goal of a registered bucket whenever the variables a
+node binds to itself changed, and the kept supersets were filtered by the tests at every step. The held goals and
+construction nodes stay computed where the selection reaches them until #875's figures on the deferred route decide
+whether and how they are kept.]
 The waiting fallback stays computed where the selection reaches it (775 of 15,558 steps at #830's 20 rows): its test reads
 every goal's waits, which a step anywhere can change. Under D1b substitution no longer visits node positions, so the
 class updates at nodes the eager step made are moot. Held (bounded at 3 minutes): #830's 10 and 20 rows and 77/1 at 200
@@ -20873,6 +20889,14 @@ goal is read along its tree (`class_first_code`) and the held goals over the acc
 (`search_select_code`). At #830's 20 rows the library search takes 11.9 s against 15.7 s, `search_update` at the
 substitutions 1.57 s against 3.20 s (`.build/tasks/885/measurement.md`). Per-call counts were not built: they would
 save at most about 1 s and add tree operations of their own (planner, q159).]
+
+[Correction (task 901, D1c of task 495's entry, D1's addition): `classes_touched_goals` and `classes_step_goals` are
+retired. The goal-call index is pruned where a goal leaves or changes its ground key, so `classes_touched` lists no
+position a goal has left, and `search_update` and `search_put_node` re-test at it again (review 885's follow-up 4);
+`class_put` and `class_drop` write a class tree only where a membership changes (follow-up 2); the prefixes whose
+count moves are the carried chain `classes_carried` of the child counts. The held goals and construction nodes stay
+computed each step: D1c's (4) and (5) were built and not taken (D1's section "D1c — the goal side's operations
+bounded").]
 
 ## The committed step selects through the kept classes; the route's priority is a class made once a step, where the selection reaches it
 

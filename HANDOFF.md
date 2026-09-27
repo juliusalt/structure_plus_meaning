@@ -80,7 +80,9 @@ leaves them, review 862's 2–4 — and GT6 waits on it; its fixes are placed be
 trees' polymorphic cost after #830's fixes.
 
 **Corrections (12)–(15)** have landed but for K3 #825 (the given at the check forms after #869: 77/1, 77/2,
-113/7) → GT2, and the consolidation #832 (review 824's 2, 3, 6, 7, 9) before GT2. I3b #817 and its fix #881
+113/7) → GT2; the consolidation #832 landed (`41fcff74`: the check and committed forms' exactness once over a focus,
+the demand argument once, the transfers from one relocated meaning, `finite_exact_verdicts_equal`), its review's 1, 2
+and 4–7 the consolidation #887 after GT3 (GT2 told to add no further copy), its 3 next-edits 372 with the low moves. I3b #817 and its fix #881
 landed (`b9d5f1d3`, `3686b772`: 12's production present at the installed lookup socket, `installed_single_clause`,
 the installed carrying of a produced record stated once); review 818's 5 and #881's re-review are next-edits 362, 368
 and 369. Off the route: #857 re-ran #718's 77 and 79 fixtures after OS2 (`5fd0f1b0`: still not returning, their cost
@@ -99,9 +101,9 @@ under Open and in `.build/plans/next-edits.md`.
 **Shape and order.** No build waits on a review. The longest chain, 12 deep: K3 #825 → GT2 #843 → GT3 #876 → GT6
 #878 → R7 #542 → #707 → #399 → #709 → #553 → #447 → #449 → #450; nothing is added after its tail until it shortens (the
 approval build, Open 142, waits for that). The queue is the planner's choice, a residual until the selection problem's
-native answer (Q2): running tasks first, the investigation #886 after them (GT6 waits on it), then by slack on the longest chain — K3, #832, the fix #884, #871 and the fix
+native answer (Q2): running tasks first, the investigation #886 after them (GT6 waits on it), then by slack on the longest chain — K3, the fix #884, #871 and the fix
 #885 before #875, whose way to GT3 and GT6 has hours of slack against K3 → GT2 — the route in its chains' order, the off-route
-held run #827 last. Word changes are serialized; none is queued.
+held run #827 last, the consolidation #887 after GT6's review (nothing waits on it). Word changes are serialized; none is queued.
 
 ## Decisions
 
@@ -366,10 +368,10 @@ a theory before briefing a task that edits it.
 
 ## Now
 
-- **Under way**: K3 #825, the consolidation #832, #871 and the fix #884; the fix #885 after #871; the investigation #886
+- **Under way**: K3 #825, #871 and the fix #884; the fix #885 after #871; the investigation #886
   (the step at the given's term size, K3's escalation) next in the queue, GT6 waiting on it. No event is unhandled.
 - **What the next events ask**: the hand-overs of #871 (what its step leaves of the held goals, the waiting fallback and
-  `class_first`, for #885), #884, #832 and K3 (K3's figures read against #869's, with
+  `class_first`, for #885), #884 and K3 (K3's figures read against #869's, with
   `rep_share` counted where a production commits, review 870's 5); GT2 #843's answer on `finite_table_true` at the
   relocated table (#883's review 1: else the formation-only form is placed); GT6's prediction, with the checking fold
   measured at samples, and its worker count before its run; #709's brief rewritten before it starts; #886's result

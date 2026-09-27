@@ -1,6 +1,6 @@
 {
- "base_receipt_sha256": "a27085b69c95c5165054d473ca8bf5b3f31c27acae6d61b743f00d0d0b7f9562",
- "checked_content_sha256": "293d6d61501f8b2419dc2ac175915fa4a59df2b685a463071c559890055e0b80",
+ "base_receipt_sha256": "020efa875a4069856e46dddafab6ea7e55495952944e61d15f3747f7a87b10b4",
+ "checked_content_sha256": "400ced70368ffcefe9127088047191d8c80686b86f6cfac3ba4fe39b6f38e624",
  "host_tests": {
   "kernel": {
    "exit_code": 0,
@@ -17,80 +17,22 @@
    "ran": 309,
    "skipped": 0,
    "tail": [
-    "{\"status\": \"failed\", \"error\": \"[Errno 2] No such file or directory: '/tmp/tmpbm1gn4es/no-project/theories/Development_Answer_a2d8d6490cc2.thy'\"}"
+    "{\"status\": \"failed\", \"error\": \"[Errno 2] No such file or directory: '/tmp/tmppz6mu15d/no-project/theories/Development_Answer_a2d8d6490cc2.thy'\"}"
    ]
   }
  },
  "phases": {
-  "base_and_impact": 0.4,
+  "base_and_impact": 0.41,
   "execution_impact": 0.0,
   "export": 0.0,
-  "proof": 174.56,
+  "proof": 79.6,
   "recipe_impact": 0.4,
-  "recipes_and_host_tests": 11.16
+  "recipes_and_host_tests": 11.26
  },
  "rebuilt_theories": [
-  "Development_Asked_Registrations",
-  "Development_First_Request_Registrations",
-  "Development_Given_Carried_Declarations",
-  "Development_Given_Declarations",
-  "Development_Given_Declarations_Execution",
-  "Development_Given_Frames",
-  "Development_Given_Installed_Declarations",
-  "Development_Given_Installed_Productions",
-  "Development_Given_Modes",
-  "Development_Given_Modes_Execution",
-  "Development_Given_Productions",
-  "Development_Given_Productions_Execution",
-  "Development_Given_Registrations",
-  "Development_Installed_Presentations",
-  "Development_Installed_Presentations_Execution",
-  "Development_Rooted_Registrations",
-  "Development_Socket_Liveness_Execution",
   "Factor_Access_Commitments",
-  "Factor_Artifact_Citation_Declarations",
   "Factor_Check_Controls",
-  "Factor_Commitment_Controls",
-  "Factor_Committed_Registrations",
-  "Factor_Construction_Holders",
-  "Factor_Definition_Reading_Declarations",
-  "Factor_Framed_Commitment_Index",
-  "Factor_Input_Production_Controls",
-  "Factor_Input_Productions",
-  "Factor_Instantiation_Declarations",
-  "Factor_Least_Collections",
-  "Factor_Least_Witness_Registrations",
-  "Factor_Material_Reading_Controls",
-  "Factor_Mode_Controls",
-  "Factor_Narrowed_Commitments",
-  "Factor_Narrowed_Controls",
-  "Factor_Narrowed_Productions",
-  "Factor_Narrowed_Sockets",
-  "Factor_Native_Committed_Registrations",
-  "Factor_Producer_Correspondences",
-  "Factor_Reader_Witness_Registrations",
-  "Factor_Resolution_Carriers",
-  "Factor_Resolution_Checks",
-  "Factor_Resolution_Commitments",
-  "Factor_Resolution_Completeness",
-  "Factor_Resolution_Controls",
-  "Factor_Resolution_Graph_Checks",
-  "Factor_Resolution_Material_Discharge",
-  "Factor_Resolution_Modes",
-  "Factor_Resolution_Producer_Discharge",
-  "Factor_Resolution_Socket_Discharges",
-  "Factor_Resolution_Views",
-  "Factor_Root_Family_Declarations",
-  "Factor_Row_Selection_Socket_Declarations",
-  "Factor_Row_Value_Socket_Declarations",
-  "Factor_Schema_Instantiation_Declarations",
-  "Factor_Shared_Commitments",
-  "Factor_Table_Controls",
-  "Factor_Union_Declarations",
-  "Factor_Varied_Constructions",
-  "Factor_Varied_Declarations",
-  "Factor_Varied_Narrowed_Sockets",
-  "Factor_Varied_Narrowed_Transfer"
+  "Factor_Resolution_Checks"
  ],
  "recipes": {
   "allocated-environments": {
@@ -250,8 +192,8 @@
    "status": "unchanged"
   }
  },
- "reused_theories": 1915,
- "seconds": 204.86,
+ "reused_theories": 1973,
+ "seconds": 110.39,
  "source_checks": {
   "missing_theory_files": [],
   "proof_escape_matches": [],

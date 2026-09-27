@@ -1,5 +1,6 @@
 theory Factor_Resolution_Checks
 imports Factor_Committed_Registrations Factor_Native_Committed_Registrations Factor_Narrowed_Productions
+  Factor_Access_Commitments
   Factor_Input_Productions Factor_Shared_Commitments Factor_Framed_Commitment_Index
 begin
 

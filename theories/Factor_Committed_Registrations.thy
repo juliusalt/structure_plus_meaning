@@ -70,6 +70,56 @@ theorem committed_registered_demand_exact:
 
 end
 
+text \<open>
+  At a table (DECISIONS.md, task 495's entry, "The given's calls are decided once", GT2): the same contract over the
+  committed forms at the table, from the exchange and the construction premise at the table
+  (@{const finite_commitment_exchanges_at_in}, @{const finite_construction_lifts_in}); every form above is its instance
+  at the empty table (@{text registered_commitment_at_in_empty}). A resolution is sound at every table; a refutation
+  and a verdict exact from the premises at the table.
+\<close>
+
+locale registered_commitment_at_in =
+  fixes \<Theta> :: "('a,'s::linorder,'d,'c) resolution_table"
+    and pr :: "('a,'s,'d,'c) resolution_state \<Rightarrow> ('a,'s,'d,'c) resolution_goal \<Rightarrow> bool"
+    and \<kappa> :: "('a,'s,'d,'c) finite_witness_construction"
+    and P :: "('a,'s,'d,'c) finite_schema_system"
+    and K :: "('a,'s,'d,'c) resolution_commitment"
+  assumes formed: "finite_witness_construction_formed \<kappa>"
+    and lifts_in: "finite_construction_lifts_in \<Theta> (\<lambda>_. False) \<kappa> P"
+    and exchanges_in: "finite_commitment_exchanges_at_in \<Theta> pr (\<lambda>_. False) \<kappa> K P"
+begin
+
+lemma exact_premises_in: "finite_committed_exact_premises_in \<Theta>
+    (\<lambda>d t s. resolution_invariant_in \<Theta> P d t s \<and> resolution_registrations_held \<kappa> s) (finite_resolution_select_in \<Theta> pr \<kappa> P) \<kappa> K P"
+  by (rule finite_committed_exact_premises_select_at_in[OF formed exchanges_in lifts_in])
+
+theorem committed_registered_resolution_exact_in:
+  shows "finite_committed_resolution_by_in \<Theta> (finite_resolution_select_in \<Theta> pr \<kappa> P) \<kappa> K P d t n = Finite_Resolved C \<Longrightarrow>
+      (d,decode_finite_term t) \<in> positive_meaning (decode_finite_system P)"
+    and "finite_resolution_refutes (finite_committed_resolution_by_in \<Theta> (finite_resolution_select_in \<Theta> pr \<kappa> P) \<kappa> K P d t n) \<Longrightarrow>
+      (d,decode_finite_term t) \<notin> positive_meaning (decode_finite_system P)"
+  by (erule finite_committed_resolution_by_sound_in(3))
+    (erule finite_committed_resolution_by_refutation_exact_in[OF exact_premises_in])
+
+theorem committed_registered_verdict_exact_in:
+  assumes "finite_resolution_verdict (finite_committed_resolution_by_in \<Theta> (finite_resolution_select_in \<Theta> pr \<kappa> P) \<kappa> K P d t n) = Some b"
+  shows "b \<longleftrightarrow> (d,decode_finite_term t) \<in> positive_meaning (decode_finite_system P)"
+  by (rule finite_committed_verdict_by_exact_in[OF exact_premises_in assms])
+
+theorem committed_registered_demand_exact_in:
+  assumes "finite_committed_demand_by_in \<Theta> (finite_resolution_select_in \<Theta> pr \<kappa> P) \<kappa> K P Q n = Some A"
+  shows "schema_system_formed (decode_finite_system P)"
+    "fset A = {q\<in>fset Q. decode_finite_call_term q \<in> positive_meaning (decode_finite_system P)}"
+  using finite_committed_demand_by_exact_in[OF exact_premises_in assms] by blast+
+
+end
+
+lemma registered_commitment_at_in_empty:
+  assumes registered: "registered_commitment_at pr \<kappa> P K"
+  shows "registered_commitment_at_in resolution_empty_table pr \<kappa> P K"
+  by (rule registered_commitment_at_in.intro[OF registered_commitment_at.formed[OF registered]
+    registered_commitment_at.lifts[OF registered] registered_commitment_at.exchanges[OF registered]])
+
 text \<open>The declared commitment exchanges at every priority: its forms hold at any, a complete construction given.\<close>
 
 lemma registered_commitment_at_declared:
@@ -189,6 +239,34 @@ lemma committed_registrations_collection:
   shows "committed_registrations (finite_collection_construction Rs k) P m D \<Phi> corr"
   by (rule committed_registrations.intro[OF finite_collection_construction_formed assms])
 
+text \<open>A record declaring no narrowing and no production is one: its discharges are R5d's
+  (@{thm [source] declarations_discharged_unnarrowed}, @{thm [source] frames_discharged_unnarrowed}).\<close>
+
+lemma committed_registrations_unnarrowed:
+  assumes \<kappa>: "finite_witness_construction_formed \<kappa>" and complete: "finite_construction_complete \<kappa> P"
+    and discharged: "declarations_discharged (positive_meaning (decode_finite_system P)) D corr"
+    and frames: "frames_discharged (positive_meaning (decode_finite_system P)) D \<Phi>"
+  shows "committed_registrations \<kappa> P m (unproduced (unnarrowed D)) \<Phi> corr"
+proof (rule committed_registrations.intro[OF \<kappa> complete])
+  show "narrowed_declarations_discharged (positive_meaning (decode_finite_system P))
+      (narrowed_declarations.truncate (unproduced (unnarrowed D))) corr"
+    using discharged by (simp add: declarations_discharged_unnarrowed)
+  show "narrowed_frames_discharged (positive_meaning (decode_finite_system P))
+      (narrowed_declarations.truncate (unproduced (unnarrowed D))) \<Phi>"
+    using frames by (simp add: frames_discharged_unnarrowed)
+  show "productions_discharged (positive_meaning (decode_finite_system P)) P m (unproduced (unnarrowed D))"
+    by (rule productions_discharged_none) simp
+  show "narrowed_productions_declared (unproduced (unnarrowed D))" by (rule narrowed_productions_declared_unnarrowed)
+qed
+
+text \<open>The record declaring nothing is one at W4a's premises alone: nothing is declared, so nothing is to discharge.\<close>
+
+lemma committed_registrations_none:
+  assumes \<kappa>: "finite_witness_construction_formed \<kappa>" and complete: "finite_construction_complete \<kappa> P"
+  shows "committed_registrations \<kappa> P m (unproduced (unnarrowed no_declarations)) \<Phi> corr"
+  by (rule committed_registrations_unnarrowed[OF \<kappa> complete no_declarations_discharged])
+    (simp add: frames_discharged_def no_declarations_def)
+
 section \<open>(4): R5's and W4a's exactness as the two instances\<close>
 
 text \<open>At the empty construction every registration is complete and premise-only, so the declared commitment's
@@ -223,11 +301,13 @@ lemma registered_commitment_none:
   unfolding finite_narrowed_commitment_none
   by (rule registered_commitment.intro[OF assms finite_commitment_exchanges_none])
 
+text \<open>W4a's instance is rc's own at that record (@{text committed_registrations_none}).\<close>
+
 lemmas committed_registered_no_declaration_exact =
-  registered_commitment.committed_registered_resolution_exact[OF registered_commitment_none,
-    unfolded finite_narrowed_commitment_none]
-  registered_commitment.committed_registered_demand_exact[OF registered_commitment_none,
-    unfolded finite_narrowed_commitment_none]
+  registered_commitment.committed_registered_resolution_exact[OF committed_registrations.registered[OF
+    committed_registrations_none], unfolded finite_narrowed_commitment_none]
+  registered_commitment.committed_registered_demand_exact[OF committed_registrations.registered[OF
+    committed_registrations_none], unfolded finite_narrowed_commitment_none]
 
 section \<open>(3): the forms at the moded selection\<close>
 
@@ -275,5 +355,82 @@ theorem committed_moded_demand_exact:
   using registered_commitment_at.committed_registered_demand_exact[OF registered_moded assms] by blast+
 
 end
+
+text \<open>
+  The moded form at two valid tables of the same calls returns an outcome of the same kind: its selection at the two
+  tables is one (@{thm [source] finite_resolution_select_calls}), and the committed form's calls-alone statement
+  (@{thm [source] finite_committed_resolution_by_calls}) applies.
+\<close>
+
+theorem finite_moded_resolution_calls:
+  assumes calls: "finite_table_calls \<Theta> = finite_table_calls \<Theta>'"
+    and valid: "finite_table_valid P \<Theta>" and valid': "finite_table_valid P \<Theta>'"
+    and Pf: "finite_system_formed P" and tf: "finite_term_formed t" and \<kappa>: "finite_witness_construction_formed \<kappa>"
+  shows "finite_resolution_verdict (finite_moded_resolution_in \<Theta> \<kappa> K Dm M P d t n) =
+      finite_resolution_verdict (finite_moded_resolution_in \<Theta>' \<kappa> K Dm M P d t n)"
+    and "finite_moded_resolution_in \<Theta> \<kappa> K Dm M P d t n = Finite_Unresolved E \<longleftrightarrow>
+      finite_moded_resolution_in \<Theta>' \<kappa> K Dm M P d t n = Finite_Unresolved E"
+proof -
+  have S: "finite_resolution_select_in \<Theta>' (finite_moded_priority K Dm M) \<kappa> P =
+      finite_resolution_select_in \<Theta> (finite_moded_priority K Dm M) \<kappa> P"
+    by (rule finite_resolution_select_calls[OF calls[symmetric]])
+  note c = finite_committed_resolution_by_calls[OF calls valid valid' Pf tf \<kappa> finite_resolution_select_goals_in,
+    where K=K and d=d and n=n]
+  show "finite_resolution_verdict (finite_moded_resolution_in \<Theta> \<kappa> K Dm M P d t n) =
+      finite_resolution_verdict (finite_moded_resolution_in \<Theta>' \<kappa> K Dm M P d t n)"
+    unfolding S by (rule c(1))
+  show "finite_moded_resolution_in \<Theta> \<kappa> K Dm M P d t n = Finite_Unresolved E \<longleftrightarrow>
+      finite_moded_resolution_in \<Theta>' \<kappa> K Dm M P d t n = Finite_Unresolved E"
+    unfolding S by (rule c(2))
+qed
+
+section \<open>rc's forms at a table\<close>
+
+text \<open>
+  rc's premises at a table: the construction premise and the narrowed commitment's exchange at every priority at the
+  table, beside rc's own. At the empty table they are rc's (@{text committed_registrations_in_empty}); at a table their
+  discharges are the exchange's (GT2b's). The moded forms there are the forms at the table at the moded priority.
+\<close>
+
+locale committed_registrations_in = committed_registrations \<kappa> P m D \<Phi> corr
+  for \<kappa> :: "('a,'s::linorder,'d,'c) finite_witness_construction" and P m and D :: "('a,'s,'d,'v) produced_declarations"
+    and \<Phi> corr +
+  fixes \<Theta> :: "('a,'s,'d,'c) resolution_table"
+  assumes lifts_at_table: "finite_construction_lifts_in \<Theta> (\<lambda>_. False) \<kappa> P"
+    and exchanges_at_table: "\<And>pr. finite_commitment_exchanges_at_in \<Theta> pr (\<lambda>_. False) \<kappa> (finite_narrowed_commitment P m D \<Phi>) P"
+begin
+
+lemma registered_at_in: "registered_commitment_at_in \<Theta> pr \<kappa> P (finite_narrowed_commitment P m D \<Phi>)"
+  by (rule registered_commitment_at_in.intro[OF formed lifts_at_table exchanges_at_table])
+
+theorem committed_moded_resolution_exact_in:
+  shows "finite_moded_resolution_in \<Theta> \<kappa> (finite_narrowed_commitment P m D \<Phi>) Dm M P d t n = Finite_Resolved C \<Longrightarrow>
+      (d,decode_finite_term t) \<in> positive_meaning (decode_finite_system P)"
+    and "finite_resolution_refutes (finite_moded_resolution_in \<Theta> \<kappa> (finite_narrowed_commitment P m D \<Phi>) Dm M P d t n) \<Longrightarrow>
+      (d,decode_finite_term t) \<notin> positive_meaning (decode_finite_system P)"
+  by (erule registered_commitment_at_in.committed_registered_resolution_exact_in(1)[OF registered_at_in])
+    (erule registered_commitment_at_in.committed_registered_resolution_exact_in(2)[OF registered_at_in])
+
+theorem committed_moded_verdict_exact_in:
+  assumes "finite_resolution_verdict (finite_moded_resolution_in \<Theta> \<kappa> (finite_narrowed_commitment P m D \<Phi>) Dm M P d t n) =
+    Some b"
+  shows "b \<longleftrightarrow> (d,decode_finite_term t) \<in> positive_meaning (decode_finite_system P)"
+  by (rule registered_commitment_at_in.committed_registered_verdict_exact_in[OF registered_at_in assms])
+
+theorem committed_moded_demand_exact_in:
+  assumes "finite_committed_demand_by_in \<Theta> (finite_resolution_select_in \<Theta>
+    (finite_moded_priority (finite_narrowed_commitment P m D \<Phi>) Dm M) \<kappa> P) \<kappa> (finite_narrowed_commitment P m D \<Phi>) P Q n = Some A"
+  shows "schema_system_formed (decode_finite_system P)"
+    "fset A = {q\<in>fset Q. decode_finite_call_term q \<in> positive_meaning (decode_finite_system P)}"
+  using registered_commitment_at_in.committed_registered_demand_exact_in[OF registered_at_in assms] by blast+
+
+end
+
+lemma committed_registrations_in_empty:
+  assumes registered: "committed_registrations \<kappa> P m D \<Phi> corr"
+  shows "committed_registrations_in \<kappa> P m D \<Phi> corr resolution_empty_table"
+  by (rule committed_registrations_in.intro[OF registered committed_registrations_in_axioms.intro[OF
+    registered_commitment.lifts[OF committed_registrations.registered[OF registered]]
+    registered_commitment_at.exchanges[OF committed_registrations.registered_at[OF registered]]]])
 
 end

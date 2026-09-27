@@ -54,6 +54,63 @@ definition native_check_resolution_by ::
   "native_check_resolution_by sel \<kappa> K P R n =
     (fimage (\<lambda>q. (q,finite_check_resolution_by sel \<kappa> K P (fst q) (snd q) n)) R, finite_check_demand_by sel \<kappa> K P R n)"
 
+text \<open>
+  The check forms at a table (DECISIONS.md, task 495's entry, "The given's calls are decided once", GT2): the committed
+  search at the table started at the root's own focus, read by the result at the table. Each form above is its
+  instance at the empty table (@{text finite_check_resolution_by_in_empty} and its siblings), and every statement
+  below at a table has the form above's as that instance, by name and statement.
+\<close>
+
+definition finite_check_resolution_by_in ::
+    "('a,'s,'d,'c) resolution_table \<Rightarrow> (('a,'s::linorder,'d,'c) resolution_state \<Rightarrow> ('a,'s,'d,'c) resolution_selection) \<Rightarrow>
+      ('a,'s,'d,'c) finite_witness_construction \<Rightarrow> ('a,'s,'d,'c) resolution_commitment \<Rightarrow>
+      ('a,'s,'d,'c) finite_schema_system \<Rightarrow> 'd \<Rightarrow> finite_factor_term \<Rightarrow> nat \<Rightarrow> ('a,'s,'d,'c) finite_resolution_result" where
+  "finite_check_resolution_by_in \<Theta> sel \<kappa> K P d t n =
+    finite_outcome_result_in \<Theta> P d t (finite_committed_search_by_in \<Theta> sel \<kappa> K P n (Some []) {||} (finite_initial_state d t))"
+
+lemma finite_check_resolution_by_in_empty:
+  "finite_check_resolution_by_in resolution_empty_table sel \<kappa> K P d t n = finite_check_resolution_by sel \<kappa> K P d t n"
+  by (simp only: finite_check_resolution_by_in_def finite_check_resolution_by_def finite_outcome_result_def)
+
+definition finite_check_verdict_by_in ::
+    "('a,'s,'d,'c) resolution_table \<Rightarrow> (('a,'s::linorder,'d,'c) resolution_state \<Rightarrow> ('a,'s,'d,'c) resolution_selection) \<Rightarrow>
+      ('a,'s,'d,'c) finite_witness_construction \<Rightarrow> ('a,'s,'d,'c) resolution_commitment \<Rightarrow>
+      ('a,'s,'d,'c) finite_schema_system \<Rightarrow> 'd \<Rightarrow> finite_factor_term \<Rightarrow> nat \<Rightarrow> bool option" where
+  "finite_check_verdict_by_in \<Theta> sel \<kappa> K P d t n = finite_resolution_verdict (finite_check_resolution_by_in \<Theta> sel \<kappa> K P d t n)"
+
+lemma finite_check_verdict_by_in_empty:
+  "finite_check_verdict_by_in resolution_empty_table sel \<kappa> K P d t n = finite_check_verdict_by sel \<kappa> K P d t n"
+  by (simp only: finite_check_verdict_by_in_def finite_check_verdict_by_def finite_check_resolution_by_in_empty)
+
+definition finite_check_demand_by_in ::
+    "('a,'s,'d,'c) resolution_table \<Rightarrow> (('a,'s::linorder,'d,'c) resolution_state \<Rightarrow> ('a,'s,'d,'c) resolution_selection) \<Rightarrow>
+      ('a,'s,'d,'c) finite_witness_construction \<Rightarrow> ('a,'s,'d,'c) resolution_commitment \<Rightarrow>
+      ('a,'s,'d,'c) finite_schema_system \<Rightarrow> ('d\<times>finite_factor_term) fset \<Rightarrow> nat \<Rightarrow> ('d\<times>finite_factor_term) fset option" where
+  "finite_check_demand_by_in \<Theta> sel \<kappa> K P D n = (let V = fimage (\<lambda>q. (q,finite_check_verdict_by_in \<Theta> sel \<kappa> K P (fst q) (snd q) n)) D in
+    if finite_system_formed P \<and> fBall V (\<lambda>(q,v). v \<noteq> None)
+    then Some (fimage fst (ffilter (\<lambda>(q,v). v = Some True) V)) else None)"
+
+lemma finite_check_demand_by_in_empty:
+  "finite_check_demand_by_in resolution_empty_table sel \<kappa> K P D n = finite_check_demand_by sel \<kappa> K P D n"
+  by (simp only: finite_check_demand_by_in_def finite_check_demand_by_def finite_check_verdict_by_in_empty)
+
+definition native_check_resolution_by_in ::
+    "(local_address,local_address,local_address option definition_site,local_address) resolution_table \<Rightarrow>
+      ((local_address,local_address,local_address option definition_site,local_address) resolution_state \<Rightarrow>
+        (local_address,local_address,local_address option definition_site,local_address) resolution_selection) \<Rightarrow>
+      (local_address,local_address,local_address option definition_site,local_address) finite_witness_construction \<Rightarrow>
+      (local_address,local_address,local_address option definition_site,local_address) resolution_commitment \<Rightarrow>
+      local_address option finite_native_system \<Rightarrow> (local_address option definition_site\<times>finite_factor_term) fset \<Rightarrow>
+      nat \<Rightarrow> ((local_address option definition_site\<times>finite_factor_term)\<times>native_resolution_result) fset\<times>
+        (local_address option definition_site\<times>finite_factor_term) fset option" where
+  "native_check_resolution_by_in \<Theta> sel \<kappa> K P R n =
+    (fimage (\<lambda>q. (q,finite_check_resolution_by_in \<Theta> sel \<kappa> K P (fst q) (snd q) n)) R, finite_check_demand_by_in \<Theta> sel \<kappa> K P R n)"
+
+lemma native_check_resolution_by_in_empty:
+  "native_check_resolution_by_in resolution_empty_table sel \<kappa> K P R n = native_check_resolution_by sel \<kappa> K P R n"
+  by (simp only: native_check_resolution_by_in_def native_check_resolution_by_def finite_check_resolution_by_in_empty
+    finite_check_demand_by_in_empty)
+
 section \<open>Exact from the committed forms' premises\<close>
 
 text \<open>
@@ -69,58 +126,73 @@ text \<open>
   (@{text native_resolution_calls_exact}), each at @{term "Some []"}.
 \<close>
 
-theorem finite_check_resolution_by_sound:
-  assumes res: "finite_check_resolution_by sel \<kappa> K P d t n = Finite_Resolved C"
+theorem finite_check_resolution_by_sound_in:
+  assumes res: "finite_check_resolution_by_in \<Theta> sel \<kappa> K P d t n = Finite_Resolved C"
   shows "C\<noteq>{||}" and "\<And>p. p |\<in>| C \<Longrightarrow> finite_checks_schema_proof P p d t"
     and "(d,decode_finite_term t) \<in> positive_meaning (decode_finite_system P)"
-  using finite_outcome_result_sound[OF res[unfolded finite_check_resolution_by_def]] by blast+
+  using finite_outcome_result_sound_in[OF res[unfolded finite_check_resolution_by_in_def]] by blast+
 
-theorem finite_check_resolution_by_certificates:
-  assumes Pf: "finite_system_formed P" and tf: "finite_term_formed t"
+lemmas finite_check_resolution_by_sound =
+  finite_check_resolution_by_sound_in[where \<Theta>=resolution_empty_table, unfolded finite_check_resolution_by_in_empty]
+
+theorem finite_check_resolution_by_certificates_in:
+  assumes valid: "finite_table_valid P \<Theta>" and Pf: "finite_system_formed P" and tf: "finite_term_formed t"
     and \<kappa>: "finite_witness_construction_formed \<kappa>"
     and goals: "\<And>st G. sel st = Select_Goals G \<Longrightarrow> G |\<subseteq>| resolution_pending st"
-  shows "finite_check_resolution_by sel \<kappa> K P d t n =
-    (let R = finite_committed_search_by sel \<kappa> K P n (Some []) {||} (finite_initial_state d t);
-      C = ffUnion (fimage finite_state_proofs (resolution_found R)) in
+  shows "finite_check_resolution_by_in \<Theta> sel \<kappa> K P d t n =
+    (let R = finite_committed_search_by_in \<Theta> sel \<kappa> K P n (Some []) {||} (finite_initial_state d t);
+      C = ffUnion (fimage (finite_state_proofs_in \<Theta>) (resolution_found R)) in
     if C\<noteq>{||} then Finite_Resolved C else if resolution_diagnoses R={||} then Finite_Refuted
     else Finite_Unresolved (resolution_diagnoses R))"
-  unfolding finite_check_resolution_by_def
-  by (rule finite_focused_resolution_certificates[OF Pf tf \<kappa> goals, where F="Some []"])
+  unfolding finite_check_resolution_by_in_def
+  by (rule finite_focused_resolution_certificates_in[OF valid Pf tf \<kappa> goals, where F="Some []"])
     (simp_all add: resolution_focused_def)
 
-theorem finite_check_resolution_by_refutation_exact:
-  assumes given: "finite_committed_exact_premises J sel \<kappa> K P"
-    and refutes: "finite_resolution_refutes (finite_check_resolution_by sel \<kappa> K P d t n)"
+lemmas finite_check_resolution_by_certificates = finite_check_resolution_by_certificates_in[where \<Theta>=resolution_empty_table,
+  OF finite_table_valid_empty, unfolded finite_check_resolution_by_in_empty finite_state_proofs_empty]
+
+theorem finite_check_resolution_by_refutation_exact_in:
+  assumes given: "finite_committed_exact_premises_in \<Theta> J sel \<kappa> K P"
+    and refutes: "finite_resolution_refutes (finite_check_resolution_by_in \<Theta> sel \<kappa> K P d t n)"
   shows "(d,decode_finite_term t) \<notin> positive_meaning (decode_finite_system P)"
-  by (rule finite_focused_resolution_refutation_exact[OF given _ refutes[unfolded finite_check_resolution_by_def]])
+  by (rule finite_focused_resolution_refutation_exact_in[OF given _ refutes[unfolded finite_check_resolution_by_in_def]])
     (simp add: resolution_focused_def)
+
+lemmas finite_check_resolution_by_refutation_exact =
+  finite_check_resolution_by_refutation_exact_in[where \<Theta>=resolution_empty_table, unfolded finite_check_resolution_by_in_empty]
 
 lemmas finite_check_resolution_by_exact =
   finite_check_resolution_by_sound(3) finite_check_resolution_by_refutation_exact
 
-lemma finite_check_verdict_by_exact:
-  assumes given: "finite_committed_exact_premises J sel \<kappa> K P"
-    and verdict: "finite_check_verdict_by sel \<kappa> K P d t n = Some b"
+lemma finite_check_verdict_by_exact_in:
+  assumes given: "finite_committed_exact_premises_in \<Theta> J sel \<kappa> K P"
+    and verdict: "finite_check_verdict_by_in \<Theta> sel \<kappa> K P d t n = Some b"
   shows "b \<longleftrightarrow> (d,decode_finite_term t) \<in> positive_meaning (decode_finite_system P)"
-  by (rule finite_focused_verdict_exact[OF given _
-    verdict[unfolded finite_check_verdict_by_def finite_check_resolution_by_def]]) (simp add: resolution_focused_def)
+  by (rule finite_focused_verdict_exact_in[OF given _
+    verdict[unfolded finite_check_verdict_by_in_def finite_check_resolution_by_in_def]]) (simp add: resolution_focused_def)
 
-theorem finite_check_demand_by_exact:
-  assumes given: "finite_committed_exact_premises J sel \<kappa> K P"
-    and result: "finite_check_demand_by sel \<kappa> K P D n = Some A"
+lemmas finite_check_verdict_by_exact =
+  finite_check_verdict_by_exact_in[where \<Theta>=resolution_empty_table, unfolded finite_check_verdict_by_in_empty]
+
+theorem finite_check_demand_by_exact_in:
+  assumes given: "finite_committed_exact_premises_in \<Theta> J sel \<kappa> K P"
+    and result: "finite_check_demand_by_in \<Theta> sel \<kappa> K P D n = Some A"
   shows "schema_system_formed (decode_finite_system P)"
     "fset A = {q\<in>fset D. decode_finite_call_term q \<in> positive_meaning (decode_finite_system P)}"
 proof -
-  note demand = finite_verdict_demand_exact[OF result[unfolded finite_check_demand_by_def]]
+  note demand = finite_verdict_demand_exact[OF result[unfolded finite_check_demand_by_in_def]]
   show "schema_system_formed (decode_finite_system P)"
-    by (rule demand(1)) (rule finite_check_verdict_by_exact[OF given])
+    by (rule demand(1)) (rule finite_check_verdict_by_exact_in[OF given])
   show "fset A = {q\<in>fset D. decode_finite_call_term q \<in> positive_meaning (decode_finite_system P)}"
-    by (rule demand(2)) (rule finite_check_verdict_by_exact[OF given])
+    by (rule demand(2)) (rule finite_check_verdict_by_exact_in[OF given])
 qed
 
-theorem native_check_resolution_by_exact:
-  assumes given: "finite_committed_exact_premises J sel \<kappa> K P"
-    and result: "native_check_resolution_by sel \<kappa> K P R n = (T,A)"
+lemmas finite_check_demand_by_exact =
+  finite_check_demand_by_exact_in[where \<Theta>=resolution_empty_table, unfolded finite_check_demand_by_in_empty]
+
+theorem native_check_resolution_by_exact_in:
+  assumes given: "finite_committed_exact_premises_in \<Theta> J sel \<kappa> K P"
+    and result: "native_check_resolution_by_in \<Theta> sel \<kappa> K P R n = (T,A)"
   shows "fimage fst T = R"
     and "(q,Finite_Resolved C) |\<in>| T \<Longrightarrow> C \<noteq> {||} \<and> fBall C (\<lambda>p. finite_checks_schema_proof P p (fst q) (snd q)) \<and>
       decode_finite_call_term q \<in> positive_meaning (decode_finite_system P)"
@@ -129,20 +201,20 @@ theorem native_check_resolution_by_exact:
     and "A = Some B \<Longrightarrow> schema_system_formed (decode_finite_system P) \<and>
       fset B = {q\<in>fset R. decode_finite_call_term q \<in> positive_meaning (decode_finite_system P)}"
 proof -
-  from result have T: "T = fimage (\<lambda>q. (q,finite_check_resolution_by sel \<kappa> K P (fst q) (snd q) n)) R"
-    and A: "A = finite_check_demand_by sel \<kappa> K P R n"
-    by (simp_all add: native_check_resolution_by_def)
+  from result have T: "T = fimage (\<lambda>q. (q,finite_check_resolution_by_in \<Theta> sel \<kappa> K P (fst q) (snd q) n)) R"
+    and A: "A = finite_check_demand_by_in \<Theta> sel \<kappa> K P R n"
+    by (simp_all add: native_check_resolution_by_in_def)
   have resolved: "C \<noteq> {||} \<and> fBall C (\<lambda>p. finite_checks_schema_proof P p (fst q) (snd q)) \<and>
       decode_finite_call_term q \<in> positive_meaning (decode_finite_system P)"
-    if res: "finite_check_resolution_by sel \<kappa> K P (fst q) (snd q) n = Finite_Resolved C" for q C
-    using finite_check_resolution_by_sound[OF res] by (simp add: decode_finite_call_term_fields)
+    if res: "finite_check_resolution_by_in \<Theta> sel \<kappa> K P (fst q) (snd q) n = Finite_Resolved C" for q C
+    using finite_check_resolution_by_sound_in[OF res] by (simp add: decode_finite_call_term_fields)
   have refuted: "decode_finite_call_term q \<notin> positive_meaning (decode_finite_system P)"
-    if "finite_resolution_refutes (finite_check_resolution_by sel \<kappa> K P (fst q) (snd q) n)" for q
-    using finite_check_resolution_by_refutation_exact[OF given that] by (simp add: decode_finite_call_term_fields)
+    if "finite_resolution_refutes (finite_check_resolution_by_in \<Theta> sel \<kappa> K P (fst q) (snd q) n)" for q
+    using finite_check_resolution_by_refutation_exact_in[OF given that] by (simp add: decode_finite_call_term_fields)
   have demand: "schema_system_formed (decode_finite_system P) \<and>
       fset B = {q\<in>fset R. decode_finite_call_term q \<in> positive_meaning (decode_finite_system P)}"
     if "A = Some B" for B
-    using finite_check_demand_by_exact[OF given that[unfolded A]] by blast
+    using finite_check_demand_by_exact_in[OF given that[unfolded A]] by blast
   note exact = native_resolution_calls_exact[OF T resolved refuted demand]
   show "fimage fst T = R" by (rule exact(1))
   show "(q,Finite_Resolved C) |\<in>| T \<Longrightarrow> C \<noteq> {||} \<and> fBall C (\<lambda>p. finite_checks_schema_proof P p (fst q) (snd q)) \<and>
@@ -156,13 +228,99 @@ proof -
     by (rule exact(4))
 qed
 
+lemmas native_check_resolution_by_exact =
+  native_check_resolution_by_exact_in[where \<Theta>=resolution_empty_table, unfolded native_check_resolution_by_in_empty]
+
 text \<open>
   The four forms whose first premise is the committed forms' premises, stated once: every instance below is this
-  bundle at an instance's premises, nothing proved again.
+  bundle at an instance's premises, nothing proved again; at a table, the bundle at the committed forms' premises there.
 \<close>
+
+lemmas finite_check_forms_exact_in = finite_check_resolution_by_refutation_exact_in finite_check_verdict_by_exact_in
+  finite_check_demand_by_exact_in native_check_resolution_by_exact_in
 
 lemmas finite_check_forms_exact = finite_check_resolution_by_refutation_exact finite_check_verdict_by_exact
   finite_check_demand_by_exact native_check_resolution_by_exact
+
+section \<open>The check forms at a table read by its calls alone\<close>
+
+text \<open>
+  A resolution at a table is sound whatever the table holds, the result keeping only certificates the checker accepts
+  (@{text finite_check_resolution_by_sound_in}); a found state of the check search at a table whose calls are true
+  makes the root call true (@{text finite_check_found_true}), whatever certificates the entries hold, the search being
+  the one at the valid table of the same calls (@{text finite_check_search_certified}). That is where the route's
+  verdicts read a table whose calls are true but whose certificates the checker does not accept (GT6 retains none,
+  an installation's relocated table carries none): GT4's graph verdicts of such a found state
+  (@{text finite_state_graph_verdicts_in}), sound wherever the table's calls are true
+  (@{text finite_state_graph_verdicts_in_true}). At two valid tables of the same calls the check forms return an
+  outcome of the same kind (GT2a's calls-alone statement, @{text finite_committed_resolution_by_calls}, carried to them).
+\<close>
+
+lemma finite_check_search_certified:
+  "finite_committed_search_by_in (finite_table_certified P \<Theta>) sel \<kappa> K P n (Some []) B st =
+    finite_committed_search_by_in \<Theta> sel \<kappa> K P n (Some []) B st"
+  by (simp only: finite_committed_search_calls[OF finite_table_certified_calls])
+
+theorem finite_check_found_true:
+  assumes true: "finite_table_true P \<Theta>" and \<kappa>: "finite_witness_construction_formed \<kappa>"
+    and goals: "\<And>st G. sel st = Select_Goals G \<Longrightarrow> G |\<subseteq>| resolution_pending st"
+    and Pf: "finite_system_formed P" and tf: "finite_term_formed t"
+    and found: "st |\<in>| resolution_found (finite_committed_search_by_in \<Theta> sel \<kappa> K P n (Some []) {||} (finite_initial_state d t))"
+  shows "(d,decode_finite_term t) \<in> positive_meaning (decode_finite_system P)"
+  by (rule finite_committed_found_true[OF true \<kappa> goals Pf tf finite_check_root_focused found])
+
+theorem finite_check_resolution_by_calls:
+  assumes calls: "finite_table_calls \<Theta> = finite_table_calls \<Theta>'"
+    and valid: "finite_table_valid P \<Theta>" and valid': "finite_table_valid P \<Theta>'"
+    and Pf: "finite_system_formed P" and tf: "finite_term_formed t" and \<kappa>: "finite_witness_construction_formed \<kappa>"
+    and goals: "\<And>st G. sel st = Select_Goals G \<Longrightarrow> G |\<subseteq>| resolution_pending st"
+  shows "finite_resolution_verdict (finite_check_resolution_by_in \<Theta> sel \<kappa> K P d t n) =
+      finite_resolution_verdict (finite_check_resolution_by_in \<Theta>' sel \<kappa> K P d t n)"
+    and "finite_check_resolution_by_in \<Theta> sel \<kappa> K P d t n = Finite_Unresolved D \<longleftrightarrow>
+      finite_check_resolution_by_in \<Theta>' sel \<kappa> K P d t n = Finite_Unresolved D"
+proof -
+  note c = finite_focused_resolution_calls[OF calls valid valid' Pf tf \<kappa> goals finite_check_root_focused]
+  show "finite_resolution_verdict (finite_check_resolution_by_in \<Theta> sel \<kappa> K P d t n) =
+      finite_resolution_verdict (finite_check_resolution_by_in \<Theta>' sel \<kappa> K P d t n)"
+    unfolding finite_check_resolution_by_in_def by (rule c(1))
+  show "finite_check_resolution_by_in \<Theta> sel \<kappa> K P d t n = Finite_Unresolved D \<longleftrightarrow>
+      finite_check_resolution_by_in \<Theta>' sel \<kappa> K P d t n = Finite_Unresolved D"
+    unfolding finite_check_resolution_by_in_def by (rule c(2))
+qed
+
+theorem finite_check_demand_by_calls:
+  assumes calls: "finite_table_calls \<Theta> = finite_table_calls \<Theta>'"
+    and valid: "finite_table_valid P \<Theta>" and valid': "finite_table_valid P \<Theta>'" and \<kappa>: "finite_witness_construction_formed \<kappa>"
+    and goals: "\<And>st G. sel st = Select_Goals G \<Longrightarrow> G |\<subseteq>| resolution_pending st"
+    and tfs: "\<And>q. q |\<in>| D \<Longrightarrow> finite_term_formed (snd q)"
+  shows "finite_check_demand_by_in \<Theta> sel \<kappa> K P D n = finite_check_demand_by_in \<Theta>' sel \<kappa> K P D n"
+proof -
+  have v: "finite_check_verdict_by_in \<Theta> sel \<kappa> K P (fst q) (snd q) n = finite_check_verdict_by_in \<Theta>' sel \<kappa> K P (fst q) (snd q) n"
+    if "q |\<in>| D" "finite_system_formed P" for q
+    unfolding finite_check_verdict_by_in_def
+    by (rule finite_check_resolution_by_calls(1)[OF calls valid valid' that(2) tfs[OF that(1)] \<kappa> goals])
+  show ?thesis unfolding finite_check_demand_by_in_def by (rule finite_verdict_demand_agree) (rule v)
+qed
+
+theorem native_check_resolution_by_calls:
+  assumes calls: "finite_table_calls \<Theta> = finite_table_calls \<Theta>'"
+    and valid: "finite_table_valid P \<Theta>" and valid': "finite_table_valid P \<Theta>'"
+    and Pf: "finite_system_formed P" and \<kappa>: "finite_witness_construction_formed \<kappa>"
+    and goals: "\<And>st G. sel st = Select_Goals G \<Longrightarrow> G |\<subseteq>| resolution_pending st"
+    and tfs: "\<And>q. q |\<in>| R \<Longrightarrow> finite_term_formed (snd q)"
+  shows "snd (native_check_resolution_by_in \<Theta> sel \<kappa> K P R n) = snd (native_check_resolution_by_in \<Theta>' sel \<kappa> K P R n)"
+    and "fimage (\<lambda>(q,r). (q,finite_resolution_verdict r)) (fst (native_check_resolution_by_in \<Theta> sel \<kappa> K P R n)) =
+      fimage (\<lambda>(q,r). (q,finite_resolution_verdict r)) (fst (native_check_resolution_by_in \<Theta>' sel \<kappa> K P R n))"
+proof -
+  show "snd (native_check_resolution_by_in \<Theta> sel \<kappa> K P R n) = snd (native_check_resolution_by_in \<Theta>' sel \<kappa> K P R n)"
+    by (simp only: native_check_resolution_by_in_def snd_conv finite_check_demand_by_calls[OF calls valid valid' \<kappa> goals tfs])
+  have v: "finite_resolution_verdict (finite_check_resolution_by_in \<Theta> sel \<kappa> K P (fst q) (snd q) n) =
+      finite_resolution_verdict (finite_check_resolution_by_in \<Theta>' sel \<kappa> K P (fst q) (snd q) n)" if "q |\<in>| R" for q
+    by (rule finite_check_resolution_by_calls(1)[OF calls valid valid' Pf tfs[OF that] \<kappa> goals])
+  show "fimage (\<lambda>(q,r). (q,finite_resolution_verdict r)) (fst (native_check_resolution_by_in \<Theta> sel \<kappa> K P R n)) =
+      fimage (\<lambda>(q,r). (q,finite_resolution_verdict r)) (fst (native_check_resolution_by_in \<Theta>' sel \<kappa> K P R n))"
+    unfolding native_check_resolution_by_in_def fst_conv by (rule native_resolution_verdicts_agree) (erule v)
+qed
 
 section \<open>The check instances\<close>
 
@@ -261,11 +419,25 @@ end
 lemmas native_committed_registered_check_at =
   native_check_resolution_by_exact[OF registered_commitment_at.exact_premises[OF committed_registrations.registered_at]]
 
+text \<open>At a table, rc's forms at a priority and their check instances, from the premises at the table.\<close>
+
+lemmas registered_checks_exact_in = finite_check_forms_exact_in[OF registered_commitment_at_in.exact_premises_in]
+
+context committed_registrations_in
+begin
+
+lemmas committed_registered_checks_exact_in =
+  finite_check_resolution_by_refutation_exact_in[OF registered_commitment_at_in.exact_premises_in[OF registered_at_in]]
+  finite_check_verdict_by_exact_in[OF registered_commitment_at_in.exact_premises_in[OF registered_at_in]]
+  finite_check_demand_by_exact_in[OF registered_commitment_at_in.exact_premises_in[OF registered_at_in]]
+
+end
+
 section \<open>The transfers at an installed program\<close>
 
 text \<open>
-  Where a route build calls a check form at a program an installed site reads (R7 #547 at the first request's installed
-  program, #707 and #399 at the asked relation's), the native check form there is exact at every priority, and at the
+  Where a route build calls a check form at a program an installed site reads (#547, the first request's, at its
+  installed program; #707 and #399 at the asked relation's), the native check form there is exact at every priority, and at the
   moded selection with the modes relocated: inside #820's locale of rc's relocated premise block, as O3's
   @{text committed_registrations_relocated_at}, @{text native_committed_registered_relocated_at} and
   @{text native_committed_moded_relocated} are its instances.
@@ -291,31 +463,152 @@ text \<open>
   is not the relocation itself but an alpha variant of it (V3's @{text installed_variant}): relating a program's
   numbered course with its installation's native course composes both exactness facts with the meaning at the
   installed entry (@{text asked_entry_contract}, @{text installed_entry_exact}, or @{text system_alpha_positive_meaning}
-  after @{text finite_renamed_meaning_at}), which #547, #707 and #399 take so.
+  after @{text finite_renamed_meaning_at}), which #547, #707 and #399 take so. The relocation transfer alone does not
+  relate them. At a table the same holds between the check verdicts at the two programs' tables, each exact from the
+  premises there; a table's calls are carried to the agreeing, relocated and installed programs by the table's own
+  transfers (@{text finite_table_true_agreement}, @{text finite_table_true_relocated}), so the numbered table's validity
+  makes the relocated table's calls true where the installed program is read.
 \<close>
 
-corollary finite_check_agreement_transfer:
-  assumes given: "finite_committed_exact_premises J sel \<kappa> K P"
-    and given': "finite_committed_exact_premises J' sel' \<kappa>' K' Q"
+corollary finite_check_agreement_transfer_in:
+  assumes given: "finite_committed_exact_premises_in \<Theta> J sel \<kappa> K P"
+    and given': "finite_committed_exact_premises_in \<Theta>' J' sel' \<kappa>' K' Q"
     and Pf: "schema_system_formed (decode_finite_system P)" and Qf: "schema_system_formed (decode_finite_system Q)"
     and agree: "systems_agree_on (decode_finite_system P) (decode_finite_system Q) V"
     and closed: "system_dependency_closed (decode_finite_system P) V" and dV: "d \<in> V"
-    and v: "finite_check_verdict_by sel \<kappa> K P d t n = Some b"
-    and v': "finite_check_verdict_by sel' \<kappa>' K' Q d t m = Some b'"
+    and v: "finite_check_verdict_by_in \<Theta> sel \<kappa> K P d t n = Some b"
+    and v': "finite_check_verdict_by_in \<Theta>' sel' \<kappa>' K' Q d t m = Some b'"
   shows "b = b'"
-  by (rule finite_exact_verdicts_equal[OF finite_check_verdict_by_exact[OF given v] finite_check_verdict_by_exact[OF given' v']
-    positive_meaning_dependency_locality[OF Pf Qf agree closed dV, symmetric]])
+  by (rule finite_exact_verdicts_equal[OF finite_check_verdict_by_exact_in[OF given v]
+    finite_check_verdict_by_exact_in[OF given' v'] positive_meaning_dependency_locality[OF Pf Qf agree closed dV, symmetric]])
 
-corollary finite_check_relocation_transfer:
-  assumes given: "finite_committed_exact_premises J sel \<kappa> K P"
-    and given': "finite_committed_exact_premises J' sel' \<kappa>' K' (finite_rename_system g P)"
+lemmas finite_check_agreement_transfer = finite_check_agreement_transfer_in[where \<Theta>=resolution_empty_table
+  and \<Theta>'=resolution_empty_table, unfolded finite_check_verdict_by_in_empty]
+
+corollary finite_check_relocation_transfer_in:
+  assumes given: "finite_committed_exact_premises_in \<Theta> J sel \<kappa> K P"
+    and given': "finite_committed_exact_premises_in \<Theta>' J' sel' \<kappa>' K' (finite_rename_system g P)"
     and Pf: "schema_system_formed (decode_finite_system P)"
     and injective: "inj_on g (insert d (system_definitions (decode_finite_system P)))"
-    and v: "finite_check_verdict_by sel \<kappa> K P d t n = Some b"
-    and v': "finite_check_verdict_by sel' \<kappa>' K' (finite_rename_system g P) (g d) t m = Some b'"
+    and v: "finite_check_verdict_by_in \<Theta> sel \<kappa> K P d t n = Some b"
+    and v': "finite_check_verdict_by_in \<Theta>' sel' \<kappa>' K' (finite_rename_system g P) (g d) t m = Some b'"
   shows "b = b'"
-  by (rule finite_exact_verdicts_equal[OF finite_check_verdict_by_exact[OF given v] finite_check_verdict_by_exact[OF given' v']
-    finite_renamed_meaning_at[OF Pf injective]])
+  by (rule finite_exact_verdicts_equal[OF finite_check_verdict_by_exact_in[OF given v]
+    finite_check_verdict_by_exact_in[OF given' v'] finite_renamed_meaning_at[OF Pf injective]])
+
+lemmas finite_check_relocation_transfer = finite_check_relocation_transfer_in[where \<Theta>=resolution_empty_table
+  and \<Theta>'=resolution_empty_table, unfolded finite_check_verdict_by_in_empty]
+
+subsection \<open>The table's own transfers\<close>
+
+text \<open>
+  A table is read by its calls alone. Its calls true at a program are true at every program agreeing with it on a
+  dependency-closed set holding their sites (the locality of positive meaning), and there the certified table of the
+  same calls is valid (@{thm [source] finite_table_certified_valid}): so a table valid at the numbered readers serves
+  every numbered program agreeing with them on its calls' sites and their callee closure, the check forms reading it
+  there as the valid table of its calls (@{text finite_check_resolution_by_calls}). A table relocated by a placement —
+  each call's site mapped, its term unchanged — has its calls true at the relocated program where the numbered table's
+  are true (@{text finite_renamed_meaning_at}), and at every alpha variant of that program, as the program an installed
+  site reads is (V3's @{text installed_variant}, @{text system_alpha_positive_meaning}): the installation's meaning
+  correspondence, with no second production and no second check (decision 5; Q33 (d), provisional).
+\<close>
+
+theorem finite_table_true_agreement:
+  assumes true: "finite_table_true P \<Theta>"
+    and Pf: "schema_system_formed (decode_finite_system P)" and Qf: "schema_system_formed (decode_finite_system Q)"
+    and agree: "systems_agree_on (decode_finite_system P) (decode_finite_system Q) V"
+    and closed: "system_dependency_closed (decode_finite_system P) V"
+    and sites: "\<And>d t. (d,t) \<in> finite_table_calls \<Theta> \<Longrightarrow> d \<in> V"
+  shows "finite_table_true Q \<Theta>"
+  unfolding finite_table_true_def
+proof (intro allI impI)
+  fix e u c assume l: "resolution_table_lookup \<Theta> (e,u) = Some c"
+  have eV: "e \<in> V" using sites[of e u] l by (simp add: finite_table_calls_def)
+  have "(e,decode_finite_term u) \<in> positive_meaning (decode_finite_system P)"
+    using true l unfolding finite_table_true_def by blast
+  then show "(e,decode_finite_term u) \<in> positive_meaning (decode_finite_system Q)"
+    using positive_meaning_dependency_locality[OF Pf Qf agree closed eV] by blast
+qed
+
+corollary finite_table_valid_agreement:
+  assumes valid: "finite_table_valid P \<Theta>"
+    and Pf: "schema_system_formed (decode_finite_system P)" and Qf: "schema_system_formed (decode_finite_system Q)"
+    and agree: "systems_agree_on (decode_finite_system P) (decode_finite_system Q) V"
+    and closed: "system_dependency_closed (decode_finite_system P) V"
+    and sites: "\<And>d t. (d,t) \<in> finite_table_calls \<Theta> \<Longrightarrow> d \<in> V"
+  shows "finite_table_true Q \<Theta>" and "finite_table_valid Q (finite_table_certified Q \<Theta>)"
+    and "finite_table_calls (finite_table_certified Q \<Theta>) = finite_table_calls \<Theta>"
+proof -
+  show t: "finite_table_true Q \<Theta>"
+    by (rule finite_table_true_agreement[OF finite_table_valid_true[OF valid] Pf Qf agree closed sites])
+  show "finite_table_valid Q (finite_table_certified Q \<Theta>)" by (rule finite_table_certified_valid[OF t])
+  show "finite_table_calls (finite_table_certified Q \<Theta>) = finite_table_calls \<Theta>" by (rule finite_table_certified_calls)
+qed
+
+definition finite_table_relocates ::
+    "('d \<Rightarrow> 'e) \<Rightarrow> ('a,'s,'d,'c) resolution_table \<Rightarrow> ('a,'s,'e,'c) resolution_table \<Rightarrow> bool" where
+  "finite_table_relocates g \<Theta> \<Theta>' \<longleftrightarrow> finite_table_calls \<Theta>' = (\<lambda>(d,t). (g d,t)) ` finite_table_calls \<Theta>"
+
+theorem finite_table_true_relocated:
+  assumes true: "finite_table_true P \<Theta>" and relocates: "finite_table_relocates g \<Theta> \<Theta>'"
+    and Pf: "schema_system_formed (decode_finite_system P)"
+    and injective: "inj_on g (system_definitions (decode_finite_system P) \<union> fst ` finite_table_calls \<Theta>)"
+  shows "finite_table_true (finite_rename_system g P) \<Theta>'"
+  unfolding finite_table_true_def
+proof (intro allI impI)
+  fix e u c assume l: "resolution_table_lookup \<Theta>' (e,u) = Some c"
+  then have "(e,u) \<in> finite_table_calls \<Theta>'" by (simp add: finite_table_calls_def)
+  then obtain d where d: "(d,u) \<in> finite_table_calls \<Theta>" and e: "e = g d"
+    using relocates by (auto simp: finite_table_relocates_def)
+  then obtain c0 where "resolution_table_lookup \<Theta> (d,u) = Some c0" by (auto simp: finite_table_calls_def)
+  then have tr: "(d,decode_finite_term u) \<in> positive_meaning (decode_finite_system P)"
+    using true unfolding finite_table_true_def by blast
+  have inj: "inj_on g (insert d (system_definitions (decode_finite_system P)))"
+    by (rule inj_on_subset[OF injective]) (use d in force)
+  show "(e,decode_finite_term u) \<in> positive_meaning (decode_finite_system (finite_rename_system g P))"
+    unfolding e using finite_renamed_meaning_at[OF Pf inj] tr by blast
+qed
+
+text \<open>
+  An alpha variant may present its clauses at other binder, socket and clause coordinates, so its table is one of
+  another type holding the same calls: the table is read by its calls alone.
+\<close>
+
+theorem finite_table_true_alpha:
+  assumes true: "finite_table_true P \<Theta>"
+    and alpha: "system_alpha_variant (decode_finite_system P) (decode_finite_system Q)"
+    and calls: "finite_table_calls \<Theta>' = finite_table_calls \<Theta>"
+  shows "finite_table_true Q \<Theta>'"
+  unfolding finite_table_true_def
+proof (intro allI impI)
+  fix e u c assume "resolution_table_lookup \<Theta>' (e,u) = Some c"
+  then have "(e,u) \<in> finite_table_calls \<Theta>'" by (simp add: finite_table_calls_def)
+  then have "(e,u) \<in> finite_table_calls \<Theta>" by (simp only: calls)
+  then obtain c0 where "resolution_table_lookup \<Theta> (e,u) = Some c0" by (auto simp: finite_table_calls_def)
+  then have tP: "(e,decode_finite_term u) \<in> positive_meaning (decode_finite_system P)"
+    using true unfolding finite_table_true_def by blast
+  show "(e,decode_finite_term u) \<in> positive_meaning (decode_finite_system Q)"
+    using tP by (simp only: system_alpha_positive_meaning[OF alpha])
+qed
+
+text \<open>
+  The two composed: a table whose calls are true at a program, relocated by a placement, has its calls true at the
+  relocated program and at an alpha variant of it; its premise is truth, which the agreement transfer gives and a
+  valid table meets (@{thm [source] finite_table_valid_true}).
+\<close>
+
+corollary finite_table_true_relocated_alpha:
+  assumes true: "finite_table_true P \<Theta>" and relocates: "finite_table_relocates g \<Theta> \<Theta>'"
+    and Pf: "schema_system_formed (decode_finite_system P)"
+    and injective: "inj_on g (system_definitions (decode_finite_system P) \<union> fst ` finite_table_calls \<Theta>)"
+    and alpha: "system_alpha_variant (decode_finite_system (finite_rename_system g P)) (decode_finite_system Q)"
+    and calls: "finite_table_calls \<Theta>'' = finite_table_calls \<Theta>'"
+  shows "finite_table_true (finite_rename_system g P) \<Theta>'" and "finite_table_true Q \<Theta>''"
+proof -
+  show t: "finite_table_true (finite_rename_system g P) \<Theta>'"
+    by (rule finite_table_true_relocated[OF true relocates Pf injective])
+  show "finite_table_true Q \<Theta>''" by (rule finite_table_true_alpha[OF t alpha calls])
+qed
 
 section \<open>The guard from the declarations\<close>
 
@@ -886,6 +1179,67 @@ definition native_moded_check_resolution ::
     native_check_resolution_by (finite_moded_select \<kappa> (finite_narrowed_commitment P m D \<Phi>) Dm M P) \<kappa>
       (finite_narrowed_commitment P m D \<Phi>) P R n"
 
+text \<open>
+  The two check constants the route calls, at a table: the check forms at the moded selection at the table, each
+  constant above its instance at the empty table. Their code equations at a table are GT3's.
+\<close>
+
+definition moded_check_resolution_in ::
+    "('a,'s,'d,'c) resolution_table \<Rightarrow> ('a,'s::linorder,'d,'c) finite_witness_construction \<Rightarrow>
+      ('a,'s,'d,'c) finite_schema_system \<Rightarrow> nat \<Rightarrow>
+      ('a,'s,'d,'v) produced_declarations \<Rightarrow> ('a,'s,'d) resolution_frames \<Rightarrow> ('a,'s,'d) resolution_declarations \<Rightarrow>
+      'd resolution_modes \<Rightarrow> 'd \<Rightarrow> finite_factor_term \<Rightarrow> nat \<Rightarrow> ('a,'s,'d,'c) finite_resolution_result" where
+  "moded_check_resolution_in \<Theta> \<kappa> P m D \<Phi> Dm M d t n =
+    finite_check_resolution_by_in \<Theta> (finite_resolution_select_in \<Theta> (finite_moded_priority (finite_narrowed_commitment P m D \<Phi>) Dm M) \<kappa> P)
+      \<kappa> (finite_narrowed_commitment P m D \<Phi>) P d t n"
+
+lemma moded_check_resolution_in_empty:
+  "moded_check_resolution_in resolution_empty_table \<kappa> P m D \<Phi> Dm M d t n = moded_check_resolution \<kappa> P m D \<Phi> Dm M d t n"
+  by (simp only: moded_check_resolution_in_def moded_check_resolution_def finite_check_resolution_by_in_empty)
+
+definition native_moded_check_resolution_in ::
+    "(local_address,local_address,local_address option definition_site,local_address) resolution_table \<Rightarrow>
+      (local_address,local_address,local_address option definition_site,local_address) finite_witness_construction \<Rightarrow>
+      local_address option finite_native_system \<Rightarrow> nat \<Rightarrow>
+      (local_address,local_address,local_address option definition_site,'v) produced_declarations \<Rightarrow>
+      (local_address,local_address,local_address option definition_site) resolution_frames \<Rightarrow>
+      (local_address,local_address,local_address option definition_site) resolution_declarations \<Rightarrow>
+      local_address option definition_site resolution_modes \<Rightarrow>
+      (local_address option definition_site\<times>finite_factor_term) fset \<Rightarrow> nat \<Rightarrow>
+      ((local_address option definition_site\<times>finite_factor_term)\<times>native_resolution_result) fset\<times>
+        (local_address option definition_site\<times>finite_factor_term) fset option" where
+  "native_moded_check_resolution_in \<Theta> \<kappa> P m D \<Phi> Dm M R n =
+    native_check_resolution_by_in \<Theta> (finite_resolution_select_in \<Theta> (finite_moded_priority (finite_narrowed_commitment P m D \<Phi>) Dm M) \<kappa> P)
+      \<kappa> (finite_narrowed_commitment P m D \<Phi>) P R n"
+
+lemma native_moded_check_resolution_in_empty:
+  "native_moded_check_resolution_in resolution_empty_table \<kappa> P m D \<Phi> Dm M R n = native_moded_check_resolution \<kappa> P m D \<Phi> Dm M R n"
+  by (simp only: native_moded_check_resolution_in_def native_moded_check_resolution_def native_check_resolution_by_in_empty)
+
+text \<open>At two valid tables of the same calls the moded check returns an outcome of the same kind (its selection is one).\<close>
+
+theorem moded_check_resolution_calls:
+  assumes calls: "finite_table_calls \<Theta> = finite_table_calls \<Theta>'"
+    and valid: "finite_table_valid P \<Theta>" and valid': "finite_table_valid P \<Theta>'"
+    and Pf: "finite_system_formed P" and tf: "finite_term_formed t" and \<kappa>: "finite_witness_construction_formed \<kappa>"
+  shows "finite_resolution_verdict (moded_check_resolution_in \<Theta> \<kappa> P m D \<Phi> Dm M d t n) =
+      finite_resolution_verdict (moded_check_resolution_in \<Theta>' \<kappa> P m D \<Phi> Dm M d t n)"
+    and "moded_check_resolution_in \<Theta> \<kappa> P m D \<Phi> Dm M d t n = Finite_Unresolved E \<longleftrightarrow>
+      moded_check_resolution_in \<Theta>' \<kappa> P m D \<Phi> Dm M d t n = Finite_Unresolved E"
+proof -
+  have S: "finite_resolution_select_in \<Theta>' (finite_moded_priority (finite_narrowed_commitment P m D \<Phi>) Dm M) \<kappa> P =
+      finite_resolution_select_in \<Theta> (finite_moded_priority (finite_narrowed_commitment P m D \<Phi>) Dm M) \<kappa> P"
+    by (rule finite_resolution_select_calls[OF calls[symmetric]])
+  note c = finite_check_resolution_by_calls[OF calls valid valid' Pf tf \<kappa> finite_resolution_select_goals_in,
+    where K="finite_narrowed_commitment P m D \<Phi>" and d=d and n=n]
+  show "finite_resolution_verdict (moded_check_resolution_in \<Theta> \<kappa> P m D \<Phi> Dm M d t n) =
+      finite_resolution_verdict (moded_check_resolution_in \<Theta>' \<kappa> P m D \<Phi> Dm M d t n)"
+    unfolding moded_check_resolution_in_def S by (rule c(1))
+  show "moded_check_resolution_in \<Theta> \<kappa> P m D \<Phi> Dm M d t n = Finite_Unresolved E \<longleftrightarrow>
+      moded_check_resolution_in \<Theta>' \<kappa> P m D \<Phi> Dm M d t n = Finite_Unresolved E"
+    unfolding moded_check_resolution_in_def S by (rule c(2))
+qed
+
 lemma moded_committed_resolution_code [code]:
   "moded_committed_resolution \<kappa> P m D \<Phi> Dm M d t n = finite_outcome_result P d t (if clause_sockets_distinct P
     then represented_committed_search (shared_committed_representation \<kappa> P)
@@ -1274,5 +1628,68 @@ theorem native_moded_check_exact:
   by blast+
 
 lemmas native_moded_committed_exact = native_committed_moded_exact[folded native_moded_committed_resolution_def]
+
+text \<open>At a table: the native moded check at rc's premises at the table.\<close>
+
+theorem native_moded_check_exact_in:
+  fixes P :: "local_address option finite_native_system"
+  assumes registered: "committed_registrations_in \<kappa> P m D \<Phi> corr \<Theta>"
+    and result: "native_moded_check_resolution_in \<Theta> \<kappa> P m D \<Phi> Dm M R n = (T,A)"
+  shows "fimage fst T = R"
+    and "(q,Finite_Resolved C) |\<in>| T \<Longrightarrow> C \<noteq> {||} \<and> fBall C (\<lambda>p. finite_checks_schema_proof P p (fst q) (snd q)) \<and>
+      decode_finite_call_term q \<in> positive_meaning (decode_finite_system P)"
+    and "(q,r) |\<in>| T \<Longrightarrow> finite_resolution_refutes r \<Longrightarrow>
+      decode_finite_call_term q \<notin> positive_meaning (decode_finite_system P)"
+    and "A = Some B \<Longrightarrow> schema_system_formed (decode_finite_system P) \<and>
+      fset B = {q\<in>fset R. decode_finite_call_term q \<in> positive_meaning (decode_finite_system P)}"
+  using native_check_resolution_by_exact_in[OF registered_commitment_at_in.exact_premises_in[OF
+    committed_registrations_in.registered_at_in[OF registered]] result[unfolded native_moded_check_resolution_in_def]]
+  by blast+
+
+text \<open>
+  The native moded forms at the program an installed site reads (review 824's follow-up 5): rc's premises there are
+  #820's @{text registrations_installed}, so the route's consumers (#547, #707, #399) cite these instances.
+\<close>
+
+context relocated_registrations
+begin
+
+lemmas native_moded_check_installed = native_moded_check_exact_in[OF committed_registrations_in_empty[OF
+  registrations_installed], unfolded native_moded_check_resolution_in_empty]
+
+lemmas native_moded_committed_installed = native_moded_committed_exact[OF registrations_installed]
+
+text \<open>
+  The numbered table's calls at the installed program: a table whose calls are true at the numbered program @{text Q}
+  (a valid one's are; the agreement transfer gives them at an agreeing program), its calls at
+  @{text Q}'s definitions, relocated by the placement, has its calls true at the placed program and at the program the
+  installed site reads, an alpha variant of it (@{text installed_variant}), at any table of those calls there.
+\<close>
+
+lemma installed_table_true:
+  assumes true: "finite_table_true Q \<Theta>" and relocates: "finite_table_relocates placement \<Theta> \<Theta>'"
+    and sites: "fst ` finite_table_calls \<Theta> \<subseteq> system_definitions (decode_finite_system Q)"
+    and calls: "finite_table_calls \<Theta>'' = finite_table_calls \<Theta>'"
+  shows "finite_table_true goal \<Theta>'" and "finite_table_true Inst \<Theta>''"
+proof -
+  have Qf: "schema_system_formed (decode_finite_system Q)" using target by (simp only: finite_system_formed_correct)
+  have inj: "inj_on placement (system_definitions (decode_finite_system Q) \<union> fst ` finite_table_calls \<Theta>)"
+    using coordinates by (simp only: Un_absorb2[OF sites] finite_system_definitions_correct)
+  note r = finite_table_true_relocated_alpha[OF true relocates Qf inj installed_variant[OF result read] calls]
+  show "finite_table_true goal \<Theta>'" by (rule r(1))
+  show "finite_table_true Inst \<Theta>''" by (rule r(2))
+qed
+
+end
+
+text \<open>At a table at the installed program (#547, #707, #399): the native moded check there, from rc's premises at the
+  table at the installed program (@{text relocated_registrations_in.registrations_installed_in}).\<close>
+
+context relocated_registrations_in
+begin
+
+lemmas native_moded_check_installed_in = native_moded_check_exact_in[OF registrations_installed_in]
+
+end
 
 end

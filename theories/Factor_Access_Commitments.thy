@@ -39,11 +39,6 @@ locale commitment_formed = access_formed \<kappa> P V st
     and goal_site: "h |\<in>| access_goals V \<Longrightarrow> commitment_goal_site E h = (case access_goal V h of
       Resolution_Call_Goal q r d p \<Rightarrow> Some d | Resolution_Material_Goal q r M \<Rightarrow> None)"
 
-lemma commitment_fball_eq: "(\<And>x. x |\<in>| A \<Longrightarrow> R x \<longleftrightarrow> S x) \<Longrightarrow> fBall A R \<longleftrightarrow> fBall A S"
-  by auto
-
-lemma commitment_fbex_eq: "(\<And>x. x |\<in>| A \<Longrightarrow> R x \<longleftrightarrow> S x) \<Longrightarrow> fBex A R \<longleftrightarrow> fBex A S"
-  by auto
 
 lemma commitment_fball_cong: "A = B \<Longrightarrow> (\<And>x. x |\<in>| B =simp=> R x \<longleftrightarrow> S x) \<Longrightarrow> fBall A R \<longleftrightarrow> fBall B S"
   by (auto simp: simp_implies_def)
@@ -295,12 +290,12 @@ lemma socket_holders_exact:
   assumes h: "h |\<in>| access_goals V"
   shows "access_socket_holders F V E q Y h \<longleftrightarrow> finite_socket_holders F st q Y (access_goal V h)"
   unfolding access_socket_holders_def finite_socket_holders_def focus_ball nodes_ball
-  by (intro conj_cong commitment_fball_eq refl)
+  by (intro conj_cong fBall_cong[OF refl] refl)
     (auto simp: focus_goal goal_eq[OF h] variables goal_position node_position call_variables)
 
 lemma free_premise_row_exact: "access_free_premise_row V nd a \<longleftrightarrow> finite_free_premise_row st nd a"
   unfolding access_free_premise_row_def finite_free_premise_row_def pending_ball
-  by (intro conj_cong commitment_fball_eq refl) (simp_all add: variables goal_position)
+  by (intro conj_cong fBall_cong[OF refl] refl) (simp_all add: variables goal_position)
 
 lemma premise_only_framed_exact: "access_premise_only_framed C V nd \<longleftrightarrow> finite_premise_only_framed C st nd"
   by (simp add: access_premise_only_framed_def finite_premise_only_framed_def free_premise_row_exact)
@@ -578,7 +573,7 @@ lemma priority_pending_exact:
   assumes exact: "access_commitment_exact Kc K"
   shows "access_priority_pending Kc V E \<longleftrightarrow> fBex (resolution_pending st) (finite_commitment_priority K st)"
   unfolding access_priority_pending_def pending_bex
-  by (rule commitment_fbex_eq) (rule commitment_priority_exact[OF exact])
+  by (rule fBex_cong[OF refl]) (rule commitment_priority_exact[OF exact])
 
 lemma declared_goal_exact:
   assumes h: "h |\<in>| access_goals V"
@@ -728,6 +723,143 @@ proof -
   have h': "h |\<in>| access_goals (access_focused F (shared_access \<kappa> P r))" using h by simp
   show ?thesis
     using f.moded_priority_exact[OF access_narrowed_commitment_exact h', where D=Dm and M=M] by simp
+qed
+
+subsection \<open>The committed step's tests read through the access\<close>
+
+text \<open>
+  Task 869, fix (3) of task 830. The committed step's tests (@{text committed_tests}) at an access commitment and its
+  moded priority: the value prepared once a step is the commitment access and whether some goal the guard admits
+  passes the commitment's priority at the focused access; a call and a material premise are tested through the
+  access, and the committed goal's production reads its decoded pattern alone. Where the guard refuses no goal the
+  commitment or the priority accepts, they are the commitment's and the priority's at the projection
+  (@{text commitment_tests_exact}), so the committed step at them is R5's (@{text commitment_tests_formed}).
+\<close>
+
+definition represented_produced_at :: "('r,'g,'n,'k,'a,'s,'d,'c,'z) committed_representation_scheme \<Rightarrow>
+    (nat resolution_view \<times> finite_factor_term) option \<Rightarrow> 'r \<Rightarrow> ('a,'s,'d,'c) resolution_goal \<Rightarrow> 'r" where
+  "represented_produced_at R pd r g = (case g of
+      Resolution_Call_Goal q rr d p \<Rightarrow> (case pd of
+          Some (W,v) \<Rightarrow> (case finite_production_substitution W p v of
+              Some \<sigma> \<Rightarrow> rep_substitute R r \<sigma> (finite_pattern_variables p)
+            | None \<Rightarrow> r)
+        | None \<Rightarrow> r)
+    | Resolution_Material_Goal q rr M \<Rightarrow> r)"
+
+lemma represented_produced_at:
+  "represented_produced R K F r st g = represented_produced_at R (commit_production K F st g) r g"
+  by (simp add: represented_produced_def represented_produced_at_def split: resolution_goal.split)
+
+definition commitment_tests ::
+    "('r,'g,'n,'k,'a,'s,'d,'c,'z) committed_representation_scheme \<Rightarrow> ('r \<Rightarrow> ('g,'n,'a,'s,'d) commitment_access) \<Rightarrow>
+      ('g,'n,'k,'a,'s,'d,'c) access_commitment \<Rightarrow> ('a,'s,'d) resolution_declarations \<Rightarrow> 'd resolution_modes \<Rightarrow>
+      ('r \<Rightarrow> 'g \<Rightarrow> bool) \<Rightarrow> ('r,'g,'n,'k,'a,'s,'d,'c,('g,'n,'a,'s,'d) commitment_access \<times> bool) committed_tests" where
+  "commitment_tests R ce Kc Dm M gd = \<lparr>
+    tests_prepare = (\<lambda>F r V. let E = ce r; W = access_focused F V in
+      (E,fBex (access_goals W) (\<lambda>h. gd r h \<and> access_commitment_priority Kc W E h))),
+    tests_priority = (\<lambda>F r V x h. access_moded_priority_at Kc Dm M (access_focused F V) (fst x) (snd x) h),
+    tests_committing = (\<lambda>F r V x h. access_is_call V h \<and> F \<noteq> Some (access_goal_position V h) \<and>
+      accessed_call Kc F V (fst x) h),
+    tests_material = (\<lambda>F r V x h. \<not> access_is_call V h \<and> accessed_material Kc F V (fst x) h \<and>
+      (case access_goal V h of Resolution_Material_Goal q rr N \<Rightarrow> finite_canonical_solutions N \<noteq> None
+        | Resolution_Call_Goal q rr d p \<Rightarrow> False)),
+    tests_produced = (\<lambda>F B r V x h. let pd = accessed_production Kc F V (fst x) h;
+      r' = represented_produced_at R pd r (access_goal V h) in
+      (access_goal_position V h, if pd = None then B else B |\<union>| rep_node_positions R r', r')),
+    tests_position = (\<lambda>r V x h. access_goal_position V h)\<rparr>"
+
+lemma commitment_tests_exact:
+  assumes st: "committed_representation_structure R Fi \<kappa> P"
+    and ce: "commitment_formed \<kappa> P (rep_access R r) (rep_project R r) (ce r)"
+    and exact: "access_commitment_exact Kc K" and Fr: "Fi r"
+    and h: "h |\<in>| access_goals (rep_access R r)"
+    and guard: "\<And>h' F. h' |\<in>| access_goals (rep_access R r) \<Longrightarrow> \<not> gd r h' \<Longrightarrow>
+      \<not> finite_moded_priority K Dm M (finite_focused F (rep_project R r)) (access_goal (rep_access R r) h')"
+  shows "tests_exact_at R (commitment_tests R ce Kc Dm M gd) Fi K (finite_moded_priority K Dm M) F B r (rep_access R r)
+      (tests_prepare (commitment_tests R ce Kc Dm M gd) F r (rep_access R r)) h"
+proof -
+  let ?V = "rep_access R r" let ?st = "rep_project R r" let ?g = "access_goal ?V h" let ?E = "ce r"
+  let ?W = "access_focused F ?V"
+  interpret s: committed_representation_structure R Fi \<kappa> P by (rule st)
+  interpret c: commitment_formed \<kappa> P ?V ?st ?E by (rule ce)
+  interpret f: commitment_formed \<kappa> P ?W "finite_focused F ?st" ?E by (rule c.commitment_focused)
+  note ex = exact[unfolded access_commitment_exact_def, rule_format, OF c.commitment_self h]
+  have admitted: "gd r h'" if w: "h' |\<in>| access_goals ?W" and a: "access_commitment_priority Kc ?W ?E h'" for h'
+  proof (rule ccontr)
+    assume n: "\<not> gd r h'"
+    have h': "h' |\<in>| access_goals ?V" using w by (simp add: access_focus_goals_def)
+    have "finite_commitment_priority K (finite_focused F ?st) (access_goal ?W h')"
+      using f.commitment_priority_exact[OF exact w] a by simp
+    then have "finite_moded_priority K Dm M (finite_focused F ?st) (access_goal ?V h')"
+      by (simp add: finite_moded_priority_def)
+    then show False using guard[OF h' n] by simp
+  qed
+  have pend: "fBex (access_goals ?W) (\<lambda>h'. gd r h' \<and> access_commitment_priority Kc ?W ?E h') \<longleftrightarrow>
+      access_priority_pending Kc ?W ?E"
+    unfolding access_priority_pending_def using admitted by blast
+  have pri: "access_moded_priority_at Kc Dm M ?W ?E
+      (fBex (access_goals ?W) (\<lambda>h'. gd r h' \<and> access_commitment_priority Kc ?W ?E h')) h \<longleftrightarrow>
+      finite_moded_priority K Dm M (finite_focused F ?st) ?g" if hF: "h |\<in>| access_focus_goals F ?V"
+  proof -
+    have w: "h |\<in>| access_goals ?W" using hF by simp
+    show ?thesis unfolding pend using f.moded_priority_exact[OF exact w, where D=Dm and M=M]
+      by (simp add: access_moded_priority_def)
+  qed
+  have call: "access_is_call ?V h \<and> F \<noteq> Some (access_goal_position ?V h) \<and> accessed_call Kc F ?V ?E h \<longleftrightarrow>
+      finite_goal_committing K F ?st ?g"
+    using ex c.is_call[OF h] c.goal_position[OF h] by (simp add: finite_goal_committing_def)
+  have mat: "\<not> access_is_call ?V h \<and> accessed_material Kc F ?V ?E h \<and> (case ?g of
+      Resolution_Material_Goal q rr N \<Rightarrow> finite_canonical_solutions N \<noteq> None | Resolution_Call_Goal q rr d p \<Rightarrow> False) \<longleftrightarrow>
+      finite_material_committed K F ?st ?g"
+    using ex c.is_call[OF h] by (cases ?g) (auto simp: finite_material_committed_def)
+  let ?r' = "represented_produced R K F r ?st ?g"
+  have pd: "accessed_production Kc F ?V ?E h = commit_production K F ?st ?g" using ex by blast
+  have rp: "represented_produced_at R (commit_production K F ?st ?g) r ?g = ?r'" by (simp add: represented_produced_at)
+  have Fr': "Fi ?r'" by (rule s.produced(1)[OF Fr])
+  have pr': "rep_project R ?r' = finite_produced_state K F ?st ?g" by (rule s.produced(2)[OF Fr])
+  have bar: "B |\<union>| rep_node_positions R ?r' = finite_committed_barring B (rep_project R ?r')"
+  proof -
+    interpret w: access_formed \<kappa> P "rep_access R ?r'" "rep_project R ?r'" by (rule s.access[OF Fr'])
+    show ?thesis
+    proof (rule fset_eqI)
+      fix y show "y |\<in>| B |\<union>| rep_node_positions R ?r' \<longleftrightarrow> y |\<in>| finite_committed_barring B (rep_project R ?r')"
+        using w.node_positions[of y] s.positions[OF Fr', of y] by (auto simp: finite_committed_barring_def)
+    qed
+  qed
+  have sub: "(if commit_production K F ?st ?g = None then B else B |\<union>| rep_node_positions R ?r') =
+      finite_goal_sub_barring K F B ?st ?g"
+    using bar pr' by (simp add: finite_goal_sub_barring_def)
+  have prod: "tests_produced (commitment_tests R ce Kc Dm M gd) F B r ?V
+      (tests_prepare (commitment_tests R ce Kc Dm M gd) F r ?V) h =
+      (resolution_goal_position ?g, finite_goal_sub_barring K F B ?st ?g, ?r')"
+    by (simp only: commitment_tests_def committed_tests.select_convs Let_def fst_conv pd rp sub c.goal_position[OF h])
+  show ?thesis
+    unfolding tests_exact_at_def Let_def prod
+    using pri call mat Fr' pr' by (simp add: commitment_tests_def Let_def)
+qed
+
+theorem commitment_tests_formed:
+  assumes st: "committed_representation_structure R Fi \<kappa> P"
+    and ce: "\<And>s. Fi s \<Longrightarrow> commitment_formed \<kappa> P (rep_access R s) (rep_project R s) (ce s)"
+    and exact: "access_commitment_exact Kc K"
+    and guard: "\<And>s h F. Fi s \<Longrightarrow> h |\<in>| access_goals (rep_access R s) \<Longrightarrow> \<not> gd s h \<Longrightarrow>
+      \<not> commit_call K F (rep_project R s) (access_goal (rep_access R s) h) \<and>
+      \<not> commit_material K F (rep_project R s) (access_goal (rep_access R s) h) \<and>
+      \<not> finite_moded_priority K Dm M (finite_focused F (rep_project R s)) (access_goal (rep_access R s) h)"
+  shows "tested_representation_formed R Fi \<kappa> P K (finite_moded_priority K Dm M) (commitment_tests R ce Kc Dm M gd) gd"
+proof (rule tested_representation_formed.intro[OF st], unfold_locales, goal_cases)
+  case (1 s h F)
+  then show ?case by (rule guard)
+next
+  case (2 s h F B)
+  have g: "\<And>h' F'. h' |\<in>| access_goals (rep_access R s) \<Longrightarrow> \<not> gd s h' \<Longrightarrow>
+      \<not> finite_moded_priority K Dm M (finite_focused F' (rep_project R s)) (access_goal (rep_access R s) h')"
+    using guard[OF 2(1)] by blast
+  show ?case by (rule commitment_tests_exact[where ce=ce and gd=gd and Dm=Dm and M=M, OF st ce[OF 2(1)] exact 2(1) 2(2) g])
+next
+  case (3 s h x)
+  interpret c: commitment_formed \<kappa> P "rep_access R s" "rep_project R s" "ce s" by (rule ce[OF 3(1)])
+  show ?case using c.goal_position[OF 3(2)] by (simp add: commitment_tests_def)
 qed
 
 end

@@ -322,6 +322,116 @@ primrec represented_committed_search ::
     (if access_focus_goals F (rep_access R r) = {||} then Resolution_Outcome {|rep_project R r|} {||}
      else represented_committed_step R pr gd \<kappa> K P (represented_committed_search R pr gd \<kappa> K P n) F B (rep_refresh R r))"
 
+subsection \<open>The committed step over tests read through the access\<close>
+
+text \<open>
+  Task 869, fix (3) of task 830. The committed step reads, of a goal, the priority and the commitment's tests; F2c's
+  step reads them on the projection of the state it steps. Here they are parameters (@{text committed_tests}), read
+  at a representation, its access and a value the step prepares once: a goal's priority at the focus, whether a call
+  is committed, whether a material premise is committed, the committed goal's position, sub-barring and produced
+  representation, and the position whose determinate key joins a successor. The step projects nothing but the
+  diagnosis of a branch that ends with nothing to select. F2c's step is its instance at the tests read on the
+  projection (@{text projected_tests}, @{text represented_committed_step_tested}); the tests the route reads through
+  the access are @{text Factor_Access_Commitments}'.
+\<close>
+
+record ('r,'g,'n,'k,'a,'s,'d,'c,'x) committed_tests =
+  tests_prepare :: "'s list option \<Rightarrow> 'r \<Rightarrow> ('g,'n,'k,'a,'s,'d,'c) search_access \<Rightarrow> 'x"
+  tests_priority :: "'s list option \<Rightarrow> 'r \<Rightarrow> ('g,'n,'k,'a,'s,'d,'c) search_access \<Rightarrow> 'x \<Rightarrow> 'g \<Rightarrow> bool"
+  tests_committing :: "'s list option \<Rightarrow> 'r \<Rightarrow> ('g,'n,'k,'a,'s,'d,'c) search_access \<Rightarrow> 'x \<Rightarrow> 'g \<Rightarrow> bool"
+  tests_material :: "'s list option \<Rightarrow> 'r \<Rightarrow> ('g,'n,'k,'a,'s,'d,'c) search_access \<Rightarrow> 'x \<Rightarrow> 'g \<Rightarrow> bool"
+  tests_produced :: "'s list option \<Rightarrow> 's list fset \<Rightarrow> 'r \<Rightarrow> ('g,'n,'k,'a,'s,'d,'c) search_access \<Rightarrow> 'x \<Rightarrow> 'g \<Rightarrow>
+    's list \<times> 's list fset \<times> 'r"
+  tests_position :: "'r \<Rightarrow> ('g,'n,'k,'a,'s,'d,'c) search_access \<Rightarrow> 'x \<Rightarrow> 'g \<Rightarrow> 's list"
+
+definition tested_committed_goal_outcome ::
+    "('r,'g,'n,'k,'a,'s,'d,'c,'z) committed_representation_scheme \<Rightarrow> ('r,'g,'n,'k,'a,'s,'d,'c,'x) committed_tests \<Rightarrow>
+      ('r \<Rightarrow> 'g \<Rightarrow> bool) \<Rightarrow> ('s list option \<Rightarrow> 's list fset \<Rightarrow> 'r \<Rightarrow> ('a,'s,'d,'c) resolution_outcome) \<Rightarrow>
+      's list option \<Rightarrow> 's list fset \<Rightarrow> 'r \<Rightarrow> ('g,'n,'k,'a,'s,'d,'c) search_access \<Rightarrow> 'x \<Rightarrow> 'g \<Rightarrow>
+      ('a,'s,'d,'c) resolution_outcome" where
+  "tested_committed_goal_outcome R T gd rec F B r V x h =
+    (if access_pruned_among (\<lambda>q. q |\<notin>| B) V h then Resolution_Outcome {||} {||}
+     else if access_pruned_among (\<lambda>q. q |\<in>| B) V h then Resolution_Outcome {||} {|Resolution_Cut {|access_goal V h|}|}
+     else if gd r h \<and> tests_committing T F r V x h then
+       (case tests_produced T F B r V x h of (q,B',r') \<Rightarrow> let sub = rec (Some q) B' r' in
+        finite_outcome_union (finsert (Resolution_Outcome {||} (resolution_diagnoses sub))
+          (fimage (\<lambda>s. rec F (finite_committed_barring B s) (rep_share R s)) (finite_kept q (resolution_found sub)))))
+     else let cm = gd r h \<and> tests_material T F r V x h;
+       S = represented_committed_successors R F cm r V h in
+       if S = {||} then (if access_witnesses V = {||} then Resolution_Outcome {||} {||}
+         else Resolution_Outcome {||} {|Resolution_Witnessed (access_witnesses V) (access_goal V h)|})
+       else if access_focus_ground F V
+         then finite_first_outcome (rec F (if cm then B |\<union>| rep_node_positions R r else B))
+           (finite_key_blocks (\<lambda>s'. access_determinate_key (tests_position T r V x h) (rep_access R s')) S)
+         else finite_outcome_union (fimage (rec F (if cm then B |\<union>| rep_node_positions R r else B)) S))"
+
+definition tested_committed_step ::
+    "('r,'g,'n,'k,'a,'s::linorder,'d,'c,'z) committed_representation_scheme \<Rightarrow> ('r,'g,'n,'k,'a,'s,'d,'c,'x) committed_tests \<Rightarrow>
+      ('r \<Rightarrow> 'g \<Rightarrow> bool) \<Rightarrow> ('a,'s,'d,'c) finite_witness_construction \<Rightarrow> ('a,'s,'d,'c) finite_schema_system \<Rightarrow>
+      ('s list option \<Rightarrow> 's list fset \<Rightarrow> 'r \<Rightarrow> ('a,'s,'d,'c) resolution_outcome) \<Rightarrow>
+      's list option \<Rightarrow> 's list fset \<Rightarrow> 'r \<Rightarrow> ('a,'s,'d,'c) resolution_outcome" where
+  "tested_committed_step R T gd \<kappa> P rec F B r = (let V = rep_access R r; x = tests_prepare T F r V in
+    case access_select (\<lambda>h. gd r h \<and> tests_priority T F r V x h) (access_focused F V) of
+      Access_Construction N \<Rightarrow> (let M = ffilter (\<lambda>m. resolution_focused F (access_node_position V m)) N in
+        if M = {||} then Resolution_Outcome {||} {|Resolution_Stuck (fimage (access_goal V) (access_focus_goals F V))|}
+        else finite_outcome_union (fimage (\<lambda>m. rec F (B |\<union>| rep_node_positions R r) (rep_construct R r m)) M))
+    | Access_Goals G \<Rightarrow> finite_outcome_union (fimage (tested_committed_goal_outcome R T gd rec F B r V x) G)
+    | Access_None \<Rightarrow> Resolution_Outcome {||}
+        (finsert (Resolution_Stuck (fimage (access_goal V) (access_focus_goals F V))) (finite_unconstructed \<kappa> P (rep_project R r))))"
+
+primrec tested_committed_search ::
+    "('r,'g,'n,'k,'a,'s::linorder,'d,'c,'z) committed_representation_scheme \<Rightarrow> ('r,'g,'n,'k,'a,'s,'d,'c,'x) committed_tests \<Rightarrow>
+      ('r \<Rightarrow> 'g \<Rightarrow> bool) \<Rightarrow> ('a,'s,'d,'c) finite_witness_construction \<Rightarrow> ('a,'s,'d,'c) finite_schema_system \<Rightarrow> nat \<Rightarrow>
+      's list option \<Rightarrow> 's list fset \<Rightarrow> 'r \<Rightarrow> ('a,'s,'d,'c) resolution_outcome" where
+  "tested_committed_search R T gd \<kappa> P 0 F B r = (let V = rep_access R r; G = access_focus_goals F V in
+    if G = {||} then Resolution_Outcome {|rep_project R r|} {||}
+    else Resolution_Outcome {||} {|Resolution_Cut (fimage (access_goal V) G)|})"
+| "tested_committed_search R T gd \<kappa> P (Suc n) F B r =
+    (if access_focus_goals F (rep_access R r) = {||} then Resolution_Outcome {|rep_project R r|} {||}
+     else tested_committed_step R T gd \<kappa> P (tested_committed_search R T gd \<kappa> P n) F B (rep_refresh R r))"
+
+text \<open>
+  The tests read on the projection: the prepared value is the projection, made where some goal is admitted by the
+  guard, and each test reads the commitment, the priority or the production on it. F2c's step, goal outcome and search
+  are the step's at these tests.
+\<close>
+
+definition projected_tests ::
+    "('r,'g,'n,'k,'a,'s,'d,'c,'z) committed_representation_scheme \<Rightarrow> ('a,'s,'d,'c) resolution_commitment \<Rightarrow>
+      (('a,'s,'d,'c) resolution_state \<Rightarrow> ('a,'s,'d,'c) resolution_goal \<Rightarrow> bool) \<Rightarrow> ('r \<Rightarrow> 'g \<Rightarrow> bool) \<Rightarrow>
+      ('r,'g,'n,'k,'a,'s,'d,'c,('a,'s,'d,'c) resolution_state option) committed_tests" where
+  "projected_tests R K pr gd = \<lparr>
+    tests_prepare = (\<lambda>F r V. if fBex (access_goals V) (gd r) then Some (rep_project R r) else None),
+    tests_priority = (\<lambda>F r V so h. pr (the (map_option (finite_focused F) so)) (access_goal V h)),
+    tests_committing = (\<lambda>F r V so h. finite_goal_committing K F (the so) (access_goal V h)),
+    tests_material = (\<lambda>F r V so h. finite_material_committed K F (the so) (access_goal V h)),
+    tests_produced = (\<lambda>F B r V so h. (resolution_goal_position (access_goal V h),
+      finite_goal_sub_barring K F B (the so) (access_goal V h), represented_produced R K F r (the so) (access_goal V h))),
+    tests_position = (\<lambda>r V so h. resolution_goal_position (access_goal V h))\<rparr>"
+
+lemma represented_committed_goal_outcome_tested:
+  "represented_committed_goal_outcome R gd rec K F B r V so =
+    tested_committed_goal_outcome R (projected_tests R K pr gd) gd rec F B r V so"
+  by (rule ext) (simp add: represented_committed_goal_outcome_def tested_committed_goal_outcome_def projected_tests_def
+    Let_def)
+
+lemma represented_committed_step_tested:
+  "represented_committed_step R pr gd \<kappa> K P rec F B r = tested_committed_step R (projected_tests R K pr gd) gd \<kappa> P rec F B r"
+  unfolding represented_committed_step_def tested_committed_step_def represented_committed_goal_outcome_tested[where pr=pr]
+  by (simp add: projected_tests_def Let_def)
+
+lemma represented_committed_search_tested:
+  "represented_committed_search R pr gd \<kappa> K P n F B r =
+    tested_committed_search R (projected_tests R K pr gd) gd \<kappa> P n F B r"
+proof (induction n arbitrary: F B r)
+  case 0
+  then show ?case by simp
+next
+  case (Suc n)
+  have "represented_committed_search R pr gd \<kappa> K P n = tested_committed_search R (projected_tests R K pr gd) gd \<kappa> P n"
+    by (intro ext) (rule Suc.IH)
+  then show ?case by (simp add: represented_committed_step_tested)
+qed
 text \<open>The two reads through a formed access are those on the state.\<close>
 
 context access_formed
@@ -440,18 +550,18 @@ qed
 section \<open>A formed committed representation searches as R5 does\<close>
 
 text \<open>
-  A committed representation is formed at an invariant of its states when its accesses are formed at their
-  projections, its steps project to R5's and keep the invariant, and every goal its guard does not admit is one no
-  test of the commitment and no priority accepts, at any focus and state.
+  A committed representation is structured at an invariant of its states when its accesses are formed at their
+  projections and its steps project to R5's and keep the invariant. It is formed at a guard and at tests read through
+  the access when moreover every goal the guard does not admit is one no test of the commitment and no priority
+  accepts at the projection of an invariant state, and the tests prepared at an admitted goal are the commitment's and
+  the priority's there (@{text tested_representation_formed}); F2c's form asks the guard's refusal at every state and
+  reads the tests on the projection (@{text committed_representation_formed}).
 \<close>
 
-locale committed_representation_formed =
+locale committed_representation_structure =
   fixes R :: "('r,'g,'n,'k,'a,'s::linorder,'d,'c,'z) committed_representation_scheme"
     and Fi :: "'r \<Rightarrow> bool"
     and \<kappa> :: "('a,'s,'d,'c) finite_witness_construction" and P :: "('a,'s,'d,'c) finite_schema_system"
-    and K :: "('a,'s,'d,'c) resolution_commitment"
-    and pr :: "('a,'s,'d,'c) resolution_state \<Rightarrow> ('a,'s,'d,'c) resolution_goal \<Rightarrow> bool"
-    and gd :: "'r \<Rightarrow> 'g \<Rightarrow> bool"
   assumes access: "\<And>s. Fi s \<Longrightarrow> access_formed \<kappa> P (rep_access R s) (rep_project R s)"
     and refresh: "\<And>s. Fi s \<Longrightarrow> Fi (rep_refresh R s) \<and> rep_project R (rep_refresh R s) = rep_project R s"
     and construct: "\<And>s m q. Fi s \<Longrightarrow> m |\<in>| access_nodes_at (rep_access R s) q \<Longrightarrow> Fi (rep_construct R s m) \<and>
@@ -471,9 +581,6 @@ locale committed_representation_formed =
     and substitute: "\<And>s \<sigma> D. Fi s \<Longrightarrow> (\<And>a. a |\<notin>| D \<Longrightarrow> \<sigma> a = Finite_Variable a) \<Longrightarrow>
       Fi (rep_substitute R s \<sigma> D) \<and> rep_project R (rep_substitute R s \<sigma> D) = resolution_state_substitute \<sigma> (rep_project R s)"
     and share: "\<And>s. Fi s \<Longrightarrow> Fi (rep_share R (rep_project R s)) \<and> rep_project R (rep_share R (rep_project R s)) = rep_project R s"
-    and guard: "\<And>s h F st. Fi s \<Longrightarrow> h |\<in>| access_goals (rep_access R s) \<Longrightarrow> \<not> gd s h \<Longrightarrow>
-      \<not> commit_call K F st (access_goal (rep_access R s) h) \<and> \<not> commit_material K F st (access_goal (rep_access R s) h) \<and>
-      \<not> pr st (access_goal (rep_access R s) h)"
 begin
 
 lemma produced:
@@ -537,12 +644,47 @@ proof -
   qed
 qed
 
-lemma goal_outcome:
+end
+
+text \<open>
+  Tests are exact at a goal and a prepared value when the priority at the focus, the call's and the material
+  premise's commitment and the committed goal's production are the commitment's and the priority's at the projection.
+\<close>
+
+definition tests_exact_at ::
+    "('r,'g,'n,'k,'a,'s,'d,'c,'z) committed_representation_scheme \<Rightarrow> ('r,'g,'n,'k,'a,'s,'d,'c,'x) committed_tests \<Rightarrow>
+      ('r \<Rightarrow> bool) \<Rightarrow> ('a,'s,'d,'c) resolution_commitment \<Rightarrow>
+      (('a,'s,'d,'c) resolution_state \<Rightarrow> ('a,'s,'d,'c) resolution_goal \<Rightarrow> bool) \<Rightarrow>
+      's list option \<Rightarrow> 's list fset \<Rightarrow> 'r \<Rightarrow> ('g,'n,'k,'a,'s,'d,'c) search_access \<Rightarrow> 'x \<Rightarrow> 'g \<Rightarrow> bool" where
+  "tests_exact_at R T Fi K pr F B r V x h \<longleftrightarrow> (let st = rep_project R r; g = access_goal V h in
+    (h |\<in>| access_focus_goals F V \<longrightarrow> (tests_priority T F r V x h \<longleftrightarrow> pr (finite_focused F st) g)) \<and>
+    (tests_committing T F r V x h \<longleftrightarrow> finite_goal_committing K F st g) \<and>
+    (tests_material T F r V x h \<longleftrightarrow> finite_material_committed K F st g) \<and>
+    (finite_goal_committing K F st g \<longrightarrow> (case tests_produced T F B r V x h of (q,B',r') \<Rightarrow>
+      q = resolution_goal_position g \<and> B' = finite_goal_sub_barring K F B st g \<and> Fi r' \<and>
+      rep_project R r' = finite_produced_state K F st g)))"
+
+locale tested_representation_formed = committed_representation_structure R Fi \<kappa> P
+  for R :: "('r,'g,'n,'k,'a,'s::linorder,'d,'c,'z) committed_representation_scheme" and Fi \<kappa> P +
+  fixes K :: "('a,'s,'d,'c) resolution_commitment"
+    and pr :: "('a,'s,'d,'c) resolution_state \<Rightarrow> ('a,'s,'d,'c) resolution_goal \<Rightarrow> bool"
+    and T :: "('r,'g,'n,'k,'a,'s,'d,'c,'x) committed_tests" and gd :: "'r \<Rightarrow> 'g \<Rightarrow> bool"
+  assumes guard_at: "\<And>s h F. Fi s \<Longrightarrow> h |\<in>| access_goals (rep_access R s) \<Longrightarrow> \<not> gd s h \<Longrightarrow>
+      \<not> commit_call K F (rep_project R s) (access_goal (rep_access R s) h) \<and>
+      \<not> commit_material K F (rep_project R s) (access_goal (rep_access R s) h) \<and>
+      \<not> pr (finite_focused F (rep_project R s)) (access_goal (rep_access R s) h)"
+    and prepared: "\<And>s h F B. Fi s \<Longrightarrow> h |\<in>| access_goals (rep_access R s) \<Longrightarrow> gd s h \<Longrightarrow>
+      tests_exact_at R T Fi K pr F B s (rep_access R s) (tests_prepare T F s (rep_access R s)) h"
+    and position: "\<And>s h x. Fi s \<Longrightarrow> h |\<in>| access_goals (rep_access R s) \<Longrightarrow>
+      tests_position T s (rep_access R s) x h = resolution_goal_position (access_goal (rep_access R s) h)"
+begin
+
+lemma tested_goal_outcome:
   assumes Fr: "Fi r" and h: "h |\<in>| access_goals (rep_access R r)"
-    and so: "gd r h \<Longrightarrow> so = Some (rep_project R r)"
+    and ex: "gd r h \<Longrightarrow> tests_exact_at R T Fi K pr F B r (rep_access R r) x h"
     and rec: "\<And>F' B' s. Fi s \<Longrightarrow> recI F' B' s = recA F' B' (rep_project R s)"
-    and recfound: "\<And>F' B' s x. Fi s \<Longrightarrow> x |\<in>| resolution_found (recI F' B' s) \<Longrightarrow> \<exists>r0. Fi r0 \<and> rep_project R r0 = x"
-  shows "represented_committed_goal_outcome R gd recI K F B r (rep_access R r) so h =
+    and recfound: "\<And>F' B' s y. Fi s \<Longrightarrow> y |\<in>| resolution_found (recI F' B' s) \<Longrightarrow> \<exists>r0. Fi r0 \<and> rep_project R r0 = y"
+  shows "tested_committed_goal_outcome R T gd recI F B r (rep_access R r) x h =
     finite_committed_goal_outcome recA K P F B (rep_project R r) (access_goal (rep_access R r) h)"
 proof -
   let ?V = "rep_access R r" let ?st = "rep_project R r" let ?g = "access_goal ?V h"
@@ -551,16 +693,29 @@ proof -
     using v.pruned_among[OF h, of "\<lambda>q. q |\<notin>| B"] by (simp add: finite_unbarred_def)
   have pb: "access_pruned_among (\<lambda>q. q |\<in>| B) ?V h \<longleftrightarrow> finite_pruned (finite_barred B ?st) ?g"
     using v.pruned_among[OF h, of "\<lambda>q. q |\<in>| B"] by (simp add: finite_barred_def)
-  have ng: "\<not> gd r h \<Longrightarrow> \<not> commit_call K F' st' ?g \<and> \<not> commit_material K F' st' ?g" for F' st'
-    using guard[OF Fr h] by blast
-  have comm: "(gd r h \<and> finite_goal_committing K F (the so) ?g) \<longleftrightarrow> finite_goal_committing K F ?st ?g"
-    using so ng by (cases "gd r h") (auto simp: finite_goal_committing_def)
-  have cm: "(gd r h \<and> finite_material_committed K F (the so) ?g) \<longleftrightarrow> finite_material_committed K F ?st ?g"
-    using so ng by (cases "gd r h") (auto simp: finite_material_committed_def split: resolution_goal.splits)
+  have ng: "\<not> gd r h \<Longrightarrow> \<not> commit_call K F ?st ?g \<and> \<not> commit_material K F ?st ?g"
+    using guard_at[OF Fr h] by blast
+  have comm: "(gd r h \<and> tests_committing T F r ?V x h) \<longleftrightarrow> finite_goal_committing K F ?st ?g"
+  proof (cases "gd r h")
+    case True
+    then show ?thesis using ex[OF True] by (simp add: tests_exact_at_def Let_def)
+  next
+    case False
+    then show ?thesis using ng by (simp add: finite_goal_committing_def)
+  qed
+  have cm: "(gd r h \<and> tests_material T F r ?V x h) \<longleftrightarrow> finite_material_committed K F ?st ?g"
+  proof (cases "gd r h")
+    case True
+    then show ?thesis using ex[OF True] by (simp add: tests_exact_at_def Let_def)
+  next
+    case False
+    then show ?thesis using ng by (cases ?g) (auto simp: finite_material_committed_def)
+  qed
+  have ps: "tests_position T r ?V x h = resolution_goal_position ?g" by (rule position[OF Fr h])
   have bar: "B |\<union>| rep_node_positions R r = finite_committed_barring B ?st"
   proof (rule fset_eqI)
-    fix x show "x |\<in>| B |\<union>| rep_node_positions R r \<longleftrightarrow> x |\<in>| finite_committed_barring B ?st"
-      using v.node_positions[of x] positions[OF Fr, of x] by (auto simp: finite_committed_barring_def)
+    fix y show "y |\<in>| B |\<union>| rep_node_positions R r \<longleftrightarrow> y |\<in>| finite_committed_barring B ?st"
+      using v.node_positions[of y] positions[OF Fr, of y] by (auto simp: finite_committed_barring_def)
   qed
   consider (closed) "finite_pruned (finite_unbarred B ?st) ?g"
     | (cut) "\<not> finite_pruned (finite_unbarred B ?st) ?g" "finite_pruned (finite_barred B ?st) ?g"
@@ -568,10 +723,10 @@ proof -
   then show ?thesis
   proof cases
     case closed
-    then show ?thesis using pu by (simp add: represented_committed_goal_outcome_def finite_committed_goal_outcome_in_def)
+    then show ?thesis using pu by (simp add: tested_committed_goal_outcome_def finite_committed_goal_outcome_in_def)
   next
     case cut
-    then show ?thesis using pu pb by (simp add: represented_committed_goal_outcome_def finite_committed_goal_outcome_in_def)
+    then show ?thesis using pu pb by (simp add: tested_committed_goal_outcome_def finite_committed_goal_outcome_in_def)
   next
     case unpruned
     have npu: "\<not> access_pruned_among (\<lambda>q. q |\<notin>| B) ?V h" and npb: "\<not> access_pruned_among (\<lambda>q. q |\<in>| B) ?V h"
@@ -579,33 +734,34 @@ proof -
     show ?thesis
     proof (cases "finite_goal_committing K F ?st ?g")
       case True
-      have c: "gd r h \<and> finite_goal_committing K F (the so) ?g" using True comm by simp
-      have sost: "the so = ?st" using c so by simp
-      have c': "gd r h \<and> finite_goal_committing K F ?st ?g" using c sost by simp
+      have c: "gd r h \<and> tests_committing T F r ?V x h" using True comm by simp
+      obtain q B' r' where pd: "tests_produced T F B r ?V x h = (q,B',r')" by (metis prod_cases3)
+      have pq: "q = resolution_goal_position ?g \<and> B' = finite_goal_sub_barring K F B ?st ?g \<and> Fi r' \<and>
+          rep_project R r' = finite_produced_state K F ?st ?g"
+        using ex[OF conjunct1[OF c]] True pd by (simp add: tests_exact_at_def Let_def)
       let ?q = "resolution_goal_position ?g" let ?B' = "finite_goal_sub_barring K F B ?st ?g"
-      have prd: "Fi (represented_produced R K F r ?st ?g)"
-          "rep_project R (represented_produced R K F r ?st ?g) = finite_produced_state K F ?st ?g"
-        using produced[OF Fr] by simp_all
+      have pd': "tests_produced T F B r ?V x h = (?q,?B',r')" using pd pq by simp
+      have Fr': "Fi r'" using pq by simp
       let ?subA = "recA (Some ?q) ?B' (finite_produced_state K F ?st ?g)"
-      have sub: "recI (Some ?q) ?B' (represented_produced R K F r ?st ?g) = ?subA" using rec[OF prd(1)] prd(2) by simp
+      have sub: "recI (Some ?q) ?B' r' = ?subA" using rec[OF Fr', of "Some ?q" ?B'] pq by simp
       have kept: "fimage (\<lambda>s. recI F (finite_committed_barring B s) (rep_share R s)) (finite_kept ?q (resolution_found ?subA)) =
           fimage (\<lambda>s. recA F (finite_committed_barring B s) s) (finite_kept ?q (resolution_found ?subA))"
       proof (rule fset.map_cong0)
         fix s assume "s \<in> fset (finite_kept ?q (resolution_found ?subA))"
         then have "s |\<in>| resolution_found ?subA" using fsubsetD[OF finite_kept_subset] by blast
-        then have "s |\<in>| resolution_found (recI (Some ?q) ?B' (represented_produced R K F r ?st ?g))" using sub by simp
-        then obtain r0 where r0: "Fi r0" "rep_project R r0 = s" using recfound[OF prd(1)] by blast
+        then have "s |\<in>| resolution_found (recI (Some ?q) ?B' r')" using sub by simp
+        then obtain r0 where r0: "Fi r0" "rep_project R r0 = s" using recfound[OF Fr'] by blast
         show "recI F (finite_committed_barring B s) (rep_share R s) = recA F (finite_committed_barring B s) s"
           using rec[OF conjunct1[OF share[OF r0(1)]]] conjunct2[OF share[OF r0(1)]] r0(2) by simp
       qed
       show ?thesis
-        unfolding represented_committed_goal_outcome_def finite_committed_goal_outcome_eq Let_def
-        by (simp only: if_not_P[OF npu] if_not_P[OF npb] if_P[OF c] sost if_P[OF c'] if_not_P[OF unpruned(1)]
-          if_not_P[OF unpruned(2)] if_P[OF True] sub kept)
+        unfolding tested_committed_goal_outcome_def finite_committed_goal_outcome_eq Let_def
+        by (simp only: if_not_P[OF npu] if_not_P[OF npb] if_P[OF c] pd' prod.case sub kept if_not_P[OF unpruned(1)]
+          if_not_P[OF unpruned(2)] if_P[OF True])
     next
       case False
-      have nc: "\<not> (gd r h \<and> finite_goal_committing K F (the so) ?g)" using False comm by simp
-      let ?cm = "gd r h \<and> finite_material_committed K F (the so) ?g"
+      have nc: "\<not> (gd r h \<and> tests_committing T F r ?V x h)" using False comm by simp
+      let ?cm = "gd r h \<and> tests_material T F r ?V x h"
       let ?S = "represented_committed_successors R F ?cm r ?V h"
       have S0: "?S = represented_committed_successors R F (finite_material_committed K F ?st ?g) r ?V h" using cm by simp
       have S: "fimage (rep_project R) ?S = finite_committed_successors K P F ?st ?g"
@@ -613,9 +769,6 @@ proof -
       have SF: "\<And>s'. s' |\<in>| ?S \<Longrightarrow> Fi s'" by (rule committed_successors(2)[OF Fr h])
       have gb: "(if ?cm then B |\<union>| rep_node_positions R r else B) = finite_goal_barring K F B ?st ?g"
         using cm bar by (simp add: finite_goal_barring_def)
-      have img: "fimage (recI F (if ?cm then B |\<union>| rep_node_positions R r else B)) ?S =
-          fimage (recA F (finite_goal_barring K F B ?st ?g)) (finite_committed_successors K P F ?st ?g)"
-        unfolding gb S[symmetric] fset.map_comp comp_def by (rule fset.map_cong0) (simp add: rec SF)
       have e: "?S = {||} \<longleftrightarrow> finite_committed_successors K P F ?st ?g = {||}"
         using S fimage_is_fempty[of "rep_project R" ?S] by simp
       let ?Bc = "if ?cm then B |\<union>| rep_node_positions R r else B"
@@ -641,7 +794,7 @@ proof -
           (finite_committed_successors K P F ?st ?g)"
         unfolding S[symmetric] finite_search_join_image v.focus_ground fb im ..
       show ?thesis
-        unfolding represented_committed_goal_outcome_def finite_committed_goal_outcome_eq Let_def
+        unfolding tested_committed_goal_outcome_def finite_committed_goal_outcome_eq Let_def ps
           if_not_P[OF npu] if_not_P[OF npb] if_not_P[OF nc] if_not_P[OF unpruned(1)] if_not_P[OF unpruned(2)]
           if_not_P[OF False]
         using jn e v.witnesses by simp
@@ -649,32 +802,32 @@ proof -
   qed
 qed
 
-lemma step:
+lemma tested_step:
   assumes Fr: "Fi r" and ne: "finite_focus_pending F (rep_project R r) \<noteq> {||}"
     and rec: "\<And>F' B' s. Fi s \<Longrightarrow>
       recI F' B' s = finite_committed_search_by (finite_resolution_select_at pr \<kappa> P) \<kappa> K P m F' B' (rep_project R s)"
     and recfound: "\<And>F' B' s x. Fi s \<Longrightarrow> x |\<in>| resolution_found (recI F' B' s) \<Longrightarrow> \<exists>r0. Fi r0 \<and> rep_project R r0 = x"
-  shows "represented_committed_step R pr gd \<kappa> K P recI F B r =
+  shows "tested_committed_step R T gd \<kappa> P recI F B r =
     finite_committed_search_by (finite_resolution_select_at pr \<kappa> P) \<kappa> K P (Suc m) F B (rep_project R r)"
 proof -
   let ?recA = "finite_committed_search_by (finite_resolution_select_at pr \<kappa> P) \<kappa> K P m"
   let ?st = "rep_project R r" let ?V = "rep_access R r"
-  let ?so = "if fBex (access_goals ?V) (gd r) then Some ?st else None"
-  let ?rp = "\<lambda>h. gd r h \<and> pr (the (map_option (finite_focused F) ?so)) (access_goal ?V h)"
+  let ?x = "tests_prepare T F r ?V"
+  let ?rp = "\<lambda>h. gd r h \<and> tests_priority T F r ?V ?x h"
   interpret v: access_formed \<kappa> P ?V ?st by (rule access[OF Fr])
   interpret vf: access_formed \<kappa> P "access_focused F ?V" "finite_focused F ?st" by (rule v.focused)
   have rp: "?rp h \<longleftrightarrow> pr (finite_focused F ?st) (access_goal (access_focused F ?V) h)"
     if hf: "h |\<in>| access_goals (access_focused F ?V)" for h
   proof -
     have h: "h |\<in>| access_goals ?V" using hf by (simp add: access_focus_goals_def)
+    have hF: "h |\<in>| access_focus_goals F ?V" using hf by simp
     show ?thesis
     proof (cases "gd r h")
       case True
-      then have "?so = Some ?st" using h by auto
-      then show ?thesis using True by simp
+      then show ?thesis using prepared[OF Fr h True, of F B] hF by (simp add: tests_exact_at_def Let_def)
     next
       case False
-      then show ?thesis using guard[OF Fr h False] by simp
+      then show ?thesis using guard_at[OF Fr h False, of F] by simp
     qed
   qed
   note sel = vf.select[of ?rp pr, OF rp]
@@ -719,78 +872,81 @@ proof -
         using rec[OF conjunct1[OF c]] conjunct2[OF c] bar by simp
     qed
     show ?thesis
-      unfolding represented_committed_step_def Let_def Access_Construction finite_committed_search_by_in.simps(2) if_not_P[OF ne]
+      unfolding tested_committed_step_def Let_def Access_Construction finite_committed_search_by_in.simps(2) if_not_P[OF ne]
       by (simp add: s M img fg)
   next
     case (Access_Goals G)
     have s: "finite_resolution_select_at pr \<kappa> P (finite_focused F ?st) = Select_Goals (fimage (access_goal ?V) G)"
       using sel(1) Access_Goals by simp
-    have img: "fimage (represented_committed_goal_outcome R gd recI K F B r ?V ?so) G =
+    have img: "fimage (tested_committed_goal_outcome R T gd recI F B r ?V ?x) G =
         fimage (finite_committed_goal_outcome ?recA K P F B ?st) (fimage (access_goal ?V) G)"
       unfolding fset.map_comp comp_def
     proof (rule fset.map_cong0)
       fix h assume hG: "h \<in> fset G"
       have "h |\<in>| access_goals (access_focused F ?V)" using Access_Goals hG by (rule access_select_goals)
       then have h: "h |\<in>| access_goals ?V" by (simp add: access_focus_goals_def)
-      have so: "gd r h \<Longrightarrow> ?so = Some ?st" using h by auto
-      show "represented_committed_goal_outcome R gd recI K F B r ?V ?so h =
+      show "tested_committed_goal_outcome R T gd recI F B r ?V ?x h =
           finite_committed_goal_outcome ?recA K P F B ?st (access_goal ?V h)"
-        by (rule goal_outcome[where recA = ?recA and recI = recI, OF Fr h so rec recfound])
+        by (rule tested_goal_outcome[where recA = ?recA and recI = recI, OF Fr h prepared[OF Fr h] rec recfound])
     qed
     show ?thesis
-      unfolding represented_committed_step_def Let_def Access_Goals finite_committed_search_by_in.simps(2) if_not_P[OF ne]
+      unfolding tested_committed_step_def Let_def Access_Goals finite_committed_search_by_in.simps(2) if_not_P[OF ne]
       by (simp add: s img)
   next
     case Access_None
     have s: "finite_resolution_select_at pr \<kappa> P (finite_focused F ?st) = Select_None"
       using sel(1) Access_None by simp
     show ?thesis
-      unfolding represented_committed_step_def Let_def Access_None finite_committed_search_by_in.simps(2) if_not_P[OF ne]
+      unfolding tested_committed_step_def Let_def Access_None finite_committed_search_by_in.simps(2) if_not_P[OF ne]
       by (simp add: s fg)
   qed
 qed
 
-lemma step_found:
+lemma tested_step_found:
   assumes Fr: "Fi r"
     and recfound: "\<And>F' B' s x. Fi s \<Longrightarrow> x |\<in>| resolution_found (recI F' B' s) \<Longrightarrow> \<exists>r0. Fi r0 \<and> rep_project R r0 = x"
-    and x: "x |\<in>| resolution_found (represented_committed_step R pr gd \<kappa> K P recI F B r)"
+    and x: "x |\<in>| resolution_found (tested_committed_step R T gd \<kappa> P recI F B r)"
   shows "\<exists>r0. Fi r0 \<and> rep_project R r0 = x"
 proof -
   let ?V = "rep_access R r"
-  let ?so = "if fBex (access_goals ?V) (gd r) then Some (rep_project R r) else None"
-  let ?rp = "\<lambda>h. gd r h \<and> pr (the (map_option (finite_focused F) ?so)) (access_goal ?V h)"
+  let ?x = "tests_prepare T F r ?V"
+  let ?rp = "\<lambda>h. gd r h \<and> tests_priority T F r ?V ?x h"
   have goal: "\<exists>r0. Fi r0 \<and> rep_project R r0 = y"
-    if h: "h |\<in>| access_goals ?V" and y: "y |\<in>| resolution_found (represented_committed_goal_outcome R gd recI K F B r ?V ?so h)"
+    if h: "h |\<in>| access_goals ?V" and y: "y |\<in>| resolution_found (tested_committed_goal_outcome R T gd recI F B r ?V ?x h)"
     for h y
   proof (cases "access_pruned_among (\<lambda>q. q |\<notin>| B) ?V h \<or> access_pruned_among (\<lambda>q. q |\<in>| B) ?V h")
     case True
-    then show ?thesis using y by (auto simp: represented_committed_goal_outcome_def split: if_splits)
+    then show ?thesis using y by (auto simp: tested_committed_goal_outcome_def split: if_splits)
   next
     case np: False
     show ?thesis
-    proof (cases "gd r h \<and> finite_goal_committing K F (the ?so) (access_goal ?V h)")
+    proof (cases "gd r h \<and> tests_committing T F r ?V ?x h")
       case True
-      let ?g = "access_goal ?V h" let ?q = "resolution_goal_position ?g"
-      let ?sub = "recI (Some ?q) (finite_goal_sub_barring K F B (the ?so) ?g) (represented_produced R K F r (the ?so) ?g)"
+      obtain q B' r' where pd: "tests_produced T F B r ?V ?x h = (q,B',r')" by (metis prod_cases3)
+      have ex: "tests_exact_at R T Fi K pr F B r ?V ?x h" by (rule prepared[OF Fr h conjunct1[OF True]])
+      have fc: "finite_goal_committing K F (rep_project R r) (access_goal ?V h)"
+        using ex True by (simp add: tests_exact_at_def Let_def)
+      have Fr': "Fi r'" using ex fc pd by (simp add: tests_exact_at_def Let_def)
+      let ?sub = "recI (Some q) B' r'"
       have "y |\<in>| resolution_found (finite_outcome_union (finsert (Resolution_Outcome {||} (resolution_diagnoses ?sub))
-          (fimage (\<lambda>s. recI F (finite_committed_barring B s) (rep_share R s)) (finite_kept ?q (resolution_found ?sub)))))"
-        using y np True by (simp add: represented_committed_goal_outcome_def Let_def)
-      then obtain s where s: "s |\<in>| finite_kept ?q (resolution_found ?sub)"
+          (fimage (\<lambda>s. recI F (finite_committed_barring B s) (rep_share R s)) (finite_kept q (resolution_found ?sub)))))"
+        using y np True pd by (simp add: tested_committed_goal_outcome_def Let_def)
+      then obtain s where s: "s |\<in>| finite_kept q (resolution_found ?sub)"
         and ys: "y |\<in>| resolution_found (recI F (finite_committed_barring B s) (rep_share R s))"
         by (auto simp: finite_outcome_union_def)
       have "s |\<in>| resolution_found ?sub" by (rule fsubsetD[OF finite_kept_subset s])
-      from recfound[OF produced(1)[OF Fr] this] obtain r0 where r0: "Fi r0 \<and> rep_project R r0 = s" by (rule exE)
+      from recfound[OF Fr' this] obtain r0 where r0: "Fi r0 \<and> rep_project R r0 = s" by (rule exE)
       have "Fi (rep_share R s)" using share[OF conjunct1[OF r0]] conjunct2[OF r0] by simp
       from recfound[OF this ys] show ?thesis .
     next
       case nc: False
-      let ?cm = "gd r h \<and> finite_material_committed K F (the ?so) (access_goal ?V h)"
+      let ?cm = "gd r h \<and> tests_material T F r ?V ?x h"
       let ?f = "recI F (if ?cm then B |\<union>| rep_node_positions R r else B)"
       let ?S = "represented_committed_successors R F ?cm r ?V h"
-      let ?k = "\<lambda>s'. access_determinate_key (resolution_goal_position (access_goal ?V h)) (rep_access R s')"
+      let ?k = "\<lambda>s'. access_determinate_key (tests_position T r ?V ?x h) (rep_access R s')"
       have yj: "y |\<in>| resolution_found (if access_focus_ground F ?V
           then finite_first_outcome ?f (finite_key_blocks ?k ?S) else finite_outcome_union (fimage ?f ?S))"
-        using y np nc by (auto simp: represented_committed_goal_outcome_def Let_def split: if_splits)
+        using y np nc by (auto simp: tested_committed_goal_outcome_def Let_def split: if_splits)
       have "\<exists>s'. s' |\<in>| ?S \<and> y |\<in>| resolution_found (?f s')"
       proof (cases "access_focus_ground F ?V")
         case True
@@ -812,7 +968,7 @@ proof -
     case (Access_Construction N)
     from x obtain m where m: "m |\<in>| N"
       and y: "x |\<in>| resolution_found (recI F (B |\<union>| rep_node_positions R r) (rep_construct R r m))"
-      unfolding represented_committed_step_def Let_def Access_Construction
+      unfolding tested_committed_step_def Let_def Access_Construction
       by (auto simp: finite_outcome_union_def split: if_splits)
     have "m |\<in>| access_construction_nodes (access_focused F ?V)" using Access_Construction m by (rule access_select_construction)
     then have "\<exists>q. m |\<in>| access_nodes_at (access_focused F ?V) q" by (rule access_construction_nodes_at)
@@ -822,19 +978,19 @@ proof -
   next
     case (Access_Goals G)
     from x obtain h where hG: "h |\<in>| G"
-      and y: "x |\<in>| resolution_found (represented_committed_goal_outcome R gd recI K F B r ?V ?so h)"
-      unfolding represented_committed_step_def Let_def Access_Goals by (auto simp: finite_outcome_union_def)
+      and y: "x |\<in>| resolution_found (tested_committed_goal_outcome R T gd recI F B r ?V ?x h)"
+      unfolding tested_committed_step_def Let_def Access_Goals by (auto simp: finite_outcome_union_def)
     have "h |\<in>| access_goals (access_focused F ?V)" using Access_Goals hG by (rule access_select_goals)
     then have h: "h |\<in>| access_goals ?V" by (simp add: access_focus_goals_def)
     show ?thesis by (rule goal[OF h y])
   next
     case Access_None
-    then show ?thesis using x unfolding represented_committed_step_def Let_def by simp
+    then show ?thesis using x unfolding tested_committed_step_def Let_def by simp
   qed
 qed
 
-lemma found:
-  assumes "Fi r" and "x |\<in>| resolution_found (represented_committed_search R pr gd \<kappa> K P n F B r)"
+lemma tested_found:
+  assumes "Fi r" and "x |\<in>| resolution_found (tested_committed_search R T gd \<kappa> P n F B r)"
   shows "\<exists>r0. Fi r0 \<and> rep_project R r0 = x"
   using assms
 proof (induction n arbitrary: F B r x)
@@ -849,20 +1005,20 @@ next
   next
     case False
     have f: "Fi (rep_refresh R r)" using refresh[OF Suc.prems(1)] by simp
-    have x: "x |\<in>| resolution_found (represented_committed_step R pr gd \<kappa> K P
-        (represented_committed_search R pr gd \<kappa> K P n) F B (rep_refresh R r))"
+    have x: "x |\<in>| resolution_found (tested_committed_step R T gd \<kappa> P
+        (tested_committed_search R T gd \<kappa> P n) F B (rep_refresh R r))"
       using Suc.prems(2) False by simp
     show ?thesis
-    proof (rule step_found[OF f _ x])
-      fix F' B' s y assume "Fi s" "y |\<in>| resolution_found (represented_committed_search R pr gd \<kappa> K P n F' B' s)"
+    proof (rule tested_step_found[OF f _ x])
+      fix F' B' s y assume "Fi s" "y |\<in>| resolution_found (tested_committed_search R T gd \<kappa> P n F' B' s)"
       then show "\<exists>r0. Fi r0 \<and> rep_project R r0 = y" by (rule Suc.IH)
     qed
   qed
 qed
 
-theorem search:
+theorem tested_search:
   assumes "Fi r"
-  shows "represented_committed_search R pr gd \<kappa> K P n F B r =
+  shows "tested_committed_search R T gd \<kappa> P n F B r =
     finite_committed_search_by (finite_resolution_select_at pr \<kappa> P) \<kappa> K P n F B (rep_project R r)"
   using assms
 proof (induction n arbitrary: F B r)
@@ -881,27 +1037,201 @@ next
   next
     case False
     have ne: "access_focus_goals F (rep_access R r) \<noteq> {||}" using False v.focus_goals_empty[of F] by simp
-    have e: "represented_committed_step R pr gd \<kappa> K P (represented_committed_search R pr gd \<kappa> K P n) F B (rep_refresh R r) =
+    have e: "tested_committed_step R T gd \<kappa> P (tested_committed_search R T gd \<kappa> P n) F B (rep_refresh R r) =
         finite_committed_search_by (finite_resolution_select_at pr \<kappa> P) \<kappa> K P (Suc n) F B (rep_project R (rep_refresh R r))"
-    proof (rule step)
+    proof (rule tested_step)
       show "Fi (rep_refresh R r)" by (rule f)
     next
       show "finite_focus_pending F (rep_project R (rep_refresh R r)) \<noteq> {||}" using False p by simp
     next
       fix F' B' s assume "Fi s"
-      then show "represented_committed_search R pr gd \<kappa> K P n F' B' s =
+      then show "tested_committed_search R T gd \<kappa> P n F' B' s =
           finite_committed_search_by (finite_resolution_select_at pr \<kappa> P) \<kappa> K P n F' B' (rep_project R s)" by (rule Suc.IH)
     next
-      fix F' B' s x assume "Fi s" "x |\<in>| resolution_found (represented_committed_search R pr gd \<kappa> K P n F' B' s)"
-      then show "\<exists>r0. Fi r0 \<and> rep_project R r0 = x" by (rule found)
+      fix F' B' s x assume "Fi s" "x |\<in>| resolution_found (tested_committed_search R T gd \<kappa> P n F' B' s)"
+      then show "\<exists>r0. Fi r0 \<and> rep_project R r0 = x" by (rule tested_found)
     qed
-    have "represented_committed_search R pr gd \<kappa> K P (Suc n) F B r =
-        represented_committed_step R pr gd \<kappa> K P (represented_committed_search R pr gd \<kappa> K P n) F B (rep_refresh R r)"
+    have "tested_committed_search R T gd \<kappa> P (Suc n) F B r =
+        tested_committed_step R T gd \<kappa> P (tested_committed_search R T gd \<kappa> P n) F B (rep_refresh R r)"
       using ne by simp
     then show ?thesis using e p by simp
   qed
 qed
 
+end
+
+text \<open>
+  A structure strengthened by an invariant of the projected states that the steps' projections keep: the construction,
+  a goal's successors, a call's at the focus, a committed material premise's and a substitution.
+\<close>
+
+lemma committed_structure_invariant:
+  assumes st: "committed_representation_structure R Fi \<kappa> P"
+    and construct: "\<And>s nd. Fi s \<Longrightarrow> I (rep_project R s) \<Longrightarrow> I (finite_construction_step \<kappa> P (rep_project R s) nd)"
+    and successors: "\<And>s g st'. Fi s \<Longrightarrow> I (rep_project R s) \<Longrightarrow> g |\<in>| resolution_pending (rep_project R s) \<Longrightarrow>
+      st' |\<in>| finite_goal_successors P (rep_project R s) g \<Longrightarrow> I st'"
+    and call: "\<And>s q rr d p st'. Fi s \<Longrightarrow> I (rep_project R s) \<Longrightarrow>
+      Resolution_Call_Goal q rr d p |\<in>| resolution_pending (rep_project R s) \<Longrightarrow>
+      st' |\<in>| finite_call_successors P (rep_project R s) q rr d p \<Longrightarrow> I st'"
+    and solution: "\<And>s q rr M Ws st'. Fi s \<Longrightarrow> I (rep_project R s) \<Longrightarrow>
+      Resolution_Material_Goal q rr M |\<in>| resolution_pending (rep_project R s) \<Longrightarrow>
+      st' |\<in>| finite_solution_successors (rep_project R s) q rr M Ws \<Longrightarrow> I st'"
+    and substitute: "\<And>st \<sigma>. I st \<Longrightarrow> I (resolution_state_substitute \<sigma> st)"
+  shows "committed_representation_structure R (\<lambda>s. Fi s \<and> I (rep_project R s)) \<kappa> P"
+proof -
+  interpret s: committed_representation_structure R Fi \<kappa> P by (rule st)
+  have pend: "access_goal (rep_access R s) h |\<in>| resolution_pending (rep_project R s)"
+    if "Fi s" "h |\<in>| access_goals (rep_access R s)" for s h
+  proof -
+    interpret v: access_formed \<kappa> P "rep_access R s" "rep_project R s" by (rule s.access[OF that(1)])
+    show ?thesis by (rule v.goal_in_pending[OF that(2)])
+  qed
+  show ?thesis
+  proof (rule committed_representation_structure.intro, goal_cases)
+    case (1 s)
+    then show ?case using s.access by blast
+  next
+    case (2 s)
+    then show ?case using s.refresh[of s] by simp
+  next
+    case (3 s m q)
+    then show ?case using s.construct[of s m q] construct[of s "access_node (rep_access R s) m"] by simp
+  next
+    case (4 s h)
+    note c = s.successors[OF conjunct1[OF 4(1)] 4(2)]
+    have i: "I (rep_project R s')" if s': "s' |\<in>| rep_successors R s h" for s'
+    proof -
+      have "rep_project R s' |\<in>| fimage (rep_project R) (rep_successors R s h)" using s' by (rule fimageI)
+      then have "rep_project R s' |\<in>| finite_goal_successors P (rep_project R s) (access_goal (rep_access R s) h)"
+        using c by simp
+      then show ?thesis
+        by (rule successors[OF conjunct1[OF 4(1)] conjunct2[OF 4(1)] pend[OF conjunct1[OF 4(1)] 4(2)]])
+    qed
+    show ?case using c i by blast
+  next
+    case (5 s h q rr d p)
+    note c = s.call[OF conjunct1[OF 5(1)] 5(2) 5(3)]
+    have g: "Resolution_Call_Goal q rr d p |\<in>| resolution_pending (rep_project R s)"
+      using pend[OF conjunct1[OF 5(1)] 5(2)] 5(3) by simp
+    have i: "I (rep_project R s')" if s': "s' |\<in>| rep_call_successors R s h" for s'
+    proof -
+      have "rep_project R s' |\<in>| fimage (rep_project R) (rep_call_successors R s h)" using s' by (rule fimageI)
+      then have "rep_project R s' |\<in>| finite_call_successors P (rep_project R s) q rr d p" using c by simp
+      then show ?thesis by (rule call[OF conjunct1[OF 5(1)] conjunct2[OF 5(1)] g])
+    qed
+    show ?case using c i by blast
+  next
+    case (6 s h q rr M Ws)
+    note c = s.solution[OF conjunct1[OF 6(1)] 6(2) 6(3), of Ws]
+    have g: "Resolution_Material_Goal q rr M |\<in>| resolution_pending (rep_project R s)"
+      using pend[OF conjunct1[OF 6(1)] 6(2)] 6(3) by simp
+    have i: "I (rep_project R s')" if s': "s' |\<in>| rep_solution_successors R s h Ws" for s'
+    proof -
+      have "rep_project R s' |\<in>| fimage (rep_project R) (rep_solution_successors R s h Ws)" using s' by (rule fimageI)
+      then have "rep_project R s' |\<in>| finite_solution_successors (rep_project R s) q rr M Ws" using c by simp
+      then show ?thesis by (rule solution[OF conjunct1[OF 6(1)] conjunct2[OF 6(1)] g])
+    qed
+    show ?case using c i by blast
+  next
+    case (7 s q)
+    then show ?case using s.positions by blast
+  next
+    case (8 s \<sigma> D)
+    then show ?case using s.substitute[OF conjunct1[OF 8(1)] 8(2)] substitute[OF conjunct2[OF 8(1)]] by simp
+  next
+    case (9 s)
+    then show ?case using s.share[of s] by simp
+  qed
+qed
+
+text \<open>
+  F2c's form: the guard refuses at every state, and the tests are read on the projection. It is the tested form at
+  @{const projected_tests} (@{text committed_representation_formed.tested}), and its step and search are the tested
+  step's and search's there.
+\<close>
+
+locale committed_representation_formed = committed_representation_structure R Fi \<kappa> P
+  for R :: "('r,'g,'n,'k,'a,'s::linorder,'d,'c,'z) committed_representation_scheme" and Fi \<kappa> P +
+  fixes K :: "('a,'s,'d,'c) resolution_commitment"
+    and pr :: "('a,'s,'d,'c) resolution_state \<Rightarrow> ('a,'s,'d,'c) resolution_goal \<Rightarrow> bool"
+    and gd :: "'r \<Rightarrow> 'g \<Rightarrow> bool"
+  assumes guard: "\<And>s h F st. Fi s \<Longrightarrow> h |\<in>| access_goals (rep_access R s) \<Longrightarrow> \<not> gd s h \<Longrightarrow>
+      \<not> commit_call K F st (access_goal (rep_access R s) h) \<and> \<not> commit_material K F st (access_goal (rep_access R s) h) \<and>
+      \<not> pr st (access_goal (rep_access R s) h)"
+begin
+
+lemma projected_exact:
+  assumes Fr: "Fi r" and so: "so = Some (rep_project R r)"
+  shows "tests_exact_at R (projected_tests R K pr gd) Fi K pr F B r (rep_access R r) so h"
+  using so by (simp add: tests_exact_at_def projected_tests_def Let_def produced[OF Fr])
+
+lemma tested: "tested_representation_formed R Fi \<kappa> P K pr (projected_tests R K pr gd) gd"
+proof (rule tested_representation_formed.intro[OF committed_representation_structure_axioms], unfold_locales, goal_cases)
+  case (1 s h F)
+  then show ?case using guard by blast
+next
+  case (2 s h F B)
+  then have "tests_prepare (projected_tests R K pr gd) F s (rep_access R s) = Some (rep_project R s)"
+    by (auto simp: projected_tests_def)
+  then show ?case by (rule projected_exact[OF 2(1)])
+next
+  case (3 s h x)
+  then show ?case by (simp add: projected_tests_def)
+qed
+
+lemma goal_outcome:
+  assumes Fr: "Fi r" and h: "h |\<in>| access_goals (rep_access R r)"
+    and so: "gd r h \<Longrightarrow> so = Some (rep_project R r)"
+    and rec: "\<And>F' B' s. Fi s \<Longrightarrow> recI F' B' s = recA F' B' (rep_project R s)"
+    and recfound: "\<And>F' B' s x. Fi s \<Longrightarrow> x |\<in>| resolution_found (recI F' B' s) \<Longrightarrow> \<exists>r0. Fi r0 \<and> rep_project R r0 = x"
+  shows "represented_committed_goal_outcome R gd recI K F B r (rep_access R r) so h =
+    finite_committed_goal_outcome recA K P F B (rep_project R r) (access_goal (rep_access R r) h)"
+proof -
+  interpret t: tested_representation_formed R Fi \<kappa> P K pr "projected_tests R K pr gd" gd by (rule tested)
+  have ex: "gd r h \<Longrightarrow> tests_exact_at R (projected_tests R K pr gd) Fi K pr F B r (rep_access R r) so h"
+    by (rule projected_exact[OF Fr so])
+  show ?thesis unfolding represented_committed_goal_outcome_tested[where pr=pr]
+    by (rule t.tested_goal_outcome[where recA = recA and recI = recI, OF Fr h ex rec recfound])
+qed
+
+lemma step:
+  assumes Fr: "Fi r" and ne: "finite_focus_pending F (rep_project R r) \<noteq> {||}"
+    and rec: "\<And>F' B' s. Fi s \<Longrightarrow>
+      recI F' B' s = finite_committed_search_by (finite_resolution_select_at pr \<kappa> P) \<kappa> K P m F' B' (rep_project R s)"
+    and recfound: "\<And>F' B' s x. Fi s \<Longrightarrow> x |\<in>| resolution_found (recI F' B' s) \<Longrightarrow> \<exists>r0. Fi r0 \<and> rep_project R r0 = x"
+  shows "represented_committed_step R pr gd \<kappa> K P recI F B r =
+    finite_committed_search_by (finite_resolution_select_at pr \<kappa> P) \<kappa> K P (Suc m) F B (rep_project R r)"
+proof -
+  interpret t: tested_representation_formed R Fi \<kappa> P K pr "projected_tests R K pr gd" gd by (rule tested)
+  show ?thesis unfolding represented_committed_step_tested by (rule t.tested_step[OF Fr ne rec recfound])
+qed
+
+lemma step_found:
+  assumes Fr: "Fi r"
+    and recfound: "\<And>F' B' s x. Fi s \<Longrightarrow> x |\<in>| resolution_found (recI F' B' s) \<Longrightarrow> \<exists>r0. Fi r0 \<and> rep_project R r0 = x"
+    and x: "x |\<in>| resolution_found (represented_committed_step R pr gd \<kappa> K P recI F B r)"
+  shows "\<exists>r0. Fi r0 \<and> rep_project R r0 = x"
+proof -
+  interpret t: tested_representation_formed R Fi \<kappa> P K pr "projected_tests R K pr gd" gd by (rule tested)
+  show ?thesis by (rule t.tested_step_found[OF Fr recfound x[unfolded represented_committed_step_tested]])
+qed
+
+lemma found:
+  assumes "Fi r" and "x |\<in>| resolution_found (represented_committed_search R pr gd \<kappa> K P n F B r)"
+  shows "\<exists>r0. Fi r0 \<and> rep_project R r0 = x"
+proof -
+  interpret t: tested_representation_formed R Fi \<kappa> P K pr "projected_tests R K pr gd" gd by (rule tested)
+  show ?thesis by (rule t.tested_found[OF assms(1) assms(2)[unfolded represented_committed_search_tested]])
+qed
+
+theorem search:
+  assumes "Fi r"
+  shows "represented_committed_search R pr gd \<kappa> K P n F B r =
+    finite_committed_search_by (finite_resolution_select_at pr \<kappa> P) \<kappa> K P n F B (rep_project R r)"
+proof -
+  interpret t: tested_representation_formed R Fi \<kappa> P K pr "projected_tests R K pr gd" gd by (rule tested)
+  show ?thesis unfolding represented_committed_search_tested by (rule t.tested_search[OF assms])
+qed
 text \<open>At no commitment, the empty priority and no construction the committed search is R3's search over the representation.\<close>
 
 theorem plain:
@@ -1003,15 +1333,11 @@ proof -
   then show ?thesis using at by simp
 qed
 
-lemma shared_committed_formed:
+lemma shared_committed_structure:
   assumes sock: "clause_sockets_distinct P"
-    and guard: "\<And>s h F st. search_formed \<kappa> P s \<and> search_placeable (search_project s) \<Longrightarrow>
-      h |\<in>| access_goals (shared_access \<kappa> P s) \<Longrightarrow> \<not> gd s h \<Longrightarrow>
-      \<not> commit_call K F st (access_goal (shared_access \<kappa> P s) h) \<and>
-      \<not> commit_material K F st (access_goal (shared_access \<kappa> P s) h) \<and> \<not> pr st (access_goal (shared_access \<kappa> P s) h)"
-  shows "committed_representation_formed (shared_committed_representation \<kappa> P)
-    (\<lambda>r. search_formed \<kappa> P r \<and> search_placeable (search_project r)) \<kappa> P K pr gd"
-proof (rule committed_representation_formed.intro, goal_cases)
+  shows "committed_representation_structure (shared_committed_representation \<kappa> P)
+    (\<lambda>r. search_formed \<kappa> P r \<and> search_placeable (search_project r)) \<kappa> P"
+proof (rule committed_representation_structure.intro, goal_cases)
   case (1 s)
   then show ?case using shared_access_formed[of \<kappa> P s] by (simp add: shared_committed_representation_def)
 next
@@ -1082,8 +1408,18 @@ next
   then have f: "search_formed \<kappa> P s" "search_placeable (search_project s)" by (simp_all add: shared_committed_representation_def)
   have d: "resolution_positions_distinct (search_project s)" using f(2) by (simp add: search_placeable_def)
   show ?case using search_of[OF d] f(2) by (simp add: shared_committed_representation_def)
-next
-  case (10 s h F st)
+qed
+
+lemma shared_committed_formed:
+  assumes sock: "clause_sockets_distinct P"
+    and guard: "\<And>s h F st. search_formed \<kappa> P s \<and> search_placeable (search_project s) \<Longrightarrow>
+      h |\<in>| access_goals (shared_access \<kappa> P s) \<Longrightarrow> \<not> gd s h \<Longrightarrow>
+      \<not> commit_call K F st (access_goal (shared_access \<kappa> P s) h) \<and>
+      \<not> commit_material K F st (access_goal (shared_access \<kappa> P s) h) \<and> \<not> pr st (access_goal (shared_access \<kappa> P s) h)"
+  shows "committed_representation_formed (shared_committed_representation \<kappa> P)
+    (\<lambda>r. search_formed \<kappa> P r \<and> search_placeable (search_project r)) \<kappa> P K pr gd"
+proof (rule committed_representation_formed.intro[OF shared_committed_structure[OF sock]], unfold_locales, goal_cases)
+  case (1 s h F st)
   then show ?case using guard by (simp add: shared_committed_representation_def)
 qed
 

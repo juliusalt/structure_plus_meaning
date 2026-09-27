@@ -563,19 +563,6 @@ end
 
 text \<open>The first join is congruent in its parts and its key on the joined set, and commutes with an image of it.\<close>
 
-lemma finite_first_outcome_cong:
-  assumes "\<And>Y x. Y \<in> set Ys \<Longrightarrow> x |\<in>| Y \<Longrightarrow> f x = g x"
-  shows "finite_first_outcome f Ys = finite_first_outcome g Ys"
-  using assms
-proof (induction Ys)
-  case Nil
-  then show ?case by simp
-next
-  case (Cons X Xs)
-  have i: "fimage f X = fimage g X" by (rule fset.map_cong0) (use Cons.prems in auto)
-  have "finite_first_outcome f Xs = finite_first_outcome g Xs" by (rule Cons.IH) (use Cons.prems in auto)
-  then show ?case using i by (simp add: Let_def)
-qed
 
 lemma finite_first_outcome_blocks_cong:
   assumes key: "\<And>x. x |\<in>| X \<Longrightarrow> key x = key' x" and f: "\<And>x. x |\<in>| X \<Longrightarrow> f x = g x"

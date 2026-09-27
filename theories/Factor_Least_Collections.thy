@@ -527,6 +527,58 @@ definition finite_query_instances_in :: "('a,'s,'d,'c,'v) query_parameters \<Rig
     then Some (map unordered_factor_term (sorted_list_of_fset (fimage (Ordered_Factor_Term \<circ> finite_residual_term) C)))
     else None)"
 
+text \<open>
+  The instances a query computes are its search's answers at the root (VK1, next-edits 207): where every found root
+  call is ground, a formed term is an answer of the outcome (@{const finite_outcome_answer}) exactly when it is the
+  residual term of a found root call, the set @{const finite_query_instances_in} returns
+  (@{text finite_query_instances_answer}). R4's answer at a pattern goal is its instance at R4's search.
+\<close>
+
+lemma finite_root_calls_member:
+  "c |\<in>| finite_root_calls R \<longleftrightarrow> (\<exists>st nd. st |\<in>| resolution_found R \<and> nd |\<in>| resolution_nodes st \<and>
+    resolution_node_position nd = [] \<and> c = resolution_node_call nd)"
+  unfolding finite_root_calls_def by (auto simp: resolution_fset_simps)
+
+lemma finite_outcome_answer_ground:
+  assumes ground: "fBall (finite_root_calls R) (\<lambda>c. finite_pattern_variables c={||})"
+  shows "finite_outcome_answer R x \<longleftrightarrow> finite_term_formed x \<and> x \<in> finite_residual_term ` fset (finite_root_calls R)"
+proof
+  assume "finite_outcome_answer R x"
+  then obtain st nd \<theta> where x: "finite_term_formed x" and st: "st |\<in>| resolution_found R"
+    and nd: "nd |\<in>| resolution_nodes st" and pos: "resolution_node_position nd = []"
+    and v: "resolution_value \<theta> (resolution_node_call nd) = x"
+    unfolding finite_outcome_answer_def by blast
+  have c: "resolution_node_call nd |\<in>| finite_root_calls R" unfolding finite_root_calls_member using st nd pos by blast
+  have "finite_residual_term (resolution_node_call nd) = x"
+    using resolution_value_ground_pattern[of "resolution_node_call nd" \<theta>] ground c v by auto
+  then show "finite_term_formed x \<and> x \<in> finite_residual_term ` fset (finite_root_calls R)" using x c by blast
+next
+  assume "finite_term_formed x \<and> x \<in> finite_residual_term ` fset (finite_root_calls R)"
+  then obtain c where x: "finite_term_formed x" and c: "c |\<in>| finite_root_calls R" and cx: "x = finite_residual_term c"
+    by blast
+  obtain st nd where st: "st |\<in>| resolution_found R" and nd: "nd |\<in>| resolution_nodes st"
+    and pos: "resolution_node_position nd = []" and call: "c = resolution_node_call nd"
+    using c unfolding finite_root_calls_member by blast
+  have "resolution_value (\<lambda>_. x) (resolution_node_call nd) = x"
+    using resolution_value_ground_pattern[of c "\<lambda>_. x"] ground c cx call by auto
+  then show "finite_outcome_answer R x" unfolding finite_outcome_answer_def using x st nd pos by blast
+qed
+
+lemma finite_query_instances_answer:
+  assumes instances: "finite_query_instances_in \<Xi> P n q W=Some Ts"
+  shows "finite_term_formed x \<and> x \<in> set Ts \<longleftrightarrow> finite_outcome_answer (finite_query_search_in \<Xi> P n (query_site q)
+    (map_finite_term_pattern finite_query_variable (finite_query_pattern q W))) x"
+proof -
+  let ?R = "finite_query_search_in \<Xi> P n (query_site q) (map_finite_term_pattern finite_query_variable (finite_query_pattern q W))"
+  have ground: "fBall (finite_root_calls ?R) (\<lambda>c. finite_pattern_variables c={||})"
+    and Ts: "Ts=map unordered_factor_term (sorted_list_of_fset (fimage (Ordered_Factor_Term \<circ> finite_residual_term)
+      (finite_root_calls ?R)))"
+    using instances by (simp_all add: finite_query_instances_in_def Let_def split: if_splits)
+  have set: "set Ts = finite_residual_term ` fset (finite_root_calls ?R)"
+    unfolding Ts by (force simp: resolution_fset_simps)
+  show ?thesis unfolding finite_outcome_answer_ground[OF ground] set by simp
+qed
+
 fun finite_resolution_unresolved :: "('a,'s,'d,'c) finite_resolution_result \<Rightarrow> bool" where
   "finite_resolution_unresolved (Finite_Unresolved D)=True"
 | "finite_resolution_unresolved r=False"
@@ -813,15 +865,13 @@ proof -
     using answers inputs formed matching
     by (cases "finite_query_instances_in \<Xi> P n q W") (auto simp: finite_query_answers_in_def split: if_splits)
   have clean: "resolution_diagnoses (finite_query_search_in \<Xi> P n (query_site q) ?gs)={||}"
-    and ground: "fBall (finite_root_calls (finite_query_search_in \<Xi> P n (query_site q) ?gs)) (\<lambda>c. finite_pattern_variables c={||})"
-    and Ts: "Ts=map unordered_factor_term (sorted_list_of_fset (fimage (Ordered_Factor_Term \<circ> finite_residual_term)
-      (finite_root_calls (finite_query_search_in \<Xi> P n (query_site q) ?gs))))"
-    using instances by (simp_all add: finite_query_instances_in_def Let_def split: if_splits)
+    using instances by (simp add: finite_query_instances_in_def Let_def split: if_splits)
   obtain c \<theta>' where c: "c |\<in>| finite_root_calls (finite_query_search_in \<Xi> P n (query_site q) ?gs)"
     and cvalue: "resolution_value \<theta>' c=t0"
     using lifted clean by blast
-  have "finite_residual_term c=t0" using resolution_value_ground_pattern[of c \<theta>'] ground c cvalue by auto
-  then have t0mem: "t0 \<in> set Ts" unfolding Ts using c by (force simp: fimage_iff)
+  have "finite_outcome_answer (finite_query_search_in \<Xi> P n (query_site q) ?gs) t0"
+    using c cvalue tf unfolding finite_outcome_answer_def finite_root_calls_member by blast
+  then have t0mem: "t0 \<in> set Ts" using finite_query_instances_answer[OF instances] by blast
   define r where "r=finite_parameters_resolution (fst \<Xi>) P (query_site q) t0 n"
   have A: "A=concat (map (finite_query_answer q W)
       (map (\<lambda>t. (t,finite_parameters_resolution (fst \<Xi>) P (query_site q) t n)) Ts))"

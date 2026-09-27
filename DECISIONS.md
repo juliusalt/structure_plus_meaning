@@ -18591,7 +18591,10 @@ abstract step's — so R4's and R5's statements are read unchanged, and the refi
   explicit shared terms are ones a later extension of the table could make non-canonical.]
 - Substitution stops at a subterm none of whose variables the unifier binds; an index from each free variable to the goals
   and nodes holding it (an instance of `Carrier_Indexes`) makes a step visit only the holders of the variables its unifier
-  binds; ground nodes and ground goals are kept apart and never substituted.
+  binds; ground nodes and ground goals are kept apart and never substituted. [Corrected by task 890's addition "The step
+  at the given's depth: …" below: every ancestor of the tail of a list a chain builds holds the tail, so the holders of a
+  bound variable grow with the depth and each is walked whole; on the route a node is kept as placed and read through a
+  binding store, a step updating only the set of its call's variables, and the goals alone are substituted.]
 - Per goal: its alternatives (F1), groundness, leaf, independence (from the holder index), and whether it is pruned or
   reusable (F3, from an index of ancestors' and solved nodes' calls by site and reference), so the selection reads class
   sets kept as steps change them.
@@ -18658,6 +18661,250 @@ remaining controls, correction (7)'s three) follows C. The consumers' forms are 
 execution theories import the refinement theories of F2b, F2c and C.
 
 [Recorded 2026-09-26 (task 683's decision; a design, no theory changes).]
+
+### The step at the given's depth: nodes kept as placed under a binding store, positions numbered where only their key is read, solvedness counted at the parent
+
+[Added by task 890, a design, from investigation #886 (`.build/tasks/886/result.md`, accepted; figures in
+`.build/tasks/886/measurement.md`), its finding 1, with review 885's follow-ups 2–4 (`.build/tasks/885/review.md`,
+`.build/tasks/885/measurement.md`), q159's figure (a red-black operation at list keys about 10 µs) and #851's
+follow-up 2 (the position-keyed trees' polymorphic cost, 1.8×), as the planner added them. At the given the route's step
+grows with the depth of the list a chain builds — 17.6 ms a step at steps 0–37, 461 ms at 272–310, 1,713 ms at 311–349
+(#886's s4) — so 77 at the given does not finish and GT6's 31–34 M states are out of reach at any constant step. This
+addition decides the course among #886's (a) a binding store applied lazily, (b) ordered variable sets and (c) interned
+positions: the notions, where they stand in F2's representation, the builds with what each states and keeps, their order
+against F234 #891, FI #892, GT2a–GT2c and GT3 #876, and the step predicted. A design; no theory changes.]
+
+| Earlier proposal or state | Correction |
+|---|---|
+| F2: a step substitutes every goal and node holding a variable its unifier binds, found through the holder index | On the route a node is kept as placed and read through a binding store; a step updates the set of each holding node's call variables, a record keyed by numbers, and resolves a node once, when its call becomes ground (D1b). Goals are substituted as before. |
+| F2's shared state keys every tree by positions, lists of sockets | The deferred search's own records, holder index and store are keyed by position numbers (D1b); the goal side keeps position keys, its operations a step bounded (D1c); numbering it stays open (D1e). |
+| `shared_open`: the count of goal positions at or under a position, adjusted at every prefix where a goal appears or leaves | The count of a position's goal and of its children whose count is not zero, adjusted at the position and carried to the parent only where a count reaches or leaves zero (D1c): the same zero set, the same solvedness. |
+| FI #892's brief: after D1, "which may change the keys the range reads" | D1 keeps the class trees' keys and order (positions, lexicographic): FI waits on F234 alone. |
+
+**What the step pays at the given.** At 300 steps (#886's s3–s5, 16.7–17.8 s in all) the node substitution at the holders
+of a bound variable (`shared_node_entry_substitute`) takes 9.3–10.3 s over 5,886 calls, 65 %: each walks the node's call
+and bindings (231 skeleton nodes, 31 variables), tests a list-based variable set at every pair (664,000 `A |∩| D`, 2.5 s in
+#886's copy) and rebuilds what it binds (`enter_node`'s union 1.3 s); `shared_replace` takes 1.7 s more over 6,767 calls.
+The holders grow from 0.6 to 127 a step, the positions every variable carries from length 5 to 46: every ancestor of the
+tail of the list being built holds the tail in its call and bindings, so a step pays holders × skeleton × position length.
+No ground term is walked (references stop it). Beside it, at #830's fixtures (#885): a red-black operation at list keys
+costs about 10 µs (the key and prefix lookups, the class puts); the step's own goal is re-tested and its three class
+entries put at every update (tests 0.90 s over 42,459 goals, puts about 1.1 s at 20 rows); the held goals (1.6 s), the
+waiting fallback (1.2 s over 775 steps) and the construction nodes (1.5 s) are recomputed each step; stale goal-call
+positions are listed (0.6 s); a step grows with the state (0.09 to 0.76 ms from 3 to 20 rows). At the given the goal side
+pays one more term that grows with the depth: a goal appearing or leaving adjusts the open count at every prefix of its
+position (`presence_count_put` through `tree_count_adjust` along `position_prefixes`), O(depth) operations at keys of
+O(depth) — by difference about 1.3 s of `shared_replace`'s 1.7 s at 300 steps, the 5,886 node re-entries taken at six
+list-keyed operations each (an estimate; D1c measures it).
+
+**The course.** (a) is the cause and is built. (b) and (c) are taken where (a)'s per-holder work stands — its node records,
+its holder index and its store are keyed by position numbers and hold keyed sets — and not in F2b2's goal side, whose
+position-keyed operations a step D1c bounds instead; numbering the goal side, the rest of (c), stays open with its
+trigger (D1e).
+1. *(a), because it is the cause.* The walk grows with the depth three ways; (b) and (c) alone would divide its constant
+   (tenfold at most) and leave it quadratic in the depth. Kept as placed, a node's call variables change by the store's
+   variables law (set arithmetic, no skeleton walked), and a node is resolved once: when its call becomes ground (the
+   node-call index, the pruning, reuse and waiting tests and the kept classes read ground calls alone) and at the
+   projection (a found state, a certificate, F4's value, the commitment tests' decoded node).
+2. *A representation beside F2b2's, not a store in it.* F2b2's projection and view lemmas state the eager operations'
+   effect (`shared_substitute_at_views`); a store read by `shared_state_project` would make them false wherever a step
+   substitutes a pattern holding a variable the store binds (a kept pattern must be resolved before any substitution).
+   The deferred search is therefore a third instance of `resolution_representation` over the same shared search — its
+   goals, classes, table and indexes — as REASONING_REUSE.md's row "State an operation once over what it reads of a state"
+   provides: its search is R3's by `represented_search` from its steps' projections, and every statement of F2b2 stays.
+3. *(c) where only the key is read.* The class trees and the tests read the position order and the prefix relation — F1's
+   least position (`class_first`, `positioned_first`), `access_pruned`'s proper prefix, `finite_position_left` — which a
+   first-occurrence number does not carry (an order-maintenance labelling would, a notion of its own). The node side reads
+   a position only as a key: its records, the holders of a node call's variables and the store are keyed by the number of
+   the position a variable was renamed at (every variable's position part is the position of the clause placed there, or
+   the root). A variable keeps R3's type `('s,'a) resolution_variable`; its key is its position's number, its flag and its
+   name, injective on the numbered variables.
+4. *(b) where a set grows with the depth.* A node call's variables (held by every ancestor of the tail) are a keyed set
+   over the variable key, a variable's holders a set of node numbers; F2a's pattern caches and the goals' sets stay
+   clause-sized fsets.
+
+**D1a — the binding store, a notion.** A new theory `Shared_Binding_Stores` above `Factor_Shared_Patterns` (F2a), no
+search in it. A store is a finite functional relation from variables to shared patterns, each binding with the rank at
+which it was recorded; it is formed over a table when every binding is a formed, collapsed pattern and every variable of
+a binding's pattern is unbound or bound at a greater rank (acyclic). Its resolution replaces each bound variable of a
+pattern by the resolution of its binding, well founded by the rank, through the keyed constructor, so a resolved
+collapsed pattern stays collapsed and the table only extends (`Shared_Term_Tables.share_term_preserves`). Recording an
+idempotent collapsed unifier `s` (its domain and its images' variables unbound in the store) is `store_bind`. The laws,
+each stated once: resolution at the empty store is the identity, and a pattern holding no bound variable is its own
+resolution; *the bind law*, resolution after `store_bind S s` is `shared_substitute` of `s` applied to the resolution
+before; the projection law, a resolution projects to R2's substitution of the projection (`finite_pattern_substitute`),
+so the bind law meets R3's step through `keyed_substitute_exact`; *the variables law*, the variables of a resolution after
+the bind are those before less `s`'s domain, with the variables of `s`'s bindings at the domain's members they held;
+compression, a binding replaced by its resolution leaves every resolution unchanged (a ground resolution memoized as its
+reference, so the ancestors of a closed tail resolve in total time linear in the chain). Its code reads the store through
+an index at a key injective on its variables (`Carrier_Indexes.carrier_index_through_key` at `Tree_Map_Indexes`' carrier).
+D1a adds REASONING_REUSE.md's row for the notion (a substitution kept factored and resolved where read).
+
+**D1b — the deferred search.** A new theory `Factor_Deferred_Search` above `Factor_Shared_Search` and D1a (the builder's
+names below are proposals).
+- *The state.* The shared search (its goals, classes, table and indexes, and its nodes as placed or, once their call is
+  ground, resolved), the store, the positions' first-occurrence numbering (`Shared_Term_Tables.keyed_reference_step` at
+  the position key, the numbering `Keyed_Value_References` states), a record per node number (its position and its call's
+  current variables as a keyed set) and the holder index of node calls (variable key to node numbers, the bucket tree
+  `Factor_Indexed_Resolution.bucket_tree_index`, updated in place by `bucket_tree_updates`).
+- *Projection and formation.* `deferred_project`: the shared search's projection with every node resolved through the
+  store. `deferred_formed`: the shared state formed for its goals and kept nodes, F4's node-reading clauses (the values,
+  the unconstructed variables) read at the resolved nodes; the store formed and binding no variable a goal holds; every
+  node position and every variable position part numbered; each record's variables exactly its resolved call's; every
+  node whose resolved call holds a variable in that variable's bucket (a superset); a node whose resolved call is ground
+  resolved in the shared state, its call its reference. Established by `deferred_of` (the shared search of an R3 state,
+  store empty) and kept by every step; never checked again.
+- *The access.* `shared_access` of the inner search with the node fields read through the store: the node resolved; the
+  registered variables a node leaves free, its binding as `finite_clause_node` places it and unbound in the store; F4's
+  value at the resolved node; F234's node call variables from the record. Formed at `deferred_project` wherever
+  `deferred_formed` holds.
+- *The bind.* The unifier collapsed as `search_bind` collapses it; (1) at each position the shared holder index finds for
+  its domain that holds a goal, the goal substituted and re-entered as today (`shared_goal_entry_substitute`, the classes
+  and registered buckets updated by `search_update`), the node there, if any, left to the store; (2) the store records
+  the bindings; (3) at each node the deferred holder index finds whose call's variables meet the domain, the record
+  updated by the variables law and the node added to the buckets of its new variables; a node whose variables become none
+  is resolved (its call collapsed to its reference, its bindings resolved) and re-entered through `search_put_node`,
+  which keys its call in the node-call index and updates the classes its key touches; (4) D1c's kept held goals and
+  construction nodes updated at the registered variables it binds.
+- *The steps.* `search_call_place` as today, the node as `finite_clause_node` makes it, its position numbered and its
+  record made; the successors are `search_successors_with`, `search_call_successors_with` and
+  `search_solution_successors_with`, new in `Factor_Shared_Search`, taking the bind, today's forms their instances at
+  `search_bind`; F4's refresh and construction in their deferred forms, the value read once at the resolved node, the
+  construction's substitution through the deferred bind.
+- *The search.* `deferred_representation κ P`; `deferred_search`: the representation's search from `deferred_of P st` is
+  R3's (`represented_search`), in the form of `shared_search`; `finite_resolution_search`'s code through it,
+  `finite_resolution_search_shared_code` kept and `[code del]`.
+- *Control and measurement.* In a theory imported by none, one evaluation: the deferred search equal to R3's and the shared
+  search at #830's 3 rows, 113/1, 77/1 and the given's 77 at 30 steps, and at a two-clause list builder at 50, 100 and
+  200 elements (no node substituted, the records updated a step at most the depth, the found state the shared search's).
+  Held (bounded at 3 minutes): the plain search at 77/1 at 200 and at the given's 77 at 30 and 300 steps, before and after,
+  with the node side's parts (records updated, resolutions, their seconds).
+
+**D1c — the goal side's operations bounded.** In `Factor_Shared_Resolution` and `Factor_Shared_Search`, every definition
+restated with its lemmas' statements kept.
+1. *Solvedness at the parent.* `shared_open` holds at a position one for a goal there plus the number of its children
+   whose count is not zero; `shared_replace` adjusts the count at the position and carries the change to the parent only
+   where a count reaches or leaves zero. On a branch each node reaches zero once, so a step pays about one adjustment where
+   it paid one at every prefix. The formation clause is restated; its zero set is the old one, so `shared_open_zero`,
+   `shared_pending_under` and the access's solvedness keep their statements. `classes_keys` reads the positions whose
+   count reached or left zero at the step (the carried chain) instead of every prefix. Should a statement of F2b2 state
+   the prefix count itself rather than its zero set, the child count stands beside `shared_open` instead, and a statement
+   neither keeps goes to the planner.
+2. *The goal-call index pruned* where a goal leaves or changes its ground key; `classes_touched_goals` returns to
+   `classes_touched` (review 885's follow-up 4).
+3. *The class trees written where they change.* `classes_at` reads the goal's old membership and puts it in the classes
+   that hold it, deleting only where it was (q159's skip; review 885's follow-up 2); the step's own goal is still tested,
+   its alternatives and waits being able to change.
+4. *The held goals kept*: a set in the search, updated where a goal holding a registered variable is placed, substituted or
+   removed and where a registered variable is bound (the goals of its registered bucket); `search_select` and
+   `kept_select_by` read it (review 885's follow-up 3).
+5. *The construction nodes kept* likewise: the registered positions whose node constructs, re-tested at the registered
+   variables a step touches.
+The waiting fallback stays computed where the selection reaches it (775 of 15,558 steps at #830's 20 rows): its test reads
+every goal's waits, which a step anywhere can change. Under D1b substitution no longer visits node positions, so the
+class updates at nodes the eager step made are moot. Held (bounded at 3 minutes): #830's 10 and 20 rows and 77/1 at 200
+beside #885's figures.
+
+**D1d — the deferred committed search and the route.** A new theory `Factor_Deferred_Commitments` above
+`Factor_Deferred_Search` and `Factor_Access_Commitments`: F2c's committed representation over the deferred search (its node
+positions the inner node tree's keys, its committed call successors the `_with` form without reuse at the deferred bind,
+its produced state through the deferred bind), formed (`committed_representation_formed`); the committed step's selection
+as #871's over the inner kept classes, and FI's at a proper focus where it has landed; the commitment access with
+`commitment_call_variables` read from the node records (`commitment_formed`), so `access_socket_holders` reads every
+node's call variables at a record lookup; `finite_committed_search`'s code through it; in `Factor_Resolution_Checks` the
+route constants' code equations through it, the `_kept` ones kept and `[code del]`. Control: the route at #830's 3 rows,
+113/7, 77/1 with `given_input_declarations` and the given's 77 at 30 steps, outcomes equal. Held: the route at the given
+(77 over `given_environment` at the check form) at 30, 300 and 350 steps and 77/1 at 200, before and after.
+
+**D1e — the goal side numbered, conditional.** F2b2's trees keyed by position numbers where no order is read, a goal and
+a node carrying their position's number, the holder and call buckets sets of numbers; the class trees keep the position
+order. It restates F2b2's state types, so its placement is the planner's; its trigger is #875 showing the goal side's
+position-keyed operations growing with the chain's depth at the given.
+
+**The builds.**
+
+| Build | Theories | States | Keeps | After | Beside |
+|---|---|---|---|---|---|
+| D1a | `Shared_Binding_Stores` (new), `ROOT`, REASONING_REUSE.md's row | the store, its formation, resolution, bind, the bind, projection and variables laws, compression, its keyed code | everything (a new theory) | — | GT2a #843, F234 #891 |
+| D1b | `Factor_Deferred_Search` (new), `Factor_Shared_Search` (the successors' `_with` forms), a control theory | the deferred state, formation, projection, access and its formation, bind, refresh, construction, successors, `deferred_of`, `deferred_search`, `finite_resolution_search`'s code | R3–R5, K2, F2a–F2d; `finite_resolution_search_shared_code` `[code del]` | D1a, F234 | D1c, FI #892, GT2b, GT2c |
+| D1c | `Factor_Shared_Resolution`, `Factor_Shared_Search` | the child counts, the pruned goal-call index, the class writes, the kept held goals and construction nodes | every statement, the definitions restated | F234 | D1b, FI |
+| D1d | `Factor_Deferred_Commitments` (new), `Factor_Resolution_Checks` (code equations), a control theory | the committed representation over the deferred search, its commitment access, `finite_committed_search`'s and the route constants' code | R5, K2, F2c; the `_kept` equations `[code del]` | D1b | FI, D1c |
+| D1e | F2b2's state (conditional) | the goal side numbered | — | #875 | — |
+
+**The order.** D1a now, beside GT2a and F234; F234 as placed; D1b after D1a and F234; D1c after F234; FI after F234, its
+wait on D1 dropped; D1d after D1b; the later lander of D1b and D1c joins D1c's kept sets to the deferred bind; GT3 after
+D1d, D1c, FI, GT2b and GT2c, its code equations at a table (its (4) and (5)) through the deferred searches, the table's
+index, closing test and class standing in the inner shared search the deferred search reads; #875 after GT3, measuring
+the deferred route and D1e's trigger; GT6 after #875. With D1b, D1c and FI beside GT2b and GT2c, D1d is the one build
+that can stand between GT2c and GT3.
+
+**The step predicted** (ms a step, the route at the given):
+
+| steps | #886 | after F234 | after F234 and D1b–D1d |
+|---|---:|---:|---:|
+| 0–37 (the first 30: 16–66, mean ≈ 24) | 17.6 | 6–8 (#886's finding 7) | 6–8 |
+| 272–310 | 461 | ≈ 450 | 6–8 |
+| 311–349 | 1,713 | ≈ 1,700 | 6–9 |
+
+Method: #886's parts at 300 steps. D1b replaces the node substitution (9.3–10.3 s) and the node re-entries (≈ 0.35 s) by
+5,886 record updates at 1–2 µs (two to four red-black operations at natural keys and a keyed-set update) and 259
+numberings and one resolution a node (≈ 0.1 s); D1c replaces the goal re-entries' prefix walks (≈ 1.3 s) by ≈ 880 × 3
+parent adjustments at ≈ 20 µs (≈ 0.05 s); F234 removes the root decodes (1.9–2.6 s), the table reversals (≈ 0.3–0.4 s)
+and R2's alternatives on decoded goals (0.7–0.8 s, ≈ 0.1 s on the shared goal). What remains — the goals' substitution
+0.6 s, the selection 0.33 s, the tests 0.29 s, registered moves and touched goals 0.3 s, the goals' alternatives and
+re-entries ≈ 0.2 s, access builds ≈ 0.1 s, `search_of` 0.16–0.19 s once — is 1.9–2.2 s over 300 steps, 6–7 ms a step.
+What still grows with the depth is small at the given's measured depths: the node records (127 at step 350, ≤ 0.3 ms) and
+the goal side's key comparisons (about ten list-keyed operations a step at keys of length 46). The unit costs are
+estimates; D1b, D1c and #875 measure them. At 6–9 ms a state GT6's 31–34 M states take 52–85 h on one worker (#886: 43–47 h
+at a constant 5 ms), and 77 at the given at 10⁵–10⁶ states 10 min–2.5 h.
+
+**What the builds must respect.**
+- Every statement of R3–R5, K2 and F2a–F2d kept by name and statement: the shared representation and its search theorem
+  stay; a generalization has today's form as its instance; a restated definition keeps every lemma about it.
+- The given's readers as installed; no clause of any program changes (Q27, Q28); no recorded word changes; payloads inert.
+- A number — a position's, a variable key's, a node's — is a key: never presented, never compared across two searches,
+  never read where the position order or a prefix is.
+- A kept pattern is resolved, never substituted: the store's laws hold of resolutions; goals hold no variable the store
+  binds, so a goal is its own resolution and the unifier reads it as today.
+- A node record's variables are exactly its resolved call's at every formed state (the socket-holder and ground-focus
+  tests read them); a node whose call is ground is resolved in the shared state (the node-call index and the tests read
+  its reference).
+- The formation of the store, the numbering, the records and D1c's counts and kept sets is established by the constructors
+  and kept by every step, never checked again (REASONING_REUSE.md, "A check made where its premise is established").
+- Each notion cited, not restated: `Carrier_Indexes` and its tree carrier, the bucket tree, the first-occurrence table;
+  D1b adds the deferred search to the row "State an operation once over what it reads of a state".
+- No library theory on the route evaluates or imports a refinement collection; controls stand in theories imported by none.
+
+**What it relies on** (task 376's test): the deferred step reads the unifier's bindings, the holders of the bound
+variables and the store, compares variables by their keys for equality and resolves a variable by its binding; a node's
+call is ground when it holds no variable; positions are read as keys where no order is, and as positions where the order
+or a prefix is; a node's solvedness is the zero of its count.
+
+**Weighed and not taken.**
+- The store a field of F2b2's shared state, read by `shared_state_project`: F2b2's view lemmas would fail at a nonempty
+  store, a statement change for nothing a representation beside does not give.
+- (b) and (c) alone, the eager substitution kept: each holder's skeleton still walked; the step still grows with the
+  holders times the skeleton.
+- Groundness counters propagated over the store (each binding's count of unground variables, each reaching zero once: a
+  step's work independent of the holders) in place of each node's call variables: `access_socket_holders` reads every
+  node's call variables, which exact sets give at a lookup and counters do not; the course if the holders a step reach
+  thousands (#875).
+- Numbering all of F2b2's positions now: the order the class trees and the tests read is not a first-occurrence number's,
+  and the rest restates F2b2's state types; D1c bounds the goal side's operations a step first (D1e).
+- Renaming apart by a counter in R3: R3's variables carry their position (F4 finds a registered variable's node by it); a
+  statement change of R3.
+- Goals deferred too, the unifier dereferencing through the store: the unifier, the alternatives and every test read a
+  goal's pattern, and goals are few (19 at step 350, their substitution 0.6 s over 300 steps).
+- The deferred records keyed by positions: three or four list-keyed operations a holder at ≈ 10–20 µs, 127 holders at step
+  350, 5–10 ms a step and growing with the depth squared.
+
+**Left.** D1e and the groundness counters, each on its trigger; (b) at F2a's caches and the goals' sets, clause-sized; the
+waiting fallback, computed where reached; the remaining 6–7 ms (the goals' substitution, the selection, the tests, the
+registered moves), for #875 to attribute after the fixes with GT6's prediction and worker count; #886's Remains (the held
+runs and the copy re-pointed, #875's); the library's `shared_derivation_substitute` at 9.0 s against #886's copy's 3.25 s
+leaves the route with D1b, the eager node substitution standing only in the shared representation.
+
+[Recorded 2026-09-27 (task 890's decision; a design, no theory changes).]
 
 ### The given's calls are decided once: a table of certified calls every judgment closes, and the candidate's part each judgment derives
 
@@ -20397,3 +20644,27 @@ run's spread (the step's own selection ≤ 6 ms of ten steps). Limits: at a prop
 access (every goal filtered and tested each step), not exercised by these fixtures (no production commits). What the step
 still pays of #865's selection — `class_first` listing a class, the held goals and the waiting fallback each step, the
 access built again inside `search_held` — is the kept search's, left to the fix placed after this one.
+
+### The access holds a node's call variables; the committed step and the kept selection are stated once
+
+[Task 891, from #886's findings 2–4 (`.build/tasks/886/result.md`), review 872's and review 885's follow-ups.]
+
+- A node's call variables are a field of the access (`access_call_variables`), formed at an R3 state as the variables
+  of the node's call (`access_formed.node_call_variables`). The ground-focus test reads the field
+  (`access_focus_ground`); the shared access gives it of the node's shared call (`shared_pattern_variables`), as the
+  commitment access already did, so the test decodes no node (at the given it decoded the root, 441K nodes, every
+  step). The indexed access keeps R3's reading. `access_formed.focus_ground` keeps its statement.
+- The shared state's access reads its table where a goal or a node is decoded (`state_access_over_code`), not where
+  the access is built, and a call goal is not solvable without reading it.
+- The tested committed step is defined as the selected step at the selection over the focused access; the kept
+  selection (`kept_select_by`, in `Factor_Shared_Search`) reads the goals held back over the access it is given, and
+  the plain selection is its instance; the choice at a priority class (`access_goal_choice_by`) stands in
+  `Factor_Search_Representations` beside the choice it generalizes (whose classes lemma keeps its statement). The
+  statements `search_select_code` and `search_select_kept` are retired: the definitions now say what they said. The
+  route's priority class reads the state's access at the whole focus (`route_select_code`).
+- Not taken: a substituted goal's alternatives counted by the shared unifier (#886's finding 3). The unifier shares the
+  definition's ground terms into the sharing state before it unifies (`shared_call_alternatives`), so the count
+  threads that state, where `enter_goal` takes a table and `enter_goal_formed` states the entry formed at it: its cure
+  changes a statement, and is the planner's.
+- Evidence (held, `.build/tasks/891/measurement.md`): the route at the given, 77 at the check form, bound 30:
+  0.555–0.621 s before, 0.260–0.365 s after; bound 10: 0.314 → 0.293 s; 77/1 at 200 unchanged (0.12–0.14 s).

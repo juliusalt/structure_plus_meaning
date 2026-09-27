@@ -1433,8 +1433,8 @@ lemma finite_committed_demand_select:
 
 theorem finite_committed_demand_plain:
   "finite_committed_demand no_witness_construction no_commitment P D n = finite_demand_resolution P D n"
-  by (simp add: finite_committed_demand_def finite_demand_resolution_def
-    finite_committed_resolution_plain[OF finite_resolution_select_none_construction])
+  by (simp add: finite_committed_demand_def finite_demand_resolution_def finite_demand_resolution_in_def
+    finite_program_resolution_def finite_committed_resolution_plain[OF finite_resolution_select_none_construction])
 
 lemma finite_resolution_verdict_true:
   "finite_resolution_verdict r = Some True \<longleftrightarrow> (\<exists>C. r = Finite_Resolved C)"
@@ -1485,7 +1485,8 @@ lemma native_committed_resolution_select:
 
 theorem native_committed_resolution_plain:
   "native_committed_resolution no_witness_construction no_commitment P R n = native_call_resolution P R n"
-  by (simp add: native_committed_resolution_def native_call_resolution_def
+  by (simp add: native_committed_resolution_def native_call_resolution_def native_call_resolution_in_def
+    finite_demand_resolution_def finite_program_resolution_def
     finite_committed_resolution_plain[OF finite_resolution_select_none_construction] finite_committed_demand_plain)
 
 theorem native_committed_resolution_sound:
@@ -2568,7 +2569,7 @@ lemma finite_committed_successors_material:
   assumes "st' |\<in>| finite_committed_successors K P F st (Resolution_Material_Goal q r M)"
   obtains Ws where "st' |\<in>| finite_solution_successors st q r M Ws"
   using assms that
-  by (auto simp: finite_committed_successors_def finite_material_successors_solutions
+  by (auto simp: finite_committed_successors_in_def finite_material_successors_solutions
     split: option.splits if_splits finite_material_outcome.splits)
 
 subsection \<open>A substitution step\<close>
@@ -3327,14 +3328,14 @@ next
           proof (cases "q' = q")
             case True
             have cs: "s1 |\<in>| finite_call_successors P st q' r e p"
-              using s1 True by (simp add: finite_committed_successors_def Resolution_Call_Goal)
+              using s1 True by (simp add: finite_committed_successors_in_def Resolution_Call_Goal)
             show ?thesis
               by (rule finite_call_substitution_step[OF Suc.prems(1) pending[unfolded Resolution_Call_Goal] fq cs])
           next
             case nq: False
             have gs: "s1 |\<in>| finite_goal_successors P st g"
               using s1 nq
-              by (auto simp del: finite_goal_successors_in.simps simp: finite_committed_successors_def Resolution_Call_Goal)
+              by (auto simp del: finite_goal_successors_in.simps simp: finite_committed_successors_in_def Resolution_Call_Goal)
             show ?thesis
             proof (cases "finite_reusable st g")
               case True
@@ -3779,13 +3780,13 @@ next
           proof (cases "q' = q")
             case True
             have cs: "s1 |\<in>| finite_call_successors P st q' r e p"
-              using s1 True by (simp add: finite_committed_successors_def Resolution_Call_Goal)
+              using s1 True by (simp add: finite_committed_successors_in_def Resolution_Call_Goal)
             show ?thesis by (rule finite_call_substitution_step[OF I pending[unfolded Resolution_Call_Goal] fq cs])
           next
             case nq: False
             have gs: "s1 |\<in>| finite_goal_successors P st g"
               using s1 nq
-              by (auto simp del: finite_goal_successors_in.simps simp: finite_committed_successors_def Resolution_Call_Goal)
+              by (auto simp del: finite_goal_successors_in.simps simp: finite_committed_successors_in_def Resolution_Call_Goal)
             show ?thesis
             proof (cases "finite_reusable st g")
               case True
@@ -4351,7 +4352,7 @@ lemma finite_committed_ground_founds_at:
   assumes \<kappa>: "finite_witness_construction_formed \<kappa>"
   shows "finite_ground_founds_by U (\<lambda>s. resolution_invariant P d t s \<and> resolution_registrations_held \<kappa> s)
     (finite_resolution_select_at pr \<kappa> P) \<kappa> K P"
-  unfolding finite_ground_founds_by_def
+  unfolding finite_ground_founds_by_in_def
 proof (intro allI impI)
   fix n q B st \<theta> s
   assume J: "resolution_invariant P d t st \<and> resolution_registrations_held \<kappa> st"
@@ -4515,7 +4516,7 @@ proof -
       using step by blast
   qed
   have grounds: "finite_ground_founds_by U ?J ?sel \<kappa> K P" by (rule finite_committed_ground_founds_at[OF \<kappa>])
-  show ?thesis unfolding finite_lifting_premises_def using selection pattern successors ex cons grounds by blast
+  show ?thesis unfolding finite_lifting_premises_in_def using selection pattern successors ex cons grounds by blast
 qed
 
 lemma finite_committed_lifting_premises:

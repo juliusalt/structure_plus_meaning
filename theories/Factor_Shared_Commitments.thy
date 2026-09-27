@@ -432,6 +432,48 @@ next
     by (intro ext) (rule Suc.IH)
   then show ?case by (simp add: represented_committed_step_tested)
 qed
+
+text \<open>
+  The step selecting through a selection the representation gives (@{text selected_committed_step}): the selection and
+  the value the goals' outcomes read are passed in, so that a representation keeping the selection's classes reads them
+  rather than testing every goal of its focus. The tested step is its instance at the selection over the focused access
+  and the prepared tests (@{text tested_committed_step_selected}); the search stops where the focus, read as the
+  representation gives it, holds no goal.
+\<close>
+
+definition selected_committed_step ::
+    "('r,'g,'n,'k,'a,'s::linorder,'d,'c,'z) committed_representation_scheme \<Rightarrow> ('r,'g,'n,'k,'a,'s,'d,'c,'x) committed_tests \<Rightarrow>
+      ('r \<Rightarrow> 'g \<Rightarrow> bool) \<Rightarrow>
+      ('s list option \<Rightarrow> 'r \<Rightarrow> ('g,'n,'k,'a,'s,'d,'c) search_access \<Rightarrow> 'x \<Rightarrow> ('n,'g) access_selection) \<Rightarrow>
+      ('s list option \<Rightarrow> 'r \<Rightarrow> ('g,'n,'k,'a,'s,'d,'c) search_access \<Rightarrow> 'x) \<Rightarrow>
+      ('a,'s,'d,'c) finite_witness_construction \<Rightarrow> ('a,'s,'d,'c) finite_schema_system \<Rightarrow>
+      ('s list option \<Rightarrow> 's list fset \<Rightarrow> 'r \<Rightarrow> ('a,'s,'d,'c) resolution_outcome) \<Rightarrow>
+      's list option \<Rightarrow> 's list fset \<Rightarrow> 'r \<Rightarrow> ('a,'s,'d,'c) resolution_outcome" where
+  "selected_committed_step R T gd sel xp \<kappa> P rec F B r = (let V = rep_access R r; x = xp F r V in
+    case sel F r V x of
+      Access_Construction N \<Rightarrow> (let M = ffilter (\<lambda>m. resolution_focused F (access_node_position V m)) N in
+        if M = {||} then Resolution_Outcome {||} {|Resolution_Stuck (fimage (access_goal V) (access_focus_goals F V))|}
+        else finite_outcome_union (fimage (\<lambda>m. rec F (B |\<union>| rep_node_positions R r) (rep_construct R r m)) M))
+    | Access_Goals G \<Rightarrow> finite_outcome_union (fimage (tested_committed_goal_outcome R T gd rec F B r V x) G)
+    | Access_None \<Rightarrow> Resolution_Outcome {||}
+        (finsert (Resolution_Stuck (fimage (access_goal V) (access_focus_goals F V))) (finite_unconstructed \<kappa> P (rep_project R r))))"
+
+primrec selected_committed_search ::
+    "('r,'g,'n,'k,'a,'s::linorder,'d,'c,'z) committed_representation_scheme \<Rightarrow> ('r,'g,'n,'k,'a,'s,'d,'c,'x) committed_tests \<Rightarrow>
+      ('r \<Rightarrow> 'g \<Rightarrow> bool) \<Rightarrow> ('s list option \<Rightarrow> 'r \<Rightarrow> bool) \<Rightarrow>
+      ('s list option \<Rightarrow> 'r \<Rightarrow> ('g,'n,'k,'a,'s,'d,'c) search_access \<Rightarrow> 'x \<Rightarrow> ('n,'g) access_selection) \<Rightarrow>
+      ('s list option \<Rightarrow> 'r \<Rightarrow> ('g,'n,'k,'a,'s,'d,'c) search_access \<Rightarrow> 'x) \<Rightarrow>
+      ('a,'s,'d,'c) finite_witness_construction \<Rightarrow> ('a,'s,'d,'c) finite_schema_system \<Rightarrow> nat \<Rightarrow>
+      's list option \<Rightarrow> 's list fset \<Rightarrow> 'r \<Rightarrow> ('a,'s,'d,'c) resolution_outcome" where
+  "selected_committed_search R T gd em sel xp \<kappa> P 0 F B r = (if em F r then Resolution_Outcome {|rep_project R r|} {||}
+    else let V = rep_access R r in Resolution_Outcome {||} {|Resolution_Cut (fimage (access_goal V) (access_focus_goals F V))|})"
+| "selected_committed_search R T gd em sel xp \<kappa> P (Suc n) F B r = (if em F r then Resolution_Outcome {|rep_project R r|} {||}
+    else selected_committed_step R T gd sel xp \<kappa> P (selected_committed_search R T gd em sel xp \<kappa> P n) F B (rep_refresh R r))"
+
+lemma tested_committed_step_selected:
+  "tested_committed_step R T gd \<kappa> P rec F B r = selected_committed_step R T gd
+    (\<lambda>F r V x. access_select (\<lambda>h. gd r h \<and> tests_priority T F r V x h) (access_focused F V)) (tests_prepare T) \<kappa> P rec F B r"
+  by (simp add: tested_committed_step_def selected_committed_step_def Let_def)
 text \<open>The two reads through a formed access are those on the state.\<close>
 
 context access_formed
@@ -1061,6 +1103,131 @@ qed
 end
 
 text \<open>
+  A formed representation selects through what it gives when its selection at an invariant state is the tested
+  step's, its focus reads empty exactly where the focused access holds no goal, and the goals' outcomes read the value
+  it passes as they read the prepared tests. Its search is then R5's committed search (@{text selected_committed}), the
+  tested search's value (@{text selected_tested}).
+\<close>
+
+locale selected_representation_formed = tested_representation_formed R Fi \<kappa> P K pr T gd
+  for R :: "('r,'g,'n,'k,'a,'s::linorder,'d,'c,'z) committed_representation_scheme" and Fi \<kappa> P K pr
+    and T :: "('r,'g,'n,'k,'a,'s,'d,'c,'x) committed_tests" and gd +
+  fixes em :: "'s list option \<Rightarrow> 'r \<Rightarrow> bool"
+    and sel :: "'s list option \<Rightarrow> 'r \<Rightarrow> ('g,'n,'k,'a,'s,'d,'c) search_access \<Rightarrow> 'x \<Rightarrow> ('n,'g) access_selection"
+    and xp :: "'s list option \<Rightarrow> 'r \<Rightarrow> ('g,'n,'k,'a,'s,'d,'c) search_access \<Rightarrow> 'x"
+  assumes empty: "\<And>s F. Fi s \<Longrightarrow> em F s \<longleftrightarrow> access_focus_goals F (rep_access R s) = {||}"
+    and select: "\<And>s F. Fi s \<Longrightarrow> sel F s (rep_access R s) (xp F s (rep_access R s)) =
+      access_select (\<lambda>h. gd s h \<and> tests_priority T F s (rep_access R s) (tests_prepare T F s (rep_access R s)) h)
+        (access_focused F (rep_access R s))"
+    and outcome: "\<And>s F B rec. Fi s \<Longrightarrow>
+      tested_committed_goal_outcome R T gd rec F B s (rep_access R s) (xp F s (rep_access R s)) =
+      tested_committed_goal_outcome R T gd rec F B s (rep_access R s) (tests_prepare T F s (rep_access R s))"
+begin
+
+lemma selected_step:
+  assumes "Fi r"
+  shows "selected_committed_step R T gd sel xp \<kappa> P rec F B r = tested_committed_step R T gd \<kappa> P rec F B r"
+  unfolding tested_committed_step_selected selected_committed_step_def Let_def select[OF assms] outcome[OF assms] ..
+
+theorem selected_committed:
+  assumes "Fi r"
+  shows "selected_committed_search R T gd em sel xp \<kappa> P n F B r =
+    finite_committed_search_by (finite_resolution_select_at pr \<kappa> P) \<kappa> K P n F B (rep_project R r)"
+  using assms
+proof (induction n arbitrary: F B r)
+  case 0
+  have "selected_committed_search R T gd em sel xp \<kappa> P 0 F B r = tested_committed_search R T gd \<kappa> P 0 F B r"
+    using empty[OF 0, of F] by (simp add: Let_def)
+  also have "\<dots> = finite_committed_search_by (finite_resolution_select_at pr \<kappa> P) \<kappa> K P 0 F B (rep_project R r)"
+    by (rule tested_search[OF 0])
+  finally show ?case .
+next
+  case (Suc n)
+  have f: "Fi (rep_refresh R r)" and p: "rep_project R (rep_refresh R r) = rep_project R r"
+    using refresh[OF Suc.prems] by simp_all
+  interpret v: access_formed \<kappa> P "rep_access R r" "rep_project R r" by (rule access[OF Suc.prems])
+  show ?case
+  proof (cases "em F r")
+    case True
+    then have "finite_focus_pending F (rep_project R r) = {||}"
+      using empty[OF Suc.prems, of F] v.focus_goals_empty[of F] by simp
+    then show ?thesis using True by simp
+  next
+    case False
+    have ne: "finite_focus_pending F (rep_project R (rep_refresh R r)) \<noteq> {||}"
+      using False empty[OF Suc.prems, of F] v.focus_goals_empty[of F] p by simp
+    have e: "tested_committed_step R T gd \<kappa> P (selected_committed_search R T gd em sel xp \<kappa> P n) F B (rep_refresh R r) =
+        finite_committed_search_by (finite_resolution_select_at pr \<kappa> P) \<kappa> K P (Suc n) F B (rep_project R (rep_refresh R r))"
+    proof (rule tested_step[OF f ne])
+      fix F' B' s assume "Fi s"
+      then show "selected_committed_search R T gd em sel xp \<kappa> P n F' B' s =
+          finite_committed_search_by (finite_resolution_select_at pr \<kappa> P) \<kappa> K P n F' B' (rep_project R s)"
+        by (rule Suc.IH)
+    next
+      fix F' B' s y assume s: "Fi s"
+        and y: "y |\<in>| resolution_found (selected_committed_search R T gd em sel xp \<kappa> P n F' B' s)"
+      have "selected_committed_search R T gd em sel xp \<kappa> P n F' B' s = tested_committed_search R T gd \<kappa> P n F' B' s"
+        using Suc.IH[OF s] tested_search[OF s] by simp
+      then have "y |\<in>| resolution_found (tested_committed_search R T gd \<kappa> P n F' B' s)" using y by simp
+      then show "\<exists>r0. Fi r0 \<and> rep_project R r0 = y" by (rule tested_found[OF s])
+    qed
+    have "selected_committed_search R T gd em sel xp \<kappa> P (Suc n) F B r =
+        tested_committed_step R T gd \<kappa> P (selected_committed_search R T gd em sel xp \<kappa> P n) F B (rep_refresh R r)"
+      using False selected_step[OF f] by simp
+    then show ?thesis using e p by simp
+  qed
+qed
+
+corollary selected_tested:
+  assumes "Fi r"
+  shows "selected_committed_search R T gd em sel xp \<kappa> P n F B r = tested_committed_search R T gd \<kappa> P n F B r"
+  using selected_committed[OF assms] tested_search[OF assms] by simp
+
+end
+
+text \<open>
+  A structure is kept at a further invariant of the representation's states that every step writing a state keeps.
+\<close>
+
+lemma committed_structure_kept:
+  assumes st: "committed_representation_structure R Fi \<kappa> P"
+    and refresh: "\<And>s. Fi s \<Longrightarrow> J s \<Longrightarrow> J (rep_refresh R s)"
+    and construct: "\<And>s m q. Fi s \<Longrightarrow> J s \<Longrightarrow> m |\<in>| access_nodes_at (rep_access R s) q \<Longrightarrow> J (rep_construct R s m)"
+    and successors: "\<And>s h s'. Fi s \<Longrightarrow> J s \<Longrightarrow> h |\<in>| access_goals (rep_access R s) \<Longrightarrow>
+      s' |\<in>| rep_successors R s h \<Longrightarrow> J s'"
+    and call: "\<And>s h s'. Fi s \<Longrightarrow> J s \<Longrightarrow> h |\<in>| access_goals (rep_access R s) \<Longrightarrow>
+      s' |\<in>| rep_call_successors R s h \<Longrightarrow> J s'"
+    and solution: "\<And>s h Ws s'. Fi s \<Longrightarrow> J s \<Longrightarrow> h |\<in>| access_goals (rep_access R s) \<Longrightarrow>
+      s' |\<in>| rep_solution_successors R s h Ws \<Longrightarrow> J s'"
+    and substitute: "\<And>s \<sigma> D. Fi s \<Longrightarrow> J s \<Longrightarrow> (\<And>a. a |\<notin>| D \<Longrightarrow> \<sigma> a = Finite_Variable a) \<Longrightarrow>
+      J (rep_substitute R s \<sigma> D)"
+    and share: "\<And>s. Fi s \<Longrightarrow> J s \<Longrightarrow> J (rep_share R (rep_project R s))"
+  shows "committed_representation_structure R (\<lambda>s. Fi s \<and> J s) \<kappa> P"
+proof -
+  interpret b: committed_representation_structure R Fi \<kappa> P by (rule st)
+  show ?thesis
+  proof (rule committed_representation_structure.intro, goal_cases)
+    case (1 s) then show ?case using b.access by blast
+  next
+    case (2 s) then show ?case using b.refresh refresh by blast
+  next
+    case (3 s m q) then show ?case using b.construct construct by blast
+  next
+    case (4 s h) then show ?case using b.successors successors by blast
+  next
+    case (5 s h q rr d p) then show ?case using b.call call by blast
+  next
+    case (6 s h q rr M Ws) then show ?case using b.solution solution by blast
+  next
+    case (7 s q) then show ?case using b.positions by blast
+  next
+    case (8 s \<sigma> D) then show ?case using b.substitute substitute by blast
+  next
+    case (9 s) then show ?case using b.share share by blast
+  qed
+qed
+
+text \<open>
   A structure strengthened by an invariant of the projected states that the steps' projections keep: the construction,
   a goal's successors, a call's at the focus, a committed material premise's and a substitution.
 \<close>
@@ -1477,6 +1644,254 @@ lemma finite_committed_search_shared_code [code]:
       \<kappa> K P n F B (search_of P st)
     else finite_committed_search_by (finite_committed_select \<kappa> K P) \<kappa> K P n F B st)"
   by (simp add: finite_committed_search_def shared_committed_search_admitted)
+
+subsection \<open>The shared state's committed step through its kept classes\<close>
+
+text \<open>
+  Task 871 (#830's fix (1) (b) in F2c). At the whole focus (none, or the root) the focused access is the state's own
+  (@{text access_focused_whole}), and the committed step selects through the kept classes as the plain step does
+  (#865's @{const search_select}): the settled and single classes read at once, the priority's class computed only when
+  the kept settled class is empty, from the candidates the classes keep (@{text kept_select_by}). At a proper focus a
+  node whose goals lie outside it counts as solved, so the kept settled and single tests are not the focused ones:
+  there the step selects over the focused access as before, the kept classes unread (their focused instance, a read of
+  the key range under the focus with the open-dependent tests recomputed there, is placed apart). The priority enters as a class, a function of the candidates
+  rather than a test of each (@{text access_goal_choice_by}), so that what it reads of the whole focus is computed once
+  a step, and only where the selection reaches it. The shared state's classes are kept by every committed step
+  (@{text shared_kept_structure}), so the selection over them is the focused access's at every state the search
+  reaches (@{text committed_kept_select}).
+\<close>
+
+lemma access_focused_whole:
+  assumes "F = None \<or> F = Some []"
+  shows "access_focused F V = V"
+  by (cases V) (use assms in \<open>auto simp: access_focused_def access_focus_goals_def Let_def fun_eq_iff fset_eq_iff
+    ffilter.rep_eq\<close>)
+
+definition access_goal_choice_by ::
+    "('g fset \<Rightarrow> 'g fset) \<Rightarrow> ('g,'n,'k,'a,'s::linorder,'d,'c) search_access \<Rightarrow> 'g fset \<Rightarrow> 'g fset" where
+  "access_goal_choice_by pc V A = (let c0 = ffilter (\<lambda>h. access_candidate V h \<and> access_settled V h) A in
+    if c0 \<noteq> {||} then access_first_goals V c0
+    else let cp = pc (ffilter (access_candidate V) A) in if cp \<noteq> {||} then access_first_goals V cp
+    else let c1 = ffilter (\<lambda>h. access_candidate V h \<and> access_single V h) A in
+      if c1 \<noteq> {||} then access_first_goals V c1
+    else access_waiting_selection V A)"
+
+lemma access_goal_choice_by:
+  assumes "pc (ffilter (access_candidate V) A) = ffilter rp (ffilter (access_candidate V) A)"
+  shows "access_goal_choice_by pc V A = access_goal_choice rp V A"
+  by (simp only: access_goal_choice_by_def access_goal_choice_classes Let_def assms)
+
+definition kept_select_by :: "('a,'s,'d,'c) finite_witness_construction \<Rightarrow> ('a,'s,'d,'c) finite_schema_system \<Rightarrow>
+    (('a,'s,'d,'c) shared_goal_entry fset \<Rightarrow> ('a,'s,'d,'c) shared_goal_entry fset) \<Rightarrow> ('a,'s::linorder,'d,'c) shared_search \<Rightarrow>
+    (('a,'s,'d,'c) shared_goal_entry,('a,'s,'d,'c) shared_node_entry,nat,'a,'s,'d,'c) search_access \<Rightarrow>
+    (('a,'s,'d,'c) shared_node_entry, ('a,'s,'d,'c) shared_goal_entry) access_selection" where
+  "kept_select_by \<kappa> P pc r V = (let N = access_construction_nodes V in
+    if N \<noteq> {||} then Access_Construction (access_first_nodes V N)
+    else let H = search_held \<kappa> P r; K = search_classes r; c0 = class_first H (class_settled K);
+      S = (if c0 \<noteq> {||} then c0 else
+        let cp = pc (fset_of_list (map snd (RBT.entries (class_candidates K))) |-| H) in
+        if cp \<noteq> {||} then access_first_goals V cp else
+        let c1 = class_first H (class_single K) in
+        if c1 \<noteq> {||} then c1 else access_waiting_selection V (access_goals V |-| H)) in
+      if S = {||} then Access_None else Access_Goals S)"
+
+lemma search_select_kept: "search_select \<kappa> P rp r = kept_select_by \<kappa> P (ffilter rp) r (shared_access \<kappa> P r)"
+  by (simp only: search_select_def kept_select_by_def Let_def)
+
+definition committed_kept_select :: "('a,'s,'d,'c) finite_witness_construction \<Rightarrow> ('a,'s,'d,'c) finite_schema_system \<Rightarrow>
+    (('a,'s,'d,'c) shared_goal_entry fset \<Rightarrow> ('a,'s,'d,'c) shared_goal_entry fset) \<Rightarrow> 's list option \<Rightarrow>
+    ('a,'s::linorder,'d,'c) shared_search \<Rightarrow>
+    (('a,'s,'d,'c) shared_goal_entry,('a,'s,'d,'c) shared_node_entry,nat,'a,'s,'d,'c) search_access \<Rightarrow>
+    (('a,'s,'d,'c) shared_node_entry, ('a,'s,'d,'c) shared_goal_entry) access_selection" where
+  "committed_kept_select \<kappa> P pc F r V = (if F = None \<or> F = Some [] then kept_select_by \<kappa> P pc r V
+    else let W = access_focused F V; N = access_construction_nodes W in
+      if N \<noteq> {||} then Access_Construction (access_first_nodes W N)
+      else let S = access_goal_choice_by pc W (ffilter (\<lambda>h. \<not> (access_holdable W h \<and> access_held W h)) (access_goals W)) in
+        if S = {||} then Access_None else Access_Goals S)"
+
+theorem committed_kept_select:
+  assumes r: "search_formed \<kappa> P r" and K: "search_classes_formed r"
+    and pc: "\<And>A. (\<And>h. h |\<in>| A \<Longrightarrow> h |\<in>| access_focus_goals F (shared_access \<kappa> P r)) \<Longrightarrow> pc A = ffilter rp A"
+  shows "committed_kept_select \<kappa> P pc F r (shared_access \<kappa> P r) = access_select rp (access_focused F (shared_access \<kappa> P r))"
+proof (cases "F = None \<or> F = Some []")
+  case True
+  let ?V = "shared_access \<kappa> P r" and ?K = "search_classes r"
+  let ?X = "fset_of_list (map snd (RBT.entries (class_candidates ?K))) |-| search_held \<kappa> P r"
+  have tc: "\<And>p. RBT.lookup (class_candidates ?K) p = class_value (kept_candidate (search_table r)) (shared_goals (search_state r)) p"
+    using K by (simp add: classes_formed_def)
+  have fg: "access_focus_goals F ?V = access_goals ?V"
+    using arg_cong[OF access_focused_whole[OF True, of ?V], of access_goals] by simp
+  have X: "h |\<in>| access_focus_goals F ?V" if "h |\<in>| ?X" for h
+    using that class_tree_member[OF tc, of h] by (auto simp: fg shared_access_simps fset_of_list.rep_eq)
+  have e: "kept_select_by \<kappa> P pc r ?V = kept_select_by \<kappa> P (ffilter rp) r ?V"
+    by (simp only: kept_select_by_def Let_def pc[OF X])
+  have e1: "kept_select_by \<kappa> P (ffilter rp) r ?V = access_select rp ?V"
+    using search_select[OF r K, of rp] by (simp only: search_select_kept)
+  show ?thesis using True by (simp only: committed_kept_select_def e e1 access_focused_whole[OF True] if_True)
+next
+  case False
+  let ?W = "access_focused F (shared_access \<kappa> P r)"
+  let ?A = "ffilter (\<lambda>h. \<not> (access_holdable ?W h \<and> access_held ?W h)) (access_goals ?W)"
+  have e: "access_goal_choice_by pc ?W ?A = access_goal_choice rp ?W ?A"
+    by (rule access_goal_choice_by, rule pc) (simp add: ffilter.rep_eq)
+  show ?thesis using False e by (simp only: committed_kept_select_def access_select_def Let_def if_False)
+qed
+
+corollary committed_kept_select_filter:
+  assumes "search_formed \<kappa> P r" "search_classes_formed r"
+  shows "committed_kept_select \<kappa> P (ffilter rp) F r (shared_access \<kappa> P r) = access_select rp (access_focused F (shared_access \<kappa> P r))"
+  by (rule committed_kept_select[OF assms]) (rule refl)
+
+text \<open>Whether the focus holds a goal is read of the goal tree at the whole focus.\<close>
+
+definition shared_focus_empty :: "('a,'s,'d,'c) finite_witness_construction \<Rightarrow> ('a,'s,'d,'c) finite_schema_system \<Rightarrow>
+    's list option \<Rightarrow> ('a,'s::linorder,'d,'c) shared_search \<Rightarrow> bool" where
+  "shared_focus_empty \<kappa> P F r \<longleftrightarrow> (if F = None \<or> F = Some [] then RBT.is_empty (shared_goals (search_state r))
+    else access_focus_goals F (shared_access \<kappa> P r) = {||})"
+
+lemma shared_focus_empty: "shared_focus_empty \<kappa> P F r \<longleftrightarrow> access_focus_goals F (shared_access \<kappa> P r) = {||}"
+proof (cases "F = None \<or> F = Some []")
+  case True
+  have a: "access_focus_goals F (shared_access \<kappa> P r) = tree_values (shared_goals (search_state r))"
+    using arg_cong[OF access_focused_whole[OF True, of "shared_access \<kappa> P r"], of access_goals]
+    by (simp add: shared_access_simps)
+  have b: "(tree_values (shared_goals (search_state r)) = {||}) = RBT.is_empty (shared_goals (search_state r))"
+    by (auto simp: fset_eq_iff tree_values_member fun_eq_iff simp flip: RBT.lookup_empty_empty) (meson not_None_eq)
+  have c: "(F = None \<or> F = Some []) = True" using True by simp
+  show ?thesis by (simp only: shared_focus_empty_def c if_True a b)
+next
+  case False
+  have c: "(F = None \<or> F = Some []) = False" using False by simp
+  show ?thesis by (simp only: shared_focus_empty_def c if_False)
+qed
+
+lemma shared_kept_structure:
+  assumes st: "committed_representation_structure (shared_committed_representation \<kappa> P) Fi \<kappa> P"
+    and sock: "clause_sockets_distinct P"
+    and fi: "\<And>s. Fi s \<Longrightarrow> search_formed \<kappa> P s \<and> search_placeable (search_project s)"
+  shows "committed_representation_structure (shared_committed_representation \<kappa> P) (\<lambda>s. Fi s \<and> search_classes_formed s) \<kappa> P"
+proof (rule committed_structure_kept[OF st], goal_cases)
+  case (1 s)
+  have f: "search_formed \<kappa> P s" using fi[OF 1(1)] by simp
+  show ?case using search_refresh_classes[OF f 1(2)] by (simp add: shared_committed_representation_def)
+next
+  case (2 s m q)
+  have f: "search_formed \<kappa> P s" using fi[OF 2(1)] by simp
+  show ?case using search_construct_classes[OF f 2(2)] by (simp add: shared_committed_representation_def)
+next
+  case (3 s h s')
+  have f: "search_formed \<kappa> P s" "search_placeable (search_project s)" using fi[OF 3(1)] by simp_all
+  have h: "h |\<in>| access_goals (shared_access \<kappa> P s)" and s': "s' |\<in>| search_successors \<kappa> P s h"
+    using 3(3,4) by (simp_all add: shared_committed_representation_def)
+  show ?case by (rule search_successors_classed(3)[OF f sock h s' 3(2)])
+next
+  case (4 s h s')
+  have f: "search_formed \<kappa> P s" "search_placeable (search_project s)" using fi[OF 4(1)] by simp_all
+  have h: "h |\<in>| access_goals (shared_access \<kappa> P s)" using 4(3) by (simp add: shared_committed_representation_def)
+  have at: "RBT.lookup (shared_goals (search_state s)) (shared_goal_position (shared_entry_goal h)) = Some h"
+    using h by (auto simp: shared_access_simps tree_values_member
+      dest: shared_goal_lookup_position[OF search_formedD(1)[OF f(1)]])
+  show ?case
+  proof (cases "shared_entry_goal h")
+    case (Shared_Call_Goal q rr d gp)
+    have s': "s' |\<in>| search_call_successors P s q d gp"
+      using 4(4) Shared_Call_Goal by (simp add: shared_committed_representation_def)
+    show ?thesis
+      by (rule search_call_successors_classed(3)[OF f sock _ Shared_Call_Goal s' 4(2)]) (use at Shared_Call_Goal in simp)
+  next
+    case (Shared_Material_Goal q rr gM)
+    then show ?thesis using 4(4) by (simp add: shared_committed_representation_def)
+  qed
+next
+  case (5 s h Ws s')
+  have f: "search_formed \<kappa> P s" "search_placeable (search_project s)" using fi[OF 5(1)] by simp_all
+  have h: "h |\<in>| access_goals (shared_access \<kappa> P s)" using 5(3) by (simp add: shared_committed_representation_def)
+  have at: "RBT.lookup (shared_goals (search_state s)) (shared_goal_position (shared_entry_goal h)) = Some h"
+    using h by (auto simp: shared_access_simps tree_values_member
+      dest: shared_goal_lookup_position[OF search_formedD(1)[OF f(1)]])
+  show ?case
+  proof (cases "shared_entry_goal h")
+    case (Shared_Material_Goal q rr gM)
+    have s': "s' |\<in>| search_solution_successors P s q gM (shared_material_project (search_table s) gM) Ws"
+      using 5(4) Shared_Material_Goal by (simp add: shared_committed_representation_def)
+    show ?thesis
+      by (rule search_solution_successors_classed(3)[OF f _ Shared_Material_Goal s' 5(2)])
+        (use at Shared_Material_Goal in simp)
+  next
+    case (Shared_Call_Goal q rr d gp)
+    then show ?thesis using 5(4) by (simp add: shared_committed_representation_def)
+  qed
+next
+  case (6 s \<sigma> D)
+  have f: "search_formed \<kappa> P s" using fi[OF 6(1)] by simp
+  show ?case using search_substitute_plain_classes[OF f 6(2) 6(3)] by (simp add: shared_committed_representation_def)
+next
+  case (7 s)
+  have d: "resolution_positions_distinct (search_project s)" using fi[OF 7(1)] by (simp add: search_placeable_def)
+  show ?case using search_of_classes[OF d] by (simp add: shared_committed_representation_def)
+qed
+
+text \<open>
+  At tests prepared as they stand, the kept selection is the one of the tests' priority as a filter: the shared state
+  selects through its kept classes at every tests the committed step is formed at.
+\<close>
+
+definition kept_tests_select where
+  "kept_tests_select \<kappa> P T gd F r V x = committed_kept_select \<kappa> P (ffilter (\<lambda>h. gd r h \<and> tests_priority T F r V x h)) F r V"
+
+lemma kept_selected_formed:
+  assumes tf: "tested_representation_formed (shared_committed_representation \<kappa> P) Fi \<kappa> P K pr T gd"
+    and fi: "\<And>s. Fi s \<Longrightarrow> search_formed \<kappa> P s \<and> search_classes_formed s"
+  shows "selected_representation_formed (shared_committed_representation \<kappa> P) Fi \<kappa> P K pr T gd (shared_focus_empty \<kappa> P)
+    (kept_tests_select \<kappa> P T gd) (tests_prepare T)"
+proof (rule selected_representation_formed.intro[OF tf], unfold_locales, goal_cases)
+  case (1 s F)
+  then show ?case by (simp add: shared_focus_empty shared_committed_representation_def)
+next
+  case (2 s F)
+  have f: "search_formed \<kappa> P s" "search_classes_formed s" using fi[OF 2] by simp_all
+  show ?case by (simp add: kept_tests_select_def shared_committed_representation_def committed_kept_select_filter[OF f])
+next
+  case (3 s F B rec)
+  show ?case by (rule refl)
+qed
+
+theorem shared_kept_committed_search:
+  assumes sock: "clause_sockets_distinct P" and pl: "search_placeable st"
+  shows "selected_committed_search (shared_committed_representation \<kappa> P)
+      (projected_tests (shared_committed_representation \<kappa> P) K pr (\<lambda>r h. True)) (\<lambda>r h. True) (shared_focus_empty \<kappa> P)
+      (kept_tests_select \<kappa> P (projected_tests (shared_committed_representation \<kappa> P) K pr (\<lambda>r h. True)) (\<lambda>r h. True))
+      (tests_prepare (projected_tests (shared_committed_representation \<kappa> P) K pr (\<lambda>r h. True))) \<kappa> P n F B (search_of P st) =
+    finite_committed_search_by (finite_resolution_select_at pr \<kappa> P) \<kappa> K P n F B st"
+proof -
+  let ?Fi = "\<lambda>r. (search_formed \<kappa> P r \<and> search_placeable (search_project r)) \<and> search_classes_formed r"
+  have st: "committed_representation_structure (shared_committed_representation \<kappa> P) ?Fi \<kappa> P"
+    by (rule shared_kept_structure[OF shared_committed_structure[OF sock] sock]) simp
+  have cf: "committed_representation_formed (shared_committed_representation \<kappa> P) ?Fi \<kappa> P K pr (\<lambda>r h. True)"
+    by (rule committed_representation_formed.intro[OF st], unfold_locales) simp
+  interpret selected_representation_formed "shared_committed_representation \<kappa> P" ?Fi \<kappa> P K pr
+      "projected_tests (shared_committed_representation \<kappa> P) K pr (\<lambda>r h. True)" "\<lambda>r h. True" "shared_focus_empty \<kappa> P"
+      "kept_tests_select \<kappa> P (projected_tests (shared_committed_representation \<kappa> P) K pr (\<lambda>r h. True)) (\<lambda>r h. True)"
+      "tests_prepare (projected_tests (shared_committed_representation \<kappa> P) K pr (\<lambda>r h. True))"
+    by (rule kept_selected_formed[OF committed_representation_formed.tested[OF cf]]) simp
+  have d: "resolution_positions_distinct st" using pl by (simp add: search_placeable_def)
+  have f: "?Fi (search_of P st)" using search_of[OF d] search_of_classes[OF d] pl by simp
+  show ?thesis using selected_committed[OF f] search_of(2)[OF d] by (simp add: shared_committed_representation_def)
+qed
+
+declare finite_committed_search_shared_code [code del]
+
+lemma finite_committed_search_kept_code [code]:
+  "finite_committed_search \<kappa> K P n F B st = (if clause_sockets_distinct P \<and> search_placeable st
+    then selected_committed_search (shared_committed_representation \<kappa> P)
+      (projected_tests (shared_committed_representation \<kappa> P) K (finite_commitment_priority K) (\<lambda>r h. True)) (\<lambda>r h. True)
+      (shared_focus_empty \<kappa> P)
+      (kept_tests_select \<kappa> P (projected_tests (shared_committed_representation \<kappa> P) K (finite_commitment_priority K) (\<lambda>r h. True))
+        (\<lambda>r h. True))
+      (tests_prepare (projected_tests (shared_committed_representation \<kappa> P) K (finite_commitment_priority K) (\<lambda>r h. True)))
+      \<kappa> P n F B (search_of P st)
+    else finite_committed_search_by (finite_committed_select \<kappa> K P) \<kappa> K P n F B st)"
+  by (simp add: finite_committed_search_def shared_kept_committed_search)
 
 export_code finite_committed_search checking SML
 

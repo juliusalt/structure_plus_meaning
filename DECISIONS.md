@@ -17646,7 +17646,10 @@ answer wherever 12 has one: its input.
   it applies (head input x0 matched against x4's term t4: B = {(0,t4)}); its value is t4; x3 is bound to t4 throughout the
   state (`finite_production_substitution`, which asks the value formed) and the committed sub-search runs from the
   produced state on 12(t4,t4), ground: 11(t4) twice and 7(t4,t4), a check by the given's clauses. Where no formed value
-  exists the goal is searched plainly, unresolved, never refuted (task 767's rule).
+  exists the goal is searched plainly, unresolved, never refuted (task 767's rule). [Marked by task 835 (review 816's
+  follow-up 8): this premise is not met at 77 under the given's modes — 37's other children have goals pending when 12 is
+  taken, and 12 is committed directly with no production: #815's entry "The given's production of 12's input: …" and
+  correction (15) below.]
 - *Completeness at the socket* (`registration_complete_at_socket`, #599's, stated for any construction). Its premises at
   37.0/2: the socket's narrowed discharge at N = ⊤ (R5's through `socket_discharged_narrowed`); `view_identity` formed;
   the premise (2,12,(x4,x3)) read (x4,x3); production — `head_registration_produces (finite_collection_construction
@@ -17876,6 +17879,112 @@ past it).
   variables of the goals a step adds under the goal's position and whether a block's outcome holds a found state;
   positions are compared by prefix, as R5's focus compares them; no payload, name or clause key is read.
 - *The builds*: rows K1–K3 of the builds table below.]
+[Corrected by task 835, a design, from I3a #815's trace (`productions_trace`, `Development_Given_Productions_Execution`)
+and review 816's follow-ups 1, 2, 4 and 8, with a draft probed at 77/1, 77/2 and 113/7 outside the library
+(`.build/tasks/835/draft/theories/Design_835_Draft.thy`: a census of the committed search's steps by site and kind, the
+goals pending under 37's other children when 12 is taken, the selection order at 37's focus, and the courses; shared
+runs, CPU 8–15 % busy, no CPU wait, `.build/tasks/835/measurements.log`). (15) The framed test admits an open sibling.
+Correction (13)'s production of 12's input at 37.0/2 is met in I2's control and never at the given: R5f1's step reads a
+production only where the framed socket test holds, and at 77 the test fails at one condition,
+`finite_children_framed {3}` (#815's entry, "The given's production of 12's input: …").
+- *What is pending when 12 is taken.* At 77/1 (bound 200, the moded selection with `given_modes`, the narrowed
+  commitment of `given_input_declarations` at `lookup_frames`) 12(x4,x3) at 2.0.1.2, input ground and output free, is met
+  at the focus 2.0.1 (37's committed sub-search, 37 committed at 75.0/1 at `lookup_view`) and at its own focus. Under 26
+  at 2.0.1.0 (environment admission) thirteen goals are pending: three at 10 (artifact projection, holding 11's
+  premise-only target, one alternative), three at 3 (data inequality, ground, five alternatives), five at 2 (data
+  recognition, ground, two alternatives) and three at 5 (selection, two holding variables); under 5 at 2.0.1.1 three at
+  2 (ground, two alternatives), the checks of the rows its later clause skipped. Both siblings' instances are ground and
+  outside the frame. In I2's control 26 and 5's here clause are facts and 5's later clause has one premise, so nothing is
+  pending under either sibling once 5 binds x4; and 12 is no declared producer there, its only commitment the socket's.
+- *Why the moded selection takes 12 then.* The 37 selections at the focus 2.0.1 at 77/1 run: 37's goal; 26 and 29 goals
+  under it (sites 19–25 and 11), each in F1's first class as reusable; 5 (O1's mode binder at the row view) and two
+  steps of its recursion; a dead 5 and a reusable 4; 12. 12 then has R5's direct commitment — a declared producer of the
+  given's record (R6b), its input ground, its parent the focus root — so it is in the priority class, which F1 takes
+  before every one-alternative and waiting goal; the sixteen goals left under 26 and 5 have one, two or five
+  alternatives and no priority. 12 is committed directly, with no production, and its committed sub-search keeps the
+  least presentation of the stored artifact (correction (13)'s cost).
+- *Where the states go* (the census; "in" a committed sub-search or outside every one):
+
+| Call, bound | States | Where they go |
+|---|---|---|
+| 77/1, 200 | 614, unresolved (cut, witnessed) | 99 outside (the walk to 75.0/1: 0 27, 17 15, 18 12, 20–26 24); about 40 in 37's sub-search (26's subtree at 19–26, 5's recursion, 12's commitment); about 470 in 12's (the least presentation: 6 committed 19 times, 5 branching 16 times, 1 136 of which 65 material, 2 71, 4 57, 0 130; 16 found states, 6 cuts) |
+| 77/2, 200 | 201, unresolved (cut) | one chain of single steps outside every sub-search (0 59, 17 22, 18 20, 20 16, 5 12, 21 9), cut before 37: no goal at 12 |
+| 77/2, 300 | 326, unresolved (cut, witnessed) | 12 met at 2.0.1.2 at both foci, the same failing condition; 6 committed 28 times in 12's sub-search: the least presentation |
+| 77/1, 77/2, 400 | not returned (77/1 over 150 s, #815; 77/2 in 15 s) | past 200 and 300, 12's least presentation as above |
+| 113/7, 230 | 413, resolved | 37 at 112.0/0 with its output ground: no socket commits, 12 a check |
+
+- *The course: the test asks what the exchange needs.* The framed test reads a sibling of the socket's premise at key
+  s′ ≠ s through one of two disjuncts: its original goal pending, or closed — nothing pending under it, its instance
+  under the binding β ground and its pattern outside the frame C. Closed stands for two facts the exchange uses: the
+  parent clause's instance is true at the support (the sibling's instance by its sub-derivation's acceptance,
+  `finite_closed_premise_true`), and every goal outside the socket's position holds at the new valuation the obligation
+  gives (none is under the sibling). An open sibling gives both on its own. Its ground instance is true at the support:
+  every goal pending under it is in the focus (the focus holds the parent, hence the sibling) and true there, and by
+  induction over its sub-derivation through the node linkage — a pending premise by the support, a child node by
+  induction, a reused premise by `resolution_solved_node_true`, a material premise pending by the support or done — so
+  is every node under it. And the new valuation changes only the variables of β at the frame's variables, which its
+  pending goals do not hold when that is checked. So `finite_children_framed`'s closed disjunct for a call premise
+  becomes: s′ ≠ s, β's instance ground, the pattern outside C, and every goal pending under the premise's position
+  holding no variable of β at the socket premise's pattern or at a frame variable (nothing pending under it is the case
+  where the check reads nothing). A material premise has no sub-derivation: its disjunct is unchanged. It is the
+  narrowing correction (9) made of R5c′'s test — the test asked more than the exchange needs — at the other half of the
+  same condition; it adds no declaration, reads no record field and changes no obligation.
+- *Exactness.* Refutation exact and resolution sound as today: the certificates are the checker's, and the lifting's
+  exchange premise is discharged at the narrowed test by the same context theorems (`finite_framed_instance_true` with
+  its open case, the exchange's valuation and context lemmas with the open siblings' goals kept by the new condition).
+  Every statement of R3, R4, R5, K2 and F2a–F2d is kept by name and statement; R5's definition `finite_children_framed`
+  changes, and with it what R5's framed and narrowed forms commit; the default frame's lemma
+  (`finite_children_closed_framed`) stands, the narrowed test being weaker. F2c's shared committed search takes the
+  commitment as a parameter and is unchanged.
+- *The figures* (the moded selection with `given_modes` at the rooted readers, the record `given_input_declarations`,
+  frames `lookup_frames`, 77's least bound handed in; states from the census, seconds of the run):
+
+| Call, bound | Today | Open siblings (the course) | Settled by position (a) | Settled in F1's order (a′) |
+|---|---|---|---|---|
+| 77/1, 200 | 614, 12 committed without production (0.7 s) | 220, produced (1.2 s) | 2,189, 12 not reached (5.9 s) | 296, 12 not reached (2.5 s) |
+| 77/1, 400 | not returned (over 150 s) | 830, produced (11.8 s; the search alone 11.9 s) | not returned in 15 s | 1,372, 12 not reached (16.2 s) |
+| 77/2, 300 | 326, without production (2.5 s) | — | — | 303, 12 not reached (5.7 s) |
+| 77/2, 400 | not returned in 15 s | 430, produced (9.1 s; the search alone 8.6 s) | not returned in 18 s | not returned in 26 s |
+| 113/7, 230 | 413, resolved (1.6 s) | 413, resolved | 413, resolved | the rule inactive: as today |
+
+  Every row at 77 is cut at the bound or left by a witnessed failure; none is refuted. With the narrowed test the
+  production is met at every lookup the search reaches (one at 77/1, one at 77/2 within 400), and the least presentation
+  is gone (at 77/1 at 200, 12's sub-search falls from about 470 states to one produced check). Past it, 77/1 at 400
+  spends its states in the check 12(t4,t4): 5 walking (246 single steps, 31 dead ends, 32 branchings), 2 (188), 4 (50),
+  6 (34) — 7's bag comparisons of a field with itself, correction (14)'s cost — and is cut; at 800 and 1200 it does not
+  return within 37 and 31 s, nor 77/2 at 800 within 26 s.
+- *Weighed and not taken.* (a) A priority that settles the expanded siblings before the socket (the moded priority
+  without a socket goal whose framed test fails only at its open siblings, with the goals pending under those
+  siblings): exact at any priority with no proof (F1's `finite_resolution_select_at_exact`, O2's and K2's forms at a
+  selection), but it puts the production after the siblings' whole sub-derivations — at 77, 26's admission of the
+  installed environment. Taken by position, it overrides F1's classes inside the subtree (9's and 8's calls under 10
+  before 10's own material premise, the target free: 2,189 states at 200); in F1's own order within the subtree (the
+  subtree's goal choice), 1,372 states at 400; neither reaches 12, and neither returns at 77/2 at 400. It orders around
+  the test's excess rather than removing it, and a refutation pays the siblings' work before the socket's check.
+  (a″) Deferring an unexpanded sibling so that only the input binder's subtree is settled: at 77/1 26 is expanded first
+  by F1's reuse class (below), and 5's subtree still blocks; it needs that class changed (R3's) and an order besides.
+  The production read at the direct commitment: 12's direct commitment is a producer's, the production a socket's;
+  reading it there needs the socket's obligation over the parent's instance — this exchange without the frame.
+- *A finding beside it* (the planner's, q151). F1's first class reads `finite_reusable` on the focused state
+  (`finite_focused` keeps every node and only the focused pending goals), where a node whose pending goals lie outside
+  the focus counts as solved; the step reads the whole state (`finite_goal_successors`), where it is not, and expands
+  the goal. At 77/1, 30 of the 37 selections at 37's focus are such goals, taken first as settled at once. Exactness is
+  untouched (any selection); the order is not.
+- *What the builds must respect*: the given's readers exactly as installed; the narrowed test reads the state alone —
+  the goals pending under a sibling (R3b's `resolution_pending_under`, or F2d's positional index where the shared state
+  is read), their variables, the node binding and the frame — never a record field or a position's bytes; no
+  declaration, production or frame is added; unresolved never refutes; every control keeps R4's value beside its own;
+  the frames' index (#834) composes with it, the index reading the goal's own socket and this condition the goals under
+  its siblings.
+- *What it relies on* (task 376's test): positions compared for prefixes, as `resolution_pending_under` does; variable
+  sets; the node binding; sites compared for equality; no payload read.
+- *The builds*: rows OS1 and OS2 of the builds table below. I3b #817 carries #815's names unchanged
+  (`given_input_declarations`, `given_input_frames`, their discharges, the lookup socket's production by I2's
+  transfers): the narrowed test is read at whichever program the search runs on and adds no obligation; its figures at
+  the installed programs follow OS2. K3 #825 evaluates 77/1, 77/2 and 113/7 at the check forms with the production met;
+  #718 re-runs its 77 (#636's two-definition installation) and 79 (#605's five roots) fixtures after OS2, the control
+  the planner named; GT6 meets 37's lookups under 79, 82 and 83's reads of the given's definitions with the production
+  met.]
 
 Presentation freedom makes a false call expensive: a true call is resolved at the first presentation its producer
 yields, a false one only after every presentation (n! root lists of n roots), so a refusal past a few elements reaches
@@ -18799,6 +18908,8 @@ Recorded 2026-09-27 (task 831's decision; a design, no theory changes).
 | GT5 | [Added by task 831.] The given's table (`Development_Given_Table`, new, beside `Development_Given_Registrations`): its calls from the given's value in their order — 11 at its artifact presentations, 7 and 12 at each with itself, 26 at its environment value and its lists' suffixes, 156 at its site value, 79, 82 and 83 (80, 77) at its package, the four sockets and 526 at (g, g) — and the binding count B; the table valid at every numbered program agreeing with the rooted readers on those calls' callee closure (the asked program, the first request's), and relocated to the asked relation's and the first request's installations (GT2's relocation) | GT2, #798 | about 120K |
 | GT6 | [Added by task 831.] The given's table produced (`Development_Given_Table_Execution`, new, imported by no theory): bottom-up at K2's check forms at the table so far with the given's modes, declarations and registrations, 77's bound at the given handed in, 7's, 11's and 12's roots through the parallel map, the fit tested at the smallest rows first; each certificate checked over its graph with GT4; the retained record (the calls' order, each entry's node count and graph digest, the validity outcome, the base and the resolver); states, seconds and memory by part | GT3, GT4, GT5 | about 100K, a run of hours placed by the planner |
 | W5 | [Added by task 831; task 496's entry, "77's least bound at the given and at a candidate …".] W2's queries resolved by R5's committed search at a table (`Factor_Least_Collections`: `finite_query_search`, `finite_query_answers` and `finite_identity_check` at the committed search with the given's declarations and selection, a statement change of W2's definitions; `Factor_Least_Witness_Registrations`, `Factor_Reader_Witness_Registrations`): a query's completeness from R5's lifting at its pattern root, every value outside a committed goal's output kept, and a valid table's closing keeping it; W4a's completeness carried; the given's four registrations complete there, at the rooted readers and by agreement at the asked and first request's programs; a control: 77 at a two-definition package with a missing callee refuted through the registration at a table, R4's value beside | GT2, I3a #815, #798 | about 250K |
+| OS1 | [Added by task 835, correction (15).] An open premise's truth (`Factor_Resolution_Material_Discharge`, beside `finite_closed_premise_true`): `finite_open_node_true` — at an invariant state (`resolution_invariant`) and a support at a focus (`resolution_supported_at`), a node every goal pending under whose position is in the focus has a true call, by induction over the nodes under it through `resolution_node_linked` (a pending premise by the support, a child node by induction, a reused premise by `resolution_solved_node_true`, a material premise pending by the support or done by `finite_material_done_ground_satisfied`); `finite_open_premise_true` — a call premise of a node whose instance under the binding is ground and every goal pending under whose position is in the focus is true, `finite_closed_premise_true` its closed case, kept | none unlanded | about 80K |
+| OS2 | [Added by task 835, correction (15).] The framed test with open siblings (`Factor_Resolution_Commitments`, `Factor_Resolution_Socket_Discharges`; `Factor_Narrowed_Productions` and any theory whose proof unfolds the test; the controls): `finite_children_framed`'s closed disjunct for a call premise at a key other than the socket's — nothing pending under it — replaced by: every goal pending under it holds no variable of the binding at the socket premise's pattern or at a frame variable (its instance ground and its pattern outside the frame kept); material premises unchanged; every statement kept by name and statement, the definition's change named; `finite_framed_instance_true` with the open case (OS1); the exchange's valuation, new-instance and context lemmas (`finite_framed_exchange_valuation`, `finite_framed_new_instance`, `finite_framed_call_context`, `finite_framed_socket_class_context`) with the open siblings' goals kept by the condition; the controls whose values change evaluated again (the framed, carrier, narrowed and input-production controls, K2's check control, O4's and I3a's execution lemmas — I3a's trace then showing the production met), a changed value reported with R4's beside; a control: a parent whose other child has goals pending under it when the socket is taken, the production met, a false call refuted as by R4 | OS1; the lander rule with #834 and #724 (both edit `Factor_Resolution_Commitments`) | about 250K |
 
 R1 and R2 are independent of each other; R3 follows both, R4 R3, R5 R4, R6 R5; R7 follows R4 and R6 [corrected by task 585: R5c follows R5b (#565), R5d R5c and R6, R5e R5d, R6b R5d, R6c
 R5e and R6b; rc (#540) follows R5e; R7 and #547 follow R6c] [corrected by task 725: R5f1 follows R5e and F3, and F2c, #613 and R5f2 follow it; rc (#540) and
@@ -18815,7 +18926,9 @@ follow K2 and K3] [corrected by task 831: GT1 waits on nothing unlanded (the lan
 follows GT1; GT2 follows GT1 and K3 #825, whose figures stay the check forms' reference without a table; GT3 follows GT2
 and #830's fix at its cause, which edits the same step; W5 follows GT2, I3a #815 and #798; GT5 follows GT2 and #798;
 GT6 follows GT3, GT4 and GT5. R7 #542 follows GT6; #547 follows GT5 and GT6; #707 follows #542; #399 follows W5 and
-#707]. R8 is independent of
+#707] [corrected by task 835: OS1 waits on nothing unlanded; OS2 follows OS1, the lander rule with #834 and #724; K3
+#825 follows OS2, and through it GT2, GT3 and GT6; #718 follows OS2 for its 77 and 79 fixtures; I3b #817 is unchanged
+by it]. R8 is independent of
 R1–R7 and follows #483. The least witness's builds follow the planner's decision. The route:
 
 - #397 (the posing) evaluates no reader entry: unaffected.
@@ -20026,3 +20139,5 @@ read through the index notion's update at the tree map (`tree_map_updates`).
 
 Limits: every ground call is still walked once (its residual term and its sharing) — the check is linear in the found
 state's size, not in its nodes alone, while its comparisons are bounded.
+[Answered by task 835: correction (15) of task 495's entry, section "Committed choice, for refusals" — the framed test
+admits an open sibling (builds OS1, OS2); the order was weighed there and not taken.]

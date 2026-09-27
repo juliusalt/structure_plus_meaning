@@ -1,6 +1,6 @@
 {
- "base_receipt_sha256": "2292f808ef7f123dcdc48589702aa6d90b2bc9a44285e48e4941031b77c26979",
- "checked_content_sha256": "e49f5039f9936e3df356ce3c7ce3aa747a7f814f6a6f24482767d669b429bede",
+ "base_receipt_sha256": "6261eb67cd214f61de96d951e581d004f742dcc8b7e75f328e0f689659a27f95",
+ "checked_content_sha256": "ea74ade0f57bb86561b9572329766ee4f103c2e024485cec014010f43d2c1463",
  "host_tests": {
   "kernel": {
    "exit_code": 0,
@@ -17,21 +17,19 @@
    "ran": 309,
    "skipped": 0,
    "tail": [
-    "{\"status\": \"failed\", \"error\": \"[Errno 2] No such file or directory: '/tmp/tmpl6op9y_1/no-project/theories/Development_Answer_a2d8d6490cc2.thy'\"}"
+    "{\"status\": \"failed\", \"error\": \"[Errno 2] No such file or directory: '/tmp/tmpa96jk614/no-project/theories/Development_Answer_a2d8d6490cc2.thy'\"}"
    ]
   }
  },
  "phases": {
-  "base_and_impact": 0.37,
+  "base_and_impact": 0.38,
   "execution_impact": 0.0,
   "export": 0.0,
-  "proof": 154.85,
-  "recipe_impact": 0.42,
-  "recipes_and_host_tests": 11.31
+  "proof": 120.25,
+  "recipe_impact": 0.38,
+  "recipes_and_host_tests": 11.57
  },
  "rebuilt_theories": [
-  "Development_Asked_Registrations",
-  "Development_First_Request_Registrations",
   "Development_Given_Carried_Declarations",
   "Development_Given_Declarations",
   "Development_Given_Declarations_Execution",
@@ -41,24 +39,16 @@
   "Development_Given_Modes_Execution",
   "Development_Given_Productions",
   "Development_Given_Productions_Execution",
-  "Development_Given_Registrations",
-  "Development_Installed_Presentations",
-  "Development_Installed_Presentations_Execution",
-  "Development_Rooted_Registrations",
   "Development_Socket_Liveness_Execution",
   "Factor_Artifact_Citation_Declarations",
   "Factor_Check_Controls",
   "Factor_Commitment_Controls",
   "Factor_Committed_Registrations",
-  "Factor_Construction_Holders",
   "Factor_Definition_Reading_Declarations",
   "Factor_Framed_Commitment_Index",
   "Factor_Input_Production_Controls",
   "Factor_Input_Productions",
   "Factor_Instantiation_Declarations",
-  "Factor_Least_Collections",
-  "Factor_Least_Witness_Registrations",
-  "Factor_Material_Reading_Controls",
   "Factor_Mode_Controls",
   "Factor_Narrowed_Commitments",
   "Factor_Narrowed_Controls",
@@ -66,26 +56,16 @@
   "Factor_Narrowed_Sockets",
   "Factor_Native_Committed_Registrations",
   "Factor_Producer_Correspondences",
-  "Factor_Reader_Witness_Registrations",
   "Factor_Resolution_Carriers",
   "Factor_Resolution_Checks",
-  "Factor_Resolution_Commitments",
-  "Factor_Resolution_Completeness",
-  "Factor_Resolution_Controls",
-  "Factor_Resolution_Graph_Checks",
-  "Factor_Resolution_Lifting",
   "Factor_Resolution_Material_Discharge",
-  "Factor_Resolution_Modes",
-  "Factor_Resolution_Producer_Discharge",
   "Factor_Resolution_Socket_Discharges",
   "Factor_Resolution_Views",
   "Factor_Root_Family_Declarations",
   "Factor_Row_Selection_Socket_Declarations",
   "Factor_Row_Value_Socket_Declarations",
   "Factor_Schema_Instantiation_Declarations",
-  "Factor_Shared_Commitments",
   "Factor_Union_Declarations",
-  "Factor_Varied_Constructions",
   "Factor_Varied_Declarations",
   "Factor_Varied_Narrowed_Sockets",
   "Factor_Varied_Narrowed_Transfer"
@@ -248,8 +228,8 @@
    "status": "unchanged"
   }
  },
- "reused_theories": 1914,
- "seconds": 179.34,
+ "reused_theories": 1934,
+ "seconds": 145.98,
  "source_checks": {
   "missing_theory_files": [],
   "proof_escape_matches": [],

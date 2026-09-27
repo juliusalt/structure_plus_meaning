@@ -72,7 +72,12 @@ instance), R7 #542 and the first request #547 after GT2b's second part #922 (#54
 goes through the merge at W5's plain instance); GT3 #876 (the table in F2's shared representation, after GT2c, GT4
 and the step's fixes) → GT6 #878 (the table produced once, a run of hours parked for its completion, its record
 `validation/given-table.json`, after GT5, the step's fixes and #875, which supplies its prediction and worker count) →
-#542, #547, #707, #399. Q33 is the owner's.
+#542, #547, #707, #399. The given's implementations after Q33 (#928, accepted; its entry "The given's readers and the
+asked relation are implementations of their notions: …"): (c) taken, the asked relation reading a candidate by its
+additions over the given, the given unchanged; (a) and (b) not taken, (a) at its trigger (Open 153); its builds AX1–AX4
+(the additions, the extension's packages, the additions guard with the asked program re-rooted and the posing recorded
+again, the given-specific work at the new installation) briefed by #929, AX4 after VK2 and before R7; GT6 and #875 do
+not wait (the table is the readers' part, its guard part at (g, g) retired by AX4).
 
 **A search step's cost** (#830's attribution, its fixes placed from #852): landed σ tabulated with F2a's shared unifier
 (#861), the pruning test through the node-call index (#863) and the selection's classes kept (#865, `a888fea7`, at no
@@ -159,11 +164,12 @@ request construction over rows, the incremental assessment, the rows line, the d
 digit layout, the rule programs' law, the shared-subterm engine (B1–B6), the exporter's obligations. Their remains are
 under Open and in `.build/plans/next-edits.md`.
 
-**Shape and order.** No build waits on a review. The longest chain, 13 deep: VK1 #920 → GT2b #889 → #922 → WC2b #914
-→ WC3 #916 → R7 #542 → #707 → #399 → #709 → #553 → #447 → #449 → #450; D1b #903 → its second part → D1d #905 → GT3 #876
-→ WC3 #916 or GT6 #878 → R7 as long; VK1's line, D1's builds and GT2's division spliced as detail; nothing is added after its tail until it
+**Shape and order.** No build waits on a review. The longest chain, 13 deep: D1b #903 → its second part #926 → D1d #905 → GT3 #876
+→ WC3 #916 → R7 #542 → #707 → #399 → #709 → #553 → #447 → #449 → #450, GT6 #878 → R7 as long; GT2b #889 → #922 →
+WC2b #914 → WC3 one shorter; #929's AX1 → AX2 → AX3 → AX4 → R7 shorter still;
+D1's builds and GT2's division spliced as detail; nothing is added after its tail until it
 shortens (the approval build, Open 142, waits for that). The queue is the planner's choice, a residual until the
-selection problem's native answer (Q2): running tasks first, VK1 and D1b side by side, GT2b's two parts, VK2, WC2b
+selection problem's native answer (Q2): running tasks first, the brief #929 and its builds, D1b's two parts and GT2b's beside them, VK2, WC2b
 and D1d each with its review, #875, GT3, WC3, GT6, the route in its chains' order, the consolidation #887 after R7's
 review (nothing waits on it). Word changes are serialized; none is queued.
 
@@ -181,9 +187,15 @@ Taken by the planning episodes, where they are not entries of `DECISIONS.md`.
 - **Q27** (2026-09-25 09:48): the evaluator that constructs the missing witnesses comes first; no judgment is decided by
   an Isabelle-proved counterpart; a missing operation is an unmet requirement, never an interim substitute (#495; Open
   39).
-- **Q28** (10:44): checkers only check; the given's readers stay as installed, no clause refined or restated; the least
-  witnesses are produced on the producing side and handed in, checked by the given's clauses and the finite proof
-  checker (#496).
+- **Q28** (10:43): checkers only check whether what is provided is what is expected; producing is not the checker's;
+  the least witnesses are produced on the producing side and handed in, checked by the given's clauses and the finite
+  proof checker (#496).
+- **Q33** (2026-09-27 12:46): an implementation is restricted only to implementing its notion correctly — a notion's
+  definition is independent of and prior to its implementation, and being installed restricts no implementation; the
+  ledger's summary of Q28 ("the given's readers unchanged") was not the owner's words. The given's readers and the asked
+  relation may change where they stay exact to their notions: the design of the given's implementations decides (a)–(c)
+  of Q33 before GT6, R7, #875 and VK2; briefs saying "the given's readers as installed … (Q27, Q28)" are corrected at
+  their next rewrite.
 - **Q29–Q32** (2026-09-26 09:40): the one-session base is on (`state/one-session-base`) and the chain it supersedes
   retired (`state/retire-superseded`); a base re-roots as one session whenever its chain's modeled start passes 10 s.
 - **17:50, 18:12, 18:36**: the native notion of a problem is the loop's product, not a design's; **a design is judged by
@@ -225,6 +237,12 @@ figures: the machinery judgment 3.76–4.22 s, the seeded 0.28–0.31 s. Not tak
   895's 2: `shared_focus_empty` with `search_formed κ P r`, next-edits 385).
 - A route selection that is not a priority of F1's is a formed selection (F1's two facts, correction (16)): the waiting
   moded selection is the first, and the exchange is stated at any formed selection (WC2a #912).
+- Every discharge of the exchange, OS1's open premise and the valued exchange at a table are stated where the table's
+  calls are true (`finite_table_true`), a valid table and the empty table their instances: the installed programs hold
+  the relocated table true, never valid (q163; GT2c, Q33 (d)).
+- A candidate of the first problem adds its own artifacts and their bindings, sourced at the uses it adds; a binding at
+  a given artifact is not a candidate (a residual choice, #928's verdict); the old guard over pairs of site values stays
+  as the notion the additions guard is exact to.
 - A free socket whose viewed input holds a variable of the parent's head output at its view never commits under the
   test at inputs (review 604's 1): a declaration build drops such a socket or declares it at a view apart.
 - A partial presentation is honest; a total one that maps the omitted case somewhere is not (item 13).
@@ -335,7 +353,8 @@ REASONING_REUSE.md, how each went in `PLANNING_LOG.md`.
 - **The resolving evaluator**: R1 `Factor_Material_Resolution`, R2 `Factor_Pattern_Unification`, R3
   `Factor_Program_Resolution` (F1's selection, F3's reuse, GT1a's table), R3b `Factor_Resolution_Acceptance`, R4
   `Factor_Resolution_Completeness` and the lifting `Factor_Resolution_Lifting` (both at a table since GT1b, its control
-  `Factor_Table_Controls`); R5 `Factor_Resolution_Commitments`, its
+  `Factor_Table_Controls`; the value lifting and the root-kept restriction since VK1 #920, `finite_root_kept` and the
+  valued exchange and premises beside WC2a's); R5 `Factor_Resolution_Commitments`, its
   discharges `Factor_Resolution_Producer_Discharge`, `Factor_Resolution_Socket_Discharges`,
   `Factor_Resolution_Material_Discharge`, its forms and transfers `Factor_Resolution_Views`,
   `Factor_Resolution_Carriers`, `Factor_Narrowed_Sockets`, `Factor_Narrowed_Commitments`, `Factor_Narrowed_Productions`;
@@ -399,11 +418,9 @@ The owner's questions, a line each (their words and provisional choices in full 
 - **Q23** #378's (b)–(f) — provisional: the least form, the owner's approval as a record, verification as a request
   after admission, the first problem's decomposition as a generated method, the end of HOL-constant problems.
 - **Q24** #376's four choices, **Q25** #381's split of the test, **Q26** #383's three choices — provisional.
-- **Q33** the route's cost at the given as installed (#831's section): (a) site 8's lookup an index, (b) 26's key
-  uniqueness over a sorted presentation, (c) the asked relation reading a candidate's additions — each changing the
-  given — and (d) the table's truth at an installation through the proved correspondence — provisional: (d) taken, none
-  of (a)–(c).
-- Answered: Q2, Q7, Q27, Q28, Q29–Q32 (Decisions); Q8–Q12 by the harness; Q15 void; Q21 withdrawn.
+- **Q33**'s (d), the table's truth at an installation through the proved correspondence — provisional, taken; its
+  (a)–(c) decided by #928 on the owner's answer (Graph).
+- Answered: Q2, Q7, Q27, Q28, Q29–Q32, Q33's (a)–(c) (Decisions); Q8–Q12 by the harness; Q15 void; Q21 withdrawn.
 
 **To plan, in the order expected** (numbers kept from earlier states):
 3. The translation of admitted native content into Isabelle — the verification problem's request, answer and
@@ -419,6 +436,9 @@ The owner's questions, a line each (their words and provisional choices in full 
    588.0/0 (review 776).
 152. The trigger of 55's clause trials (correction (16), "Depth 3's clause trials"): R7 #542's figures at the given's
    55 calls with the table — a call not decided within its bound with its lookups closed makes a design of them.
+153. Site 8's lookup as an index (Q33 (a)): a change of the material observation's fields or of the artifact's data
+   class, not of an implementation (#928's entry); designed at its trigger — R7's control candidate's added rows' 11s
+   (≈ 63 K states a row, ≈ 8 K with it) or GT6's measured production (11's 27.3 M states once, ≈ 2.15 M with it).
 142. The owner's approval of the first answer: after #447 and #407, an owner record citing the admission, the
    criticism and the verification records (`development_owner_approval`, Q23 (c)); publication after verification and
    item 3.
@@ -450,7 +470,8 @@ a theory before briefing a task that edits it.
 
 ## Now
 
-- **Under way**: VK1 #920 and D1b's first part #903, continued from its tree, side by side (D1b's parts carry q162's answer; D1b and D1d review 902's follow-ups;
+- **Under way**: D1b's first part #903 (continued from its tree), GT2b's first part #889 after VK1's landing and the
+  brief #929 of task 928's builds side by side (D1b's parts carry q162's answer; D1b and D1d review 902's follow-ups;
   review 848's follow-ups 1–6 in VK1's and VK2's briefs through #919, next-edits 207, 273 and 383 given to them).
   Decided at #875's figures on the deferred route: the kept held goals and construction nodes (q162, review 902's 3:
   `.build/tasks/901/result.md` Remains (a)–(e); next-edits 384's words) and FI's remaining costs (review 895's 2 and 5:
@@ -458,10 +479,13 @@ a theory before briefing a task that edits it.
   the next restater of the route constants' code, WC3 #916 if the figures come before it starts.
 - **What the next events ask**: GT6's prediction and worker count from #875 before its run, with the checking fold
   measured at samples; the decisions at #875's figures (Under way); #709's brief rewritten before it starts (the two
-  phases, the table, GT6's record). Q33 is the owner's.
+  phases, the table, GT6's record); #929's proposal placed (AX4 after AX3 and VK2, #542 re-pointed onto it); after AX4
+  lands, the route's briefs the asked relation's change reaches rewritten from AX1–AX4's hand-overs by a brief (#542,
+  #707, #399, #709, #710, #401, #443, #445, #549, #551, #553, #447, #449: #928's Remains).
 
-- **Planners stopped**: plan-120 and plan-121 were stopped by a classifier declining a turn, before their notes; this
-  file and `PLANNING_LOG.md` carried all they settled. Keep both current at every event.
+- **Planners stopped**: plan-120 and plan-121 were stopped by a classifier declining a turn, and plan-131's window
+  ended, before their notes; this file, `PLANNING_LOG.md`, `.build/plans/mailed.md` and next-edits carried all they
+  settled. Keep them current at every event.
 - **Briefs nearest their rooms**: #542, #399 and the samples build #551; GT2b #889 at 350K beside the discharge
   theories' relations (divided by theory if handed back). A brief written before its theories grew may be refused at
   its start, and is resized or divided then.

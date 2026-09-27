@@ -1,5 +1,5 @@
 theory Development_Given_Productions_Execution
-  imports Development_Given_Productions Development_Given_Modes_Execution Factor_Committed_Traces
+  imports Development_Given_Productions Development_Given_Execution_Fixtures Factor_Committed_Traces
     Native_Execution_Refinements
 begin
 
@@ -25,10 +25,6 @@ definition productions_selection :: "bool \<Rightarrow> (nat,nat,nat,nat) produc
     then finite_moded_select \<kappa> K (resolution_declarations.truncate D) given_modes finite_rooted_given_readers
     else finite_committed_select \<kappa> K finite_rooted_given_readers)"
 
-definition productions_call :: "nat \<Rightarrow> local_address option definition_site list option \<times> finite_factor_term" where
-  "productions_call k = (if k = 1
-    then (Some (snd (modes_fixture_install modes_fixture_one [0])), modes_77_call modes_fixture_one [0])
-    else (Some (snd (modes_fixture_install modes_fixture_two [1,0])), modes_77_call modes_fixture_two [1]))"
 
 definition productions_search :: "bool \<Rightarrow> (nat,nat,nat,nat) produced_declarations \<Rightarrow>
     (nat,nat,nat) resolution_frames \<Rightarrow> nat \<Rightarrow> nat \<Rightarrow> bool option \<times> nat list" where

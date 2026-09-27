@@ -389,7 +389,9 @@ REASONING_REUSE.md, how each went in `PLANNING_LOG.md`.
 - **rc's forms**: `Factor_Committed_Registrations`, `Factor_Native_Committed_Registrations` (the locale
   `relocated_registrations`; at a table since GT2c #888, `committed_registrations_in` and `relocated_registrations_in`,
   premise blocks whose table premises GT2b discharges).
-- **The binding store** `Shared_Binding_Stores` (D1a #899), under which D1b's deferred search keeps its nodes.
+- **The binding store** `Shared_Binding_Stores` (D1a #899), under which D1b's deferred search keeps its nodes; the
+  deferred search's first part `Factor_Deferred_Search` (D1b #903, `1fb5d229`): the deferred state, its formation and
+  access, the goal-only substitution, a ground node's resolution, the deferred bind and place.
 - **The goal side bounded** (D1c #901, `Factor_Shared_Resolution`, `Factor_Shared_Search`): open counts carried at the
   parent, the goal-call index pruned, the class trees written where a membership changes, `enter_goal` counting the
   shared unifier's alternatives on the shared goal (`enter_goal_formed` and `enter_goal_fields` restated); the held
@@ -470,7 +472,7 @@ a theory before briefing a task that edits it.
 
 ## Now
 
-- **Under way**: D1b's first part #903 (continued from its tree), GT2b's first part #889 after VK1's landing and the
+- **Under way**: D1b's second part #926 (review 904's follow-ups mailed), GT2b's first part #889 after VK1's landing and the
   brief #929 of task 928's builds side by side (D1b's parts carry q162's answer; D1b and D1d review 902's follow-ups;
   review 848's follow-ups 1–6 in VK1's and VK2's briefs through #919, next-edits 207, 273 and 383 given to them).
   Decided at #875's figures on the deferred route: the kept held goals and construction nodes (q162, review 902's 3:

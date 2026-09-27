@@ -903,22 +903,28 @@ proof
   show False using resolution_call_goal_no_node[OF I g m(1)] m(2) by simp
 qed
 
-lemma finite_call_goal_alone_under_in:
-  assumes I: "resolution_invariant_in \<Theta> P d t st" and g: "Resolution_Call_Goal q r e p |\<in>| resolution_pending st"
+lemma finite_call_goal_alone_under_pattern_in:
+  assumes I: "resolution_pattern_invariant_in \<Theta> P d \<pi> st" and g: "Resolution_Call_Goal q r e p |\<in>| resolution_pending st"
     and h: "h |\<in>| resolution_pending st" and focus: "resolution_focused (Some q) (resolution_goal_position h)"
   shows "h = Resolution_Call_Goal q r e p"
 proof (cases "resolution_goal_position h = q")
   case True
-  then show ?thesis using I g h unfolding resolution_invariant_in_def resolution_positions_distinct_def by force
+  then show ?thesis using I g h unfolding resolution_pattern_invariant_in_def resolution_positions_distinct_def by force
 next
   case False
   have t: "take (length q) (resolution_goal_position h) = q" using focus by (simp add: resolution_focused_def)
   have "resolution_before q (resolution_goal_position h)"
     unfolding resolution_before_def using t False by (metis linorder_not_less take_all)
   then obtain m where m: "m |\<in>| resolution_nodes st" "resolution_node_position m = q"
-    using resolution_goal_ancestor_node_in[OF I h] by blast
-  show ?thesis using resolution_call_goal_no_node_in[OF I g m(1)] m(2) by simp
+    using resolution_pattern_goal_ancestor_node_in[OF I h] by blast
+  show ?thesis using resolution_pattern_call_goal_no_node_in[OF I g m(1)] m(2) by simp
 qed
+
+lemma finite_call_goal_alone_under_in:
+  assumes I: "resolution_invariant_in \<Theta> P d t st" and g: "Resolution_Call_Goal q r e p |\<in>| resolution_pending st"
+    and h: "h |\<in>| resolution_pending st" and focus: "resolution_focused (Some q) (resolution_goal_position h)"
+  shows "h = Resolution_Call_Goal q r e p"
+  using assms unfolding resolution_invariant_pattern_in by (rule finite_call_goal_alone_under_pattern_in)
 
 lemmas finite_call_goal_alone_under = finite_call_goal_alone_under_in[where \<Theta>=resolution_empty_table]
 

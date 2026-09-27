@@ -21319,3 +21319,34 @@ relation, retired at their next edit; the working rule in HANDOFF.md that the gi
 clause refined or restated" corrected there.
 
 Recorded 2026-09-27 (task 928's decision; a design, no theory changes).
+### GT2b's first part: the direct producer's, the material single solution's and the socket kinds' discharges, valued, at a table whose calls are true
+
+Task 889, GT2b's first part (task 918's division, q161 (A); the planner's answer to q163). Each discharge of R5's exchange in
+`Factor_Resolution_Producer_Discharge`, `Factor_Resolution_Material_Discharge` and `Factor_Resolution_Socket_Discharges`
+is stated once in VK1's valued form, at a table whose calls are true (`finite_table_true P Θ`), a formed selection, the
+pattern invariant and any foreign `U`; every earlier statement is its instance by name and statement.
+
+1. *The table.* A discharge reads an entry only for its call's truth: the node linkage may record the committed goal's
+   premise, or a closed sibling, as closed by an entry. So every discharge stands at a table whose calls are true, a
+   valid table and the empty table its instances (q163). A solved node's truth at such a table is taken by the
+   transfer the planner allowed: the invariant reads a table by its calls alone (`resolution_pattern_invariant_calls_in`),
+   so a state invariant at the table is invariant at the certified table of the same calls, valid by
+   `finite_table_certified_valid` (`resolution_solved_node_true_calls_in`, `resolution_premise_closed_true_calls_in`, in
+   `Factor_Resolution_Commitments` beside the certified table). The direct form in `Factor_Resolution_Acceptance` did not
+   go through there: its induction reads valuations and material readers stated above Acceptance.
+2. *The pattern invariant.* The committed sub-search's relation, frame, positions, confinement, registered-unbound and
+   kept-nonempty lemmas hold at the pattern invariant by their proofs unchanged; their pattern forms stand beside them,
+   the ground ones instances. A committed call is unheld and the holders invariant places every variable, so a foreign
+   `U` costs nothing at a commitment; the material successor keeps `U`'s placement.
+3. *The value.* Every context exports the agreement its valuation proves: the support kept outside the step's changes
+   (`finite_exchange_changes`; the free premise-only variables are `(q,True)` and absent from the parent's call by
+   `finite_premise_only_unshared`, the absorbed ones are the parent's call's and changed only where the parent is the
+   focus root). The found state keeps every root value: below the root the root nodes stand outside the committed
+   position, the frame substituting no placed variable outside the goal but a registered one, and a registered
+   variable of a program with premise-only registrations stands in no node's call; at the root the goal is ground
+   (root-apartness), the state re-roots its pattern invariant at that call, and the found root node calls it. The
+   material successor keeps the valuation (the unifier keeps it). No discharge needed a condition beyond the section's.
+
+**What the builds must respect**: GT2b's second part composes these (the narrowed productions, the composed forms, the
+transfers' premises and GT2c's premise blocks) and restates none; the contained exchange's valued form takes the calls
+and materials of its commitment at every pattern-invariant state.

@@ -28,7 +28,7 @@ entries of DECISIONS.md, all accepted, found by their headings:
   use-renamed sample in criticism (Q26).
 - #482 with #560's parametric recording: every route generation costs its payload's size once.
 - #495, "The native evaluator constructs the missing witnesses by resolution: …" (Q27), with #585's and #683's
-  additions, corrections (5)–(15) and #831's section "The given's calls are decided once".
+  additions, corrections (5)–(16) and #831's section "The given's calls are decided once".
 - #496, "A checker does not produce: …" (Q28), with #642's addition (registrations and declarations reach an installed
   package through the clause match) and #790's section.
 
@@ -55,11 +55,11 @@ from the graph alone, exact at a valid table and sound where its calls are true;
 certificates) and GT4c #883 (`2e988a42`: the graph reading at found states under the entries' calls' truth,
 `finite_table_true`; the indexed check over a reach; one fold checking and producing the table; its review's 1–2
 mailed to GT2, 3 to GT3, 4 to GT6, 5 next-edits 370) → GT2, divided by q158 within a build's room: GT2a #843 (the
-committed search's lemmas at a table with a closed-goal step, R5's committed forms, the exchange and lifting premises at
-a table, exact from their premises, the table read by its calls alone at the searches; its item (12) hands over what
-the other two consume) → side by side GT2c #888 (K2's check forms and rc's forms at a table, the named instance at the
+committed search, its forms, exchange and lifting at a table, landed `7d686653`: every `_in` name takes the table and
+today's names are its instances at the empty table, six `_def` facts are now `_in_def`; its hand-over,
+`.build/tasks/843/result.md` Remains, says what the other two consume; no check form at a table, GT2c's) → side by side GT2c #888 (K2's check forms and rc's forms at a table, the named instance at the
 installed program, the table's and the forms' transfers, next-edits 317, review 824's 4) and GT2b #889 (every discharge
-of the exchange and OS1's open premise at a table); GT5 #845 (the given's table) after GT2c, W5 #847 after GT2a and
+of the exchange and OS1's open premise at a table and a formed selection, after WC2a: correction (16), below); GT5 #845 (the given's table) after GT2c, W5 #847 after GT2a and
 GT2c, R7 #542 and the first request #547 after GT2b; GT3 #876 (the table in F2's shared representation, after GT2c, GT4
 and the step's fixes) → GT6 #878 (the table produced once, a run of hours parked for its completion, its record
 `validation/given-table.json`, after GT5, the step's fixes and #875, which supplies its prediction and worker count) →
@@ -116,9 +116,17 @@ W5's and the table's; the re-run with review 858's attributions at W5's landing,
 bounds (unresolved at 800, not returned at 1500). #896 attributed it (accepted, `.build/tasks/896/result.md`): F1's
 order at a pair node expands its one-clause premises while 34, which binds the sockets' input, has alternatives
 pending, so the framed test at 55.2/2 and 55.2/3 fails for good and the inner unions enumerate every presentation — an
-order, not a step's cost; its prototype waiting class refutes depth 2 in 4,806 selections. The design D2 #907 decides
-that class (a correction of F1 and the modes), its builds before #542 and #547 (#707 and #399 through #542), with
-review 828's follow-up 1 and `given_union_control`'s revision; review 828's follow-ups 3–5 (the committed trace out of a chain of three evaluating
+order, not a step's cost; its prototype waiting class refutes depth 2 in 4,806 selections. D2 #907 decided it (accepted;
+correction (16) of "Committed choice, for refusals"): a class of F1's selection of its own at a pair node — a goal
+holding a variable of a pending framed socket's frame, or of the head output, waits while the socket is pending in its
+original form — read by the selection alone, never by exactness; 55's false call at depth 2 refuted in 4,710
+selections, depth 3 in 9,658, the true calls 3–8 % more; review 828's follow-up 1 settled. Its builds, briefed by
+#909 (after #907's landing): WC1 (the class) and WC2a (the formed selection, the exchange and lifting at a table and at
+it) at once; GT2b #889 rewritten to state every discharge at a table and a formed selection in one pass, after WC2a
+(q160: held until then); WC2b (the forms at the waiting moded selection, the control) after WC1, GT2b and GT2c; WC3 (the
+class at the route, K2's constants redefined at the waiting moded selection, the controls again) after D1d, FI and
+GT3, before #542, #547 and #887, beside GT6, whose table's validity does not rest on the order (#878 mailed to name the
+selection it ran); #542 mailed the trigger of 55's clause trials (Open 152). Review 828's follow-ups 3–5 (the committed trace out of a chain of three evaluating
 theories, about 90 s a check) were the fix #898, landed (`ae6ded12`: `committed_trace` in `Factor_Committed_Traces`,
 which evaluates nothing); review 898's 1 went to #887, its 2 and 3 are the fix #908 (no execution theory importing
 another, one evaluation per theory), its 4 to D2 (the trace at a margin once the order moves the course).
@@ -133,12 +141,11 @@ digit layout, the rule programs' law, the shared-subterm engine (B1–B6), the e
 under Open and in `.build/plans/next-edits.md`.
 
 **Shape and order.** No build waits on a review. The longest chain, 13 deep: D1c #901 → D1b #903 → D1d #905 → GT3
-#876 → GT6 #878 → R7 #542 → #707 → #399 → #709 → #553 → #447 → #449 → #450, and GT2a #843 → GT2c #888 → D1d → … as long,
+#876 → GT6 #878 → R7 #542 → #707 → #399 → #709 → #553 → #447 → #449 → #450, and GT2c #888 → D1d → … one shorter,
 D1's builds and GT2's division spliced as detail; nothing is added after its tail until it shortens (the approval build,
 Open 142, waits for that). The queue is the planner's choice, a residual until the selection problem's native answer
-(Q2): running tasks first, the design D2 #907, the fix #908, GT2a's review, D1c, D1a, GT2c, D1b, FI and D1d each with
-its review,
-GT2b, #875, the route in
+(Q2): running tasks first, the brief #909 (correction (16)'s builds), D1c's and D1a's reviews, GT2c's, D1b, FI and
+D1d each with its review, GT2b, #875, the route in
 its chains' order, the consolidation #887 after GT6's review (nothing waits on it). Word changes are serialized; none is
 queued.
 
@@ -197,7 +204,8 @@ figures: the machinery judgment 3.76–4.22 s, the seeded 0.28–0.31 s. Not tak
   instances of their generalizations (review 803's 1). A premise bundle of the lifting may gain a conjunct discharged
   where the bundle is built (q147); an unfolding lemma spelling a changed body changes with it where nothing outside
   cites it (q149).
-- A route selection that is not a priority of F1's must meet `finite_selection_unheld` (review 803's 2); none is planned.
+- A route selection that is not a priority of F1's is a formed selection (F1's two facts, correction (16)): the waiting
+  moded selection is the first, and the exchange is stated at any formed selection (WC2).
 - A free socket whose viewed input holds a variable of the parent's head output at its view never commits under the
   test at inputs (review 604's 1): a declaration build drops such a socket or declares it at a view apart.
 - A partial presentation is honest; a total one that maps the omitted case somewhere is not (item 13).
@@ -280,7 +288,7 @@ What landed that open work builds on, a line each naming its theories; their fac
 REASONING_REUSE.md, how each went in `PLANNING_LOG.md`.
 
 - **The entries** (DECISIONS.md): #378, #376, #381, #383, #428, #460 (its decision withdrawn by Q27), #482 and #560,
-  #495 with #585's and #683's additions, corrections (5)–(15), #831's section and #890's addition, #496 with #642's
+  #495 with #585's and #683's additions, corrections (5)–(16), #831's section and #890's addition, #496 with #642's
   addition and #790's
   section, #613's entry, #782's and #817's. The planner's answers to each design are in its `verdict.md`; the attributions
   #481, #644, #715, #829, #830, #851 and #886 in their `result.md`.
@@ -378,6 +386,8 @@ The owner's questions, a line each (their words and provisional choices in full 
 151. D of correction (11): the produced table for 65 and 56, a design after R7 #542's figures
    (`.build/tasks/766/result.md`, `.build/plans/plan-104/q137.md`), with whether 587 is committed as a producer at
    588.0/0 (review 776).
+152. The trigger of 55's clause trials (correction (16), "Depth 3's clause trials"): R7 #542's figures at the given's
+   55 calls with the table — a call not decided within its bound with its lookups closed makes a design of them.
 142. The owner's approval of the first answer: after #447 and #407, an owner record citing the admission, the
    criticism and the verification records (`development_owner_approval`, Q23 (c)); publication after verification and
    item 3.
@@ -409,16 +419,13 @@ a theory before briefing a task that edits it.
 
 ## Now
 
-- **Under way**: GT2a #843, continued from its tree (review 844's fix made probe-clean, its hand-over (12)); D1c #901
-  and D1a #899; the design D2 #907 (F1's waiting class, #896's finding; review 898's 4 mailed); the fix #908 (review
-  898's 2–3); FI #892 after D1c (review 891's 3 and 4, plan-127's mail); GT2c #888 and GT2b #889 after GT2a, each mailed
-  review 844's follow-up.
-- **What the next events ask**: GT2a's hand-over (its item (12)): what GT2b and GT2c consume, and whether it stated the
-  check forms' definitions at a table (GT3 stays after GT2c through D1d, which edits `Factor_Resolution_Checks` after
-  it); GT2c's answer on
-  `finite_table_true` at the relocated table (#883's review 1: else the formation-only form is placed); GT6's prediction
-  and worker count from #875 before its run, with the checking fold measured at samples; #709's brief rewritten before it
-  starts; D2 #907's builds placed from its table before #542 and #547, their edges to D2 re-pointed. Q33 is the owner's.
+- **Under way**: D1c #901 and D1a #899; GT2c #888; the fix #908 (review 898's 2–3); FI #892 after D1c (review 891's 3
+  and 4, plan-127's mail); the brief #909 of correction (16)'s builds after #907 lands, GT2b #889 held for its rewrite.
+- **What the next events ask**: #909's proposal placed — WC1 and WC2a at once, WC2a feeding GT2b, WC2b after WC1, GT2b
+  and GT2c, WC3 before #542, #547 and #887; GT2b's and #894's rewrites placed by edit from the brief's copies under the
+  planner's folder; GT2c's answer on `finite_table_true` at the relocated table (#883's review 1: else the
+  formation-only form is placed); GT6's prediction and worker count from #875 before its run, with the checking fold
+  measured at samples; #709's brief rewritten before it starts. Q33 is the owner's.
 - **Planners stopped**: plan-120 and plan-121 were stopped by a classifier declining a turn, before their notes; this
   file and `PLANNING_LOG.md` carried all they settled. Keep both current at every event.
 - **Briefs nearest their rooms**: #542, #399 and the samples build #551; GT2b #889 at 350K beside the discharge

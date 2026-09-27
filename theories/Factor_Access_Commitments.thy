@@ -1,5 +1,5 @@
 theory Factor_Access_Commitments
-  imports Factor_Shared_Commitments Factor_Framed_Commitment_Index Factor_Resolution_Modes
+  imports Factor_Shared_Commitments Factor_Framed_Commitment_Index Factor_Resolution_Modes Established_Premises
 begin
 
 section \<open>The commitment's tests and the moded priority, read through the access\<close>
@@ -516,6 +516,217 @@ theorem access_narrowed_commitment_exact:
   by (intro allI impI conjI)
     (simp_all add: commitment_formed.narrowed_call_exact commitment_formed.narrowed_material_exact
       commitment_formed.narrowed_production_field_exact)
+
+subsection \<open>The tests evaluated with the goal decoded once\<close>
+
+text \<open>
+  Task 884, reviews 868's follow-ups 2 and 3 and 870's 1. As defined, the framed tests read the tested goal at every
+  view and frame choice of its raising socket, the socket's test and the call's test each decoding it again; the
+  narrowed call test asks the framed call and the socket's productions twice. The code equations below evaluate each
+  test with the goal decoded once: the call and the material test decode it once the index holds its key, compare its
+  parent's declared socket (key, site, schema) before any view is matched, and match each view once for all frame
+  choices; the socket's productions decode it once and read the frame choices once; the narrowed call test asks the
+  framed call and the productions once, the production's own check of the framed call being established by the
+  test's first conjunct (@{text established_premise}). Each equation is proved equal to its definition at every
+  input, so no statement changes. The parent's socket is compared at the decoded position: before the decode it could
+  be read only at the access's cached position, which is the decoded one where the access is formed and not at every
+  input.
+\<close>
+
+definition access_parent_declared where
+  "access_parent_declared D V E q \<longleftrightarrow> q \<noteq> [] \<and> fBex (access_nodes_at V (butlast q)) (\<lambda>n.
+    fBex (declared_sockets D) (\<lambda>(e,S,s,keep,Vp,Vh). s = last q \<and> e = commitment_node_site E n \<and>
+      S = commitment_node_schema E n))"
+
+definition access_call_view_test where
+  "access_call_view_test D \<Phi> Cs Vp Vh F V E q p h \<longleftrightarrow> (case resolution_view_pattern Vp p of
+      Some (x,y) \<Rightarrow> finite_pattern_variables x = {||} \<and> finite_pattern_variables y \<noteq> {||} \<and>
+        fBex Cs (\<lambda>ch. access_socket_declared_framed D \<Phi> Vp Vh ch F V E q (finite_pattern_variables y) h \<and>
+          fBex (access_nodes_at V (butlast q)) (\<lambda>n.
+            (case finite_frame_at \<Phi> Vp Vh (commitment_node_site E n) (commitment_node_schema E n) (last q) ch of
+                None \<Rightarrow> False
+              | Some C \<Rightarrow> access_children_framed C V (access_node V n) (last q)) \<and>
+            finite_premise_only_unshared (access_node V n) \<and>
+            finite_socket_pair Vp q (commitment_node_schema E n) \<and>
+            (access_socket_kept_framed D \<Phi> Vp Vh ch F V E q (finite_pattern_variables y) h \<or>
+              finite_input_output_apart Vh (access_node V n))))
+    | None \<Rightarrow> False)"
+
+definition access_call_goal_test where
+  "access_call_goal_test D \<Phi> Vs Cs F V E h g \<longleftrightarrow> (case g of
+      Resolution_Call_Goal q r e p \<Rightarrow> access_parent_declared D V E q \<and>
+        fBex Vs (\<lambda>(Vp,Vh). access_call_view_test D \<Phi> Cs Vp Vh F V E q p h)
+    | Resolution_Material_Goal q r M \<Rightarrow> access_parent_declared D V E q \<and>
+        finite_canonical_solutions M \<noteq> None \<and> finite_free_fields M \<and>
+        fBex Vs (\<lambda>(Vp,Vh). fBex Cs (\<lambda>ch.
+          access_socket_declared_framed D \<Phi> Vp Vh ch F V E q (finite_material_variables M) h)))"
+
+definition access_material_goal_test where
+  "access_material_goal_test D \<Phi> Vs Cs F V E h g \<longleftrightarrow> (case g of
+      Resolution_Call_Goal q r e p \<Rightarrow> access_parent_declared D V E q \<and>
+        fBex Vs (\<lambda>(Vp,Vh). case resolution_view_pattern Vp p of
+            Some (x,y) \<Rightarrow> finite_pattern_variables x = {||} \<and> finite_pattern_variables y \<noteq> {||} \<and>
+              fBex Cs (\<lambda>ch. access_socket_declared_framed D \<Phi> Vp Vh ch F V E q (finite_pattern_variables y) h)
+          | None \<Rightarrow> False)
+    | Resolution_Material_Goal q r M \<Rightarrow> access_parent_declared D V E q \<and>
+        finite_canonical_solutions M \<noteq> None \<and> finite_free_fields M \<and>
+        fBex Vs (\<lambda>(Vp,Vh). fBex Cs (\<lambda>ch.
+          access_socket_declared_framed D \<Phi> Vp Vh ch F V E q (finite_material_variables M) h \<and>
+          fBex (access_nodes_at V (butlast q)) (\<lambda>n.
+            (case finite_frame_at \<Phi> Vp Vh (commitment_node_site E n) (commitment_node_schema E n) (last q) ch of
+                None \<Rightarrow> False
+              | Some C \<Rightarrow> access_children_framed C V (access_node V n) (last q)) \<and>
+            finite_premise_only_unshared (access_node V n) \<and>
+            (access_socket_kept_framed D \<Phi> Vp Vh ch F V E q (finite_material_variables M) h \<or>
+              finite_input_output_apart Vh (access_node V n))))))"
+
+definition access_call_productions where
+  "access_call_productions D \<Phi> Cs F V E h q p =
+    (\<lambda>(e',S,s,keep,Vp,Vh). (Vp,the (declared_production D e' S s))) |`|
+      ffilter (\<lambda>(e',S,s,keep,Vp,Vh). q \<noteq> [] \<and> s = last q \<and> declared_production D e' S s \<noteq> None \<and>
+        fBex (access_nodes_at V (butlast q)) (\<lambda>n. commitment_node_site E n = e' \<and> commitment_node_schema E n = S) \<and>
+        access_call_view_test (resolution_declarations.truncate D) \<Phi> Cs Vp Vh F V E q p h) (declared_sockets D)"
+
+definition access_production_from where
+  "access_production_from Pg n VRs e p = (case finite_singleton_option VRs of None \<Rightarrow> None
+    | Some VR \<Rightarrow> if finite_registration_applies (fst VR) (snd VR) e p then
+        (case finite_registration_production Pg n (fst VR) (snd VR) p of None \<Rightarrow> None
+        | Some v \<Rightarrow> if finite_production_substitution (fst VR) p v = None then None else Some (fst VR,v))
+      else None)"
+
+lemma socket_declared_parent:
+  assumes d: "access_socket_declared_framed D \<Phi> Vp Vh ch F V E q Y h"
+  shows "access_parent_declared D V E q"
+proof -
+  obtain n keep where q: "q \<noteq> []" and n: "n |\<in>| access_nodes_at V (butlast q)"
+    and s: "(commitment_node_site E n,commitment_node_schema E n,last q,keep,Vp,Vh) |\<in>| declared_sockets D"
+    using d by (auto simp: access_socket_declared_framed_def access_socket_kept_framed_def
+      access_socket_free_framed_def)
+  have "fBex (declared_sockets D) (\<lambda>(e,S,s,keep,Vp,Vh). s = last q \<and> e = commitment_node_site E n \<and>
+      S = commitment_node_schema E n)"
+    using s by (rule fBexI[rotated]) simp
+  then show ?thesis unfolding access_parent_declared_def using q n by blast
+qed
+
+lemma call_view_exact:
+  assumes g: "access_goal V h = Resolution_Call_Goal q r e p"
+  shows "fBex Cs (\<lambda>ch. access_socket_commitment_framed D \<Phi> Vp Vh ch F V E h \<and>
+      access_call_framed D \<Phi> Vp Vh ch F V E h) \<longleftrightarrow> access_call_view_test D \<Phi> Cs Vp Vh F V E q p h"
+  by (auto simp: access_socket_commitment_framed_def access_call_framed_def access_call_view_test_def g
+    split: option.splits prod.splits)
+
+lemma call_goal_exact:
+  "fBex Vs (\<lambda>(Vp,Vh). fBex Cs (\<lambda>ch. access_socket_commitment_framed D \<Phi> Vp Vh ch F V E h \<and>
+      access_call_framed D \<Phi> Vp Vh ch F V E h)) \<longleftrightarrow> access_call_goal_test D \<Phi> Vs Cs F V E h (access_goal V h)"
+proof (cases "access_goal V h")
+  case (Resolution_Call_Goal q r e p)
+  have parent: "access_call_view_test D \<Phi> Cs Vp Vh F V E q p h \<Longrightarrow> access_parent_declared D V E q" for Vp Vh
+    by (auto simp: access_call_view_test_def split: option.splits prod.splits dest: socket_declared_parent)
+  show ?thesis
+    by (auto simp: access_call_goal_test_def Resolution_Call_Goal call_view_exact[OF Resolution_Call_Goal]
+      split: prod.splits dest: parent)
+next
+  case (Resolution_Material_Goal q r M)
+  then show ?thesis
+    by (auto simp: access_call_goal_test_def access_socket_commitment_framed_def access_call_framed_def
+      dest: socket_declared_parent)
+qed
+
+lemma material_goal_exact:
+  "fBex Vs (\<lambda>(Vp,Vh). fBex Cs (\<lambda>ch. access_socket_commitment_framed D \<Phi> Vp Vh ch F V E h \<and>
+      access_material_framed D \<Phi> Vp Vh ch F V E h)) \<longleftrightarrow>
+    access_material_goal_test D \<Phi> Vs Cs F V E h (access_goal V h)"
+proof (cases "access_goal V h")
+  case (Resolution_Call_Goal q r e p)
+  let ?view = "\<lambda>Vp Vh. case resolution_view_pattern Vp p of
+      Some (x,y) \<Rightarrow> finite_pattern_variables x = {||} \<and> finite_pattern_variables y \<noteq> {||} \<and>
+        fBex Cs (\<lambda>ch. access_socket_declared_framed D \<Phi> Vp Vh ch F V E q (finite_pattern_variables y) h)
+    | None \<Rightarrow> False"
+  have pv: "fBex Cs (\<lambda>ch. access_socket_commitment_framed D \<Phi> Vp Vh ch F V E h \<and>
+      access_material_framed D \<Phi> Vp Vh ch F V E h) \<longleftrightarrow> ?view Vp Vh" for Vp Vh
+    by (auto simp: access_socket_commitment_framed_def access_material_framed_def Resolution_Call_Goal
+      split: option.splits prod.splits)
+  have parent: "?view Vp Vh \<Longrightarrow> access_parent_declared D V E q" for Vp Vh
+    by (auto split: option.splits prod.splits dest: socket_declared_parent)
+  show ?thesis
+    by (auto simp: access_material_goal_test_def Resolution_Call_Goal pv split: prod.splits dest: parent)
+next
+  case (Resolution_Material_Goal q r M)
+  then show ?thesis
+    by (auto simp: access_material_goal_test_def access_socket_commitment_framed_def access_material_framed_def
+      dest: socket_declared_parent)
+qed
+
+lemma framed_call_decoded:
+  "framed_socket_test T (\<lambda>Vp Vh ch. access_socket_commitment_framed D \<Phi> Vp Vh ch F V E h \<and>
+      access_call_framed D \<Phi> Vp Vh ch F V E h) q \<longleftrightarrow> q \<noteq> [] \<and> (case RBT.lookup T (last q) of None \<Rightarrow> False
+    | Some (Vs,Cs) \<Rightarrow> access_call_goal_test D \<Phi> Vs Cs F V E h (access_goal V h))"
+  by (simp add: framed_socket_test_def call_goal_exact split: option.split)
+
+lemma framed_material_decoded:
+  "framed_socket_test T (\<lambda>Vp Vh ch. access_socket_commitment_framed D \<Phi> Vp Vh ch F V E h \<and>
+      access_material_framed D \<Phi> Vp Vh ch F V E h) q \<longleftrightarrow> q \<noteq> [] \<and> (case RBT.lookup T (last q) of None \<Rightarrow> False
+    | Some (Vs,Cs) \<Rightarrow> access_material_goal_test D \<Phi> Vs Cs F V E h (access_goal V h))"
+  by (simp add: framed_socket_test_def material_goal_exact split: option.split)
+
+lemma access_framed_commitment_code [code]:
+  "access_framed_commitment D \<Phi> = (let T = framed_socket_index D \<Phi> in
+    \<lparr>accessed_call = (\<lambda>F V E h. access_goal_premise V E h \<and> (access_direct_commitment D F V E h \<or>
+       (access_is_call V h \<and> access_goal_position V h \<noteq> [] \<and>
+         (case RBT.lookup T (last (access_goal_position V h)) of None \<Rightarrow> False
+         | Some (Vs,Cs) \<Rightarrow> access_call_goal_test D \<Phi> Vs Cs F V E h (access_goal V h))))),
+     accessed_material = (\<lambda>F V E h. access_material_premise V E h \<and> \<not> access_is_call V h \<and>
+       access_goal_position V h \<noteq> [] \<and> (case RBT.lookup T (last (access_goal_position V h)) of None \<Rightarrow> False
+         | Some (Vs,Cs) \<Rightarrow> access_material_goal_test D \<Phi> Vs Cs F V E h (access_goal V h))),
+     accessed_production = (\<lambda>F V E h. None)\<rparr>)"
+  by (simp only: access_framed_commitment_def Let_def framed_call_decoded framed_material_decoded)
+
+lemma access_socket_productions_code [code]:
+  "access_socket_productions D \<Phi> F V E h = (case access_goal V h of
+      Resolution_Call_Goal q r e p \<Rightarrow> access_call_productions D \<Phi> (finite_frame_choices \<Phi>) F V E h q p
+    | Resolution_Material_Goal q r M \<Rightarrow> {||})"
+  by (cases "access_goal V h")
+    (simp_all add: access_socket_productions_def access_call_productions_def call_view_exact)
+
+lemma access_narrowed_production_code [code]:
+  "access_narrowed_production Pg n D \<Phi> Kc F V E h = (case access_goal V h of
+      Resolution_Call_Goal q r e p \<Rightarrow> if accessed_call Kc F V E h
+        then access_production_from Pg n (access_call_productions D \<Phi> (finite_frame_choices \<Phi>) F V E h q p) e p
+        else None
+    | Resolution_Material_Goal q r M \<Rightarrow> None)"
+  by (cases "access_goal V h")
+    (simp_all add: access_narrowed_production_def access_socket_productions_code access_production_from_def)
+
+lemma narrowed_production_established:
+  "established_premise (access_narrowed_production Pg n D \<Phi> Kc F V E) (accessed_call Kc F V E)
+    (\<lambda>h. case access_goal V h of
+        Resolution_Call_Goal q r e p \<Rightarrow>
+          access_production_from Pg n (access_call_productions D \<Phi> (finite_frame_choices \<Phi>) F V E h q p) e p
+      | Resolution_Material_Goal q r M \<Rightarrow> None)"
+  by unfold_locales (simp add: access_narrowed_production_code split: resolution_goal.split)
+
+lemma access_narrowed_commitment_code [code]:
+  "access_narrowed_commitment Pg n D \<Phi> = (let Kc = access_framed_commitment (resolution_declarations.truncate D) \<Phi> in
+    Kc\<lparr>accessed_call := (\<lambda>F V E h. accessed_call Kc F V E h \<and> (case access_goal V h of
+        Resolution_Call_Goal q r e p \<Rightarrow> (let Ps = access_call_productions D \<Phi> (finite_frame_choices \<Phi>) F V E h q p in
+          Ps = {||} \<or> access_production_from Pg n Ps e p \<noteq> None)
+      | Resolution_Material_Goal q r M \<Rightarrow> True)),
+     accessed_production := access_narrowed_production Pg n D \<Phi> Kc\<rparr>)"
+proof -
+  have pw: "accessed_call Kc F V E h \<and> (access_socket_productions D \<Phi> F V E h = {||} \<or>
+      access_narrowed_production Pg n D \<Phi> Kc F V E h \<noteq> None) \<longleftrightarrow>
+    accessed_call Kc F V E h \<and> (case access_goal V h of
+        Resolution_Call_Goal q r e p \<Rightarrow> (let Ps = access_call_productions D \<Phi> (finite_frame_choices \<Phi>) F V E h q p in
+          Ps = {||} \<or> access_production_from Pg n Ps e p \<noteq> None)
+      | Resolution_Material_Goal q r M \<Rightarrow> True)" for Kc F V E h
+  proof (cases "accessed_call Kc F V E h")
+    case True
+    note e = established_premise.exact[OF narrowed_production_established, of Kc F V E h Pg n D \<Phi>, OF True]
+    show ?thesis using True unfolding e
+      by (cases "access_goal V h") (simp_all add: access_socket_productions_code Let_def)
+  qed simp
+  show ?thesis unfolding access_narrowed_commitment_def Let_def by (simp only: pw Let_def)
+qed
 
 subsection \<open>The moded priority over the access\<close>
 

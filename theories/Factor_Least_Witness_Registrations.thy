@@ -1117,7 +1117,7 @@ text \<open>
 theorem finite_construction_complete_lifts:
   assumes complete: "finite_construction_complete \<kappa> P"
   shows "finite_construction_lifts U \<kappa> P"
-  unfolding finite_construction_lifts_def
+  unfolding finite_construction_lifts_in_def
 proof (intro allI impI)
   fix F B st \<theta> d t N nd
   assume I: "resolution_invariant P d t st" and H: "resolution_registrations_held \<kappa> st"

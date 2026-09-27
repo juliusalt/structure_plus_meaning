@@ -320,11 +320,11 @@ proof -
   have step: "finite_construction_step \<kappa> P st nd = resolution_state_substitute ?\<sigma> st0"
     by (simp add: finite_construction_step_def W_def st0_def Let_def)
   have placed_nodes: "resolution_nodes_placed P d t st" and distinct: "resolution_positions_distinct st"
-    using I unfolding resolution_invariant_def by blast+
+    using I unfolding resolution_invariant_in_def by blast+
   have linked: "resolution_node_linked P st nd"
-    using placed_nodes nd unfolding resolution_nodes_placed_def by blast
+    using placed_nodes nd unfolding resolution_nodes_placed_in_def by blast
   have bformed: "\<And>a x. (a,x) |\<in>| resolution_node_bindings nd \<Longrightarrow> finite_pattern_formed x"
-    using placed_nodes nd unfolding resolution_nodes_placed_def by blast
+    using placed_nodes nd unfolding resolution_nodes_placed_in_def by blast
   obtain \<beta> where bind: "resolution_node_bindings nd = fimage (\<lambda>a. (a,\<beta> a)) (finite_schema_variables ?S)"
     and prem: "\<And>s e p. (s,e,p) |\<in>| finite_schema_premises ?S \<Longrightarrow>
         Resolution_Call_Goal (?pos@[s]) (Some (resolution_node_site nd,resolution_node_clause nd,s)) e
@@ -335,9 +335,9 @@ proof -
     and mat: "\<And>s M. (s,M) |\<in>| finite_schema_materials ?S \<Longrightarrow>
         Resolution_Material_Goal (?pos@[s]) (resolution_node_site nd,resolution_node_clause nd,s)
           (finite_material_pattern_substitute \<beta> M) |\<in>| ?G \<or> resolution_material_done \<beta> M"
-    using linked unfolding resolution_node_linked_def by blast
+    using linked unfolding resolution_node_linked_in_def by blast
   have clause: "((resolution_node_site nd,resolution_node_clause nd),?S) |\<in>| finite_system_clauses P"
-    using linked unfolding resolution_node_linked_def by blast
+    using linked unfolding resolution_node_linked_in_def by blast
   have bind_mem: "\<And>b y. (b,y) |\<in>| resolution_node_bindings nd \<longleftrightarrow> b |\<in>| finite_schema_variables ?S \<and> y = \<beta> b"
     unfolding bind by auto
   have B_mem: "\<And>b v. (b,v) |\<in>| ?B \<longleftrightarrow> b |\<in>| finite_schema_variables ?S \<and>
@@ -429,7 +429,7 @@ proof -
       proof
         assume "resolution_premise_reused st (?pos@[s]) e (finite_pattern_substitute \<beta> p)"
         then have "finite_pattern_variables (finite_pattern_substitute \<beta> p) = {||}"
-          unfolding resolution_premise_reused_def by blast
+          unfolding resolution_premise_closed_in_def resolution_table.sel by blast
         then show False using xp by simp
       qed
       ultimately show "Resolution_Call_Goal (?pos@[s]) (Some (resolution_node_site nd,resolution_node_clause nd,s)) e

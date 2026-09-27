@@ -318,7 +318,7 @@ next
       case False
       have ne: "resolution_node_position m \<noteq> []" using len by auto
       obtain m' where m': "m' |\<in>| resolution_nodes st" "resolution_node_position m' = butlast (resolution_node_position m)"
-        using I m ne by (auto simp: resolution_pattern_invariant_def resolution_pattern_nodes_placed_def)
+        using I m ne by (auto simp: resolution_pattern_invariant_in_def resolution_pattern_nodes_placed_in_def)
       have "length (resolution_node_position m') = n" using len m'(2) by simp
       moreover have "length a \<le> n" using la False by simp
       moreover have "take (length a) (resolution_node_position m') = a"
@@ -342,7 +342,7 @@ lemma resolution_pattern_goal_ancestor_node:
 proof -
   have ne: "resolution_goal_position h \<noteq> []" using before by (auto simp: resolution_before_def)
   obtain m where m: "m |\<in>| resolution_nodes st" "resolution_node_position m = butlast (resolution_goal_position h)"
-    using I h ne by (auto simp: resolution_pattern_invariant_def resolution_pattern_goals_placed_def)
+    using I h ne by (auto simp: resolution_pattern_invariant_in_def resolution_pattern_goals_placed_def)
   have "length a \<le> length (resolution_node_position m)" "take (length a) (resolution_node_position m) = a"
     using m(2) before by (auto simp: resolution_before_def take_butlast)
   then show ?thesis using resolution_pattern_node_prefix[OF I] m(1) by blast
@@ -358,7 +358,7 @@ lemma resolution_pattern_call_goal_no_node:
   assumes I: "resolution_pattern_invariant P d \<pi> st" and g: "Resolution_Call_Goal q r e p |\<in>| resolution_pending st"
     and nd: "nd |\<in>| resolution_nodes st"
   shows "resolution_node_position nd \<noteq> q"
-  using I g nd by (fastforce simp: resolution_pattern_invariant_def resolution_positions_distinct_def)
+  using I g nd by (fastforce simp: resolution_pattern_invariant_in_def resolution_positions_distinct_def)
 
 lemma resolution_call_goal_no_node:
   assumes I: "resolution_invariant P d t st" and g: "Resolution_Call_Goal q r e p |\<in>| resolution_pending st"
@@ -1090,7 +1090,7 @@ proof -
         resolution_rank ?P (resolution_node_site nd,decode_finite_term (resolution_value \<theta> (resolution_node_call nd))))"
     using sup goal focus unfolding resolution_supported_at_def by blast+
   have "resolution_goal_formed (Resolution_Material_Goal q r M)"
-    using I goal unfolding resolution_pattern_invariant_def resolution_pattern_goals_placed_def by blast
+    using I goal unfolding resolution_pattern_invariant_in_def resolution_pattern_goals_placed_def by blast
   then have Mf: "finite_material_formed M" by simp
   obtain Ws where Ws: "finite_material_resolution M = Material_Solutions Ws"
     using solvable by (cases "finite_material_resolution M") auto
@@ -2808,14 +2808,14 @@ next
   case (Suc n)
   have out: "finite_committed_goal_outcome (finite_committed_search_by sel \<kappa> no_commitment P n) no_commitment P None {||} st =
       finite_goal_outcome (finite_resolution_search_by sel \<kappa> P n) P st" for st
-    by (rule ext) (simp add: finite_committed_goal_outcome_def finite_search_join_def finite_goal_outcome_def Suc.IH Let_def)
+    by (rule ext) (simp add: finite_committed_goal_outcome_def finite_search_join_def finite_goal_outcome_in_def Suc.IH Let_def)
   show ?case by (rule ext) (simp add: out Suc.IH free split: resolution_selection.split)
 qed
 
 corollary finite_committed_search_plain:
   assumes free: "\<And>st N. finite_resolution_select \<kappa> P st \<noteq> Select_Construction N"
   shows "finite_committed_search \<kappa> no_commitment P n None {||} = finite_resolution_search \<kappa> P n"
-  by (simp add: finite_committed_search_def finite_resolution_search_def finite_committed_search_by_plain[OF free])
+  by (simp add: finite_committed_search_def finite_resolution_search_def finite_resolution_search_in_def finite_committed_search_by_plain[OF free])
 
 section \<open>The lifting at a focused barred support\<close>
 

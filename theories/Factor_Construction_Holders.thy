@@ -909,7 +909,7 @@ lemma finite_call_goal_alone_under:
   shows "h = Resolution_Call_Goal q r e p"
 proof (cases "resolution_goal_position h = q")
   case True
-  then show ?thesis using I g h unfolding resolution_invariant_def resolution_positions_distinct_def by force
+  then show ?thesis using I g h unfolding resolution_invariant_in_def resolution_positions_distinct_def by force
 next
   case False
   have t: "take (length q) (resolution_goal_position h) = q" using focus by (simp add: resolution_focused_def)

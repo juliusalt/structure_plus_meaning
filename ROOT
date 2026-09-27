@@ -686,6 +686,7 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Factor_Permission_Investigation
     Factor_Adoption_Comparison
     Factor_Reader_Payloads
+    Factor_Environment_Additions
     Factor_Generation_Reader_Payloads
     Factor_Adoption_Permission_Admission
     Factor_Substitution

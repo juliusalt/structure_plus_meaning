@@ -581,7 +581,10 @@ text \<open>
   registered site lies in 113's closure);
   77 resolved at a two-definition package (the program below, installed over the empty package) and refuted where
   the reach holds its selector, which is no definition, is stated by the predicates below and does not return within
-  20 s at bound 2000 either way (task 718's result; escalated). Each verdict is taken by the search
+  20 s at bound 2000 either way (task 718's result; escalated), nor after OS2 (task 857's held runs: at this form 2
+  selections in 15.6 s, the collection construction taking the time, and R4 none in 15.7 s; at the narrowed commitment
+  of the input record at O4's moded selection the true call 625 states in 15.9 s with the production of 12's input met,
+  the false call left unresolved by a witnessed failure; escalated). Each verdict is taken by the search
   the exact forms hold for, R5's committed search at no commitment over the construction
   (@{text given_control_verdict}), which bars every node present at a construction step: there a @{text "Some False"}
   is a refutation by @{thm [source] given_readers_verdict_exact}, where R3's search with a construction is sound and

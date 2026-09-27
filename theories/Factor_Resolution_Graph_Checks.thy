@@ -1477,26 +1477,80 @@ text \<open>
   certificate is read. Validity is one way the table's calls are true.
 \<close>
 
-theorem finite_state_graph_check_true_at:
-  assumes true: "\<And>e u c. resolution_table_lookup \<Theta> (e,u) = Some c \<Longrightarrow>
-      (e,decode_finite_term u) \<in> positive_meaning (decode_finite_system P)"
-    and check: "finite_state_graph_check_in \<Theta> P d t N nd"
-  shows "(d,decode_finite_term t) \<in> positive_meaning (decode_finite_system P)"
-proof (rule finite_graph_reading_conditional_sound[OF check[unfolded finite_state_graph_check_in_def]])
-  fix n e u assume a: "(n,e,u) |\<in>| finite_graph_assumptions (finite_state_graph_in \<Theta> N nd) (finite_state_claims_in \<Theta> N nd)"
-  obtain c where "resolution_table_lookup \<Theta> (e,u) = Some c" using finite_state_graph_in_assumptions[OF a] by blast
-  then show "(e,decode_finite_term u) \<in> positive_meaning (decode_finite_system P)" by (rule true)
-qed
+definition finite_table_true ::
+    "('a,'s::linorder,'d,'c) finite_schema_system \<Rightarrow> ('a,'s,'d,'c) resolution_table \<Rightarrow> bool" where
+  "finite_table_true P \<Theta> \<longleftrightarrow> (\<forall>d t c. resolution_table_lookup \<Theta> (d,t) = Some c \<longrightarrow>
+    (d,decode_finite_term t) \<in> positive_meaning (decode_finite_system P))"
 
-corollary finite_state_graph_check_true_in:
-  assumes valid: "finite_table_valid P \<Theta>" and check: "finite_state_graph_check_in \<Theta> P d t N nd"
-  shows "(d,decode_finite_term t) \<in> positive_meaning (decode_finite_system P)"
-proof (rule finite_state_graph_check_true_at[OF _ check])
+lemma finite_table_valid_true:
+  assumes valid: "finite_table_valid P \<Theta>"
+  shows "finite_table_true P \<Theta>"
+  unfolding finite_table_true_def
+proof (intro allI impI)
   fix e u c assume "resolution_table_lookup \<Theta> (e,u) = Some c"
   then have "finite_checks_schema_proof P c e u" by (rule finite_table_valid_entry[OF valid])
   then show "(e,decode_finite_term u) \<in> positive_meaning (decode_finite_system P)"
     unfolding finite_checks_schema_proof_exact by (rule schema_proof_sound)
 qed
+
+text \<open>
+  Every true call has a finite certificate the checker accepts: an accepted tree binds formed terms only, so its finite
+  copy decodes back to it.
+\<close>
+
+lemma checks_schema_proof_values_decoded:
+  "checks_schema_proof Q tree d t \<Longrightarrow> map_inference_proof id id id (decode_finite_term \<circ> finite_term_of) tree = tree"
+proof (induction tree arbitrary: d t rule: measure_induct_rule[where f=size])
+  case (less tree)
+  obtain c V B where tree: "tree = Schema_Proof c V B" by (cases tree)
+  obtain H where adm: "admitted_schema_instance Q d c (fset V) t H"
+    and children: "\<forall>(s,F)\<in>fset (fimage (map_prod id (checks_schema_proof Q)) B). \<exists>e x. (s,e,x) \<in> H \<and> F e x"
+    using less.prems by (auto simp: tree)
+  have Vf: "term_formed v" if "(a,v) \<in> fset V" for a v
+    using adm that by (auto simp: admitted_schema_instance_def schema_instance_def term_bindings_formed_def)
+  have Bf: "map_inference_proof id id id (decode_finite_term \<circ> finite_term_of) p = p" if sp: "(s,p) \<in> fset B" for s p
+  proof -
+    obtain e x where "checks_schema_proof Q p e x" using children sp unfolding fimage_pair_forall by blast
+    then show ?thesis using less.IH[OF schema_proof_child_size[OF sp, of c V, folded tree]] by blast
+  qed
+  have hV: "map_prod id (decode_finite_term \<circ> finite_term_of) z = z" if "z \<in> fset V" for z
+    using that Vf decode_finite_term_of by (cases z) auto
+  have hB: "map_prod id (map_inference_proof id id id (decode_finite_term \<circ> finite_term_of)) z = z" if "z \<in> fset B" for z
+    using that Bf by (cases z) auto
+  have V: "fimage (map_prod id (decode_finite_term \<circ> finite_term_of)) V = V"
+    by (rule fset_eqI) (use hV in \<open>force simp: resolution_fset_simps\<close>)
+  have B: "fimage (map_prod id (map_inference_proof id id id (decode_finite_term \<circ> finite_term_of))) B = B"
+    by (rule fset_eqI) (use hB in \<open>force simp: resolution_fset_simps\<close>)
+  show ?case unfolding tree using V B by (simp add: id_def comp_def)
+qed
+
+lemma finite_checks_schema_proof_complete:
+  assumes "(d,decode_finite_term t) \<in> positive_meaning (decode_finite_system P)"
+  shows "\<exists>c. finite_checks_schema_proof P c d t"
+proof -
+  obtain tree where tr: "checks_schema_proof (decode_finite_system P) tree d (decode_finite_term t)"
+    using schema_proof_complete[OF assms] by blast
+  have "decode_finite_proof (map_inference_proof id id id finite_term_of tree) = tree"
+    using checks_schema_proof_values_decoded[OF tr] by (simp add: decode_finite_proof_def inference_proof.map_comp)
+  then have "finite_checks_schema_proof P (map_inference_proof id id id finite_term_of tree) d t"
+    by (simp add: finite_checks_schema_proof_exact tr)
+  then show ?thesis by blast
+qed
+
+theorem finite_state_graph_check_true_at:
+  assumes true: "finite_table_true P \<Theta>" and check: "finite_state_graph_check_in \<Theta> P d t N nd"
+  shows "(d,decode_finite_term t) \<in> positive_meaning (decode_finite_system P)"
+proof (rule finite_graph_reading_conditional_sound[OF check[unfolded finite_state_graph_check_in_def]])
+  fix n e u assume a: "(n,e,u) |\<in>| finite_graph_assumptions (finite_state_graph_in \<Theta> N nd) (finite_state_claims_in \<Theta> N nd)"
+  obtain c where "resolution_table_lookup \<Theta> (e,u) = Some c" using finite_state_graph_in_assumptions[OF a] by blast
+  then show "(e,decode_finite_term u) \<in> positive_meaning (decode_finite_system P)"
+    using true unfolding finite_table_true_def by blast
+qed
+
+corollary finite_state_graph_check_true_in:
+  assumes valid: "finite_table_valid P \<Theta>" and check: "finite_state_graph_check_in \<Theta> P d t N nd"
+  shows "(d,decode_finite_term t) \<in> positive_meaning (decode_finite_system P)"
+  by (rule finite_state_graph_check_true_at[OF finite_table_valid_true[OF valid] check])
 
 theorem finite_state_graph_check_accepts:
   assumes nd: "nd |\<in>| N" and check: "finite_state_graph_check P d t N nd"
@@ -1639,6 +1693,46 @@ proof -
     using rootsite rootcall uses each entry finite_link_reach(2)[OF nd] by auto
 qed
 
+text \<open>
+  At a table whose calls are true the graph reading holds at every found state too: the same calls certified by the
+  checker form a valid table, and the invariant and the graph read only which calls the table holds.
+\<close>
+
+theorem finite_state_graph_check_found_true:
+  assumes true: "finite_table_true P \<Theta>" and I: "resolution_invariant_in \<Theta> P d t st"
+    and closed: "resolution_pending st={||}"
+    and nd: "nd |\<in>| resolution_nodes st" and root: "resolution_node_position nd=[]"
+  shows "finite_state_graph_check_in \<Theta> P d t (resolution_nodes st) nd"
+proof -
+  define C where "C = Resolution_Table (\<lambda>q. case resolution_table_lookup \<Theta> q of None \<Rightarrow> None
+    | Some c \<Rightarrow> Some (SOME c'. finite_checks_schema_proof P c' (fst q) (snd q)))"
+  have dom: "resolution_table_lookup C q = None \<longleftrightarrow> resolution_table_lookup \<Theta> q = None" for q
+    unfolding C_def by (simp split: option.split)
+  have valid: "finite_table_valid P C"
+    unfolding finite_table_valid_def
+  proof (intro allI impI)
+    fix e u c assume "resolution_table_lookup C (e,u) = Some c"
+    then obtain c0 where c0: "resolution_table_lookup \<Theta> (e,u) = Some c0"
+      and c: "c = (SOME c'. finite_checks_schema_proof P c' e u)"
+      unfolding C_def by (auto split: option.splits)
+    have "(e,decode_finite_term u) \<in> positive_meaning (decode_finite_system P)"
+      using true c0 unfolding finite_table_true_def by blast
+    then have "\<exists>c'. finite_checks_schema_proof P c' e u" by (rule finite_checks_schema_proof_complete)
+    then show "finite_checks_schema_proof P c e u" unfolding c by (rule someI_ex)
+  qed
+  have closed_eq: "resolution_premise_closed_in C st q e x \<longleftrightarrow> resolution_premise_closed_in \<Theta> st q e x" for q e x
+    by (simp add: resolution_premise_closed_in_def dom)
+  have I': "resolution_invariant_in C P d t st"
+    using I unfolding resolution_invariant_in_def resolution_nodes_placed_in_def resolution_node_linked_in_def closed_eq .
+  have links: "finite_table_links C N' n = finite_table_links \<Theta> N' n" for N' n
+    by (simp add: finite_table_links_def dom cong: if_cong)
+  have "finite_state_graph_check_in C P d t (resolution_nodes st) nd"
+    by (rule finite_state_graph_check_found_in[OF valid I' closed nd root])
+  then show ?thesis
+    unfolding finite_state_graph_check_in_def finite_state_graph_in_def finite_state_claims_in_def
+      finite_table_discharges_def links .
+qed
+
 theorem finite_state_graph_check_found:
   assumes I: "resolution_invariant P d t st" and closed: "resolution_pending st={||}"
     and nd: "nd |\<in>| resolution_nodes st" and root: "resolution_node_position nd=[]"
@@ -1712,6 +1806,24 @@ corollary finite_table_graph_checks_produced:
   "finite_table_graph_checks P resolution_empty_table rows \<Longrightarrow>
     finite_table_valid P (finite_table_produced resolution_empty_table rows)"
   by (rule finite_table_graph_checks_valid[OF finite_table_valid_empty])
+
+text \<open>The check and the table it produces in one fold: the produced table only where the check passes.\<close>
+
+fun finite_table_checked ::
+    "('a,'s::linorder,'d,'c) finite_schema_system \<Rightarrow> ('a,'s,'d,'c) resolution_table \<Rightarrow>
+      ('a,'s,'d,'c) resolution_table_row list \<Rightarrow> ('a,'s,'d,'c) resolution_table option" where
+  "finite_table_checked P \<Theta> [] = Some \<Theta>"
+| "finite_table_checked P \<Theta> ((e,u,N,nd)#rows) = (if nd |\<in>| N \<and> finite_state_graph_check_in \<Theta> P e u N nd
+    then finite_table_checked P (resolution_table_extend \<Theta> e u (finite_node_proof_in \<Theta> (fcard N) N nd)) rows else None)"
+
+lemma finite_table_checked_exact:
+  "finite_table_checked P \<Theta> rows =
+    (if finite_table_graph_checks P \<Theta> rows then Some (finite_table_produced \<Theta> rows) else None)"
+  by (induction P \<Theta> rows rule: finite_table_checked.induct) auto
+
+corollary finite_table_checked_valid:
+  "finite_table_valid P \<Theta> \<Longrightarrow> finite_table_checked P \<Theta> rows = Some \<Theta>' \<Longrightarrow> finite_table_valid P \<Theta>'"
+  by (auto simp: finite_table_checked_exact split: if_splits intro: finite_table_graph_checks_valid)
 
 section \<open>The code equations: the check over the graph, the certificates once per node\<close>
 
@@ -2913,11 +3025,15 @@ definition finite_indexed_graph_check ::
 
 subsection \<open>The graph reading over the indexes at a table\<close>
 
-definition finite_indexed_table_graph_check ::
+text \<open>
+  The graph reading and the entries' acceptance at a given reach; the indexed forms read them at the root's reach.
+\<close>
+
+definition finite_indexed_reached_graph_check ::
     "('a,'s::linorder,'d,'c) finite_schema_system \<Rightarrow> 'd \<Rightarrow> finite_factor_term \<Rightarrow>
       (('a,'s,'d,'c) resolution_node \<times> ('s \<times> ('a,'s,'d,'c) resolution_node) fset \<times>
-        ('s \<times> ('a,'s,'d,'c) resolution_node) fset) list \<Rightarrow> ('a,'s,'d,'c) resolution_node \<Rightarrow> bool" where
-  "finite_indexed_table_graph_check P d t LS nd = (let R = finite_indexed_reach (map (\<lambda>(m,L,TL). (m,L)) LS) nd in
+        ('s \<times> ('a,'s,'d,'c) resolution_node) fset) list \<Rightarrow> ('s list, unit) rbt \<Rightarrow> ('a,'s,'d,'c) resolution_node \<Rightarrow> bool" where
+  "finite_indexed_reached_graph_check P d t LS R nd = (
     resolution_node_site nd=d \<and> finite_residual_term (resolution_node_call nd)=t \<and> finite_system_formed P \<and>
     list_all (\<lambda>(m,L,TL). RBT.lookup R (resolution_node_position m) \<noteq> None \<longrightarrow> finite_relation_functional (L |\<union>| TL) \<and>
       finite_admitted_instance_at P (resolution_node_site m) (resolution_node_clause m) (finite_node_values m)
@@ -2925,22 +3041,37 @@ definition finite_indexed_table_graph_check ::
         (fimage (\<lambda>(s,m'). (s,resolution_node_site m',finite_residual_term (resolution_node_call m'))) (L |\<union>| TL)) \<and>
       fBall TL (\<lambda>(s,a). finite_schema_call_formed P (resolution_node_site a) (finite_residual_term (resolution_node_call a)))) LS)"
 
-definition finite_indexed_table_entries ::
+definition finite_indexed_reached_entries ::
     "('a,'s::linorder,'d,'c) finite_schema_system \<Rightarrow> ('a,'s,'d,'c) resolution_table \<Rightarrow>
       (('a,'s,'d,'c) resolution_node \<times> ('s \<times> ('a,'s,'d,'c) resolution_node) fset \<times>
-        ('s \<times> ('a,'s,'d,'c) resolution_node) fset) list \<Rightarrow> ('a,'s,'d,'c) resolution_node \<Rightarrow> bool" where
-  "finite_indexed_table_entries P \<Theta> LS nd = (let R = finite_indexed_reach (map (\<lambda>(m,L,TL). (m,L)) LS) nd in
+        ('s \<times> ('a,'s,'d,'c) resolution_node) fset) list \<Rightarrow> ('s list, unit) rbt \<Rightarrow> bool" where
+  "finite_indexed_reached_entries P \<Theta> LS R = (
     list_all (\<lambda>(m,L,TL). RBT.lookup R (resolution_node_position m) \<noteq> None \<longrightarrow> fBall TL (\<lambda>(s,a).
       finite_checks_schema_proof P (finite_table_proof \<Theta> a) (resolution_node_site a) (finite_residual_term (resolution_node_call a))))
     LS)"
 
+definition finite_indexed_table_graph_check ::
+    "('a,'s::linorder,'d,'c) finite_schema_system \<Rightarrow> 'd \<Rightarrow> finite_factor_term \<Rightarrow>
+      (('a,'s,'d,'c) resolution_node \<times> ('s \<times> ('a,'s,'d,'c) resolution_node) fset \<times>
+        ('s \<times> ('a,'s,'d,'c) resolution_node) fset) list \<Rightarrow> ('a,'s,'d,'c) resolution_node \<Rightarrow> bool" where
+  "finite_indexed_table_graph_check P d t LS nd =
+    finite_indexed_reached_graph_check P d t LS (finite_indexed_reach (map (\<lambda>(m,L,TL). (m,L)) LS) nd) nd"
+
+definition finite_indexed_table_entries ::
+    "('a,'s::linorder,'d,'c) finite_schema_system \<Rightarrow> ('a,'s,'d,'c) resolution_table \<Rightarrow>
+      (('a,'s,'d,'c) resolution_node \<times> ('s \<times> ('a,'s,'d,'c) resolution_node) fset \<times>
+        ('s \<times> ('a,'s,'d,'c) resolution_node) fset) list \<Rightarrow> ('a,'s,'d,'c) resolution_node \<Rightarrow> bool" where
+  "finite_indexed_table_entries P \<Theta> LS nd =
+    finite_indexed_reached_entries P \<Theta> LS (finite_indexed_reach (map (\<lambda>(m,L,TL). (m,L)) LS) nd)"
+
 lemma finite_indexed_table_entries_rows [simp]:
   "finite_indexed_table_entries P \<Theta> (map (\<lambda>(m,L). (m,L,{||})) LS) nd"
-  by (simp add: finite_indexed_table_entries_def Let_def list_all_iff split_def)
+  by (simp add: finite_indexed_table_entries_def finite_indexed_reached_entries_def Let_def list_all_iff split_def)
 
 lemma finite_indexed_graph_check_rows:
   "finite_indexed_graph_check P d t LS nd = finite_indexed_table_graph_check P d t (map (\<lambda>(m,L). (m,L,{||})) LS) nd"
-  by (simp add: finite_indexed_graph_check_def finite_indexed_table_graph_check_def Let_def list_all_iff split_def comp_def)
+  by (simp add: finite_indexed_graph_check_def finite_indexed_table_graph_check_def finite_indexed_reached_graph_check_def
+    Let_def list_all_iff split_def comp_def)
 
 lemma finite_indexed_table_graph_check_exact:
   assumes listed: "finite_post_listed (fset N) ns" and nd: "nd |\<in>| N"
@@ -2983,7 +3114,8 @@ proof -
     finally show ?thesis .
   qed
   show ?thesis
-    unfolding finite_indexed_table_graph_check_def Let_def pairs A finite_state_graph_check_in_at[OF nd]
+    unfolding finite_indexed_table_graph_check_def finite_indexed_reached_graph_check_def pairs A
+      finite_state_graph_check_in_at[OF nd]
     using finite_state_graph_in_uses[OF nd dist] by blast
 qed
 
@@ -3006,7 +3138,7 @@ proof -
       map (\<lambda>m. (m,finite_node_links N m)) ns" by simp
   have "finite_indexed_table_entries P \<Theta> (map (\<lambda>m. (m,finite_node_links N m,finite_table_links \<Theta> N m)) ns) nd \<longleftrightarrow>
       (\<forall>m\<in>fset N. RBT.lookup ?R (resolution_node_position m) \<noteq> None \<longrightarrow> ?E m)"
-    unfolding finite_indexed_table_entries_def Let_def pairs by (simp add: list_all_iff setns)
+    unfolding finite_indexed_table_entries_def finite_indexed_reached_entries_def pairs by (simp add: list_all_iff setns)
   also have "\<dots> \<longleftrightarrow> (\<forall>m\<in>fset N. m |\<in>| finite_link_reach N nd \<longrightarrow> ?E m)"
     by (rule ball_cong[OF refl]) (simp only: finite_indexed_reach_exact[OF listed nd])
   also have "\<dots> \<longleftrightarrow> fBall (finite_link_reach N nd) ?E" using finite_link_reach(2)[OF nd] by auto
@@ -3024,15 +3156,7 @@ definition finite_indexed_table_accepts ::
       (('a,'s,'d,'c) resolution_node \<times> ('s \<times> ('a,'s,'d,'c) resolution_node) fset \<times>
         ('s \<times> ('a,'s,'d,'c) resolution_node) fset) list \<Rightarrow> ('a,'s,'d,'c) resolution_node \<Rightarrow> bool" where
   "finite_indexed_table_accepts P \<Theta> d t LS nd = (let R = finite_indexed_reach (map (\<lambda>(m,L,TL). (m,L)) LS) nd in
-    (resolution_node_site nd=d \<and> finite_residual_term (resolution_node_call nd)=t \<and> finite_system_formed P \<and>
-    list_all (\<lambda>(m,L,TL). RBT.lookup R (resolution_node_position m) \<noteq> None \<longrightarrow> finite_relation_functional (L |\<union>| TL) \<and>
-      finite_admitted_instance_at P (resolution_node_site m) (resolution_node_clause m) (finite_node_values m)
-        (finite_residual_term (resolution_node_call m))
-        (fimage (\<lambda>(s,m'). (s,resolution_node_site m',finite_residual_term (resolution_node_call m'))) (L |\<union>| TL)) \<and>
-      fBall TL (\<lambda>(s,a). finite_schema_call_formed P (resolution_node_site a) (finite_residual_term (resolution_node_call a)))) LS) \<and>
-    list_all (\<lambda>(m,L,TL). RBT.lookup R (resolution_node_position m) \<noteq> None \<longrightarrow> fBall TL (\<lambda>(s,a).
-      finite_checks_schema_proof P (finite_table_proof \<Theta> a) (resolution_node_site a) (finite_residual_term (resolution_node_call a))))
-    LS)"
+    finite_indexed_reached_graph_check P d t LS R nd \<and> finite_indexed_reached_entries P \<Theta> LS R)"
 
 lemma finite_indexed_table_accepts_split:
   "finite_indexed_table_accepts P \<Theta> d t LS nd =
@@ -3269,6 +3393,36 @@ qed
 lemmas finite_table_graph_checks_code [code] = finite_table_graph_checks.simps(1) finite_table_graph_checks_indexed
 lemmas finite_table_produced_code [code] = finite_table_produced.simps(1) finite_table_produced_indexed
 
+declare finite_table_checked.simps [code del]
+
+lemma finite_table_checked_indexed:
+  "finite_table_checked P \<Theta> ((e,u,N,nd)#rows) = (case finite_post_listing (fset N) of
+      None \<Rightarrow> if nd |\<in>| N \<and> finite_state_graph_check_in \<Theta> P e u N nd
+        then finite_table_checked P (resolution_table_extend \<Theta> e u (finite_node_proof_in \<Theta> (fcard N) N nd)) rows else None
+    | Some ns \<Rightarrow> (let LS = finite_indexed_table_rows \<Theta> ns in
+        if nd |\<in>| N \<and> finite_indexed_table_graph_check P e u LS nd
+        then finite_table_checked P (resolution_table_extend \<Theta> e u
+          (the (RBT.lookup (finite_indexed_certificates_in \<Theta> LS) (resolution_node_position nd)))) rows else None))"
+proof (cases "finite_post_listing (fset N)")
+  case None
+  then show ?thesis by simp
+next
+  case (Some ns)
+  have listed: "finite_post_listed (fset N) ns" by (rule finite_post_listing_some[OF Some])
+  show ?thesis
+  proof (cases "nd |\<in>| N")
+    case True
+    then show ?thesis using Some
+      by (simp add: finite_indexed_table_rows_exact[OF listed] finite_indexed_table_graph_check_exact[OF listed True]
+        finite_indexed_certificates_in_exact[OF listed True] Let_def)
+  next
+    case False
+    then show ?thesis using Some by (simp add: Let_def)
+  qed
+qed
+
+lemmas finite_table_checked_code [code] = finite_table_checked.simps(1) finite_table_checked_indexed
+
 section \<open>The verdict at a table read from its graph alone\<close>
 
 text \<open>
@@ -3294,8 +3448,7 @@ lemma finite_state_graph_verdicts_in_valid:
   by (simp add: finite_state_graph_verdicts_in_def finite_state_verdicts_in_def finite_table_entries_accepted_valid[OF valid])
 
 theorem finite_state_graph_verdicts_in_true:
-  assumes true: "\<And>e u c. resolution_table_lookup \<Theta> (e,u) = Some c \<Longrightarrow>
-      (e,decode_finite_term u) \<in> positive_meaning (decode_finite_system P)"
+  assumes true: "finite_table_true P \<Theta>"
     and verdict: "(c,True) |\<in>| finite_state_graph_verdicts_in \<Theta> P d t st"
   shows "(d,decode_finite_term t) \<in> positive_meaning (decode_finite_system P)"
 proof -
@@ -3304,7 +3457,7 @@ proof -
   then show ?thesis
   proof
     assume g: "finite_state_graph_check_in \<Theta> P d t (resolution_nodes st) nd"
-    show ?thesis by (rule finite_state_graph_check_true_at[OF _ g]) (erule true)
+    show ?thesis by (rule finite_state_graph_check_true_at[OF true g])
   next
     assume "finite_checks_schema_proof P c d t"
     then show ?thesis unfolding finite_checks_schema_proof_exact by (rule schema_proof_sound)
@@ -3367,6 +3520,6 @@ next
 qed
 
 export_code finite_program_resolution finite_committed_resolution finite_program_resolution_in finite_table_graph_checks
-  finite_table_produced finite_state_graph_verdicts_in checking SML
+  finite_table_produced finite_table_checked finite_state_graph_verdicts_in checking SML
 
 end

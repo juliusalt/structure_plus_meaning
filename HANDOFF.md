@@ -109,9 +109,11 @@ into the briefs #522 and #523 corrected, or recorded superseded there.
   1 and 3, #829's method and review 824's 1 mailed) → #542 and #547. The briefs of #542, #547, #707 and #399 call the check forms at the moded selection for
   ground root calls (#819's rewrites; the committed forms at None for pattern roots, #542's 590).
 - The given's record (R6c): #782 landed the one produced record at the rooted readers (R7's); its installed carrying:
-  #796 landed (the produced record's relocation, the generic join at its notions); #798 (526 and 561,
-  `given_union_registration`; review 797's 1–3, its 1 decided as q138: the union registration's facts at the varied
-  relocated registration, discharged from the agreements alone) → #707, #547 and #399 (q144). #784 landed (review 783's 4, 5 and 8); its control of 55's
+  #796 landed (the produced record's relocation, the generic join at its notions); #798 (the one record at 526 and 561;
+  review 797's 1–3; ended partial, its theories written and one forked proof of `Development_Given_Frames` unfinished
+  at 540 s, re-planned to repair it and hand over, continuing 798) → `given_union_registration` #859 (#782's Remains 4,
+  review 767's 2, q138: its facts at the varied relocated registration, discharged from the agreements alone) → #707,
+  #547 and #399 (q144). #784 landed (review 783's 4, 5 and 8); its control of 55's
   two-union clause is c55 #827 (q146, review 785's 1–3), after K3, off the route.
 - #831's builds, placed from #836: GT1a #837 (the table in R3's step, search and resolution and R3b's certificate;
   after #793) and #849 (q150: the ground-founds conjunct at the pattern invariant, R4's lifting the committed lifting's
@@ -122,9 +124,7 @@ into the briefs #522 and #523 corrected, or recorded superseded there.
   #707 → #399 → its controls #709 (before #401, #403 and #553); #547 → #443.
 - Off the route: the controls #718 landed (`41553f0d`) with 77's and 79's fixtures as Remains, re-run after OS2 by
   #857 (with review 719's follow-ups); c55 #827 (a held run, so queued last). On the
-  route: the move #793 (q141: the committed search and its lifting in `Factor_Resolution_Lifting` below Completeness,
-  checked with #718; R4's lifting and induction left standing, q150; review 724's 1, 4 and 5 offered to OS1 and OS2,
-  review 812's 1 to #849; at the queue's head while it checks), before GT1a and #849; the consolidation #832 (review
+  route: the move #793 landed (`8ed6d254`; review 793's 1–3 mailed to #849, its 4 to #832); the consolidation #832 (review
   824's 2, 3, 6, 7, 9: the check and committed forms' exactness once over a focus, the transfers from one relocated
   meaning; review 724's 2 and next-edits 340 at the row it edits; after #793 and K3), before GT2, so the table enters
   the forms once.
@@ -152,9 +152,9 @@ Nothing is added after the route's tail until it shortens (the status line gives
 
 **Order** (the queue holds it; the planner's choice, a residual until the native answer to the selection problem
 exists, Q2): the slots are one pool, each free slot going to the first task in the queue that can start, every review
-right after its build. The move #793 at the head while it checks; uncertainty next (the investigation #851, the brief
-#852 of #830's fixes), then by slack on the longest chain: OS1 #853, OS2 #855, #849, GT1a #837, GT1b #839, GT4 #841;
-#798 as it runs; I3b #817; K3 #825, the consolidation #832, GT2 #843, GT5 #845, W5 #847; R7 #542, #707, #399, #709,
+right after its build. Uncertainty first (the investigation #851, the brief #852 of #830's fixes), then by slack on
+the longest chain: OS1 #853, OS2 #855, #849, GT1a #837, #798 and `given_union_registration` #859, GT1b #839, GT4 #841;
+I3b #817; K3 #825, the consolidation #832, GT2 #843, GT5 #845, W5 #847; R7 #542, #707, #399, #709,
 #547; the route in its chains' order (#551, #549, #553, #401, #403, #443, #447, #407, #445, #449); the re-run #857 and
 c55 #827 last, held runs off the route.
 ## Decisions
@@ -433,7 +433,9 @@ under `.build/plans/plan-69/`, `plan-81/` and `plan-86/`.
   instances and transfers, the declarations' guard `finite_declared_guard`, the route forms' constants with
   `native_moded_check_exact`; its control `Factor_Check_Controls`; #823).
 - **The base as one heap** (Q29–Q32): #623–#628; `Factor_Resolution_Commitments`' proof time (#629).
-- **The low moves** (#618, #777).
+- **The low moves** (#618, #777); the move #793 (`8ed6d254`): the committed search and its lifting, with R4's rank,
+  values, positions, support, successors and steps, in `Factor_Resolution_Lifting` below Completeness, R4's lifting
+  standing until #849.
 - **Briefs whose findings stand**: #434 (`.build/tasks/434/result.md`: the approval record's place, part (g)'s leaf
   argument not demanded, parts (h) and (e) the owner's, Q25), #451 (`.build/tasks/451/result.md`: the readings of
   "generation" and "adoption" generated, the owner's words naming readers).
@@ -535,13 +537,13 @@ planner searches for a theory before briefing a task that edits it.
 
 ## Now
 
-- **Under way**: the move #793 in review (rewritten to the move, R4's lifting left standing, q150); #798 builds; the
-  investigation #851 (C's per-node walk at the given) and the brief #852 (#830's fixes) run; OS1 #853 starts as a slot
-  frees; OS2 #855 after OS1 and #793; #849 and GT1a #837 after #793.
+- **Under way**: #798 continues (one forked proof of `Development_Given_Frames` unfinished at 540 s, then its
+  hand-over; `given_union_registration` #859 after it); the investigation #851 (C's per-node walk at the given) and
+  the brief #852 (#830's fixes) run; OS1 #853, #849 and GT1a #837 start as slots free; OS2 #855 after OS1.
 - **What the next events ask**: #852's proposal (K2's route over the access, the shared unifier at the given, the
   selection's classes kept; K3 re-pointed onto those its figures need, all before #542; its correction of #825 made from
   #825's brief as #850's correction left it, told), then the brief of GT3 and GT6 (the production's run placed then);
-  #851's cause, its fix before GT4 #841; the hand-overs of #793, #798, OS1 and #849. The
+  #851's cause, its fix before GT4 #841; the hand-overs of #798, OS1, #849 and GT1a. The
   briefs of #542, #547, #707 and #399 are rewritten from #831's section, correction (15) and #830's follow-ups before
   they start (#542's takes review 816's 6, the exchange at the moded priority, unless #817 states it). Q33 is the
   owner's.

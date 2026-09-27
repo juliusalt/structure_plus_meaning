@@ -597,6 +597,133 @@ text \<open>
   valid table meets (@{thm [source] finite_table_valid_true}).
 \<close>
 
+text \<open>
+  The relocated and the agreeing program's exact premises at a table (task 942), from the source's discharged
+  declarations (and frames, and the narrowed record's relocation with its productions there) and a complete construction
+  at the target: the declarations carried (@{text declarations_relocated_discharged}, @{text declarations_agree_discharged}),
+  the table's calls carried (@{thm [source] finite_table_true_relocated}, @{thm [source] finite_table_true_agreement}),
+  the construction's lifting at the table (@{text finite_construction_complete_lifts_in}), composed by the premises lemmas
+  of the forms at a table. The check transfers at a table (@{thm [source] finite_check_relocation_transfer_in},
+  @{thm [source] finite_check_agreement_transfer_in}) take them.
+\<close>
+
+lemma finite_declared_relocated_premises_in:
+  fixes P :: "('a,'s::linorder,'d,'c) finite_schema_system" and g :: "'d \<Rightarrow> 'e"
+  assumes \<kappa>': "finite_witness_construction_formed \<kappa>'"
+    and complete': "finite_construction_complete \<kappa>' (finite_rename_system g P)"
+    and sel: "finite_selection_formed \<kappa>' (finite_rename_system g P) sel"
+    and true: "finite_table_true P \<Theta>" and relocates: "finite_table_relocates g \<Theta> \<Theta>'"
+    and Pf: "schema_system_formed (decode_finite_system P)"
+    and injective: "inj_on g (system_definitions (decode_finite_system P) \<union> declared_sites D \<union> fst ` finite_table_calls \<Theta>)"
+    and discharged: "declarations_discharged (positive_meaning (decode_finite_system P)) D corr"
+  shows "finite_committed_exact_premises_in \<Theta>' (\<lambda>d t s. resolution_invariant_in \<Theta>' (finite_rename_system g P) d t s \<and>
+      resolution_registrations_held \<kappa>' s) sel \<kappa>' (finite_declared_commitment (declarations_relocated g D)) (finite_rename_system g P)"
+  by (rule finite_declared_exact_premises_by_in[OF \<kappa>' sel
+    finite_table_true_relocated[OF true relocates Pf inj_on_subset[OF injective]]
+    declarations_relocated_discharged[OF Pf inj_on_subset[OF injective] discharged]
+    finite_complete_registrations_premise_only[OF complete'] finite_construction_complete_lifts_in[OF complete']]) blast+
+
+lemma finite_framed_relocated_premises_in:
+  fixes P :: "('a,'s::linorder,'d,'c) finite_schema_system" and g :: "'d \<Rightarrow> 'e"
+  assumes \<kappa>': "finite_witness_construction_formed \<kappa>'"
+    and complete': "finite_construction_complete \<kappa>' (finite_rename_system g P)"
+    and sel: "finite_selection_formed \<kappa>' (finite_rename_system g P) sel"
+    and true: "finite_table_true P \<Theta>" and relocates: "finite_table_relocates g \<Theta> \<Theta>'"
+    and Pf: "schema_system_formed (decode_finite_system P)"
+    and injective: "inj_on g (system_definitions (decode_finite_system P) \<union> declared_sites D \<union> frame_sites \<Phi> \<union>
+      fst ` finite_table_calls \<Theta>)"
+    and discharged: "declarations_discharged (positive_meaning (decode_finite_system P)) D corr"
+    and frames: "frames_discharged (positive_meaning (decode_finite_system P)) D \<Phi>"
+  shows "finite_committed_exact_premises_in \<Theta>' (\<lambda>d t s. resolution_invariant_in \<Theta>' (finite_rename_system g P) d t s \<and>
+      resolution_registrations_held \<kappa>' s) sel \<kappa>' (finite_framed_commitment (declarations_relocated g D) (frames_relocated g \<Phi>))
+      (finite_rename_system g P)"
+  by (rule finite_framed_exact_premises_by_in[OF \<kappa>' sel
+    finite_table_true_relocated[OF true relocates Pf inj_on_subset[OF injective]]
+    declarations_relocated_discharged[OF Pf inj_on_subset[OF injective] discharged]
+    frames_relocated_discharged[OF Pf inj_on_subset[OF injective] frames]
+    finite_complete_registrations_premise_only[OF complete'] finite_construction_complete_lifts_in[OF complete']]) blast+
+
+lemma finite_narrowed_relocated_premises_in:
+  fixes P :: "('a,'s::linorder,'d,'c) finite_schema_system" and g :: "'d \<Rightarrow> 'e"
+    and D :: "('a,'s,'d,'v) produced_declarations" and D' :: "('a,'s,'e,'w) produced_declarations"
+  assumes \<kappa>': "finite_witness_construction_formed \<kappa>'"
+    and complete': "finite_construction_complete \<kappa>' (finite_rename_system g P)"
+    and sel: "finite_selection_formed \<kappa>' (finite_rename_system g P) sel"
+    and true: "finite_table_true P \<Theta>" and relocates_table: "finite_table_relocates g \<Theta> \<Theta>'"
+    and Pf: "schema_system_formed (decode_finite_system P)"
+    and injective: "inj_on g (system_definitions (decode_finite_system P) \<union>
+      declared_sites (resolution_declarations.truncate D) \<union> frame_sites \<Phi> \<union> fst ` finite_table_calls \<Theta>)"
+    and discharged: "narrowed_declarations_discharged (positive_meaning (decode_finite_system P))
+      (narrowed_declarations.truncate D) corr"
+    and frames: "narrowed_frames_discharged (positive_meaning (decode_finite_system P))
+      (narrowed_declarations.truncate D) \<Phi>"
+    and relocated: "narrowed_declarations.truncate D' =
+      narrowed (declarations_relocated g (resolution_declarations.truncate D)) \<nu>"
+    and relocates: "\<And>e S s keep Vp Vh. (e,S,s,keep,Vp,Vh) |\<in>| declared_sockets D \<Longrightarrow>
+      \<nu> (g e) (finite_rename_schema id id g S) s = declared_narrowing D e S s"
+    and productions': "productions_discharged (positive_meaning (decode_finite_system (finite_rename_system g P)))
+      (finite_rename_system g P) m' D'"
+    and declared': "narrowed_productions_declared D'"
+  shows "finite_committed_exact_premises_in \<Theta>' (\<lambda>d t s. resolution_invariant_in \<Theta>' (finite_rename_system g P) d t s \<and>
+      resolution_registrations_held \<kappa>' s) sel \<kappa>' (finite_narrowed_commitment (finite_rename_system g P) m' D' (frames_relocated g \<Phi>))
+      (finite_rename_system g P)"
+proof -
+  have inj0: "inj_on g (system_definitions (decode_finite_system P) \<union>
+      declared_sites (resolution_declarations.truncate (narrowed_declarations.truncate D)))"
+    by (rule inj_on_subset[OF injective]) auto
+  have rel0: "\<nu> (g e) (finite_rename_schema id id g S) s = declared_narrowing (narrowed_declarations.truncate D) e S s"
+    if "(e,S,s,keep,Vp,Vh) |\<in>| declared_sockets (narrowed_declarations.truncate D)" for e S s keep Vp Vh
+    using relocates[of e S s keep Vp Vh] that by simp
+  have dR: "narrowed_declarations_discharged (positive_meaning (decode_finite_system (finite_rename_system g P)))
+      (narrowed_declarations.truncate D') (corr \<circ> inv_into (declared_sites (resolution_declarations.truncate D)) g)"
+    using narrowed_declarations_relocated_discharged[OF Pf inj0 discharged rel0] relocated by simp
+  have fR: "narrowed_frames_discharged (positive_meaning (decode_finite_system (finite_rename_system g P)))
+      (narrowed_declarations.truncate D') (frames_relocated g \<Phi>)"
+  proof -
+    have "narrowed_frames_discharged (positive_meaning (decode_finite_system (finite_rename_system g P)))
+        (narrowed (declarations_relocated g (resolution_declarations.truncate (narrowed_declarations.truncate D))) \<nu>)
+        (frames_relocated g \<Phi>)"
+      by (rule narrowed_frames_relocated_discharged[OF Pf _ rel0 frames]) (rule inj_on_subset[OF injective], auto)
+    then show ?thesis using relocated by simp
+  qed
+  have true': "finite_table_true (finite_rename_system g P) \<Theta>'"
+    by (rule finite_table_true_relocated[OF true relocates_table Pf inj_on_subset[OF injective]]) blast
+  show ?thesis
+    by (rule finite_narrowed_exact_premises_by_in[OF \<kappa>' sel true' dR fR productions' declared'
+      finite_complete_registrations_premise_only[OF complete'] finite_construction_complete_lifts_in[OF complete']])
+qed
+
+lemma finite_declared_agreement_premises_in:
+  fixes P Q :: "('a,'s::linorder,'d,'c) finite_schema_system"
+  assumes \<kappa>': "finite_witness_construction_formed \<kappa>'" and complete': "finite_construction_complete \<kappa>' Q"
+    and sel: "finite_selection_formed \<kappa>' Q sel" and true: "finite_table_true P \<Theta>"
+    and Pf: "schema_system_formed (decode_finite_system P)" and Qf: "schema_system_formed (decode_finite_system Q)"
+    and agree: "systems_agree_on (decode_finite_system P) (decode_finite_system Q) V"
+    and closed: "system_dependency_closed (decode_finite_system P) V"
+    and sites: "declared_sites D \<subseteq> V" and tsites: "\<And>d t. (d,t) \<in> finite_table_calls \<Theta> \<Longrightarrow> d \<in> V"
+    and discharged: "declarations_discharged (positive_meaning (decode_finite_system P)) D corr"
+  shows "finite_committed_exact_premises_in \<Theta> (\<lambda>d t s. resolution_invariant_in \<Theta> Q d t s \<and> resolution_registrations_held \<kappa>' s)
+    sel \<kappa>' (finite_declared_commitment D) Q"
+  by (rule finite_declared_exact_premises_by_in[OF \<kappa>' sel finite_table_true_agreement[OF true Pf Qf agree closed tsites]
+    declarations_agree_discharged[OF Pf Qf agree closed sites discharged]
+    finite_complete_registrations_premise_only[OF complete'] finite_construction_complete_lifts_in[OF complete']])
+
+lemma finite_framed_agreement_premises_in:
+  fixes P Q :: "('a,'s::linorder,'d,'c) finite_schema_system"
+  assumes \<kappa>': "finite_witness_construction_formed \<kappa>'" and complete': "finite_construction_complete \<kappa>' Q"
+    and sel: "finite_selection_formed \<kappa>' Q sel" and true: "finite_table_true P \<Theta>"
+    and Pf: "schema_system_formed (decode_finite_system P)" and Qf: "schema_system_formed (decode_finite_system Q)"
+    and agree: "systems_agree_on (decode_finite_system P) (decode_finite_system Q) V"
+    and closed: "system_dependency_closed (decode_finite_system P) V"
+    and sites: "declared_sites D \<subseteq> V" and tsites: "\<And>d t. (d,t) \<in> finite_table_calls \<Theta> \<Longrightarrow> d \<in> V"
+    and discharged: "declarations_discharged (positive_meaning (decode_finite_system P)) D corr"
+    and frames: "frames_discharged (positive_meaning (decode_finite_system P)) D \<Phi>"
+  shows "finite_committed_exact_premises_in \<Theta> (\<lambda>d t s. resolution_invariant_in \<Theta> Q d t s \<and> resolution_registrations_held \<kappa>' s)
+    sel \<kappa>' (finite_framed_commitment D \<Phi>) Q"
+  by (rule finite_framed_exact_premises_by_in[OF \<kappa>' sel finite_table_true_agreement[OF true Pf Qf agree closed tsites]
+    declarations_agree_discharged[OF Pf Qf agree closed sites discharged] frames_agree_discharged[OF Pf Qf agree closed sites frames]
+    finite_complete_registrations_premise_only[OF complete'] finite_construction_complete_lifts_in[OF complete']])
+
 corollary finite_table_true_relocated_alpha:
   assumes true: "finite_table_true P \<Theta>" and relocates: "finite_table_relocates g \<Theta> \<Theta>'"
     and Pf: "schema_system_formed (decode_finite_system P)"

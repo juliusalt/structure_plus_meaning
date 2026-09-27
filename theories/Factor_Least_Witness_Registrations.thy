@@ -301,8 +301,14 @@ proof -
 qed
 
 
-theorem finite_complete_construction_supported:
-  assumes I: "resolution_invariant P d t st" and H: "resolution_registrations_held \<kappa> st"
+text \<open>
+  The construction's support holds at any table (task 942): the table enters the invariant only through a premise it
+  closes, which is ground, and a constructed variable lies in none; so no truth of the table is read. The empty-table
+  form below is its instance.
+\<close>
+
+theorem finite_complete_construction_supported_in:
+  assumes I: "resolution_invariant_in \<Theta> P d t st" and H: "resolution_registrations_held \<kappa> st"
     and sup: "resolution_supported_at U F B P st \<theta>"
     and focus: "resolution_focused F (resolution_node_position nd)"
     and complete: "finite_construction_complete \<kappa> P" and nd: "nd |\<in>| resolution_nodes st"
@@ -324,9 +330,9 @@ proof -
   define st0 where "st0 = Resolution_State ?G (resolution_nodes st) W"
   have step: "finite_construction_step \<kappa> P st nd = resolution_state_substitute ?\<sigma> st0"
     by (simp add: finite_construction_step_def W_def st0_def Let_def)
-  have placed_nodes: "resolution_nodes_placed P d t st" and distinct: "resolution_positions_distinct st"
+  have placed_nodes: "resolution_nodes_placed_in \<Theta> P d t st" and distinct: "resolution_positions_distinct st"
     using I unfolding resolution_invariant_in_def by blast+
-  have linked: "resolution_node_linked P st nd"
+  have linked: "resolution_node_linked_in \<Theta> P st nd"
     using placed_nodes nd unfolding resolution_nodes_placed_in_def by blast
   have bformed: "\<And>a x. (a,x) |\<in>| resolution_node_bindings nd \<Longrightarrow> finite_pattern_formed x"
     using placed_nodes nd unfolding resolution_nodes_placed_in_def by blast
@@ -336,7 +342,7 @@ proof -
           (finite_pattern_substitute \<beta> p) |\<in>| ?G \<or>
         (\<exists>m. m |\<in>| resolution_nodes st \<and> resolution_node_position m = ?pos@[s] \<and>
           resolution_node_site m = e \<and> resolution_node_call m = finite_pattern_substitute \<beta> p) \<or>
-        resolution_premise_reused st (?pos@[s]) e (finite_pattern_substitute \<beta> p)"
+        resolution_premise_closed_in \<Theta> st (?pos@[s]) e (finite_pattern_substitute \<beta> p)"
     and mat: "\<And>s M. (s,M) |\<in>| finite_schema_materials ?S \<Longrightarrow>
         Resolution_Material_Goal (?pos@[s]) (resolution_node_site nd,resolution_node_clause nd,s)
           (finite_material_pattern_substitute \<beta> M) |\<in>| ?G \<or> resolution_material_done \<beta> M"
@@ -430,9 +436,9 @@ proof -
       have "\<not> (\<exists>m. m |\<in>| resolution_nodes st \<and> resolution_node_position m = ?pos@[s] \<and>
           resolution_node_site m = e \<and> resolution_node_call m = finite_pattern_substitute \<beta> p)"
         using resolution_variable_heldD(2)[OF held] xp by metis
-      moreover have "\<not> resolution_premise_reused st (?pos@[s]) e (finite_pattern_substitute \<beta> p)"
+      moreover have "\<not> resolution_premise_closed_in \<Theta> st (?pos@[s]) e (finite_pattern_substitute \<beta> p)"
       proof
-        assume "resolution_premise_reused st (?pos@[s]) e (finite_pattern_substitute \<beta> p)"
+        assume "resolution_premise_closed_in \<Theta> st (?pos@[s]) e (finite_pattern_substitute \<beta> p)"
         then have "finite_pattern_variables (finite_pattern_substitute \<beta> p) = {||}"
           unfolding resolution_premise_closed_in_def resolution_table.sel by blast
         then show False using xp by simp
@@ -1108,6 +1114,15 @@ theorem relocated_construction_complete:
 
 end
 
+theorem finite_complete_construction_supported:
+  assumes I: "resolution_invariant P d t st" and H: "resolution_registrations_held \<kappa> st"
+    and sup: "resolution_supported_at U F B P st \<theta>"
+    and focus: "resolution_focused F (resolution_node_position nd)"
+    and complete: "finite_construction_complete \<kappa> P" and nd: "nd |\<in>| resolution_nodes st"
+  shows "\<exists>\<theta>'. resolution_supported_at U F (finite_committed_barring B st) P
+      (finite_construction_step \<kappa> P st nd) \<theta>'"
+  by (rule finite_complete_construction_supported_in[OF I H sup focus complete nd])
+
 section \<open>Complete registrations lift every construction step, and the committed forms are exact\<close>
 
 text \<open>
@@ -1119,21 +1134,26 @@ text \<open>
   its search keeps pruning across a construction step, which the committed search bars.
 \<close>
 
-theorem finite_construction_complete_lifts:
+theorem finite_construction_complete_lifts_in:
   assumes complete: "finite_construction_complete \<kappa> P"
-  shows "finite_construction_lifts U \<kappa> P"
+  shows "finite_construction_lifts_in \<Theta> U \<kappa> P"
   unfolding finite_construction_lifts_in_def
 proof (intro allI impI)
   fix F B st \<theta> d t N nd
-  assume I: "resolution_invariant P d t st" and H: "resolution_registrations_held \<kappa> st"
+  assume I: "resolution_invariant_in \<Theta> P d t st" and H: "resolution_registrations_held \<kappa> st"
     and sup: "resolution_supported_at U F B P st \<theta>"
     and sel: "finite_resolution_select \<kappa> P (finite_focused F st) = Select_Construction N"
     and nd: "nd |\<in>| N" and focus: "resolution_focused F (resolution_node_position nd)"
   have ndst: "nd |\<in>| resolution_nodes st"
     using finite_resolution_select_construction[OF sel] nd by (auto simp: finite_focused_def)
   show "\<exists>\<theta>'. resolution_supported_at U F (finite_committed_barring B st) P (finite_construction_step \<kappa> P st nd) \<theta>'"
-    by (rule finite_complete_construction_supported[OF I H sup focus complete ndst])
+    by (rule finite_complete_construction_supported_in[OF I H sup focus complete ndst])
 qed
+
+theorem finite_construction_complete_lifts:
+  assumes complete: "finite_construction_complete \<kappa> P"
+  shows "finite_construction_lifts U \<kappa> P"
+  by (rule finite_construction_complete_lifts_in[OF complete])
 
 text \<open>The exact forms at a complete construction, each R5's at no commitment.\<close>
 

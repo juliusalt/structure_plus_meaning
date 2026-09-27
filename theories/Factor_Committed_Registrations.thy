@@ -443,21 +443,21 @@ theorem committed_moded_demand_exact_in:
 end
 
 text \<open>
-  At a table whose calls are true the exchange premise is rc's (@{text committed_registrations.exchanges_at_true}); the
-  construction premise at the table stays the caller's.
+  At a table whose calls are true rc's premises at the table are rc's: the exchange premise by
+  @{text committed_registrations.exchanges_at_true}, the construction premise by the complete construction's lifting at
+  the table (@{thm [source] finite_construction_complete_lifts_in}, task 942).
 \<close>
 
 lemma committed_registrations_in_true:
   assumes registered: "committed_registrations \<kappa> P m D \<Phi> corr" and true: "finite_table_true P \<Theta>"
-    and lifts: "finite_construction_lifts_in \<Theta> (\<lambda>_. False) \<kappa> P"
   shows "committed_registrations_in \<kappa> P m D \<Phi> corr \<Theta>"
-  by (rule committed_registrations_in.intro[OF registered committed_registrations_in_axioms.intro[OF lifts
+  by (rule committed_registrations_in.intro[OF registered committed_registrations_in_axioms.intro[OF
+    finite_construction_complete_lifts_in[OF committed_registrations.complete[OF registered]]
     committed_registrations.exchanges_at_true[OF registered true]]])
 
 lemma committed_registrations_in_empty:
   assumes registered: "committed_registrations \<kappa> P m D \<Phi> corr"
   shows "committed_registrations_in \<kappa> P m D \<Phi> corr resolution_empty_table"
-  by (rule committed_registrations_in_true[OF registered finite_table_true_empty
-    registered_commitment.lifts[OF committed_registrations.registered[OF registered]]])
+  by (rule committed_registrations_in_true[OF registered finite_table_true_empty])
 
 end

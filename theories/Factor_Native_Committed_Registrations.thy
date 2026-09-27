@@ -67,25 +67,23 @@ theorem native_committed_moded_exact:
       fset B = {q\<in>fset R. decode_finite_call_term q \<in> positive_meaning (decode_finite_system P)}"
   using native_committed_registered_exact_at[OF committed_registrations.registered_moded[OF registered] result] by blast+
 
-text \<open>A record declaring no narrowing and no production is one: its discharges are R5d's
-  (@{thm [source] declarations_discharged_unnarrowed}, @{thm [source] frames_discharged_unnarrowed}).\<close>
+text \<open>At a table: rc's native form at a priority, from rc's premises at the table; at the moded priority it is the
+  moded form at the table.\<close>
 
-lemma committed_registrations_unnarrowed:
-  assumes \<kappa>: "finite_witness_construction_formed \<kappa>" and complete: "finite_construction_complete \<kappa> P"
-    and discharged: "declarations_discharged (positive_meaning (decode_finite_system P)) D corr"
-    and frames: "frames_discharged (positive_meaning (decode_finite_system P)) D \<Phi>"
-  shows "committed_registrations \<kappa> P m (unproduced (unnarrowed D)) \<Phi> corr"
-proof (rule committed_registrations.intro[OF \<kappa> complete])
-  show "narrowed_declarations_discharged (positive_meaning (decode_finite_system P))
-      (narrowed_declarations.truncate (unproduced (unnarrowed D))) corr"
-    using discharged by (simp add: declarations_discharged_unnarrowed)
-  show "narrowed_frames_discharged (positive_meaning (decode_finite_system P))
-      (narrowed_declarations.truncate (unproduced (unnarrowed D))) \<Phi>"
-    using frames by (simp add: frames_discharged_unnarrowed)
-  show "productions_discharged (positive_meaning (decode_finite_system P)) P m (unproduced (unnarrowed D))"
-    by (rule productions_discharged_none) simp
-  show "narrowed_productions_declared (unproduced (unnarrowed D))" by (rule narrowed_productions_declared_unnarrowed)
-qed
+theorem native_committed_moded_exact_in:
+  fixes P :: "local_address option finite_native_system"
+  assumes registered: "committed_registrations_in \<kappa> P m D \<Phi> corr \<Theta>"
+    and result: "native_committed_resolution_by_in \<Theta> (finite_resolution_select_in \<Theta> prio \<kappa> P) \<kappa>
+      (finite_narrowed_commitment P m D \<Phi>) P R n = (T,A)"
+  shows "fimage fst T = R"
+    and "(q,Finite_Resolved C) |\<in>| T \<Longrightarrow> C \<noteq> {||} \<and> fBall C (\<lambda>p. finite_checks_schema_proof P p (fst q) (snd q)) \<and>
+      decode_finite_call_term q \<in> positive_meaning (decode_finite_system P)"
+    and "(q,r) |\<in>| T \<Longrightarrow> finite_resolution_refutes r \<Longrightarrow>
+      decode_finite_call_term q \<notin> positive_meaning (decode_finite_system P)"
+    and "A = Some B \<Longrightarrow> schema_system_formed (decode_finite_system P) \<and>
+      fset B = {q\<in>fset R. decode_finite_call_term q \<in> positive_meaning (decode_finite_system P)}"
+  using native_committed_resolution_by_exact_in[OF registered_commitment_at_in.exact_premises_in[OF
+    committed_registrations_in.registered_at_in[OF registered]] result] by blast+
 
 section \<open>The produced record relocated\<close>
 
@@ -1166,6 +1164,44 @@ proof -
   show "A = Some B \<Longrightarrow> schema_system_formed (decode_finite_system Inst) \<and>
       fset B = {q\<in>fset R. decode_finite_call_term q \<in> positive_meaning (decode_finite_system Inst)}" by (rule exact(4))
 qed
+
+end
+
+section \<open>The relocated block at a table\<close>
+
+text \<open>
+  #820's block with a table at the installed program and its two premises there (the construction premise and the
+  varied record's exchange at every priority, their discharges the exchange's, GT2b): rc's premises at the table at
+  the installed program (@{text registrations_installed_in}), and from them the native forms there, the moded among
+  them; at the empty table these are the block's own (@{text committed_registrations_in_empty}).
+\<close>
+
+locale relocated_registrations_in = relocated_registrations E P Q pu pr N g Inst F u \<kappa> m ND \<Phi> corr D' \<nu> m'
+  for E P Q pu pr N g Inst F u \<kappa> m ND \<Phi> corr D' \<nu> m' +
+  fixes \<Theta> :: "(local_address,local_address,local_address option definition_site,local_address) resolution_table"
+  assumes installed_lifts: "finite_construction_lifts_in \<Theta> (\<lambda>_. False)
+      (finite_varied_construction (finite_rename_system (finite_program_coordinates E (finite_system_definitions P)
+        (finite_system_definitions Q) g) Q) Inst (finite_relocated_construction (finite_program_coordinates E
+        (finite_system_definitions P) (finite_system_definitions Q) g) Q \<kappa>)) Inst"
+    and installed_exchanges: "\<And>prio. finite_commitment_exchanges_at_in \<Theta> prio (\<lambda>_. False)
+      (finite_varied_construction (finite_rename_system (finite_program_coordinates E (finite_system_definitions P)
+        (finite_system_definitions Q) g) Q) Inst (finite_relocated_construction (finite_program_coordinates E
+        (finite_system_definitions P) (finite_system_definitions Q) g) Q \<kappa>))
+      (finite_narrowed_commitment Inst m' (produced_declarations_varied (finite_rename_system (finite_program_coordinates E
+        (finite_system_definitions P) (finite_system_definitions Q) g) Q) Inst D')
+        (frames_varied (finite_rename_system (finite_program_coordinates E (finite_system_definitions P)
+          (finite_system_definitions Q) g) Q) Inst (frames_relocated (finite_program_coordinates E
+          (finite_system_definitions P) (finite_system_definitions Q) g) \<Phi>))) Inst"
+begin
+
+lemma registrations_installed_in:
+  "committed_registrations_in (finite_varied_construction goal Inst (finite_relocated_construction placement Q \<kappa>))
+    Inst m' (produced_declarations_varied goal Inst D') (frames_varied goal Inst (frames_relocated placement \<Phi>))
+    (corr \<circ> inv_into (declared_sites (resolution_declarations.truncate ND)) placement) \<Theta>"
+  by (rule committed_registrations_in.intro[OF registrations_installed
+    committed_registrations_in_axioms.intro[OF installed_lifts installed_exchanges]])
+
+lemmas native_committed_moded_installed_in = native_committed_moded_exact_in[OF registrations_installed_in]
 
 end
 

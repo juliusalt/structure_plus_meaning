@@ -31,11 +31,6 @@ text \<open>
 
 section \<open>Values of decoded patterns\<close>
 
-lemma resolution_value_substitute_decoded:
-  "decode_finite_term (resolution_value \<theta> (finite_pattern_substitute \<beta> p)) =
-    evaluate_pattern (\<lambda>a. decode_finite_term (resolution_value \<theta> (\<beta> a))) (decode_finite_pattern p)"
-  by (simp add: resolution_value_composes decode_resolution_value)
-
 declare resolution_value_variable [simp]
 
 lemma resolution_value_pair [simp]:
@@ -47,24 +42,6 @@ lemma finite_pattern_substitute_variable:
     z |\<in>| finite_pattern_variables (finite_pattern_substitute \<sigma> p)"
   by (induction p) auto
 
-lemma finite_material_ground_substitute:
-  "finite_material_ground_satisfied (finite_material_pattern_substitute (resolution_substitution \<theta>)
-      (finite_material_pattern_substitute \<beta> N)) \<longleftrightarrow>
-    evaluate_material_satisfaction (\<lambda>a. decode_finite_term (resolution_value \<theta> (\<beta> a))) (decode_finite_material N)"
-  by (simp add: finite_material_ground_satisfied_def finite_material_pattern_substitute_def resolution_value_substitute
-    finite_exact_term_pattern_eq_iff finite_material_observation_correct resolution_value_substitute_decoded
-    decode_finite_material_def)
-
-lemma evaluate_material_variables_formed:
-  assumes sat: "evaluate_material_satisfaction h N" and a: "a \<in> material_variables N"
-  shows "term_formed (h a)"
-proof -
-  obtain p where p: "p \<in> set (material_fields N)" "a \<in> pattern_variables p"
-    using a by (auto simp: material_variables_def)
-  have "term_formed (evaluate_pattern h p)"
-    using material_observation_formed[OF sat] p(1) by (auto simp: material_fields_def)
-  then show ?thesis using p(2) by (rule evaluate_pattern_variables_formed)
-qed
 
 section \<open>A parent clause's instance is true from its pending and closed premises\<close>
 

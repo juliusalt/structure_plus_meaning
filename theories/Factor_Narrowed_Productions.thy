@@ -1066,7 +1066,7 @@ proof -
   have supported: "finite_narrowed_productions_supported P m D \<Phi>"
     by (rule finite_narrowed_productions_supports[OF productions])
   show ?thesis
-  unfolding finite_commitment_exchanges_at_in_def
+  unfolding finite_commitment_exchanges_at_in_def finite_commitment_exchanges_by_in_def
 proof (intro allI impI conjI)
   fix n F B st \<theta> g d t s0 B0 \<theta>0
   assume I: "resolution_invariant P d t st" and sup: "resolution_supported_at (\<lambda>_. False) F B P st \<theta>"

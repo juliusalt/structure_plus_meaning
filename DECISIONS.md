@@ -20338,3 +20338,53 @@ re-tested; the maintenance costs about 6.5 s of it and saves about 19 s of selec
 goal's presence (`.build/tasks/865/measurement.md`). Limit: the tests of a touched goal read the call's goal and node
 buckets, so grounding substitutions and presence changes cost with the buckets they touch; the held goals and
 construction nodes are computed each step.
+
+## The committed step selects through the kept classes; the route's priority is a class made once a step, where the selection reaches it
+
+Task 871, #830's fix (1) (b) in F2c (DECISIONS.md, task 495's entry, "The resolver at the given's size"), after #865
+("The kept classes are maintained where a step changes a test") and #869 ("The committed step reads its tests through the
+access; the guard reads a goal's raising socket"); review 870's follow-ups 2–4, review 868's 4, review 824's 8.
+
+F2c's committed step over tests selected over the focused access, re-testing every pending goal of the focus at every
+step, and the route prepared its pending priority over every focused goal whether or not the selection reached the
+priority. The committed search is now stated once more over a representation, with the selection and the value the goals'
+outcomes read passed in (`selected_committed_step`, `selected_committed_search`); the tested step is its instance
+(`tested_committed_step_selected`), and a formed selection — the tested step's at every invariant state, the focus's
+emptiness and the outcomes' value as the tests read them — gives R5's committed search by the tested step's own lemma
+(`selected_representation_formed.selected_committed`), nothing argued again. The shared state is its instance: at no
+focus and at the root's (the check route's), the focused access is the state's (`access_focused_whole`), so the committed
+step reads #865's kept classes as the plain step does (`kept_select_by`, #865's `search_select` at a priority class); at a
+proper focus (every committed sub-search) the step still selects over the focused access, #869's selection unchanged and
+the kept classes unread (`committed_kept_select`). q156's answer asks their focused instance — the focus's goals a key
+range of the kept position-ordered class trees, the open-dependent tests recomputed there — and it is not done: the class
+trees are read only through their entries, so the range is reached only by walking every class entry, and the range
+selection's equality and its measurement at a fixture running a sub-search exceeded this task; by q156's escape it is
+brought to the planner as a task of its own (a range operation on the class trees, then the focused selection over it). Every committed step keeps the classes
+(`shared_kept_structure`, from #865's classed step lemmas; `committed_structure_kept` states the strengthening once).
+
+The priority enters the choice as a class, a function of the candidates the kept classes give (`access_goal_choice_by`),
+so what it reads of the whole focus is computed where the selection reaches it and once. The route's class
+(`admitted_priority_class`) asks the guard once of each goal of the focus and the commitment's priority once of each
+admitted goal; the goals' outcomes read only the commitment access of the prepared value (`commitment_tests_outcome`),
+so the route prepares that alone. Choice, with its figures: the admitted goals and their priority are not kept as a
+class across steps. The commitment's priority reads the whole focus — its pending part, the socket holders over every
+focus goal, the open siblings — so a step touching one goal changes the priority of others, and a class kept at what a
+step touches would need that dependency's frame; the guard alone is goal-local, but the shared search's classes carry no
+guard, and after the lazy class it is asked 272,950 times at #830's 10 rows against 749,703 (once a focus goal at the
+2,044 of 3,682 steps reaching the priority), the class costing 23–33 % of a step at 10–20 rows with the given's whole
+frames once #884 decodes the framed tests' goal once. The holder index and the under-position count review 870 names
+live in the commitment's tests (`Factor_Access_Commitments`), left to them.
+
+Whether the program's clause sockets are distinct is an argument of the route's form (`moded_route_with`, `cs`), bound
+once a call and once a demand by the constants' code equations (`_kept`); the former `_code` and `_route` equations and
+`moded_route_resolution` keep their statements (`moded_route_with_route`). R5's committed search's code
+(`finite_committed_search_kept_code`) goes through the same selection at F2c's projected tests.
+
+Evidence (`.build/tasks/871/measurement.md`, shared runs, little contention): the route's search equals R5's and #869's at
+#830's 3 rows, 113/1, 113/7 and, with whole frames, 77/1; after #884, seconds a step through the route with the given's
+whole frames 0.32 / 0.60 / 1.08 ms at #830's 10 / 15 / 20 rows against #869's 0.49 / 0.99 / 1.85 (#830's 2.9 ms at 10
+rows, the plain search's 0.81 there), 77/1 0.94 s against 1.16, 113/7 0.038 against 0.048, the given equal within the
+run's spread (the step's own selection ≤ 6 ms of ten steps). Limits: at a proper focus the selection is #869's over the focused
+access (every goal filtered and tested each step), not exercised by these fixtures (no production commits). What the step
+still pays of #865's selection — `class_first` listing a class, the held goals and the waiting fallback each step, the
+access built again inside `search_held` — is the kept search's, left to the fix placed after this one.

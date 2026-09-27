@@ -269,6 +269,30 @@ lemma finite_goal_successors_unreused_in:
     | Resolution_Material_Goal q r M \<Rightarrow> finite_material_successors st q r M)"
   by (cases g) simp_all
 
+text \<open>
+  The table is read by its calls alone (DECISIONS.md, task 495's entry, "The given's calls are decided once", GT2 (9)):
+  a goal is closed by an entry exactly where an entry stands at its ground call, whatever certificate it holds, so at two
+  tables holding the same calls the step, the selection, the goal outcome and R3's search are one.
+\<close>
+
+definition finite_table_calls :: "('a,'s,'d,'c) resolution_table \<Rightarrow> ('d \<times> finite_factor_term) set" where
+  "finite_table_calls \<Theta> = {q. resolution_table_lookup \<Theta> q \<noteq> None}"
+
+lemma finite_table_closes_calls_member:
+  "finite_table_closes \<Theta> g \<longleftrightarrow> (case g of Resolution_Call_Goal q r d p \<Rightarrow> q \<noteq> [] \<and> finite_pattern_variables p={||} \<and>
+      (d,finite_residual_term p) \<in> finite_table_calls \<Theta> | Resolution_Material_Goal q r M \<Rightarrow> False)"
+  by (cases g) (auto simp: finite_table_closes_def finite_table_calls_def split: option.split)
+
+lemma finite_table_closes_calls:
+  assumes calls: "finite_table_calls \<Theta> = finite_table_calls \<Theta>'"
+  shows "finite_table_closes \<Theta> = finite_table_closes \<Theta>'"
+  by (rule ext) (simp only: finite_table_closes_calls_member calls)
+
+lemma finite_goal_successors_calls:
+  assumes calls: "finite_table_calls \<Theta> = finite_table_calls \<Theta>'"
+  shows "finite_goal_successors_in \<Theta> P st g = finite_goal_successors_in \<Theta>' P st g"
+  by (cases g) (simp_all only: finite_goal_successors_in.simps finite_table_closes_calls[OF calls])
+
 lemma finite_goal_successors_unreused:
   "\<not> finite_reusable st g \<Longrightarrow> finite_goal_successors P st g = (case g of
       Resolution_Call_Goal q r d p \<Rightarrow> finite_call_successors P st q r d p
@@ -860,6 +884,40 @@ definition finite_resolution_search_in ::
       ('a,'s,'d,'c) finite_schema_system \<Rightarrow> nat \<Rightarrow> ('a,'s,'d,'c) resolution_state \<Rightarrow> ('a,'s,'d,'c) resolution_outcome" where
   "finite_resolution_search_in \<Theta> \<kappa> P =
     finite_resolution_search_by_in \<Theta> (finite_resolution_select_in \<Theta> (\<lambda>st g. False) \<kappa> P) \<kappa> P"
+
+lemma finite_goal_choice_calls:
+  assumes calls: "finite_table_calls \<Theta> = finite_table_calls \<Theta>'"
+  shows "finite_goal_choice_in \<Theta> pr P st G A = finite_goal_choice_in \<Theta>' pr P st G A"
+  unfolding finite_goal_choice_in_def by (simp only: finite_table_closes_calls[OF calls])
+
+lemma finite_resolution_select_calls:
+  assumes calls: "finite_table_calls \<Theta> = finite_table_calls \<Theta>'"
+  shows "finite_resolution_select_in \<Theta> pr \<kappa> P = finite_resolution_select_in \<Theta>' pr \<kappa> P"
+  by (intro ext) (simp only: finite_resolution_select_in_def finite_goal_choice_calls[OF calls])
+
+lemma finite_goal_outcome_calls:
+  assumes calls: "finite_table_calls \<Theta> = finite_table_calls \<Theta>'"
+  shows "finite_goal_outcome_in \<Theta> rec P st g = finite_goal_outcome_in \<Theta>' rec P st g"
+  unfolding finite_goal_outcome_in_def by (simp only: finite_goal_successors_calls[OF calls])
+
+theorem finite_resolution_search_calls:
+  assumes calls: "finite_table_calls \<Theta> = finite_table_calls \<Theta>'"
+  shows "finite_resolution_search_by_in \<Theta> sel \<kappa> P n = finite_resolution_search_by_in \<Theta>' sel \<kappa> P n"
+proof (induction n)
+  case 0
+  show ?case by (intro ext) (simp only: finite_resolution_search_by_in.simps)
+next
+  case (Suc n)
+  have out: "finite_goal_outcome_in \<Theta> = finite_goal_outcome_in \<Theta>'"
+    by (intro ext) (rule finite_goal_outcome_calls[OF calls])
+  show ?case by (intro ext) (simp only: finite_resolution_search_by_in.simps Suc.IH out)
+qed
+
+corollary finite_resolution_search_in_calls:
+  assumes calls: "finite_table_calls \<Theta> = finite_table_calls \<Theta>'"
+  shows "finite_resolution_search_in \<Theta> \<kappa> P = finite_resolution_search_in \<Theta>' \<kappa> P"
+  by (intro ext) (simp only: finite_resolution_search_in_def finite_resolution_select_calls[OF calls]
+    finite_resolution_search_calls[OF calls])
 
 definition finite_resolution_search ::
     "('a,'s::linorder,'d,'c) finite_witness_construction \<Rightarrow> ('a,'s,'d,'c) finite_schema_system \<Rightarrow> nat \<Rightarrow>

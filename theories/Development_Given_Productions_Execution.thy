@@ -79,31 +79,45 @@ definition production_socket_probe :: "(nat,nat,nat,nat) produced_declarations \
         else {||}
     | Resolution_Material_Goal q r M \<Rightarrow> {||})"
 
-primrec production_trace ::
-    "((nat,nat,nat,nat) resolution_state \<Rightarrow> (nat,nat,nat,nat) resolution_selection) \<Rightarrow>
+text \<open>
+  The committed search, traced: at every goal it selects, what a probe reads of the goal in its state, the focus beside
+  it; the search's own course unchanged (its steps, joins and sub-searches). The trace of 12's production is its
+  instance at @{const production_socket_probe}.
+\<close>
+
+primrec committed_trace ::
+    "(nat list option \<Rightarrow> (nat,nat,nat,nat) resolution_state \<Rightarrow> (nat,nat,nat,nat) resolution_goal \<Rightarrow> 'x fset) \<Rightarrow>
+      ((nat,nat,nat,nat) resolution_state \<Rightarrow> (nat,nat,nat,nat) resolution_selection) \<Rightarrow>
       (nat,nat,nat,nat) finite_witness_construction \<Rightarrow> (nat,nat,nat,nat) resolution_commitment \<Rightarrow>
-      (nat,nat,nat,nat) finite_schema_system \<Rightarrow> (nat,nat,nat,nat) produced_declarations \<Rightarrow>
-      (nat,nat,nat) resolution_frames \<Rightarrow> nat \<Rightarrow> nat list option \<Rightarrow> nat list fset \<Rightarrow>
-      (nat,nat,nat,nat) resolution_state \<Rightarrow> (nat list \<times> nat list \<times> bool list) fset" where
-  "production_trace sel \<kappa> K P D \<Phi> 0 F B st = {||}"
-| "production_trace sel \<kappa> K P D \<Phi> (Suc n) F B st = (if finite_focus_pending F st = {||} then {||} else
+      (nat,nat,nat,nat) finite_schema_system \<Rightarrow> nat \<Rightarrow> nat list option \<Rightarrow> nat list fset \<Rightarrow>
+      (nat,nat,nat,nat) resolution_state \<Rightarrow> 'x fset" where
+  "committed_trace probe sel \<kappa> K P 0 F B st = {||}"
+| "committed_trace probe sel \<kappa> K P (Suc n) F B st = (if finite_focus_pending F st = {||} then {||} else
     (case sel (finite_focused F st) of
       Select_Construction N \<Rightarrow> (let M = ffilter (\<lambda>nd. resolution_focused F (resolution_node_position nd)) N in
-        ffUnion (fimage (production_trace sel \<kappa> K P D \<Phi> n F (finite_committed_barring B st))
+        ffUnion (fimage (committed_trace probe sel \<kappa> K P n F (finite_committed_barring B st))
           (fimage (finite_construction_step \<kappa> P st) M)))
-    | Select_Goals G \<Rightarrow> ffUnion (fimage (\<lambda>g. production_socket_probe D \<Phi> K F st g |\<union>|
+    | Select_Goals G \<Rightarrow> ffUnion (fimage (\<lambda>g. probe F st g |\<union>|
         (if finite_pruned (finite_unbarred B st) g \<or> finite_pruned (finite_barred B st) g then {||}
          else if finite_goal_committing K F st g then
            (let q = resolution_goal_position g;
               sub = finite_committed_search_by sel \<kappa> K P n (Some q) (finite_goal_sub_barring K F B st g)
                 (finite_produced_state K F st g) in
-             production_trace sel \<kappa> K P D \<Phi> n (Some q) (finite_goal_sub_barring K F B st g)
+             committed_trace probe sel \<kappa> K P n (Some q) (finite_goal_sub_barring K F B st g)
                (finite_produced_state K F st g) |\<union>|
-             ffUnion (fimage (\<lambda>s. production_trace sel \<kappa> K P D \<Phi> n F (finite_committed_barring B s) s)
+             ffUnion (fimage (\<lambda>s. committed_trace probe sel \<kappa> K P n F (finite_committed_barring B s) s)
                (finite_kept q (resolution_found sub))))
-         else ffUnion (fimage (production_trace sel \<kappa> K P D \<Phi> n F (finite_goal_barring K F B st g))
+         else ffUnion (fimage (committed_trace probe sel \<kappa> K P n F (finite_goal_barring K F B st g))
            (finite_committed_successors K P F st g)))) G)
     | Select_None \<Rightarrow> {||}))"
+
+abbreviation production_trace ::
+    "((nat,nat,nat,nat) resolution_state \<Rightarrow> (nat,nat,nat,nat) resolution_selection) \<Rightarrow>
+      (nat,nat,nat,nat) finite_witness_construction \<Rightarrow> (nat,nat,nat,nat) resolution_commitment \<Rightarrow>
+      (nat,nat,nat,nat) finite_schema_system \<Rightarrow> (nat,nat,nat,nat) produced_declarations \<Rightarrow>
+      (nat,nat,nat) resolution_frames \<Rightarrow> nat \<Rightarrow> nat list option \<Rightarrow> nat list fset \<Rightarrow>
+      (nat,nat,nat,nat) resolution_state \<Rightarrow> (nat list \<times> nat list \<times> bool list) fset" where
+  "production_trace sel \<kappa> K P D \<Phi> \<equiv> committed_trace (production_socket_probe D \<Phi> K) sel \<kappa> K P"
 
 definition productions_trace :: "(nat,nat,nat,nat) produced_declarations \<Rightarrow> (nat,nat,nat) resolution_frames \<Rightarrow>
     nat \<Rightarrow> nat \<Rightarrow> (nat list \<times> nat list \<times> bool list) list" where

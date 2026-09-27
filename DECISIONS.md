@@ -20070,7 +20070,12 @@ Whether its value at the relocated program is the source's value at the source p
 under a site relocation, which is not stated (q138): the productions' discharge at the program that reads the record
 stays a premise of the corollary, discharged at the installed program by the semantic lemma, for 48's registrations by
 `union_registration_answers_variant` (`Factor_Union_Declarations`), which reads only the head's view at an alpha
-variant of `union_schema` and the agreements at the site and at 5.
+variant of `union_schema` and the agreements at the site and at 5. [Corrected by task 798 (review 797's follow-up 2):
+that lemma also reads `carried`, the construction's value at the bindings a value of `union_registration` at the
+numbered program, which at the construction `productions_discharged` reads at the installed program is q138's
+equivariance. 48's productions there are discharged instead by `union_at_registration_answers` at the registration
+relocated and varied (`union_registration_at` at the relocated 48 and 5 and the matched variables), from the installed
+program's meanings at those two sites alone (`given_readers_extension.installed_productions`).]
 
 ## The given's production of 12's input: a produced record overridden at a socket's key, and a production the framed socket test does not meet at 77
 
@@ -20146,3 +20151,37 @@ Limits: every ground call is still walked once (its residual term and its sharin
 state's size, not in its nodes alone, while its comparisons are bounded.
 [Answered by task 835: correction (15) of task 495's entry, section "Committed choice, for refusals" — the framed test
 admits an open sibling (builds OS1, OS2); the order was weighed there and not taken.]
+
+
+## The given's one record at the installed programs: one source where the record narrows, productions from the installed meanings
+
+Task 798 (#782's Remains 2–5; reviews 783's follow-ups 1, 3 and 7, 786's 3, 797's 1–3). The one record
+(`given_declarations`) reaches every extension's installed program by #796's corollary
+`committed_registrations_produced_relocated`; its premises are discharged once in `given_readers_extension`
+(`Development_Given_Frames`), and the asked relation's (526, #707) and the first request's (561, #547, #399)
+installed programs are its instances.
+
+1. **Sources unique only where the record narrows.** Two sources of one carried socket can disagree only on its class,
+   and the one record's classes differ from every answer only at 48's sockets. The agreement and the static premise are
+   stated at a set of sites (`finite_varied_sources_unique_at`, `narrowings_within`,
+   `varied_narrowings_agree_within`, `narrowed_productions_declared_varied_within`), the unrestricted forms their
+   instances at every site. At the given the set is the placement of 48's callers 50, 55, 57, 60 and 63; there two
+   rooted clauses of one definition each differ in a callee (`given_union_site_distinct`: 37 and 50 at 50, 42 and 55
+   at 55, 60 at 60, 62 and 63 at 63, one clause at 57), and a match keeps callees, so an installed clause there has
+   one placed source (`installed_union_sources`). Whole-program uniqueness is not claimed and is not needed.
+2. **Productions from the installed meanings.** 48's registration relocated by the placement and varied along the
+   match is `union_registration_at` at the relocated 48 and 5 and the matched variables
+   (`union_registration_varied_relocated`); its production, value and answers are stated once over those coordinates
+   in `Factor_Union_Declarations` (48's statements their instances) and read only the meanings at the registration's
+   site (48's union) and at its query site (selection 5), which the installed program has at the relocated sites
+   (`union_meanings_installed`). No equivalence of W2's registration values between programs is read; q138's
+   equivariance stays open for registrations that need it.
+3. **The names consumers cite.** `asked_installed_declarations_discharged` and
+   `first_request_installed_declarations_discharged` state the one record's committed registrations at the two
+   installed programs, for every construction formed and complete at the numbered program (a premise: each consumer
+   holds its construction, e.g. `asked_construction_complete`); the plain record's carrying keeps its statements as
+   `asked_installed_plain_declarations_discharged` and `first_request_installed_plain_declarations_discharged`.
+4. **Not built here:** `given_union_registration` — the union registration as a witness construction relocated and
+   varied to V3's installed presentation, complete at the eight installed sockets by
+   `varied_registration_complete_at_socket`, with review 767's static applies lemma — which the productions route above
+   does not need; and review 783's follow-up 6 (the 26 frame lemmas as one). Both follow-ups.

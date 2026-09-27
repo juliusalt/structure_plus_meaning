@@ -1,5 +1,6 @@
 theory Development_Given_Declarations_Execution
-  imports Development_Given_Productions_Execution Factor_Resolution_Checks Native_Execution_Refinements
+  imports Development_Given_Productions Development_Given_Modes Factor_Committed_Traces Factor_Resolution_Checks
+    Native_Execution_Refinements
 begin
 
 text \<open>
@@ -186,12 +187,12 @@ definition given_union_trace :: "nat \<Rightarrow> finite_factor_term \<Rightarr
 text \<open>
   The rows, in one evaluation. At depth 1 the true call is resolved at 500 with its used variables in either order, and
   the false call is refuted there (the counted search: 1,645 and 1,598 states; the committed form at @{term None}, 4,621
-  states unresolved at 300, returns nothing at 500 within a held run, nor R4). At depth 2 the true call is resolved at
+  states unresolved at 300, returns nothing at 500 within 170 s of a shared run, nor R4). At depth 2 the true call is resolved at
   1500 (4,437 states). A commitment refuting the true call with the unchosen order, #519's counterexample, does not
   arise. The union is not produced: at depth 2 the search selects the goals at 55's sockets 7 and 8, the outer call's
   and the inner call's ([2,7], [2,8]), and a goal at 48 under the inner call's premise 1, and none is committed with
-  its production (the trace at 800); the unions are searched. The false call at depth 2 is unresolved at 800 and not
-  returned at 1500 within a held run: it is not a row here (investigation #896).
+  its production (the trace at 437, the least bound at which they are selected: at 436 none is); the unions are searched. The false call at depth 2 is unresolved at 800 and not
+  returned at 1500 within 150 s of a shared run: it is not a row here (investigation #896).
 \<close>
 
 lemma given_union_control:
@@ -199,7 +200,7 @@ lemma given_union_control:
    given_union_check 20 (given_union_true 1 [0,1]) 500 = Some True \<and>
    given_union_check 20 (given_union_false 1) 500 = Some False \<and>
    given_union_check 20 (given_union_true 2 [1,0]) 1500 = Some True \<and>
-   given_union_trace 20 (given_union_true 2 [1,0]) 800 =
+   given_union_trace 20 (given_union_true 2 [1,0]) 437 =
     [([2,1,7],False),([2,7],False),([2,8],False),([7],False),([8],False)]"
   by eval
 

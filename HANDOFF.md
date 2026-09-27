@@ -56,15 +56,18 @@ into the briefs #522 and #523 corrected, or recorded superseded there.
 - The resolver at the given's size (#683's addition): F2c and F2d landed (F2d: the positional index in one pass and
   every decode through an immutable array, `search_of` at the given 0.29 s against 57.1 s; R7 takes the shared
   equation); C landed (#703: a found derivation checked over its graph, 1.0 s against the search's 3.2 s and the tree
-  checker's 34.5 s at 10 rows, its code equations in effect where imported, mailed to the route's executions); its check
-  is quadratic in the found state's nodes and compares decoded terms (review 704's 1, 2, 5): the fix #833 (continues
-  703) indexes the nodes with bounded key comparisons, before #542 and #547. A step of the shared search at the given's
+  checker's 34.5 s at 10 rows, its code equations in effect where imported, mailed to the route's executions); #833
+  landed its check linear in the found state's nodes (`3c70cf11`), and its per-node walk — sharing, the residual, the
+  admitted-instance comparison of every call, about 10^11 steps at the given (review 833's 1, 2) — is the investigation
+  #851's, before GT4 #841. A step of the shared search at the given's
   size costs 0.21–0.65 s with 1–9
   pending goals, the table's copies under 1 % (#829: holding the table's array in the state does not pay, not planned),
-  and 113 over `sa_env` grows 53× for 3.3× rows (#703: a node's cost 14×): the investigation #830 attributes a step's
-  cost and names the fix at its cause, before #542 and #547. q145's (a) with review 702's 1–3 is K1–K3's (correction
-  (14)). Off the route: #792 (F2b1 the access's instance, review 772's 1, q139; review 702's 4); next-edits 339 (review
-  704's 4, a low move).
+  and 113 over `sa_env` grows 53× for 3.3× rows (#703: a node's cost 14×): #830 (accepted) attributed a step: the selection
+  re-testing every pending goal, the unifier's bindings re-shared at every application at the given, K2's route
+  projecting the whole state (180 ms a step at the given); its three fixes go through a brief, before K3 #825, GT3 and
+  #542. q145's (a) with review 702's 1–3 is K1–K3's (correction
+  (14)). #792 landed F2b1 as the access's instance (`0d8768ae`); its follow-ups 1 and 2 go with GT3's brief (next-edits
+  343, 344); next-edits 339 and 348 are low moves.
 - The guard's calls at the given (#829's attribution, accepted): #810's 45 s was a fixture mismatch, no landing
   multiplies; R5's own step recomputes 77's registration value, the goal choice and the pruning sets at every state
   (97–99 %, 94 % and 72–75 % of the runs), which the shared committed search keeps or indexes — K2's constants
@@ -85,11 +88,14 @@ into the briefs #522 and #523 corrected, or recorded superseded there.
   interpret.
 - Correction (13) (#789, q143): I1, I2 and I3a landed (#815: `given_input_declarations` at the rooted readers,
   `produced_override` in `Factor_Narrowed_Productions`); I3b #817 (at the installed programs, after #798) → #547, #707
-  and #399. #815 found the production never met at the given under the moded selection — R5's framed test fails at
-  `finite_children_framed`, 26's and 5's subtrees open when 12 is taken (the committed sub-search then searching the
-  least presentation) — and 77/1-2 not returning at 400: the design #835 (review 816's 1, 2, 4, 8) before K3 #825 and
-  the table's production. The frames' cost (95.6 s against 11.9 s at 77/1/200): the fix #834, a code equation reading
-  the goal's own socket, in a theory `Factor_Resolution_Checks` imports, before K3.
+  and #399. #815 found the production never met at the given — R5's framed test failing at `finite_children_framed`,
+  26's and 5's subtrees open when 12 is taken. Correction (15) (#835, accepted, `e2275289`) opens that disjunct for a
+  call sibling whose pending goals hold no variable of the socket's binding or of a frame: 77/1 at 200 falls from 614
+  states to 220, produced, and 77/1 and 77/2 are produced at 400 (cut past it in the check 12(t4,t4), correction (14)'s
+  cost, which the given's table closes); its builds OS1 #853 → OS2 #855 (after #793) → K3 #825, and the re-run of
+  #718's 77 and 79 fixtures #857 after OS2, off the route (#825's and #843's briefs corrected from #850's). #834 landed
+  the framed test read at the goal's own socket (`4a41e8ee`, `Factor_Framed_Commitment_Index`); its follow-up 1 is
+  OS2's, 2 and 3 next-edits 345 and 346, 4 and 5 K3's (347).
 - Task 790's section of #496's entry: RD1 landed (#808: R1's skeleton reading corrected, 11's target produced by 10's
   own material premise); its cost at 77/1's artifact rows is #829's to attribute.
 - Correction (14) (#794, "A check keeps its first found state"; briefed by #819): K1 landed (#821: the first join below
@@ -99,7 +105,7 @@ into the briefs #522 and #523 corrected, or recorded superseded there.
   declarations' guard — weaker than briefed, any declared socket key admitting a goal, so the shared search projects
   almost everywhere (review 824's 1, #830's) — and the route forms' constants through the shared committed search; its
   control `Factor_Check_Controls`; review 824's 1, 4, 5 and 8 mailed to #542, #547, #707 and #399; 2, 3, 6, 7 and 9 the
-  consolidation #832 after #793 and K3, off the route) → K3 #825 (the given at the check forms; after #834 and #835; review 822's
+  consolidation #832 after #793 and K3) → K3 #825 (the given at the check forms; after OS2 #855 and the brief #852 of #830's fixes; review 822's
   1 and 3, #829's method and review 824's 1 mailed) → #542 and #547. The briefs of #542, #547, #707 and #399 call the check forms at the moded selection for
   ground root calls (#819's rewrites; the committed forms at None for pattern roots, #542's 590).
 - The given's record (R6c): #782 landed the one produced record at the rooted readers (R7's); its installed carrying:
@@ -108,18 +114,20 @@ into the briefs #522 and #523 corrected, or recorded superseded there.
   relocated registration, discharged from the agreements alone) → #707, #547 and #399 (q144). #784 landed (review 783's 4, 5 and 8); its control of 55's
   two-union clause is c55 #827 (q146, review 785's 1–3), after K3, off the route.
 - #831's builds, placed from #836: GT1a #837 (the table in R3's step, search and resolution and R3b's certificate;
-  after #793, #792 and #833) → GT1b #839 (the committed step, search and lifting, R4 their instance) → GT4 #841 (C at a
-  table, after #833) → #542; GT2 #843 (the committed and check forms and the transfers; after GT1b, K3 #825, the design
-  #835 as a stand-in for its builds, and #832) → GT5 #845 (the given's table, after #798) → #542, #547, #707; W5 #847
+  after #793) and #849 (q150: the ground-founds conjunct at the pattern invariant, R4's lifting the committed lifting's
+  instance, its induction retired; continues #793) → GT1b #839 (the committed step, search and lifting, R4 their
+  instance) → GT4 #841 (C at a table, after the investigation #851) → #542; GT2 #843 (the committed and check forms and
+  the transfers; after GT1b, K3 #825 and #832) → GT5 #845 (the given's table, after #798) → #542, #547, #707; W5 #847
   (after GT2 and #798) → #399; GT3 and GT6 after #830 reports. Then R7 #542 (the numbered course) → its native part
   #707 → #399 → its controls #709 (before #401, #403 and #553); #547 → #443.
-- Off the route: the controls #718 (77 over #636's installation and 79 at five roots do not return — #605's cause at
-  37's lookup, #835's — so it hands over with them as Remains, #834 named for it, their re-run after #835's builds)
-  and c55 #827 (a held run, so queued last). Now on the route: the move #793 (q141, review 614's 1 and 4: the committed
-  lifting and R4's below Completeness; review 724's 1, 4 and 5 mailed, if they fit beside the move; at the queue's head
-  while it checks), before GT1a; the consolidation #832 (review 824's 2, 3, 6, 7, 9: the check and committed forms'
-  exactness once over a focus, the transfers from one relocated meaning; review 724's 2 and next-edits 340 at the row it
-  edits; after #703, I3a, #793 and K3), before GT2, so the table enters the forms once.
+- Off the route: the controls #718 landed (`41553f0d`) with 77's and 79's fixtures as Remains, re-run after OS2 by
+  #857 (with review 719's follow-ups); c55 #827 (a held run, so queued last). On the
+  route: the move #793 (q141: the committed search and its lifting in `Factor_Resolution_Lifting` below Completeness,
+  checked with #718; R4's lifting and induction left standing, q150; review 724's 1, 4 and 5 offered to OS1 and OS2,
+  review 812's 1 to #849; at the queue's head while it checks), before GT1a and #849; the consolidation #832 (review
+  824's 2, 3, 6, 7, 9: the check and committed forms' exactness once over a focus, the transfers from one relocated
+  meaning; review 724's 2 and next-edits 340 at the row it edits; after #793 and K3), before GT2, so the table enters
+  the forms once.
 **Retired** on #376's and #378's entries (their tables): the decomposition line (#325–#334), N1a, N1b, N3a, N3b, N4a
 and N4b as briefed, #371, #377, the designation by locus (#169, #170), the index form's retirement (#92, #93) and the
 machinery's verification stage judged natively (#193, #194).
@@ -134,21 +142,21 @@ line, a row at a locus; the decomposition's schema and library; the digit layout
 **Word changes are serialized** (Decisions): none is queued. A word change's records are re-recorded after its landing
 by a task of their own (Open 100).
 
-**Shape.** No build waits on a review task. The route's longest chain, 13 deep, runs the design #835 → K3 #825 → the
-consolidation #832 → GT2 #843 → GT5 #845 → R7 #542 → #707 → #399 → #709 → the record #553 → #447 → #449 → #450, and as
-deep the move #793 → GT1a #837 → GT1b #839 → GT2; the investigation #830, the fixes #833 and #834, GT4 #841, I3b and
-#798 are spliced before #542, #547 and #707 with slack against it. GT3 (after #830's fix) and GT6 (the production)
-lengthen it when placed, as splices before #542.
+**Shape.** No build waits on a review task. The route's longest chain, 14 deep,
+runs OS1 #853 → OS2 #855 → K3 #825 → the consolidation #832 → GT2 #843 → GT5 #845 → R7 #542 → #707
+→ #399 → #709 → the record #553 → #447 → #449 → #450; the move #793 → GT1a #837 and #849 → GT1b #839 → GT2 runs one
+shorter; the investigation #851, #830's fixes, GT4 #841, I3b and #798 are spliced before #542, #547 and #707 with slack
+against it. GT3 (after #830's fix) and GT6 (the production) lengthen it when placed, as splices before #542.
 Nothing is added after the route's tail until it shortens (the status line gives the depths); the approval build (Open
 142) after #407 and #447 waits for that.
 
 **Order** (the queue holds it; the planner's choice, a residual until the native answer to the selection problem
 exists, Q2): the slots are one pool, each free slot going to the first task in the queue that can start, every review
-right after its build. Uncertainty first (the investigation #830, the design #835), then by slack on the longest chain:
-the fixes #834 and #833, the move #793 (at the head while it checks), GT1a #837, GT1b #839, GT4 #841; #798 as it runs;
-I3b #817; K3 #825, the consolidation #832, GT2 #843, GT5 #845, W5 #847; R7 #542, #707, #399, #709, #547; the
-route in its chains'
-order (#551, #549, #553, #401, #403, #443, #447, #407, #445, #449); the controls #718, c55 #827 and #792 last.
+right after its build. The move #793 at the head while it checks; uncertainty next (the investigation #851, the brief
+#852 of #830's fixes), then by slack on the longest chain: OS1 #853, OS2 #855, #849, GT1a #837, GT1b #839, GT4 #841;
+#798 as it runs; I3b #817; K3 #825, the consolidation #832, GT2 #843, GT5 #845, W5 #847; R7 #542, #707, #399, #709,
+#547; the route in its chains' order (#551, #549, #553, #401, #403, #443, #447, #407, #445, #449); the re-run #857 and
+c55 #827 last, held runs off the route.
 ## Decisions
 
 Taken by the planning episodes, where they are not entries of `DECISIONS.md`.
@@ -335,7 +343,8 @@ under `.build/plans/plan-69/`, `plan-81/` and `plan-86/`.
   (the payload audit's reliances), #460 (its decision withdrawn by Q27), #482 and #560 (the payload-bounded and the
   parametric recording), #495 (Q27) with #585's addition, #683's addition (the resolver at the given's size) and
   corrections (5)–(14) — (9) #686 the socket's inputs, (10) #730 frames, (11) #766 liveness, (12) #787 modes
-  (`759e77e6`), (13) #789 the determined value (`f8191d02`), (14) #794 a check's first found state — and #831's section (the given's calls decided once, `457cc344`), #496 (Q28) with
+  (`759e77e6`), (13) #789 the determined value (`f8191d02`), (14) #794 a check's first found state, (15) #835 an open
+  sibling in the framed test (`e2275289`) — and #831's section (the given's calls decided once, `457cc344`), #496 (Q28) with
   #642's addition (registrations and
   declarations at an installed package) and #790's section (11's target produced by 10's material premise,
   `b9448cb1`); #613's entry (the committed lifting over the selection parameter) and #782's (the given's one record a
@@ -379,13 +388,13 @@ under `.build/plans/plan-69/`, `plan-81/` and `plan-86/`.
   `Factor_Narrowed_Commitments`, `Factor_Narrowed_Productions` (R5f2, #774); controls in `Factor_Resolution_Controls`,
   `Factor_Commitment_Controls` and `Factor_Narrowed_Controls`.
 - **The resolver's states** (#683's addition): F2a `Factor_Shared_Patterns` (#697, #713), F2b1
-  `Factor_Indexed_Resolution` (#699; (c) #769), F2b2 (a) `Factor_Shared_Resolution` (#755) and (b)
+  `Factor_Indexed_Resolution` (#699; (c) #769; the access's instance #792), F2b2 (a) `Factor_Shared_Resolution` (#755) and (b)
   `Factor_Search_Representations` with `Factor_Shared_Search` (#771: the search once over a representation, the shared
   instance's code equation); F2c `Factor_Shared_Commitments` (#701: R5's committed search over that representation, its
   projection R5's at every priority, the code equation admitting every goal); F2d (#810: `position_index_extend_code`,
   the decodes through an immutable array, `reference_term_array_code`); C `Factor_Resolution_Graph_Checks` (#703: a
   found state's derivation checked over its graph, `finite_state_graph_check_found_exact`, the verdicts graph first
-  through `finite_outcome_result_verdicts`); the measurements #742, #764, #779, #788, #810 and #703 in their
+  through `finite_outcome_result_verdicts`; linear in the nodes, #833); the measurements #742, #764, #779, #788, #810 and #703 in their
   `result.md` and `measurement.md`.
 - **The given's declarations**: R6 `Development_Given_Declarations` (#520); R6b `Factor_Root_Family_Declarations`
   (#601), `Factor_Artifact_Citation_Declarations` (#603, its frames #749); R6c `Factor_Instantiation_Declarations`
@@ -411,7 +420,8 @@ under `.build/plans/plan-69/`, `plan-81/` and `plan-86/`.
   determined value in W2, W4a and V2b (#811); O3 rc's forms at a priority and at the moded selection
   (`registered_commitment_at_declared`, `registered_at`, the moded names their instances; #804); I2 the input production, 12's instance and its control
   (`Factor_Input_Productions`: `input_registration`, `input_productions_discharged`; #813); I3a the given's input record (`Development_Given_Productions`:
-  `given_input_declarations`; `produced_override` in `Factor_Narrowed_Productions`; #815); RD1 R1's skeleton reading
+  `given_input_declarations`; `produced_override` in `Factor_Narrowed_Productions`; #815); the framed test read at the
+  goal's own socket (`Factor_Framed_Commitment_Index`, #834); RD1 R1's skeleton reading
   corrected, 11's target produced by 10's own material premise (`Factor_Material_Resolution`, #808); rc's relocated
   premise block as the locale `relocated_registrations` (`Factor_Native_Committed_Registrations`, #820); the produced
   record's relocation and the generic join at its notions (#796: `produced_relocated`,
@@ -525,16 +535,16 @@ planner searches for a theory before briefing a task that edits it.
 
 ## Now
 
-- **Under way**: #798 builds and the controls #718 run; the investigation #830 (a step's cost at the given's size) and
-  the design #835 (12's input production at 37.0/2 met at the given) run; the fixes #833, #834 and #792 and the move
-  #793 start as slots free, then GT1a #837. Unhandled by plan-115: #718 ended partial (`.build/tasks/718/result.md`)
-  — split it into tasks over what exists or re-plan it; its 77 and 79 controls re-run after #835's builds.
-- **What the next events ask**: #830's causes, each fix spliced before GT3 and #542 (review 824's 1, the guard reading
-  a goal's raising socket, is a statement change of F2c's, the planner's, from its figures), then the brief of GT3 and
-  GT6 (the production's run placed then); #835's entry and builds, spliced before K3 #825 (and GT2 #843, which waits on #835 as a stand-in, re-pointed onto
-  them), with the re-run of #718's 77 and 79 controls; the hand-overs of #798, #718, #833, #834 and #793; then K3. The briefs of #825, #542, #547, #707 and #399 are
-  rewritten from #831's section and #835's entry before they start (#542's takes review 816's 6, the exchange at the
-  moded priority, unless #817 states it). Q33 is the owner's.
+- **Under way**: the move #793 in review (rewritten to the move, R4's lifting left standing, q150); #798 builds; the
+  investigation #851 (C's per-node walk at the given) and the brief #852 (#830's fixes) run; OS1 #853 starts as a slot
+  frees; OS2 #855 after OS1 and #793; #849 and GT1a #837 after #793.
+- **What the next events ask**: #852's proposal (K2's route over the access, the shared unifier at the given, the
+  selection's classes kept; K3 re-pointed onto those its figures need, all before #542; its correction of #825 made from
+  #825's brief as #850's correction left it, told), then the brief of GT3 and GT6 (the production's run placed then);
+  #851's cause, its fix before GT4 #841; the hand-overs of #793, #798, OS1 and #849. The
+  briefs of #542, #547, #707 and #399 are rewritten from #831's section, correction (15) and #830's follow-ups before
+  they start (#542's takes review 816's 6, the exchange at the moded priority, unless #817 states it). Q33 is the
+  owner's.
 - **Briefs written before their theories grew** may be refused at their start (#596 was; #607 was divided by #678):
   each is resized or divided then. Nearest their rooms: #542 (its brief now also takes corrections (12)–(14) and
   RD1) and #399; the samples build #551 (384K at proposal; a hand-back divides its corrected item (3), the planner's).

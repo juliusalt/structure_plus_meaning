@@ -166,6 +166,16 @@ lemma access_goal_holders_at:
 lemma access_construction_nodes_at: "n |\<in>| access_construction_nodes V \<Longrightarrow> \<exists>q. n |\<in>| access_nodes_at V q"
   by (auto simp: access_construction_nodes_def ffilter.rep_eq ffUnion.rep_eq fimage.rep_eq)
 
+text \<open>
+  The construction nodes are filtered at each registered position before the union: the union is of the few nodes that
+  construct, not of every node the registered positions hold.
+\<close>
+
+lemma access_construction_nodes_code [code]:
+  "access_construction_nodes V =
+    ffUnion (fimage (\<lambda>q. ffilter (\<lambda>n. access_constructed V n \<noteq> {||}) (access_nodes_at V q)) (access_registered V))"
+  by (rule fset_eqI) (auto simp: access_construction_nodes_def ffilter.rep_eq ffUnion.rep_eq fimage.rep_eq)
+
 context access_formed
 begin
 
@@ -870,6 +880,186 @@ qed
 
 end
 
+subsection \<open>The selection through its classes\<close>
+
+text \<open>
+  Three of the choice's classes test a goal alone: a candidate is a call or a solvable material goal, a settled goal
+  has no alternative or is pruned or reusable, and a single goal has one alternative and does not wait. The choice
+  (@{const access_goal_choice}) is stated over these tests (@{text access_goal_choice_classes}), so that a
+  representation keeping the goals that pass them reads its classes rather than testing every goal. Their R3 forms test
+  the goal's value at the state (@{text goal_settled}, @{text goal_single}); a test of a ground call reads the state
+  only through the nodes and the pending goals making that call and the solvedness of those nodes
+  (@{text goal_tests_frame}). The first of a class read in the order of positions is its first member
+  (@{text positioned_first_sorted}).
+\<close>
+
+definition access_candidate :: "('g,'n,'k,'a,'s,'d,'c) search_access \<Rightarrow> 'g \<Rightarrow> bool" where
+  "access_candidate V h \<longleftrightarrow> access_is_call V h \<or> access_solvable V h"
+
+definition access_settled :: "('g,'n,'k,'a,'s::linorder,'d,'c) search_access \<Rightarrow> 'g \<Rightarrow> bool" where
+  "access_settled V h \<longleftrightarrow> access_alternatives V h = 0 \<or> access_pruned V h \<or> access_reusable V h"
+
+definition access_single :: "('g,'n,'k,'a,'s::linorder,'d,'c) search_access \<Rightarrow> 'g \<Rightarrow> bool" where
+  "access_single V h \<longleftrightarrow> access_alternatives V h = 1 \<and> \<not> access_waits V h"
+
+lemma access_goal_choice_classes:
+  "access_goal_choice rp V A = (let c0 = ffilter (\<lambda>h. access_candidate V h \<and> access_settled V h) A in
+    if c0 \<noteq> {||} then access_first_goals V c0
+    else let cp = ffilter rp (ffilter (access_candidate V) A) in if cp \<noteq> {||} then access_first_goals V cp
+    else let c1 = ffilter (\<lambda>h. access_candidate V h \<and> access_single V h) A in
+      if c1 \<noteq> {||} then access_first_goals V c1
+    else access_waiting_selection V A)"
+proof -
+  have e: "ffilter F (ffilter G A) = ffilter (\<lambda>h. G h \<and> F h) A" for F G by (rule fset_eqI) (auto simp: ffilter.rep_eq)
+  show ?thesis
+    unfolding access_goal_choice_def access_candidate_def access_settled_def access_single_def Let_def by (simp add: e)
+qed
+
+definition goal_settled :: "nat \<Rightarrow> ('a,'s::linorder,'d,'c) resolution_state \<Rightarrow> ('a,'s,'d,'c) resolution_goal \<Rightarrow> bool" where
+  "goal_settled n st g \<longleftrightarrow> n = 0 \<or> finite_pruned st g \<or> finite_reusable st g"
+
+definition goal_single :: "nat \<Rightarrow> ('a,'s::linorder,'d,'c) resolution_state \<Rightarrow> ('a,'s,'d,'c) resolution_goal \<Rightarrow> bool" where
+  "goal_single n st g \<longleftrightarrow> n = 1 \<and> \<not> finite_goal_waits st g"
+
+context access_formed
+begin
+
+lemma candidate: "h |\<in>| access_goals V \<Longrightarrow> access_candidate V h \<longleftrightarrow> finite_candidate_goal (access_goal V h)"
+  by (simp add: access_candidate_def finite_candidate_goal_def is_call solvable)
+
+lemma settled:
+  "h |\<in>| access_goals V \<Longrightarrow> access_settled V h \<longleftrightarrow> goal_settled (access_alternatives V h) st (access_goal V h)"
+  by (simp add: access_settled_def goal_settled_def pruned reusable)
+
+lemma single:
+  "h |\<in>| access_goals V \<Longrightarrow> access_single V h \<longleftrightarrow> goal_single (access_alternatives V h) st (access_goal V h)"
+  by (simp add: access_single_def goal_single_def waits)
+
+end
+
+text \<open>
+  A test of a ground call is the same at two states that hold nodes making the call at the same positions, solved alike,
+  and pending goals making it at the same positions: it reads the nodes and the goals by their positions, and what a step
+  changes elsewhere, or in a node or a goal there that keeps its call, leaves it as it is.
+\<close>
+
+lemma goal_tests_frame:
+  assumes N: "\<And>q'. (\<exists>nd. nd |\<in>| resolution_nodes st' \<and> resolution_node_position nd = q' \<and> resolution_node_site nd = d \<and>
+        resolution_node_call nd = p) \<longleftrightarrow>
+      (\<exists>nd. nd |\<in>| resolution_nodes st \<and> resolution_node_position nd = q' \<and> resolution_node_site nd = d \<and>
+        resolution_node_call nd = p)"
+    and S: "\<And>q'. (\<exists>nd. nd |\<in>| resolution_nodes st \<and> resolution_node_position nd = q' \<and> resolution_node_site nd = d \<and>
+        resolution_node_call nd = p) \<Longrightarrow>
+      fBex (resolution_pending st') (\<lambda>g. take (length q') (resolution_goal_position g) = q') \<longleftrightarrow>
+      fBex (resolution_pending st) (\<lambda>g. take (length q') (resolution_goal_position g) = q')"
+    and G: "\<And>q'. (\<exists>r'. Resolution_Call_Goal q' r' d p |\<in>| resolution_pending st') \<longleftrightarrow>
+      (\<exists>r'. Resolution_Call_Goal q' r' d p |\<in>| resolution_pending st)"
+  shows "finite_pruned st' (Resolution_Call_Goal q r d p) \<longleftrightarrow> finite_pruned st (Resolution_Call_Goal q r d p)"
+    and "finite_reusable st' (Resolution_Call_Goal q r d p) \<longleftrightarrow> finite_reusable st (Resolution_Call_Goal q r d p)"
+    and "finite_goal_waits st' (Resolution_Call_Goal q r d p) \<longleftrightarrow> finite_goal_waits st (Resolution_Call_Goal q r d p)"
+proof -
+  let ?at = "\<lambda>X q'. \<exists>nd. nd |\<in>| X \<and> resolution_node_position nd = q' \<and> resolution_node_site nd = d \<and>
+    resolution_node_call nd = p"
+  let ?open = "\<lambda>Y q'. fBex Y (\<lambda>g. take (length q') (resolution_goal_position g) = q')"
+  have pr: "fBex X (\<lambda>nd. length (resolution_node_position nd) < length q \<and>
+        take (length (resolution_node_position nd)) q = resolution_node_position nd \<and>
+        resolution_node_site nd = d \<and> resolution_node_call nd = p) \<longleftrightarrow>
+      (\<exists>q'. ?at X q' \<and> length q' < length q \<and> take (length q') q = q')" for X by blast
+  have re: "fBex X (\<lambda>nd. finite_position_left (resolution_node_position nd) q \<and>
+        \<not> ?open Y (resolution_node_position nd) \<and> resolution_node_site nd = d \<and> resolution_node_call nd = p) \<longleftrightarrow>
+      (\<exists>q'. ?at X q' \<and> finite_position_left q' q \<and> \<not> ?open Y q')" for X Y by blast
+  have wa: "fBex X (\<lambda>nd. resolution_node_site nd = d \<and> resolution_node_call nd = p \<and>
+        finite_position_left (resolution_node_position nd) q \<and> ?open Y (resolution_node_position nd)) \<longleftrightarrow>
+      (\<exists>q'. ?at X q' \<and> finite_position_left q' q \<and> ?open Y q')" for X Y by blast
+  have e: "fBex X (\<lambda>h. case h of Resolution_Call_Goal q' r' d' p' \<Rightarrow> d' = d \<and> p' = p \<and> finite_position_less q' q
+        | Resolution_Material_Goal q' r' M \<Rightarrow> False) \<longleftrightarrow>
+      (\<exists>q'. (\<exists>r'. Resolution_Call_Goal q' r' d p |\<in>| X) \<and> finite_position_less q' q)" for X
+  proof
+    assume "fBex X (\<lambda>h. case h of Resolution_Call_Goal q' r' d' p' \<Rightarrow> d' = d \<and> p' = p \<and> finite_position_less q' q
+        | Resolution_Material_Goal q' r' M \<Rightarrow> False)"
+    then obtain h where h: "h |\<in>| X" "case h of Resolution_Call_Goal q' r' d' p' \<Rightarrow> d' = d \<and> p' = p \<and>
+        finite_position_less q' q | Resolution_Material_Goal q' r' M \<Rightarrow> False" by blast
+    then show "\<exists>q'. (\<exists>r'. Resolution_Call_Goal q' r' d p |\<in>| X) \<and> finite_position_less q' q" by (cases h) auto
+  next
+    assume "\<exists>q'. (\<exists>r'. Resolution_Call_Goal q' r' d p |\<in>| X) \<and> finite_position_less q' q"
+    then show "fBex X (\<lambda>h. case h of Resolution_Call_Goal q' r' d' p' \<Rightarrow> d' = d \<and> p' = p \<and> finite_position_less q' q
+        | Resolution_Material_Goal q' r' M \<Rightarrow> False)" by force
+  qed
+  have opened: "\<And>A' A L U' U. (A' \<longleftrightarrow> A) \<Longrightarrow> (A \<Longrightarrow> U' \<longleftrightarrow> U) \<Longrightarrow> (A' \<and> L \<and> U' \<longleftrightarrow> A \<and> L \<and> U)"
+    and closed: "\<And>A' A L U' U. (A' \<longleftrightarrow> A) \<Longrightarrow> (A \<Longrightarrow> U' \<longleftrightarrow> U) \<Longrightarrow> (A' \<and> L \<and> \<not> U' \<longleftrightarrow> A \<and> L \<and> \<not> U)"
+    by blast+
+  have W: "?at (resolution_nodes st') q' \<and> finite_position_left q' q \<and> ?open (resolution_pending st') q' \<longleftrightarrow>
+      ?at (resolution_nodes st) q' \<and> finite_position_left q' q \<and> ?open (resolution_pending st) q'" for q'
+    by (rule opened[OF N S])
+  have R: "?at (resolution_nodes st') q' \<and> finite_position_left q' q \<and> \<not> ?open (resolution_pending st') q' \<longleftrightarrow>
+      ?at (resolution_nodes st) q' \<and> finite_position_left q' q \<and> \<not> ?open (resolution_pending st) q'" for q'
+    by (rule closed[OF N S])
+  show "finite_pruned st' (Resolution_Call_Goal q r d p) \<longleftrightarrow> finite_pruned st (Resolution_Call_Goal q r d p)"
+    unfolding finite_pruned_def resolution_goal.case pr by (simp only: N)
+  show "finite_reusable st' (Resolution_Call_Goal q r d p) \<longleftrightarrow> finite_reusable st (Resolution_Call_Goal q r d p)"
+    unfolding finite_reusable_def resolution_goal.case finite_solved_node_def re by (simp only: R)
+  show "finite_goal_waits st' (Resolution_Call_Goal q r d p) \<longleftrightarrow> finite_goal_waits st (Resolution_Call_Goal q r d p)"
+    unfolding finite_goal_waits_def resolution_goal.case finite_solved_node_def not_not e wa by (simp only: G W)
+qed
+
+lemma positioned_first_sorted:
+  fixes pos :: "'x \<Rightarrow> 's::linorder list"
+  assumes "sorted_wrt (\<lambda>x y. finite_position_less (pos x) (pos y)) xs"
+  shows "positioned_first pos (fset_of_list (filter Q xs)) = (case find Q xs of None \<Rightarrow> {||} | Some x \<Rightarrow> {|x|})"
+  using assms
+proof (induction xs)
+  case Nil
+  then show ?case by (simp add: positioned_first_def fset_eq_iff ffilter.rep_eq)
+next
+  case (Cons x xs)
+  have irr: "\<not> finite_position_less p p" for p :: "'s list"
+    unfolding finite_position_less_def by (rule lexord_irreflexive) simp
+  have tr: "finite_position_less a c" if "finite_position_less a b" "finite_position_less b c" for a b c :: "'s list"
+    using that unfolding finite_position_less_def by (rule lexord_trans) (auto simp: trans_def)
+  have after: "finite_position_less (pos x) (pos y)" if "y \<in> set xs" for y using Cons.prems that by simp
+  show ?case
+  proof (cases "Q x")
+    case True
+    have "positioned_first pos (fset_of_list (x # filter Q xs)) = {|x|}"
+    proof (rule fset_eqI)
+      fix h
+      show "h |\<in>| positioned_first pos (fset_of_list (x # filter Q xs)) \<longleftrightarrow> h |\<in>| {|x|}"
+      proof
+        assume "h |\<in>| positioned_first pos (fset_of_list (x # filter Q xs))"
+        then have hin: "h = x \<or> h \<in> set xs"
+          and first: "\<not> (\<exists>h'\<in>set (x # filter Q xs). finite_position_less (pos h') (pos h))"
+          by (auto simp: positioned_first_def ffilter.rep_eq fset_of_list.rep_eq)
+        show "h |\<in>| {|x|}"
+        proof (cases "h = x")
+          case False
+          then have "h \<in> set xs" using hin by simp
+          then have "finite_position_less (pos x) (pos h)" by (rule after)
+          then show ?thesis using first by simp
+        qed simp
+      next
+        assume "h |\<in>| {|x|}"
+        then have hx: "h = x" by simp
+        have "\<not> finite_position_less (pos h') (pos x)" if "h' \<in> set (x # filter Q xs)" for h'
+        proof (cases "h' = x")
+          case True
+          then show ?thesis using irr by simp
+        next
+          case False
+          then have "h' \<in> set xs" using that by simp
+          then have "finite_position_less (pos x) (pos h')" by (rule after)
+          then show ?thesis using irr tr by blast
+        qed
+        then show "h |\<in>| positioned_first pos (fset_of_list (x # filter Q xs))"
+          using hx by (auto simp: positioned_first_def ffilter.rep_eq fset_of_list.rep_eq)
+      qed
+    qed
+    then show ?thesis using True by simp
+  next
+    case False
+    then show ?thesis using Cons.IH Cons.prems by simp
+  qed
+qed
+
 section \<open>The search over a representation\<close>
 
 text \<open>
@@ -1002,6 +1192,66 @@ next
       then show ?thesis using ne False Access_None p v.pending by (simp add: Let_def)
     qed
   qed
+qed
+
+text \<open>
+  A search selecting through any function of its states searches as the representation's search wherever that
+  function is the access's selection at the priority: the selection is the one step in which the two differ, and every
+  state the search reaches keeps the invariant under which they agree.
+\<close>
+
+primrec selected_search :: "('r,'g,'n,'k,'a,'s::linorder,'d,'c) resolution_representation \<Rightarrow>
+    ('r \<Rightarrow> ('n,'g) access_selection) \<Rightarrow> ('a,'s,'d,'c) finite_witness_construction \<Rightarrow>
+    ('a,'s,'d,'c) finite_schema_system \<Rightarrow> nat \<Rightarrow> 'r \<Rightarrow> ('a,'s,'d,'c) resolution_outcome" where
+  "selected_search R sel \<kappa> P 0 r = (if rep_empty R r then Resolution_Outcome {|rep_project R r|} {||}
+    else Resolution_Outcome {||} {|Resolution_Cut (fimage (access_goal (rep_access R r)) (access_goals (rep_access R r)))|})"
+| "selected_search R sel \<kappa> P (Suc n) r = (if rep_empty R r then Resolution_Outcome {|rep_project R r|} {||}
+    else let r' = rep_refresh R r; V = rep_access R r' in (case sel r' of
+      Access_Construction N \<Rightarrow> finite_outcome_union (fimage (\<lambda>m. selected_search R sel \<kappa> P n (rep_construct R r' m)) N)
+    | Access_Goals G \<Rightarrow> finite_outcome_union (fimage (represented_goal_outcome R (selected_search R sel \<kappa> P n) r' V) G)
+    | Access_None \<Rightarrow> Resolution_Outcome {||}
+        (finsert (Resolution_Stuck (fimage (access_goal V) (access_goals V))) (finite_unconstructed \<kappa> P (rep_project R r')))))"
+
+theorem selected_search:
+  assumes F: "F r"
+    and refresh: "\<And>s. F s \<Longrightarrow> F (rep_refresh R s)"
+    and construct: "\<And>s m. F s \<Longrightarrow> m |\<in>| access_construction_nodes (rep_access R s) \<Longrightarrow> F (rep_construct R s m)"
+    and successors: "\<And>s h s'. F s \<Longrightarrow> h |\<in>| access_goals (rep_access R s) \<Longrightarrow> s' |\<in>| rep_successors R s h \<Longrightarrow> F s'"
+    and sel: "\<And>s. F s \<Longrightarrow> sel s = access_select (rp s) (rep_access R s)"
+  shows "selected_search R sel \<kappa> P n r = represented_search R rp \<kappa> P n r"
+  using F
+proof (induction n arbitrary: r)
+  case 0
+  then show ?case by simp
+next
+  case (Suc n)
+  let ?r = "rep_refresh R r" let ?V = "rep_access R ?r"
+  have f: "F ?r" by (rule refresh[OF Suc.prems])
+  have c: "fimage (\<lambda>m. selected_search R sel \<kappa> P n (rep_construct R ?r m)) N =
+      fimage (\<lambda>m. represented_search R rp \<kappa> P n (rep_construct R ?r m)) N"
+    if "access_select (rp ?r) ?V = Access_Construction N" for N
+  proof (rule fset.map_cong0)
+    fix m assume "m \<in> fset N"
+    then have "m |\<in>| access_construction_nodes ?V" using access_select_construction[OF that] by blast
+    then show "selected_search R sel \<kappa> P n (rep_construct R ?r m) = represented_search R rp \<kappa> P n (rep_construct R ?r m)"
+      by (rule Suc.IH[OF construct[OF f]])
+  qed
+  have g: "fimage (represented_goal_outcome R (selected_search R sel \<kappa> P n) ?r ?V) G =
+      fimage (represented_goal_outcome R (represented_search R rp \<kappa> P n) ?r ?V) G"
+    if "access_select (rp ?r) ?V = Access_Goals G" for G
+  proof (rule fset.map_cong0)
+    fix h assume "h \<in> fset G"
+    then have h: "h |\<in>| access_goals ?V" using access_select_goals[OF that] by blast
+    have "fimage (selected_search R sel \<kappa> P n) (rep_successors R ?r h) =
+        fimage (represented_search R rp \<kappa> P n) (rep_successors R ?r h)"
+      by (rule fset.map_cong0) (rule Suc.IH[OF successors[OF f h]], simp)
+    then show "represented_goal_outcome R (selected_search R sel \<kappa> P n) ?r ?V h =
+        represented_goal_outcome R (represented_search R rp \<kappa> P n) ?r ?V h"
+      by (simp add: represented_goal_outcome_def Let_def)
+  qed
+  show ?case
+    unfolding selected_search.simps represented_search.simps Let_def sel[OF f]
+    by (cases "access_select (rp ?r) ?V") (simp_all add: c g)
 qed
 
 end

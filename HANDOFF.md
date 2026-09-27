@@ -52,9 +52,9 @@ every table, a valid table deciding only which calls resolve — the entry's add
 GT2, W5 and GT6) and GT4 #841 (`99e45393`: C at a table, validity checked over graphs; its verdict at a table
 tree-checks the entries a judgment reads) and GT4b #882 (`f0d6e6fd`, review 842's 1–4: the verdict at a table read
 from the graph alone, exact at a valid table and sound where its calls are true; the table's checks over indexed
-certificates) → GT4c #883 (review 882's 1–4 and 6, continuing #882: the graph reading at found states under the
-entries' calls' formation or truth, for an installation's relocated table; the premise named; one fold checking and
-producing the table for GT6) → GT2 #843 (the committed and check forms over GT4b's verdict, rc's
+certificates) and GT4c #883 (`2e988a42`: the graph reading at found states under the entries' calls' truth,
+`finite_table_true`; the indexed check over a reach; one fold checking and producing the table; its review's 1–2
+mailed to GT2, 3 to GT3, 4 to GT6, 5 next-edits 370) → GT2 #843 (the committed and check forms over GT4b's verdict, rc's
 forms, the transfers, the table read by its calls alone and — by q155 — the committed search's frame and position lemmas
 at a table; after K3 #825 and the consolidation #832) → GT5 #845 (the given's table) and W5 #847; GT3 #876 (the table in
 F2's shared representation, after GT2, GT4 and #830's fixes) → GT6 #878 (the table produced once, a run of hours parked
@@ -65,10 +65,12 @@ for its completion, its record `validation/given-table.json`, after GT5 and the 
 (#861) and the pruning test through the node-call index (#863); open the selection's classes kept #865 (at no focus,
 q156; the held goals and construction nodes recomputed over `search_registered`, mailed to #875; its first session's
 maintenance made the search 26 % slower at 20 rows, so it continues from its tree, narrowing the maintenance to what
-changes a test, before it lands) → in F2c #871 (the
-focused instance, q156, mailed),
-and the commitment's tests over the access (#867 landed, `b805e7c8`, `Factor_Access_Commitments`) → F2c's committed
-step over them #869 (review 868's 1–5 and 7 mailed) → K3 #825. #861's
+changes a test, before it lands) → in F2c #871 (the focused instance, q156; since #869 also the admitted focused goals
+and their priority kept as a class, the guard asked once a step, `clause_sockets_distinct` once a call, review 870's
+2–4). The commitment's tests over the access (#867, `b805e7c8`) with F2c's committed step over them (#869, `20f3bdf3`)
+put the route at #830's 10 rows with the given's whole frames at 3.12 ms a step, above the old route there (prepare
+61 %, priority 32 %; 1.24 s against 9.11 s at the given): the access tests' goal decoded once per test is the fix #884
+(review 870's 1 with 868's 2–3), beside #871 and before #875. K3 #825 measures meanwhile (review 870's 5 mailed). #861's
 question — a production binding a variable that occurs nowhere pays a keyed walk: (a) a term-level substitution, (b) an
 order at the given's variable type, (c) kept, provisional — and review 862's 2–4 are the investigation #875's to
 measure (mailed); their fixes are placed before GT6.
@@ -90,12 +92,12 @@ request construction over rows, the incremental assessment, the rows line, the d
 digit layout, the rule programs' law, the shared-subterm engine (B1–B6), the exporter's obligations. Their remains are
 under Open and in `.build/plans/next-edits.md`.
 
-**Shape and order.** No build waits on a review. The longest chain, 13 deep: #869 → K3 #825 → GT2 #843
-→ GT3 #876 → GT6 #878 → R7 #542 → #707 → #399 → #709 → #553 → #447 → #449 → #450; nothing is added after its tail until
-it shortens (the approval build, Open 142, waits for that). The queue is the planner's choice, a residual until the
-selection problem's native answer (Q2): running tasks first, then by slack on the longest chain — K3 and #832 before
-#871 and #875, whose way to GT3 and GT6 has hours of slack against K3 → GT2 — the route in its chains' order, the
-off-route held run #827 last. Word changes are serialized; none is queued.
+**Shape and order.** No build waits on a review. The longest chain, 12 deep: K3 #825 → GT2 #843 → GT3 #876 → GT6
+#878 → R7 #542 → #707 → #399 → #709 → #553 → #447 → #449 → #450; nothing is added after its tail until it shortens (the
+approval build, Open 142, waits for that). The queue is the planner's choice, a residual until the selection problem's
+native answer (Q2): running tasks first, then by slack on the longest chain — K3, #832 and the fix #884 before #871 and
+#875, whose way to GT3 and GT6 has hours of slack against K3 → GT2 — the route in its chains' order, the off-route
+held run #827 last. Word changes are serialized; none is queued.
 
 ## Decisions
 
@@ -272,8 +274,9 @@ REASONING_REUSE.md, how each went in `PLANNING_LOG.md`.
   `Factor_Check_Controls`.
 - **The resolver's states**: F2a `Factor_Shared_Patterns`, F2b1 `Factor_Indexed_Resolution`, F2b2
   `Factor_Shared_Resolution`, `Factor_Search_Representations` and `Factor_Shared_Search`, F2c
-  `Factor_Shared_Commitments`, the commitment's tests over the access `Factor_Access_Commitments` (#867), C
-  `Factor_Resolution_Graph_Checks` (at a table since GT4 #841).
+  `Factor_Shared_Commitments` (its committed step over the access tests since #869), the commitment's tests over the
+  access `Factor_Access_Commitments` (#867), C `Factor_Resolution_Graph_Checks` (at a table since GT4 #841; the
+  verdict from the graph alone, GT4b #882; the reading at a true table and one checking fold, GT4c #883).
 - **The given's declarations**: `Development_Given_Declarations`, `Factor_Root_Family_Declarations`,
   `Factor_Artifact_Citation_Declarations`, `Factor_Instantiation_Declarations`,
   `Factor_Schema_Instantiation_Declarations`, `Factor_Definition_Reading_Declarations`, `Factor_Union_Declarations`,
@@ -358,11 +361,13 @@ a theory before briefing a task that edits it.
 
 ## Now
 
-- **Under way**: #869 (#867 having landed); #865 continued from its tree (partial: its maintenance narrowed before it
-  lands); GT4c #883 (continuing #882), before GT2.
-- **What the next events ask**: the hand-overs of #865, GT4c and #869 (its step measured at the given decides review
-  868's 4, the linear scans); GT6's prediction and worker count before its run; #709's brief rewritten before it
-  starts; #861's question decided on #875's figures before GT6 (provisional (c)). Q33 is the owner's.
+- **Under way**: K3 #825; #865 continued from its tree (partial, its maintenance narrowed, in review); the
+  consolidation #832 and the fix #884 as slots free.
+- **What the next events ask**: the hand-overs of #865, #884, #832 and K3 (K3's figures read against #869's, with
+  `rep_share` counted where a production commits, review 870's 5); GT2 #843's answer on `finite_table_true` at the
+  relocated table (#883's review 1: else the formation-only form is placed); GT6's prediction, with the checking fold
+  measured at samples, and its worker count before its run; #709's brief rewritten before it starts; #861's question
+  decided on #875's figures before GT6 (provisional (c)). Q33 is the owner's.
 - **Planners stopped**: plan-120 and plan-121 were stopped by a classifier declining a turn, before their notes; this
   file and `PLANNING_LOG.md` carried all they settled. Keep both current at every event.
 - **Briefs nearest their rooms**: #542, #399 and the samples build #551; GT2 #843 at 340K with review 840's, 842's and

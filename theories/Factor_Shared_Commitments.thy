@@ -957,9 +957,10 @@ section \<open>The shared state's committed search\<close>
 
 text \<open>
   The shared state writes the committed operations with its own steps: the node positions are its node tree's keys,
-  a call's successors at the focus are its clause alternatives' states (@{const search_call_state}), a committed
-  material premise's are its solutions' states (@{const search_material_state}), a substitution is shared first
-  (@{const search_substitute_plain}), and a found state is shared again (@{const search_of}).
+  a call's successors at the focus are its shared unifier's alternatives' states (@{const search_call_successors}), a
+  committed material premise's are its solutions' shared alternatives' states (@{const search_solution_successors}), a
+  substitution is shared first (@{const search_substitute_plain}), and a found state is shared again
+  (@{const search_of}).
 \<close>
 
 
@@ -976,12 +977,12 @@ definition shared_committed_representation :: "('a,'s,'d,'c) finite_witness_cons
     rep_project = (\<lambda>r. search_project r), rep_refresh = search_refresh \<kappa> P, rep_construct = search_construct \<kappa> P,
     rep_successors = search_successors \<kappa> P,
     rep_node_positions = (\<lambda>r. fset_of_list (RBT.keys (shared_nodes (search_state r)))),
-    rep_call_successors = (\<lambda>r h. case shared_goal_project (search_table r) (shared_entry_goal h) of
-        Resolution_Call_Goal q rr d p \<Rightarrow> fimage (search_call_state P r q rr d p) (finite_call_alternative_set P q d p)
-      | Resolution_Material_Goal q rr M \<Rightarrow> {||}),
-    rep_solution_successors = (\<lambda>r h Ws. case shared_goal_project (search_table r) (shared_entry_goal h) of
-        Resolution_Material_Goal q rr M \<Rightarrow> fimage (search_material_state P r q) (finite_solution_alternatives M Ws)
-      | Resolution_Call_Goal q rr d p \<Rightarrow> {||}),
+    rep_call_successors = (\<lambda>r h. case shared_entry_goal h of
+        Shared_Call_Goal q rr d gp \<Rightarrow> search_call_successors P r q d gp
+      | Shared_Material_Goal q rr gM \<Rightarrow> {||}),
+    rep_solution_successors = (\<lambda>r h Ws. case shared_entry_goal h of
+        Shared_Material_Goal q rr gM \<Rightarrow> search_solution_successors P r q gM (shared_material_project (search_table r) gM) Ws
+      | Shared_Call_Goal q rr d gp \<Rightarrow> {||}),
     rep_substitute = (\<lambda>r \<sigma> D. search_substitute_plain P \<sigma> D r),
     rep_share = search_of P\<rparr>"
 
@@ -1038,14 +1039,15 @@ next
     and g: "shared_goal_project (search_table s) (shared_entry_goal h) = Resolution_Call_Goal q rr d p"
     by (simp_all add: shared_committed_representation_def shared_access_simps)
   have atq: "RBT.lookup (shared_goals (search_state s)) q = Some h" using shared_goal_at[OF f(1) h g] by simp
-  have e: "fimage search_project (fimage (search_call_state P s q rr d p) (finite_call_alternative_set P q d p)) =
-      fimage (finite_call_alternative_state (search_project s) q rr d p) (finite_call_alternative_set P q d p)"
-    unfolding fset.map_comp comp_def
-    by (rule fset.map_cong0) (rule search_call_state(2)[OF f(1) f(2) sock atq g])
+  obtain gp where eg: "shared_entry_goal h = Shared_Call_Goal q rr d gp"
+    and pp: "shared_pattern_project (search_table s) gp = p" using g by (cases "shared_entry_goal h") auto
+  note c = search_call_successors[OF f(1) f(2) sock atq eg]
+  have e: "fimage search_project (search_call_successors P s q d gp) = finite_call_successors P (search_project s) q rr d p"
+    using c(1) pp by (simp add: finite_call_successors_alternatives)
   have fo: "search_formed \<kappa> P s' \<and> search_placeable (search_project s')"
-    if "s' |\<in>| fimage (search_call_state P s q rr d p) (finite_call_alternative_set P q d p)" for s'
-    using that search_call_state(1,3)[OF f(1) f(2) sock atq g] by (auto elim!: fimageE)
-  show ?case using e fo g by (simp add: shared_committed_representation_def finite_call_successors_alternatives)
+    if "s' |\<in>| search_call_successors P s q d gp" for s'
+    using c(2)[OF that] .
+  show ?case using e fo by (simp add: shared_committed_representation_def eg)
 next
   case (6 s h q rr M Ws)
   then have f: "search_formed \<kappa> P s" "search_placeable (search_project s)"
@@ -1053,14 +1055,15 @@ next
     and g: "shared_goal_project (search_table s) (shared_entry_goal h) = Resolution_Material_Goal q rr M"
     by (simp_all add: shared_committed_representation_def shared_access_simps)
   have atq: "RBT.lookup (shared_goals (search_state s)) q = Some h" using shared_goal_at[OF f(1) h g] by simp
-  have e: "fimage search_project (fimage (search_material_state P s q) (finite_solution_alternatives M Ws)) =
-      fimage (finite_material_alternative_state (search_project s) q rr M) (finite_solution_alternatives M Ws)"
-    unfolding fset.map_comp comp_def
-    by (rule fset.map_cong0) (rule search_material_state(2)[OF f(1) f(2) atq g])
+  obtain gM where eg: "shared_entry_goal h = Shared_Material_Goal q rr gM"
+    and pM: "shared_material_project (search_table s) gM = M" using g by (cases "shared_entry_goal h") auto
+  note c = search_solution_successors[where Ws = Ws, OF f(1) f(2) atq eg]
+  have e: "fimage search_project (search_solution_successors P s q gM M Ws) = finite_solution_successors (search_project s) q rr M Ws"
+    using c(1) pM by (simp add: finite_solution_successors_alternatives)
   have fo: "search_formed \<kappa> P s' \<and> search_placeable (search_project s')"
-    if "s' |\<in>| fimage (search_material_state P s q) (finite_solution_alternatives M Ws)" for s'
-    using that search_material_state(1,3)[OF f(1) f(2) atq g] by (auto elim!: fimageE)
-  show ?case using e fo g by (simp add: shared_committed_representation_def finite_solution_successors_alternatives)
+    if "s' |\<in>| search_solution_successors P s q gM M Ws" for s'
+    using c(2) that pM by simp
+  show ?case using e fo pM by (simp add: shared_committed_representation_def eg)
 next
   case (7 s q)
   have k: "q |\<in>| fset_of_list (RBT.keys (shared_nodes (search_state s))) \<longleftrightarrow> RBT.lookup (shared_nodes (search_state s)) q \<noteq> None"

@@ -100,18 +100,21 @@ kept as placed under a binding store (D1a, a notion), the deferred search a thir
 groundness counters wait on #875's figures. Placed from the brief #897 (its `result.md` gives each edge's reason), each
 with its review: D1a #899 (the binding store, `Shared_Binding_Stores`, landed `8daeae20`; review 900's 1, 3, 5–7 mailed
 to D1b, its 2 and 4 next-edits 378–379), D1c #901 (with F234's finding 3, 113/7
-and next-edits 316 and 338), D1b #903 (after D1a and D1c, over D1c's `search_update`), D1d #905 (after D1b, FI and GT2c;
+and next-edits 316 and 338), D1b #903 (after D1a and D1c; divided when its first session ended partial, plan-131: #903 the state, the bind and
+the place, continued from its tree, its second part the steps, the representation, the search and the code equation;
+`search_variables_placed` the deferred path's premise, tested at the code equations' entry), D1d #905 (after D1b's
+second part, FI and GT2c;
 review 891's 1 and next-edits 375's #871 part); GT3 #876 (its brief rewritten from #897's: D1's deferred searches,
 GT2a's calls lemmas, the graph verdicts at a table of true calls) and #875 wait on D1d. Findings 2–4 (the root
 node decoded at every step, `enter_goal`'s decode, the table reversed at every access build; 24 to 6–8 ms a first step
 predicted) are the fix F234 #891 after #885, with review 872's consolidation of #871's bodies — findings 2 and 4 and the
 consolidation landed (`c0d51080`; review 891's follow-ups 1 and 5 mailed to #897, 2 to #875, 3 and 4 to FI), finding
 3 (`enter_goal` through the shared unifier, which changes
-`enter_goal_formed`'s statement) folded into D1c with 113/7 at #830's rows; #861's question is settled, (c) kept. q157 is FI #892, the kept classes' focused instance (a range read of the class trees as an operation
-of the index notion, the committed selection at a proper focus over it), after D1c #901 (both restate `kept_select_by`;
-its first session, started at 09:12, stopped when the proposal was placed), before D1d and GT3. #875, rewritten again,
-measures the deferred route held after D1's builds, beside GT3, and supplies GT6's prediction, its worker count and
-D1e's trigger.
+`enter_goal_formed`'s statement) folded into D1c with 113/7 at #830's rows; #861's question is settled, (c) kept. FI #892 landed
+(`38e389d2`, q157: `Ranged_Carrier_Indexes`, the committed selection at a proper focus through the range; review 895's
+3 to WC3 #916, 6 to WC2b #914, 4 next-edits 386). #875, rewritten again, measures the deferred route held after D1's
+builds, beside GT3, and supplies GT6's prediction, its worker count and D1e's trigger; the kept forms (q162) and FI's
+remaining costs (review 895's 1, 2 and 5; next-edits 385) are decided at its figures.
 
 **Corrections (12)–(15)** have landed, K3 #825 last (`2397d6a9`: at the check forms 113/7 resolves at 230 in 0.06 s; at 77 the check form
 gives the committed form's figures, 77/1 and 77/2 cut up to 800 past 12's production; 77 at the given's own
@@ -157,10 +160,10 @@ digit layout, the rule programs' law, the shared-subterm engine (B1–B6), the e
 under Open and in `.build/plans/next-edits.md`.
 
 **Shape and order.** No build waits on a review. The longest chain, 13 deep: VK1 #920 → GT2b #889 → #922 → WC2b #914
-→ WC3 #916 → R7 #542 → #707 → #399 → #709 → #553 → #447 → #449 → #450; D1b #903 → D1d #905 → GT3 #876 → GT6 #878 → R7
-one shorter; VK1's line, D1's builds and GT2's division spliced as detail; nothing is added after its tail until it
+→ WC3 #916 → R7 #542 → #707 → #399 → #709 → #553 → #447 → #449 → #450; D1b #903 → its second part → D1d #905 → GT3 #876
+→ WC3 #916 or GT6 #878 → R7 as long; VK1's line, D1's builds and GT2's division spliced as detail; nothing is added after its tail until it
 shortens (the approval build, Open 142, waits for that). The queue is the planner's choice, a residual until the
-selection problem's native answer (Q2): running tasks first, VK1, FI and D1b side by side, GT2b's two parts, VK2, WC2b
+selection problem's native answer (Q2): running tasks first, VK1 and D1b side by side, GT2b's two parts, VK2, WC2b
 and D1d each with its review, #875, GT3, WC3, GT6, the route in its chains' order, the consolidation #887 after R7's
 review (nothing waits on it). Word changes are serialized; none is queued.
 
@@ -218,7 +221,8 @@ figures: the machinery judgment 3.76–4.22 s, the seeded 0.28–0.31 s. Not tak
   name and statement; a control whose figure changes is reported with both and R4's beside. R5's `_def`s may become
   instances of their generalizations (review 803's 1). A premise bundle of the lifting may gain a conjunct discharged
   where the bundle is built (q147); an unfolding lemma spelling a changed body changes with it where nothing outside
-  cites it (q149).
+  cites it (q149); a lemma may gain a premise every consumer discharges from the invariant it stands under (review
+  895's 2: `shared_focus_empty` with `search_formed κ P r`, next-edits 385).
 - A route selection that is not a priority of F1's is a formed selection (F1's two facts, correction (16)): the waiting
   moded selection is the first, and the exchange is stated at any formed selection (WC2a #912).
 - A free socket whose viewed input holds a variable of the parent's head output at its view never commits under the
@@ -343,7 +347,8 @@ REASONING_REUSE.md, how each went in `PLANNING_LOG.md`.
 - **The resolver's states**: F2a `Factor_Shared_Patterns`, F2b1 `Factor_Indexed_Resolution`, F2b2
   `Factor_Shared_Resolution`, `Factor_Search_Representations` and `Factor_Shared_Search` (the selection's classes kept,
   #865), F2c
-  `Factor_Shared_Commitments` (its committed step over the access tests since #869), the commitment's tests over the
+  `Factor_Shared_Commitments` (its committed step over the access tests since #869, its selection at a proper focus
+  through the range of the kept class trees since FI #892, `Ranged_Carrier_Indexes`), the commitment's tests over the
   access `Factor_Access_Commitments` (#867), C `Factor_Resolution_Graph_Checks` (at a table since GT4 #841; the
   verdict from the graph alone, GT4b #882; the reading at a true table and one checking fold, GT4c #883).
 - **The given's declarations**: `Development_Given_Declarations`, `Factor_Root_Family_Declarations`,
@@ -445,13 +450,15 @@ a theory before briefing a task that edits it.
 
 ## Now
 
-- **Under way**: VK1 #920, FI #892 and D1b #903 side by side (FI and D1b mailed q162's answer; D1b and D1d review 902's
-  follow-ups; review 848's follow-ups 1–6 in VK1's and VK2's briefs through #919, next-edits 207, 273 and 383 given to
-  them); the kept held goals and construction nodes (q162, review 902's 3: `.build/tasks/901/result.md` Remains
-  (a)–(e)) decided at #875's figures on the deferred route, with next-edits 384's words.
+- **Under way**: VK1 #920 and D1b's first part #903, continued from its tree, side by side (D1b's parts carry q162's answer; D1b and D1d review 902's follow-ups;
+  review 848's follow-ups 1–6 in VK1's and VK2's briefs through #919, next-edits 207, 273 and 383 given to them).
+  Decided at #875's figures on the deferred route: the kept held goals and construction nodes (q162, review 902's 3:
+  `.build/tasks/901/result.md` Remains (a)–(e); next-edits 384's words) and FI's remaining costs (review 895's 2 and 5:
+  the focus's emptiness and `access_first_goals` through the range, `rbt_range`'s appends; next-edits 385), placed at
+  the next restater of the route constants' code, WC3 #916 if the figures come before it starts.
 - **What the next events ask**: GT6's prediction and worker count from #875 before its run, with the checking fold
-  measured at samples; #709's brief rewritten before it starts (the two phases, the table, GT6's record);
-  `.build/plans/mailed.md`'s #889 and #919 lines removed at its next edit. Q33 is the owner's.
+  measured at samples; the decisions at #875's figures (Under way); #709's brief rewritten before it starts (the two
+  phases, the table, GT6's record). Q33 is the owner's.
 
 - **Planners stopped**: plan-120 and plan-121 were stopped by a classifier declining a turn, before their notes; this
   file and `PLANNING_LOG.md` carried all they settled. Keep both current at every event.

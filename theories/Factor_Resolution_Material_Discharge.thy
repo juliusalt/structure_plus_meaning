@@ -109,9 +109,9 @@ text \<open>
   most general unifier keeps the valuation, so each goal left pending holds as the goal it substitutes did.
 \<close>
 
-lemma finite_canonical_successor_supported:
+lemma finite_canonical_successor_supported_pattern_in:
   fixes P :: "('a,'s::linorder,'d,'c) finite_schema_system"
-  assumes I: "resolution_invariant P d t st"
+  assumes I: "resolution_pattern_invariant_in \<Theta> P d \<pi> st"
     and goal: "Resolution_Material_Goal q r M |\<in>| resolution_pending st"
     and source: "finite_material_source M = Finite_Pattern_Target (Finite_Whole C)"
     and Ws: "finite_canonical_solutions M = Some Ws"
@@ -123,12 +123,13 @@ lemma finite_canonical_successor_supported:
     and holds: "\<And>h. h |\<in>| finite_focus_pending F st \<Longrightarrow> h \<noteq> Resolution_Material_Goal q r M \<Longrightarrow>
       finite_goal_holds (positive_meaning (decode_finite_system P)) \<theta> h"
   shows "\<exists>st'. st' |\<in>| finite_solution_successors st q r M Ws \<and>
-    resolution_supported_at U F (finite_committed_barring B st) P st' \<theta>"
+    resolution_supported_at U F (finite_committed_barring B st) P st' \<theta> \<and>
+    (\<forall>v. resolution_root_value st \<theta> v \<longrightarrow> resolution_root_value st' \<theta> v)"
 proof -
   let ?\<sigma> = "resolution_substitution \<theta>"
   let ?g = "Resolution_Material_Goal q r M"
   have "resolution_goal_formed ?g"
-    using I goal unfolding resolution_invariant_in_def resolution_goals_placed_def by blast
+    using I goal unfolding resolution_pattern_invariant_in_def resolution_pattern_goals_placed_def by blast
   then have Mf: "finite_material_formed M" by simp
   have Ws_eq: "Ws = finite_material_candidates M [finite_material_tuple C (finite_artifact_rows C)]"
     using Ws source by (simp add: finite_canonical_solutions_def split: if_splits)
@@ -278,8 +279,53 @@ proof -
     have "x = resolution_node_position m" using x ndm by (cases m) simp
     then show "x |\<in>| finite_committed_barring B st" using m by (auto simp: finite_committed_barring_def)
   qed
-  show ?thesis using member resolution_supported_at_barred_mono[OF sup' sub] by blast
+  have rv: "\<forall>v. resolution_root_value st \<theta> v \<longrightarrow> resolution_root_value st' \<theta> v"
+  proof (intro allI impI)
+    fix v assume rv0: "resolution_root_value st \<theta> v"
+    have goals: "resolution_value \<theta> p' = v" if h: "Resolution_Call_Goal [] r' e' p' |\<in>| resolution_pending st'" for r' e' p'
+    proof -
+      obtain g0 where g0: "g0 |\<in>| resolution_pending st" "g0 \<noteq> ?g"
+        and hg: "Resolution_Call_Goal [] r' e' p' = resolution_goal_substitute (finite_binding_substitution u) g0"
+        using st'_goals[OF h] by blast
+      obtain r0 e0 p0 where g0c: "g0 = Resolution_Call_Goal [] r0 e0 p0"
+        and pp: "p' = finite_pattern_substitute (finite_binding_substitution u) p0"
+        using hg by (cases g0) auto
+      have "resolution_value \<theta> p0 = v" using rv0 g0(1) g0c unfolding resolution_root_value_def by blast
+      then show ?thesis using pp keep by simp
+    qed
+    have nodes: "resolution_value \<theta> (resolution_node_call nd) = v"
+      if nd: "nd |\<in>| resolution_nodes st'" "resolution_node_position nd = []" for nd
+    proof -
+      obtain m where m: "m |\<in>| resolution_nodes st"
+        and ndm: "nd = resolution_node_substitute (finite_binding_substitution u) m"
+        using st'_nodes[OF nd(1)] by blast
+      have mp: "resolution_node_position m = []" using nd(2) ndm by (cases m) simp
+      have "resolution_value \<theta> (resolution_node_call m) = v" using rv0 m mp unfolding resolution_root_value_def by blast
+      moreover have "resolution_node_call nd = finite_pattern_substitute (finite_binding_substitution u) (resolution_node_call m)"
+        using ndm by (cases m) simp
+      ultimately show ?thesis using keep by simp
+    qed
+    show "resolution_root_value st' \<theta> v" unfolding resolution_root_value_def using goals nodes by blast
+  qed
+  show ?thesis using member resolution_supported_at_barred_mono[OF sup' sub] rv by blast
 qed
+
+lemma finite_canonical_successor_supported:
+  fixes P :: "('a,'s::linorder,'d,'c) finite_schema_system"
+  assumes I: "resolution_invariant P d t st"
+    and goal: "Resolution_Material_Goal q r M |\<in>| resolution_pending st"
+    and source: "finite_material_source M = Finite_Pattern_Target (Finite_Whole C)"
+    and Ws: "finite_canonical_solutions M = Some Ws"
+    and ground: "finite_material_ground_satisfied (finite_material_pattern_substitute (resolution_substitution \<theta>) M)"
+    and canonical: "(resolution_value \<theta> (finite_material_source M),resolution_value \<theta> (finite_material_atoms M),
+        resolution_value \<theta> (finite_material_edges M),resolution_value \<theta> (finite_material_counts M),
+        resolution_value \<theta> (finite_material_functions M)) = finite_material_tuple C (finite_artifact_rows C)"
+    and placed: "finite_state_placed U st"
+    and holds: "\<And>h. h |\<in>| finite_focus_pending F st \<Longrightarrow> h \<noteq> Resolution_Material_Goal q r M \<Longrightarrow>
+      finite_goal_holds (positive_meaning (decode_finite_system P)) \<theta> h"
+  shows "\<exists>st'. st' |\<in>| finite_solution_successors st q r M Ws \<and>
+    resolution_supported_at U F (finite_committed_barring B st) P st' \<theta>"
+  using finite_canonical_successor_supported_pattern_in[where \<Theta>=resolution_empty_table and \<pi>="finite_exact_term_pattern t" for t, folded resolution_invariant_pattern_in, OF assms] by blast
 
 subsection \<open>Facts the discharge reads\<close>
 
@@ -330,14 +376,11 @@ lemma finite_canonical_observation:
     (finite_enumeration_term (map (finite_atom_term C) A)) (finite_enumeration_term (map (finite_incidence_term C) E))
     (finite_enumeration_term (map (finite_attachment_term C) B)) (finite_enumeration_term (map (finite_attachment_term C) F))"
 proof -
-  have en: "finite_artifact_enumeration C A E B F"
-    using finite_artifact_enumerations_exact[OF formed, of A E B F] finite_artifact_rows_enumerated[of C] rows by simp
-  have r: "finite_enumeration_read (finite_atom_read C) (finite_enumeration_term (map (finite_atom_term C) A)) = Some A"
-    "finite_enumeration_read (finite_incidence_read C) (finite_enumeration_term (map (finite_incidence_term C) E)) = Some E"
-    "finite_enumeration_read (finite_attachment_read C) (finite_enumeration_term (map (finite_attachment_term C) B)) = Some B"
-    "finite_enumeration_read (finite_attachment_read C) (finite_enumeration_term (map (finite_attachment_term C) F)) = Some F"
-    by (rule finite_enumeration_read_term, rule finite_material_term_reads)+
-  show ?thesis unfolding finite_material_observation_whole using en r by blast
+  have "finite_material_arguments C = (Finite_Target (Finite_Whole C),
+      finite_enumeration_term (map (finite_atom_term C) A), finite_enumeration_term (map (finite_incidence_term C) E),
+      finite_enumeration_term (map (finite_attachment_term C) B), finite_enumeration_term (map (finite_attachment_term C) F))"
+    by (simp add: finite_material_arguments_def rows)
+  then show ?thesis using finite_material_arguments_exact formed by blast
 qed
 
 subsection \<open>A closed sibling's instance is true\<close>
@@ -411,9 +454,10 @@ text \<open>
   goal stands there), a material premise by the linkage, which marks it done.
 \<close>
 
-lemma finite_closed_premise_true:
+lemma finite_closed_premise_true_pattern_in:
   fixes P :: "('a,'s::linorder,'d,'c) finite_schema_system"
-  assumes I: "resolution_invariant P d t st" and nd: "nd |\<in>| resolution_nodes st"
+  assumes true: "finite_table_true P \<Theta>"
+    and I: "resolution_pattern_invariant_in \<Theta> P d \<pi> st" and nd: "nd |\<in>| resolution_nodes st"
     and closed: "resolution_pending_under st (resolution_node_position nd @ [s]) = {||}"
   shows "\<And>e p. (s,e,p) |\<in>| finite_schema_premises (resolution_node_schema nd) \<Longrightarrow>
       finite_pattern_variables (finite_pattern_substitute (finite_node_binding nd) p) = {||} \<Longrightarrow>
@@ -427,15 +471,15 @@ proof -
   let ?pos = "resolution_node_position nd"
   let ?\<beta> = "finite_node_binding nd"
   let ?SV = "finite_schema_variables ?S"
-  have linked: "resolution_node_linked P st nd"
-    using I nd unfolding resolution_invariant_in_def resolution_nodes_placed_in_def by blast
+  have linked: "resolution_node_linked_in \<Theta> P st nd"
+    using I nd unfolding resolution_pattern_invariant_in_def resolution_pattern_nodes_placed_in_def by blast
   obtain \<beta>0 where bind: "resolution_node_bindings nd = fimage (\<lambda>a. (a,\<beta>0 a)) ?SV"
     and prems: "\<forall>s e p. (s,e,p) |\<in>| finite_schema_premises ?S \<longrightarrow>
         Resolution_Call_Goal (?pos@[s]) (Some (resolution_node_site nd,resolution_node_clause nd,s)) e
             (finite_pattern_substitute \<beta>0 p) |\<in>| resolution_pending st \<or>
         (\<exists>m. m |\<in>| resolution_nodes st \<and> resolution_node_position m=?pos@[s] \<and>
           resolution_node_site m=e \<and> resolution_node_call m=finite_pattern_substitute \<beta>0 p) \<or>
-        resolution_premise_reused st (?pos@[s]) e (finite_pattern_substitute \<beta>0 p)"
+        resolution_premise_closed_in \<Theta> st (?pos@[s]) e (finite_pattern_substitute \<beta>0 p)"
     and mats: "\<forall>s M. (s,M) |\<in>| finite_schema_materials ?S \<longrightarrow>
         Resolution_Material_Goal (?pos@[s]) (resolution_node_site nd,resolution_node_clause nd,s)
             (finite_material_pattern_substitute \<beta>0 M) |\<in>| resolution_pending st \<or>
@@ -459,36 +503,30 @@ proof -
       using p that by (force simp: finite_schema_variables_def resolution_fset_simps)
     have eqp: "finite_pattern_substitute \<beta>0 p = finite_pattern_substitute ?\<beta> p"
       by (rule finite_pattern_substitute_cong) (simp add: \<beta>0 pv)
-    have Ip: "resolution_pattern_invariant P d (finite_exact_term_pattern t) st"
-      using I by (simp add: resolution_invariant_pattern)
-    obtain m where m: "m |\<in>| resolution_nodes st" "finite_solved_node st m" "resolution_node_site m = e"
-      "resolution_node_call m = finite_pattern_substitute ?\<beta> p"
+    have Ip: "resolution_pattern_invariant_in \<Theta> P d \<pi> st" by (rule I)
+    have ans: "(e,decode_finite_term (finite_residual_term (finite_pattern_substitute ?\<beta> p))) \<in> positive_meaning (decode_finite_system P)"
     proof -
       from prems p consider
           (goal) "Resolution_Call_Goal (?pos@[s]) (Some (resolution_node_site nd,resolution_node_clause nd,s)) e
             (finite_pattern_substitute \<beta>0 p) |\<in>| resolution_pending st"
         | (node) m where "m |\<in>| resolution_nodes st" "resolution_node_position m=?pos@[s]" "resolution_node_site m=e"
             "resolution_node_call m=finite_pattern_substitute \<beta>0 p"
-        | (reused) "resolution_premise_reused st (?pos@[s]) e (finite_pattern_substitute \<beta>0 p)"
+        | (reused) "resolution_premise_closed_in \<Theta> st (?pos@[s]) e (finite_pattern_substitute \<beta>0 p)"
         by blast
-      then show thesis
+      then show ?thesis
       proof cases
         case goal
-        then show thesis using not_pending[of "Resolution_Call_Goal (?pos@[s])
+        then show ?thesis using not_pending[of "Resolution_Call_Goal (?pos@[s])
           (Some (resolution_node_site nd,resolution_node_clause nd,s)) e (finite_pattern_substitute \<beta>0 p)"] by simp
       next
         case node
         have sol: "finite_solved_node st m" unfolding finite_solved_node_under node(2) by (rule closed)
-        show thesis by (rule that[OF node(1) sol node(3)]) (simp add: node(4) eqp)
+        show ?thesis using resolution_solved_node_true_calls_in[OF true Ip node(1) sol] node(3,4) eqp by simp
       next
         case reused
-        then obtain m where "m |\<in>| resolution_nodes st" "finite_solved_node st m" "resolution_node_site m=e"
-          "resolution_node_call m=finite_pattern_substitute \<beta>0 p" unfolding resolution_premise_closed_in_def resolution_table.sel by blast
-        then show thesis using that eqp by simp
+        show ?thesis using resolution_premise_closed_true_calls_in[OF true Ip reused] eqp by simp
       qed
     qed
-    have ans: "(e,decode_finite_term (finite_residual_term (finite_pattern_substitute ?\<beta> p))) \<in> positive_meaning (decode_finite_system P)"
-      using resolution_solved_node_true[OF Ip m(1,2)] unfolding m(3,4) .
     then show ?thesis using ground by (simp add: resolution_value_def finite_pattern_substitute_ground)
   qed
   show "finite_material_ground_satisfied (finite_material_pattern_substitute (resolution_substitution \<theta>)
@@ -506,6 +544,8 @@ proof -
   qed
 qed
 
+lemmas finite_closed_premise_true = finite_closed_premise_true_pattern_in[where \<Theta>=resolution_empty_table and \<pi>="finite_exact_term_pattern t" for t, OF finite_table_true_empty, folded resolution_invariant_pattern_in]
+
 text \<open>
   A node every goal pending under whose position holds at a formed valuation has a true call at it (correction (15)'s
   first fact): by induction over the nodes strictly under the node, through its linkage to its clause — a pending premise
@@ -515,9 +555,9 @@ text \<open>
   otherwise constrained, and an unformed value there makes the call false.
 \<close>
 
-lemma finite_open_node_true_in:
+lemma finite_open_node_true_pattern_in:
   fixes P :: "('a,'s::linorder,'d,'c) finite_schema_system"
-  assumes valid: "finite_table_valid P \<Theta>" and I: "resolution_invariant_in \<Theta> P d t st" and formed: "\<And>z. finite_term_formed (\<theta> z)"
+  assumes true: "finite_table_true P \<Theta>" and I: "resolution_pattern_invariant_in \<Theta> P d \<pi> st" and formed: "\<And>z. finite_term_formed (\<theta> z)"
   shows "nd |\<in>| resolution_nodes st \<Longrightarrow>
     (\<And>h. h |\<in>| resolution_pending_under st (resolution_node_position nd) \<Longrightarrow>
       finite_goal_holds (positive_meaning (decode_finite_system P)) \<theta> h) \<Longrightarrow>
@@ -533,13 +573,12 @@ proof (induction nd rule: measure_induct_rule[where f="\<lambda>nd. fcard (ffilt
   let ?under = "\<lambda>x. ffilter (\<lambda>m. take (length (resolution_node_position x)) (resolution_node_position m) =
     resolution_node_position x \<and> resolution_node_position m \<noteq> resolution_node_position x) (resolution_nodes st)"
   have nd: "nd |\<in>| resolution_nodes st" by (rule less.prems(1))
-  have Pf: "finite_system_formed P" using I by (simp add: resolution_invariant_in_def)
-  have Ip: "resolution_pattern_invariant_in \<Theta> P d (finite_exact_term_pattern t) st"
-    using I by (simp add: resolution_invariant_pattern_in)
+  have Pf: "finite_system_formed P" using I by (simp add: resolution_pattern_invariant_in_def)
+  have Ip: "resolution_pattern_invariant_in \<Theta> P d \<pi> st" by (rule I)
   have callf: "finite_pattern_formed (resolution_node_call nd)"
     and bindf: "\<And>a x. (a,x) |\<in>| resolution_node_bindings nd \<Longrightarrow> finite_pattern_formed x"
     and linked: "resolution_node_linked_in \<Theta> P st nd"
-    using I nd unfolding resolution_invariant_in_def resolution_nodes_placed_in_def by blast+
+    using I nd unfolding resolution_pattern_invariant_in_def resolution_pattern_nodes_placed_in_def by blast+
   obtain i \<iota> where iface: "(resolution_node_site nd,i) |\<in>| finite_system_interfaces P"
     and icall: "resolution_node_call nd = finite_pattern_substitute \<iota> i"
     using linked unfolding resolution_node_linked_in_def by blast
@@ -671,7 +710,7 @@ proof (induction nd rule: measure_induct_rule[where f="\<lambda>nd. fcard (ffilt
       have gr: "finite_pattern_variables (finite_pattern_substitute \<beta>0 p) = {||}"
         using reused unfolding resolution_premise_closed_in_def resolution_table.sel by blast
       have "(e,decode_finite_term (finite_residual_term (finite_pattern_substitute \<beta>0 p))) \<in> ?M"
-        by (rule resolution_premise_closed_true_in[OF valid Ip reused])
+        by (rule resolution_premise_closed_true_calls_in[OF true Ip reused])
       then show ?thesis using gr by (simp add: resolution_value_def finite_pattern_substitute_ground)
     qed
   qed
@@ -715,6 +754,8 @@ proof (induction nd rule: measure_induct_rule[where f="\<lambda>nd. fcard (ffilt
   then show ?case by (simp only: heq)
 qed
 
+lemmas finite_open_node_true_in = finite_open_node_true_pattern_in[where \<pi>="finite_exact_term_pattern t" for t, OF finite_table_valid_true, folded resolution_invariant_pattern_in]
+
 lemmas finite_open_node_true = finite_open_node_true_in[where \<Theta>=resolution_empty_table, OF finite_table_valid_empty]
 
 text \<open>
@@ -724,9 +765,9 @@ text \<open>
   value is the same; closed by reuse or by a valid table, by the closed premise's truth. \<open>finite_closed_premise_true\<close> is its closed case.
 \<close>
 
-lemma finite_open_premise_holds_in:
+lemma finite_open_premise_holds_pattern_in:
   fixes P :: "('a,'s::linorder,'d,'c) finite_schema_system"
-  assumes valid: "finite_table_valid P \<Theta>" and I: "resolution_invariant_in \<Theta> P d t st"
+  assumes true: "finite_table_true P \<Theta>" and I: "resolution_pattern_invariant_in \<Theta> P d \<pi> st"
     and nd: "nd |\<in>| resolution_nodes st"
     and pending: "\<And>h. h |\<in>| resolution_pending_under st (resolution_node_position nd @ [s]) \<Longrightarrow>
       finite_goal_holds (positive_meaning (decode_finite_system P)) \<theta> h"
@@ -741,7 +782,7 @@ proof -
   let ?\<beta> = "finite_node_binding nd"
   let ?SV = "finite_schema_variables ?S"
   have linked: "resolution_node_linked_in \<Theta> P st nd"
-    using I nd unfolding resolution_invariant_in_def resolution_nodes_placed_in_def by blast
+    using I nd unfolding resolution_pattern_invariant_in_def resolution_pattern_nodes_placed_in_def by blast
   obtain \<beta>0 where bind: "resolution_node_bindings nd = fimage (\<lambda>a. (a,\<beta>0 a)) ?SV"
     and prems: "\<forall>s e p. (s,e,p) |\<in>| finite_schema_premises ?S \<longrightarrow>
         Resolution_Call_Goal (?pos@[s]) (Some (resolution_node_site nd,resolution_node_clause nd,s)) e
@@ -759,8 +800,7 @@ proof -
     by (rule finite_pattern_substitute_cong) (simp add: \<beta>0 pv)
   have holds: "finite_goal_holds ?M \<theta> h" if "h |\<in>| resolution_pending_under st (?pos@[s])" for h
     by (rule pending[OF that])
-  have Ip: "resolution_pattern_invariant_in \<Theta> P d (finite_exact_term_pattern t) st"
-    using I by (simp add: resolution_invariant_pattern_in)
+  have Ip: "resolution_pattern_invariant_in \<Theta> P d \<pi> st" by (rule I)
   have gval: "resolution_value \<theta>' (finite_pattern_substitute ?\<beta> p) = finite_residual_term (finite_pattern_substitute ?\<beta> p)"
     for \<theta>' :: "('s,'a) resolution_variable \<Rightarrow> finite_factor_term"
     using ground by (simp add: resolution_value_def finite_pattern_substitute_ground)
@@ -791,17 +831,19 @@ proof -
       with h\<theta> show ?thesis by simp
     qed
     have "(resolution_node_site m,decode_finite_term (resolution_value \<theta>' (resolution_node_call m))) \<in> ?M"
-      by (rule finite_open_node_true_in[OF valid I formed' node(1) holds'])
+      by (rule finite_open_node_true_pattern_in[OF true I formed' node(1) holds'])
     then show ?thesis using node(3,4) eqp gval by simp
   next
     case reused
     have "(e,decode_finite_term (finite_residual_term (finite_pattern_substitute \<beta>0 p))) \<in> ?M"
-      by (rule resolution_premise_closed_true_in[OF valid Ip reused])
+      by (rule resolution_premise_closed_true_calls_in[OF true Ip reused])
     then have "(e,decode_finite_term (finite_residual_term (finite_pattern_substitute ?\<beta> p))) \<in> ?M"
       using eqp by simp
     then show ?thesis using gval by simp
   qed
 qed
+
+lemmas finite_open_premise_holds_in = finite_open_premise_holds_pattern_in[where \<pi>="finite_exact_term_pattern t" for t, OF finite_table_valid_true, folded resolution_invariant_pattern_in]
 
 lemmas finite_open_premise_holds = finite_open_premise_holds_in[where \<Theta>=resolution_empty_table, OF finite_table_valid_empty]
 
@@ -809,9 +851,9 @@ text \<open>
   The support's form (OS1): every goal pending under the premise is in the focus and holds there.
 \<close>
 
-lemma finite_open_premise_true_in:
+lemma finite_open_premise_true_pattern_in:
   fixes P :: "('a,'s::linorder,'d,'c) finite_schema_system"
-  assumes valid: "finite_table_valid P \<Theta>" and I: "resolution_invariant_in \<Theta> P d t st"
+  assumes true: "finite_table_true P \<Theta>" and I: "resolution_pattern_invariant_in \<Theta> P d \<pi> st"
     and sup: "resolution_supported_at U F B P st \<theta>"
     and nd: "nd |\<in>| resolution_nodes st"
     and focus: "resolution_pending_under st (resolution_node_position nd @ [s]) |\<subseteq>| finite_focus_pending F st"
@@ -819,11 +861,13 @@ lemma finite_open_premise_true_in:
     and ground: "finite_pattern_variables (finite_pattern_substitute (finite_node_binding nd) p) = {||}"
   shows "(e,decode_finite_term (resolution_value \<theta> (finite_pattern_substitute (finite_node_binding nd) p)))
     \<in> positive_meaning (decode_finite_system P)"
-proof (rule finite_open_premise_holds_in[OF valid I nd _ p ground])
+proof (rule finite_open_premise_holds_pattern_in[OF true I nd _ p ground])
   show "finite_goal_holds (positive_meaning (decode_finite_system P)) \<theta> h"
     if "h |\<in>| resolution_pending_under st (resolution_node_position nd @ [s])" for h
     by (rule resolution_supported_at_holds[OF sup]) (use focus that in blast)
 qed
+
+lemmas finite_open_premise_true_in = finite_open_premise_true_pattern_in[where \<pi>="finite_exact_term_pattern t" for t, OF finite_table_valid_true, folded resolution_invariant_pattern_in]
 
 lemmas finite_open_premise_true = finite_open_premise_true_in[where \<Theta>=resolution_empty_table, OF finite_table_valid_empty]
 
@@ -851,11 +895,13 @@ text \<open>
   (\<open>finite_premise_only_unshared\<close>). The committed goal is the pending instance at the socket's key.
 \<close>
 
-definition finite_parent_context ::
-    "('a,'s::linorder,'d,'c) finite_schema_system \<Rightarrow> nat resolution_view \<Rightarrow> nat resolution_view \<Rightarrow>
+definition finite_parent_context_in ::
+    "('a,'s,'d,'c) resolution_table \<Rightarrow> ('a,'s::linorder,'d,'c) finite_schema_system \<Rightarrow> nat resolution_view \<Rightarrow> nat resolution_view \<Rightarrow>
       ('a,'s,'d,'c) resolution_state \<Rightarrow> ('a,'s,'d,'c) resolution_node \<Rightarrow> 's \<Rightarrow> bool" where
-  "finite_parent_context P Vp Vh st nd s \<longleftrightarrow> nd |\<in>| resolution_nodes st \<and> resolution_node_linked P st nd \<and>
+  "finite_parent_context_in \<Theta> P Vp Vh st nd s \<longleftrightarrow> nd |\<in>| resolution_nodes st \<and> resolution_node_linked_in \<Theta> P st nd \<and>
     finite_children_closed Vp Vh st nd s \<and> finite_premise_only_inputs Vp Vh st nd s \<and> finite_premise_only_unshared nd"
+
+abbreviation finite_parent_context where "finite_parent_context \<equiv> finite_parent_context_in resolution_empty_table"
 
 subsection \<open>The parent context at a frame\<close>
 
@@ -907,14 +953,14 @@ next
   qed
 qed
 
-lemma finite_node_binding_linked:
-  assumes I: "resolution_invariant P d t st" and np: "np |\<in>| resolution_nodes st"
+lemma finite_node_binding_linked_pattern_in:
+  assumes I: "resolution_pattern_invariant_in \<Theta> P d \<pi> st" and np: "np |\<in>| resolution_nodes st"
   shows "resolution_node_bindings np =
       fimage (\<lambda>a. (a,finite_node_binding np a)) (finite_schema_variables (resolution_node_schema np))"
     and "resolution_node_call np =
       finite_pattern_substitute (finite_node_binding np) (finite_schema_conclusion (resolution_node_schema np))"
 proof -
-  have "resolution_node_linked P st np" using I np unfolding resolution_invariant_in_def resolution_nodes_placed_in_def by blast
+  have "resolution_node_linked_in \<Theta> P st np" using I np unfolding resolution_pattern_invariant_in_def resolution_pattern_nodes_placed_in_def by blast
   then obtain \<beta> where bind: "resolution_node_bindings np = fimage (\<lambda>a. (a,\<beta> a)) (finite_schema_variables (resolution_node_schema np))"
     and call: "resolution_node_call np = finite_pattern_substitute \<beta> (finite_schema_conclusion (resolution_node_schema np))"
     unfolding resolution_node_linked_in_def by blast
@@ -929,17 +975,23 @@ proof -
     unfolding call by (rule finite_pattern_substitute_cong) (metis agree finite_schema_variables_members(1))
 qed
 
-definition finite_framed_parent_context ::
-    "('a,'s::linorder,'d,'c) finite_schema_system \<Rightarrow> 'a fset \<Rightarrow> ('a,'s,'d,'c) resolution_state \<Rightarrow>
+lemmas finite_node_binding_linked = finite_node_binding_linked_pattern_in[where \<Theta>=resolution_empty_table and \<pi>="finite_exact_term_pattern t" for t, folded resolution_invariant_pattern_in]
+
+definition finite_framed_parent_context_in ::
+    "('a,'s,'d,'c) resolution_table \<Rightarrow> ('a,'s::linorder,'d,'c) finite_schema_system \<Rightarrow> 'a fset \<Rightarrow> ('a,'s,'d,'c) resolution_state \<Rightarrow>
       ('a,'s,'d,'c) resolution_node \<Rightarrow> 's \<Rightarrow> bool" where
-  "finite_framed_parent_context P C st nd s \<longleftrightarrow> nd |\<in>| resolution_nodes st \<and> resolution_node_linked P st nd \<and>
+  "finite_framed_parent_context_in \<Theta> P C st nd s \<longleftrightarrow> nd |\<in>| resolution_nodes st \<and> resolution_node_linked_in \<Theta> P st nd \<and>
     finite_children_framed C st nd s \<and> finite_premise_only_framed C st nd \<and> finite_premise_only_unshared nd"
 
-lemma finite_parent_context_framed:
-  assumes "finite_parent_context P Vp Vh st nd s"
-  shows "finite_framed_parent_context P (finite_default_frame Vp Vh (resolution_node_schema nd) s) st nd s"
+abbreviation finite_framed_parent_context where "finite_framed_parent_context \<equiv> finite_framed_parent_context_in resolution_empty_table"
+
+lemma finite_parent_context_framed_table_in:
+  assumes "finite_parent_context_in \<Theta> P Vp Vh st nd s"
+  shows "finite_framed_parent_context_in \<Theta> P (finite_default_frame Vp Vh (resolution_node_schema nd) s) st nd s"
   using assms finite_children_closed_framed[of Vp Vh st nd s] finite_premise_only_inputs_framed[of Vp Vh st nd s]
-  unfolding finite_parent_context_def finite_framed_parent_context_def by blast
+  unfolding finite_parent_context_in_def finite_framed_parent_context_in_def by blast
+
+lemmas finite_parent_context_framed = finite_parent_context_framed_table_in[where \<Theta>=resolution_empty_table]
 
 text \<open>
   Every node's call is its clause's head under its bindings at every state the invariant holds of
@@ -947,21 +999,25 @@ text \<open>
   is formed.
 \<close>
 
-lemma finite_invariant_headed:
-  assumes I: "resolution_invariant P d t st"
+lemma finite_invariant_headed_pattern_in:
+  assumes I: "resolution_pattern_invariant_in \<Theta> P d \<pi> st"
   shows "finite_nodes_headed st"
-  unfolding finite_nodes_headed_def using finite_node_binding_linked(2)[OF I] by blast
+  unfolding finite_nodes_headed_def using finite_node_binding_linked_pattern_in(2)[OF I] by blast
 
-lemma finite_linked_schema_formed:
-  assumes I: "resolution_invariant P d t st" and linked: "resolution_node_linked P st nd"
+lemmas finite_invariant_headed = finite_invariant_headed_pattern_in[where \<Theta>=resolution_empty_table and \<pi>="finite_exact_term_pattern t" for t, folded resolution_invariant_pattern_in]
+
+lemma finite_linked_schema_formed_pattern_in:
+  assumes I: "resolution_pattern_invariant_in \<Theta> P d \<pi> st" and linked: "resolution_node_linked_in \<Theta> P st nd"
   shows "schema_formed (decode_finite_schema (resolution_node_schema nd))"
 proof -
   have cl: "((resolution_node_site nd,resolution_node_clause nd),resolution_node_schema nd) |\<in>| finite_system_clauses P"
     using linked unfolding resolution_node_linked_in_def by blast
-  have "finite_system_formed P" using I by (simp add: resolution_invariant_in_def)
+  have "finite_system_formed P" using I by (simp add: resolution_pattern_invariant_in_def)
   then have "finite_schema_formed (resolution_node_schema nd)" using cl unfolding finite_system_formed_def by auto
   then show ?thesis by (simp add: finite_schema_formed_correct)
 qed
+
+lemmas finite_linked_schema_formed = finite_linked_schema_formed_pattern_in[where \<Theta>=resolution_empty_table and \<pi>="finite_exact_term_pattern t" for t, folded resolution_invariant_pattern_in]
 
 lemma finite_children_framed_children:
   assumes closed: "finite_children_framed C st np k"
@@ -999,18 +1055,20 @@ proof -
   qed
 qed
 
-lemma finite_framed_premise_only:
-  assumes I: "resolution_invariant P d t st" and ctx: "finite_framed_parent_context P C st nd k"
+lemma finite_framed_premise_only_pattern_in:
+  assumes I: "resolution_pattern_invariant_in \<Theta> P d \<pi> st" and ctx: "finite_framed_parent_context_in \<Theta> P C st nd k"
     and a: "a |\<in>| finite_schema_variables (resolution_node_schema nd)"
       "a |\<notin>| finite_pattern_variables (finite_schema_conclusion (resolution_node_schema nd))"
   shows "finite_free_premise_only st nd a \<or> (a |\<notin>| C \<and> finite_pattern_variables (finite_node_binding nd a) = {||})"
 proof -
   have nd: "nd |\<in>| resolution_nodes st" and pof: "finite_premise_only_framed C st nd"
-    using ctx by (simp_all add: finite_framed_parent_context_def)
+    using ctx by (simp_all add: finite_framed_parent_context_in_def)
   have sv: "single_valued (fset (resolution_node_bindings nd))"
-    unfolding finite_node_binding_linked(1)[OF I nd] by (auto simp: single_valued_def)
+    unfolding finite_node_binding_linked_pattern_in(1)[OF I nd] by (auto simp: single_valued_def)
   show ?thesis by (rule finite_premise_only_framed_bound[OF pof sv a])
 qed
+
+lemmas finite_framed_premise_only = finite_framed_premise_only_pattern_in[where \<Theta>=resolution_empty_table and \<pi>="finite_exact_term_pattern t" for t, folded resolution_invariant_pattern_in]
 
 text \<open>
   At a socket commitment of the framed test the parent context holds at the frame the test chose, at the socket's views
@@ -1018,19 +1076,19 @@ text \<open>
   default frame.
 \<close>
 
-lemma finite_framed_socket_context:
-  assumes I: "resolution_invariant P d t st"
+lemma finite_framed_socket_context_pattern_in:
+  assumes I: "resolution_pattern_invariant_in \<Theta> P d \<pi> st"
     and sc: "finite_socket_commitment_framed D \<Phi> Vp Vh ch F st g"
     and cn: "finite_call_framed D \<Phi> Vp Vh ch F st g" and mn: "finite_material_framed D \<Phi> Vp Vh ch F st g"
   obtains nd C where "nd |\<in>| resolution_nodes st" "resolution_node_position nd = butlast (resolution_goal_position g)"
     "resolution_goal_position g \<noteq> []"
     "finite_frame_at \<Phi> Vp Vh (resolution_node_site nd) (resolution_node_schema nd) (last (resolution_goal_position g)) ch =
       Some C"
-    "finite_framed_parent_context P C st nd (last (resolution_goal_position g))"
+    "finite_framed_parent_context_in \<Theta> P C st nd (last (resolution_goal_position g))"
 proof -
   let ?q = "resolution_goal_position g"
   let ?fa = "\<lambda>nd. finite_frame_at \<Phi> Vp Vh (resolution_node_site nd) (resolution_node_schema nd) (last ?q) ch"
-  have dist: "resolution_positions_distinct st" using I by (simp add: resolution_invariant_in_def)
+  have dist: "resolution_positions_distinct st" using I by (simp add: resolution_pattern_invariant_in_def)
   have declared: "?q \<noteq> [] \<and> (\<exists>nd' C'. nd' |\<in>| resolution_nodes st \<and> resolution_node_position nd' = butlast ?q \<and>
       ?fa nd' = Some C' \<and> finite_premise_only_framed C' st nd')"
     if "finite_socket_declared_framed D \<Phi> Vp Vh ch F st ?q Y g" for Y
@@ -1065,11 +1123,13 @@ proof -
     using narrowed by blast
   have same: "nd' = nd" using dist nd'(1) nd(1) nd'(2) nd(2) unfolding resolution_positions_distinct_def by auto
   then have "C' = C" using fa fa' by simp
-  then have "finite_framed_parent_context P C st nd (last ?q)"
+  then have "finite_framed_parent_context_in \<Theta> P C st nd (last ?q)"
     using nd(1) I closed unsh pof same
-    unfolding finite_framed_parent_context_def resolution_invariant_in_def resolution_nodes_placed_in_def by blast
+    unfolding finite_framed_parent_context_in_def resolution_pattern_invariant_in_def resolution_pattern_nodes_placed_in_def by blast
   then show thesis using that nd qne fa by blast
 qed
+
+lemmas finite_framed_socket_context = finite_framed_socket_context_pattern_in[where \<Theta>=resolution_empty_table and \<pi>="finite_exact_term_pattern t" for t, folded resolution_invariant_pattern_in]
 
 subsection \<open>The socket's own variables and the absorbed frame\<close>
 
@@ -1159,6 +1219,67 @@ lemma finite_material_substitute_variables:
     (\<exists>c. c |\<in>| finite_material_variables N \<and> z |\<in>| finite_pattern_variables (\<sigma> c))"
   by (auto simp: finite_material_variables_def finite_pattern_substitute_variables_iff)
 
+text \<open>
+  A variable a committed step leaves unchanged, at a goal whose parent stands at a framed context, is not the goal's,
+  no free premise-only variable of the parent (none stands in the parent's call) and, at a free socket, where the
+  parent is the focus root, not absorbed (the absorbed variables are the parent call's): the three conditions under
+  which the framed valuations keep the support. Stated once for the call and the material sockets.
+\<close>
+
+lemma finite_exchange_unchanged_parent:
+  assumes I: "resolution_pattern_invariant_in \<Theta> P d \<pi> st" and ctx: "finite_framed_parent_context_in \<Theta> P C st nd k"
+    and Vh: "view_formed Vh" and pos: "butlast (resolution_goal_position g) = resolution_node_position nd"
+    and kf: "keep \<or> F = Some (resolution_node_position nd)"
+    and nc: "\<not> finite_exchange_changes F st g z"
+  shows "z |\<notin>| resolution_goal_variables g \<and> \<not> finite_free_premise_variable st nd z \<and>
+    (keep \<or> z |\<notin>| finite_parent_absorbed Vp Vh C nd k)"
+proof (intro conjI)
+  let ?pos = "resolution_node_position nd" and ?S = "resolution_node_schema nd" and ?\<beta> = "finite_node_binding nd"
+  have dist: "resolution_positions_distinct st" by (rule resolution_pattern_invariant_distinct[OF I])
+  have ndst: "nd |\<in>| resolution_nodes st" using ctx by (simp add: finite_framed_parent_context_in_def)
+  have only_nd: "m = nd" if "m |\<in>| resolution_nodes st" "resolution_node_position m = ?pos" for m
+    using dist that ndst unfolding resolution_positions_distinct_def by metis
+  show "z |\<notin>| resolution_goal_variables g" using nc unfolding finite_exchange_changes_def by (simp add: Let_def)
+  show "\<not> finite_free_premise_variable st nd z"
+  proof
+    assume fz: "finite_free_premise_variable st nd z"
+    have zz: "z = ((?pos,True),snd z)" using fz by (cases z) (simp add: finite_free_premise_variable_def)
+    have po: "snd z |\<in>| finite_schema_variables ?S |-| finite_pattern_variables (finite_schema_conclusion ?S)"
+      using fz unfolding finite_free_premise_variable_def by simp
+    have "finite_premise_only_unshared nd" using ctx by (simp add: finite_framed_parent_context_in_def)
+    then have ncall: "z |\<notin>| finite_pattern_variables (resolution_node_call nd)"
+      using fbspec[OF \<open>finite_premise_only_unshared nd\<close>[unfolded finite_premise_only_unshared_def] po] zz by simp
+    have "\<not> fBex (resolution_nodes st) (\<lambda>m. resolution_node_position m = ?pos \<and>
+        z |\<in>| finite_pattern_variables (resolution_node_call m))"
+      using only_nd ncall by blast
+    then have "finite_exchange_changes F st g z"
+      using fz pos unfolding finite_exchange_changes_def finite_free_premise_variable_def by (simp add: Let_def)
+    with nc show False by blast
+  qed
+  show "keep \<or> z |\<notin>| finite_parent_absorbed Vp Vh C nd k"
+  proof (cases keep)
+    case False
+    with kf have Fq: "F = Some ?pos" by blast
+    show ?thesis
+    proof (rule disjI2, rule notI)
+      assume za: "z |\<in>| finite_parent_absorbed Vp Vh C nd k"
+      obtain hi ho a where vc: "resolution_view_pattern Vh (finite_schema_conclusion ?S) = Some (hi,ho)"
+        and a: "a |\<in>| finite_pattern_variables ho" and za': "z |\<in>| finite_pattern_variables (?\<beta> a)"
+        using za unfolding finite_parent_absorbed_def
+        by (auto split: option.splits simp: ffUnion.rep_eq fimage.rep_eq ffilter.rep_eq)
+      have ac: "a |\<in>| finite_pattern_variables (finite_schema_conclusion ?S)"
+        using resolution_view_pattern_variables[OF Vh vc] a by auto
+      have ceq: "resolution_node_call nd = finite_pattern_substitute ?\<beta> (finite_schema_conclusion ?S)"
+        using finite_node_binding_linked_pattern_in[OF I ndst] by blast
+      have zc: "z |\<in>| finite_pattern_variables (resolution_node_call nd)"
+        unfolding ceq finite_pattern_substitute_variables_iff using ac za' by blast
+      have "finite_exchange_changes F st g z"
+        unfolding finite_exchange_changes_def using Fq pos ndst zc by (auto simp: Let_def)
+      with nc show False by blast
+    qed
+  qed simp
+qed
+
 subsection \<open>A valuation read from a new instance, one variable at a time\<close>
 
 text \<open>
@@ -1230,11 +1351,11 @@ text \<open>
   variables are the free premise-only variables and, at a free socket, the absorbed ones: nothing else changes.
 \<close>
 
-lemma finite_framed_valuation:
+lemma finite_framed_valuation_pattern_in:
   fixes P :: "('a,'s::linorder,'d,'c) finite_schema_system"
     and \<theta> \<theta>2 :: "('s,'a) resolution_variable \<Rightarrow> finite_factor_term"
-  assumes I: "resolution_invariant P d t st"
-    and ctx: "finite_framed_parent_context P C st nd k"
+  assumes I: "resolution_pattern_invariant_in \<Theta> P d \<pi> st"
+    and ctx: "finite_framed_parent_context_in \<Theta> P C st nd k"
     and Vh: "view_formed Vh"
     and own: "finite_socket_own Vp (resolution_node_schema nd) k |\<subseteq>| Ow"
     and OS: "Ow |\<subseteq>| finite_schema_variables (resolution_node_schema nd)"
@@ -1264,11 +1385,11 @@ proof -
   let ?A = "{c. c |\<in>| ?SV \<and> (h c = decode_finite_term (resolution_value \<theta> (?\<beta> c)) \<or>
     (c |\<notin>| ?cv \<and> finite_free_premise_only st nd c))}"
   have nd: "nd |\<in>| resolution_nodes st" and unshared: "finite_premise_only_unshared nd"
-    using ctx by (simp_all add: finite_framed_parent_context_def)
-  note linked = finite_node_binding_linked[OF I nd]
+    using ctx by (simp_all add: finite_framed_parent_context_in_def)
+  note linked = finite_node_binding_linked_pattern_in[OF I nd]
   have po: "finite_free_premise_only st nd a \<or> (a |\<notin>| C \<and> finite_pattern_variables (?\<beta> a) = {||})"
     if "a |\<in>| ?SV" "a |\<notin>| ?cv" for a
-    by (rule finite_framed_premise_only[OF I ctx that])
+    by (rule finite_framed_premise_only_pattern_in[OF I ctx that])
   have own_var: "?\<beta> a = Finite_Variable (?own a)" if "finite_free_premise_only st nd a" for a
     using that unfolding finite_free_premise_only_def by blast
   have own_call: "?own a |\<notin>| ?call" if "a |\<in>| ?SV" "a |\<notin>| ?cv" for a
@@ -1734,6 +1855,8 @@ proof -
   qed
 qed
 
+lemmas finite_framed_valuation = finite_framed_valuation_pattern_in[where \<Theta>=resolution_empty_table and \<pi>="finite_exact_term_pattern t" for t, folded resolution_invariant_pattern_in]
+
 subsection \<open>The socket's obligation re-grounds the pending siblings\<close>
 
 text \<open>
@@ -1745,10 +1868,11 @@ text \<open>
   elsewhere, which no premise-only variable and no output variable reaches in the parent's call.
 \<close>
 
-lemma finite_framed_material_valuation:
+lemma finite_framed_material_valuation_pattern_in:
   fixes P :: "('a,'s::linorder,'d,'c) finite_schema_system"
-  assumes I: "resolution_invariant P d t st"
-    and ctx: "finite_framed_parent_context P C st nd k"
+  assumes true: "finite_table_true P \<Theta>"
+    and I: "resolution_pattern_invariant_in \<Theta> P d \<pi> st"
+    and ctx: "finite_framed_parent_context_in \<Theta> P C st nd k"
     and N0: "(k,N0) |\<in>| finite_schema_materials (resolution_node_schema nd)"
     and g: "Resolution_Material_Goal (resolution_node_position nd@[k]) r M |\<in>| resolution_pending st"
     and M: "M = finite_material_pattern_substitute (finite_node_binding nd) N0"
@@ -1769,7 +1893,9 @@ lemma finite_framed_material_valuation:
       resolution_value \<theta>1 (finite_material_functions M)) = finite_material_tuple R (finite_artifact_rows R) \<and>
     finite_material_ground_satisfied (finite_material_pattern_substitute (resolution_substitution \<theta>1) M) \<and>
     (\<forall>h. h |\<in>| finite_focus_pending F st \<longrightarrow> h \<noteq> Resolution_Material_Goal (resolution_node_position nd@[k]) r M \<longrightarrow>
-      finite_goal_holds (positive_meaning (decode_finite_system P)) \<theta>1 h)"
+      finite_goal_holds (positive_meaning (decode_finite_system P)) \<theta>1 h) \<and>
+    ((keep \<or> F = Some (resolution_node_position nd)) \<longrightarrow>
+      (\<forall>z. \<not> finite_exchange_changes F st (Resolution_Material_Goal (resolution_node_position nd@[k]) r M) z \<longrightarrow> \<theta>1 z = \<theta> z))"
 proof -
   let ?Mn = "positive_meaning (decode_finite_system P)"
   let ?S = "resolution_node_schema nd"
@@ -1778,9 +1904,9 @@ proof -
   let ?SV = "finite_schema_variables ?S"
   let ?cv = "finite_pattern_variables (finite_schema_conclusion ?S)"
   let ?g = "Resolution_Material_Goal (?pos@[k]) r M"
-  have nd: "nd |\<in>| resolution_nodes st" and linked: "resolution_node_linked P st nd"
+  have nd: "nd |\<in>| resolution_nodes st" and linked: "resolution_node_linked_in \<Theta> P st nd"
     and closed: "finite_children_framed C st nd k"
-    using ctx by (simp_all add: finite_framed_parent_context_def)
+    using ctx by (simp_all add: finite_framed_parent_context_in_def)
   have prem_cases: "Resolution_Call_Goal (?pos@[s]) (Some (resolution_node_site nd,resolution_node_clause nd,s)) e
       (finite_pattern_substitute ?\<beta> p) |\<in>| resolution_pending st \<or>
       finite_pattern_variables (finite_pattern_substitute ?\<beta> p) = {||}"
@@ -1792,7 +1918,7 @@ proof -
       resolution_pending_under st (?pos@[s]) = {||}"
     if "(s,N) |\<in>| finite_schema_materials ?S" for s N
     using closed that unfolding finite_children_framed_def by auto
-  have schema_formed: "schema_formed (decode_finite_schema ?S)" by (rule finite_linked_schema_formed[OF I linked])
+  have schema_formed: "schema_formed (decode_finite_schema ?S)" by (rule finite_linked_schema_formed_pattern_in[OF I linked])
   have inst_child: "(\<exists>s e p. (s,e,p) |\<in>| finite_schema_premises ?S \<and>
         h = Resolution_Call_Goal (?pos@[s]) (Some (resolution_node_site nd,resolution_node_clause nd,s)) e
           (finite_pattern_substitute ?\<beta> p)) \<or>
@@ -1891,7 +2017,7 @@ proof -
       case False
       then have cl: "finite_pattern_variables (finite_pattern_substitute ?\<beta> p0) = {||}"
         using prem_cases[OF p0] by blast
-      show ?thesis by (rule finite_open_premise_holds[OF I nd _ p0 cl])
+      show ?thesis by (rule finite_open_premise_holds_pattern_in[OF true I nd _ p0 cl])
         (rule holds, erule fsubsetD[OF resolution_pending_under_focused[OF resolution_focused_child[OF focus]]])
     qed
     then have t: "(d,evaluate_pattern ev (decode_finite_pattern p0)) \<in> ?Mn" unfolding evsub ev_def .
@@ -1912,7 +2038,7 @@ proof -
     next
       case False
       then have cl: "resolution_pending_under st (?pos@[s]) = {||}" using mat_cases[OF N1] by blast
-      show ?thesis by (rule finite_closed_premise_true(2)[OF I nd cl N1])
+      show ?thesis by (rule finite_closed_premise_true_pattern_in(2)[OF true I nd cl N1])
     qed
     then have "evaluate_material_satisfaction ev (decode_finite_material N1)" unfolding matsub ev_def .
     then show "evaluate_material_satisfaction hA N" unfolding NN by (rule mat_hA)
@@ -2030,7 +2156,7 @@ proof -
     and t3: "\<And>c. c |\<in>| ?SV \<Longrightarrow> hA c = decode_finite_term (resolution_value \<theta> (?\<beta> c)) \<or>
         (c |\<notin>| ?cv \<and> finite_free_premise_only st nd c) \<Longrightarrow>
       decode_finite_term (resolution_value \<theta>1 (?\<beta> c)) = hN c"
-    by (rule finite_framed_valuation[where h=hA and h'=hN and \<theta>=\<theta> and ?\<theta>2.0=\<theta>2 and
+    by (rule finite_framed_valuation_pattern_in[where h=hA and h'=hN and \<theta>=\<theta> and ?\<theta>2.0=\<theta>2 and
       Y="fset (finite_material_variables M)" and Ow="finite_material_variables N0",
       OF I ctx Vh own OS old_O new_O Yiff frameN headc hN_formed]) (assumption | rule that)+
   have wM: "w1 |\<in>| finite_material_variables M" "w2 |\<in>| finite_material_variables M"
@@ -2167,7 +2293,7 @@ proof -
       next
         case ncv: False
         have f: "finite_free_premise_only st nd c"
-          using finite_framed_premise_only[OF I ctx cS ncv] c(2) by auto
+          using finite_framed_premise_only_pattern_in[OF I ctx cS ncv] c(2) by auto
         have "z = ((?pos,True),c)" using f c(2) unfolding finite_free_premise_only_def by auto
         then have "resolution_goal_position h \<noteq> [] \<and> butlast (resolution_goal_position h) = ?pos"
           using child_of[OF f] z by simp
@@ -2204,7 +2330,55 @@ proof -
     qed
     show ?thesis using h\<theta> finite_goal_holds_cong[of h \<theta>1 \<theta>] same by blast
   qed
-  show ?thesis using tuple ground1 others by blast
+  have kept: "(keep \<or> F = Some ?pos) \<longrightarrow>
+      (\<forall>z. \<not> finite_exchange_changes F st (Resolution_Material_Goal (?pos@[k]) r M) z \<longrightarrow> \<theta>1 z = \<theta> z)"
+  proof (intro impI allI)
+    assume kf: "keep \<or> F = Some ?pos"
+    fix z assume nc: "\<not> finite_exchange_changes F st (Resolution_Material_Goal (?pos@[k]) r M) z"
+    have "z |\<notin>| resolution_goal_variables (Resolution_Material_Goal (?pos@[k]) r M) \<and>
+        \<not> finite_free_premise_variable st nd z \<and> (keep \<or> z |\<notin>| finite_parent_absorbed Vp Vh C nd k)"
+      by (rule finite_exchange_unchanged_parent[OF I ctx Vh _ kf nc]) simp
+    then show "\<theta>1 z = \<theta> z" by (auto intro: t2)
+  qed
+  show ?thesis using tuple ground1 others kept by blast
+qed
+
+lemma finite_framed_material_valuation:
+  fixes P :: "('a,'s::linorder,'d,'c) finite_schema_system"
+  assumes I: "resolution_invariant P d t st"
+    and ctx: "finite_framed_parent_context P C st nd k"
+    and N0: "(k,N0) |\<in>| finite_schema_materials (resolution_node_schema nd)"
+    and g: "Resolution_Material_Goal (resolution_node_position nd@[k]) r M |\<in>| resolution_pending st"
+    and M: "M = finite_material_pattern_substitute (finite_node_binding nd) N0"
+    and focus: "resolution_focused F (resolution_node_position nd)"
+    and holds: "\<And>h. h |\<in>| finite_focus_pending F st \<Longrightarrow> finite_goal_holds (positive_meaning (decode_finite_system P)) \<theta> h"
+    and socket: "socket_framed (positive_meaning (decode_finite_system P)) (resolution_node_schema nd) k keep Vp Vh (fset C)"
+    and Vh: "view_formed Vh"
+    and head: "keep \<or> (finite_parent_absorbs Vp Vh C nd k \<and> finite_input_output_apart Vh nd)"
+    and outside: "\<And>h z b hi ho. h |\<in>| finite_focus_pending F st \<Longrightarrow>
+        \<not> (resolution_goal_position h \<noteq> [] \<and> butlast (resolution_goal_position h) = resolution_node_position nd) \<Longrightarrow>
+        \<not> keep \<Longrightarrow> resolution_view_pattern Vh (finite_schema_conclusion (resolution_node_schema nd)) = Some (hi,ho) \<Longrightarrow>
+        b |\<in>| finite_pattern_variables ho \<Longrightarrow> b |\<in>| C \<Longrightarrow> z |\<in>| finite_pattern_variables (finite_node_binding nd b) \<Longrightarrow>
+        z |\<notin>| resolution_goal_variables h"
+    and free: "finite_free_fields M"
+    and source: "finite_material_source M = Finite_Pattern_Target (Finite_Whole R)"
+  shows "\<exists>\<theta>1. (resolution_value \<theta>1 (finite_material_source M),resolution_value \<theta>1 (finite_material_atoms M),
+      resolution_value \<theta>1 (finite_material_edges M),resolution_value \<theta>1 (finite_material_counts M),
+      resolution_value \<theta>1 (finite_material_functions M)) = finite_material_tuple R (finite_artifact_rows R) \<and>
+    finite_material_ground_satisfied (finite_material_pattern_substitute (resolution_substitution \<theta>1) M) \<and>
+    (\<forall>h. h |\<in>| finite_focus_pending F st \<longrightarrow> h \<noteq> Resolution_Material_Goal (resolution_node_position nd@[k]) r M \<longrightarrow>
+      finite_goal_holds (positive_meaning (decode_finite_system P)) \<theta>1 h)"
+proof -
+  have "\<exists>\<theta>1. (resolution_value \<theta>1 (finite_material_source M),resolution_value \<theta>1 (finite_material_atoms M),
+      resolution_value \<theta>1 (finite_material_edges M),resolution_value \<theta>1 (finite_material_counts M),
+      resolution_value \<theta>1 (finite_material_functions M)) = finite_material_tuple R (finite_artifact_rows R) \<and>
+    finite_material_ground_satisfied (finite_material_pattern_substitute (resolution_substitution \<theta>1) M) \<and>
+    (\<forall>h. h |\<in>| finite_focus_pending F st \<longrightarrow> h \<noteq> Resolution_Material_Goal (resolution_node_position nd@[k]) r M \<longrightarrow>
+      finite_goal_holds (positive_meaning (decode_finite_system P)) \<theta>1 h) \<and>
+    ((keep \<or> F = Some (resolution_node_position nd)) \<longrightarrow>
+      (\<forall>z. \<not> finite_exchange_changes F st (Resolution_Material_Goal (resolution_node_position nd@[k]) r M) z \<longrightarrow> \<theta>1 z = \<theta> z))"
+    by (rule finite_framed_material_valuation_pattern_in[where \<Theta>=resolution_empty_table and \<pi>="finite_exact_term_pattern t" for t, OF finite_table_true_empty, folded resolution_invariant_pattern_in]) (fact assms)+
+  then show ?thesis by blast
 qed
 
 subsection \<open>The exchange at a material socket\<close>
@@ -2215,14 +2389,15 @@ text \<open>
   simply replaces the support there. Either valuation supports a canonical successor with every node barred.
 \<close>
 
-lemma finite_framed_material_exchange:
+lemma finite_framed_material_exchange_pattern_in:
   fixes P :: "('a,'s::linorder,'d,'c) finite_schema_system"
-  assumes I: "resolution_invariant P d t st" and sup: "resolution_supported_at U F B P st \<theta>"
+  assumes true: "finite_table_true P \<Theta>"
+    and I: "resolution_pattern_invariant_in \<Theta> P d \<pi> st" and sup: "resolution_supported_at U F B P st \<theta>"
     and gF: "Resolution_Material_Goal q r M |\<in>| finite_focus_pending F st"
     and Ws: "finite_canonical_solutions M = Some Ws" and free: "finite_free_fields M"
     and prem: "finite_material_premise st (Resolution_Material_Goal q r M)"
     and nd: "nd |\<in>| resolution_nodes st" "resolution_node_position nd = butlast q" and qne: "q \<noteq> []"
-    and ctx: "finite_framed_parent_context P C st nd (last q)"
+    and ctx: "finite_framed_parent_context_in \<Theta> P C st nd (last q)"
     and socket: "socket_framed (positive_meaning (decode_finite_system P)) (resolution_node_schema nd) (last q) keep Vp Vh
       (fset C)"
     and Vh: "view_formed Vh"
@@ -2231,17 +2406,19 @@ lemma finite_framed_material_exchange:
     and head: "keep \<or> (F = Some (butlast q) \<and> finite_parent_absorbs Vp Vh C nd (last q) \<and>
       finite_input_output_apart Vh nd \<and> finite_parent_absorbed Vp Vh C nd (last q) |\<subseteq>| Y)"
   shows "\<exists>st' \<theta>'. st' |\<in>| finite_solution_successors st q r M Ws \<and>
-    resolution_supported_at U F (finite_committed_barring B st) P st' \<theta>'"
+    resolution_supported_at U F (finite_committed_barring B st) P st' \<theta>' \<and>
+    (finite_root_apart F st (Resolution_Material_Goal q r M) \<longrightarrow>
+      (\<forall>v. resolution_root_value st \<theta> v \<longrightarrow> resolution_root_value st' \<theta>' v))"
 proof -
   let ?Mn = "positive_meaning (decode_finite_system P)"
   let ?g = "Resolution_Material_Goal q r M"
   let ?pos = "resolution_node_position nd"
   let ?\<beta> = "finite_node_binding nd"
-  have dist: "resolution_positions_distinct st" using I by (simp add: resolution_invariant_in_def)
-  have linked: "resolution_node_linked P st nd" using ctx by (simp add: finite_framed_parent_context_def)
+  have dist: "resolution_positions_distinct st" using I by (simp add: resolution_pattern_invariant_in_def)
+  have linked: "resolution_node_linked_in \<Theta> P st nd" using ctx by (simp add: finite_framed_parent_context_in_def)
   have gp: "?g |\<in>| resolution_pending st" using gF by (simp add: finite_focus_pending_focused)
   obtain k where qk: "q = ?pos @ [k]" and k: "k = last q" using nd(2) qne by (metis append_butlast_last_id)
-  have ctxk: "finite_framed_parent_context P C st nd k" using ctx k by simp
+  have ctxk: "finite_framed_parent_context_in \<Theta> P C st nd k" using ctx k by simp
   obtain N0 where N0: "(k,N0) |\<in>| finite_schema_materials (resolution_node_schema nd)"
   proof -
     obtain np where np: "np |\<in>| resolution_nodes st" "resolution_node_position np = butlast q"
@@ -2254,7 +2431,7 @@ proof -
   qed
   have inst_g: "Resolution_Material_Goal (?pos@[k]) (resolution_node_site nd,resolution_node_clause nd,k)
       (finite_material_pattern_substitute ?\<beta> N0) |\<in>| resolution_pending st"
-    using ctxk N0 unfolding finite_framed_parent_context_def finite_children_framed_def by auto
+    using ctxk N0 unfolding finite_framed_parent_context_in_def finite_children_framed_def by auto
   have gq: "Resolution_Material_Goal (?pos@[k]) r M |\<in>| resolution_pending st" using gp by (simp only: qk[symmetric])
   have "resolution_goal_position (Resolution_Material_Goal (?pos@[k]) r M) =
       resolution_goal_position (Resolution_Material_Goal (?pos@[k]) (resolution_node_site nd,resolution_node_clause nd,k)
@@ -2276,14 +2453,15 @@ proof -
   have gsat: "finite_material_ground_satisfied (finite_material_pattern_substitute (resolution_substitution \<theta>) M)"
     using holds\<theta>[OF gF] by (simp add: finite_goal_holds_def)
   have formedS: "schema_formed (decode_finite_schema (resolution_node_schema nd))"
-    by (rule finite_linked_schema_formed[OF I linked])
+    by (rule finite_linked_schema_formed_pattern_in[OF I linked])
   have own_sub: "finite_socket_own Vp (resolution_node_schema nd) k |\<subseteq>| finite_material_variables N0"
     by (rule finite_socket_own_material[OF formedS N0])
   have "\<exists>\<theta>1. (resolution_value \<theta>1 (finite_material_source M),resolution_value \<theta>1 (finite_material_atoms M),
       resolution_value \<theta>1 (finite_material_edges M),resolution_value \<theta>1 (finite_material_counts M),
       resolution_value \<theta>1 (finite_material_functions M)) = finite_material_tuple R (finite_artifact_rows R) \<and>
     finite_material_ground_satisfied (finite_material_pattern_substitute (resolution_substitution \<theta>1) M) \<and>
-    (\<forall>h. h |\<in>| finite_focus_pending F st \<longrightarrow> h \<noteq> ?g \<longrightarrow> finite_goal_holds ?Mn \<theta>1 h)"
+    (\<forall>h. h |\<in>| finite_focus_pending F st \<longrightarrow> h \<noteq> ?g \<longrightarrow> finite_goal_holds ?Mn \<theta>1 h) \<and>
+    (\<forall>z. \<not> finite_exchange_changes F st ?g z \<longrightarrow> \<theta>1 z = \<theta> z)"
   proof (cases "resolution_focused F ?pos")
     case True
     have headv: "keep \<or> (finite_parent_absorbs Vp Vh C nd k \<and> finite_input_output_apart Vh nd)"
@@ -2323,10 +2501,13 @@ proof -
         resolution_value \<theta>1 (finite_material_functions M)) = finite_material_tuple R (finite_artifact_rows R) \<and>
       finite_material_ground_satisfied (finite_material_pattern_substitute (resolution_substitution \<theta>1) M) \<and>
       (\<forall>h. h |\<in>| finite_focus_pending F st \<longrightarrow> h \<noteq> Resolution_Material_Goal (?pos@[k]) r M \<longrightarrow>
-        finite_goal_holds ?Mn \<theta>1 h)"
-      by (rule finite_framed_material_valuation[OF I ctxk N0 gq Meq True holds\<theta> socket[unfolded k[symmetric]] Vh headv
+        finite_goal_holds ?Mn \<theta>1 h) \<and>
+      ((keep \<or> F = Some ?pos) \<longrightarrow>
+        (\<forall>z. \<not> finite_exchange_changes F st (Resolution_Material_Goal (?pos@[k]) r M) z \<longrightarrow> \<theta>1 z = \<theta> z))"
+      by (rule finite_framed_material_valuation_pattern_in[OF true I ctxk N0 gq Meq True holds\<theta> socket[unfolded k[symmetric]] Vh headv
         outside free source])
-    then show ?thesis unfolding qk by blast
+    moreover have "keep \<or> F = Some ?pos" using head nd(2) by auto
+    ultimately show ?thesis unfolding qk by blast
   next
     case nfoc: False
     obtain f where Ff: "F = Some f" using nfoc by (cases F) (simp_all add: resolution_focused_def)
@@ -2394,17 +2575,51 @@ proof -
       qed
       show ?thesis using holds\<theta>[OF h(1)] finite_goal_holds_cong[of h \<theta>1 \<theta>] same by blast
     qed
-    show ?thesis using tuple ground1 others by blast
+    have agree1: "\<forall>z. \<not> finite_exchange_changes F st ?g z \<longrightarrow> \<theta>1 z = \<theta> z"
+      using w unfolding finite_exchange_changes_def by (auto simp: Let_def \<theta>1_def finite_material_variables_def)
+    show ?thesis using tuple ground1 others agree1 by blast
   qed
   then obtain \<theta>1 where can1: "(resolution_value \<theta>1 (finite_material_source M),resolution_value \<theta>1 (finite_material_atoms M),
       resolution_value \<theta>1 (finite_material_edges M),resolution_value \<theta>1 (finite_material_counts M),
       resolution_value \<theta>1 (finite_material_functions M)) = finite_material_tuple R (finite_artifact_rows R)"
     and ground1: "finite_material_ground_satisfied (finite_material_pattern_substitute (resolution_substitution \<theta>1) M)"
     and hold1: "\<And>h. h |\<in>| finite_focus_pending F st \<Longrightarrow> h \<noteq> ?g \<Longrightarrow> finite_goal_holds ?Mn \<theta>1 h"
+    and agree: "\<forall>z. \<not> finite_exchange_changes F st ?g z \<longrightarrow> \<theta>1 z = \<theta> z"
     by blast
-  show ?thesis
-    using finite_canonical_successor_supported[OF I gp source Ws ground1 can1 placed hold1] by blast
+  obtain st' where st': "st' |\<in>| finite_solution_successors st q r M Ws"
+      "resolution_supported_at U F (finite_committed_barring B st) P st' \<theta>1"
+    and rv1: "\<forall>v. resolution_root_value st \<theta>1 v \<longrightarrow> resolution_root_value st' \<theta>1 v"
+    using finite_canonical_successor_supported_pattern_in[OF I gp source Ws ground1 can1 placed hold1] by blast
+  have "finite_root_apart F st ?g \<longrightarrow> (\<forall>v. resolution_root_value st \<theta> v \<longrightarrow> resolution_root_value st' \<theta>1 v)"
+  proof (intro impI allI)
+    assume apart: "finite_root_apart F st ?g"
+    fix v assume v: "resolution_root_value st \<theta> v"
+    have "\<theta>1 z = \<theta> z" if "z |\<in>| resolution_root_variables st" for z
+      using agree fbspec[OF apart[unfolded finite_root_apart_def] that] by blast
+    then have "resolution_root_value st \<theta>1 v" using v by (rule resolution_root_value_agree)
+    then show "resolution_root_value st' \<theta>1 v" using rv1 by blast
+  qed
+  then show ?thesis using st' by blast
 qed
+
+lemma finite_framed_material_exchange:
+  fixes P :: "('a,'s::linorder,'d,'c) finite_schema_system"
+  assumes I: "resolution_invariant P d t st" and sup: "resolution_supported_at U F B P st \<theta>"
+    and gF: "Resolution_Material_Goal q r M |\<in>| finite_focus_pending F st"
+    and Ws: "finite_canonical_solutions M = Some Ws" and free: "finite_free_fields M"
+    and prem: "finite_material_premise st (Resolution_Material_Goal q r M)"
+    and nd: "nd |\<in>| resolution_nodes st" "resolution_node_position nd = butlast q" and qne: "q \<noteq> []"
+    and ctx: "finite_framed_parent_context P C st nd (last q)"
+    and socket: "socket_framed (positive_meaning (decode_finite_system P)) (resolution_node_schema nd) (last q) keep Vp Vh
+      (fset C)"
+    and Vh: "view_formed Vh"
+    and hold: "finite_socket_holders F st q Y (Resolution_Material_Goal q r M)"
+    and Ysub: "finite_material_variables M |\<subseteq>| Y"
+    and head: "keep \<or> (F = Some (butlast q) \<and> finite_parent_absorbs Vp Vh C nd (last q) \<and>
+      finite_input_output_apart Vh nd \<and> finite_parent_absorbed Vp Vh C nd (last q) |\<subseteq>| Y)"
+  shows "\<exists>st' \<theta>'. st' |\<in>| finite_solution_successors st q r M Ws \<and>
+    resolution_supported_at U F (finite_committed_barring B st) P st' \<theta>'"
+  using finite_framed_material_exchange_pattern_in[where \<Theta>=resolution_empty_table and \<pi>="finite_exact_term_pattern t" for t, OF finite_table_true_empty, folded resolution_invariant_pattern_in, OF assms] by blast
 
 subsection \<open>The discharge of the premise's material part\<close>
 
@@ -2417,17 +2632,19 @@ text \<open>
   \<open>finite_frame_at_framed\<close>.
 \<close>
 
-theorem finite_framed_material_commitment_exchanges:
+theorem finite_framed_material_commitment_exchanges_in:
   fixes P :: "('a,'s::linorder,'d,'c) finite_schema_system"
-  assumes discharged: "declarations_discharged (positive_meaning (decode_finite_system P)) D corr"
+  assumes true: "finite_table_true P \<Theta>"
+    and discharged: "declarations_discharged (positive_meaning (decode_finite_system P)) D corr"
     and frames: "frames_discharged (positive_meaning (decode_finite_system P)) D \<Phi>"
-  shows "resolution_invariant P d t st \<Longrightarrow> resolution_supported_at U F B P st \<theta> \<Longrightarrow>
+  shows "resolution_pattern_invariant_in \<Theta> P d \<pi> st \<Longrightarrow> resolution_supported_at U F B P st \<theta> \<Longrightarrow>
     g |\<in>| finite_focus_pending F st \<Longrightarrow> g = Resolution_Material_Goal q r M \<Longrightarrow>
     finite_canonical_solutions M = Some Ws \<Longrightarrow> commit_material (finite_framed_commitment D \<Phi>) F st g \<Longrightarrow>
     \<exists>st' \<theta>'. st' |\<in>| finite_solution_successors st q r M Ws \<and>
-      resolution_supported_at U F (finite_committed_barring B st) P st' \<theta>'"
+      resolution_supported_at U F (finite_committed_barring B st) P st' \<theta>' \<and>
+      (finite_root_apart F st g \<longrightarrow> (\<forall>v. resolution_root_value st \<theta> v \<longrightarrow> resolution_root_value st' \<theta>' v))"
 proof -
-  assume I: "resolution_invariant P d t st" and sup: "resolution_supported_at U F B P st \<theta>"
+  assume I: "resolution_pattern_invariant_in \<Theta> P d \<pi> st" and sup: "resolution_supported_at U F B P st \<theta>"
     and gF: "g |\<in>| finite_focus_pending F st" and gq: "g = Resolution_Material_Goal q r M"
     and Ws: "finite_canonical_solutions M = Some Ws" and cm: "commit_material (finite_framed_commitment D \<Phi>) F st g"
   let ?M = "positive_meaning (decode_finite_system P)"
@@ -2440,8 +2657,8 @@ proof -
   have cn: "finite_call_framed D \<Phi> Vp Vh ch F st ?g" by (simp add: finite_call_framed_def)
   obtain nd C where nd: "nd |\<in>| resolution_nodes st" "resolution_node_position nd = butlast q" and qne: "q \<noteq> []"
     and fa: "finite_frame_at \<Phi> Vp Vh (resolution_node_site nd) (resolution_node_schema nd) (last q) ch = Some C"
-    and ctx: "finite_framed_parent_context P C st nd (last q)"
-    using finite_framed_socket_context[OF I sc cn mn] by auto
+    and ctx: "finite_framed_parent_context_in \<Theta> P C st nd (last q)"
+    using finite_framed_socket_context_pattern_in[OF I sc cn mn] by auto
   have free: "finite_free_fields M"
     and decl: "finite_socket_declared_framed D \<Phi> Vp Vh ch F st q (finite_material_variables M) ?g"
     using sc by (simp_all add: finite_socket_commitment_framed_def)
@@ -2449,22 +2666,23 @@ proof -
     and ka: "finite_socket_kept_framed D \<Phi> Vp Vh ch F st q (finite_material_variables M) ?g \<or>
       finite_input_output_apart Vh nd0"
     using mn unfolding finite_material_framed_def by auto
-  have dist: "resolution_positions_distinct st" using I by (simp add: resolution_invariant_in_def)
+  have dist: "resolution_positions_distinct st" by (rule resolution_pattern_invariant_distinct[OF I])
   have same: "m = nd" if "m |\<in>| resolution_nodes st" "resolution_node_position m = butlast q" for m
   proof -
     have "resolution_node_position m = resolution_node_position nd" using that(2) nd(2) by simp
     then show ?thesis using dist that(1) nd(1) unfolding resolution_positions_distinct_def by blast
   qed
-  have linked: "resolution_node_linked P st nd" using ctx by (simp add: finite_framed_parent_context_def)
+  have linked: "resolution_node_linked_in \<Theta> P st nd" using ctx by (simp add: finite_framed_parent_context_in_def)
   have formed: "schema_formed (decode_finite_schema (resolution_node_schema nd))"
-    by (rule finite_linked_schema_formed[OF I linked])
+    by (rule finite_linked_schema_formed_pattern_in[OF I linked])
   have views: "view_formed Vh" if "(e,S,s,keep,Vp,Vh) |\<in>| declared_sockets D" for e S s keep
   proof -
     have "declarations_formed D" using discharged by (simp add: declarations_discharged_def)
     then show ?thesis using that unfolding declarations_formed_def by auto
   qed
-  show "\<exists>st' \<theta>'. st' |\<in>| finite_solution_successors st q r M Ws \<and>
-      resolution_supported_at U F (finite_committed_barring B st) P st' \<theta>'"
+  have res: "\<exists>st' \<theta>'. st' |\<in>| finite_solution_successors st q r M Ws \<and>
+      resolution_supported_at U F (finite_committed_barring B st) P st' \<theta>' \<and>
+      (finite_root_apart F st ?g \<longrightarrow> (\<forall>v. resolution_root_value st \<theta> v \<longrightarrow> resolution_root_value st' \<theta>' v))"
   proof (cases "finite_socket_kept_framed D \<Phi> Vp Vh ch F st q (finite_material_variables M) ?g")
     case True
     obtain nd' where nd': "nd' |\<in>| resolution_nodes st" "resolution_node_position nd' = butlast q"
@@ -2477,7 +2695,8 @@ proof -
     have sock: "socket_framed ?M (resolution_node_schema nd) (last q) True Vp Vh (fset C)"
       by (rule finite_frame_at_framed[OF discharged frames decl' fa formed])
     show ?thesis
-      by (rule finite_framed_material_exchange[OF I sup gF' Ws free prem nd qne ctx sock views[OF decl'] hold]) simp_all
+      by (rule finite_framed_material_exchange_pattern_in[OF true I sup gF' Ws free prem nd qne ctx sock views[OF decl'] hold])
+        simp_all
   next
     case False
     have fr: "finite_socket_free_framed D \<Phi> Vp Vh ch F st q (finite_material_variables M) ?g"
@@ -2498,15 +2717,60 @@ proof -
     have sock: "socket_framed ?M (resolution_node_schema nd) (last q) False Vp Vh (fset C)"
       by (rule finite_frame_at_framed[OF discharged frames decl' fa formed])
     show ?thesis
-      by (rule finite_framed_material_exchange[OF I sup gF' Ws free prem nd qne ctx sock views[OF decl'] hold])
+      by (rule finite_framed_material_exchange_pattern_in[OF true I sup gF' Ws free prem nd qne ctx sock views[OF decl'] hold])
         (use Fq abs apart eq CC in auto)
   qed
+  show "\<exists>st' \<theta>'. st' |\<in>| finite_solution_successors st q r M Ws \<and>
+      resolution_supported_at U F (finite_committed_barring B st) P st' \<theta>' \<and>
+      (finite_root_apart F st g \<longrightarrow> (\<forall>v. resolution_root_value st \<theta> v \<longrightarrow> resolution_root_value st' \<theta>' v))"
+    using res gq by simp
+qed
+
+theorem finite_framed_material_commitment_exchanges:
+  fixes P :: "('a,'s::linorder,'d,'c) finite_schema_system"
+  assumes discharged: "declarations_discharged (positive_meaning (decode_finite_system P)) D corr"
+    and frames: "frames_discharged (positive_meaning (decode_finite_system P)) D \<Phi>"
+  shows "resolution_invariant P d t st \<Longrightarrow> resolution_supported_at U F B P st \<theta> \<Longrightarrow>
+    g |\<in>| finite_focus_pending F st \<Longrightarrow> g = Resolution_Material_Goal q r M \<Longrightarrow>
+    finite_canonical_solutions M = Some Ws \<Longrightarrow> commit_material (finite_framed_commitment D \<Phi>) F st g \<Longrightarrow>
+    \<exists>st' \<theta>'. st' |\<in>| finite_solution_successors st q r M Ws \<and>
+      resolution_supported_at U F (finite_committed_barring B st) P st' \<theta>'"
+proof -
+  assume I: "resolution_invariant P d t st" and sup: "resolution_supported_at U F B P st \<theta>"
+    and gF: "g |\<in>| finite_focus_pending F st" and gq: "g = Resolution_Material_Goal q r M"
+    and Ws: "finite_canonical_solutions M = Some Ws" and cm: "commit_material (finite_framed_commitment D \<Phi>) F st g"
+  show "\<exists>st' \<theta>'. st' |\<in>| finite_solution_successors st q r M Ws \<and>
+      resolution_supported_at U F (finite_committed_barring B st) P st' \<theta>'"
+    using finite_framed_material_commitment_exchanges_in[OF finite_table_true_empty discharged frames
+      resolution_invariant_pattern_in[THEN iffD1, OF I] sup gF gq Ws cm] by blast
 qed
 
 text \<open>
   Today's material part is the framed one's instance at no frames: every material goal today's test commits the framed
   test commits (B1's containment, at the headed nodes the invariant gives).
 \<close>
+
+theorem finite_material_commitment_exchanges_in:
+  fixes P :: "('a,'s::linorder,'d,'c) finite_schema_system"
+  assumes true: "finite_table_true P \<Theta>"
+    and discharged: "declarations_discharged (positive_meaning (decode_finite_system P)) D corr"
+  shows "resolution_pattern_invariant_in \<Theta> P d \<pi> st \<Longrightarrow> resolution_supported_at U F B P st \<theta> \<Longrightarrow>
+    g |\<in>| finite_focus_pending F st \<Longrightarrow> g = Resolution_Material_Goal q r M \<Longrightarrow>
+    finite_canonical_solutions M = Some Ws \<Longrightarrow> commit_material (finite_declared_commitment D) F st g \<Longrightarrow>
+    \<exists>st' \<theta>'. st' |\<in>| finite_solution_successors st q r M Ws \<and>
+      resolution_supported_at U F (finite_committed_barring B st) P st' \<theta>' \<and>
+      (finite_root_apart F st g \<longrightarrow> (\<forall>v. resolution_root_value st \<theta> v \<longrightarrow> resolution_root_value st' \<theta>' v))"
+proof -
+  assume I: "resolution_pattern_invariant_in \<Theta> P d \<pi> st" and sup: "resolution_supported_at U F B P st \<theta>"
+    and gF: "g |\<in>| finite_focus_pending F st" and gq: "g = Resolution_Material_Goal q r M"
+    and Ws: "finite_canonical_solutions M = Some Ws" and cm: "commit_material (finite_declared_commitment D) F st g"
+  have cm': "commit_material (finite_framed_commitment D {||}) F st g"
+    by (rule finite_framed_commitment_material[OF cm finite_invariant_headed_pattern_in[OF I]])
+  show "\<exists>st' \<theta>'. st' |\<in>| finite_solution_successors st q r M Ws \<and>
+      resolution_supported_at U F (finite_committed_barring B st) P st' \<theta>' \<and>
+      (finite_root_apart F st g \<longrightarrow> (\<forall>v. resolution_root_value st \<theta> v \<longrightarrow> resolution_root_value st' \<theta>' v))"
+    by (rule finite_framed_material_commitment_exchanges_in[OF true discharged no_frames_discharged I sup gF gq Ws cm'])
+qed
 
 theorem finite_material_commitment_exchanges:
   fixes P :: "('a,'s::linorder,'d,'c) finite_schema_system"
@@ -2520,11 +2784,10 @@ proof -
   assume I: "resolution_invariant P d t st" and sup: "resolution_supported_at U F B P st \<theta>"
     and gF: "g |\<in>| finite_focus_pending F st" and gq: "g = Resolution_Material_Goal q r M"
     and Ws: "finite_canonical_solutions M = Some Ws" and cm: "commit_material (finite_declared_commitment D) F st g"
-  have cm': "commit_material (finite_framed_commitment D {||}) F st g"
-    by (rule finite_framed_commitment_material[OF cm finite_invariant_headed[OF I]])
   show "\<exists>st' \<theta>'. st' |\<in>| finite_solution_successors st q r M Ws \<and>
       resolution_supported_at U F (finite_committed_barring B st) P st' \<theta>'"
-    by (rule finite_framed_material_commitment_exchanges[OF discharged no_frames_discharged I sup gF gq Ws cm'])
+    using finite_material_commitment_exchanges_in[OF finite_table_true_empty discharged
+      resolution_invariant_pattern_in[THEN iffD1, OF I] sup gF gq Ws cm] by blast
 qed
 
 end

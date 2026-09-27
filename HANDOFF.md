@@ -58,7 +58,9 @@ for its completion, its record `validation/given-table.json`, after GT5 and the 
 
 **A search step's cost** (#830's attribution, its fixes placed from #852): landed σ tabulated with F2a's shared unifier
 (#861) and the pruning test through the node-call index (#863); open the selection's classes kept #865 (at no focus,
-q156; the held goals and construction nodes recomputed over `search_registered`, mailed to #875) → in F2c #871 (the
+q156; the held goals and construction nodes recomputed over `search_registered`, mailed to #875; its first session's
+maintenance made the search 26 % slower at 20 rows, so it continues from its tree, narrowing the maintenance to what
+changes a test, before it lands) → in F2c #871 (the
 focused instance, q156, mailed),
 and the commitment's tests over the access (#867 landed, `b805e7c8`, `Factor_Access_Commitments`) → F2c's committed
 step over them #869 (review 868's 1–5 and 7 mailed) → K3 #825. #861's
@@ -67,11 +69,12 @@ order at the given's variable type, (c) kept, provisional — and review 862's 2
 measure (mailed); their fixes are placed before GT6.
 
 **Corrections (12)–(15)** have landed but for K3 #825 (the given at the check forms after #869: 77/1, 77/2,
-113/7) → GT2, and the consolidation #832 (review 824's 2, 3, 6, 7, 9) before GT2. I3b #817 landed (`b9d5f1d3`); review
-818's 1–4 are the fix #881 (12's production present at the installed lookup socket, `installed_single_clause`, the
-installed carrying stated once) before #547, #707 and #399, its 5 next-edits 362. Off the route: #857 re-runs #718's
-77 and 79 fixtures after OS2 (still not returning: their cost is W5's and the table's, next-edits 364), and c55
-#827 follows K3, both held runs queued last.
+113/7) → GT2, and the consolidation #832 (review 824's 2, 3, 6, 7, 9) before GT2. I3b #817 and its fix #881
+landed (`b9d5f1d3`, `3686b772`: 12's production present at the installed lookup socket, `installed_single_clause`,
+the installed carrying of a produced record stated once); review 818's 5 and #881's re-review are next-edits 362, 368
+and 369. Off the route: #857 re-ran #718's 77 and 79 fixtures after OS2 (`5fd0f1b0`: still not returning, their cost
+W5's and the table's; the re-run with review 858's attributions at W5's landing, next-edits 364–366), and c55 #827
+follows K3, a held run queued last.
 
 **Retired** on #376's and #378's entries: the decomposition line (#325–#334), N1a, N1b, N3a, N3b, N4a, N4b, #371, #377,
 the designation by locus (#169, #170), the index form's retirement (#92, #93), the machinery's native verification
@@ -85,8 +88,9 @@ under Open and in `.build/plans/next-edits.md`.
 **Shape and order.** No build waits on a review. The longest chain, 13 deep: #869 → K3 #825 → GT2 #843
 → GT3 #876 → GT6 #878 → R7 #542 → #707 → #399 → #709 → #553 → #447 → #449 → #450; nothing is added after its tail until
 it shortens (the approval build, Open 142, waits for that). The queue is the planner's choice, a residual until the
-selection problem's native answer (Q2): running tasks first, then by slack on the longest chain, the route in its
-chains' order, the off-route held runs #857 and #827 last. Word changes are serialized; none is queued.
+selection problem's native answer (Q2): running tasks first, then by slack on the longest chain — K3 and #832 before
+#871 and #875, whose way to GT3 and GT6 has hours of slack against K3 → GT2 — the route in its chains' order, the
+off-route held run #827 last. Word changes are serialized; none is queued.
 
 ## Decisions
 
@@ -271,7 +275,8 @@ REASONING_REUSE.md, how each went in `PLANNING_LOG.md`.
   `Factor_Row_Value_Socket_Declarations`, `Factor_Row_Selection_Socket_Declarations`; their carrying
   `Development_Given_Carried_Declarations` (`given_declarations`, the one produced record), `Development_Given_Frames`,
   `Development_Given_Installed_Declarations` (with the one record at 526 and 561), `Development_Given_Modes`,
-  `Development_Given_Productions`, `Development_Given_Installed_Productions` (the input record at 526 and 561); liveness
+  `Development_Given_Productions`, `Development_Given_Installed_Productions` (the input record at 526 and 561,
+  12's production present at the installed lookup socket, #881); liveness
   `Development_Socket_Liveness_Execution`.
 - **The least witnesses**: `Factor_Least_Collections`, `Factor_Least_Witness_Facts`, `Factor_Construction_Holders`,
   `Factor_Least_Witness_Registrations`, `Development_Given_Registrations`, `Development_Asked_Registrations`,
@@ -348,11 +353,13 @@ a theory before briefing a task that edits it.
 
 ## Now
 
-- **Under way**: #865 (q156 answered), GT4 #841, #857 (told to hand over, no fix task), the fix #881 (review 818's 1–4)
-  and #869 (#867 having landed).
-- **What the next events ask**: the hand-overs of #865, GT4, #857, #881 and #869 (its step measured at the given
-  decides review 868's 4, the linear scans); GT6's prediction and worker count before its run; #709's brief rewritten
-  before it starts; #861's question decided on #875's figures before GT6 (provisional (c)). Q33 is the owner's.
+- **Under way**: GT4 #841 and #869 (#867 having landed); #865 continued from its tree (partial: its maintenance
+  narrowed before it lands).
+- **What the next events ask**: the hand-overs of #865, GT4 and #869 (its step measured at the given decides review
+  868's 4, the linear scans); GT6's prediction and worker count before its run; #709's brief rewritten before it
+  starts; #861's question decided on #875's figures before GT6 (provisional (c)). Q33 is the owner's.
+- **Planners stopped**: plan-120 and plan-121 were stopped by a classifier declining a turn, before their notes; this
+  file and `PLANNING_LOG.md` carried all they settled. Keep both current at every event.
 - **Briefs nearest their rooms**: #542, #399 and the samples build #551; GT2 #843 at 340K — if handed back, its (9) with
   the truth-soundness becomes a task after it and before GT3, GT5 and W5 (#880's Remains 1). A brief written before its
   theories grew may be refused at its start, and is resized or divided then.

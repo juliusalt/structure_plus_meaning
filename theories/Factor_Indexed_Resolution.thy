@@ -2048,26 +2048,26 @@ text \<open>
   The selection is the representation's (@{const access_select}) read through the access of an indexed state, and by
   the access's formation it projects to R3's selection (@{const finite_resolution_select_at}): every class of
   @{const finite_goal_choice} is the access's filter of goals by a test equal to R3's on the goals of a formed state.
-  The order of goals and of nodes reads the positions of their values alone: it is the goal access's at every state,
-  and is stated at the empty one.
+  The order of goals and of nodes reads the positions of their values alone: it is the first of them over the
+  position map of their values (@{const positioned_first}), which is the goal access's at every state.
 \<close>
 
 definition indexed_first_goals :: "('a,'s::linorder,'d,'c) indexed_goal fset \<Rightarrow> ('a,'s,'d,'c) indexed_goal fset" where
-  "indexed_first_goals H = access_first_goals (indexed_goal_access (indexed_empty {||})) H"
+  "indexed_first_goals H = positioned_first (\<lambda>h. resolution_goal_position (indexed_goal_value h)) H"
 
 lemma indexed_first_goals:
   "fimage indexed_goal_value (indexed_first_goals H) = finite_first_goals (fimage indexed_goal_value H)"
   "h |\<in>| indexed_first_goals H \<Longrightarrow> h |\<in>| H"
-  by (auto simp: indexed_first_goals_def access_first_goals_def finite_first_goals_def fset_eq_iff fimage.rep_eq
+  by (auto simp: indexed_first_goals_def positioned_first_def finite_first_goals_def fset_eq_iff fimage.rep_eq
       ffilter.rep_eq)
 
 definition indexed_first_nodes :: "('a,'s::linorder,'d,'c) indexed_node fset \<Rightarrow> ('a,'s,'d,'c) indexed_node fset" where
-  "indexed_first_nodes N = access_first_nodes (indexed_goal_access (indexed_empty {||})) N"
+  "indexed_first_nodes N = positioned_first (\<lambda>hn. resolution_node_position (indexed_node_value hn)) N"
 
 lemma indexed_first_nodes:
   "fimage indexed_node_value (indexed_first_nodes N) = finite_first_nodes (fimage indexed_node_value N)"
   "hn |\<in>| indexed_first_nodes N \<Longrightarrow> hn |\<in>| N"
-  by (auto simp: indexed_first_nodes_def access_first_nodes_def finite_first_nodes_def fset_eq_iff fimage.rep_eq
+  by (auto simp: indexed_first_nodes_def positioned_first_def finite_first_nodes_def fset_eq_iff fimage.rep_eq
       ffilter.rep_eq)
 
 subsection \<open>R3's classes and the waiting rule\<close>

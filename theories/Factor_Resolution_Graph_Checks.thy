@@ -1394,6 +1394,19 @@ definition finite_indexed_links_rows ::
   "finite_indexed_links_rows ns = (case finite_share_rows ns (RBT.empty,0,[]) of (rows,q0) \<Rightarrow>
     map (\<lambda>m. (m,finite_indexed_links (finite_position_index rows) (finite_group_index rows) q0 m)) ns)"
 
+text \<open>
+  The two indexes are invariants of the walk over the nodes: its code equation builds them once from the shared rows,
+  beside the definition, which builds them within the function mapped over the nodes (task 873, from #851's
+  attribution: once per node, quadratic in the nodes). Equal by definition on every input; every statement
+  and proof reads the definition.
+\<close>
+
+lemma finite_indexed_links_rows_once [code]:
+  "finite_indexed_links_rows ns = (case finite_share_rows ns (RBT.empty,0,[]) of (rows,q0) \<Rightarrow>
+    let PI = finite_position_index rows; G = finite_group_index rows in
+    map (\<lambda>m. (m,finite_indexed_links PI G q0 m)) ns)"
+  by (simp add: finite_indexed_links_rows_def Let_def split: prod.split)
+
 lemma finite_indexed_links_rows_exact:
   assumes listed: "finite_post_listed (fset N) ns"
   shows "finite_indexed_links_rows ns = map (\<lambda>m. (m,finite_node_links N m)) ns"

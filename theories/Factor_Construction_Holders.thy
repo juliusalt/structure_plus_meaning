@@ -965,11 +965,4 @@ next
 qed
 qed
 
-text \<open>A variable's substitute stands inside the substituted pattern.\<close>
-
-lemma finite_substitute_variables_subset:
-  "b |\<in>| finite_pattern_variables p \<Longrightarrow>
-    finite_pattern_variables (\<sigma> b) |\<subseteq>| finite_pattern_variables (finite_pattern_substitute \<sigma> p)"
-  by (induction p) auto
-
 end

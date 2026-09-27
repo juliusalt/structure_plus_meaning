@@ -1327,6 +1327,7 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Factor_Required_History_Cases
     Factor_Required_History_Investigation
     Ordered_Finite_Terms
+    Factor_Resolution_Lifting
     Factor_Resolution_Commitments
     Factor_Resolution_Graph_Checks
     Factor_Resolution_Modes

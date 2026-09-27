@@ -18875,7 +18875,14 @@ by `finite_state_graph_check_accepts_valid` and `finite_table_valid_extend`; fro
 premises and checks no entry's certificate (`finite_state_graph_verdicts_in`): equal to `finite_state_verdicts_in` at a
 valid table (`finite_state_graph_verdicts_in_valid`) and so to GT1a's outcome (`finite_outcome_result_in_graph_verdicts`),
 sound wherever the table's calls are true (`finite_state_graph_verdicts_in_true`, through
-`finite_state_graph_check_true_at`) — decision 2's table part once, the judgment's part at every judgment]. GT1b (task 839) carries the table through the committed step, search and lifting
+`finite_state_graph_check_true_at`) — decision 2's table part once, the judgment's part at every judgment] [marked by task 883: it checks none at a found state because the graph reading
+holds there — at a valid table (`finite_state_graph_check_found_in`) and at a table whose calls are true
+(`finite_table_true`, `finite_state_graph_check_found_true`), as an installation's relocated table's are (Q33 (d)) — and
+the root certificate's tree check, which does read the entries' certificates, is the verdict's lazy fallback, evaluated
+only where the reading fails. The premise read is truth, not formation: the graph check reads only an entry's
+formation, but the reading at a found state is proved through the tree acceptance at the same calls re-certified,
+which every true call has (`finite_checks_schema_proof_complete`). One fold checks the table and produces it
+(`finite_table_checked`, equal to the pair by `finite_table_checked_exact`)]. GT1b (task 839) carries the table through the committed step, search and lifting
 (`Factor_Resolution_Lifting`) and R4 (`Factor_Resolution_Completeness`), today's forms the instances at the empty table,
 statements kept: the closing's case is one lemma of the step, `resolution_closed_lifted_at` (with
 `finite_table_closes_true` at a valid table), cited by the goal step both liftings take; R4 keeps its own induction
@@ -20263,3 +20270,52 @@ Task 817, I3's second part (correction (13) of "Committed choice, for refusals",
   families were unspecified; it now keeps a determined value (its pattern names no site).
 - **Not built here:** the production's presence at the installed lookup socket (a nonempty varied production, from the
   unique source at 37 and the unique installed clause at 12), which no premise of the carrying reads.
+
+## The committed step reads its tests through the access; the guard reads a goal's raising socket
+
+Task 869, #830's fix (3), second part, with review 824's follow-up 1 and review 834's follow-up 4.
+
+**The step over tests.** F2c's committed step read the priority and the commitment's tests on the projection of the
+state it stepped (`so = Some (rep_project R r)` wherever a goal passed the guard). The tests are now parameters
+(`Factor_Shared_Commitments.committed_tests`): a value prepared once a step (`tests_prepare`) and, of a goal at the
+focus, its priority, whether a call or a material premise is committed, the committed goal's position, sub-barring and
+produced representation, and the position whose determinate key joins a successor. `tested_committed_goal_outcome`,
+`tested_committed_step`, `tested_committed_search` read them and project nothing but the diagnosis of a branch that ends
+with nothing to select (`finite_unconstructed`) and the found state the search returns. The locale
+`tested_representation_formed` asks a structured representation (`committed_representation_structure`: F2c's nine step
+axioms, the guard taken out), the guard's refusal at the projection of an invariant state (not at every state), and the
+tests exact at the prepared value of an admitted goal (`tests_exact_at`); its `tested_search` is R5's search. F2c's step,
+goal outcome and search are the tested ones at `projected_tests` (`represented_committed_step_tested`,
+`represented_committed_goal_outcome_tested`, `represented_committed_search_tested`), so `committed_representation_formed`
+(now the structure and its guard) derives `goal_outcome`, `step`, `step_found`, `found` and `search` from the tested
+locale (`committed_representation_formed.tested`): every statement kept, no second proof. A structure strengthens by an
+invariant of the projections its construction, successors, call and solution successors and substitution keep
+(`committed_structure_invariant`). The route's tests (`Factor_Access_Commitments.commitment_tests`) prepare the
+commitment access and whether some goal the guard admits passes the commitment's priority at the focused access, and
+read the call, the material premise and the production through the access (`represented_produced_at`); they are exact
+where the guard refuses no goal the moded priority accepts (`commitment_tests_exact`, `commitment_tests_formed`).
+
+**The raising guard.** `finite_declared_guard` admits a goal whose last position component is any declared socket's key.
+A goal a clause's premise raised names its raiser (`resolution_goal_raiser`: site, clause, socket); at every state the
+shared search reaches from a root goal each node at its parent position is that clause's node and each node's schema
+its clause's (`Factor_Resolution_Checks.finite_goals_raised`, over node and goal keys, kept by every step:
+`finite_goals_raised_substitute`, `_clause`, `_call`, `_successors`, `_solutions`, `_construction`,
+`finite_initial_state_raised`; `shared_raised`, `shared_raised_structure`). The guard reads a goal's site against the
+producers and modes and its raiser against `finite_declared_raisers P D` (the site, clause and socket of every declared
+socket at a clause's schema), on the shared goal as it stands (`shared_raising_guard`, `shared_raising_guard_project`):
+sound at those states (`finite_raising_guard_refuses`, `finite_raising_moded_refuses`, at the focused state too),
+`shared_raising_formed`, `shared_raising_search`. The weak guard, its theorems and `shared_moded_search` stay.
+
+**The route's code.** `moded_route_resolution` takes the access commitment and the raisers as arguments
+(`moded_route_resolution_exact`): each constant's code equation (`moded_committed_resolution_route`,
+`moded_check_resolution_route`, `moded_committed_demand_route`, `moded_check_demand_route`,
+`native_moded_committed_resolution_route`, `native_moded_check_resolution_route`) builds them once a call, a demand
+once for all its calls, and the native forms compute each query's search once, their demand read off the returned
+results. The former code equations keep their statements, their `code` attribute dropped.
+
+Evidence (`.build/tasks/869/measurement.md`, shared runs, little contention): at #830's 10 rows the step costs 0.64 ms
+against 2.45 before (the plain search's 0.81), equal outcomes at 113/1, 3 rows and 113/7; at the given the committed
+step's own cost is 0 (no goal admitted); the new guard admits 5.6–20.9 % of the goals it is asked of where the old
+admitted 99.9 %; the index and raisers cost under a millisecond a call. Limits: with the given's whole frames the framed
+tests' repeated decodes (review 868's 2–3) dominate (3.1 ms a step at 10 rows); the re-sharing of a committed
+sub-search's found states is not exercised by these fixtures.

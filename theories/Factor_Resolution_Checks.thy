@@ -520,6 +520,379 @@ corollary shared_moded_search:
       (finite_narrowed_commitment P m D \<Phi>) P n F B st"
   by (rule shared_committed_search[OF sock pl shared_moded_guard])
 
+section \<open>The guard from a goal's raising socket\<close>
+
+text \<open>
+  Review 824's follow-up 1 (task 869). A goal a clause's premise raised names the site and clause that raised it and
+  its socket (its raiser, @{text rr}); at every state the shared search reaches, each node at the goal's parent position
+  is that clause's node, and each node's schema is its clause's in the program (@{text finite_goals_raised}, kept by
+  every step, @{text shared_raised_structure}). A socket test commits a goal only where the declarations name a socket
+  at its parent node's site and schema and the goal's socket, so at those states only where they name one at the
+  raising clause's schema (@{text finite_declared_raisers}). The guard reads the goal's site and raiser against those,
+  never a decoded goal: sound at the invariant's states (@{text finite_raising_moded_refuses}), where
+  @{const finite_declared_guard} admits a goal whose socket is any declared socket's.
+\<close>
+
+fun resolution_goal_raiser :: "('a,'s,'d,'c) resolution_goal \<Rightarrow> ('d \<times> 'c \<times> 's) option" where
+  "resolution_goal_raiser (Resolution_Call_Goal q r d p) = r"
+| "resolution_goal_raiser (Resolution_Material_Goal q r M) = Some r"
+
+definition resolution_goal_key :: "('a,'s,'d,'c) resolution_goal \<Rightarrow> 's list \<times> ('d \<times> 'c \<times> 's) option" where
+  "resolution_goal_key g = (resolution_goal_position g,resolution_goal_raiser g)"
+
+definition resolution_node_key ::
+    "('a,'s,'d,'c) resolution_node \<Rightarrow> 's list \<times> 'd \<times> 'c \<times> ('a,'s,'d) finite_factor_schema" where
+  "resolution_node_key nd = (resolution_node_position nd,resolution_node_site nd,resolution_node_clause nd,
+    resolution_node_schema nd)"
+
+definition finite_nodes_raised ::
+    "('a,'s,'d,'c) finite_schema_system \<Rightarrow> ('s list \<times> 'd \<times> 'c \<times> ('a,'s,'d) finite_factor_schema) fset \<Rightarrow> bool" where
+  "finite_nodes_raised P N \<longleftrightarrow>
+    fBall N (\<lambda>z. ((fst (snd z),fst (snd (snd z))),snd (snd (snd z))) |\<in>| finite_system_clauses P)"
+
+definition finite_raised_key ::
+    "('s list \<times> 'd \<times> 'c \<times> ('a,'s,'d) finite_factor_schema) fset \<Rightarrow> 's list \<times> ('d \<times> 'c \<times> 's) option \<Rightarrow> bool" where
+  "finite_raised_key N k \<longleftrightarrow> fst k \<noteq> [] \<longrightarrow> (case snd k of None \<Rightarrow> False
+    | Some (e,c,s) \<Rightarrow> s = last (fst k) \<and>
+      fBall N (\<lambda>z. fst z = butlast (fst k) \<longrightarrow> fst (snd z) = e \<and> fst (snd (snd z)) = c))"
+
+definition finite_goals_raised :: "('a,'s,'d,'c) finite_schema_system \<Rightarrow> ('a,'s,'d,'c) resolution_state \<Rightarrow> bool" where
+  "finite_goals_raised P st \<longleftrightarrow> (let N = fimage resolution_node_key (resolution_nodes st) in
+    finite_nodes_raised P N \<and> fBall (fimage resolution_goal_key (resolution_pending st)) (finite_raised_key N))"
+
+lemma resolution_node_key_substitute [simp]:
+  "resolution_node_key (resolution_node_substitute \<sigma> nd) = resolution_node_key nd"
+  by (simp add: resolution_node_key_def)
+
+lemma resolution_goal_key_substitute [simp]:
+  "resolution_goal_key (resolution_goal_substitute \<sigma> g) = resolution_goal_key g"
+  by (cases g) (simp_all add: resolution_goal_key_def)
+
+lemma finite_goals_raised_substitute [simp]:
+  "finite_goals_raised P (resolution_state_substitute \<sigma> st) \<longleftrightarrow> finite_goals_raised P st"
+  by (simp add: finite_goals_raised_def resolution_state_substitute_def fset.map_comp comp_def)
+
+lemma finite_goals_raised_fewer:
+  assumes raised: "finite_goals_raised P st" and sub: "G |\<subseteq>| resolution_pending st"
+  shows "finite_goals_raised P (Resolution_State G (resolution_nodes st) W)"
+  using raised sub unfolding finite_goals_raised_def Let_def
+  by (auto simp: fimage.rep_eq less_eq_fset.rep_eq)
+
+lemma finite_goals_raised_clause:
+  assumes raised: "finite_goals_raised P st" and pl: "search_placeable st"
+    and g: "Resolution_Call_Goal q r d p |\<in>| resolution_pending st"
+    and clause: "((d,c),S) |\<in>| finite_system_clauses P"
+  shows "finite_goals_raised P (Resolution_State (finite_clause_goals q d c S |\<union>|
+      (resolution_pending st |-| {|Resolution_Call_Goal q r d p|})) (finsert (finite_clause_node q d c S) (resolution_nodes st)) W)"
+proof -
+  let ?N = "fimage resolution_node_key (resolution_nodes st)"
+  let ?N' = "fimage resolution_node_key (finsert (finite_clause_node q d c S) (resolution_nodes st))"
+  have noq: "resolution_node_position nd \<noteq> q" if "nd |\<in>| resolution_nodes st" for nd
+    using pl g that unfolding search_placeable_def resolution_positions_distinct_def by force
+  have par: "\<exists>nd. nd |\<in>| resolution_nodes st \<and> resolution_node_position nd = butlast (resolution_goal_position g')"
+    if "g' |\<in>| resolution_pending st" "resolution_goal_position g' \<noteq> []" for g'
+    using pl that unfolding search_placeable_def by (force simp: fimage_iff)
+  have nodes: "finite_nodes_raised P ?N'"
+    using raised clause unfolding finite_goals_raised_def finite_nodes_raised_def Let_def
+    by (auto simp: fimage.rep_eq resolution_node_key_def finite_clause_node_def)
+  have new: "finite_raised_key ?N' (q@[s],Some (d,c,s))" for s
+    using noq by (auto simp: finite_raised_key_def fimage.rep_eq resolution_node_key_def
+      finite_clause_node_def)
+  have old: "finite_raised_key ?N' (resolution_goal_key g')" if g': "g' |\<in>| resolution_pending st" for g'
+  proof (cases "resolution_goal_position g' = []")
+    case True
+    then show ?thesis by (simp add: finite_raised_key_def resolution_goal_key_def)
+  next
+    case False
+    have k: "finite_raised_key ?N (resolution_goal_key g')"
+      using raised fimageI[OF g', of resolution_goal_key] unfolding finite_goals_raised_def Let_def by blast
+    obtain nd where nd: "nd |\<in>| resolution_nodes st" "resolution_node_position nd = butlast (resolution_goal_position g')"
+      using par[OF g' False] by blast
+    have nq: "butlast (resolution_goal_position g') \<noteq> q" using noq[OF nd(1)] nd(2) by simp
+    show ?thesis using k nq
+      by (auto simp: finite_raised_key_def resolution_goal_key_def fimage.rep_eq resolution_node_key_def
+        finite_clause_node_def split: option.splits)
+  qed
+  have cg: "\<exists>s. resolution_goal_key x = (q@[s],Some (d,c,s))" if "x |\<in>| finite_clause_goals q d c S" for x
+    using that by (auto simp: finite_clause_goals_def resolution_goal_key_def fimage.rep_eq)
+  have gk: "fBall (fimage resolution_goal_key (finite_clause_goals q d c S |\<union>|
+      (resolution_pending st |-| {|Resolution_Call_Goal q r d p|}))) (finite_raised_key ?N')"
+  proof (rule fBallI)
+    fix k assume "k |\<in>| fimage resolution_goal_key (finite_clause_goals q d c S |\<union>|
+        (resolution_pending st |-| {|Resolution_Call_Goal q r d p|}))"
+    then obtain x where x: "x |\<in>| finite_clause_goals q d c S |\<union>| (resolution_pending st |-| {|Resolution_Call_Goal q r d p|})"
+      and k: "k = resolution_goal_key x" by (auto elim: fimageE)
+    show "finite_raised_key ?N' k"
+    proof (cases "x |\<in>| finite_clause_goals q d c S")
+      case True
+      then obtain s where "resolution_goal_key x = (q@[s],Some (d,c,s))" using cg by blast
+      then show ?thesis using new k by simp
+    next
+      case False
+      then have "x |\<in>| resolution_pending st" using x by simp
+      then show ?thesis using old k by simp
+    qed
+  qed
+  show ?thesis using nodes gk unfolding finite_goals_raised_def Let_def by simp
+qed
+
+lemma finite_goals_raised_call:
+  assumes raised: "finite_goals_raised P st" and pl: "search_placeable st"
+    and g: "Resolution_Call_Goal q r d p |\<in>| resolution_pending st" and s: "st' |\<in>| finite_call_successors P st q r d p"
+  shows "finite_goals_raised P st'"
+proof -
+  obtain c S u where cl: "((d,c),S) |\<in>| finite_system_clauses P"
+    and st': "st' = resolution_state_substitute (finite_binding_substitution u)
+      (Resolution_State (finite_clause_goals q d c S |\<union>| (resolution_pending st |-| {|Resolution_Call_Goal q r d p|}))
+        (finsert (finite_clause_node q d c S) (resolution_nodes st)) (resolution_witnesses st))"
+    using finite_call_successors_member[OF s] by blast
+  show ?thesis unfolding st' finite_goals_raised_substitute by (rule finite_goals_raised_clause[OF raised pl g cl])
+qed
+
+lemma finite_goals_raised_material_state:
+  assumes "finite_goals_raised P st"
+  shows "finite_goals_raised P (finite_material_alternative_state st q r M z)"
+  using assms by (cases z) (auto simp: finite_material_alternative_state_def intro!: finite_goals_raised_fewer)
+
+lemma finite_goals_raised_successors:
+  assumes raised: "finite_goals_raised P st" and pl: "search_placeable st" and g: "g |\<in>| resolution_pending st"
+    and s: "st' |\<in>| finite_goal_successors P st g"
+  shows "finite_goals_raised P st'"
+proof (cases g)
+  case (Resolution_Call_Goal q r d p)
+  show ?thesis
+  proof (cases "finite_reusable st g \<or> finite_table_closes resolution_empty_table g")
+    case True
+    then have "st' = finite_goal_closed st g" using s by (simp add: finite_closed_successors)
+    then show ?thesis using raised by (auto simp: finite_goal_closed_def intro!: finite_goals_raised_fewer)
+  next
+    case False
+    then have "st' |\<in>| finite_call_successors P st q r d p" using s Resolution_Call_Goal by simp
+    then show ?thesis using finite_goals_raised_call[OF raised pl] g Resolution_Call_Goal by blast
+  qed
+next
+  case (Resolution_Material_Goal q r M)
+  then have "st' |\<in>| finite_material_successors st q r M" using s by simp
+  then show ?thesis unfolding finite_material_successors_alternatives
+    using finite_goals_raised_material_state[OF raised, of q r M] by (auto simp: fimage_iff)
+qed
+
+lemma finite_goals_raised_solutions:
+  assumes raised: "finite_goals_raised P st" and s: "st' |\<in>| finite_solution_successors st q r M Ws"
+  shows "finite_goals_raised P st'"
+  using s unfolding finite_solution_successors_alternatives
+  using finite_goals_raised_material_state[OF raised, of q r M] by (auto simp: fimage_iff)
+
+lemma finite_goals_raised_construction:
+  "finite_goals_raised P st \<Longrightarrow> finite_goals_raised P (finite_construction_step \<kappa> P' st nd)"
+  by (auto simp: finite_construction_step_def Let_def intro!: finite_goals_raised_fewer)
+
+lemma finite_initial_state_raised: "finite_goals_raised P (finite_initial_state d t)"
+  by (simp add: finite_goals_raised_def finite_initial_state_def finite_nodes_raised_def finite_raised_key_def
+    resolution_goal_key_def fimage.rep_eq)
+
+definition shared_raised :: "('a,'s,'d,'c) finite_witness_construction \<Rightarrow> ('a,'s,'d,'c) finite_schema_system \<Rightarrow>
+    ('a,'s::linorder,'d,'c) shared_search \<Rightarrow> bool" where
+  "shared_raised \<kappa> P r \<longleftrightarrow> search_formed \<kappa> P r \<and> search_placeable (search_project r) \<and>
+    finite_goals_raised P (search_project r)"
+
+lemma shared_raised_structure:
+  assumes sock: "clause_sockets_distinct P"
+  shows "committed_representation_structure (shared_committed_representation \<kappa> P) (shared_raised \<kappa> P) \<kappa> P"
+proof -
+  have pj: "rep_project (shared_committed_representation \<kappa> P) = search_project"
+    by (simp add: shared_committed_representation_def)
+  have e: "shared_raised \<kappa> P = (\<lambda>s. (search_formed \<kappa> P s \<and> search_placeable (search_project s)) \<and>
+      finite_goals_raised P (rep_project (shared_committed_representation \<kappa> P) s))"
+    by (simp add: fun_eq_iff shared_raised_def pj)
+  show ?thesis unfolding e
+  proof (rule committed_structure_invariant[where I = "finite_goals_raised P", OF shared_committed_structure[OF sock]],
+      goal_cases)
+    case (1 s nd)
+    then show ?case by (simp add: finite_goals_raised_construction)
+  next
+    case (2 s g st')
+    then show ?case using finite_goals_raised_successors[of P "search_project s" g st'] by (simp add: pj)
+  next
+    case (3 s q rr d p st')
+    then show ?case using finite_goals_raised_call[of P "search_project s" q rr d p st'] by (simp add: pj)
+  next
+    case (4 s q rr M Ws st')
+    then show ?case using finite_goals_raised_solutions[of P "search_project s" st' q rr M Ws] by (simp add: pj)
+  next
+    case (5 st \<sigma>)
+    then show ?case by simp
+  qed
+qed
+
+definition finite_declared_raisers ::
+    "('a,'s,'d,'c) finite_schema_system \<Rightarrow> ('a,'s,'d) resolution_declarations \<Rightarrow> ('d \<times> 'c \<times> 's) fset" where
+  "finite_declared_raisers P D = ffUnion (fimage (\<lambda>((e,c),S). fimage (\<lambda>z. (e,c,fst (snd (snd z))))
+      (ffilter (\<lambda>z. fst z = e \<and> fst (snd z) = S) (declared_sockets D))) (finite_system_clauses P))"
+
+lemma finite_declared_raisers_member:
+  assumes "((e,c),S) |\<in>| finite_system_clauses P" and "(e,S,s,keep,Vp,Vh) |\<in>| declared_sockets D"
+  shows "(e,c,s) |\<in>| finite_declared_raisers P D"
+  using assms unfolding finite_declared_raisers_def
+  by (force simp: ffUnion.rep_eq fimage.rep_eq ffilter.rep_eq Set.filter_eq)
+
+definition finite_raising_guard ::
+    "('d \<times> 'c \<times> 's) fset \<Rightarrow> ('a,'s,'d) resolution_declarations \<Rightarrow> 'd resolution_modes \<Rightarrow>
+      ('a,'s,'d,'c) resolution_goal \<Rightarrow> bool" where
+  "finite_raising_guard X D M g \<longleftrightarrow> (case g of
+      Resolution_Call_Goal q r d p \<Rightarrow> fBex (declared_producers D) (\<lambda>z. fst z = d) \<or> fBex M (\<lambda>z. fst z = d) \<or>
+        (case r of None \<Rightarrow> False | Some z \<Rightarrow> z |\<in>| X)
+    | Resolution_Material_Goal q r N \<Rightarrow> r |\<in>| X)"
+
+text \<open>The guard read on a shared goal, whose site and raiser the shared state keeps as they are.\<close>
+
+definition shared_raising_guard ::
+    "('d \<times> 'c \<times> 's) fset \<Rightarrow> ('a,'s,'d) resolution_declarations \<Rightarrow> 'd resolution_modes \<Rightarrow>
+      ('a,'s,'d,'c) shared_goal \<Rightarrow> bool" where
+  "shared_raising_guard X D M e \<longleftrightarrow> (case e of
+      Shared_Call_Goal q r d p \<Rightarrow> fBex (declared_producers D) (\<lambda>z. fst z = d) \<or> fBex M (\<lambda>z. fst z = d) \<or>
+        (case r of None \<Rightarrow> False | Some z \<Rightarrow> z |\<in>| X)
+    | Shared_Material_Goal q r N \<Rightarrow> r |\<in>| X)"
+
+lemma shared_raising_guard_project:
+  "finite_raising_guard X D M (shared_goal_project T e) \<longleftrightarrow> shared_raising_guard X D M e"
+  by (cases e) (simp_all add: finite_raising_guard_def shared_raising_guard_def)
+
+lemma finite_socket_commitment_framed_node:
+  assumes "finite_socket_commitment_framed D \<Phi> Vp Vh ch F st g"
+  shows "\<exists>nd keep. resolution_goal_position g \<noteq> [] \<and> nd |\<in>| resolution_nodes st \<and>
+    resolution_node_position nd = butlast (resolution_goal_position g) \<and>
+    (resolution_node_site nd,resolution_node_schema nd,last (resolution_goal_position g),keep,Vp,Vh) |\<in>| declared_sockets D"
+  using assms by (cases g) (force simp: finite_socket_commitment_framed_def finite_socket_declared_framed_def
+    finite_socket_kept_framed_def finite_socket_free_framed_def split: option.splits prod.splits)+
+
+theorem finite_raising_guard_refuses:
+  assumes nodes: "finite_nodes_raised P (fimage resolution_node_key (resolution_nodes st))"
+    and key: "finite_raised_key (fimage resolution_node_key (resolution_nodes st)) (resolution_goal_key g)"
+    and ng: "\<not> finite_raising_guard (finite_declared_raisers P D) D M g"
+  shows "\<not> commit_call (finite_framed_commitment D \<Phi>) F st g" and "\<not> commit_material (finite_framed_commitment D \<Phi>) F st g"
+proof -
+  have sock: "\<not> finite_socket_commitment_framed D \<Phi> Vp Vh ch F st g" for Vp Vh ch
+  proof
+    assume "finite_socket_commitment_framed D \<Phi> Vp Vh ch F st g"
+    then obtain nd keep where nq: "resolution_goal_position g \<noteq> []" and nd: "nd |\<in>| resolution_nodes st"
+        "resolution_node_position nd = butlast (resolution_goal_position g)"
+      and dec: "(resolution_node_site nd,resolution_node_schema nd,last (resolution_goal_position g),keep,Vp,Vh) |\<in>|
+        declared_sockets D"
+      using finite_socket_commitment_framed_node by blast
+    obtain e c s where r: "resolution_goal_raiser g = Some (e,c,s)" and sl: "s = last (resolution_goal_position g)"
+      and par: "fBall (fimage resolution_node_key (resolution_nodes st))
+        (\<lambda>z. fst z = butlast (resolution_goal_position g) \<longrightarrow> fst (snd z) = e \<and> fst (snd (snd z)) = c)"
+      using key nq by (auto simp: finite_raised_key_def resolution_goal_key_def split: option.splits)
+    have nk: "resolution_node_key nd |\<in>| fimage resolution_node_key (resolution_nodes st)" using nd(1) by (rule fimageI)
+    have "fst (resolution_node_key nd) = butlast (resolution_goal_position g) \<longrightarrow>
+        fst (snd (resolution_node_key nd)) = e \<and> fst (snd (snd (resolution_node_key nd))) = c"
+      using par nk by blast
+    then have ec: "resolution_node_site nd = e" "resolution_node_clause nd = c" using nd(2) by (simp_all add: resolution_node_key_def)
+    have "((fst (snd (resolution_node_key nd)),fst (snd (snd (resolution_node_key nd)))),snd (snd (snd (resolution_node_key nd))))
+        |\<in>| finite_system_clauses P"
+      using nodes nk unfolding finite_nodes_raised_def by blast
+    then have cl: "((e,c),resolution_node_schema nd) |\<in>| finite_system_clauses P" using ec by (simp add: resolution_node_key_def)
+    have "(e,c,s) |\<in>| finite_declared_raisers P D"
+      using finite_declared_raisers_member[OF cl] dec ec sl by simp
+    then show False using ng r by (cases g) (auto simp: finite_raising_guard_def)
+  qed
+  have dir: "\<not> finite_direct_commitment D F st g"
+  proof
+    assume "finite_direct_commitment D F st g"
+    then obtain d V hs where m: "(d,V,hs) |\<in>| declared_producers D" and c: "finite_producer_commits D F st g d V hs"
+      unfolding finite_direct_commitment_def by blast
+    from c obtain q r p where "g = Resolution_Call_Goal q r d p"
+      by (cases g) (auto simp: finite_producer_commits_def)
+    with m ng show False unfolding finite_raising_guard_def by force
+  qed
+  show "\<not> commit_call (finite_framed_commitment D \<Phi>) F st g" and "\<not> commit_material (finite_framed_commitment D \<Phi>) F st g"
+    using sock dir by (auto simp: finite_framed_commitment_def)
+qed
+
+theorem finite_raising_moded_refuses:
+  assumes nodes: "finite_nodes_raised P (fimage resolution_node_key (resolution_nodes st))"
+    and key: "finite_raised_key (fimage resolution_node_key (resolution_nodes st)) (resolution_goal_key g)"
+    and ng: "\<not> finite_raising_guard (finite_declared_raisers P (resolution_declarations.truncate D))
+      (resolution_declarations.truncate D) M g"
+  shows "\<not> commit_call (finite_narrowed_commitment Pg m D \<Phi>) F st g \<and>
+    \<not> commit_material (finite_narrowed_commitment Pg m D \<Phi>) F st g \<and>
+    \<not> finite_moded_priority (finite_narrowed_commitment Pg m D \<Phi>) Dm M st g"
+proof -
+  have c: "\<not> commit_call (finite_narrowed_commitment Pg m D \<Phi>) F' st g" for F'
+    using finite_raising_guard_refuses(1)[OF nodes key ng] by simp
+  have n: "\<not> commit_material (finite_narrowed_commitment Pg m D \<Phi>) F' st g" for F'
+    using finite_raising_guard_refuses(2)[OF nodes key ng] by simp
+  have s: "\<not> (case g of Resolution_Call_Goal q r d p \<Rightarrow> fBex M (\<lambda>z. fst z = d) | Resolution_Material_Goal q r N \<Rightarrow> False)"
+    using ng by (cases g) (simp_all add: finite_raising_guard_def)
+  show ?thesis using c n finite_moded_priority_refused[OF c n s] by blast
+qed
+
+text \<open>
+  The route's committed step: the narrowed commitment's tests and moded priority read through the access, at the
+  guard read on the shared goal, over the shared states that keep the raising invariant. Its search is R5's committed
+  search at the moded selection.
+\<close>
+
+theorem shared_raising_formed:
+  assumes sock: "clause_sockets_distinct P"
+  shows "tested_representation_formed (shared_committed_representation \<kappa> P) (shared_raised \<kappa> P) \<kappa> P
+    (finite_narrowed_commitment P m D \<Phi>) (finite_moded_priority (finite_narrowed_commitment P m D \<Phi>) Dm M)
+    (commitment_tests (shared_committed_representation \<kappa> P) shared_commitment_access (access_narrowed_commitment P m D \<Phi>)
+      Dm M (\<lambda>s h. shared_raising_guard (finite_declared_raisers P (resolution_declarations.truncate D))
+        (resolution_declarations.truncate D) M (shared_entry_goal h)))
+    (\<lambda>s h. shared_raising_guard (finite_declared_raisers P (resolution_declarations.truncate D))
+      (resolution_declarations.truncate D) M (shared_entry_goal h))"
+proof (rule commitment_tests_formed[OF shared_raised_structure[OF sock]], goal_cases)
+  case (1 s)
+  then show ?case using shared_commitment_formed[of \<kappa> P s]
+    by (simp add: shared_raised_def shared_committed_representation_def)
+next
+  case 2
+  show ?case by (rule access_narrowed_commitment_exact)
+next
+  case (3 s h F)
+  let ?st = "search_project s" let ?g = "access_goal (shared_access \<kappa> P s) h"
+  have f: "search_formed \<kappa> P s" and rs: "finite_goals_raised P ?st" using 3(1) by (simp_all add: shared_raised_def)
+  interpret v: access_formed \<kappa> P "shared_access \<kappa> P s" ?st by (rule shared_access_formed[OF f])
+  have h': "h |\<in>| access_goals (shared_access \<kappa> P s)" using 3(2) by (simp add: shared_committed_representation_def)
+  have g: "?g |\<in>| resolution_pending ?st" by (rule v.goal_in_pending[OF h'])
+  have nd: "finite_nodes_raised P (fimage resolution_node_key (resolution_nodes ?st))"
+    using rs by (simp add: finite_goals_raised_def Let_def)
+  have key: "finite_raised_key (fimage resolution_node_key (resolution_nodes ?st)) (resolution_goal_key ?g)"
+    using rs fimageI[OF g, of resolution_goal_key] unfolding finite_goals_raised_def Let_def by blast
+  have ng: "\<not> finite_raising_guard (finite_declared_raisers P (resolution_declarations.truncate D))
+      (resolution_declarations.truncate D) M ?g"
+    using 3(3) by (simp add: shared_access_simps shared_raising_guard_project)
+  have fn: "resolution_nodes (finite_focused F ?st) = resolution_nodes ?st" by (simp add: finite_focused_def)
+  have ndF: "finite_nodes_raised P (fimage resolution_node_key (resolution_nodes (finite_focused F ?st)))" using nd fn by simp
+  have keyF: "finite_raised_key (fimage resolution_node_key (resolution_nodes (finite_focused F ?st))) (resolution_goal_key ?g)"
+    using key fn by simp
+  have a: "\<not> commit_call (finite_narrowed_commitment P m D \<Phi>) F ?st ?g \<and>
+      \<not> commit_material (finite_narrowed_commitment P m D \<Phi>) F ?st ?g"
+    using finite_raising_moded_refuses[OF nd key ng] by blast
+  have b: "\<not> finite_moded_priority (finite_narrowed_commitment P m D \<Phi>) Dm M (finite_focused F ?st) ?g"
+    using finite_raising_moded_refuses[OF ndF keyF ng] by blast
+  show ?case using a b by (simp add: shared_committed_representation_def)
+qed
+
+corollary shared_raising_search:
+  assumes sock: "clause_sockets_distinct P" and pl: "search_placeable st" and rs: "finite_goals_raised P st"
+  shows "tested_committed_search (shared_committed_representation \<kappa> P)
+      (commitment_tests (shared_committed_representation \<kappa> P) shared_commitment_access (access_narrowed_commitment P m D \<Phi>)
+        Dm M (\<lambda>s h. shared_raising_guard (finite_declared_raisers P (resolution_declarations.truncate D))
+          (resolution_declarations.truncate D) M (shared_entry_goal h)))
+      (\<lambda>s h. shared_raising_guard (finite_declared_raisers P (resolution_declarations.truncate D))
+        (resolution_declarations.truncate D) M (shared_entry_goal h)) \<kappa> P n F B (search_of P st) =
+    finite_committed_search_by (finite_moded_select \<kappa> (finite_narrowed_commitment P m D \<Phi>) Dm M P) \<kappa>
+      (finite_narrowed_commitment P m D \<Phi>) P n F B st"
+proof -
+  have d: "resolution_positions_distinct st" using pl by (simp add: search_placeable_def)
+  have f: "shared_raised \<kappa> P (search_of P st)" using search_of[OF d] pl rs by (simp add: shared_raised_def)
+  show ?thesis using tested_representation_formed.tested_search[OF shared_raising_formed[OF sock] f] search_of(2)[OF d]
+    by (simp add: shared_committed_representation_def)
+qed
+
 section \<open>The route forms' constants and their code\<close>
 
 text \<open>
@@ -639,6 +1012,87 @@ lemma native_moded_check_resolution_code [code]:
       moded_check_demand \<kappa> P m D \<Phi> Dm M R n)"
   by (simp add: native_moded_check_resolution_def native_check_resolution_by_def
     moded_check_resolution_def moded_check_demand_def)
+
+text \<open>
+  Task 869. The route's search at a commitment through the access and the raising guard's declared raisers, both
+  given as arguments, so that a call builds the access commitment (its framed index) and the raisers once, and a demand
+  or a native form once for all its calls. At the narrowed commitment's access form and the declarations' raisers it is
+  R5's committed search at the moded selection (@{text moded_route_resolution_exact}), so the constants' code
+  equations below take it; the code equations above keep their statements.
+\<close>
+
+definition moded_route_resolution ::
+    "('a,'s::linorder,'d,'c) finite_witness_construction \<Rightarrow> ('a,'s,'d,'c) finite_schema_system \<Rightarrow> nat \<Rightarrow>
+      ('a,'s,'d,'v) produced_declarations \<Rightarrow> ('a,'s,'d) resolution_frames \<Rightarrow> ('a,'s,'d) resolution_declarations \<Rightarrow>
+      'd resolution_modes \<Rightarrow>
+      (('a,'s,'d,'c) shared_goal_entry,('a,'s,'d,'c) shared_node_entry,nat,'a,'s,'d,'c) access_commitment \<Rightarrow>
+      ('d \<times> 'c \<times> 's) fset \<Rightarrow> 's list option \<Rightarrow> 'd \<Rightarrow> finite_factor_term \<Rightarrow> nat \<Rightarrow> ('a,'s,'d,'c) finite_resolution_result" where
+  "moded_route_resolution \<kappa> P m D \<Phi> Dm M Kc X F0 d t n =
+    (let gd = (\<lambda>r h. shared_raising_guard X (resolution_declarations.truncate D) M (shared_entry_goal h)) in
+    finite_outcome_result P d t (if clause_sockets_distinct P
+      then tested_committed_search (shared_committed_representation \<kappa> P)
+        (commitment_tests (shared_committed_representation \<kappa> P) shared_commitment_access Kc Dm M gd) gd \<kappa> P n F0 {||}
+        (search_of P (finite_initial_state d t))
+      else finite_committed_search_by (finite_moded_select \<kappa> (finite_narrowed_commitment P m D \<Phi>) Dm M P) \<kappa>
+        (finite_narrowed_commitment P m D \<Phi>) P n F0 {||} (finite_initial_state d t)))"
+
+theorem moded_route_resolution_exact:
+  "moded_route_resolution \<kappa> P m D \<Phi> Dm M (access_narrowed_commitment P m D \<Phi>)
+      (finite_declared_raisers P (resolution_declarations.truncate D)) F0 d t n =
+    finite_outcome_result P d t (finite_committed_search_by (finite_moded_select \<kappa> (finite_narrowed_commitment P m D \<Phi>) Dm M P)
+      \<kappa> (finite_narrowed_commitment P m D \<Phi>) P n F0 {||} (finite_initial_state d t))"
+  by (simp add: moded_route_resolution_def Let_def
+    shared_raising_search[OF _ finite_initial_state_placeable finite_initial_state_raised])
+
+declare moded_committed_resolution_code [code del] moded_check_resolution_code [code del]
+  moded_committed_demand_code [code del] moded_check_demand_code [code del]
+  native_moded_committed_resolution_code [code del] native_moded_check_resolution_code [code del]
+
+lemma moded_committed_resolution_route [code]:
+  "moded_committed_resolution \<kappa> P m D \<Phi> Dm M d t n = moded_route_resolution \<kappa> P m D \<Phi> Dm M
+    (access_narrowed_commitment P m D \<Phi>) (finite_declared_raisers P (resolution_declarations.truncate D)) None d t n"
+  by (simp add: moded_route_resolution_exact moded_committed_resolution_def finite_committed_resolution_by_def)
+
+lemma moded_check_resolution_route [code]:
+  "moded_check_resolution \<kappa> P m D \<Phi> Dm M d t n = moded_route_resolution \<kappa> P m D \<Phi> Dm M
+    (access_narrowed_commitment P m D \<Phi>) (finite_declared_raisers P (resolution_declarations.truncate D)) (Some []) d t n"
+  by (simp add: moded_route_resolution_exact moded_check_resolution_def finite_check_resolution_by_def)
+
+lemma moded_committed_demand_route [code]:
+  "moded_committed_demand \<kappa> P m D \<Phi> Dm M Q n = (let Kc = access_narrowed_commitment P m D \<Phi>;
+      X = finite_declared_raisers P (resolution_declarations.truncate D);
+      V = fimage (\<lambda>q. (q,finite_resolution_verdict (moded_route_resolution \<kappa> P m D \<Phi> Dm M Kc X None (fst q) (snd q) n))) Q in
+    if finite_system_formed P \<and> fBall V (\<lambda>(q,v). v \<noteq> None)
+    then Some (fimage fst (ffilter (\<lambda>(q,v). v = Some True) V)) else None)"
+  by (simp add: moded_committed_demand_code moded_committed_resolution_route Let_def)
+
+lemma moded_check_demand_route [code]:
+  "moded_check_demand \<kappa> P m D \<Phi> Dm M Q n = (let Kc = access_narrowed_commitment P m D \<Phi>;
+      X = finite_declared_raisers P (resolution_declarations.truncate D);
+      V = fimage (\<lambda>q. (q,finite_resolution_verdict (moded_route_resolution \<kappa> P m D \<Phi> Dm M Kc X (Some []) (fst q) (snd q) n))) Q in
+    if finite_system_formed P \<and> fBall V (\<lambda>(q,v). v \<noteq> None)
+    then Some (fimage fst (ffilter (\<lambda>(q,v). v = Some True) V)) else None)"
+  by (simp add: moded_check_demand_code moded_check_resolution_route Let_def)
+
+lemma native_moded_committed_resolution_route [code]:
+  "native_moded_committed_resolution \<kappa> P m D \<Phi> Dm M R n = (let Kc = access_narrowed_commitment P m D \<Phi>;
+      X = finite_declared_raisers P (resolution_declarations.truncate D);
+      T = fimage (\<lambda>q. (q,moded_route_resolution \<kappa> P m D \<Phi> Dm M Kc X None (fst q) (snd q) n)) R;
+      V = fimage (\<lambda>(q,r). (q,finite_resolution_verdict r)) T in
+    (T,if finite_system_formed P \<and> fBall V (\<lambda>(q,v). v \<noteq> None)
+      then Some (fimage fst (ffilter (\<lambda>(q,v). v = Some True) V)) else None))"
+  by (simp add: native_moded_committed_resolution_code moded_committed_demand_code moded_committed_resolution_route
+    Let_def fset.map_comp comp_def)
+
+lemma native_moded_check_resolution_route [code]:
+  "native_moded_check_resolution \<kappa> P m D \<Phi> Dm M R n = (let Kc = access_narrowed_commitment P m D \<Phi>;
+      X = finite_declared_raisers P (resolution_declarations.truncate D);
+      T = fimage (\<lambda>q. (q,moded_route_resolution \<kappa> P m D \<Phi> Dm M Kc X (Some []) (fst q) (snd q) n)) R;
+      V = fimage (\<lambda>(q,r). (q,finite_resolution_verdict r)) T in
+    (T,if finite_system_formed P \<and> fBall V (\<lambda>(q,v). v \<noteq> None)
+      then Some (fimage fst (ffilter (\<lambda>(q,v). v = Some True) V)) else None))"
+  by (simp add: native_moded_check_resolution_code moded_check_demand_code moded_check_resolution_route
+    Let_def fset.map_comp comp_def)
 
 export_code moded_committed_resolution moded_check_resolution moded_committed_demand moded_check_demand
   native_moded_committed_resolution native_moded_check_resolution checking SML

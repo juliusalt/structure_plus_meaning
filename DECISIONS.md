@@ -18890,7 +18890,7 @@ Recorded 2026-09-27 (task 831's decision; a design, no theory changes).
 | F2a | [Added by task 683.] Patterns over the shared-term table: skeletons with references and cached variable sets, substitution stopping at subterms whose variables are unbound, unification equal to R2's over the projection, the table extended as ground terms are made | R2, `Shared_Term_Tables` | about 250K |
 | F2b | [Added by task 683.] The refined state and R3's refined search: the holder index, ground goals and nodes apart, the class caches, F4's values, formation established by the constructors, the projection theorem, the code equation of `finite_resolution_search` | F3, F2a | about 380K |
 | F2c | [Added by task 683.] R5's committed search refined, the commitment tests read on projections at declared sites; the code equation of `finite_committed_search` | F2b | about 350K |
-| C | [Added by task 683.] The check of a found derivation over its graph by the existing graph reading, over shared terms, equivalent to the tree check of the unfolded certificate; certificates built once per node; code equations of the result forms | F3, F2c | about 330K |
+| C | [Added by task 683.] The check of a found derivation over its graph by the existing graph reading, over shared terms, equivalent to the tree check of the unfolded certificate; certificates built once per node; code equations of the result forms [Note (task 873, from #851's attribution): the check as built by task 833 made the position and group indexes of the whole found state once per node, inside the function mapped over the nodes, O(n² log n) in the nodes and 92–94 % of the state's check at 10–16 rows; the code equation `finite_indexed_links_rows_once` builds them once per state, equal to `finite_indexed_links_rows` by definition, no statement, certificate or verdict changed.] | F3, F2c | about 330K |
 | O1 | [Added by task 787, correction (12).] Modes (`Factor_Resolution_Modes`, new, above `Factor_Resolution_Commitments`; `ROOT`, `THEORY_MAP.md`): `resolution_modes`, `finite_declared_goal`, `finite_waiting_variables`, `finite_mode_binder`, `finite_moded_priority`, `finite_moded_select`; `finite_moded_priority_none`, the selection facts at the moded selection as instances of F1's lemma, modes relocated; a control in `Factor_Mode_Controls` (new, imported by no theory): a keyed lookup beside an identity producer in small, the true call resolved at the moded selection in fewer states than at R5's default, R4's value beside | F1 (landed) | about 150K |
 | O2 | [Added by task 787, correction (12).] The exchange at any priority (`Factor_Resolution_Commitments`, `Factor_Resolution_Producer_Discharge`, `Factor_Resolution_Socket_Discharges`, `Factor_Resolution_Material_Discharge`, `Factor_Narrowed_Productions`, `Factor_Resolution_Views`): the committed sub-search's frame and placement lemmas and every discharge of the exchange stated at any priority of F1's selection in #613's `finite_exchanges_by`, the default statements their instances by name and statement; the committed forms at the moded selection as instances of #613's forms at a selection; O1's control's false call refuted there [Corrected by task 804 (review 801's follow-up 3): the committed forms at the moded selection and O1's control's false call refuted there are O3's, where O1 and O2 meet — `committed_moded_resolution_exact`, `committed_moded_verdict_exact`, `committed_moded_demand_exact` (`Factor_Committed_Registrations`), `native_committed_moded_exact`, `native_committed_moded_relocated` (`Factor_Native_Committed_Registrations`), `mode_control_refuted` (`Factor_Mode_Controls`); O2 states everything at an arbitrary priority and reads no mode.] | #613 (its changes after #777's and #786's) | about 250K, divided at its brief if its relations exceed the room |
 | O3 | [Added by task 787, correction (12).] rc at a priority (`Factor_Committed_Registrations`, `Factor_Native_Committed_Registrations`): rc's numbered and native forms at a priority of F1's selection, the default their instance | O2 | about 100K |
@@ -20185,3 +20185,26 @@ installed programs are its instances.
    varied to V3's installed presentation, complete at the eight installed sockets by
    `varied_registration_complete_at_socket`, with review 767's static applies lemma — which the productions route above
    does not need; and review 783's follow-up 6 (the 26 frame lemmas as one). Both follow-ups.
+
+## The pruning test reads the node-call index; the first goals and nodes read their position maps
+
+Task 863, #830's fix (1) (a) as the planner placed it (`.build/tasks/830/verdict.md`), with review 792's follow-ups 1 and 2.
+
+- `access_pruned_among` finds the nodes closing a ground call through the node-call index, as `access_reusable` and
+  `access_waits` find them: a position the index gives for the call's key, a proper prefix of the goal's position, that
+  the test admits and that holds a closing node. Its value changes at unformed accesses only: at a formed access
+  (`access_formed`'s `closes` and `node_calls`) every closing node's position is in the index, so
+  `access_formed.pruned_among`, `access_formed.pruned`, `access_formed.select`, `represented_goal_outcome`,
+  `represented_search` and F2c's `represented_committed_goal_outcome` keep their statements. The test no longer walks
+  every proper prefix of the goal's position through the node tree: at #830's fixtures 0.10–0.14 µs a call against
+  0.26–8.5 µs (`.build/tasks/863/measurement.md`).
+- The first of a finite set of things placed at positions is stated over their position map (`positioned_first`);
+  `access_first_goals` and `access_first_nodes` are its instances at the access's maps, with their statements, and F2b1's
+  `indexed_first_goals` and `indexed_first_nodes` its instances at the positions of the goals' and nodes' values: they read
+  no state, where they read the goal access of an empty indexed state carrying construction fillers.
+- The indexed branch of `finite_resolution_search_shared_code` is reached only outside formed programs or at a state
+  that is not placeable: every executed call is at a program's initial or pattern state, a formed program's sockets are
+  distinct (`finite_system_formed_sockets_distinct`), its initial state placeable (`finite_initial_state_placeable`); no
+  recipe reaches `Factor_Shared_Search`, and every fixture measured takes the shared branch. The branch is kept: it is
+  what makes the code equation hold at every input, and replacing it by R3's own equation changes the code equation's
+  statement, the planner's.

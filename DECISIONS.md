@@ -20185,3 +20185,26 @@ installed programs are its instances.
    varied to V3's installed presentation, complete at the eight installed sockets by
    `varied_registration_complete_at_socket`, with review 767's static applies lemma — which the productions route above
    does not need; and review 783's follow-up 6 (the 26 frame lemmas as one). Both follow-ups.
+
+## The pruning test reads the node-call index; the first goals and nodes read their position maps
+
+Task 863, #830's fix (1) (a) as the planner placed it (`.build/tasks/830/verdict.md`), with review 792's follow-ups 1 and 2.
+
+- `access_pruned_among` finds the nodes closing a ground call through the node-call index, as `access_reusable` and
+  `access_waits` find them: a position the index gives for the call's key, a proper prefix of the goal's position, that
+  the test admits and that holds a closing node. Its value changes at unformed accesses only: at a formed access
+  (`access_formed`'s `closes` and `node_calls`) every closing node's position is in the index, so
+  `access_formed.pruned_among`, `access_formed.pruned`, `access_formed.select`, `represented_goal_outcome`,
+  `represented_search` and F2c's `represented_committed_goal_outcome` keep their statements. The test no longer walks
+  every proper prefix of the goal's position through the node tree: at #830's fixtures 0.10–0.14 µs a call against
+  0.26–8.5 µs (`.build/tasks/863/measurement.md`).
+- The first of a finite set of things placed at positions is stated over their position map (`positioned_first`);
+  `access_first_goals` and `access_first_nodes` are its instances at the access's maps, with their statements, and F2b1's
+  `indexed_first_goals` and `indexed_first_nodes` its instances at the positions of the goals' and nodes' values: they read
+  no state, where they read the goal access of an empty indexed state carrying construction fillers.
+- The indexed branch of `finite_resolution_search_shared_code` is reached only outside formed programs or at a state
+  that is not placeable: every executed call is at a program's initial or pattern state, a formed program's sockets are
+  distinct (`finite_system_formed_sockets_distinct`), its initial state placeable (`finite_initial_state_placeable`); no
+  recipe reaches `Factor_Shared_Search`, and every fixture measured takes the shared branch. The branch is kept: it is
+  what makes the code equation hold at every input, and replacing it by R3's own equation changes the code equation's
+  statement, the planner's.

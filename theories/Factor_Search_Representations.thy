@@ -108,12 +108,15 @@ definition access_ground :: "('g,'n,'k,'a,'s,'d,'c) search_access \<Rightarrow> 
 
 text \<open>
   A ground call's pruning among the nodes at positions a test admits: the barred nodes of a commitment, or the others;
-  R3's pruning admits every position.
+  R3's pruning admits every position. The closing nodes are found through the index of ground calls, as reuse and
+  waiting find them: a position the index gives for the call's key that is a proper prefix of the goal's position, the
+  test admits, and holds a node closing the call.
 \<close>
 
 definition access_pruned_among :: "('s list \<Rightarrow> bool) \<Rightarrow> ('g,'n,'k,'a,'s,'d,'c) search_access \<Rightarrow> 'g \<Rightarrow> bool" where
-  "access_pruned_among X V h \<longleftrightarrow> access_ground V h \<and> list_ex (\<lambda>i. X (take i (access_goal_position V h)) \<and>
-    fBex (access_nodes_at V (take i (access_goal_position V h))) (\<lambda>n. access_closes V n h)) [0..<length (access_goal_position V h)]"
+  "access_pruned_among X V h \<longleftrightarrow> access_ground V h \<and> fBex (access_node_calls V (access_key V h)) (\<lambda>q'.
+    length q' < length (access_goal_position V h) \<and> take (length q') (access_goal_position V h) = q' \<and> X q' \<and>
+    fBex (access_nodes_at V q') (\<lambda>n. access_closes V n h))"
 
 definition access_pruned :: "('g,'n,'k,'a,'s,'d,'c) search_access \<Rightarrow> 'g \<Rightarrow> bool" where
   "access_pruned V h \<longleftrightarrow> access_pruned_among (\<lambda>q. True) V h"
@@ -207,16 +210,18 @@ proof (cases "access_goal V h")
   case (Resolution_Call_Goal q rr d p)
   have pos: "access_goal_position V h = q" using goal_position[OF h] Resolution_Call_Goal by simp
   have gr: "access_ground V h \<longleftrightarrow> finite_pattern_variables p = {||}" using ground[OF h] Resolution_Call_Goal by simp
-  have eq: "(\<exists>i\<in>set [0..<length q]. X (take i q) \<and> fBex (access_nodes_at V (take i q)) (\<lambda>n. access_closes V n h)) \<longleftrightarrow>
+  have eq: "fBex (access_node_calls V (access_key V h)) (\<lambda>q'. length q' < length q \<and> take (length q') q = q' \<and> X q' \<and>
+        fBex (access_nodes_at V q') (\<lambda>n. access_closes V n h)) \<longleftrightarrow>
       fBex (ffilter (\<lambda>nd. X (resolution_node_position nd)) (resolution_nodes st)) (\<lambda>nd. length (resolution_node_position nd) < length q \<and>
         take (length (resolution_node_position nd)) q = resolution_node_position nd \<and>
         resolution_node_site nd = d \<and> resolution_node_call nd = p)"
     if g: "finite_pattern_variables p = {||}"
   proof
-    assume "\<exists>i\<in>set [0..<length q]. X (take i q) \<and> fBex (access_nodes_at V (take i q)) (\<lambda>n. access_closes V n h)"
-    then obtain i n where i: "i < length q" and x: "X (take i q)" and n: "n |\<in>| access_nodes_at V (take i q)"
-      and c: "access_closes V n h" by auto
-    have np: "resolution_node_position (access_node V n) = take i q" using node_at[OF n] by simp
+    assume "fBex (access_node_calls V (access_key V h)) (\<lambda>q'. length q' < length q \<and> take (length q') q = q' \<and> X q' \<and>
+        fBex (access_nodes_at V q') (\<lambda>n. access_closes V n h))"
+    then obtain q' n where i: "length q' < length q" "take (length q') q = q'" and x: "X q'"
+      and n: "n |\<in>| access_nodes_at V q'" and c: "access_closes V n h" by blast
+    have np: "resolution_node_position (access_node V n) = q'" using node_at[OF n] by simp
     have m: "resolution_node_site (access_node V n) = d" "resolution_node_call (access_node V n) = p"
       using closes[OF h Resolution_Call_Goal g n] c by simp_all
     have mem: "access_node V n |\<in>| ffilter (\<lambda>nd. X (resolution_node_position nd)) (resolution_nodes st)"
@@ -242,14 +247,17 @@ proof (cases "access_goal V h")
     obtain n where n: "n |\<in>| access_nodes_at V (resolution_node_position nd)" "access_node V n = nd"
       by (rule node_set_at[OF nd0])
     have c: "access_closes V n h" using closes[OF h Resolution_Call_Goal g n(1)] n(2) nd(4,5) by simp
-    show "\<exists>i\<in>set [0..<length q]. X (take i q) \<and> fBex (access_nodes_at V (take i q)) (\<lambda>n. access_closes V n h)"
-      using nd n c xn by (intro bexI[of _ "length (resolution_node_position nd)"]) auto
+    have k: "resolution_node_position nd |\<in>| access_node_calls V (access_key V h)"
+      by (rule node_calls[OF h Resolution_Call_Goal g n(1) c])
+    show "fBex (access_node_calls V (access_key V h)) (\<lambda>q'. length q' < length q \<and> take (length q') q = q' \<and> X q' \<and>
+        fBex (access_nodes_at V q') (\<lambda>n. access_closes V n h))"
+      using k nd(2,3) xn n(1) c by blast
   qed
   show ?thesis
   proof (cases "finite_pattern_variables p = {||}")
     case True
     then show ?thesis using eq[OF True] pos gr Resolution_Call_Goal
-      by (simp add: access_pruned_among_def finite_pruned_def list_ex_iff)
+      by (simp add: access_pruned_among_def finite_pruned_def)
   next
     case False
     then show ?thesis using gr Resolution_Call_Goal by (simp add: access_pruned_among_def finite_pruned_def)
@@ -606,13 +614,22 @@ text \<open>
   asks the goals that do not wait first.
 \<close>
 
+text \<open>
+  The first of a finite set of things placed at positions reads their positions alone: it is stated over the position
+  map, and the first goals and the first nodes of an access are its instances at the access's position maps.
+\<close>
+
+definition positioned_first :: "('x \<Rightarrow> 's::linorder list) \<Rightarrow> 'x fset \<Rightarrow> 'x fset" where
+  "positioned_first pos H = ffilter (\<lambda>h. \<not> fBex H (\<lambda>h'. finite_position_less (pos h') (pos h))) H"
+
+lemma positioned_first_member: "h |\<in>| positioned_first pos H \<Longrightarrow> h |\<in>| H"
+  by (simp add: positioned_first_def ffilter.rep_eq)
+
 definition access_first_goals :: "('g,'n,'k,'a,'s::linorder,'d,'c) search_access \<Rightarrow> 'g fset \<Rightarrow> 'g fset" where
-  "access_first_goals V H = ffilter (\<lambda>h. \<not> fBex H (\<lambda>h'. finite_position_less
-    (access_goal_position V h') (access_goal_position V h))) H"
+  "access_first_goals V H = positioned_first (access_goal_position V) H"
 
 definition access_first_nodes :: "('g,'n,'k,'a,'s::linorder,'d,'c) search_access \<Rightarrow> 'n fset \<Rightarrow> 'n fset" where
-  "access_first_nodes V N = ffilter (\<lambda>n. \<not> fBex N (\<lambda>m. finite_position_less
-    (access_node_position V m) (access_node_position V n))) N"
+  "access_first_nodes V N = positioned_first (access_node_position V) N"
 
 definition access_goal_selection :: "('g,'n,'k,'a,'s::linorder,'d,'c) search_access \<Rightarrow> 'g fset \<Rightarrow> 'g fset" where
   "access_goal_selection V A = (let c1 = ffilter (access_ground V) A; c2 = ffilter (access_independent V) A;
@@ -652,10 +669,10 @@ definition access_select :: "('g \<Rightarrow> bool) \<Rightarrow> ('g,'n,'k,'a,
       if S = {||} then Access_None else Access_Goals S)"
 
 lemma access_first_goals_member: "h |\<in>| access_first_goals V H \<Longrightarrow> h |\<in>| H"
-  by (simp add: access_first_goals_def ffilter.rep_eq)
+  unfolding access_first_goals_def by (rule positioned_first_member)
 
 lemma access_first_nodes_member: "n |\<in>| access_first_nodes V N \<Longrightarrow> n |\<in>| N"
-  by (simp add: access_first_nodes_def ffilter.rep_eq)
+  unfolding access_first_nodes_def by (rule positioned_first_member)
 
 lemma access_goal_selection_member: "h |\<in>| access_goal_selection V A \<Longrightarrow> h |\<in>| A"
   by (auto simp: access_goal_selection_def Let_def ffilter.rep_eq dest: access_first_goals_member split: if_splits)
@@ -685,7 +702,7 @@ proof -
     using H goal_position by blast
   have "access_first_goals V H = ffilter (\<lambda>h. \<not> fBex H (\<lambda>h'. finite_position_less
       (resolution_goal_position (access_goal V h')) (resolution_goal_position (access_goal V h)))) H"
-    unfolding access_first_goals_def
+    unfolding access_first_goals_def positioned_first_def
   proof (rule ffilter_cong_on)
     fix h assume h: "h |\<in>| H"
     show "(\<not> fBex H (\<lambda>h'. finite_position_less (access_goal_position V h') (access_goal_position V h))) \<longleftrightarrow>
@@ -704,7 +721,7 @@ proof -
     using N node_at by metis
   have "access_first_nodes V N = ffilter (\<lambda>n. \<not> fBex N (\<lambda>m. finite_position_less
       (resolution_node_position (access_node V m)) (resolution_node_position (access_node V n)))) N"
-    unfolding access_first_nodes_def
+    unfolding access_first_nodes_def positioned_first_def
   proof (rule ffilter_cong_on)
     fix n assume n: "n |\<in>| N"
     show "(\<not> fBex N (\<lambda>m. finite_position_less (access_node_position V m) (access_node_position V n))) \<longleftrightarrow>

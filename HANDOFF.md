@@ -46,8 +46,10 @@ yet name the two phases, the table or GT6's record (#880's Remains 2, mailed to 
 **The given's calls, decided once** (#831's section; #496's "77's least bound at the given and at a candidate"): a
 table of certified ground calls every judgment's search closes (one successor, never a committed focus), its validity
 checked once over graphs and retained; a judgment in two phases; 77's bound handed in for an admission, W5 for a
-refusal. One-time ≈ 31–34 M states, a judgment's part ≈ 2–5 M. Builds: GT1a landed (#837); GT1b #839 (the committed
-step, search and lifting and R4 at a table) → GT4 #841 (C at a table) and GT2 #843 (the committed and check forms, rc's
+refusal. One-time ≈ 31–34 M states, a judgment's part ≈ 2–5 M. Builds: GT1a and GT1b landed (#837, #839: the table
+in R3, R3b, the committed step, search and lifting and R4; refutation exact and a resolution's certificates sound at
+every table, a valid table deciding only which calls resolve — the entry's addition; review 840's 1–6 mailed to GT4,
+GT2, W5 and GT6) → GT4 #841 (C at a table) and GT2 #843 (the committed and check forms, rc's
 forms, the transfers, the table read by its calls alone and — by q155 — the committed search's frame and position lemmas
 at a table; after K3 #825 and the consolidation #832) → GT5 #845 (the given's table) and W5 #847; GT3 #876 (the table in
 F2's shared representation, after GT2, GT4 and #830's fixes) → GT6 #878 (the table produced once, a run of hours parked
@@ -55,15 +57,18 @@ for its completion, its record `validation/given-table.json`, after GT5 and the 
 #707, #399. GT6 asks the planner its prediction and worker count before its run. Q33 is the owner's.
 
 **A search step's cost** (#830's attribution, its fixes placed from #852): landed σ tabulated with F2a's shared unifier
-(#861) and the pruning test through the node-call index (#863); open the selection's classes kept #865 → in F2c #871,
+(#861) and the pruning test through the node-call index (#863); open the selection's classes kept #865 (at no focus,
+q156; the held goals and construction nodes recomputed over `search_registered`, mailed to #875) → in F2c #871 (the
+focused instance, q156, mailed),
 and the commitment's tests over the access #867 → F2c's committed step over them #869 (after OS2) → K3 #825. #861's
 question — a production binding a variable that occurs nowhere pays a keyed walk: (a) a term-level substitution, (b) an
 order at the given's variable type, (c) kept, provisional — and review 862's 2–4 are the investigation #875's to
 measure (mailed); their fixes are placed before GT6.
 
-**Corrections (12)–(15)** have landed but for: I3b #817 (the given's input record at the installed programs) → #547,
-#707, #399; K3 #825 (the given at the check forms after #867 → #869, OS2 #855 having landed: 77/1,
-77/2, 113/7) → GT2; the consolidation #832 (review 824's 2, 3, 6, 7, 9) before GT2. Off the route: #857 re-runs #718's
+**Corrections (12)–(15)** have landed but for K3 #825 (the given at the check forms after #867 → #869: 77/1, 77/2,
+113/7) → GT2, and the consolidation #832 (review 824's 2, 3, 6, 7, 9) before GT2. I3b #817 landed (`b9d5f1d3`); review
+818's 1–4 are the fix #881 (12's production present at the installed lookup socket, `installed_single_clause`, the
+installed carrying stated once) before #547, #707 and #399, its 5 next-edits 362. Off the route: #857 re-runs #718's
 77 and 79 fixtures after OS2, and c55 #827 follows K3, both held runs queued last.
 
 **Retired** on #376's and #378's entries: the decomposition line (#325–#334), N1a, N1b, N3a, N3b, N4a, N4b, #371, #377,
@@ -220,7 +225,7 @@ REASONING_REUSE.md, how each went in `PLANNING_LOG.md`.
 
 - **The entries** (DECISIONS.md): #378, #376, #381, #383, #428, #460 (its decision withdrawn by Q27), #482 and #560,
   #495 with #585's and #683's additions, corrections (5)–(15) and #831's section, #496 with #642's addition and #790's
-  section, #613's entry and #782's. The planner's answers to each design are in its `verdict.md`; the attributions
+  section, #613's entry, #782's and #817's. The planner's answers to each design are in its `verdict.md`; the attributions
   #481, #644, #715, #829, #830 and #851 in their `result.md`.
 - **The development package**: `Development_Package_Program` (#340; a landing changing one of its six programs derives
   it again, Q18 (c)), `development_package_environment` (#342).
@@ -245,7 +250,8 @@ REASONING_REUSE.md, how each went in `PLANNING_LOG.md`.
   `Development_Recording_Refinements` (no library theory imports it); X′ within the gate.
 - **The resolving evaluator**: R1 `Factor_Material_Resolution`, R2 `Factor_Pattern_Unification`, R3
   `Factor_Program_Resolution` (F1's selection, F3's reuse, GT1a's table), R3b `Factor_Resolution_Acceptance`, R4
-  `Factor_Resolution_Completeness`, the lifting `Factor_Resolution_Lifting`; R5 `Factor_Resolution_Commitments`, its
+  `Factor_Resolution_Completeness` and the lifting `Factor_Resolution_Lifting` (both at a table since GT1b, its control
+  `Factor_Table_Controls`); R5 `Factor_Resolution_Commitments`, its
   discharges `Factor_Resolution_Producer_Discharge`, `Factor_Resolution_Socket_Discharges`,
   `Factor_Resolution_Material_Discharge`, its forms and transfers `Factor_Resolution_Views`,
   `Factor_Resolution_Carriers`, `Factor_Narrowed_Sockets`, `Factor_Narrowed_Commitments`, `Factor_Narrowed_Productions`;
@@ -262,7 +268,8 @@ REASONING_REUSE.md, how each went in `PLANNING_LOG.md`.
   `Factor_Row_Value_Socket_Declarations`, `Factor_Row_Selection_Socket_Declarations`; their carrying
   `Development_Given_Carried_Declarations` (`given_declarations`, the one produced record), `Development_Given_Frames`,
   `Development_Given_Installed_Declarations` (with the one record at 526 and 561), `Development_Given_Modes`,
-  `Development_Given_Productions`; liveness `Development_Socket_Liveness_Execution`.
+  `Development_Given_Productions`, `Development_Given_Installed_Productions` (the input record at 526 and 561); liveness
+  `Development_Socket_Liveness_Execution`.
 - **The least witnesses**: `Factor_Least_Collections`, `Factor_Least_Witness_Facts`, `Factor_Construction_Holders`,
   `Factor_Least_Witness_Registrations`, `Development_Given_Registrations`, `Development_Asked_Registrations`,
   `Development_First_Request_Registrations`, `Development_Rooted_Registrations`.
@@ -338,11 +345,10 @@ a theory before briefing a task that edits it.
 
 ## Now
 
-- **Under way**: I3b #817, GT1b #839 (q155 answered: its Done (2) moved to GT2's item (11)), #865; #867 and #857 can
-  start, OS2 #855 having landed (its implied condition: next-edits 361, #867 mailed).
-- **What the next events ask**: the hand-overs of I3b, GT1b and #865; GT6's prediction and worker count before its
-  run; #709's brief rewritten before it starts; #861's question decided on #875's figures before GT6 (provisional (c)).
-  Q33 is the owner's.
+- **Under way**: #865 (q156 answered), #867, GT4 #841 and #857; the fix #881 (review 818's 1–4) can start.
+- **What the next events ask**: the hand-overs of #865, #867, GT4, #857 and #881; GT6's prediction and worker count
+  before its run; #709's brief rewritten before it starts; #861's question decided on #875's figures before GT6
+  (provisional (c)). Q33 is the owner's.
 - **Briefs nearest their rooms**: #542, #399 and the samples build #551; GT2 #843 at 340K — if handed back, its (9) with
   the truth-soundness becomes a task after it and before GT3, GT5 and W5 (#880's Remains 1). A brief written before its
   theories grew may be refused at its start, and is resized or divided then.

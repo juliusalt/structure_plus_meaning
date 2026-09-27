@@ -157,6 +157,52 @@ text \<open>
   states with the production against 58 without it, and the false call refuted in 6; R4 gives the same two verdicts.
 \<close>
 
+text \<open>
+  A refutation through the produced check with the sibling open (review 856's follow-up 2, task 857): the environment's
+  list ends in the payload [8] where the empty payload ends a list (@{text open_sibling_tail_environment}). Row [5] is
+  its first entry, so 5 selects it and binds 12's input as at the true call; 26's bag comparison of the environment
+  with itself fails only at that tail, below the pending goals the open sibling holds when 12 is taken at 37.0/2. The
+  call is refuted in 26 states with the production against 54 without it: the same 28 states the true call's produced
+  check saves (30 against 58), so 12 is taken and its production met on the refuted call's path. R4 refutes it too.
+\<close>
+
+definition open_sibling_tail_environment :: finite_factor_term where
+  "open_sibling_tail_environment = Finite_Pair (Finite_Pair (Finite_Payload [5]) input_control_artifact)
+    (Finite_Pair (Finite_Pair (Finite_Payload [6]) (input_control_data [Finite_Payload [4]])) (Finite_Payload [8]))"
+
+definition open_sibling_tail_call :: finite_factor_term where
+  "open_sibling_tail_call = Finite_Pair (Finite_Pair open_sibling_tail_environment (Finite_Payload [])) (Finite_Payload [5])"
+
+text \<open>
+  Every control of the theory in one evaluation (@{text input_production_evaluation}); each named control is its
+  projection, the earlier one's name and statement unchanged.
+\<close>
+
+lemma input_production_evaluation:
+  "(witness_value (finite_collection_construction [identity_input_registration] 0) input_control_program 12
+      identity_socket_schema {|(0,input_control_artifact)|} 1 = Some input_control_artifact \<and>
+    input_control_row input_control_produced 40 (input_control_call [5]) 30 = (Some True,1,25) \<and>
+    input_control_row input_control_committed 40 (input_control_call [5]) 30 = (Some True,1,53) \<and>
+    input_control_plain 40 (input_control_call [5]) = Some True \<and>
+    input_control_row input_control_produced 40 (input_control_call [7]) 30 = (Some False,0,6) \<and>
+    input_control_plain 40 (input_control_call [7]) = Some False \<and>
+    input_control_row input_control_produced 37 (input_control_lookup [Finite_Payload [3],Finite_Payload [1]]) 30 =
+      (Some False,0,23) \<and>
+    input_control_plain 37 (input_control_lookup [Finite_Payload [3],Finite_Payload [1]]) = Some False \<and>
+    input_control_run open_sibling_program open_sibling_produced 40 (input_control_call [5]) 30 = (Some True,1,30) \<and>
+    input_control_run open_sibling_program input_control_committed 40 (input_control_call [5]) 30 = (Some True,1,58) \<and>
+    finite_resolution_verdict (finite_program_resolution no_witness_construction open_sibling_program 40
+      (input_control_call [5]) 30) = Some True \<and>
+    input_control_run open_sibling_program open_sibling_produced 40 (input_control_call [7]) 30 = (Some False,0,6) \<and>
+    input_control_run open_sibling_program input_control_committed 40 (input_control_call [7]) 30 = (Some False,0,6) \<and>
+    finite_resolution_verdict (finite_program_resolution no_witness_construction open_sibling_program 40
+      (input_control_call [7]) 30) = Some False) \<and>
+    (input_control_run open_sibling_program open_sibling_produced 40 open_sibling_tail_call 30 = (Some False,0,26) \<and>
+    input_control_run open_sibling_program input_control_committed 40 open_sibling_tail_call 30 = (Some False,0,54) \<and>
+    finite_resolution_verdict (finite_program_resolution no_witness_construction open_sibling_program 40
+      open_sibling_tail_call 30) = Some False)"
+  by eval
+
 lemma input_production_controls:
   "witness_value (finite_collection_construction [identity_input_registration] 0) input_control_program 12
       identity_socket_schema {|(0,input_control_artifact)|} 1 = Some input_control_artifact \<and>
@@ -176,6 +222,13 @@ lemma input_production_controls:
     input_control_run open_sibling_program input_control_committed 40 (input_control_call [7]) 30 = (Some False,0,6) \<and>
     finite_resolution_verdict (finite_program_resolution no_witness_construction open_sibling_program 40
       (input_control_call [7]) 30) = Some False"
-  by eval
+  using input_production_evaluation by (rule conjunct1)
+
+lemma open_sibling_refutation_control:
+  "input_control_run open_sibling_program open_sibling_produced 40 open_sibling_tail_call 30 = (Some False,0,26) \<and>
+    input_control_run open_sibling_program input_control_committed 40 open_sibling_tail_call 30 = (Some False,0,54) \<and>
+    finite_resolution_verdict (finite_program_resolution no_witness_construction open_sibling_program 40
+      open_sibling_tail_call 30) = Some False"
+  using input_production_evaluation by (rule conjunct2)
 
 end

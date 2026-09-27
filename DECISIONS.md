@@ -16987,7 +16987,10 @@ existing control keeps its answer under the narrowed test; the premise-only cont
 c(X) :- prod(Pair X Y), mat(Z;A,E,B,F) over prod([1],[2]) and prod([1],[3]), prod's socket kept; with a literal
 source the socket commits and keeps one answer (one certificate, R4's two); with Z registered and constructed first Z
 is premise-only and bound, the test refuses the commitment, and both answers stay (two). Correction (7)'s three
-counterexamples are not yet controls: a later controls task takes them.]
+counterexamples are not yet controls: a later controls task takes them. [Done by task 718: they are
+`Factor_Resolution_Controls.narrowing_controls` — (i) `narrowing_stray_state`, (ii) `narrowing_kept_node`, (iii)
+`narrowing_free_node` — with the registered source's state `premise_only_constructed_state` in `premise_only_conjuncts`,
+both projections of the one evaluation `resolution_controls`.]]
 
 [Corrected by task 668 (the record at views, its switch; review 632's follow-up 2), in (8): the socket's ordinary premise
 is read at the premise's view (`finite_socket_pair` at views; R5's pair is its identity instance,

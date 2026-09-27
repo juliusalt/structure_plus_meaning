@@ -4719,6 +4719,85 @@ text \<open>
   closes, each there that entry's (@{const finite_table_proofs}).
 \<close>
 
+text \<open>
+  The calls-alone statement once, at a focus that focuses the root (as @{text finite_focused_resolution_certificates_in}):
+  the committed forms at @{term None} and the check forms at @{term "Some []"} are its instances.
+\<close>
+
+theorem finite_focused_resolution_calls:
+  assumes calls: "finite_table_calls \<Theta> = finite_table_calls \<Theta>'"
+    and valid: "finite_table_valid P \<Theta>" and valid': "finite_table_valid P \<Theta>'"
+    and Pf: "finite_system_formed P" and tf: "finite_term_formed t" and \<kappa>: "finite_witness_construction_formed \<kappa>"
+    and goals: "\<And>st G. sel st = Select_Goals G \<Longrightarrow> G |\<subseteq>| resolution_pending st"
+    and root: "resolution_focused F []"
+  shows "finite_resolution_verdict (finite_outcome_result_in \<Theta> P d t
+        (finite_committed_search_by_in \<Theta> sel \<kappa> K P n F {||} (finite_initial_state d t))) =
+      finite_resolution_verdict (finite_outcome_result_in \<Theta>' P d t
+        (finite_committed_search_by_in \<Theta>' sel \<kappa> K P n F {||} (finite_initial_state d t)))"
+    and "finite_outcome_result_in \<Theta> P d t (finite_committed_search_by_in \<Theta> sel \<kappa> K P n F {||} (finite_initial_state d t)) =
+        Finite_Unresolved D \<longleftrightarrow>
+      finite_outcome_result_in \<Theta>' P d t (finite_committed_search_by_in \<Theta>' sel \<kappa> K P n F {||} (finite_initial_state d t)) =
+        Finite_Unresolved D"
+proof -
+  let ?R = "finite_committed_search_by_in \<Theta> sel \<kappa> K P n F {||} (finite_initial_state d t)"
+  have R: "finite_committed_search_by_in \<Theta>' sel \<kappa> K P n F {||} (finite_initial_state d t) = ?R"
+    by (simp only: finite_committed_search_calls[OF calls])
+  have e: "finite_state_proofs_in \<Theta> s = {||} \<longleftrightarrow> finite_state_proofs_in \<Theta>' s = {||}" for s
+    by (simp add: finite_state_proofs_in_def)
+  have E: "ffUnion (fimage (finite_state_proofs_in \<Theta>) X) = {||} \<longleftrightarrow> ffUnion (fimage (finite_state_proofs_in \<Theta>') X) = {||}"
+    for X using e by (auto simp: fset_eq_iff resolution_fset_simps)
+  have c1: "finite_outcome_result_in \<Theta> P d t ?R = (let R = ?R;
+      C = ffUnion (fimage (finite_state_proofs_in \<Theta>) (resolution_found R)) in
+    if C\<noteq>{||} then Finite_Resolved C else if resolution_diagnoses R={||} then Finite_Refuted
+    else Finite_Unresolved (resolution_diagnoses R))"
+    by (rule finite_focused_resolution_certificates_in[OF valid Pf tf \<kappa> goals root])
+  have c2: "finite_outcome_result_in \<Theta>' P d t (finite_committed_search_by_in \<Theta>' sel \<kappa> K P n F {||} (finite_initial_state d t)) =
+    (let R = ?R; C = ffUnion (fimage (finite_state_proofs_in \<Theta>') (resolution_found R)) in
+    if C\<noteq>{||} then Finite_Resolved C else if resolution_diagnoses R={||} then Finite_Refuted
+    else Finite_Unresolved (resolution_diagnoses R))"
+    by (subst R[symmetric]) (rule finite_focused_resolution_certificates_in[OF valid' Pf tf \<kappa> goals root])
+  show "finite_resolution_verdict (finite_outcome_result_in \<Theta> P d t
+        (finite_committed_search_by_in \<Theta> sel \<kappa> K P n F {||} (finite_initial_state d t))) =
+      finite_resolution_verdict (finite_outcome_result_in \<Theta>' P d t
+        (finite_committed_search_by_in \<Theta>' sel \<kappa> K P n F {||} (finite_initial_state d t)))"
+    unfolding c1 c2 Let_def using E[of "resolution_found ?R"]
+    by (auto simp: finite_resolution_verdict_def split: if_split)
+  show "finite_outcome_result_in \<Theta> P d t (finite_committed_search_by_in \<Theta> sel \<kappa> K P n F {||} (finite_initial_state d t)) =
+        Finite_Unresolved D \<longleftrightarrow>
+      finite_outcome_result_in \<Theta>' P d t (finite_committed_search_by_in \<Theta>' sel \<kappa> K P n F {||} (finite_initial_state d t)) =
+        Finite_Unresolved D"
+    unfolding c1 c2 Let_def using E[of "resolution_found ?R"] by (auto split: if_split)
+qed
+
+text \<open>
+  The demand-level and native wrappers once over the per-call verdicts, as @{text finite_verdict_demand_exact} is for
+  exactness: two verdict functions agreeing on the demanded calls give one demand, and one verdict map of the results.
+\<close>
+
+lemma finite_verdict_demand_agree:
+  assumes agree: "\<And>q. q |\<in>| D \<Longrightarrow> finite_system_formed P \<Longrightarrow> v q = v' q"
+  shows "(let V = fimage (\<lambda>q. (q,v q)) D in
+      if finite_system_formed P \<and> fBall V (\<lambda>(q,w). w \<noteq> None)
+      then Some (fimage fst (ffilter (\<lambda>(q,w). w = Some True) V)) else None) =
+    (let V = fimage (\<lambda>q. (q,v' q)) D in
+      if finite_system_formed P \<and> fBall V (\<lambda>(q,w). w \<noteq> None)
+      then Some (fimage fst (ffilter (\<lambda>(q,w). w = Some True) V)) else None)"
+proof (cases "finite_system_formed P")
+  case False
+  then show ?thesis by (simp add: Let_def)
+next
+  case True
+  have V: "fimage (\<lambda>q. (q,v q)) D = fimage (\<lambda>q. (q,v' q)) D"
+    by (rule fimage_cong) (simp_all add: agree True)
+  show ?thesis by (simp only: Let_def V)
+qed
+
+lemma native_resolution_verdicts_agree:
+  assumes agree: "\<And>q. q |\<in>| R \<Longrightarrow> finite_resolution_verdict (r q) = finite_resolution_verdict (r' q)"
+  shows "fimage (\<lambda>(q,x). (q,finite_resolution_verdict x)) (fimage (\<lambda>q. (q,r q)) R) =
+    fimage (\<lambda>(q,x). (q,finite_resolution_verdict x)) (fimage (\<lambda>q. (q,r' q)) R)"
+  unfolding fset.map_comp comp_def by (rule fimage_cong) (simp_all add: agree)
+
 theorem finite_committed_resolution_by_calls:
   assumes calls: "finite_table_calls \<Theta> = finite_table_calls \<Theta>'"
     and valid: "finite_table_valid P \<Theta>" and valid': "finite_table_valid P \<Theta>'"
@@ -4729,30 +4808,14 @@ theorem finite_committed_resolution_by_calls:
     and "finite_committed_resolution_by_in \<Theta> sel \<kappa> K P d t n = Finite_Unresolved D \<longleftrightarrow>
       finite_committed_resolution_by_in \<Theta>' sel \<kappa> K P d t n = Finite_Unresolved D"
 proof -
-  let ?R = "finite_committed_search_by_in \<Theta> sel \<kappa> K P n None {||} (finite_initial_state d t)"
-  have R: "finite_committed_search_by_in \<Theta>' sel \<kappa> K P n None {||} (finite_initial_state d t) = ?R"
-    by (simp only: finite_committed_search_calls[OF calls])
-  have e: "finite_state_proofs_in \<Theta> s = {||} \<longleftrightarrow> finite_state_proofs_in \<Theta>' s = {||}" for s
-    by (simp add: finite_state_proofs_in_def)
-  have E: "ffUnion (fimage (finite_state_proofs_in \<Theta>) X) = {||} \<longleftrightarrow> ffUnion (fimage (finite_state_proofs_in \<Theta>') X) = {||}"
-    for X using e by (auto simp: fset_eq_iff resolution_fset_simps)
-  have c1: "finite_committed_resolution_by_in \<Theta> sel \<kappa> K P d t n = (let R = ?R;
-      C = ffUnion (fimage (finite_state_proofs_in \<Theta>) (resolution_found R)) in
-    if C\<noteq>{||} then Finite_Resolved C else if resolution_diagnoses R={||} then Finite_Refuted
-    else Finite_Unresolved (resolution_diagnoses R))"
-    by (rule finite_committed_resolution_by_certificates_in[OF valid Pf tf \<kappa> goals])
-  have c2: "finite_committed_resolution_by_in \<Theta>' sel \<kappa> K P d t n = (let R = ?R;
-      C = ffUnion (fimage (finite_state_proofs_in \<Theta>') (resolution_found R)) in
-    if C\<noteq>{||} then Finite_Resolved C else if resolution_diagnoses R={||} then Finite_Refuted
-    else Finite_Unresolved (resolution_diagnoses R))"
-    by (subst R[symmetric]) (rule finite_committed_resolution_by_certificates_in[OF valid' Pf tf \<kappa> goals])
+  have root: "resolution_focused (None :: 's list option) []" by (simp add: resolution_focused_def)
+  note c = finite_focused_resolution_calls[OF calls valid valid' Pf tf \<kappa> goals root]
   show "finite_resolution_verdict (finite_committed_resolution_by_in \<Theta> sel \<kappa> K P d t n) =
       finite_resolution_verdict (finite_committed_resolution_by_in \<Theta>' sel \<kappa> K P d t n)"
-    unfolding c1 c2 Let_def using E[of "resolution_found ?R"]
-    by (auto simp: finite_resolution_verdict_def split: if_split)
+    unfolding finite_committed_resolution_by_in_def by (rule c(1))
   show "finite_committed_resolution_by_in \<Theta> sel \<kappa> K P d t n = Finite_Unresolved D \<longleftrightarrow>
       finite_committed_resolution_by_in \<Theta>' sel \<kappa> K P d t n = Finite_Unresolved D"
-    unfolding c1 c2 Let_def using E[of "resolution_found ?R"] by (auto split: if_split)
+    unfolding finite_committed_resolution_by_in_def by (rule c(2))
 qed
 
 text \<open>
@@ -4789,18 +4852,12 @@ theorem finite_committed_demand_by_calls:
     and goals: "\<And>st G. sel st = Select_Goals G \<Longrightarrow> G |\<subseteq>| resolution_pending st"
     and tfs: "\<And>q. q |\<in>| D \<Longrightarrow> finite_term_formed (snd q)"
   shows "finite_committed_demand_by_in \<Theta> sel \<kappa> K P D n = finite_committed_demand_by_in \<Theta>' sel \<kappa> K P D n"
-proof (cases "finite_system_formed P")
-  case False
-  then show ?thesis by (simp add: finite_committed_demand_by_in_def Let_def)
-next
-  case True
+proof -
   have v: "finite_resolution_verdict (finite_committed_resolution_by_in \<Theta> sel \<kappa> K P (fst q) (snd q) n) =
-      finite_resolution_verdict (finite_committed_resolution_by_in \<Theta>' sel \<kappa> K P (fst q) (snd q) n)" if "q |\<in>| D" for q
-    by (rule finite_committed_resolution_by_calls(1)[OF calls valid valid' True tfs[OF that] \<kappa> goals])
-  have V: "fimage (\<lambda>q. (q,finite_resolution_verdict (finite_committed_resolution_by_in \<Theta> sel \<kappa> K P (fst q) (snd q) n))) D =
-      fimage (\<lambda>q. (q,finite_resolution_verdict (finite_committed_resolution_by_in \<Theta>' sel \<kappa> K P (fst q) (snd q) n))) D"
-    by (rule fimage_cong) (simp_all add: v)
-  show ?thesis by (simp only: finite_committed_demand_by_in_def Let_def V)
+      finite_resolution_verdict (finite_committed_resolution_by_in \<Theta>' sel \<kappa> K P (fst q) (snd q) n)"
+    if "q |\<in>| D" "finite_system_formed P" for q
+    by (rule finite_committed_resolution_by_calls(1)[OF calls valid valid' that(2) tfs[OF that(1)] \<kappa> goals])
+  show ?thesis unfolding finite_committed_demand_by_in_def by (rule finite_verdict_demand_agree) (rule v)
 qed
 
 corollary finite_committed_demand_calls:
@@ -4828,8 +4885,8 @@ proof -
     by (rule finite_committed_resolution_by_calls(1)[OF calls valid valid' Pf tfs[OF that] \<kappa> goals])
   show "fimage (\<lambda>(q,r). (q,finite_resolution_verdict r)) (fst (native_committed_resolution_by_in \<Theta> sel \<kappa> K P R n)) =
       fimage (\<lambda>(q,r). (q,finite_resolution_verdict r)) (fst (native_committed_resolution_by_in \<Theta>' sel \<kappa> K P R n))"
-    unfolding native_committed_resolution_by_in_def fst_conv fset.map_comp comp_def
-    by (rule fimage_cong) (simp_all add: v)
+    unfolding native_committed_resolution_by_in_def fst_conv
+    by (rule native_resolution_verdicts_agree) (erule v)
 qed
 
 corollary native_committed_resolution_calls:
@@ -5542,33 +5599,45 @@ lemma finite_exact_verdicts_equal:
   shows "b = b'"
   using v v' same by blast
 
-corollary finite_committed_agreement_transfer:
-  assumes \<kappa>: "finite_witness_construction_formed \<kappa>" and ex: "finite_commitment_exchanges (\<lambda>_. False) \<kappa> K P"
-    and cl: "finite_construction_lifts (\<lambda>_. False) \<kappa> P"
-    and \<kappa>': "finite_witness_construction_formed \<kappa>'" and ex': "finite_commitment_exchanges (\<lambda>_. False) \<kappa>' K' Q"
-    and cl': "finite_construction_lifts (\<lambda>_. False) \<kappa>' Q"
+text \<open>
+  The transfers at a table (GT2): the committed verdicts at two programs' tables, each exact from the exchange and the
+  construction premise at its table, agree where the called sites mean the same; today's transfers are their instances
+  at the empty tables.
+\<close>
+
+corollary finite_committed_agreement_transfer_in:
+  assumes \<kappa>: "finite_witness_construction_formed \<kappa>" and ex: "finite_commitment_exchanges_in \<Theta> (\<lambda>_. False) \<kappa> K P"
+    and cl: "finite_construction_lifts_in \<Theta> (\<lambda>_. False) \<kappa> P"
+    and \<kappa>': "finite_witness_construction_formed \<kappa>'" and ex': "finite_commitment_exchanges_in \<Theta>' (\<lambda>_. False) \<kappa>' K' Q"
+    and cl': "finite_construction_lifts_in \<Theta>' (\<lambda>_. False) \<kappa>' Q"
     and Pf: "schema_system_formed (decode_finite_system P)" and Qf: "schema_system_formed (decode_finite_system Q)"
     and agree: "systems_agree_on (decode_finite_system P) (decode_finite_system Q) V"
     and closed: "system_dependency_closed (decode_finite_system P) V" and dV: "d \<in> V"
-    and v: "finite_resolution_verdict (finite_committed_resolution \<kappa> K P d t n) = Some b"
-    and v': "finite_resolution_verdict (finite_committed_resolution \<kappa>' K' Q d t m) = Some b'"
+    and v: "finite_resolution_verdict (finite_committed_resolution_in \<Theta> \<kappa> K P d t n) = Some b"
+    and v': "finite_resolution_verdict (finite_committed_resolution_in \<Theta>' \<kappa>' K' Q d t m) = Some b'"
   shows "b = b'"
-  by (rule finite_exact_verdicts_equal[OF finite_committed_verdict_exact[OF \<kappa> ex cl v]
-    finite_committed_verdict_exact[OF \<kappa>' ex' cl' v'] positive_meaning_dependency_locality[OF Pf Qf agree closed dV, symmetric]])
+  by (rule finite_exact_verdicts_equal[OF finite_committed_verdict_exact_in[OF \<kappa> ex cl v]
+    finite_committed_verdict_exact_in[OF \<kappa>' ex' cl' v'] positive_meaning_dependency_locality[OF Pf Qf agree closed dV, symmetric]])
 
-corollary finite_committed_relocation_transfer:
-  assumes \<kappa>: "finite_witness_construction_formed \<kappa>" and ex: "finite_commitment_exchanges (\<lambda>_. False) \<kappa> K P"
-    and cl: "finite_construction_lifts (\<lambda>_. False) \<kappa> P"
+lemmas finite_committed_agreement_transfer = finite_committed_agreement_transfer_in[where \<Theta>=resolution_empty_table
+  and \<Theta>'=resolution_empty_table, unfolded finite_committed_resolution_in_empty]
+
+corollary finite_committed_relocation_transfer_in:
+  assumes \<kappa>: "finite_witness_construction_formed \<kappa>" and ex: "finite_commitment_exchanges_in \<Theta> (\<lambda>_. False) \<kappa> K P"
+    and cl: "finite_construction_lifts_in \<Theta> (\<lambda>_. False) \<kappa> P"
     and \<kappa>': "finite_witness_construction_formed \<kappa>'"
-    and ex': "finite_commitment_exchanges (\<lambda>_. False) \<kappa>' K' (finite_rename_system g P)"
-    and cl': "finite_construction_lifts (\<lambda>_. False) \<kappa>' (finite_rename_system g P)"
+    and ex': "finite_commitment_exchanges_in \<Theta>' (\<lambda>_. False) \<kappa>' K' (finite_rename_system g P)"
+    and cl': "finite_construction_lifts_in \<Theta>' (\<lambda>_. False) \<kappa>' (finite_rename_system g P)"
     and Pf: "schema_system_formed (decode_finite_system P)"
     and injective: "inj_on g (insert d (system_definitions (decode_finite_system P)))"
-    and v: "finite_resolution_verdict (finite_committed_resolution \<kappa> K P d t n) = Some b"
-    and v': "finite_resolution_verdict (finite_committed_resolution \<kappa>' K' (finite_rename_system g P) (g d) t m) = Some b'"
+    and v: "finite_resolution_verdict (finite_committed_resolution_in \<Theta> \<kappa> K P d t n) = Some b"
+    and v': "finite_resolution_verdict (finite_committed_resolution_in \<Theta>' \<kappa>' K' (finite_rename_system g P) (g d) t m) = Some b'"
   shows "b = b'"
-  by (rule finite_exact_verdicts_equal[OF finite_committed_verdict_exact[OF \<kappa> ex cl v]
-    finite_committed_verdict_exact[OF \<kappa>' ex' cl' v'] finite_renamed_meaning_at[OF Pf injective]])
+  by (rule finite_exact_verdicts_equal[OF finite_committed_verdict_exact_in[OF \<kappa> ex cl v]
+    finite_committed_verdict_exact_in[OF \<kappa>' ex' cl' v'] finite_renamed_meaning_at[OF Pf injective]])
+
+lemmas finite_committed_relocation_transfer = finite_committed_relocation_transfer_in[where \<Theta>=resolution_empty_table
+  and \<Theta>'=resolution_empty_table, unfolded finite_committed_resolution_in_empty]
 
 section \<open>The socket test at the socket's frame\<close>
 

@@ -19137,6 +19137,20 @@ statements kept: the closing's case is one lemma of the step, `resolution_closed
 result keeps only certificates the checker accepts, so the verdict is exact at every table. The table forms of the
 committed relation, frame, placement, position and found lemmas (item 3's "R5's … lemmas") moved to GT2 (q155).]
 
+[Added by task 888, GT2c. The check forms and rc's forms at a table take the table as a parameter, today's their
+instances at the empty table by name and statement. rc at a table is a premise block (`registered_commitment_at_in`,
+`committed_registrations_in`): the exchange and the construction premise at the table are premises, discharged by the
+exchange's discharges (GT2b), and at the empty table rc's own. The table is read by its calls: its transfers carry the
+truth of its calls — to a program agreeing on a dependency-closed set holding their sites (there the certified table
+of the same calls is valid, `finite_table_valid_agreement`), to a relocation by a placement (`finite_table_relocates`:
+sites mapped, terms kept; `finite_table_true_relocated`) and to an alpha variant at any table of the same calls
+(`finite_table_true_alpha`), so the numbered table's calls true — by its validity, or by the agreement transfer at an
+agreeing numbered program — make the relocated table's calls true at the installed program
+(`relocated_registrations.installed_table_true`, at truth: decision 5, with no second production or check); rc's forms
+at a table at the installed program stand in `relocated_registrations_in`, its two table premises GT2b's. Validity at
+the agreeing program itself (the checker's acceptance of the same certificates there) is not stated: truth is what a
+found state and GT4's graph verdicts read (`finite_check_found_true`, `finite_state_graph_verdicts_in_true`).]
+
 ### What of the counterpart line stays
 
 | Piece | Standing | Role and reason |

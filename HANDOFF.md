@@ -61,14 +61,15 @@ today's names are its instances at the empty table, six `_def` facts are now `_i
 table, `committed_registrations_in` and `relocated_registrations_in` whose table premises GT2b discharges, the named
 instance `relocated_registrations_in.native_moded_check_installed_in` with the resolution's half beside it, no global
 table copy (next-edits 335 confirmed), the table's transfers carrying truth, so the relocated table is true at the
-numbered program and no formation-only form is placed; review 893's follow-ups mailed) and GT2b #889 (every discharge
-of the exchange and OS1's open premise at a table and a formed selection, after WC2a #912: correction (16), below); GT5 #845 (committed `f9484e82`: `Development_Given_Table`, the given's calls
+numbered program and no formation-only form is placed; review 893's follow-ups mailed) and, by task 918's decision (q161 (A), accepted: the root-kept restriction, the valued exchange and lifting), VK1 #920
+→ GT2b's two parts #889 (the three lowest discharge theories, OS1's open premise) and #922 (the narrowed productions,
+the composed forms, GT2c's premise blocks), each discharge once valued at a table, a formed selection and the pattern
+invariant → VK2 #924 (W5's premise at the given's committing instance) before #399; GT5 #845 (committed `f9484e82`: `Development_Given_Table`, the given's calls
 `given_table_calls` from its value, the readers' part valid at the rooted readers and the guard's part certified at
 `finite_asked_program`, their truth at agreeing programs and at the installations, the relocation once as
-`mapped_installed_table_true`; review 846's follow-ups mailed to GT6, R7, #707, #399 and #547, next-edits 380–381), W5 #847 after GT2a and
-GT2c (q161: W2's definitions take a parameter record per type, completeness under a named premise open at the given's
-committing instance, since #831's (2) does not follow from R5's lifting; the design #918 decides a value-keeping
-lifting and exchange before GT2b's one pass), R7 #542 and the first request #547 after GT2b; GT3 #876 (the table in F2's shared representation, after GT2c, GT4
+`mapped_installed_table_true`; review 846's follow-ups mailed to GT6, R7, #707, #399 and #547, next-edits 380–381), W5 #847 landed (W2's queries at a query's parameters, completeness under `finite_query_search_keeps` at the plain
+instance), R7 #542 and the first request #547 after GT2b's second part #922 (#547 not after VK2: its refusal at 561
+goes through the merge at W5's plain instance); GT3 #876 (the table in F2's shared representation, after GT2c, GT4
 and the step's fixes) → GT6 #878 (the table produced once, a run of hours parked for its completion, its record
 `validation/given-table.json`, after GT5, the step's fixes and #875, which supplies its prediction and worker count) →
 #542, #547, #707, #399. Q33 is the owner's.
@@ -155,14 +156,13 @@ request construction over rows, the incremental assessment, the rows line, the d
 digit layout, the rule programs' law, the shared-subterm engine (B1–B6), the exporter's obligations. Their remains are
 under Open and in `.build/plans/next-edits.md`.
 
-**Shape and order.** No build waits on a review. The longest chain, 13 deep: D1c #901 → D1b #903 → D1d #905 → GT3
-#876 → GT6 #878 → R7 #542 → #707 → #399 → #709 → #553 → #447 → #449 → #450, and GT2c #888 → D1d → … one shorter,
-D1's builds and GT2's division spliced as detail; nothing is added after its tail until it shortens (the approval build,
-Open 142, waits for that). The queue is the planner's choice, a residual until the selection problem's native answer
-(Q2): running tasks first, D1c #901 with its review, the design #918, WC2a and WC1 with theirs, GT5 and W5 with
-theirs, FI, D1b, GT2b, WC2b and D1d each with its review, #875, GT3, WC3, GT6, the route in its chains' order, the
-consolidation #887 after R7's review (nothing waits on it). Word changes are serialized; none is
-queued.
+**Shape and order.** No build waits on a review. The longest chain, 13 deep: VK1 #920 → GT2b #889 → #922 → WC2b #914
+→ WC3 #916 → R7 #542 → #707 → #399 → #709 → #553 → #447 → #449 → #450; D1b #903 → D1d #905 → GT3 #876 → GT6 #878 → R7
+one shorter; VK1's line, D1's builds and GT2's division spliced as detail; nothing is added after its tail until it
+shortens (the approval build, Open 142, waits for that). The queue is the planner's choice, a residual until the
+selection problem's native answer (Q2): running tasks first, VK1, FI and D1b side by side, GT2b's two parts, VK2, WC2b
+and D1d each with its review, #875, GT3, WC3, GT6, the route in its chains' order, the consolidation #887 after R7's
+review (nothing waits on it). Word changes are serialized; none is queued.
 
 ## Decisions
 
@@ -366,6 +366,10 @@ REASONING_REUSE.md, how each went in `PLANNING_LOG.md`.
   `relocated_registrations`; at a table since GT2c #888, `committed_registrations_in` and `relocated_registrations_in`,
   premise blocks whose table premises GT2b discharges).
 - **The binding store** `Shared_Binding_Stores` (D1a #899), under which D1b's deferred search keeps its nodes.
+- **The goal side bounded** (D1c #901, `Factor_Shared_Resolution`, `Factor_Shared_Search`): open counts carried at the
+  parent, the goal-call index pruned, the class trees written where a membership changes, `enter_goal` counting the
+  shared unifier's alternatives on the shared goal (`enter_goal_formed` and `enter_goal_fields` restated); the held
+  goals and construction nodes computed at the selection, their kept forms not taken (q162).
 - **The given's table's calls** `Development_Given_Table` (GT5 #845): `given_table_calls`, the readers' part and the
   guard's part (certified at `finite_asked_program`), their truth at agreeing programs and at the installations.
 - **Briefs whose findings stand**: #434 (the approval record's place, part (g), parts (h) and (e), Q25) and #451 (the
@@ -441,18 +445,13 @@ a theory before briefing a task that edits it.
 
 ## Now
 
-- **Under way**: D1c #901 continued from its tree, withdrawing its kept held goals and construction nodes (q162
-  answered (b): as built they made the step slower at every scale, `.build/tasks/901/measurement.md`; the counts, the
-  pruned index, the class trees and `enter_goal` land; keeping them waits on #875's figures; D1b #903, FI #892 and
-  #875 mailed); the brief #919 of task 918's builds (review 848's follow-ups 1–6 mailed to it); FI #892 after D1c.
-- **Task 918 accepted** (`.build/tasks/918/verdict.md`): the root-kept restriction, the valued exchange and the lifting
-  with a two-flag outcome beside WC2a's; its builds briefed together — VK1 first (startable at once), GT2b #889's pass
-  valued and divided by theory where beyond its room, VK2 after GT2b and W5, before #399 (mailed); W5 hands over its
-  premise at the plain instance, VK2 discharging the rest. GT2b #889 and #399 wait on the brief until its proposal is
-  placed; whether #547 waits on VK2 the proposal says.
-- **What the next events ask**: the brief's proposal placed (#889's and #894's rewrites from `.build/plans/plan-130/`
-  by edit); GT6's prediction and worker count from #875 before its run, with the checking fold measured at samples;
-  #709's brief rewritten before it starts. Q33 is the owner's.
+- **Under way**: VK1 #920, FI #892 and D1b #903 side by side (FI and D1b mailed q162's answer; D1b and D1d review 902's
+  follow-ups; review 848's follow-ups 1–6 in VK1's and VK2's briefs through #919, next-edits 207, 273 and 383 given to
+  them); the kept held goals and construction nodes (q162, review 902's 3: `.build/tasks/901/result.md` Remains
+  (a)–(e)) decided at #875's figures on the deferred route, with next-edits 384's words.
+- **What the next events ask**: GT6's prediction and worker count from #875 before its run, with the checking fold
+  measured at samples; #709's brief rewritten before it starts (the two phases, the table, GT6's record);
+  `.build/plans/mailed.md`'s #889 and #919 lines removed at its next edit. Q33 is the owner's.
 
 - **Planners stopped**: plan-120 and plan-121 were stopped by a classifier declining a turn, before their notes; this
   file and `PLANNING_LOG.md` carried all they settled. Keep both current at every event.

@@ -231,107 +231,116 @@ theorem union_socket_framed:
 lemmas union_listed_simps = schema_instantiation_listed_simps view_listed[OF argument_view_def] argument_view_formed
   argument_view_covered
 
-section \<open>The registration at 48.0's head variable\<close>
+section \<open>The registration at any site, its selection at any site\<close>
 
-definition union_query :: "nat \<Rightarrow> (nat,nat,nat) collection_query" where
-  "union_query a = \<lparr>query_equations = [(a,Finite_Variable 1)], query_site = 5,
+text \<open>
+  The union registration's families read only the site their queries select at and the two clause variables whose
+  lists they select from; the registration's own site, schema and variable are where it is read. Stated once over
+  those coordinates (@{text union_registration_at}), its distinct collection, its production of @{const union_class},
+  the distinct union it returns and its answers at a program whose meaning at the query site is selection (5) and at a
+  site whose meaning is 48's union follow from those two agreements alone: no equivalence of the collection's values
+  between programs is read. The registration at 48 is its instance at 48, 5 and 48.0's variables
+  (@{text union_registration_instance}); the registration a relocation and a clause match make of it is another, at
+  the relocated sites and the matched variables (the given's installed programs, task 798).
+\<close>
+
+definition union_query_at :: "'d \<Rightarrow> 'a \<Rightarrow> ('a,'d,nat) collection_query" where
+  "union_query_at s a = \<lparr>query_equations = [(a,Finite_Variable 1)], query_site = s,
     query_goal = Finite_Pattern_Pair (Finite_Variable 0) (Finite_Pattern_Pair (Finite_Variable 1) (Finite_Variable 2)),
     query_element = 0\<rparr>"
 
-definition union_family :: "(nat,nat,nat) collection_family" where
-  "union_family = \<lparr>family_base = [union_query 0,union_query 1], family_step = None,
+definition union_family_at :: "'d \<Rightarrow> 'a \<Rightarrow> 'a \<Rightarrow> ('a,'d,nat) collection_family" where
+  "union_family_at s a b = \<lparr>family_base = [union_query_at s a,union_query_at s b], family_step = None,
     family_key = (Finite_Variable 0,0), family_identity = None\<rparr>"
 
-definition union_registration :: "(nat,nat,nat,nat) collection_registration" where
-  "union_registration = \<lparr>registration_site = 48, registration_schema = union_schema, registration_variable = 2,
-    registration_families = Single_Family union_family\<rparr>"
+definition union_registration_at ::
+    "'d \<Rightarrow> 'd \<Rightarrow> ('a,'s,'d) finite_factor_schema \<Rightarrow> 'a \<Rightarrow> 'a \<Rightarrow> 'a \<Rightarrow> ('a,'s,'d,nat) collection_registration" where
+  "union_registration_at d s S x a b = \<lparr>registration_site = d, registration_schema = S, registration_variable = x,
+    registration_families = Single_Family (union_family_at s a b)\<rparr>"
 
-abbreviation union_construction :: "nat \<Rightarrow> (nat,nat,nat,'c) finite_witness_construction" where
-  "union_construction n \<equiv> finite_collection_construction [union_registration] n"
+lemma union_registration_at_fields [simp]:
+  "registration_site (union_registration_at d s S x a b) = d"
+  "registration_schema (union_registration_at d s S x a b) = S"
+  "registration_variable (union_registration_at d s S x a b) = x"
+  "registration_families (union_registration_at d s S x a b) = Single_Family (union_family_at s a b)"
+  by (simp_all add: union_registration_at_def)
 
-lemma union_head_registration: "head_registration join_view union_schema 2"
-  by (simp add: head_registration_def join_view_formed union_schema_def socket_listed_simps)
-
-lemma union_registration_input:
-  "head_registration_input join_view union_schema B =
-    Some (Pair_Term (decode_finite_term (finite_binding_valuation B 0)) (decode_finite_term (finite_binding_valuation B 1)))"
-  by (simp add: head_registration_input_def union_schema_def socket_listed_simps)
-
-lemma union_construction_value:
-  "witness_value (union_construction n) P 48 union_schema B 2 = finite_registration_value P n union_registration B"
-  using finite_collection_construction_value_at[where Rs = "[union_registration]" and R = union_registration]
-  by (simp add: finite_registrations_distinct_def union_registration_def)
-
-lemma union_family_key: "finite_family_key union_family e = Some e"
+lemma union_at_family_key: "finite_family_key (union_family_at s a b) e = Some e"
 proof -
   have m: "finite_inputs_matching [(e,Finite_Variable 0 :: nat finite_term_pattern)] = Some {|(0,e)|}"
     by (simp add: finite_inputs_matching_def finite_relation_functional_def)
   show ?thesis
     using finite_relation_option_at[of "{|(0::nat,e)|}" 0 e]
-    by (simp add: finite_family_key_def union_family_def m finite_relation_functional_def)
+    by (simp add: finite_family_key_def union_family_at_def m finite_relation_functional_def)
 qed
 
-lemma union_collection_distinct:
-  assumes collect: "finite_family_collection P n union_family B = Some (es,cs)"
+lemma union_at_collection_distinct:
+  assumes collect: "finite_family_collection P n (union_family_at s a b) B = Some (es,cs)"
   shows "cs = []" "distinct (map fst es)"
 proof -
   show c: "cs = []"
   proof (rule ccontr)
     assume "cs \<noteq> []"
     then obtain z zs where "cs = z # zs" by (cases cs) auto
-    moreover obtain x y where "z = (x,y)" by (cases z)
-    ultimately have xy: "(x,y) \<in> set cs" by simp
-    have "finite_family_key union_family x = finite_family_key union_family y" "x \<noteq> y"
-      using finite_family_collection_conflicts[OF collect xy] by simp_all
-    then show False by (simp add: union_family_key)
+    moreover obtain u w where "z = (u,w)" by (cases z)
+    ultimately have uw: "(u,w) \<in> set cs" by simp
+    have "finite_family_key (union_family_at s a b) u = finite_family_key (union_family_at s a b) w" "u \<noteq> w"
+      using finite_family_collection_conflicts[OF collect uw] by simp_all
+    then show False by (simp add: union_at_family_key)
   qed
-  show "distinct (map fst es)" using finite_family_collection_distinct[of P n union_family B es] collect c by simp
+  show "distinct (map fst es)"
+    using finite_family_collection_distinct[of P n "union_family_at s a b" B es] collect c by simp
 qed
 
-lemma union_registration_collected:
-  assumes "finite_registration_value P n union_registration B = Some v"
-  obtains es where "finite_family_collection P n union_family B = Some (es,[])" "v = finite_family_value es"
+lemma union_at_registration_collected:
+  assumes "finite_registration_value P n (union_registration_at d s S x a b) B = Some v"
+  obtains es where "finite_family_collection P n (union_family_at s a b) B = Some (es,[])" "v = finite_family_value es"
 proof -
-  obtain es cs where c: "finite_family_collection P n union_family B = Some (es,cs)" "v = finite_family_value es"
-    using assms by (auto simp: finite_registration_value_def union_registration_def finite_family_collected_some)
-  have "cs = []" by (rule union_collection_distinct(1)[OF c(1)])
+  obtain es cs where c: "finite_family_collection P n (union_family_at s a b) B = Some (es,cs)" "v = finite_family_value es"
+    using assms by (auto simp: finite_registration_value_def union_registration_at_def finite_family_collected_some)
+  have "cs = []" by (rule union_at_collection_distinct(1)[OF c(1)])
   then show ?thesis using that c by simp
 qed
 
-lemma union_value_distinct:
-  assumes collect: "finite_family_collection P n union_family B = Some (es,cs)"
+lemma union_at_value_distinct:
+  assumes collect: "finite_family_collection P n (union_family_at s a b) B = Some (es,cs)"
   shows "distinct (map (decode_finite_term \<circ> fst) es)"
-  using union_collection_distinct(2)[OF collect] by (auto simp: distinct_map inj_on_def)
+  using union_at_collection_distinct(2)[OF collect] by (auto simp: distinct_map inj_on_def)
 
-text \<open>(iii) Production: every value the registration returns is formed and a distinct list.\<close>
+lemma union_at_construction_value:
+  "witness_value (finite_collection_construction [union_registration_at d s S x a b] n) P d S B x =
+    finite_registration_value P n (union_registration_at d s S x a b) B"
+  using finite_collection_construction_value_at[where Rs = "[union_registration_at d s S x a b]" and
+    R = "union_registration_at d s S x a b"]
+  by (simp add: finite_registrations_distinct_def)
 
-theorem union_registration_produces:
-  "head_registration_produces (union_construction n) P 48 union_schema 2 union_class"
-  unfolding head_registration_produces_def union_construction_value
+theorem union_at_registration_produces:
+  "head_registration_produces (finite_collection_construction [union_registration_at d s S x a b] n) P d S x union_class"
+  unfolding head_registration_produces_def union_at_construction_value
 proof (intro allI impI)
-  fix B v assume val: "finite_registration_value P n union_registration B = Some v"
-  obtain es where c: "finite_family_collection P n union_family B = Some (es,[])" "v = finite_family_value es"
-    by (rule union_registration_collected[OF val])
+  fix B v assume val: "finite_registration_value P n (union_registration_at d s S x a b) B = Some v"
+  obtain es where c: "finite_family_collection P n (union_family_at s a b) B = Some (es,[])" "v = finite_family_value es"
+    by (rule union_at_registration_collected[OF val])
   have "union_class (decode_finite_term v)"
-    unfolding union_class_def c(2) finite_family_value_presents using union_value_distinct[OF c(1)] by blast
+    unfolding union_class_def c(2) finite_family_value_presents using union_at_value_distinct[OF c(1)] by blast
   then show "finite_term_formed v \<and> union_class (decode_finite_term v)"
     using finite_registration_value_formed[OF val] by simp
 qed
 
-text \<open>A base query answers exactly the members of the list its clause variable is bound to, by selection (5).\<close>
+text \<open>A base query answers exactly the members of the list its clause variable is bound to, by selection at its site.\<close>
 
-lemma union_query_holds:
-  assumes selection: "\<And>t. (5,t) \<in> positive_meaning (decode_finite_system P) \<longleftrightarrow>
+lemma union_at_query_holds:
+  assumes selection: "\<And>t. (s,t) \<in> positive_meaning (decode_finite_system P) \<longleftrightarrow>
       (5,t) \<in> positive_meaning bag_comparison_system"
     and list: "decode_finite_term (finite_binding_valuation B a) = data_list_term xs" and elements: "data_elements xs"
-  shows "finite_query_holds P (union_query a) B [] e \<longleftrightarrow> decode_finite_term e \<in> set xs"
+  shows "finite_query_holds P (union_query_at s a) B [] e \<longleftrightarrow> decode_finite_term e \<in> set xs"
 proof
-  assume "finite_query_holds P (union_query a) B [] e"
+  assume "finite_query_holds P (union_query_at s a) B [] e"
   then obtain t0 and \<theta> :: "nat \<Rightarrow> finite_factor_term" where t0: "finite_relation_option B a = Some t0"
     and el: "\<theta> 0 = e" and one: "\<theta> 1 = t0"
-    and goal: "(5,Pair_Term (decode_finite_term (\<theta> 0)) (Pair_Term (decode_finite_term (\<theta> 1))
+    and goal: "(s,Pair_Term (decode_finite_term (\<theta> 0)) (Pair_Term (decode_finite_term (\<theta> 1))
       (decode_finite_term (\<theta> 2)))) \<in> positive_meaning (decode_finite_system P)"
-    by (auto simp: finite_query_holds_def finite_query_inputs_def union_query_def split: option.splits)
+    by (auto simp: finite_query_holds_def finite_query_inputs_def union_query_at_def split: option.splits)
   have "(5,Pair_Term (decode_finite_term e) (Pair_Term (decode_finite_term t0) (decode_finite_term (\<theta> 2))))
       \<in> positive_meaning bag_comparison_system"
     using goal selection el one by simp
@@ -358,31 +367,32 @@ next
       \<in> positive_meaning bag_comparison_system"
     by (simp only: data_selection_exact) (use elements split in blast)
   define \<theta> where "\<theta> = (\<lambda>v::nat. if v = 0 then e else if v = 1 then t0 else finite_term_of (data_list_term (pre @ post)))"
-  show "finite_query_holds P (union_query a) B [] e"
+  show "finite_query_holds P (union_query_at s a) B [] e"
     unfolding finite_query_holds_def
     by (rule exI[of _ "[(t0,Finite_Variable 1)]"], rule exI[of _ \<theta>])
-      (use t0 sel dr dt0 selection in \<open>simp add: finite_query_inputs_def union_query_def \<theta>_def\<close>)
+      (use t0 sel dr dt0 selection in \<open>simp add: finite_query_inputs_def union_query_at_def \<theta>_def\<close>)
 qed
 
 text \<open>The value at two bound lists is the distinct union of their elements, the answer 48's clause checks.\<close>
 
-theorem union_registration_union:
-  assumes selection: "\<And>t. (5,t) \<in> positive_meaning (decode_finite_system P) \<longleftrightarrow>
+theorem union_at_registration_union:
+  assumes selection: "\<And>t. (s,t) \<in> positive_meaning (decode_finite_system P) \<longleftrightarrow>
       (5,t) \<in> positive_meaning bag_comparison_system"
-    and valued: "finite_registration_value P n union_registration B = Some v"
-    and first: "decode_finite_term (finite_binding_valuation B 0) = data_list_term xs" "data_elements xs"
-    and second: "decode_finite_term (finite_binding_valuation B 1) = data_list_term ys" "data_elements ys"
+    and valued: "finite_registration_value P n (union_registration_at d s S x a b) B = Some v"
+    and first: "decode_finite_term (finite_binding_valuation B a) = data_list_term xs" "data_elements xs"
+    and second: "decode_finite_term (finite_binding_valuation B b) = data_list_term ys" "data_elements ys"
   shows "\<exists>zs. decode_finite_term v = data_list_term zs \<and> data_elements zs \<and> distinct zs \<and> set zs = set xs \<union> set ys"
 proof -
-  obtain es where c: "finite_family_collection P n union_family B = Some (es,[])" "v = finite_family_value es"
-    by (rule union_registration_collected[OF valued])
-  have exact: "fst ` set es = (finite_family_step_answers P union_family B)\<^sup>* `` finite_family_base_answers P union_family B"
-    by (rule finite_family_collection_exact[OF c(1)]) (simp add: union_family_def)
-  have step: "finite_family_step_answers P union_family B = {}"
-    by (simp add: finite_family_step_answers_def union_family_def)
-  have base: "finite_family_base_answers P union_family B = {e. decode_finite_term e \<in> set xs \<union> set ys}"
-    by (auto simp: finite_family_base_answers_def union_family_def union_query_holds[OF selection first]
-      union_query_holds[OF selection second] union_query_holds[OF selection second, unfolded One_nat_def])
+  obtain es where c: "finite_family_collection P n (union_family_at s a b) B = Some (es,[])" "v = finite_family_value es"
+    by (rule union_at_registration_collected[OF valued])
+  have exact: "fst ` set es = (finite_family_step_answers P (union_family_at s a b) B)\<^sup>* ``
+      finite_family_base_answers P (union_family_at s a b) B"
+    by (rule finite_family_collection_exact[OF c(1)]) (simp add: union_family_at_def)
+  have step: "finite_family_step_answers P (union_family_at s a b) B = {}"
+    by (simp add: finite_family_step_answers_def union_family_at_def)
+  have base: "finite_family_base_answers P (union_family_at s a b) B = {e. decode_finite_term e \<in> set xs \<union> set ys}"
+    by (auto simp: finite_family_base_answers_def union_family_at_def union_at_query_holds[OF selection first]
+      union_at_query_holds[OF selection second])
   have found: "fst ` set es = {e. decode_finite_term e \<in> set xs \<union> set ys}" using exact step base by simp
   have set: "set (map (decode_finite_term \<circ> fst) es) = set xs \<union> set ys"
   proof
@@ -401,8 +411,164 @@ proof -
     using c(2) by (simp only: finite_family_value_presents)
   show ?thesis
     by (rule exI[of _ "map (decode_finite_term \<circ> fst) es"])
-      (use v elements set union_value_distinct[OF c(1)] first(2) second(2) in auto)
+      (use v elements set union_at_value_distinct[OF c(1)] first(2) second(2) in auto)
 qed
+
+theorem union_at_registration_checked:
+  assumes selection: "\<And>t. (s,t) \<in> positive_meaning (decode_finite_system P) \<longleftrightarrow>
+      (5,t) \<in> positive_meaning bag_comparison_system"
+    and valued: "finite_registration_value P n (union_registration_at d s S x a b) B = Some v"
+    and first: "decode_finite_term (finite_binding_valuation B a) = data_list_term xs" "data_elements xs"
+    and second: "decode_finite_term (finite_binding_valuation B b) = data_list_term ys" "data_elements ys"
+  shows "(48,collection_join_argument (data_list_term xs) (data_list_term ys) (decode_finite_term v))
+    \<in> positive_meaning data_union_system"
+  using union_at_registration_union[OF selection valued first second] first(2) second(2)
+  by (auto simp: data_union_lists)
+
+text \<open>
+  The answer step, stated once for every answer lemma: a registration's value at bindings whose two selected values are the components of a
+  viewed input is, with that input, the view of a true call wherever the site means 48's union and the query site
+  selection. Every answer lemma below consumes it.
+\<close>
+
+lemma union_at_answer_step:
+  fixes M :: "('d \<times> factor_term) set"
+  assumes union: "\<And>t. (d,t) \<in> M \<longleftrightarrow> (48,t) \<in> positive_meaning data_union_system"
+    and selection: "\<And>t. (s,t) \<in> positive_meaning (decode_finite_system P) \<longleftrightarrow>
+      (5,t) \<in> positive_meaning bag_comparison_system"
+    and valued: "finite_registration_value P n (union_registration_at d0 s S0 x0 a b) B = Some v"
+    and input: "y = Pair_Term (decode_finite_term (finite_binding_valuation B a))
+      (decode_finite_term (finite_binding_valuation B b))"
+    and holds: "(d,t) \<in> M" and view: "resolution_view_term join_view t = Some (y,z)"
+  shows "\<exists>t'. (d,t') \<in> M \<and> resolution_view_term join_view t' = Some (y,decode_finite_term v)"
+proof -
+  obtain a' b' where t: "t = Pair_Term a' (Pair_Term b' z)" and y: "y = Pair_Term a' b'"
+    using view by (auto simp: join_view_term)
+  obtain xs ys where lists: "a' = data_list_term xs" "b' = data_list_term ys" "data_elements xs" "data_elements ys"
+    using holds union t unfolding data_union_exact by auto
+  have first: "decode_finite_term (finite_binding_valuation B a) = data_list_term xs"
+    and second: "decode_finite_term (finite_binding_valuation B b) = data_list_term ys"
+    using input y lists(1,2) by simp_all
+  have "(d,Pair_Term a' (Pair_Term b' (decode_finite_term v))) \<in> M"
+    using union_at_registration_checked[OF selection valued first lists(3) second lists(4)] union lists(1,2) by simp
+  moreover have "resolution_view_term join_view (Pair_Term a' (Pair_Term b' (decode_finite_term v))) =
+      Some (y,decode_finite_term v)"
+    using y by (simp add: join_view_term)
+  ultimately show ?thesis by blast
+qed
+
+text \<open>
+  The value is an answer at the registration's site wherever that site means 48's union: the head's input at the
+  bindings is the pair of the two selected lists (@{text input}), and the value their distinct union.
+\<close>
+
+theorem union_at_registration_answers:
+  fixes M :: "('d \<times> factor_term) set"
+  assumes union: "\<And>t. (d,t) \<in> M \<longleftrightarrow> (48,t) \<in> positive_meaning data_union_system"
+    and selection: "\<And>t. (s,t) \<in> positive_meaning (decode_finite_system P) \<longleftrightarrow>
+      (5,t) \<in> positive_meaning bag_comparison_system"
+    and input: "\<And>B. head_registration_input join_view S B = Some (Pair_Term
+      (decode_finite_term (finite_binding_valuation B a)) (decode_finite_term (finite_binding_valuation B b)))"
+  shows "head_registration_answers M (finite_collection_construction [union_registration_at d s S x a b] n) P d S
+    join_view x"
+  unfolding head_registration_answers_def union_at_construction_value
+proof (intro allI impI)
+  fix B v y t z
+  assume valued: "finite_registration_value P n (union_registration_at d s S x a b) B = Some v"
+    and inp: "head_registration_input join_view S B = Some y"
+    and holds: "(d,t) \<in> M" and view: "resolution_view_term join_view t = Some (y,z)"
+  have "y = Pair_Term (decode_finite_term (finite_binding_valuation B a)) (decode_finite_term (finite_binding_valuation B b))"
+    using inp input[of B] by simp
+  then show "\<exists>t'. (d,t') \<in> M \<and> resolution_view_term join_view t' = Some (y,decode_finite_term v)"
+    by (rule union_at_answer_step[OF union selection valued _ holds view])
+qed
+
+section \<open>The registration at 48.0's head variable\<close>
+
+definition union_query :: "nat \<Rightarrow> (nat,nat,nat) collection_query" where
+  "union_query a = \<lparr>query_equations = [(a,Finite_Variable 1)], query_site = 5,
+    query_goal = Finite_Pattern_Pair (Finite_Variable 0) (Finite_Pattern_Pair (Finite_Variable 1) (Finite_Variable 2)),
+    query_element = 0\<rparr>"
+
+definition union_family :: "(nat,nat,nat) collection_family" where
+  "union_family = \<lparr>family_base = [union_query 0,union_query 1], family_step = None,
+    family_key = (Finite_Variable 0,0), family_identity = None\<rparr>"
+
+definition union_registration :: "(nat,nat,nat,nat) collection_registration" where
+  "union_registration = \<lparr>registration_site = 48, registration_schema = union_schema, registration_variable = 2,
+    registration_families = Single_Family union_family\<rparr>"
+
+lemma union_query_instance: "union_query a = union_query_at 5 a"
+  by (simp add: union_query_def union_query_at_def)
+
+lemma union_family_instance: "union_family = union_family_at 5 0 1"
+  by (simp add: union_family_def union_family_at_def union_query_instance)
+
+lemma union_registration_instance: "union_registration = union_registration_at 48 5 union_schema 2 0 1"
+  by (simp add: union_registration_def union_registration_at_def union_family_instance)
+
+abbreviation union_construction :: "nat \<Rightarrow> (nat,nat,nat,'c) finite_witness_construction" where
+  "union_construction n \<equiv> finite_collection_construction [union_registration] n"
+
+lemma union_head_registration: "head_registration join_view union_schema 2"
+  by (simp add: head_registration_def join_view_formed union_schema_def socket_listed_simps)
+
+lemma union_registration_input:
+  "head_registration_input join_view union_schema B =
+    Some (Pair_Term (decode_finite_term (finite_binding_valuation B 0)) (decode_finite_term (finite_binding_valuation B 1)))"
+  by (simp add: head_registration_input_def union_schema_def socket_listed_simps)
+
+lemma union_construction_value:
+  "witness_value (union_construction n) P 48 union_schema B 2 = finite_registration_value P n union_registration B"
+  unfolding union_registration_instance by (rule union_at_construction_value)
+
+lemma union_family_key: "finite_family_key union_family e = Some e"
+  unfolding union_family_instance by (rule union_at_family_key)
+
+lemma union_collection_distinct:
+  assumes collect: "finite_family_collection P n union_family B = Some (es,cs)"
+  shows "cs = []" "distinct (map fst es)"
+  using union_at_collection_distinct[OF collect[unfolded union_family_instance]] by simp_all
+
+lemma union_registration_collected:
+  assumes "finite_registration_value P n union_registration B = Some v"
+  obtains es where "finite_family_collection P n union_family B = Some (es,[])" "v = finite_family_value es"
+proof -
+  obtain es where "finite_family_collection P n (union_family_at 5 0 1) B = Some (es,[])" "v = finite_family_value es"
+    by (rule union_at_registration_collected[OF assms[unfolded union_registration_instance]])
+  then show ?thesis using that unfolding union_family_instance by blast
+qed
+
+lemma union_value_distinct:
+  assumes collect: "finite_family_collection P n union_family B = Some (es,cs)"
+  shows "distinct (map (decode_finite_term \<circ> fst) es)"
+  by (rule union_at_value_distinct[OF collect[unfolded union_family_instance]])
+
+text \<open>(iii) Production: every value the registration returns is formed and a distinct list.\<close>
+
+theorem union_registration_produces:
+  "head_registration_produces (union_construction n) P 48 union_schema 2 union_class"
+  unfolding union_registration_instance by (rule union_at_registration_produces)
+
+text \<open>A base query answers exactly the members of the list its clause variable is bound to, by selection (5).\<close>
+
+lemma union_query_holds:
+  assumes selection: "\<And>t. (5,t) \<in> positive_meaning (decode_finite_system P) \<longleftrightarrow>
+      (5,t) \<in> positive_meaning bag_comparison_system"
+    and list: "decode_finite_term (finite_binding_valuation B a) = data_list_term xs" and elements: "data_elements xs"
+  shows "finite_query_holds P (union_query a) B [] e \<longleftrightarrow> decode_finite_term e \<in> set xs"
+  unfolding union_query_instance by (rule union_at_query_holds[OF selection list elements])
+
+text \<open>The value at two bound lists is the distinct union of their elements, the answer 48's clause checks.\<close>
+
+theorem union_registration_union:
+  assumes selection: "\<And>t. (5,t) \<in> positive_meaning (decode_finite_system P) \<longleftrightarrow>
+      (5,t) \<in> positive_meaning bag_comparison_system"
+    and valued: "finite_registration_value P n union_registration B = Some v"
+    and first: "decode_finite_term (finite_binding_valuation B 0) = data_list_term xs" "data_elements xs"
+    and second: "decode_finite_term (finite_binding_valuation B 1) = data_list_term ys" "data_elements ys"
+  shows "\<exists>zs. decode_finite_term v = data_list_term zs \<and> data_elements zs \<and> distinct zs \<and> set zs = set xs \<union> set ys"
+  by (rule union_at_registration_union[OF selection valued[unfolded union_registration_instance] first second])
 
 theorem union_registration_checked:
   assumes selection: "\<And>t. (5,t) \<in> positive_meaning (decode_finite_system P) \<longleftrightarrow>
@@ -412,8 +578,7 @@ theorem union_registration_checked:
     and second: "decode_finite_term (finite_binding_valuation B 1) = data_list_term ys" "data_elements ys"
   shows "(48,collection_join_argument (data_list_term xs) (data_list_term ys) (decode_finite_term v))
     \<in> positive_meaning data_union_system"
-  using union_registration_union[OF selection valued first second] first(2) second(2)
-  by (auto simp: data_union_lists)
+  by (rule union_at_registration_checked[OF selection valued[unfolded union_registration_instance] first second])
 
 text \<open>
   The value is an answer of 48 wherever 48 has one at the same input. The proof reads the head's view and the two
@@ -436,6 +601,15 @@ lemma union_variant_input:
       (decode_finite_term (finite_binding_valuation B (f 1))))"
   by (simp add: head_registration_input_def finite_rename_schema_def union_schema_def socket_listed_simps)
 
+lemma union_variant_head_registration:
+  assumes "inj_on f {0,1,2}"
+  shows "head_registration join_view (finite_rename_schema f h g union_schema) (f 2)"
+proof -
+  have "f 2 \<noteq> f 0" "f 2 \<noteq> f 1" using assms by (auto simp: inj_on_def)
+  then show ?thesis
+    by (simp add: head_registration_def join_view_formed finite_rename_schema_def union_schema_def socket_listed_simps)
+qed
+
 theorem union_registration_answers_variant:
   fixes M :: "('d \<times> factor_term) set"
   assumes union: "\<And>t. (d,t) \<in> M \<longleftrightarrow> (48,t) \<in> positive_meaning data_union_system"
@@ -456,21 +630,10 @@ proof (intro allI impI)
       "finite_binding_valuation B0 0 = finite_binding_valuation B (f 0)"
       "finite_binding_valuation B0 1 = finite_binding_valuation B (f 1)"
     using carried[OF valued] by blast
-  obtain a' b where t: "t = Pair_Term a' (Pair_Term b y)" and x: "x = Pair_Term a' b"
-    using view by (auto simp: join_view_term)
-  obtain xs ys where lists: "a' = data_list_term xs" "b = data_list_term ys" "data_elements xs" "data_elements ys"
-    using holds union t unfolding data_union_exact by auto
   have "x = Pair_Term (decode_finite_term (finite_binding_valuation B0 0)) (decode_finite_term (finite_binding_valuation B0 1))"
     using input B0(2,3) by (simp add: union_variant_input)
-  then have first: "decode_finite_term (finite_binding_valuation B0 0) = data_list_term xs"
-    and second: "decode_finite_term (finite_binding_valuation B0 1) = data_list_term ys"
-    using x lists(1,2) by simp_all
-  have "(d,Pair_Term a' (Pair_Term b (decode_finite_term v))) \<in> M"
-    using union_registration_checked[OF selection B0(1) first lists(3) second lists(4)] union lists(1,2) by simp
-  moreover have "resolution_view_term join_view (Pair_Term a' (Pair_Term b (decode_finite_term v))) =
-      Some (x,decode_finite_term v)"
-    using x by (simp add: join_view_term)
-  ultimately show "\<exists>t'. (d,t') \<in> M \<and> resolution_view_term join_view t' = Some (x,decode_finite_term v)" by blast
+  then show "\<exists>t'. (d,t') \<in> M \<and> resolution_view_term join_view t' = Some (x,decode_finite_term v)"
+    by (rule union_at_answer_step[OF union selection B0(1)[unfolded union_registration_instance] _ holds view])
 qed
 
 theorem union_registration_answers:
@@ -479,18 +642,8 @@ theorem union_registration_answers:
     and selection: "\<And>t. (5,t) \<in> positive_meaning (decode_finite_system P) \<longleftrightarrow>
       (5,t) \<in> positive_meaning bag_comparison_system"
   shows "head_registration_answers M (union_construction n) P 48 union_schema join_view 2"
-proof -
-  have "head_registration_answers M (union_construction n) P 48 (finite_rename_schema id id id union_schema) join_view 2"
-  proof (rule union_registration_answers_variant[OF union selection])
-    fix B v
-    assume "witness_value (union_construction n) P 48 (finite_rename_schema id id id union_schema) B 2 = Some v"
-    then show "\<exists>B0. finite_registration_value P n union_registration B0 = Some v \<and>
-        finite_binding_valuation B0 0 = finite_binding_valuation B (id 0) \<and>
-        finite_binding_valuation B0 1 = finite_binding_valuation B (id 1)"
-      by (simp only: finite_rename_schema_ident union_construction_value id_apply) blast
-  qed
-  then show ?thesis by (simp only: finite_rename_schema_ident)
-qed
+  unfolding union_registration_instance
+  by (rule union_at_registration_answers[OF union selection union_registration_input])
 
 text \<open>
   Completeness at a narrowed socket of 48 read at @{const join_view}: every true instance of the caller clause extends

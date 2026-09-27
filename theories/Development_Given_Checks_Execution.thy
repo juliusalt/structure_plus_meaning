@@ -1,5 +1,5 @@
 theory Development_Given_Checks_Execution
-  imports Development_Given_Productions_Execution Factor_Resolution_Checks Factor_Shared_Resolution
+  imports Development_Given_Productions Development_Given_Execution_Fixtures Factor_Resolution_Checks Factor_Shared_Resolution
     Factor_Shared_Commitments Factor_Shared_Search Factor_Indexed_Resolution Factor_Resolution_Graph_Checks
     Native_Execution_Refinements "HOL-Library.Product_Plus"
 begin

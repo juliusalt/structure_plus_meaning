@@ -1965,6 +1965,7 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Development_First_Request_Registrations
     Development_Given_Modes
     Development_Given_Execution_Fixtures
+    Factor_Deferred_Search_Controls
     Development_Given_Modes_Execution
     Factor_Check_Controls
     Development_Given_Productions_Execution

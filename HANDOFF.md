@@ -55,9 +55,9 @@ from the graph alone, exact at a valid table and sound where its calls are true;
 certificates) and GT4c #883 (`2e988a42`: the graph reading at found states under the entries' calls' truth,
 `finite_table_true`; the indexed check over a reach; one fold checking and producing the table; its review's 1–2
 mailed to GT2, 3 to GT3, 4 to GT6, 5 next-edits 370) → GT2, divided by q158 within a build's room: GT2a #843 (the
-committed search's lemmas at a table with a closed-goal step, R5's committed forms, the exchange and lifting premises at
-a table, exact from their premises, the table read by its calls alone at the searches; its item (12) hands over what
-the other two consume) → side by side GT2c #888 (K2's check forms and rc's forms at a table, the named instance at the
+committed search, its forms, exchange and lifting at a table, landed `7d686653`: every `_in` name takes the table and
+today's names are its instances at the empty table, six `_def` facts are now `_in_def`; its hand-over,
+`.build/tasks/843/result.md` Remains, says what the other two consume; no check form at a table, GT2c's) → side by side GT2c #888 (K2's check forms and rc's forms at a table, the named instance at the
 installed program, the table's and the forms' transfers, next-edits 317, review 824's 4) and GT2b #889 (every discharge
 of the exchange and OS1's open premise at a table); GT5 #845 (the given's table) after GT2c, W5 #847 after GT2a and
 GT2c, R7 #542 and the first request #547 after GT2b; GT3 #876 (the table in F2's shared representation, after GT2c, GT4
@@ -133,10 +133,10 @@ digit layout, the rule programs' law, the shared-subterm engine (B1–B6), the e
 under Open and in `.build/plans/next-edits.md`.
 
 **Shape and order.** No build waits on a review. The longest chain, 13 deep: D1c #901 → D1b #903 → D1d #905 → GT3
-#876 → GT6 #878 → R7 #542 → #707 → #399 → #709 → #553 → #447 → #449 → #450, and GT2a #843 → GT2c #888 → D1d → … as long,
+#876 → GT6 #878 → R7 #542 → #707 → #399 → #709 → #553 → #447 → #449 → #450, and GT2c #888 → D1d → … one shorter,
 D1's builds and GT2's division spliced as detail; nothing is added after its tail until it shortens (the approval build,
 Open 142, waits for that). The queue is the planner's choice, a residual until the selection problem's native answer
-(Q2): running tasks first, the design D2 #907, the fix #908, GT2a's review, D1c, D1a, GT2c, D1b, FI and D1d each with
+(Q2): running tasks first, the design D2 #907, the fix #908, D1c, D1a, GT2c, D1b, FI and D1d each with
 its review,
 GT2b, #875, the route in
 its chains' order, the consolidation #887 after GT6's review (nothing waits on it). Word changes are serialized; none is
@@ -409,13 +409,11 @@ a theory before briefing a task that edits it.
 
 ## Now
 
-- **Under way**: GT2a #843, continued from its tree (review 844's fix made probe-clean, its hand-over (12)); D1c #901
-  and D1a #899; the design D2 #907 (F1's waiting class, #896's finding; review 898's 4 mailed); the fix #908 (review
-  898's 2–3); FI #892 after D1c (review 891's 3 and 4, plan-127's mail); GT2c #888 and GT2b #889 after GT2a, each mailed
-  review 844's follow-up.
-- **What the next events ask**: GT2a's hand-over (its item (12)): what GT2b and GT2c consume, and whether it stated the
-  check forms' definitions at a table (GT3 stays after GT2c through D1d, which edits `Factor_Resolution_Checks` after
-  it); GT2c's answer on
+- **Under way**: D1c #901 and D1a #899; the design D2 #907 (F1's waiting class, #896's finding; review 898's 4, GT2a's
+  `_in_def` names and its closed-goal note mailed); the fix #908 (review 898's 2–3); GT2c #888 and GT2b #889, startable
+  since GT2a landed (review 844's follow-ups and GT2a's hand-over mailed); FI #892 after D1c (review 891's 3 and 4,
+  plan-127's mail).
+- **What the next events ask**: GT2c's answer on
   `finite_table_true` at the relocated table (#883's review 1: else the formation-only form is placed); GT6's prediction
   and worker count from #875 before its run, with the checking fold measured at samples; #709's brief rewritten before it
   starts; D2 #907's builds placed from its table before #542 and #547, their edges to D2 re-pointed. Q33 is the owner's.

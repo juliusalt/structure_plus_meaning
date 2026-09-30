@@ -606,7 +606,7 @@ qed
 section \<open>The native readers of the package at a site of an extension\<close>
 
 text \<open>
-  Eleven ordinary definitions, at 955 to 965 above every numbered site of the library and views over package
+  Twelve ordinary definitions, at 955 to 966 above every numbered site of the library and views over package
   membership (83), read G2 at the pair of the given's site value and the additions. 955 and 956 check a
   proposed least environment's rows: each is an added row (47 over the added rows) or a row of the given (37 at
   the given's value). 957 admits the proposed least environment (26), its rows so checked and its binding rows any
@@ -625,8 +625,9 @@ text \<open>
   a given site package admission at the given's value (80). The least environment is premise-only at 961, produced
   by 957 from the given and the additions alone; the roots are produced by 79; the bound is premise-only at 960.
   Each is handed in, never produced by these clauses. 965 reads a row of the least environment, at the given, the
-  additions and the added site's use: a row 955 admits whose use is the site's or a source or a target of an added
-  binding row (5 over the added binding rows); the least environment's rows are collected as its rows.
+  additions and the added site's use: a stored row (966: a member of the added rows, 47, or a row 5 selects from the
+  given's artifact table) whose use is the site's or a source or a target of an added binding row (5 over the added
+  binding rows); the least environment's rows are collected as its rows, each the stored row at its use.
 \<close>
 
 definition extension_row_added_schema :: "(nat,nat,nat) factor_schema" where
@@ -707,12 +708,19 @@ definition extension_given_site_schema :: "(nat,nat,nat) factor_schema" where
 definition extension_package_clauses :: "(nat \<times> (nat,nat,nat) factor_schema) set" where
   "extension_package_clauses={(0,extension_added_site_schema),(1,extension_given_site_schema)}"
 
+definition stored_row_given_schema :: "(nat,nat,nat) factor_schema" where
+  "stored_row_given_schema=data_rule (Pattern_Pair (Pattern_Pair (Pattern_Pair data_x data_w) data_y) data_z)
+    {(0,5,Pattern_Pair data_z (Pattern_Pair data_x (Pattern_Variable 4)))}"
+
+definition stored_row_clauses :: "(nat \<times> (nat,nat,nat) factor_schema) set" where
+  "stored_row_clauses={(0,extension_row_added_schema),(1,stored_row_given_schema)}"
+
 abbreviation least_row_pattern :: "nat term_pattern \<Rightarrow> nat term_pattern" where
   "least_row_pattern v \<equiv> Pattern_Pair (Pattern_Pair (Pattern_Pair data_x data_y) (Pattern_Pair data_z data_w))
     (Pattern_Pair v (Pattern_Variable 5))"
 
 abbreviation least_row_premise :: "nat term_pattern \<Rightarrow> nat \<times> nat \<times> nat term_pattern" where
-  "least_row_premise v \<equiv> (0,955,Pattern_Pair (Pattern_Pair data_x data_y) (Pattern_Pair v (Pattern_Variable 5)))"
+  "least_row_premise v \<equiv> (0,966,Pattern_Pair (Pattern_Pair data_x data_y) (Pattern_Pair v (Pattern_Variable 5)))"
 
 definition least_row_site_schema :: "(nat,nat,nat) factor_schema" where
   "least_row_site_schema=data_rule (least_row_pattern data_w) {least_row_premise data_w}"
@@ -757,8 +765,11 @@ definition bounded_closure_system :: "(nat,nat,nat,nat) schema_system" where
 definition added_site_system :: "(nat,nat,nat,nat) schema_system" where
   "added_site_system=add_view_definition bounded_closure_system 964 data_x {(0,added_site_schema)}"
 
+definition stored_row_system :: "(nat,nat,nat,nat) schema_system" where
+  "stored_row_system=add_view_definition added_site_system 966 data_x stored_row_clauses"
+
 definition least_row_system :: "(nat,nat,nat,nat) schema_system" where
-  "least_row_system=add_view_definition added_site_system 965 data_x least_row_clauses"
+  "least_row_system=add_view_definition stored_row_system 965 data_x least_row_clauses"
 
 definition extension_package_system :: "(nat,nat,nat,nat) schema_system" where
   "extension_package_system=add_view_definition least_row_system 961 data_x extension_package_clauses"
@@ -769,6 +780,7 @@ lemmas extension_package_schema_defs = extension_row_clauses_def extension_row_a
   bounded_closure_schema_def extension_package_clauses_def added_site_schema_def extension_added_site_schema_def
   extension_given_site_schema_def context_list_clauses_def context_list_nil_schema_def context_list_step_schema_def
   least_row_clauses_def least_row_site_schema_def least_row_source_schema_def least_row_target_schema_def
+  stored_row_clauses_def stored_row_given_schema_def
 
 lemma extension_row_system_formed [simp]: "schema_system_formed extension_row_system"
   unfolding extension_row_system_def
@@ -860,14 +872,24 @@ lemma added_site_definitions [simp]:
   "system_definitions added_site_system=insert 964 (system_definitions bounded_closure_system)"
   by (simp add: added_site_system_def)
 
-lemma least_row_system_formed [simp]: "schema_system_formed least_row_system"
-  unfolding least_row_system_def
+lemma stored_row_system_formed [simp]: "schema_system_formed stored_row_system"
+  unfolding stored_row_system_def
   by (rule add_recursive_definition_formed[OF added_site_system_formed])
     (auto simp: extension_package_schema_defs
       schema_formed_def schema_dependencies_def single_valued_def rel_dom_def rel_ran_def octets_formed_def)
 
+lemma stored_row_definitions [simp]:
+  "system_definitions stored_row_system=insert 966 (system_definitions added_site_system)"
+  by (simp add: stored_row_system_def)
+
+lemma least_row_system_formed [simp]: "schema_system_formed least_row_system"
+  unfolding least_row_system_def
+  by (rule add_recursive_definition_formed[OF stored_row_system_formed])
+    (auto simp: extension_package_schema_defs
+      schema_formed_def schema_dependencies_def single_valued_def rel_dom_def rel_ran_def octets_formed_def)
+
 lemma least_row_definitions [simp]:
-  "system_definitions least_row_system=insert 965 (system_definitions added_site_system)"
+  "system_definitions least_row_system=insert 965 (system_definitions stored_row_system)"
   by (simp add: least_row_system_def)
 
 lemma extension_package_system_formed [simp]: "schema_system_formed extension_package_system"
@@ -934,10 +956,16 @@ lemma added_site_call:
     added_site_system_formed[unfolded added_site_system_def] bounded_closure_call]
   by (simp only: added_site_system_def[symmetric])
 
+lemma stored_row_call:
+  "schema_call_formed stored_row_system d t \<longleftrightarrow> d\<in>system_definitions stored_row_system \<and> term_formed t"
+  using added_variable_calls[OF added_site_system_formed
+    stored_row_system_formed[unfolded stored_row_system_def] added_site_call]
+  by (simp only: stored_row_system_def[symmetric])
+
 lemma least_row_call:
   "schema_call_formed least_row_system d t \<longleftrightarrow> d\<in>system_definitions least_row_system \<and> term_formed t"
-  using added_variable_calls[OF added_site_system_formed
-    least_row_system_formed[unfolded least_row_system_def] added_site_call]
+  using added_variable_calls[OF stored_row_system_formed
+    least_row_system_formed[unfolded least_row_system_def] stored_row_call]
   by (simp only: least_row_system_def[symmetric])
 
 lemma extension_package_call:
@@ -986,15 +1014,19 @@ proof -
     using added_definition_preserves_old(2)[OF bounded_closure_system_formed
       added_site_system_formed[unfolded added_site_system_def], of d t] old
     by (auto simp: added_site_system_def)
-  have step6c: "(d,t)\<in>positive_meaning least_row_system \<longleftrightarrow> (d,t)\<in>positive_meaning added_site_system"
+  have step6s: "(d,t)\<in>positive_meaning stored_row_system \<longleftrightarrow> (d,t)\<in>positive_meaning added_site_system"
     using added_definition_preserves_old(2)[OF added_site_system_formed
+      stored_row_system_formed[unfolded stored_row_system_def], of d t] old
+    by (auto simp: stored_row_system_def)
+  have step6c: "(d,t)\<in>positive_meaning least_row_system \<longleftrightarrow> (d,t)\<in>positive_meaning stored_row_system"
+    using added_definition_preserves_old(2)[OF stored_row_system_formed
       least_row_system_formed[unfolded least_row_system_def], of d t] old
     by (auto simp: least_row_system_def)
   have step7: "(d,t)\<in>positive_meaning extension_package_system \<longleftrightarrow> (d,t)\<in>positive_meaning least_row_system"
     using added_definition_preserves_old(2)[OF least_row_system_formed
       extension_package_system_formed[unfolded extension_package_system_def], of d t] old
     by (auto simp: extension_package_system_def)
-  show ?thesis using step1 step2 step3 step3a step3b step4 step5 step6 step6b step6c step7 by simp
+  show ?thesis using step1 step2 step3 step3a step3b step4 step5 step6 step6b step6s step6c step7 by simp
 qed
 
 lemma extension_package_components:
@@ -1062,10 +1094,11 @@ lemma extension_package_families:
   "((963,c),S)\<in>system_clauses extension_package_system \<longleftrightarrow> (c,S)\<in>context_list_clauses 962 963"
   "((964,c),S)\<in>system_clauses extension_package_system \<longleftrightarrow> c=0 \<and> S=added_site_schema"
   "((965,c),S)\<in>system_clauses extension_package_system \<longleftrightarrow> (c,S)\<in>least_row_clauses"
+  "((966,c),S)\<in>system_clauses extension_package_system \<longleftrightarrow> (c,S)\<in>stored_row_clauses"
 proof -
   have owned: "((d,c),S)\<in>system_clauses package_membership_system \<Longrightarrow> d\<in>system_definitions package_membership_system"
     for d c S using package_membership_system_formed unfolding schema_system_formed_def by blast
-  have absent: "((d,c),S)\<notin>system_clauses package_membership_system" if "d\<in>{955,956,957,958,959,960,961,962,963,964,965}" for d c S
+  have absent: "((d,c),S)\<notin>system_clauses package_membership_system" if "d\<in>{955,956,957,958,959,960,961,962,963,964,965,966}" for d c S
     using that by (auto dest: owned)
   show "((955,c),S)\<in>system_clauses extension_package_system \<longleftrightarrow> (c,S)\<in>extension_row_clauses"
     "((956,c),S)\<in>system_clauses extension_package_system \<longleftrightarrow> (c,S)\<in>context_list_clauses 955 956"
@@ -1078,7 +1111,8 @@ proof -
     "((963,c),S)\<in>system_clauses extension_package_system \<longleftrightarrow> (c,S)\<in>context_list_clauses 962 963"
     "((964,c),S)\<in>system_clauses extension_package_system \<longleftrightarrow> c=0 \<and> S=added_site_schema"
     "((965,c),S)\<in>system_clauses extension_package_system \<longleftrightarrow> (c,S)\<in>least_row_clauses"
-    using absent by (auto simp: extension_package_system_def least_row_system_def added_site_system_def bounded_closure_system_def bounded_members_system_def
+    "((966,c),S)\<in>system_clauses extension_package_system \<longleftrightarrow> (c,S)\<in>stored_row_clauses"
+    using absent by (auto simp: extension_package_system_def least_row_system_def stored_row_system_def added_site_system_def bounded_closure_system_def bounded_members_system_def
       bounded_member_system_def source_absences_system_def source_absence_system_def least_environment_system_def extension_rows_system_def extension_row_system_def)
 qed
 
@@ -1482,11 +1516,76 @@ next
   qed
 qed
 
+lemma stored_row_raw:
+  "(966,t)\<in>positive_meaning extension_package_system \<longleftrightarrow> (\<exists>g a x. t=Pair_Term (Pair_Term g a) x \<and>
+    term_formed g \<and> term_formed a \<and> term_formed x \<and>
+    ((47,Pair_Term (Pair_Term x (Payload_Term [])) a)\<in>positive_meaning data_subset_system \<or>
+     (\<exists>gw gb rest. g=Pair_Term gw gb \<and> term_formed rest \<and>
+       (5,Pair_Term x (Pair_Term gw rest))\<in>positive_meaning bag_comparison_system)))" (is "?lhs \<longleftrightarrow> ?rhs")
+proof
+  assume ?lhs
+  then obtain c S f where clause: "((966,c),S)\<in>system_clauses extension_package_system"
+    and vars: "\<forall>a\<in>schema_variables S. term_formed (f a)" and conclusion: "t=evaluate_pattern f (schema_conclusion S)"
+    and support: "\<forall>s e p. (s,e,p)\<in>schema_premises S \<longrightarrow> (e,evaluate_pattern f p)\<in>positive_meaning extension_package_system"
+    by (blast dest: extension_package_valuation)
+  have family: "(c,S)\<in>stored_row_clauses" using clause by (simp add: extension_package_families)
+  then consider "S=extension_row_added_schema" | "S=stored_row_given_schema" by (auto simp: stored_row_clauses_def)
+  then show ?rhs
+  proof cases
+    case 1
+    have "term_formed (f 0) \<and> term_formed (f 1) \<and> term_formed (f 2) \<and> t=Pair_Term (Pair_Term (f 0) (f 1)) (f 2) \<and>
+      (47,Pair_Term (Pair_Term (f 2) (Payload_Term [])) (f 1))\<in>positive_meaning data_subset_system"
+      using vars conclusion support
+      by (auto simp: 1 extension_row_added_schema_def schema_variables_def extension_package_components)
+    then show ?thesis by blast
+  next
+    case 2
+    have parts: "term_formed (f 0)" "term_formed (f 1)" "term_formed (f 2)" "term_formed (f 3)" "term_formed (f 4)"
+      "t=Pair_Term (Pair_Term (Pair_Term (f 0) (f 3)) (f 1)) (f 2)"
+      "(5,Pair_Term (f 2) (Pair_Term (f 0) (f 4)))\<in>positive_meaning bag_comparison_system"
+      using vars conclusion support
+      by (auto simp: 2 stored_row_given_schema_def schema_variables_def extension_package_components)
+    have given_row: "\<exists>gw gb rest. Pair_Term (f 0) (f 3)=Pair_Term gw gb \<and> term_formed rest \<and>
+        (5,Pair_Term (f 2) (Pair_Term gw rest))\<in>positive_meaning bag_comparison_system"
+      using parts(5,7) by blast
+    have "term_formed (Pair_Term (f 0) (f 3))" using parts(1,4) by simp
+    then show ?thesis using parts(2,3,6) given_row by blast
+  qed
+next
+  assume ?rhs
+  then obtain g a x where t: "t=Pair_Term (Pair_Term g a) x" and formed: "term_formed g" "term_formed a" "term_formed x"
+    and calls: "(47,Pair_Term (Pair_Term x (Payload_Term [])) a)\<in>positive_meaning data_subset_system \<or>
+     (\<exists>gw gb rest. g=Pair_Term gw gb \<and> term_formed rest \<and>
+       (5,Pair_Term x (Pair_Term gw rest))\<in>positive_meaning bag_comparison_system)" by blast
+  from calls show ?lhs
+  proof
+    assume sub: "(47,Pair_Term (Pair_Term x (Payload_Term [])) a)\<in>positive_meaning data_subset_system"
+    let ?f="\<lambda>n::nat. if n=0 then g else if n=1 then a else x"
+    have "(966,evaluate_pattern ?f (schema_conclusion extension_row_added_schema))\<in>positive_meaning extension_package_system"
+      by (rule ordinary_positive_valuation_step[where c=0])
+        (use formed sub in \<open>auto simp: extension_package_families extension_package_schema_defs
+          schema_variables_def extension_package_call extension_package_components\<close>)
+    then show ?thesis by (simp add: t extension_row_added_schema_def)
+  next
+    assume "\<exists>gw gb rest. g=Pair_Term gw gb \<and> term_formed rest \<and>
+       (5,Pair_Term x (Pair_Term gw rest))\<in>positive_meaning bag_comparison_system"
+    then obtain gw gb rest where g: "g=Pair_Term gw gb" and rf: "term_formed rest"
+      and sel: "(5,Pair_Term x (Pair_Term gw rest))\<in>positive_meaning bag_comparison_system" by blast
+    have gparts: "term_formed gw" "term_formed gb" using formed(1) g by simp_all
+    let ?f="\<lambda>n::nat. if n=0 then gw else if n=1 then a else if n=2 then x else if n=3 then gb else rest"
+    have "(966,evaluate_pattern ?f (schema_conclusion stored_row_given_schema))\<in>positive_meaning extension_package_system"
+      by (rule ordinary_positive_valuation_step[where c=1])
+        (use formed gparts rf sel in \<open>auto simp: extension_package_families extension_package_schema_defs
+          schema_variables_def extension_package_call extension_package_components\<close>)
+    then show ?thesis by (simp add: t g stored_row_given_schema_def)
+  qed
+qed
+
 lemma least_row_raw:
   "(965,t)\<in>positive_meaning extension_package_system \<longleftrightarrow> (\<exists>g a b u v R.
     t=Pair_Term (Pair_Term (Pair_Term g a) (Pair_Term b u)) (Pair_Term v R) \<and>
     term_formed g \<and> term_formed a \<and> term_formed b \<and> term_formed u \<and> term_formed v \<and> term_formed R \<and>
-    (955,Pair_Term (Pair_Term g a) (Pair_Term v R))\<in>positive_meaning extension_package_system \<and>
+    (966,Pair_Term (Pair_Term g a) (Pair_Term v R))\<in>positive_meaning extension_package_system \<and>
     (v=u \<or>
      (\<exists>k w r. term_formed k \<and> term_formed w \<and> term_formed r \<and>
        (5,Pair_Term (Pair_Term (Pair_Term v k) w) (Pair_Term b r))\<in>positive_meaning bag_comparison_system) \<or>
@@ -1507,7 +1606,7 @@ proof
     case 1
     have "term_formed (f 0) \<and> term_formed (f 1) \<and> term_formed (f 2) \<and> term_formed (f 3) \<and> term_formed (f 5) \<and>
       t=Pair_Term (Pair_Term (Pair_Term (f 0) (f 1)) (Pair_Term (f 2) (f 3))) (Pair_Term (f 3) (f 5)) \<and>
-      (955,Pair_Term (Pair_Term (f 0) (f 1)) (Pair_Term (f 3) (f 5)))\<in>positive_meaning extension_package_system"
+      (966,Pair_Term (Pair_Term (f 0) (f 1)) (Pair_Term (f 3) (f 5)))\<in>positive_meaning extension_package_system"
       using vars conclusion support by (auto simp: 1 least_row_site_schema_def schema_variables_def)
     then show ?thesis by blast
   next
@@ -1515,7 +1614,7 @@ proof
     have "term_formed (f 0) \<and> term_formed (f 1) \<and> term_formed (f 2) \<and> term_formed (f 3) \<and> term_formed (f 4) \<and>
       term_formed (f 5) \<and> term_formed (f 6) \<and> term_formed (f 7) \<and> term_formed (f 8) \<and>
       t=Pair_Term (Pair_Term (Pair_Term (f 0) (f 1)) (Pair_Term (f 2) (f 3))) (Pair_Term (f 4) (f 5)) \<and>
-      (955,Pair_Term (Pair_Term (f 0) (f 1)) (Pair_Term (f 4) (f 5)))\<in>positive_meaning extension_package_system \<and>
+      (966,Pair_Term (Pair_Term (f 0) (f 1)) (Pair_Term (f 4) (f 5)))\<in>positive_meaning extension_package_system \<and>
       (5,Pair_Term (Pair_Term (Pair_Term (f 4) (f 6)) (f 7)) (Pair_Term (f 2) (f 8)))\<in>positive_meaning bag_comparison_system"
       using vars conclusion support
       by (auto simp: 2 least_row_source_schema_def schema_variables_def extension_package_components)
@@ -1525,7 +1624,7 @@ proof
     have "term_formed (f 0) \<and> term_formed (f 1) \<and> term_formed (f 2) \<and> term_formed (f 3) \<and> term_formed (f 4) \<and>
       term_formed (f 5) \<and> term_formed (f 6) \<and> term_formed (f 7) \<and> term_formed (f 8) \<and>
       t=Pair_Term (Pair_Term (Pair_Term (f 0) (f 1)) (Pair_Term (f 2) (f 3))) (Pair_Term (f 4) (f 5)) \<and>
-      (955,Pair_Term (Pair_Term (f 0) (f 1)) (Pair_Term (f 4) (f 5)))\<in>positive_meaning extension_package_system \<and>
+      (966,Pair_Term (Pair_Term (f 0) (f 1)) (Pair_Term (f 4) (f 5)))\<in>positive_meaning extension_package_system \<and>
       (5,Pair_Term (Pair_Term (Pair_Term (f 6) (f 7)) (f 4)) (Pair_Term (f 2) (f 8)))\<in>positive_meaning bag_comparison_system"
       using vars conclusion support
       by (auto simp: 3 least_row_target_schema_def schema_variables_def extension_package_components)
@@ -1535,7 +1634,7 @@ next
   assume ?rhs
   then obtain g a b u v R where t: "t=Pair_Term (Pair_Term (Pair_Term g a) (Pair_Term b u)) (Pair_Term v R)"
     and formed: "term_formed g" "term_formed a" "term_formed b" "term_formed u" "term_formed v" "term_formed R"
-    and row: "(955,Pair_Term (Pair_Term g a) (Pair_Term v R))\<in>positive_meaning extension_package_system"
+    and row: "(966,Pair_Term (Pair_Term g a) (Pair_Term v R))\<in>positive_meaning extension_package_system"
     and which: "v=u \<or>
      (\<exists>k w r. term_formed k \<and> term_formed w \<and> term_formed r \<and>
        (5,Pair_Term (Pair_Term (Pair_Term v k) w) (Pair_Term b r))\<in>positive_meaning bag_comparison_system) \<or>
@@ -1747,16 +1846,71 @@ proof -
 qed
 
 text \<open>
+  A stored row, read at the given's value and the added rows: a listed added row or a row of the given's artifact
+  table as the given's value lists it.
+\<close>
+
+theorem stored_row_at_values:
+  assumes given: "environment_value_presents E (Pair_Term (data_list_term gs) gb)"
+    and rows: "list_all2 environment_artifact_entry_presents xs ts"
+  shows "(966,Pair_Term (Pair_Term (Pair_Term (data_list_term gs) gb) (data_list_term ts)) x)
+      \<in>positive_meaning extension_package_system \<longleftrightarrow> x\<in>set ts \<or> x\<in>set gs"
+proof -
+  have gformed: "term_formed (data_list_term gs)" "term_formed gb" "self_contained_term (data_list_term gs)"
+    using environment_value_presents_formed[OF given] by simp_all
+  have gdata: "data_elements gs" using gformed by (intro data_list_elements) simp_all
+  have data: "data_elements ts" using list_all2_members[OF rows] environment_artifact_entry_formed by blast
+  have af: "term_formed (data_list_term ts)" using data by (simp add: data_list_term_formed)
+  have member: "(47,Pair_Term (Pair_Term x (Payload_Term [])) (data_list_term ts))\<in>positive_meaning data_subset_system \<longleftrightarrow>
+      x\<in>set ts" using data_subset_lists[of "[x]" ts] data by auto
+  have selection: "(\<exists>rest. term_formed rest \<and>
+      (5,Pair_Term x (Pair_Term (data_list_term gs) rest))\<in>positive_meaning bag_comparison_system) \<longleftrightarrow> x\<in>set gs"
+  proof
+    assume "\<exists>rest. term_formed rest \<and> (5,Pair_Term x (Pair_Term (data_list_term gs) rest))\<in>positive_meaning bag_comparison_system"
+    then have "selected_data_member x (data_list_term gs)" by blast
+    then show "x\<in>set gs" by (auto simp: selected_data_member_exact data_list_term_injective)
+  next
+    assume "x\<in>set gs"
+    then have "selected_data_member x (data_list_term gs)" using gdata
+      by (auto simp: selected_data_member_exact data_list_term_injective)
+    then obtain rest where sel: "(5,Pair_Term x (Pair_Term (data_list_term gs) rest))\<in>positive_meaning bag_comparison_system"
+      by blast
+    have "term_formed rest" using schema_call_formed_target[OF positive_meaning_formed[OF sel]] by simp
+    then show "\<exists>rest. term_formed rest \<and>
+      (5,Pair_Term x (Pair_Term (data_list_term gs) rest))\<in>positive_meaning bag_comparison_system" using sel by blast
+  qed
+  have xf: "term_formed x" if "x\<in>set ts \<or> x\<in>set gs" using that data gdata by blast
+  show ?thesis
+  proof
+    assume "(966,Pair_Term (Pair_Term (Pair_Term (data_list_term gs) gb) (data_list_term ts)) x)
+      \<in>positive_meaning extension_package_system"
+    then have "(47,Pair_Term (Pair_Term x (Payload_Term [])) (data_list_term ts))\<in>positive_meaning data_subset_system \<or>
+        (\<exists>rest. term_formed rest \<and> (5,Pair_Term x (Pair_Term (data_list_term gs) rest))\<in>positive_meaning bag_comparison_system)"
+      unfolding stored_row_raw by auto
+    then show "x\<in>set ts \<or> x\<in>set gs" using member selection by blast
+  next
+    assume listed: "x\<in>set ts \<or> x\<in>set gs"
+    then have "(47,Pair_Term (Pair_Term x (Payload_Term [])) (data_list_term ts))\<in>positive_meaning data_subset_system \<or>
+        (\<exists>rest. term_formed rest \<and> (5,Pair_Term x (Pair_Term (data_list_term gs) rest))\<in>positive_meaning bag_comparison_system)"
+      using member selection by blast
+    then show "(966,Pair_Term (Pair_Term (Pair_Term (data_list_term gs) gb) (data_list_term ts)) x)
+      \<in>positive_meaning extension_package_system"
+      unfolding stored_row_raw using gformed af xf[OF listed] by auto
+  qed
+qed
+
+text \<open>
   A row of the least environment, read at the given's value, the added rows, the added binding rows and the added
-  site's use: a row 955 admits, at the site's use or at a source or a target of an added binding row.
+  site's use: a stored row, at the site's use or at a source or a target of an added binding row.
 \<close>
 
 theorem least_row_at_values:
-  assumes given: "environment_value_presents E g" and rows: "list_all2 environment_artifact_entry_presents xs ts"
+  assumes given: "environment_value_presents E g" and table: "g=Pair_Term (data_list_term gs) gb"
+    and rows: "list_all2 environment_artifact_entry_presents xs ts"
     and bindings: "data_elements (map binding_data zs)" and ukey: "term_formed (use_data_term u)"
   shows "(965,Pair_Term (Pair_Term (Pair_Term g (data_list_term ts))
       (Pair_Term (data_list_term (map binding_data zs)) (use_data_term u))) x)\<in>positive_meaning extension_package_system \<longleftrightarrow>
-    (x\<in>set ts \<or> (\<exists>z\<in>environment_artifacts E. environment_artifact_entry_presents z x)) \<and>
+    (x\<in>set ts \<or> x\<in>set gs) \<and>
     (\<exists>z. environment_artifact_entry_presents z x \<and>
       (fst z=u \<or> (\<exists>k w. ((fst z,k),w)\<in>set zs) \<or> (\<exists>s k. ((s,k),fst z)\<in>set zs)))"
   (is "?lhs \<longleftrightarrow> ?row \<and> ?needed")
@@ -1766,8 +1920,14 @@ proof -
   have data: "data_elements ts" using list_all2_members[OF rows] environment_artifact_entry_formed by blast
   have af: "term_formed ?a" using data by (simp add: data_list_term_formed)
   have bf: "term_formed ?b" using bindings by (simp add: data_list_term_formed)
+  have given': "environment_value_presents E (Pair_Term (data_list_term gs) gb)" using given table by simp
+  have gtable: "data_collection_presents environment_artifact_entry_presents (environment_artifacts E) (data_list_term gs)"
+    using given' unfolding environment_value_rows environment_rows_presents_def by auto
+  obtain ys' gs' where genum: "list_all2 environment_artifact_entry_presents ys' gs'" "data_list_term gs=data_list_term gs'"
+    using gtable unfolding data_collection_presents_def by blast
+  have gsame: "gs'=gs" using genum(2) by (simp add: data_list_term_injective)
   have entry: "\<exists>z. environment_artifact_entry_presents z x" if ?row
-    using that list_all2_members[OF rows] by blast
+    using that list_all2_members[OF rows] list_all2_members[OF genum(1)] gsame by blast
   have selected: "(\<exists>r. (5,Pair_Term y (Pair_Term ?b r))\<in>positive_meaning bag_comparison_system) \<longleftrightarrow>
       y\<in>binding_data ` set zs" for y
     using bindings by (auto simp: selected_data_member_exact data_list_term_injective)
@@ -1810,7 +1970,7 @@ proof -
   proof
     assume lhs_holds: ?lhs
     have "\<exists>v R. x=Pair_Term v R \<and>
-        (955,Pair_Term (Pair_Term g ?a) (Pair_Term v R))\<in>positive_meaning extension_package_system \<and>
+        (966,Pair_Term (Pair_Term g ?a) (Pair_Term v R))\<in>positive_meaning extension_package_system \<and>
         (v=use_data_term u \<or>
          (\<exists>k w r. term_formed k \<and> term_formed w \<and> term_formed r \<and>
            (5,Pair_Term (Pair_Term (Pair_Term v k) w) (Pair_Term ?b r))\<in>positive_meaning bag_comparison_system) \<or>
@@ -1818,14 +1978,14 @@ proof -
            (5,Pair_Term (Pair_Term (Pair_Term s k) v) (Pair_Term ?b r))\<in>positive_meaning bag_comparison_system))"
       using lhs_holds unfolding least_row_raw by (auto; blast)
     then obtain v R where x: "x=Pair_Term v R"
-      and row: "(955,Pair_Term (Pair_Term g ?a) (Pair_Term v R))\<in>positive_meaning extension_package_system"
+      and row: "(966,Pair_Term (Pair_Term g ?a) (Pair_Term v R))\<in>positive_meaning extension_package_system"
       and which: "v=use_data_term u \<or>
          (\<exists>k w r. term_formed k \<and> term_formed w \<and> term_formed r \<and>
            (5,Pair_Term (Pair_Term (Pair_Term v k) w) (Pair_Term ?b r))\<in>positive_meaning bag_comparison_system) \<or>
          (\<exists>s k r. term_formed s \<and> term_formed k \<and> term_formed r \<and>
            (5,Pair_Term (Pair_Term (Pair_Term s k) v) (Pair_Term ?b r))\<in>positive_meaning bag_comparison_system)"
       by blast
-    have rowx: ?row using row x by (simp add: extension_row_at_values[OF given rows])
+    have rowx: ?row using row x table by (simp add: stored_row_at_values[OF given' rows])
     obtain z where z: "environment_artifact_entry_presents z x" using entry[OF rowx] by blast
     have vz: "v=use_data_term (fst z)" using z x by (auto simp: environment_artifact_entry_presents_def)
     have needed: "use_data_term (fst z)=use_data_term u \<or> (\<exists>k w. ((fst z,k),w)\<in>set zs) \<or>
@@ -1842,8 +2002,8 @@ proof -
       using z unfolding environment_artifact_entry_presents_def by blast
     have xf: "term_formed (use_data_term (fst z))" "term_formed a'"
       using environment_artifact_entry_formed[OF z] za(2) by simp_all
-    have row: "(955,Pair_Term (Pair_Term g ?a) (Pair_Term (use_data_term (fst z)) a'))\<in>positive_meaning extension_package_system"
-      using both za(2) by (simp add: extension_row_at_values[OF given rows])
+    have row: "(966,Pair_Term (Pair_Term g ?a) (Pair_Term (use_data_term (fst z)) a'))\<in>positive_meaning extension_package_system"
+      using both za(2) table by (simp add: stored_row_at_values[OF given' rows])
     from needed consider (site) "fst z=u" | (source_row) "\<exists>k w. ((fst z,k),w)\<in>set zs"
       | (target_row) "\<exists>s k. ((s,k),fst z)\<in>set zs" by blast
     then have disj: "use_data_term (fst z)=use_data_term u \<or>
@@ -2457,6 +2617,11 @@ lemma bounded_closure_system_payloads [lineage_payloads]: "system_payloads bound
 lemma added_site_system_payloads [lineage_payloads]: "system_payloads added_site_system\<subseteq>{[]}"
   unfolding added_site_system_def
   by ((intro lineage_payload_steps lineage_payloads)?; auto simp: lineage_payload_simps added_site_schema_def)
+
+lemma stored_row_system_payloads [lineage_payloads]: "system_payloads stored_row_system\<subseteq>{[]}"
+  unfolding stored_row_system_def
+  by ((intro lineage_payload_steps lineage_payloads)?; auto simp: lineage_payload_simps stored_row_clauses_def
+    extension_row_added_schema_def stored_row_given_schema_def)
 
 lemma least_row_system_payloads [lineage_payloads]: "system_payloads least_row_system\<subseteq>{[]}"
   unfolding least_row_system_def

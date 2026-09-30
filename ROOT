@@ -1359,6 +1359,7 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Factor_Varied_Constructions
     Factor_Varied_Narrowed_Sockets
     Factor_Varied_Narrowed_Transfer
+    Factor_Committing_Query_Parameters
     Factor_Native_Committed_Registrations
     Factor_Reader_Witness_Registrations
     Finite_Presented_Coordinates
@@ -1804,7 +1805,6 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Encoded_Environment_Presentation
     Data_Reading_Presentation
     Isabelle_Constant_Closure
-    Development_Verification_Frame
     Map_Filter_Lists
     Isabelle_Terms
     Isabelle_Entities
@@ -1958,6 +1958,7 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Development_Given_Installed_Declarations
     Development_Given_Frames
     Development_Given_Productions
+    Development_Given_Query_Parameters
     Development_Given_Installed_Productions
     Development_Installed_Presentations_Execution
     Development_First_Problem_Asked
@@ -1972,6 +1973,7 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Factor_Check_Controls
     Development_Given_Productions_Execution
     Development_Given_Checks_Execution
+    Development_Given_Waiting_Controls
     Development_Native_State
     Development_Given_Table
     Development_First_Problem

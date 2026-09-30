@@ -1,6 +1,6 @@
 theory Development_Given_Declarations_Execution
   imports Development_Given_Productions Development_Given_Modes Factor_Committed_Traces Factor_Resolution_Checks
-    Native_Execution_Refinements
+    Development_Given_Execution_Fixtures Native_Execution_Refinements
 begin
 
 text \<open>
@@ -113,42 +113,27 @@ text \<open>
   true call), and at depth 1 also as x0,x1.
 \<close>
 
-definition given_union_pattern :: "nat \<Rightarrow> nat finite_term_pattern" where
-  "given_union_pattern k = (if k = 1 then Finite_Pattern_Pair (Finite_Variable 0) (Finite_Variable 1)
-    else Finite_Pattern_Pair (Finite_Pattern_Pair (Finite_Variable 0) (Finite_Variable 1)) (Finite_Variable 0))"
-
-definition given_union_binder :: "nat \<Rightarrow> local_address" where
-  "given_union_binder = finite_binder_coordinates {|0,1|}"
-
-definition given_union_environment :: "nat \<Rightarrow> local_address option finite_artifact_environment" where
-  "given_union_environment k =
-    finite_enumerated_environment [(None,finite_pattern_syntax given_union_binder (given_union_pattern k))] []"
-
-definition given_union_payloads :: "local_address list \<Rightarrow> finite_factor_term" where
-  "given_union_payloads A = finite_data_list (map Finite_Payload A)"
-
-definition given_union_interior :: "nat \<Rightarrow> local_address list" where
-  "given_union_interior k = (if k = 1 then [[3],[1],[2],[],[0]] else [[3],[2,3],[1],[2],[2,0],[],[2,2],[0],[2,1]])"
-
-definition given_union_call :: "nat \<Rightarrow> finite_factor_term \<Rightarrow> nat list \<Rightarrow> finite_factor_term" where
-  "given_union_call k t ws = Finite_Pair
-    (Finite_Pair (finite_environment_value (given_union_environment k)) (finite_use_data None))
-    (Finite_Pair (Finite_Payload [])
-      (Finite_Pair (Finite_Pair (given_union_payloads [given_union_binder 0,given_union_binder 1])
-          (finite_data_list [Finite_Pair (Finite_Payload (given_union_binder 0)) (Finite_Payload [7]),
-            Finite_Pair (Finite_Payload (given_union_binder 1)) (Finite_Payload [8])]))
-        (Finite_Pair t (Finite_Pair (given_union_payloads (map given_union_binder ws))
-          (Finite_Pair (given_union_payloads (given_union_interior k)) (given_union_payloads []))))))"
-
-text \<open>The true instances, and a false one at each depth (the instance's last leaf [8] for [7] at depth 2).\<close>
+text \<open>
+  The call is the fixture's @{const c55_call} (its pattern @{const c896_pattern}, its environment
+  @{const c896_environment}). The true instances, and a false one at each depth (the instance's last leaf [8] for [7]
+  at depth 2).
+\<close>
 
 definition given_union_true :: "nat \<Rightarrow> nat list \<Rightarrow> finite_factor_term" where
-  "given_union_true k ws = given_union_call k (if k = 1 then Finite_Pair (Finite_Payload [7]) (Finite_Payload [8])
+  "given_union_true k ws = c55_call k (if k = 1 then Finite_Pair (Finite_Payload [7]) (Finite_Payload [8])
     else Finite_Pair (Finite_Pair (Finite_Payload [7]) (Finite_Payload [8])) (Finite_Payload [7])) ws"
 
 definition given_union_false :: "nat \<Rightarrow> finite_factor_term" where
-  "given_union_false k = given_union_call k (if k = 1 then Finite_Pair (Finite_Payload [8]) (Finite_Payload [8])
+  "given_union_false k = c55_call k (if k = 1 then Finite_Pair (Finite_Payload [8]) (Finite_Payload [8])
     else Finite_Pair (Finite_Pair (Finite_Payload [7]) (Finite_Payload [8])) (Finite_Payload [8])) [1,0]"
+
+text \<open>#827's calls are #896's fixture's (@{const c896_term}) where they are the same terms: the true call and the
+  false one at each depth, the used variables x1,x0.\<close>
+
+lemma given_union_fixture_terms:
+  "given_union_true 1 [1,0] = c896_term 1 0" "given_union_true 2 [1,0] = c896_term 2 0"
+  "given_union_false 1 = c896_term 1 2" "given_union_false 2 = c896_term 2 1"
+  by (simp_all add: given_union_true_def given_union_false_def c896_term_def c896_pattern_def Let_def)
 
 text \<open>
   The check form (K2's @{const moded_check_resolution}: the search started at the root's own focus) at the moded

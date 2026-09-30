@@ -14,6 +14,22 @@ text \<open>
   the installed site's reading among them, as the corollary below gives it.
 \<close>
 
+text \<open>At a formed selection (@{text registered_commitment_by_in}): R5's native form at the table, from the premises there.\<close>
+
+theorem native_committed_registered_exact_by_in:
+  fixes P :: "local_address option finite_native_system"
+  assumes registered: "registered_commitment_by_in \<Theta> sel \<kappa> P K"
+    and result: "native_committed_resolution_by_in \<Theta> sel \<kappa> K P R n = (T,A)"
+  shows "fimage fst T = R"
+    and "(q,Finite_Resolved C) |\<in>| T \<Longrightarrow> C \<noteq> {||} \<and> fBall C (\<lambda>p. finite_checks_schema_proof P p (fst q) (snd q)) \<and>
+      decode_finite_call_term q \<in> positive_meaning (decode_finite_system P)"
+    and "(q,r) |\<in>| T \<Longrightarrow> finite_resolution_refutes r \<Longrightarrow>
+      decode_finite_call_term q \<notin> positive_meaning (decode_finite_system P)"
+    and "A = Some B \<Longrightarrow> schema_system_formed (decode_finite_system P) \<and>
+      fset B = {q\<in>fset R. decode_finite_call_term q \<in> positive_meaning (decode_finite_system P)}"
+  using native_committed_resolution_by_exact_in[OF registered_commitment_by_in.exact_premises_by_in[OF registered] result]
+  by blast+
+
 theorem native_committed_registered_exact_at:
   fixes P :: "local_address option finite_native_system"
   assumes registered: "registered_commitment_at prio \<kappa> P K"
@@ -84,6 +100,23 @@ theorem native_committed_moded_exact_in:
       fset B = {q\<in>fset R. decode_finite_call_term q \<in> positive_meaning (decode_finite_system P)}"
   using native_committed_resolution_by_exact_in[OF registered_commitment_at_in.exact_premises_in[OF
     committed_registrations_in.registered_at_in[OF registered]] result] by blast+
+
+text \<open>At the waiting moded selection, at a table whose calls are true: rc's native form there.\<close>
+
+theorem native_committed_waiting_exact_in:
+  fixes P :: "local_address option finite_native_system"
+  assumes registered: "committed_registrations \<kappa> P m D \<Phi> corr" and true: "finite_table_true P \<Theta>"
+    and result: "native_committed_resolution_by_in \<Theta> (finite_waiting_moded_select_in \<Theta> \<kappa>
+      (finite_narrowed_commitment P m D \<Phi>) Dm \<Psi> M P) \<kappa> (finite_narrowed_commitment P m D \<Phi>) P R n = (T,A)"
+  shows "fimage fst T = R"
+    and "(q,Finite_Resolved C) |\<in>| T \<Longrightarrow> C \<noteq> {||} \<and> fBall C (\<lambda>p. finite_checks_schema_proof P p (fst q) (snd q)) \<and>
+      decode_finite_call_term q \<in> positive_meaning (decode_finite_system P)"
+    and "(q,r) |\<in>| T \<Longrightarrow> finite_resolution_refutes r \<Longrightarrow>
+      decode_finite_call_term q \<notin> positive_meaning (decode_finite_system P)"
+    and "A = Some B \<Longrightarrow> schema_system_formed (decode_finite_system P) \<and>
+      fset B = {q\<in>fset R. decode_finite_call_term q \<in> positive_meaning (decode_finite_system P)}"
+  using native_committed_registered_exact_by_in[OF committed_registrations.registered_waiting[OF registered true] result]
+  by blast+
 
 section \<open>The produced record relocated\<close>
 
@@ -946,10 +979,33 @@ theorem native_installed_moded:
 
 end
 
-text \<open>The forms in @{text finite_mapped_native_extension}, each the locale's instance by one interpretation.\<close>
+text \<open>
+  The forms in @{text finite_mapped_native_extension}, each the locale's instance through its introduction, stated once
+  (@{text relocated_registrations_at}; next-edits 334, review 820's follow-up 1).
+\<close>
 
 context finite_mapped_native_extension
 begin
+
+lemma relocated_registrations_at:
+  fixes Inst :: "local_address option finite_native_system"
+  assumes result: "finite_extend_mapped_native E P Q g = Some (F,u)"
+    and read: "native_package_at (decode_finite_environment F) u [] (decode_finite_system Inst)"
+    and registered: "committed_registrations \<kappa> Q m ND \<Phi> corr"
+    and sites: "declared_sites (resolution_declarations.truncate ND) \<subseteq> system_definitions (decode_finite_system Q)"
+    and frame_sites: "frame_sites \<Phi> \<subseteq> system_definitions (decode_finite_system Q)"
+    and relocated: "narrowed_declarations.truncate (D' :: (_,_,_,'v) produced_declarations) =
+      narrowed (declarations_relocated placement (resolution_declarations.truncate ND)) \<nu>"
+    and relocates: "\<And>e S s keep Vp Vh. (e,S,s,keep,Vp,Vh) |\<in>| declared_sockets ND \<Longrightarrow>
+      \<nu> (placement e) (finite_rename_schema id id placement S) s = declared_narrowing ND e S s"
+    and agree: "varied_narrowings_agree goal Inst D'"
+    and productions: "productions_discharged (positive_meaning (decode_finite_system Inst)) Inst m'
+      (produced_declarations_varied goal Inst D')"
+    and declared: "narrowed_productions_declared (produced_declarations_varied goal Inst D')"
+  shows "relocated_registrations E P Q pu pr N g Inst F u \<kappa> m ND \<Phi> corr D' \<nu> m'"
+  by (rule relocated_registrations.intro[OF finite_mapped_native_extension_axioms],
+    rule relocated_registrations_axioms.intro[OF result read registered sites frame_sites relocated _ agree
+      productions declared], rule relocates)
 
 lemma committed_registrations_relocated:
   fixes Inst :: "local_address option finite_native_system"
@@ -969,13 +1025,8 @@ lemma committed_registrations_relocated:
   shows "committed_registrations (finite_varied_construction goal Inst (finite_relocated_construction placement Q \<kappa>))
     Inst m' (produced_declarations_varied goal Inst D') (frames_varied goal Inst (frames_relocated placement \<Phi>))
     (corr \<circ> inv_into (declared_sites (resolution_declarations.truncate ND)) placement)"
-proof -
-  interpret L: relocated_registrations E P Q pu pr N g Inst F u \<kappa> m ND \<Phi> corr D' \<nu> m'
-    by (rule relocated_registrations.intro[OF finite_mapped_native_extension_axioms],
-      rule relocated_registrations_axioms.intro[OF result read registered sites frame_sites relocated _ agree
-        productions declared], rule relocates)
-  show ?thesis by (rule L.registrations_installed)
-qed
+  by (rule relocated_registrations.registrations_installed[OF relocated_registrations_at[OF result read registered
+    sites frame_sites relocated relocates agree productions declared]])
 
 text \<open>At a priority of the installed program: the varied record's exchange holds at every one (O2).\<close>
 
@@ -997,13 +1048,8 @@ lemma committed_registrations_relocated_at:
   shows "registered_commitment_at prio (finite_varied_construction goal Inst (finite_relocated_construction placement Q \<kappa>))
     Inst (finite_narrowed_commitment Inst m' (produced_declarations_varied goal Inst D')
       (frames_varied goal Inst (frames_relocated placement \<Phi>)))"
-proof -
-  interpret L: relocated_registrations E P Q pu pr N g Inst F u \<kappa> m ND \<Phi> corr D' \<nu> m'
-    by (rule relocated_registrations.intro[OF finite_mapped_native_extension_axioms],
-      rule relocated_registrations_axioms.intro[OF result read registered sites frame_sites relocated _ agree
-        productions declared], rule relocates)
-  show ?thesis by (rule L.registered_installed_at)
-qed
+  by (rule relocated_registrations.registered_installed_at[OF relocated_registrations_at[OF result read registered
+    sites frame_sites relocated relocates agree productions declared]])
 
 theorem native_committed_registered_relocated_at:
   fixes Inst :: "local_address option finite_native_system"
@@ -1033,11 +1079,10 @@ theorem native_committed_registered_relocated_at:
     and "A = Some B \<Longrightarrow> schema_system_formed (decode_finite_system Inst) \<and>
       fset B = {q\<in>fset R. decode_finite_call_term q \<in> positive_meaning (decode_finite_system Inst)}"
 proof -
-  interpret L: relocated_registrations E P Q pu pr N g Inst F u \<kappa> m ND \<Phi> corr D' \<nu> m'
-    by (rule relocated_registrations.intro[OF finite_mapped_native_extension_axioms],
-      rule relocated_registrations_axioms.intro[OF result read registered sites frame_sites relocated _ agree
-        productions declared], rule relocates)
-  note exact = L.native_installed_at[OF resolution]
+  have registrations: "relocated_registrations E P Q pu pr N g Inst F u \<kappa> m ND \<Phi> corr D' \<nu> m'"
+    by (rule relocated_registrations_at[OF result read registered sites frame_sites relocated relocates agree
+      productions declared])
+  note exact = relocated_registrations.native_installed_at[OF registrations resolution]
   show "fimage fst T = R" by (rule exact(1))
   show "(q,Finite_Resolved C) |\<in>| T \<Longrightarrow> C \<noteq> {||} \<and> fBall C (\<lambda>p. finite_checks_schema_proof Inst p (fst q) (snd q)) \<and>
       decode_finite_call_term q \<in> positive_meaning (decode_finite_system Inst)" by (rule exact(2))
@@ -1068,12 +1113,9 @@ lemma committed_registrations_produced_relocated:
 proof -
   have inj: "inj_on placement (declared_sites (resolution_declarations.truncate ND))"
     by (rule inj_on_subset[OF maps.injective sites])
-  interpret L: relocated_registrations E P Q pu pr N g Inst F u \<kappa> m ND \<Phi> corr "produced_relocated placement ND"
-      "declared_narrowing (produced_relocated placement ND)" m'
-    by (rule relocated_registrations.intro[OF finite_mapped_native_extension_axioms],
-      rule relocated_registrations_axioms.intro[OF result read registered sites frame_sites produced_relocated_truncate _
-        agree productions declared], rule produced_relocated_keys(1)[OF inj])
-  show ?thesis by (rule L.registrations_installed)
+  show ?thesis
+    by (rule relocated_registrations.registrations_installed[OF relocated_registrations_at[OF result read registered
+      sites frame_sites produced_relocated_truncate produced_relocated_keys(1)[OF inj] agree productions declared]])
 qed
 
 theorem native_committed_registered_relocated:
@@ -1102,11 +1144,10 @@ theorem native_committed_registered_relocated:
     and "A = Some B \<Longrightarrow> schema_system_formed (decode_finite_system Inst) \<and>
       fset B = {q\<in>fset R. decode_finite_call_term q \<in> positive_meaning (decode_finite_system Inst)}"
 proof -
-  interpret L: relocated_registrations E P Q pu pr N g Inst F u \<kappa> m ND \<Phi> corr D' \<nu> m'
-    by (rule relocated_registrations.intro[OF finite_mapped_native_extension_axioms],
-      rule relocated_registrations_axioms.intro[OF result read registered sites frame_sites relocated _ agree
-        productions declared], rule relocates)
-  note exact = L.native_installed[OF resolution]
+  have registrations: "relocated_registrations E P Q pu pr N g Inst F u \<kappa> m ND \<Phi> corr D' \<nu> m'"
+    by (rule relocated_registrations_at[OF result read registered sites frame_sites relocated relocates agree
+      productions declared])
+  note exact = relocated_registrations.native_installed[OF registrations resolution]
   show "fimage fst T = R" by (rule exact(1))
   show "(q,Finite_Resolved C) |\<in>| T \<Longrightarrow> C \<noteq> {||} \<and> fBall C (\<lambda>p. finite_checks_schema_proof Inst p (fst q) (snd q)) \<and>
       decode_finite_call_term q \<in> positive_meaning (decode_finite_system Inst)" by (rule exact(2))
@@ -1151,11 +1192,10 @@ theorem native_committed_moded_relocated:
     and "A = Some B \<Longrightarrow> schema_system_formed (decode_finite_system Inst) \<and>
       fset B = {q\<in>fset R. decode_finite_call_term q \<in> positive_meaning (decode_finite_system Inst)}"
 proof -
-  interpret L: relocated_registrations E P Q pu pr N g Inst F u \<kappa> m ND \<Phi> corr D' \<nu> m'
-    by (rule relocated_registrations.intro[OF finite_mapped_native_extension_axioms],
-      rule relocated_registrations_axioms.intro[OF result read registered sites frame_sites relocated _ agree
-        productions declared], rule relocates)
-  note exact = L.native_installed_moded[OF resolution]
+  have registrations: "relocated_registrations E P Q pu pr N g Inst F u \<kappa> m ND \<Phi> corr D' \<nu> m'"
+    by (rule relocated_registrations_at[OF result read registered sites frame_sites relocated relocates agree
+      productions declared])
+  note exact = relocated_registrations.native_installed_moded[OF registrations resolution]
   show "fimage fst T = R" by (rule exact(1))
   show "(q,Finite_Resolved C) |\<in>| T \<Longrightarrow> C \<noteq> {||} \<and> fBall C (\<lambda>p. finite_checks_schema_proof Inst p (fst q) (snd q)) \<and>
       decode_finite_call_term q \<in> positive_meaning (decode_finite_system Inst)" by (rule exact(2))
@@ -1164,6 +1204,32 @@ proof -
   show "A = Some B \<Longrightarrow> schema_system_formed (decode_finite_system Inst) \<and>
       fset B = {q\<in>fset R. decode_finite_call_term q \<in> positive_meaning (decode_finite_system Inst)}" by (rule exact(4))
 qed
+
+end
+
+text \<open>
+  The installed record's premises at a table whose calls are true at the installed program: its exchange at every
+  priority (@{text committed_registrations.exchanges_at_true}) and, with the construction premise there, rc's premises
+  at the table (review 943's follow-up 3: the locale below cites these, one fact with one proof).
+\<close>
+
+context relocated_registrations
+begin
+
+lemma installed_exchanges_true:
+  assumes true: "finite_table_true Inst \<Theta>"
+  shows "finite_commitment_exchanges_at_in \<Theta> prio (\<lambda>_. False)
+    (finite_varied_construction goal Inst (finite_relocated_construction placement Q \<kappa>))
+    (finite_narrowed_commitment Inst m' (produced_declarations_varied goal Inst D')
+      (frames_varied goal Inst (frames_relocated placement \<Phi>))) Inst"
+  by (rule committed_registrations.exchanges_at_true[OF registrations_installed true])
+
+lemma registrations_installed_true:
+  assumes true: "finite_table_true Inst \<Theta>"
+  shows "committed_registrations_in (finite_varied_construction goal Inst (finite_relocated_construction placement Q \<kappa>))
+    Inst m' (produced_declarations_varied goal Inst D') (frames_varied goal Inst (frames_relocated placement \<Phi>))
+    (corr \<circ> inv_into (declared_sites (resolution_declarations.truncate ND)) placement) \<Theta>"
+  by (rule committed_registrations_in_true[OF registrations_installed true])
 
 end
 
@@ -1203,42 +1269,19 @@ lemma installed_exchanges: "finite_commitment_exchanges_at_in \<Theta> prio (\<l
         (frames_varied (finite_rename_system (finite_program_coordinates E (finite_system_definitions P)
           (finite_system_definitions Q) g) Q) Inst (frames_relocated (finite_program_coordinates E
           (finite_system_definitions P) (finite_system_definitions Q) g) \<Phi>))) Inst"
-  by (rule committed_registrations.exchanges_at_true[OF registrations_installed installed_true])
+  by (rule installed_exchanges_true[OF installed_true])
 
 lemma registrations_installed_in:
   "committed_registrations_in (finite_varied_construction goal Inst (finite_relocated_construction placement Q \<kappa>))
     Inst m' (produced_declarations_varied goal Inst D') (frames_varied goal Inst (frames_relocated placement \<Phi>))
     (corr \<circ> inv_into (declared_sites (resolution_declarations.truncate ND)) placement) \<Theta>"
-  by (rule committed_registrations_in.intro[OF registrations_installed
-    committed_registrations_in_axioms.intro[OF installed_lifts installed_exchanges]])
+  by (rule registrations_installed_true[OF installed_true])
 
 lemmas native_committed_moded_installed_in = native_committed_moded_exact_in[OF registrations_installed_in]
 
-end
-
-text \<open>
-  The block's exchange premise at a table whose calls are true at the installed program is the installed record's
-  (@{text committed_registrations.exchanges_at_true}); with the construction premise there, rc's premises at the table.
-\<close>
-
-context relocated_registrations
-begin
-
-lemma installed_exchanges_true:
-  assumes true: "finite_table_true Inst \<Theta>"
-  shows "finite_commitment_exchanges_at_in \<Theta> prio (\<lambda>_. False)
-    (finite_varied_construction goal Inst (finite_relocated_construction placement Q \<kappa>))
-    (finite_narrowed_commitment Inst m' (produced_declarations_varied goal Inst D')
-      (frames_varied goal Inst (frames_relocated placement \<Phi>))) Inst"
-  by (rule committed_registrations.exchanges_at_true[OF registrations_installed true])
-
-lemma registrations_installed_true:
-  assumes true: "finite_table_true Inst \<Theta>"
-  shows "committed_registrations_in (finite_varied_construction goal Inst (finite_relocated_construction placement Q \<kappa>))
-    Inst m' (produced_declarations_varied goal Inst D') (frames_varied goal Inst (frames_relocated placement \<Phi>))
-    (corr \<circ> inv_into (declared_sites (resolution_declarations.truncate ND)) placement) \<Theta>"
-  by (rule committed_registrations_in_true[OF registrations_installed true])
+lemmas native_committed_waiting_installed_in = native_committed_waiting_exact_in[OF registrations_installed installed_true]
 
 end
+
 
 end

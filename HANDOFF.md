@@ -42,7 +42,8 @@ comes from a native notion. The route rests on these accepted entries of `DECISI
 
 **The first problem's route**, each build with its review. Landed: the recording (P #581, X′ #583), the posing #397 with
 its one-citation recording #562, AX1 #930 (`Factor_Environment_Additions`), AX2a #932 (`Factor_Extension_Packages`). Open: AX2b–AX4 (#928's (c),
-from the brief #929: AX2b #934 and AX3a #936 → AX3b #938, which records the posing again → AX4 #940); then two rewrite
+from the brief #929: #955 (AX2a's clauses 957 and 958 changed so that AX2b's witnesses have W2 forms, q169) → #957
+(961's clause 0 split so that l is produced with no q, q170) → AX2b #934, and AX3a #936 → AX3b #938, which records the posing again → AX4 #940); then two rewrite
 briefs carry AX1–AX4's hand-overs into the briefs they reach, spliced so that nothing they rewrite starts first: #948
 the route's (#542, #707, #399, #709, #401, #443, #445; #709's with #880's Remains 2, #542's with review 931's 2) and
 #949 the criticism's (#549, #551, #553, #447, #449; after the design #947 too). R7 #542 (the given at the guard's calls
@@ -62,7 +63,7 @@ one-time ≈ 31–34 M states, a judgment's part ≈ 2–5 M (after #928 a candi
 table through R3–R5 and C (GT1a–GT2c, GT4–GT4c), the given's calls (GT5 #845), W5 #847, VK1 #920, GT2b's two parts
 #889 and #922, and #942 (every discharge valued at a true table; rc's table forms from a true table and rc alone; the
 committed forms' transfers at a table). Open: VK2 #924 (W5's premise at the given's committing instance, under a named premise, q167) → #953 (#798's
-record carried to the query program, discharging it) → AX4 and
+record carried to the query program, discharging it; VK2's controls #956 after it and D1d) → AX4 and
 #399; GT3 #876 (the table in F2's shared representation, after D1d) → GT6 #878 (the table produced once, a run of hours
 parked for its completion, its record `validation/given-table.json`, after #875, which supplies its prediction and
 worker count) → #542, #547, #707, #399. #547 does not wait on VK2 (its refusal at 561 goes through the merge at W5's
@@ -87,7 +88,7 @@ rest on the order; R7 #542's figures set the trigger of 55's clause trials (Open
 832's follow-ups) after GT3 and WC3; nothing waits on it.
 
 **The probe's cost** (#944's attribution): a probe's minute is its theories' forked proofs, joined theory by theory;
-#950 makes the two slow proofs fast (27.1 s and 8.6 s) and deletes the frame; #951 loads a probe's theories in one call
+#950 made the two slow proofs fast (27.1 s and 8.6 s) and deleted the frame (`74e2cd04`); #951 loads a probe's theories in one call
 (#942's eleven 54.5 → 35.6 s held) with Open 78's items, reviewed by #952; the start model's refit is not taken (its
 model drives the owner's re-root trigger).
 
@@ -103,7 +104,7 @@ as long; GT6's run of hours (52–85 h on one worker; #875 supplies the worker c
 critical one, and the AX line has slack against it. Nothing is added after the tail until it shortens (the approval
 build, Open 142, waits for that); rewrites and splices before a task are placed at any depth. The queue is the
 planner's choice, a residual until the selection problem's native answer (Q2): the running tasks with their reviews,
-#953 warm after VK2, the fix #950, the resolver's pole D1d → #875 and GT3 → GT6, AX2b–AX4, the probe tool #951 with
+#953 warm after VK2, the resolver's pole D1d → #875 and GT3 → GT6, AX2b–AX4, the probe tool #951 with
 its review #952, the rewrite briefs, then the route in its chains' order, each review right after its build; #887
 after R7's review. Word changes are serialized; none is queued.
 
@@ -392,12 +393,13 @@ a theory before briefing a task that edits it.
 
 ## Now
 
-- **Under way**: VK2 #924, WC2b #914 and D1b″ #945, continued in their trees from 2026-09-27; #924 lands its
-  committing instance under a named premise that #953 discharges (q167). AX2a #932 landed (`11a22b69`); review 933's
-  follow-ups were mailed to AX2b #934 (2), AX3a #936 (1, 3, 4) and AX3b #938 (5).
+- **Under way**: WC2b #914 and D1b″ #945, continued in their trees from 2026-09-27; VK2 #924 ended partial and is
+  re-planned to hand over what exists (its committing instance at a named premise that #953 discharges, q167; its
+  controls moved to #956); AX2b #934 parks until #955 and #957 land (q169, q170). AX2a #932 landed (`11a22b69`);
+  review 933's follow-ups were mailed to AX2b #934 (2), AX3a #936 (1, 3, 4) and AX3b #938 (5).
 - **plan-134** was stopped by a classifier before its notes (2026-10-01 00:47); this file and the graph held its
   state, and nothing it decided is missing here.
-- **What the next events ask**: #950's and #951's hand-overs (then the Working rules' Probes bullet says a probe loads
+- **What the next events ask**: #951's hand-over (then the Working rules' Probes bullet says a probe loads
   its theories in one call); Q34's answer; #875's figures — GT6's prediction and worker count, the
   checking fold measured at samples, the kept forms (q162) and FI's remaining costs (Graph), and with them the re-run of
   #718's 77 and 79 fixtures with review 858's attributions (next-edits 364–366); at AX4's landing #948 and #949 start,

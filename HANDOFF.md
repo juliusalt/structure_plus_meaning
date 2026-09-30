@@ -81,8 +81,8 @@ come before it starts): the kept held goals and construction nodes (q162; `.buil
 next-edits 384) and FI's remaining costs (review 895's 2 and 5, next-edits 385).
 
 **The order at a pair node** (correction (16), D2 #907 from #896's attribution of c55 #827): a waiting class of F1's
-selection, read by the selection alone, never by exactness. Landed: WC1 #910, WC2a #912. Open: WC2b #914 (the forms at
-the waiting moded selection, the 55 fixture, the control) → WC3 #916 (the class at the route, K2's constants redefined
+selection, read by the selection alone, never by exactness. Landed: WC1 #910, WC2a #912, WC2b #914 (`5f3ae77b`: the
+forms at the waiting moded selection, the 55 fixture, the control). Open: WC3 #916 (the class at the route, K2's constants redefined
 at the waiting moded selection; after D1d, FI and GT3) → #542, #547, #887, beside GT6, whose table's validity does not
 rest on the order; R7 #542's figures set the trigger of 55's clause trials (Open 152). The consolidation #887 (review
 832's follow-ups) after GT3 and WC3; nothing waits on it.
@@ -301,7 +301,7 @@ REASONING_REUSE.md, how each went in `PLANNING_LOG.md`.
   (`Factor_Resolution_Producer_Discharge`, `Factor_Resolution_Socket_Discharges`, `Factor_Resolution_Material_Discharge`),
   forms and transfers (`Factor_Resolution_Views`, `Factor_Resolution_Carriers`, `Factor_Narrowed_Sockets`,
   `Factor_Narrowed_Commitments`, `Factor_Narrowed_Productions`), modes `Factor_Resolution_Modes`, the waiting class
-  `Factor_Socket_Waiting`, the check forms and route constants `Factor_Resolution_Checks`,
+  `Factor_Socket_Waiting` (its forms at the waiting moded selection, WC2b; controls `Development_Given_Waiting_Controls`), the check forms and route constants `Factor_Resolution_Checks`,
   `Factor_Framed_Commitment_Index`, the input production `Factor_Input_Productions`; controls in
   `Factor_Resolution_Controls`, `Factor_Commitment_Controls`, `Factor_Narrowed_Controls`, `Factor_Mode_Controls`,
   `Factor_Check_Controls`, `Factor_Table_Controls`, the committed trace in `Factor_Committed_Traces`.
@@ -393,7 +393,7 @@ a theory before briefing a task that edits it.
 
 ## Now
 
-- **Under way**: WC2b #914 and D1b″ #945, continued in their trees from 2026-09-27; VK2 #924 ended partial and is
+- **Under way**: D1b″ #945, continued in its tree from 2026-09-27; VK2 #924 ended partial and is
   re-planned to hand over what exists (its committing instance at a named premise that #953 discharges, q167; its
   controls moved to #956); AX2b #934 parks until #955 and #957 land (q169, q170). AX2a #932 landed (`11a22b69`);
   review 933's follow-ups were mailed to AX2b #934 (2), AX3a #936 (1, 3, 4) and AX3b #938 (5).

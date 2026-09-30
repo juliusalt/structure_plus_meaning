@@ -1,6 +1,6 @@
 {
- "base_receipt_sha256": "9ef14cbd44fd2d84b7537ef798a43bbb92ed171c2de6639e9caab71d910f9530",
- "checked_content_sha256": "1d70cafb3f847cd811a51f3276dacad28a43ecd53cf03e914b5240ceafcc65a0",
+ "base_receipt_sha256": "e5d247bfac97c17d6cd7887667f5afb0575ecbdda6a4f1aeb4e894bdae223303",
+ "checked_content_sha256": "624ebc2e748327d0836edbb25c2c7d58a0be7273d420db496eecf562f9d47559",
  "host_tests": {
   "kernel": {
    "exit_code": 0,
@@ -17,38 +17,20 @@
    "ran": 309,
    "skipped": 0,
    "tail": [
-    "{\"status\": \"failed\", \"error\": \"[Errno 2] No such file or directory: '/tmp/tmp93r1hjju/no-project/theories/Development_Answer_a2d8d6490cc2.thy'\"}"
+    "{\"status\": \"failed\", \"error\": \"[Errno 2] No such file or directory: '/tmp/tmpkaii521t/no-project/theories/Development_Answer_a2d8d6490cc2.thy'\"}"
    ]
   }
  },
  "phases": {
-  "base_and_impact": 0.42,
+  "base_and_impact": 0.61,
   "execution_impact": 0.0,
   "export": 0.0,
-  "proof": 157.28,
-  "recipe_impact": 0.39,
-  "recipes_and_host_tests": 11.37
+  "proof": 35.23,
+  "recipe_impact": 0.46,
+  "recipes_and_host_tests": 11.42
  },
  "rebuilt_theories": [
-  "Development_Given_Checks_Execution",
-  "Development_Given_Declarations_Execution",
-  "Development_Given_Execution_Fixtures",
-  "Development_Given_Frames",
-  "Development_Given_Installed_Productions",
-  "Development_Given_Modes_Execution",
-  "Development_Given_Productions",
-  "Development_Given_Productions_Execution",
-  "Development_Given_Table",
-  "Development_Given_Waiting_Controls",
-  "Factor_Check_Controls",
-  "Factor_Committed_Registrations",
-  "Factor_Deferred_Search_Controls",
-  "Factor_Input_Production_Controls",
-  "Factor_Input_Productions",
-  "Factor_Mode_Controls",
-  "Factor_Native_Committed_Registrations",
-  "Factor_Resolution_Checks",
-  "Factor_Socket_Waiting"
+  "Factor_Extension_Packages"
  ],
  "recipes": {
   "allocated-environments": {
@@ -208,8 +190,8 @@
    "status": "unchanged"
   }
  },
- "reused_theories": 1969,
- "seconds": 179.37,
+ "reused_theories": 1987,
+ "seconds": 58.03,
  "source_checks": {
   "missing_theory_files": [],
   "proof_escape_matches": [],

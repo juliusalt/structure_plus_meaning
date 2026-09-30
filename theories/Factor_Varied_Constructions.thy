@@ -588,7 +588,8 @@ lemma installed_variant:
 proof -
   obtain T where T: "native_package_at (decode_finite_environment F) u [] T"
       "system_alpha_variant (rename_system placement (decode_finite_system Q)) T"
-    using correct[OF result] by blast
+    using correct[OF result, THEN conjunct2, THEN conjunct2, THEN conjunct2, THEN conjunct2, THEN conjunct2,
+      THEN conjunct1] by (elim exE conjE) (rule that)
   have "T = decode_finite_system R" by (rule native_package_unique[OF T(1) read])
   then show ?thesis using T(2) by simp
 qed

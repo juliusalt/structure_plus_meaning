@@ -2,10 +2,10 @@
  "boundary": "A run without --proof rebuilds the complete constructor and source proofs from HOL, exports the accepted code and executes all complete package reports. Every returned artifact, binding, interface, clause and coordinate is retained in the reproduced output. Complete source correspondence is proved for the concrete source models and remains a premise of the general constructor contract. General native admission of that correspondence, the whole development protocol and its cost account remain open.",
  "complete_recipe_source_manifest": "native-extensions-sources.json",
  "complete_review": {
-  "base_receipt_sha256": "79c17967a7e52d289774bee810ca7cc28842a063d607d684cc8993122d90cbb4",
+  "base_receipt_sha256": "9c9eef9aa14215280dcf9b85e11a4d2c6bddf1d81258fc60ca6d6956df499409",
   "records": 1,
   "reports_equal": true,
-  "seconds": 3.07,
+  "seconds": 3.17,
   "status": "accepted"
  },
  "execution_boundary": {
@@ -43,7 +43,7 @@
    "tools/check_presented_report.py": "a67a604376049a2b2928ecf9b9adca4bfd50d9cbd058a1366bf8e4df5f6f9e42",
    "tools/evidence_io.py": "3fa63f8fe266eacdfe8f2f4ea88b7ac171af353d69bbae1b08ff35b645c73d93",
    "tools/execution_support.py": "64d1c28b69ec776ff8888a3c7db24a9679e37c6bc3bd40a0b48cb63c884490f4",
-   "tools/isabelle_places.py": "9d8b3dc3cb7a744ab229df9f1b776e390af63ee857d98fca5570fb4e0ece50ec",
+   "tools/isabelle_places.py": "612af105fe625165a084007f27520cac80563b78a9f3e14bb3b1a0d7a937b020",
    "tools/machine_reports.py": "dffab23ed8a5a52c8d40d2e822a020060798aa6f9797afbce37be8846dc511d6",
    "tools/native_artifact_stream.py": "8109ad9272c9fc1b1e8ee358beeec4e69ac3b7371b1cb1f65e91dcc47de74113",
    "tools/native_execution_runtime.py": "ded4c2831202c5b524434bb37b2864f69a0a9ce22b87aecfb7e991f71c4621c9",
@@ -55,11 +55,6 @@
    "tools/reconstruct_native_extensions.py": "772a68aa72e8799132d0354fe84b34f7513690eab606c1cc230e8b47b49af4d4",
    "tools/reconstruction.py": "91156a6f49e9c1fc0dba69a82a18d1553a7a3379465ed54deabf7bbd52bb171a"
   }
- },
- "execution_reuse": {
-  "base_receipt_sha256": "e056a2fc84a8507bae0eddfec5a3b369f2a6c4137864be5462165c48d059088f",
-  "boundary": "The current accepted proof context exported an identical module and subject contracts; execution tools, fixtures, expected reports and native runtime are unchanged. The accepted execution determines these complete report boundaries without being repeated.",
-  "export_module_sha256": "e2f530dfb51edd3f088380e9933475c024d1852196661fb5161334946cdbbad4"
  },
  "recipe": "native-extensions",
  "recipe_inputs_unchanged": true,
@@ -74,14 +69,14 @@
  },
  "reports_equal": true,
  "retention": "The accepted base proof and the incremental proof of every changed theory and dependent supplied the exported module; every complete report boundary equals its retained original. Generated result bulk is not a repository input.",
- "source_manifest_sha256": "74831bdbd6f690b42cd8a96d8627ce3264f95c753dc4a105944a394e029f2240",
+ "source_manifest_sha256": "24d18016f25898c2d2085e020b4a434826cf3cdea9bf05abea9c2ce449a1f0f3",
  "sources_rebuilt": false,
  "status": "accepted",
  "steps": [
   {
    "exit_code": 0,
    "name": "presentation",
-   "seconds": 2.971953394007869
+   "seconds": 3.0723058299990953
   }
  ]
 }

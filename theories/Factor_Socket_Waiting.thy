@@ -228,4 +228,16 @@ lemma finite_waiting_moded_select_unheld_in:
   "finite_selection_unheld \<kappa> (finite_waiting_moded_select_in \<Theta> \<kappa> K D \<Phi> M P)"
   unfolding finite_waiting_moded_select_in_def by (rule finite_resolution_select_waiting_unheld_in)
 
+text \<open>
+  The waiting selection is formed (WC2a's @{const finite_selection_formed}) at every table, predicate and priority, from
+  F1's two facts alone: every discharge stated at a formed selection holds at it, the waiting moded selection among them.
+\<close>
+
+lemma finite_resolution_select_waiting_formed_in:
+  "finite_selection_formed \<kappa> P (finite_resolution_select_waiting_in \<Theta> pr wt \<kappa> P)"
+  unfolding finite_selection_formed_def using finite_resolution_select_waiting_exact_in by blast
+
+lemma finite_waiting_moded_select_formed_in: "finite_selection_formed \<kappa> P (finite_waiting_moded_select_in \<Theta> \<kappa> K D \<Phi> M P)"
+  unfolding finite_waiting_moded_select_in_def by (rule finite_resolution_select_waiting_formed_in)
+
 end

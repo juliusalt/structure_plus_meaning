@@ -47,20 +47,23 @@ once over graphs and retained; a judgment in two phases; 77's bound handed in fo
 one-time ≈ 31–34 M states, a judgment's part ≈ 2–5 M (after #928 a candidate's part is its additions). Landed: the table
 through R3–R5 and C (GT1a–GT2c, GT4–GT4c), the given's calls (GT5 #845), W5 #847, VK1 #920, GT2b (#889, #922), #942
 (every discharge valued at a true table; rc's table forms from a true table and rc alone), VK2 #924 (`764262a1`: the
-given's committing instance at a named premise, q167). Open: #953 (#798's record carried to the query program,
-discharging VK2's premise; VK2's controls #956 after it and D1d, reporting whether a query meets a root-held committable
-goal, which task 918's answer 4 waits on) → AX4 and #399; GT3 #876 (the table in F2's shared representation, after D1d)
+given's committing instance at a named premise, q167) and #953 (`1bfe59b9`: the given's input record carried to the
+query program, VK2's premise discharged; AX4 and #399 cite the premise-free forms). Open: VK2's controls #956 (after
+D1d, reporting whether a query meets a root-held committable goal, which task 918's answer 4 waits on); GT3 #876 (the
+table in F2's shared representation, after D1d)
 → GT6 #878 (the table produced once, a run of hours parked for its completion, its record `validation/given-table.json`,
 after #875, which supplies its prediction and worker count) → #542, #547, #707, #399. #547 does not wait on VK2 (its
 refusal at 561 goes through the merge at W5's plain instance). The table is the readers' part, its guard part at (g, g)
 retired by AX4, so GT6 and #875 do not wait on AX1–AX4.
 
-**A search step's cost** (#830's and #886's attributions): landed through D1b's two parts #903 and #926 (the deferred
-search, equal to R3's where its variables are placed). D1 #890 decided the step at the given's depth: nodes kept as
-placed under a binding store, 6–8 ms a step predicted at 30, 300 and 350 steps, GT6 52–85 h on one worker. Open: D1b″
-#945 (review 927's 1 and 4; q168: the store memoized from another, the memoization independent of the fold's order) →
-D1d #905 (the deferred committed search and the route through it) → GT3 #876 and #875 (the deferred route held: GT6's
-prediction and worker count, D1e's and the groundness counters' triggers; review 927's 2 and 3 measured there). Decided
+**A search step's cost** (#830's and #886's attributions): landed through D1b's parts #903, #926 and D1b″ #945
+(`467e66a6`: the deferred search, equal to R3's where its variables are placed; a query root on R3's deferred path, the
+committed W2 queries reaching it only through D1d's instance, review 946's 1; a node's ground resolution memoized, q168).
+D1 #890 decided the step at the given's depth: nodes kept as placed under a binding store, 6–8 ms a step predicted at
+30, 300 and 350 steps (10.4 ms measured at 300 on today's base, review 946's 5), GT6 52–85 h on one worker. Open: D1d
+#905 (the deferred committed search and the route through it) → GT3 #876 and #875 (the deferred route held: GT6's
+prediction and worker count, D1e's and the groundness counters' triggers, the records along an open chain; review
+927's 2 and 3 and review 946's 3–5 measured there). Decided
 at #875's figures and placed at the next restater of the route constants' code (WC3 #916 if the figures come before it
 starts): the kept held goals and construction nodes (q162; `.build/tasks/901/result.md` Remains (a)–(e), next-edits
 384) and FI's remaining costs (review 895's 2 and 5, next-edits 385).
@@ -83,11 +86,11 @@ bootstrap loop's landed lines** are kept and none is extended (#376); their rema
 `.build/plans/next-edits.md`.
 
 **Shape and order.** No build waits on a review. The longest chains, 12 deep: AX2b #934 → AX3b #938 → AX4 #940 → #948
-→ R7 #542 → #707 → #399 → #709 → #553 → #447 → #449 → #450, and D1b″ #945 → D1d #905 → GT3 #876 → GT6 #878 → R7 about
+→ R7 #542 → #707 → #399 → #709 → #553 → #447 → #449 → #450, and D1d #905 → GT3 #876 → GT6 #878 → R7 about
 as long; GT6's run of hours makes the resolver's pole the critical one, and the AX line has slack against it. Nothing
 is added after the tail until it shortens (the approval build, Open 142, waits for that); rewrites and splices before a
 task are placed at any depth. The queue is the planner's choice, a residual until the selection problem's native
-answer (Q2): the running tasks with their reviews, the fix #959 before AX2b #934 resumes, #953, the resolver's pole D1d
+answer (Q2): the running tasks with their reviews, the fix #959 before AX2b #934 resumes, the resolver's pole D1d
 → #875 and GT3 → GT6, AX3a–AX4, #956, the rewrite briefs, then the route in its chains' order, each review right after
 its build; #887 after R7's review. Word changes are serialized; none is queued.
 
@@ -258,7 +261,8 @@ REASONING_REUSE.md's, how it went in `PLANNING_LOG.md`.
   `Development_Given_Installed_Productions`.
 - **The least witnesses**: `Factor_Least_Collections`, `Factor_Least_Witness_Facts`, `Factor_Construction_Holders`,
   `Factor_Least_Witness_Registrations`, the given's, asked, first request's and rooted `*_Registrations`; VK2's
-  committing instance `Development_Given_Query_Parameters`, at the named premise #953 discharges.
+  committing instance `Development_Given_Query_Parameters`, its premise discharged at the given by #953 (the given's
+  input record carried to the query program).
 - **The clause match and rc's forms**: `Factor_Finite_Schema_Matching`, the `Factor_Varied_*` theories,
   `Development_Installed_Presentations`; `Factor_Committed_Registrations`, `Factor_Native_Committed_Registrations`
   (rc's forms at a true table, `committed_registrations_in`, `relocated_registrations_in`).
@@ -312,9 +316,10 @@ a theory before briefing a task that edits it (the probe tool's next edit: next-
 
 ## Now
 
-- **Under way**: D1b″ #945, continued in its tree from 2026-09-27; #953 (VK2's premise discharged, continuing #924);
-  AX3a #936; the fix #959 (q171, q172), for which AX2b #934 is parked (`v2.py after 934 959`), resuming on it to
-  register both witnesses. Review 933's follow-ups were mailed to AX2b #934 (2), AX3a #936 (1, 3, 4) and AX3b #938 (5).
+- **Under way**: AX3a #936; the fix #959 (q171, q172), for which AX2b #934 is parked (`v2.py after 934 959`), resuming
+  on it to register both witnesses; the resolver's pole goes on at D1d #905, its last blocker #945 landed. Review 933's
+  follow-ups were mailed to AX2b #934 (2), AX3a #936 (1, 3, 4) and AX3b #938 (5); review 946's to D1d #905 (1, 2) and
+  #875 (3–5); review 954's 1 and 2 to AX4 #940.
 - **What the next events ask**: Q34's answer; #875's figures — GT6's prediction and worker count, the checking fold
   measured at samples, the kept forms (q162) and FI's remaining costs, and with them the re-run of #718's 77 and 79
   fixtures with review 858's attributions (next-edits 364–366); #956's observation of a query meeting a root-held

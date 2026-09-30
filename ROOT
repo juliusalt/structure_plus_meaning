@@ -951,6 +951,7 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Factor_Requirement_Guards
     Factor_Requirement_Installation
     Development_First_Problem_Guard
+    Development_First_Problem_Additions
     Factor_Requirement_Plan_Realization
     Factor_Requirement_Plans
     Factor_Requirement_Result_Values

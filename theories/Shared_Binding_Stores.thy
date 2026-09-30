@@ -869,6 +869,90 @@ proof -
   show ?thesis using e memo formed resolved by simp
 qed
 
+text \<open>
+  A store memoized from another: formed over an extended table, with the same next rank and the same bound variables,
+  every resolution of a pattern of the old table projecting as before. Memoizing a binding is an instance
+  (@{text store_memoize_memoized}); the relation is reflexive and transitive over extended tables, so any sequence of
+  memoizations, in any order, is one.
+\<close>
+
+definition store_memoized :: "shape list \<Rightarrow> 'a binding_store \<Rightarrow> shape list \<Rightarrow> 'a binding_store \<Rightarrow> bool" where
+  "store_memoized T S T' S' \<longleftrightarrow> table_formed T' \<and> (\<forall>i u. reference_term T i = Some u \<longrightarrow> reference_term T' i = Some u) \<and>
+    binding_store_formed T' S' \<and> binding_next_rank S' = binding_next_rank S \<and>
+    (\<forall>a. binding_map S' a = None \<longleftrightarrow> binding_map S a = None) \<and>
+    (\<forall>p. shared_pattern_formed T p \<longrightarrow> shared_pattern_project T' (binding_resolve S' p) = shared_pattern_project T (binding_resolve S p))"
+
+lemma store_memoized_refl:
+  "binding_store_formed T S \<Longrightarrow> table_formed T \<Longrightarrow> store_memoized T S T S"
+  by (simp add: store_memoized_def)
+
+lemma store_memoized_trans:
+  assumes first: "store_memoized T S T1 S1" and second: "store_memoized T1 S1 T2 S2" and table: "table_formed T"
+  shows "store_memoized T S T2 S2"
+proof -
+  have e1: "\<forall>i u. reference_term T i = Some u \<longrightarrow> reference_term T1 i = Some u" using first by (simp add: store_memoized_def)
+  have p: "shared_pattern_project T2 (binding_resolve S2 p) = shared_pattern_project T (binding_resolve S p)"
+    if pf: "shared_pattern_formed T p" for p
+  proof -
+    have "shared_pattern_formed T1 p" using shared_pattern_extended[OF table pf e1[rule_format]] by blast
+    then have "shared_pattern_project T2 (binding_resolve S2 p) = shared_pattern_project T1 (binding_resolve S1 p)"
+      using second by (simp add: store_memoized_def)
+    also have "\<dots> = shared_pattern_project T (binding_resolve S p)" using first pf by (simp add: store_memoized_def)
+    finally show ?thesis .
+  qed
+  show ?thesis using first second p unfolding store_memoized_def by simp
+qed
+
+lemma store_memoized_extended:
+  assumes S: "binding_store_formed T S" and table: "table_formed T" and table': "table_formed T'"
+    and ext: "\<forall>i u. reference_term T i = Some u \<longrightarrow> reference_term T' i = Some u"
+  shows "store_memoized T S T' S"
+proof -
+  have "shared_pattern_project T' (binding_resolve S p) = shared_pattern_project T (binding_resolve S p)"
+    if "shared_pattern_formed T p" for p
+    using shared_pattern_extended[OF table binding_resolve_formed[OF S that] ext[rule_format]] by blast
+  then show ?thesis using binding_store_formed_extended[OF S table ext] table' ext unfolding store_memoized_def by blast
+qed
+
+text \<open>A memoized store's resolutions hold the variables they held: they project as before.\<close>
+
+lemma store_memoized_variables:
+  assumes m: "store_memoized T S T' S'" and S: "binding_store_formed T S" and table: "table_formed T"
+    and p: "shared_pattern_formed T p"
+  shows "shared_pattern_variables (binding_resolve S' p) = shared_pattern_variables (binding_resolve S p)"
+proof -
+  have ext: "\<forall>i u. reference_term T i = Some u \<longrightarrow> reference_term T' i = Some u" and S': "binding_store_formed T' S'"
+    and pr: "shared_pattern_project T' (binding_resolve S' p) = shared_pattern_project T (binding_resolve S p)"
+    using m p by (simp_all add: store_memoized_def)
+  have p': "shared_pattern_formed T' p" using shared_pattern_extended[OF table p ext[rule_format]] by blast
+  have "shared_pattern_variables (binding_resolve S' p) =
+      finite_pattern_variables (shared_pattern_project T' (binding_resolve S' p))"
+    by (rule shared_pattern_variables_project[OF binding_resolve_formed[OF S' p']])
+  also have "\<dots> = finite_pattern_variables (shared_pattern_project T (binding_resolve S p))" using pr by simp
+  also have "\<dots> = shared_pattern_variables (binding_resolve S p)"
+    by (rule shared_pattern_variables_project[symmetric, OF binding_resolve_formed[OF S p]])
+  finally show ?thesis .
+qed
+
+theorem store_memoize_memoized:
+  assumes S: "binding_store_formed T S" and table: "table_formed T" and rep: "keyed_state_represents st T"
+  shows "\<exists>T'. keyed_state_represents (snd (store_memoize S a st)) T' \<and> store_memoized T S T' (fst (store_memoize S a st))"
+proof (cases "binding_map S a")
+  case None
+  then show ?thesis using S table rep store_memoized_refl[OF S table] by (auto simp: store_memoize_def)
+next
+  case (Some x)
+  obtain ra qa where a: "binding_map S a = Some (ra, qa)" using Some by (cases x) auto
+  let ?T' = "snd (share_collapse (binding_resolve S qa) T)"
+  note E = store_memoize_exact[OF S table rep a]
+  obtain q st' where k: "keyed_binding_resolve S qa st = (q, st')" by (cases "keyed_binding_resolve S qa st")
+  have memo: "store_memoize S a st = (store_compress S a q, st')" using a k by (simp add: store_memoize_def)
+  have fields: "binding_next_rank (store_compress S a q) = binding_next_rank S"
+    "\<And>b. binding_map (store_compress S a q) b = None \<longleftrightarrow> binding_map S b = None"
+    using a by (auto simp: store_compress_def split: option.splits)
+  show ?thesis using E memo fields unfolding store_memoized_def by (intro exI[of _ ?T']) simp
+qed
+
 subsection \<open>The store read through a red-black tree at a variable key\<close>
 
 text \<open>

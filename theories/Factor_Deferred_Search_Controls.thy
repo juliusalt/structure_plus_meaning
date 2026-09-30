@@ -19,7 +19,11 @@ struct
   val reach_max = Unsynchronized.ref 0
   val reach_sum = Unsynchronized.ref 0
   val binds = Unsynchronized.ref 0
-  fun reset () = (reach_max := 0; reach_sum := 0; binds := 0)
+  val follows = Unsynchronized.ref 0
+  val memos = Unsynchronized.ref 0
+  fun reset () = (reach_max := 0; reach_sum := 0; binds := 0; follows := 0; memos := 0)
+  fun follow () = (follows := !follows + 1; true)
+  fun memo () = (memos := !memos + 1; true)
   fun note (k : IntInf.int) =
     let val i = IntInf.toInt k
     in (reach_max := Int.max (!reach_max, i); reach_sum := !reach_sum + i; binds := !binds + 1; true) end
@@ -29,6 +33,39 @@ end
 definition c_note :: "integer \<Rightarrow> bool" where "c_note k = True"
 
 code_printing constant c_note \<rightharpoonup> (SML) "DeferredControl.note"
+
+section \<open>Counting the resolutions and the memoizations\<close>
+
+text \<open>
+  Task 945's part of the control: every binding the keyed resolution follows and every binding memoized is counted,
+  through code equations of this theory alone, each equal to its constant's own by an identity in HOL (@{text c_follow},
+  @{text c_memo}), so the list builder's grounding is measured against the linear claim: each ancestor resolved once.
+\<close>
+
+definition c_follow :: "unit \<Rightarrow> bool" where "c_follow u = True"
+definition c_memo :: "unit \<Rightarrow> bool" where "c_memo u = True"
+
+code_printing constant c_follow \<rightharpoonup> (SML) "DeferredControl.follow"
+  | constant c_memo \<rightharpoonup> (SML) "DeferredControl.memo"
+
+declare keyed_resolve_from.simps [code del] deferred_memoize_at_def [code del]
+
+lemma c_keyed_resolve_code [code]:
+  "keyed_resolve_from n r M (Shared_Variable a) st = (case M a of
+      Some (r', q) \<Rightarrow> (if r \<le> r' \<and> r' < n \<and> c_follow () then keyed_resolve_from n (Suc r') M q st else (Shared_Variable a, st))
+    | None \<Rightarrow> (Shared_Variable a, st))"
+  "keyed_resolve_from n r M (Shared_Ground i) st = (Shared_Ground i, st)"
+  "keyed_resolve_from n r M (Shared_Node A p q) st = (if fBall A (\<lambda>a. M a = None) then (Shared_Node A p q, st)
+    else (case keyed_resolve_from n r M p st of (p', st1) \<Rightarrow>
+      (case keyed_resolve_from n r M q st1 of (q', st2) \<Rightarrow> keyed_share_node p' q' st2)))"
+  by (simp_all add: c_follow_def split: option.splits)
+
+lemma c_memoize_at_code [code]:
+  "deferred_memoize_at x d = (if c_memo () then (case RBT.lookup (snd (deferred_tree d)) (deferred_key d x) of None \<Rightarrow> d
+    | Some z \<Rightarrow> (case keyed_binding_resolve (deferred_store d) (snd z) (shared_sharing (search_state (deferred_inner d))) of
+      (q, st') \<Rightarrow> d\<lparr>deferred_tree := binding_tree_compress (deferred_key d) (deferred_tree d) x q,
+        deferred_inner := search_share st' (deferred_inner d)\<rparr>)) else d)"
+  by (simp add: c_memo_def deferred_memoize_at_def)
 
 section \<open>The deferred search with its binds' reach noted\<close>
 
@@ -95,6 +132,27 @@ definition c_77 :: "local_address option definition_site list option \<times> fi
     bool list \<times> integer list" where
   "c_77 c n = c_compare (modes_construction (fst c) n) finite_rooted_given_readers n (finite_initial_state 77 (snd c))"
 
+text \<open>
+  A W2 query at the given's readers, at a query root (@{text finite_pattern_state}): the selection query of 77's bound
+  over the given's root site list, its element and rest left as the query's variables at the root position, where no
+  node stands. The state is rooted and not placed, so the search's code equation takes the deferred path; the deferred
+  search there is compared with the shared search and R3's indexed search.
+\<close>
+
+definition c_query :: "nat \<Rightarrow> bool list \<times> integer list" where
+  "c_query n = (case c_given_site of None \<Rightarrow> ([False], []) | Some d \<Rightarrow> (let
+      P = (finite_query_program finite_rooted_given_readers :: (nat+nat,nat,nat,nat) finite_schema_system);
+      q = witness_selection_query (0::nat) (Finite_Variable 0) 0;
+      st = finite_pattern_state (query_site q) (map_finite_term_pattern finite_query_variable
+        (finite_query_pattern q {|(0::nat, finite_data_list [finite_site_data d])|}));
+      A = indexed_search (\<lambda>r h. False) no_witness_construction P n (index_state P st);
+      B = selected_search (shared_representation no_witness_construction P)
+        (search_select no_witness_construction P (\<lambda>h. False)) no_witness_construction P n (search_of P st);
+      C = selected_search (deferred_representation no_witness_construction P)
+        (deferred_select no_witness_construction P (\<lambda>h. False)) no_witness_construction P n (deferred_of P st) in
+    ([clause_sockets_distinct P, search_placeable st, search_variables_rooted st, \<not> search_variables_placed st,
+      C = A, C = B, finite_resolution_search no_witness_construction P n st = C], c_light C)))"
+
 definition c_113 :: "nat \<Rightarrow> nat \<Rightarrow> bool list \<times> integer list" where
   "c_113 m n = c_compare no_witness_construction finite_given_readers n (finite_initial_state 113 (modes_113_call m))"
 
@@ -134,6 +192,7 @@ local
   val nat = @{code nat_of_integer}
   val c77 = @{code c_77}
   val c113 = @{code c_113}
+  val cquery = @{code c_query}
   val clist = @{code c_list}
   val creach = @{code c_list_reach}
   val given = @{code c_given_call}
@@ -146,21 +205,35 @@ local
     let
       val _ = DeferredControl.reset ()
       val light = creach (nat k)
+      val kk = IntInf.toInt k
     in
-      if !DeferredControl.reach_max <= IntInf.toInt k + 2 then
-        writeln ("DEFERRED CONTROL list " ^ IntInf.toString k ^ ": binds " ^ string_of_int (!DeferredControl.binds) ^
+      if !DeferredControl.reach_max <= kk + 2 andalso !DeferredControl.follows <= 8 * (kk + 10)
+        andalso !DeferredControl.memos <= 8 * (kk + 10) then
+        (writeln ("DEFERRED CONTROL list " ^ IntInf.toString k ^ ": binds " ^ string_of_int (!DeferredControl.binds) ^
           ", records reached at most " ^ string_of_int (!DeferredControl.reach_max) ^ " a bind, " ^
-          string_of_int (!DeferredControl.reach_sum) ^ " in all " ^ ints light)
+          string_of_int (!DeferredControl.reach_sum) ^ " in all; bindings followed " ^
+          string_of_int (!DeferredControl.follows) ^ ", memoized " ^ string_of_int (!DeferredControl.memos) ^ " " ^
+          ints light);
+         (!DeferredControl.follows, !DeferredControl.memos))
       else error ("DEFERRED CONTROL list " ^ IntInf.toString k ^ ": a bind reached " ^
-        string_of_int (!DeferredControl.reach_max) ^ " records")
+        string_of_int (!DeferredControl.reach_max) ^ " records, bindings followed " ^
+        string_of_int (!DeferredControl.follows) ^ ", memoized " ^ string_of_int (!DeferredControl.memos))
     end
 in
   val _ = check "113 at 3 rows, 1500" (c113 (nat 3) (nat 1500))
   val _ = check "113/1, 400" (c113 (nat 1) (nat 400))
   val _ = check "77/1, 400" (c77 (production (nat 1)) (nat 400))
   val _ = check "the given's 77, 30" (c77 given (nat 30))
+  val _ = check "a query root at the given's 77 selection, 200" (cquery (nat 200))
   val _ = map (fn k => check ("list " ^ IntInf.toString k) (clist (nat k))) [50, 100, 200]
-  val _ = map reach [50, 100, 200]
+  val counts = map reach [50, 100, 200]
+  val _ = case counts of
+      [(f50, m50), _, (f200, m200)] =>
+        if f200 * 50 <= 2 * f50 * 200 + 400 andalso m200 * 50 <= 2 * m50 * 200 + 400 then
+          writeln ("DEFERRED CONTROL list: bindings followed a element " ^ Real.fmt (StringCvt.FIX (SOME 2))
+            (real f50 / 50.0) ^ " at 50, " ^ Real.fmt (StringCvt.FIX (SOME 2)) (real f200 / 200.0) ^ " at 200: linear")
+        else error "DEFERRED CONTROL list: the resolutions grow faster than the chain"
+    | _ => ()
 end
 \<close>
 

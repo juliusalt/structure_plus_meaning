@@ -53,10 +53,10 @@ from evidence_io import publish_text, write_json
 
 ROOT = Path(__file__).resolve().parents[1]
 TOOLS = ROOT / 'tools'
-POLY = Path('/opt/isabelle/contrib/polyml-5.9.2-2/x86_64_32-linux/poly')
+POLY = isabelle_places.POLY
 ENV = {**os.environ, 'PYTHONDONTWRITEBYTECODE': '1', 'USER_HOME': str(isabelle_places.USER_HOME)}
 # Every Isabelle/Poly/ML runtime file read by native executions, beyond the toolchain digests.
-NATIVE_RUNTIME = (*native_execution_runtime.inputs(), Path('/opt/isabelle/src/Pure/ML/ml_statistics.ML'))
+NATIVE_RUNTIME = (*native_execution_runtime.inputs(), isabelle_places.ISABELLE_HOME / 'src/Pure/ML/ml_statistics.ML')
 
 
 def theory_names(project):
@@ -357,13 +357,22 @@ def proof_timeout(timeout, rebuilt):
 
 
 # The start of a process on a base, by task 623's model (`.build/tasks/623/result.md`, measured on 2026-09-26 at light
-# load, a lower envelope): the Isabelle/Scala side's session dependencies cost START_PER_SESSION for each session of the
+# load; fitted to the measured prefixes of the chain, within about 1 s of each, not their lower envelope): the Isabelle/Scala side's session dependencies cost START_PER_SESSION for each session of the
 # chain above HOL, Poly/ML's load of the heaps START_PER_GB for each GB of the chain's heap files, Pure's and HOL's among
 # them, over START_SECONDS; 36.7 s predicted for the chain of 148 sessions and 14.99 GB, 37.4 measured; 3.3 predicted for
 # a base of one session, 3.1 measured.
+# The model is stated here once: `chain_start` and the probe tool's `modeled_start` both read it through
+# `modeled_start_seconds`, each over its own reading of a chain's sessions and heaps.
 START_SECONDS = 1.6
 START_PER_SESSION = 0.085
 START_PER_GB = 1.5
+
+
+def modeled_start_seconds(sessions, gigabytes):
+    """#623's modeled start of a process over a chain of this many sessions above HOL and this many GB of heaps."""
+    return START_SECONDS + START_PER_SESSION * sessions + START_PER_GB * gigabytes
+
+
 START_BOUND = 10.0   # a chain whose modeled start passes it is replaced by one session at the next base made
 REBUILT_SHARE = 0.5  # a check that rebuilds at least this share of the library makes its base one session
 # The trigger is inert until the harness sets this switch: a one-session base has no parent, so the harness's pruning of
@@ -386,7 +395,7 @@ def chain_start(directories, home=None):
              for found in [sorted(home.glob('.isabelle/*/heaps/*/' + session))] if found]
     gb = sum(heap.stat().st_size for heap in heaps) / 1e9
     return {'sessions': len(sessions), 'heap_gb': round(gb, 3),
-            'seconds': round(START_SECONDS + START_PER_SESSION * len(sessions) + START_PER_GB * gb, 2)}
+            'seconds': round(modeled_start_seconds(len(sessions), gb), 2)}
 
 
 def one_session_trigger(stores_heap, rebuilt, theories, start, enabled=None):

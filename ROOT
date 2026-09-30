@@ -687,6 +687,7 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Factor_Adoption_Comparison
     Factor_Reader_Payloads
     Factor_Environment_Additions
+    Factor_Extension_Packages
     Factor_Generation_Reader_Payloads
     Factor_Adoption_Permission_Admission
     Factor_Substitution
@@ -1803,7 +1804,6 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Encoded_Environment_Presentation
     Data_Reading_Presentation
     Isabelle_Constant_Closure
-    Development_Verification_Frame
     Map_Filter_Lists
     Isabelle_Terms
     Isabelle_Entities

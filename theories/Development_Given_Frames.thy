@@ -829,6 +829,12 @@ proof
   qed
 qed
 
+text \<open>48 has one clause at the rooted readers, the union's.\<close>
+
+lemma union_rooted_clause:
+  "((48,c),S) \<in> system_clauses given_rooted_readers_system \<longleftrightarrow> c = 0 \<and> S = decode_finite_schema union_schema"
+  by (simp only: given_union_site_clauses(6) singleton_iff prod.inject union_schema_decoded)
+
 context given_readers_extension
 begin
 
@@ -1270,10 +1276,6 @@ proof -
 qed
 
 subsection \<open>48's registration at the placed and installed programs\<close>
-
-lemma union_rooted_clause:
-  "((48,c),S) \<in> system_clauses given_rooted_readers_system \<longleftrightarrow> c = 0 \<and> S = decode_finite_schema union_schema"
-  by (simp only: given_union_site_clauses(6) singleton_iff prod.inject union_schema_decoded)
 
 lemma placed_union_clause:
   "((installed_placement 48,c),S) |\<in>| finite_system_clauses (finite_rename_system installed_placement Q) \<longleftrightarrow>

@@ -10,8 +10,7 @@ owner's words are in the ledger (`.claude/orchestration/owner-ledger.md`) and ar
 **The direction.** The Q7 order is the owner's (Q7, 2026-09-24): the loop's notions as native definitions — readiness,
 the verdict of a kind and request construction are native — then problems whose subjects are native definitions. Its
 last step, the translation of native content into Isabelle for verification, is withdrawn by the owner's answer to
-Q18 (a) (2026-09-30): native content is consumed without Isabelle's verification; the design #947 decides what the
-withdrawn verification request was to check becomes. The third step begins with the native loop's first problem (the
+Q18 (a) (2026-09-30): native content is consumed without Isabelle's verification; #947's entry decides the rest (below). The third step begins with the native loop's first problem (the
 owner, 18:53): what a problem is, its native notion the loop's product and not a design's; then Q2's problem (17:18),
 how to choose the next problem to solve, posed over the first answer; the authority question a native problem whose
 answer the owner approves. Every step answers the owner's rule of 18:12: every distinction a native program relies on
@@ -27,7 +26,12 @@ comes from a native notion. The route rests on these accepted entries of `DECISI
 - #381, "The first problem's requirements use the test of a native distinction; …": the guard's sockets G1 retention, G2
   formation and closure, G3 the callee boundary, G4 the octet audit; the rest criticism and the owner's approval. The
   parts (a), (b), (c), (f) the verification request was to check, and #383's part (d) ("Non-nominality of uses is
-  equivariance under use permutations, …"; a use-renamed sample in criticism), go where #947 decides.
+  equivariance under use permutations, …"; a use-renamed sample in criticism), go where #947 decided: (a) no requirement;
+  (b) and (d) criticism by their samples; (c) criticism by the observation of an added definition's callees (82, 83),
+  a failure row that never refuses; (f) none. G3 stays the given's package (Q34).
+- #947, "Native content is consumed on its native judgment: …" (Q18 (a), Q23): the first answer admitted, criticized
+  (its record a generation citing the admission), approved by the owner (a record citing the criticism record), then
+  consumed, posed again under it; no translation; Isabelle's bootstrap role over the library's own theories only.
 - #482 with #560's parametric recording: every route generation costs its payload's size once.
 - #495, "The native evaluator constructs the missing witnesses by resolution: …" (Q27), with #585's and #683's
   additions, corrections (5)–(16), #831's section "The given's calls are decided once" and #890's addition "The step at
@@ -37,14 +41,15 @@ comes from a native notion. The route rests on these accepted entries of `DECISI
   (b) not.
 
 **The first problem's route**, each build with its review. Landed: the recording (P #581, X′ #583), the posing #397 with
-its one-citation recording #562, AX1 #930 (`Factor_Environment_Additions`). Open: AX2a–AX4 (#928's (c), from the brief
-#929: AX2a #932 → AX2b #934 and AX3a #936 → AX3b #938, which records the posing again → AX4 #940); then two rewrite
+its one-citation recording #562, AX1 #930 (`Factor_Environment_Additions`), AX2a #932 (`Factor_Extension_Packages`). Open: AX2b–AX4 (#928's (c),
+from the brief #929: #955 (AX2a's clauses 957 and 958 changed so that AX2b's witnesses have W2 forms, q169) → #957
+(961's clause 0 split so that l is produced with no q, q170) → AX2b #934, and AX3a #936 → AX3b #938, which records the posing again → AX4 #940); then two rewrite
 briefs carry AX1–AX4's hand-overs into the briefs they reach, spliced so that nothing they rewrite starts first: #948
 the route's (#542, #707, #399, #709, #401, #443, #445; #709's with #880's Remains 2, #542's with review 931's 2) and
 #949 the criticism's (#549, #551, #553, #447, #449; after the design #947 too). R7 #542 (the given at the guard's calls
 in the numbered course) → its native part #707 → the answer's judgment and admission #399 → its controls #709 → the
 transport #401; the first request at the given #547 → its packet, issue and execution #443 → its delivery #445; the
-criticism's observations #549 and samples #551 → its record #553 (after #399) → its controls #447 → its route #449.
+criticism's observations #549 and samples #551 → its record #553 (after #399) → its controls #447 → its route #449 → the owner's approval (Open 142).
 Every route generation is recorded through B2's recording (`development_citing_row_generation_certified`). #547, #707,
 #399 and GT2 follow #831's section (#880): the judgment in two phases at the given's table relocated to the
 installation, admission through the hand-in, refusal through W5's complete construction, soundness at a table whose
@@ -57,7 +62,8 @@ once over graphs and retained; a judgment in two phases; 77's bound handed in fo
 one-time ≈ 31–34 M states, a judgment's part ≈ 2–5 M (after #928 a candidate's part is its additions). Landed: the
 table through R3–R5 and C (GT1a–GT2c, GT4–GT4c), the given's calls (GT5 #845), W5 #847, VK1 #920, GT2b's two parts
 #889 and #922, and #942 (every discharge valued at a true table; rc's table forms from a true table and rc alone; the
-committed forms' transfers at a table). Open: VK2 #924 (W5's premise at the given's committing instance) → AX4 and
+committed forms' transfers at a table). Open: VK2 #924 (W5's premise at the given's committing instance, under a named premise, q167) → #953 (#798's
+record carried to the query program, discharging it; VK2's controls #956 after it and D1d) → AX4 and
 #399; GT3 #876 (the table in F2's shared representation, after D1d) → GT6 #878 (the table produced once, a run of hours
 parked for its completion, its record `validation/given-table.json`, after #875, which supplies its prediction and
 worker count) → #542, #547, #707, #399. #547 does not wait on VK2 (its refusal at 561 goes through the merge at W5's
@@ -75,24 +81,32 @@ come before it starts): the kept held goals and construction nodes (q162; `.buil
 next-edits 384) and FI's remaining costs (review 895's 2 and 5, next-edits 385).
 
 **The order at a pair node** (correction (16), D2 #907 from #896's attribution of c55 #827): a waiting class of F1's
-selection, read by the selection alone, never by exactness. Landed: WC1 #910, WC2a #912. Open: WC2b #914 (the forms at
-the waiting moded selection, the 55 fixture, the control) → WC3 #916 (the class at the route, K2's constants redefined
+selection, read by the selection alone, never by exactness. Landed: WC1 #910, WC2a #912, WC2b #914 (`5f3ae77b`: the
+forms at the waiting moded selection, the 55 fixture, the control). Open: WC3 #916 (the class at the route, K2's constants redefined
 at the waiting moded selection; after D1d, FI and GT3) → #542, #547, #887, beside GT6, whose table's validity does not
 rest on the order; R7 #542's figures set the trigger of 55's clause trials (Open 152). The consolidation #887 (review
 832's follow-ups) after GT3 and WC3; nothing waits on it.
 
+**The probe's cost** (#944's attribution): a probe's minute is its theories' forked proofs, joined theory by theory;
+#950 made the two slow proofs fast (27.1 s and 8.6 s) and deleted the frame (`74e2cd04`); #951 loads a probe's theories in one call
+(#942's eleven 54.5 → 35.6 s held) with Open 78's items, reviewed by #952; the start model's refit is not taken (its
+model drives the owner's re-root trigger).
+
 **Retired**: on #376's and #378's entries the decomposition line, #320's N-builds, #371, #377, the designation by locus,
 the index form's retirement and the machinery's native verification stage; on Q18 (a) the verification request's builds
-#403 and #407 with their reviews (plan-134). **The bootstrap loop's landed lines** are kept and none is extended (#376);
+#403 and #407 with their reviews (plan-134), the translation into Isabelle and the verification frame (#947, the frame
+deleted by #950). **The bootstrap loop's landed lines** are kept and none is extended (#376);
 their remains are under Open and in `.build/plans/next-edits.md`.
 
-**Shape and order.** No build waits on a review. The longest chains, 13 deep: AX2a #932 → AX2b #934 → AX3b #938 → AX4
-#940 → #948 → R7 #542 → #707 → #399 → #709 → #553 → #447 → #449 → #450, and D1b″ #945 → D1d #905 → GT3 #876 → GT6
-#878 → R7 about as long. Nothing is added after the tail until it shortens (the approval build, Open 142, waits for
-that); rewrites and splices before a task are placed at any depth. The queue is the planner's choice, a residual until
-the selection problem's native answer (Q2): the design #947 (the owner's latest answer), the resolver's long pole D1b″
-→ D1d → #875 and GT3 → GT6, the investigation #944, AX2a–AX4, VK2, WC2b, then the route in its chains' order, each
-review right after its build; #887 after R7's review. Word changes are serialized; none is queued.
+**Shape and order.** No build waits on a review. The longest chains, 12 deep: AX2b #934 → AX3b #938 → AX4 #940 → #948
+→ R7 #542 → #707 → #399 → #709 → #553 → #447 → #449 → #450, and D1b″ #945 → D1d #905 → GT3 #876 → GT6 #878 → R7 about
+as long; GT6's run of hours (52–85 h on one worker; #875 supplies the worker count) makes the resolver's pole the
+critical one, and the AX line has slack against it. Nothing is added after the tail until it shortens (the approval
+build, Open 142, waits for that); rewrites and splices before a task are placed at any depth. The queue is the
+planner's choice, a residual until the selection problem's native answer (Q2): the running tasks with their reviews,
+#953 warm after VK2, the resolver's pole D1d → #875 and GT3 → GT6, AX2b–AX4, the probe tool #951 with
+its review #952, the rewrite briefs, then the route in its chains' order, each review right after its build; #887
+after R7's review. Word changes are serialized; none is queued.
 
 ## Decisions
 
@@ -106,7 +120,10 @@ Taken by the planning episodes, where they are not entries of `DECISIONS.md`.
   (Open 119); the authority question a native problem whose answer the owner approves. Meanwhile readiness and the
   planner's choice are the working basis, each interim choice a residual.
 - **Q18 (a)** (2026-09-30 23:39): native content is consumed without Isabelle's verification; the verification request
-  is withdrawn (#403, #407 deleted) and its consequences are the design #947's. **Q23** (23:57): (b) the least form and
+  is withdrawn (#403, #407 deleted) and its consequences are decided by #947's entry: (a) no requirement, (b), (c), (d)
+  criticism, the first answer consumed once the owner approves it after its criticism, no translation, the frame
+  retired (#950); G3 stays the given's package, (c) a criticism row, whether (c) and (d) are refused at admission being
+  Q34's, the entry's choice worked under. **Q23** (23:57): (b) the least form and
   (c) the owner's approval as an owner record are the owner's. The other parts of Q18 and Q23 are "covered by other
   answers": their provisional choices stand as generated.
 - **Q27** (2026-09-25 09:48): the evaluator that constructs the missing witnesses comes first; no judgment is decided by
@@ -253,8 +270,8 @@ REASONING_REUSE.md, how each went in `PLANNING_LOG.md`.
 
 - **The entries** (`DECISIONS.md`): #378, #376, #381, #383, #428, #460 (its decision withdrawn by Q27), #482 and #560,
   #495 with its additions, corrections (5)–(16), #831's section and #890's addition, #496 with #642's addition and
-  #790's section, the entries of #613, #782, #817 and #928. The planner's answer to each design is in its `verdict.md`;
-  the attributions #481, #644, #715, #829, #830, #851, #886 and #896 in their `result.md`.
+  #790's section, the entries of #613, #782, #817, #928 and #947. The planner's answer to each design is in its `verdict.md`;
+  the attributions #481, #644, #715, #829, #830, #851, #886, #896 and #944 in their `result.md`.
 - **The development package**: `Development_Package_Program` (a landing changing one of its six programs derives it
   again, Q18 (c)), `development_package_environment`.
 - **The given**: `Development_Given_Readers`, `Development_Given_Program`, `Development_Given_Installation` (47 entries
@@ -263,10 +280,11 @@ REASONING_REUSE.md, how each went in `PLANNING_LOG.md`.
   definition closure read from its roots (#716).
 - **The guard and the asked relation**: `Development_First_Problem_Guard`, `Factor_Package_Additions`,
   `Factor_Payload_Audit`, `Development_First_Problem_Asked`, the additions of an environment `Factor_Environment_Additions`
-  (AX1: the class relative to the given, G1's reader exact to 113, the additions' use action); non-nominality in
+  (AX1: the class relative to the given, G1's reader exact to 113, the additions' use action), the extension's packages
+  `Factor_Extension_Packages` (AX2a: the package at a site of an extension exact to 80 by locality); non-nominality in
   `Presentation_Equivariance`, `Factor_Use_Actions` and `Factor_Use_Renaming`. **The request at a package**:
   `Factor_Package_Requests`, `Development_First_Request_Program`. **The verification frame**
-  `Development_Verification_Frame`, which no route consumes since Q18 (a) (#947 decides whether it stays). **The
+  `Development_Verification_Frame`, retired by #947 and deleted by #950. **The
   criticism's notions**: `Criticism_Samples`, `Criticism_Use_Samples`, `Criticism_Octet_Samples`, `Factor_Stated_Leaves`,
   `Factor_Stated_Leaves_Program`. **The evaluation over a base**: `Factor_Implemented_Base_Evaluation` (E1); the
   counterparts retired, their readers in `Factor_Finite_Site_Value_Readers`, their controls in `Factor_Executed_Controls`.
@@ -283,7 +301,7 @@ REASONING_REUSE.md, how each went in `PLANNING_LOG.md`.
   (`Factor_Resolution_Producer_Discharge`, `Factor_Resolution_Socket_Discharges`, `Factor_Resolution_Material_Discharge`),
   forms and transfers (`Factor_Resolution_Views`, `Factor_Resolution_Carriers`, `Factor_Narrowed_Sockets`,
   `Factor_Narrowed_Commitments`, `Factor_Narrowed_Productions`), modes `Factor_Resolution_Modes`, the waiting class
-  `Factor_Socket_Waiting`, the check forms and route constants `Factor_Resolution_Checks`,
+  `Factor_Socket_Waiting` (its forms at the waiting moded selection, WC2b; controls `Development_Given_Waiting_Controls`), the check forms and route constants `Factor_Resolution_Checks`,
   `Factor_Framed_Commitment_Index`, the input production `Factor_Input_Productions`; controls in
   `Factor_Resolution_Controls`, `Factor_Commitment_Controls`, `Factor_Narrowed_Controls`, `Factor_Mode_Controls`,
   `Factor_Check_Controls`, `Factor_Table_Controls`, the committed trace in `Factor_Committed_Traces`.
@@ -321,13 +339,13 @@ REASONING_REUSE.md, how each went in `PLANNING_LOG.md`.
 ## Open
 
 **The owner's question** (its words in `.claude/orchestration/state/held/owner-questions.md`):
-- **Q26** #383's three choices on non-nominality of uses — provisional; its (b), the check by Isabelle in the
-  verification request, is overtaken by Q18 (a): #947 decides what replaces it and drafts the question in its changed
-  form for the ledger.
+- **Q34** (Q26's changed form, after Q18 (a) and #947): whether (c) and (d) of the first problem's test are refused
+  at admission (uses as leaves of their own; G3 at the rooted readers' package) or left to criticism and the owner's
+  approval — provisional: criticism, #947's choice. It supersedes **Q26**, whose (b) Q18 (a) overtook.
 
 **To plan, in the order expected** (numbers kept from earlier states):
-3. The translation of native content into Isabelle: withdrawn by Q18 (a); what remains of it — N7 (the verdict at a
-   package, when a problem kind asks it), N8 (installation) — is #947's to say.
+3. N7, the verdict at a package: a native notion, built when a problem kind asks it; the translation into Isabelle
+   and N8 are withdrawn (#947).
 119. The second and the authority problems' requirement families, posed over the first answer (#370's follow-ups in
    `.build/tasks/370/result.md`, #371's notes).
 121. The criticism's leaf argument for programs with material premises (#381's follow-up 3,
@@ -341,9 +359,11 @@ REASONING_REUSE.md, how each went in `PLANNING_LOG.md`.
 153. Site 8's lookup as an index (Q33 (a)): a change of the material observation's fields or of the artifact's data
    class, not of an implementation (#928's entry); designed at its trigger — R7's control candidate's added rows' 11s
    (≈ 63 K states a row, ≈ 8 K with it) or GT6's measured production (11's 27.3 M states once, ≈ 2.15 M with it).
-142. The owner's approval of the first answer (Q23 (c), the owner's): after #447 and the design #947, an owner record
-   citing the admission and the criticism records (`development_owner_approval`); publication without Isabelle's
-   verification (Q18 (a)), as #947 decides it.
+142. The owner's approval of the first answer (Q23 (c); #947's course): after #553 and #447,
+   `Development_Owner_Records.development_owner_approval` and `development_owner_approval_certified` citing the
+   criticism record's generation, its payload the owner's words when given; then the first problem posed again under
+   the approved answer and the second and authority problems over it, each citing the approval; placed when the
+   criticism's chain is below the depth limit.
 148. The first answer itself: an executor given only #445's packet, answering through #401, judged by #399, criticized
    by #449 — the plan's stage 3; Q4 closed unanswered, its provisional choice (no agent executor run) a generated
    choice to revisit when the route stands.
@@ -365,7 +385,7 @@ REASONING_REUSE.md, how each went in `PLANNING_LOG.md`.
 27. The seed recipe's cost (#324, #367): attributed at a measured need of the check's cycle.
 78. The probe tool (reviews of #316, #286, #353, #432, #417, #457, #563, #584): qualified ML structure paths renamed
    with the theory, the active base's unlanded theories from the heap, skipped code checks extended, a refusal naming
-   `--from-heap`; folded into the fix #944 names, when it is placed.
+   `--from-heap`; carried by #951.
 29. `REASONING_REUSE.md`'s open comparisons (#280's follow-ups).
 
 **At a theory's next edit or a measured need**: the items in `.build/plans/next-edits.md`, which a planner searches for
@@ -373,15 +393,14 @@ a theory before briefing a task that edits it.
 
 ## Now
 
-- **The fresh start** (2026-10-01, plan-134): the stock is taken; nothing landed since `43beec9c` (2026-09-27). Five
-  tasks whose sessions ended that day continue in their trees, their briefs unchanged: VK2 #924 (its tree changes
-  `Factor_Least_Collections` and `Factor_Least_Witness_Registrations`), WC2b #914 (eleven files, among them
-  `Factor_Socket_Waiting`, `Factor_Resolution_Checks`, both registrations theories, DECISIONS.md, REASONING_REUSE.md
-  and a new `Development_Given_Waiting_Controls`), AX2a #932 (a new `Factor_Extension_Packages`), D1b″ #945 (not
-  begun), and the investigation #944, whose step 1 stands in its `result.md`; its held probe ran, steps 2 and 3
-  remain.
-- **What the next events ask**: #944's fix course (a build of `tools/probe_theories.py` with Open 78's items, or the
-  owner's); #947's decision, which #949 and Open 142 take; #875's figures — GT6's prediction and worker count, the
+- **Under way**: D1b″ #945, continued in its tree from 2026-09-27; VK2 #924 ended partial and is
+  re-planned to hand over what exists (its committing instance at a named premise that #953 discharges, q167; its
+  controls moved to #956); AX2b #934 parks until #955 and #957 land (q169, q170). AX2a #932 landed (`11a22b69`);
+  review 933's follow-ups were mailed to AX2b #934 (2), AX3a #936 (1, 3, 4) and AX3b #938 (5).
+- **plan-134** was stopped by a classifier before its notes (2026-10-01 00:47); this file and the graph held its
+  state, and nothing it decided is missing here.
+- **What the next events ask**: #951's hand-over (then the Working rules' Probes bullet says a probe loads
+  its theories in one call); Q34's answer; #875's figures — GT6's prediction and worker count, the
   checking fold measured at samples, the kept forms (q162) and FI's remaining costs (Graph), and with them the re-run of
   #718's 77 and 79 fixtures with review 858's attributions (next-edits 364–366); at AX4's landing #948 and #949 start,
   and their proposals are placed by rewrite.
@@ -393,7 +412,7 @@ a theory before briefing a task that edits it.
   #371's (their lines retired by #376 and #378), #176's (superseded: its exporter obligation landed by another task;
   its uncommitted changes make the open-tree overlap checks inexact until it is removed), #143's (an uncommitted note to
   `validation/development-answers/README.md`, the bootstrap loop's answer records, kept unextended), and the
-  investigations' (#425, #430, #481, #559, #644, #764, #779, #829, #830, #851, #886, #896), whose deliverable is their
+  investigations' (#425, #430, #481, #559, #644, #764, #779, #829, #830, #851, #886, #896, #944), whose deliverable is their
   `result.md`.
 - **The base** lives at `.build/tasks/base-lasting/`, advanced by the harness at every landing;
   `.build/complete-20260921a` and `/tmp/structural-accepted` are the owner's or the next reboot's.

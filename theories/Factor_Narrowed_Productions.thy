@@ -1105,8 +1105,12 @@ proof -
   proof (rule ccontr)
     assume ne: "declared_narrowing D (resolution_node_site nd) (resolution_node_schema nd)
       (last (resolution_goal_position g)) \<noteq> (\<lambda>_. True)"
-    obtain R where R: "declared_production D (resolution_node_site nd0) (resolution_node_schema nd0) (last q) = Some R"
-      using declared tup ne ndeq gq unfolding narrowed_productions_declared_def by fastforce
+    have ne0: "declared_narrowing D (resolution_node_site nd0) (resolution_node_schema nd0) (last q) \<noteq> (\<lambda>_. True)"
+      using ne ndeq gq by simp
+    have "declared_production D (resolution_node_site nd0) (resolution_node_schema nd0) (last q) \<noteq> None"
+      by (rule declared[unfolded narrowed_productions_declared_def, rule_format, OF tup ne0])
+    then obtain R where R: "declared_production D (resolution_node_site nd0) (resolution_node_schema nd0) (last q) = Some R"
+      by (cases "declared_production D (resolution_node_site nd0) (resolution_node_schema nd0) (last q)") simp_all
     have "(Vp,R) |\<in>| finite_socket_productions D \<Phi> F st g"
       by (rule finite_socket_productions_memberI[OF gq qne nd0 tup R ch sc cn])
     then show False using met by simp

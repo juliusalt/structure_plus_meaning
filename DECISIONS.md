@@ -18091,7 +18091,9 @@ is the order.
   alternative, pruned, reusable, closed by a table) never waits — the goals the class names are set aside from (ii),
   (iii) and (iv) while an unheld candidate it does not name stands; when every candidate is named the choice is F1's
   over all of them, so the class never empties the selection. Formally, F1's choice (`finite_goal_choice_in`) over the
-  unheld candidates that do not wait or are settled at once when one stands, else over all; F1's selection with a
+  unheld candidates that do not wait or are settled at once, and where F1's choice over them is empty, over all [marked
+  correction, task 914 (review 911's follow-up 1): "when one stands, else over all" missed that F1's choice can be
+  empty on a set holding a candidate; WC1 states it so, `finite_waiting_choice_in`]; F1's selection with a
   waiting predicate beside its priority (`finite_resolution_select_waiting_in Θ pr wt κ P`, the builder's name), today's
   selection its instance at the empty predicate, statements kept. The committed forms take it at the moded priority and
   `finite_socket_waits D Φ M` (the *waiting moded selection*), which at no frames is the moded selection. Not a mode: a
@@ -21008,7 +21010,9 @@ focus and at the root's (the check route's), the focused access is the state's (
 step reads #865's kept classes as the plain step does (`kept_select_by`, #865's `search_select` at a priority class); at a
 proper focus (every committed sub-search) the step still selects over the focused access, #869's selection unchanged and
 the kept classes unread (`committed_kept_select`). q156's answer asks their focused instance — the focus's goals a key
-range of the kept position-ordered class trees, the open-dependent tests recomputed there — and it is not done: the class
+range of the kept position-ordered class trees, the open-dependent tests recomputed there — and it is not done [marked pointer, task 914 (review 895's follow-up 6):
+done since, task 892's entry "The committed step at a proper focus reads the focus as a key range of the kept class
+trees"]: the class
 trees are read only through their entries, so the range is reached only by walking every class entry, and the range
 selection's equality and its measurement at a fixture running a sub-search exceeded this task; by q156's escape it is
 brought to the planner as a task of its own (a range operation on the class trees, then the focused selection over it). Every committed step keeps the classes

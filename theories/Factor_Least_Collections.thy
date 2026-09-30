@@ -742,8 +742,11 @@ text \<open>
   identity's exactness rest on, one named premise (@{text finite_query_exact}). At the plain parameters they are R4's
   refutation exactness and the lifting above (@{text finite_query_exact_plain}); the first holds at every parameters
   where R5's committed forms are exact (@{text finite_parameters_refutes_exact_committed}). The second at a committing
-  lifted part is a value-keeping lifting at a pattern root, which R5 does not state: R5's lifting keeps a root value
-  only where nothing is committed, and its found-state invariant is stated at ground roots (task 847, q161).
+  lifted part is VK1's value lifting at the pattern root, stated where the lifted part commits only root-apart goals
+  at the top focus (@{text Factor_Least_Witness_Registrations}, VK2). Its patterns are those the queries build: every
+  variable a query's own at the root position (@{const finite_query_variable}'s shape), which the root step places, so
+  the value lifting's holders invariant holds from the step on (task 924, q167). The premise is stated at those patterns
+  alone: every consumer passes a query's pattern, and a variable at another position is never placed by the root step.
 \<close>
 
 definition finite_parameters_refutes_exact :: "('a,'s,'d,'c) resolution_parameters \<Rightarrow>
@@ -755,7 +758,7 @@ definition finite_query_search_keeps :: "('a,'s,'d,'c,'v) query_parameters \<Rig
     nat \<Rightarrow> bool" where
   "finite_query_search_keeps \<Xi> P n \<longleftrightarrow>
     (\<forall>d (p::('s,'a+'v) resolution_variable finite_term_pattern) \<theta>. finite_pattern_formed p \<longrightarrow>
-      (\<forall>z. z |\<in>| finite_pattern_variables p \<longrightarrow> (\<exists>v. snd z=Inr v)) \<longrightarrow>
+      (\<forall>z. z |\<in>| finite_pattern_variables p \<longrightarrow> fst z=([],True) \<and> (\<exists>v. snd z=Inr v)) \<longrightarrow>
       (d,decode_finite_term (resolution_value \<theta> p)) \<in> positive_meaning (decode_finite_system P) \<longrightarrow>
       resolution_diagnoses (finite_query_search_in \<Xi> P n d p)\<noteq>{||} \<or>
       (\<exists>c \<theta>'. c |\<in>| finite_root_calls (finite_query_search_in \<Xi> P n d p) \<and> resolution_value \<theta>' c=resolution_value \<theta> p))"
@@ -770,7 +773,7 @@ lemma finite_query_exact_parts:
     (\<forall>d t. finite_parameters_resolution (fst \<Xi>) P d t n=Finite_Refuted \<longrightarrow>
       (d,decode_finite_term t) \<notin> positive_meaning (decode_finite_system P)) \<and>
     (\<forall>d (p::('s,'a+'v) resolution_variable finite_term_pattern) \<theta>. finite_pattern_formed p \<longrightarrow>
-      (\<forall>z. z |\<in>| finite_pattern_variables p \<longrightarrow> (\<exists>v. snd z=Inr v)) \<longrightarrow>
+      (\<forall>z. z |\<in>| finite_pattern_variables p \<longrightarrow> fst z=([],True) \<and> (\<exists>v. snd z=Inr v)) \<longrightarrow>
       (d,decode_finite_term (resolution_value \<theta> p)) \<in> positive_meaning (decode_finite_system P) \<longrightarrow>
       resolution_diagnoses (finite_query_search_in \<Xi> P n d p)\<noteq>{||} \<or>
       (\<exists>c \<theta>'. c |\<in>| finite_root_calls (finite_query_search_in \<Xi> P n d p) \<and> resolution_value \<theta>' c=resolution_value \<theta> p))"
@@ -782,7 +785,8 @@ lemma finite_query_exact_refuted:
   using assms unfolding finite_query_exact_parts by blast
 
 lemma finite_query_exact_search:
-  assumes "finite_query_exact \<Xi> P n" "finite_pattern_formed p" "\<And>z. z |\<in>| finite_pattern_variables p \<Longrightarrow> \<exists>v. snd z=Inr v"
+  assumes "finite_query_exact \<Xi> P n" "finite_pattern_formed p"
+    "\<And>z. z |\<in>| finite_pattern_variables p \<Longrightarrow> fst z=([],True) \<and> (\<exists>v. snd z=Inr v)"
     "(d,decode_finite_term (resolution_value \<theta> p)) \<in> positive_meaning (decode_finite_system P)"
   shows "resolution_diagnoses (finite_query_search_in \<Xi> P n d p)\<noteq>{||} \<or>
     (\<exists>c \<theta>'. c |\<in>| finite_root_calls (finite_query_search_in \<Xi> P n d p) \<and> resolution_value \<theta>' c=resolution_value \<theta> p)"
@@ -818,7 +822,8 @@ proof (intro conjI allI impI)
     by (rule finite_program_resolution_refutation_exact)
 next
   fix d and p :: "('s,'a+'v) resolution_variable finite_term_pattern" and \<theta>
-  assume formed: "finite_pattern_formed p" and own: "\<forall>z. z |\<in>| finite_pattern_variables p \<longrightarrow> (\<exists>v. snd z=Inr v)"
+  assume formed: "finite_pattern_formed p"
+    and own: "\<forall>z. z |\<in>| finite_pattern_variables p \<longrightarrow> fst z=([],True) \<and> (\<exists>v. snd z=Inr v)"
     and holds: "(d,decode_finite_term (resolution_value \<theta> p)) \<in> positive_meaning (decode_finite_system P)"
   show "resolution_diagnoses (finite_query_search_in plain_query_parameters P n d p)\<noteq>{||} \<or>
       (\<exists>c \<theta>'. c |\<in>| finite_root_calls (finite_query_search_in plain_query_parameters P n d p) \<and>
@@ -854,7 +859,7 @@ proof -
     using finite_query_pattern_value[of W \<theta> q, OF agree] by (simp add: resolution_value_rename comp t0_def)
   have gsformed: "finite_pattern_formed ?gs"
     using finite_query_pattern_formed[of W \<theta> q, OF agree gformed] tf by (simp add: t0_def)
-  have gsvars: "\<And>z. z |\<in>| finite_pattern_variables ?gs \<Longrightarrow> \<exists>v. snd z=Inr v"
+  have gsvars: "\<And>z. z |\<in>| finite_pattern_variables ?gs \<Longrightarrow> fst z=([],True) \<and> (\<exists>v. snd z=Inr v)"
     by (auto simp: finite_pattern_variables_map finite_query_variable_def)
   have Ptrue: "(query_site q,decode_finite_term (resolution_value \<theta>s ?gs)) \<in> positive_meaning (decode_finite_system P)"
     using true by (simp add: gsvalue t0_def)

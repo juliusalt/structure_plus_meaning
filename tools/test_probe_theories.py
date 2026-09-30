@@ -4,10 +4,13 @@ and named, and a base's own sources."""
 
 import json
 from pathlib import Path
+import re
 import tempfile
 import unittest
 from unittest import mock
 
+import incremental_check
+import isabelle_places
 import probe_theories
 
 
@@ -117,9 +120,18 @@ class ChangedBaseTheories(unittest.TestCase):
             self.assertEqual(summary['stale_heap_imports'], {})
             self.assertIsNone(summary['cause'])
             self.assertEqual(summary['from_heap_despite_change'], [])
-            script = (root / 'work' / 'probe.ML').read_text().splitlines()
-            self.assertEqual([line.rsplit('/', 1)[1].rstrip('";') for line in script[:4]],
-                             ['A_Probe', 'C_Probe', 'B_Probe', 'N'])
+            text = (root / 'work' / 'probe.ML').read_text()
+            script = text.splitlines()
+            self.assertEqual(len(script), 3)
+            self.assertEqual(script[0], 'fun use_thy_path path = (path, Position.none);')
+            self.assertTrue(script[1].startswith(
+                'val _ = Runtime.toplevel_program (fn () => ignore (Thy_Info.use_theories (Options.default ()) '
+                'Resources.default_qualifier [use_thy_path "'))
+            # the harness's reader of a probe's loaded theories (v2.py, probe_runs) over the whole script
+            directory = root / 'work' / 'theories'
+            self.assertEqual(re.findall(r'use_thy\w*\s+"([^"]+)"', text),
+                             [str(directory / name) for name in ['A_Probe', 'C_Probe', 'B_Probe', 'N']])
+            self.assertEqual(script[2], 'val _ = writeln "PROBE THEORIES LOADED";')
             self.assertIn('imports "A_Probe"', (root / 'work' / 'theories' / 'C_Probe.thy').read_text())
 
     def test_intermediate_between_two_changed(self):
@@ -157,7 +169,7 @@ class ChangedBaseTheories(unittest.TestCase):
 
     def test_refused_before_load(self):
         with tempfile.TemporaryDirectory() as directory:
-            with mock.patch.object(probe_theories, 'START_SECONDS', 100):
+            with mock.patch.object(incremental_check, 'START_SECONDS', 100):
                 summary, runner = self.run_probe(Path(directory), {'A': 'a', 'B': 'b', 'N': None})
             runner.assert_not_called()
             self.assertFalse(summary['loaded'])
@@ -184,6 +196,61 @@ class ChangedBaseTheories(unittest.TestCase):
             self.assertEqual(summary['certified'], [])
             self.assertIn('PROBE CAUSE: stale_heap_imports', (root / 'work' / 'probe.log').read_text())
 
+    def test_every_failing_theory_reported(self):
+        """The one call reports the errors of every theory that fails; neither stops the other's report."""
+        text = ('Loading theory "A_Probe"\n*** Failed to finish proof (line 3 of "A_Probe.thy")\n'
+                'Loading theory "N"\n*** Undefined constant: "bar" (line 5 of "N.thy")\n')
+        run = {'exit': 1, 'text': text, 'timed_out': False, 'last_command': None,
+               'errors': [line for line in text.splitlines() if line.startswith('***')]}
+        with tempfile.TemporaryDirectory() as directory:
+            summary, _ = self.run_probe(Path(directory), {'A': 'a', 'N': None}, run=run)
+            self.assertFalse(summary['loaded'])
+            self.assertEqual(summary['certified'], [])
+            self.assertEqual(len(summary['errors']), 2)
+            self.assertIn('A_Probe.thy', summary['errors'][0])
+            self.assertIn('N.thy', summary['errors'][1])
+
+    def test_structure_renamed(self):
+        text = ('theory A imports Main\nbegin\nML \\<open>structure A = struct val x = 1 end\\<close>\n'
+                'ML \\<open>structure F = A; open A; val y = A.x\\<close>\nML \\<open>structure AB = A.B\\<close>\nend\n')
+        written = probe_theories.renamed_source(text, 'A', {'A': 'A_Probe'})
+        self.assertIn('structure A_Probe = struct', written)
+        self.assertIn('structure F = A_Probe; open A_Probe; val y = A_Probe.x', written)
+        self.assertIn('structure AB = A_Probe.B', written)
+        self.assertTrue(written.startswith('theory A_Probe imports Main'))
+
+    def test_unlanded_from_heap(self):
+        with tempfile.TemporaryDirectory() as directory:
+            with mock.patch.object(probe_theories, 'untouched_theories', return_value=['C']), \
+                    mock.patch.object(probe_theories, 'advanced_theories', return_value=[]), \
+                    mock.patch.object(probe_theories, 'unlanded_theories', return_value=['C']) as unlanded:
+                summary, _ = self.run_probe(Path(directory), {'A': 'a', 'C': 'c', 'N': None}, targets=['N'],
+                                            load=['N'])
+            unlanded.assert_called_once_with(['C'], Path('/base'))
+            self.assertEqual(summary['unlanded'], ['C'])
+            self.assertIn('C', summary['from_heap'])
+            self.assertNotIn('C', summary['from_tree'])
+            self.assertEqual(summary['from_heap_despite_change'], ['C'])
+
+    def test_unlanded_theories(self):
+        with tempfile.TemporaryDirectory() as directory:
+            base = Path(directory)
+            (base / 'original-sources').mkdir()
+            for name in ('A', 'B'):
+                (base / 'original-sources' / (name + '.thy')).write_text('theory %s imports Main begin end\n' % name)
+            calls = []
+
+            def git(*arguments, text=None):
+                calls.append(arguments)
+                if arguments[0] == 'hash-object':
+                    return b'ba\nbb\n'
+                return b'' if '--find-object=ba' in arguments else b'c1\n'
+            with mock.patch.object(probe_theories, 'git_output', side_effect=git):
+                self.assertEqual(probe_theories.unlanded_theories(['A', 'B', 'Z'], base), ['A'])
+            self.assertEqual(calls[1], ('log', 'main', '--format=%H', '--find-object=ba', '--', 'theories/A.thy'))
+            with mock.patch.object(probe_theories, 'git_output', return_value=None):
+                self.assertEqual(probe_theories.unlanded_theories(['A'], base), [])
+
     def test_from_heap(self):
         with tempfile.TemporaryDirectory() as directory:
             summary, _ = self.run_probe(Path(directory), {'A': 'a', 'N': None}, targets=['N'], load=['N'],
@@ -200,17 +267,23 @@ class SkippedCodeChecks(unittest.TestCase):
             'export_code a b\n  checking SML\n'
             'export_code c in Eval module_name M file_prefix m\n'
             'export_code "(\\<le>) :: t \\<Rightarrow> _" (* c *) checking SML OCaml\n'
-            'text \\<open>checking SML\\<close>\nlemma "x = x" by simp\nend\n')
+            'text \\<open>checking SML\\<close>\nlemma "x = x" by simp\n'
+            'export_code d checking SML_imp OCaml? Haskell (string_classes)\n'
+            'export_code e checking SMLx\nend\n')
 
     def test_scan(self):
         written, skipped = probe_theories.skip_code_checks(self.TEXT)
         self.assertEqual(skipped, [{'line': 3, 'command': 'export_code a b checking SML'},
                                    {'line': 6, 'command':
-                                    'export_code "(\\<le>) :: t \\<Rightarrow> _" (* c *) checking SML OCaml'}])
+                                    'export_code "(\\<le>) :: t \\<Rightarrow> _" (* c *) checking SML OCaml'},
+                                   {'line': 9, 'command':
+                                    'export_code d checking SML_imp OCaml? Haskell (string_classes)'}])
         self.assertEqual(written.count('\n'), self.TEXT.count('\n'))
         self.assertNotIn('checking SML\n', written)
+        self.assertNotIn('string_classes', written)
         self.assertIn('export_code c in Eval module_name M file_prefix m\n', written)
-        self.assertIn('text \\<open>checking SML\\<close>\nlemma "x = x" by simp\nend\n', written)
+        self.assertIn('text \\<open>checking SML\\<close>\nlemma "x = x" by simp\n\nexport_code e checking SMLx\nend\n',
+                      written)
         self.assertEqual(probe_theories.skip_code_checks('export_code a\ntext \\<open>checking\\<close>\n'),
                          ('export_code a\ntext \\<open>checking\\<close>\n', []))
 
@@ -254,6 +327,7 @@ class AdvancedBase(unittest.TestCase):
             self.assertEqual(summary['advanced'], ['C', 'D'])
             self.assertFalse(summary['loaded'])
             self.assertIn('bring-main', summary['refused'])
+            self.assertIn('--from-heap', summary['refused'])
             self.assertEqual(summary['errors'], [summary['refused']])
             self.assertFalse((root / 'work' / 'theories').exists())
 
@@ -290,16 +364,42 @@ class ModeledStart(unittest.TestCase):
                     heap.truncate(size)
             (root / 'New.thy').write_bytes(b'x' * 72000)
             context = {'session': 'A', 'directories': [str(root / 'a'), str(root / 'b')]}
-            with mock.patch.object(probe_theories, 'ISABELLE_HOME', home), \
-                    mock.patch.object(probe_theories, 'HEAPS', heaps):
+            with mock.patch.object(isabelle_places, 'ISABELLE_HOME', home), \
+                    mock.patch.object(isabelle_places, 'HEAPS', heaps):
                 self.assertEqual(probe_theories.session_chain('A', context['directories']),
                                  ['A', 'B', 'HOL', 'Pure'])
                 seconds, sessions, gigabytes = probe_theories.modeled_start(context)
                 self.assertEqual((sessions, gigabytes), (2, 4.0))
-                self.assertEqual(seconds, round(1.6 + 0.085 * 2 + 1.5 * 4.0, 1))
+                self.assertEqual(seconds, 7.8)  # 1.6 + 0.085 x 2 + 1.5 x 4.0, as before the model was stated once
                 self.assertEqual(probe_theories.load_estimate([root / 'New.thy'], context),
                                  (round(seconds + 72000 / probe_theories.BYTES_PER_SECOND, 1), 72000,
                                   (seconds, 2, 4.0)))
+
+
+class OneModel(unittest.TestCase):
+    """The probe's start and the check's chain start read one model: its constants give both their values."""
+
+    def test_both_read_it(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            home = root / 'home'
+            heaps = home / '.isabelle' / 'X' / 'heaps' / 'Y'
+            heaps.mkdir(parents=True)
+            for name, size in [('A', 2 * 10 ** 9), ('B', 10 ** 9), ('HOL', 5 * 10 ** 8), ('Pure', 5 * 10 ** 8)]:
+                with (heaps / name).open('wb') as heap:
+                    heap.truncate(size)
+            for name, parent in [('A', 'B'), ('B', 'HOL')]:
+                (root / name).mkdir()
+                (root / name / 'ROOT').write_text('session %s = %s +\n  theories T\n' % (name, parent))
+            directories = [str(root / 'A'), str(root / 'B')]
+            self.assertEqual(incremental_check.chain_start(directories, home),
+                             {'sessions': 2, 'heap_gb': 4.0, 'seconds': 7.77})
+            with mock.patch.object(isabelle_places, 'HEAPS', heaps):
+                self.assertEqual(probe_theories.modeled_start({'session': 'A', 'directories': directories})[0], 7.8)
+                with mock.patch.object(incremental_check, 'START_SECONDS', 11.6):
+                    self.assertEqual(incremental_check.chain_start(directories, home)['seconds'], 17.77)
+                    self.assertEqual(probe_theories.modeled_start({'session': 'A', 'directories': directories})[0],
+                                     17.8)
 
 
 class BaseContext(unittest.TestCase):

@@ -966,7 +966,6 @@ proof -
   then show ?thesis by (simp add: finite_system_definitions_correct[symmetric])
 qed
 
-
 lemma finite_rename_material_id: "finite_rename_material id M = M"
   by (cases M) (simp add: finite_rename_material_def finite_term_pattern.map_id)
 
@@ -1185,5 +1184,289 @@ lemmas finite_registered_demand_exact =
 
 lemmas native_registered_resolution_exact =
   native_complete_resolution_exact[OF finite_collection_construction_formed finite_collection_construction_complete]
+
+
+section \<open>A query's search keeps its root value where nothing commits at the pattern root\<close>
+
+text \<open>
+  VK2 (task 918's decision 5): W5's named premise wherever the query's lifted commitment commits at the pattern root
+  only goals apart from the root's variables (@{text finite_commits_apart}) — in particular where it commits nothing
+  there, and at the root-kept restriction of any commitment. The value lifting at the top focus
+  (@{text finite_committed_value_lifting_pattern_in}) asks the holders invariant at its start, which the pattern state
+  of a query with a variable lacks: its variables are placed only once a node stands at the root. The root call is
+  apart from nothing, so it does not commit; its step places the query's variables standing at the root position, the
+  value lifting applies at the step's successor, and the step keeps the root value. A found state at the top focus
+  has no pending goal, so its root node's call is one of the outcome's root calls, with the kept value.
+\<close>
+
+lemma finite_pattern_state_supported:
+  assumes holds: "(d,decode_finite_term (resolution_value \<theta> p)) \<in> positive_meaning (decode_finite_system P)"
+    and own: "\<And>z. z |\<in>| finite_pattern_variables p \<Longrightarrow> U z"
+  shows "resolution_supported_at U F B P (finite_pattern_state d p) \<theta>"
+  using holds own by (auto simp: resolution_supported_at_def finite_pattern_state_def)
+
+lemma finite_pattern_state_ground_held:
+  assumes "finite_pattern_variables p = {||}"
+  shows "resolution_registrations_held \<kappa> (finite_pattern_state d p)"
+  using assms by (auto simp: resolution_registrations_held_def resolution_state_variables_def finite_pattern_state_def)
+
+lemma finite_pattern_call_held:
+  fixes p :: "('s::linorder,'a) resolution_variable finite_term_pattern"
+  assumes own: "\<And>z. z |\<in>| finite_pattern_variables p \<Longrightarrow> fst (fst z) = []"
+    and st': "st' |\<in>| finite_call_successors P (finite_pattern_state d p :: ('a,'s,'d,'c) resolution_state) [] None d p"
+  shows "resolution_registrations_held no_witness_construction st'"
+proof -
+  let ?st = "finite_pattern_state d p :: ('a,'s,'d,'c) resolution_state"
+  obtain i c S u where
+    u: "finite_unify_pairs [(finite_rename_apart ([],False) i,p),
+      (finite_rename_apart ([],True) (finite_schema_conclusion S),p)] = Some u"
+    and st'_eq: "st' = resolution_state_substitute (finite_binding_substitution u)
+      (Resolution_State (finite_clause_goals [] d c S |\<union>| (resolution_pending ?st |-| {|Resolution_Call_Goal [] None d p|}))
+        (finsert (finite_clause_node [] d c S) (resolution_nodes ?st)) (resolution_witnesses ?st))"
+    by (rule finite_call_successors_member[OF st'])
+  define E where "E = [(finite_rename_apart ([]::'s list,False) i,p),
+    (finite_rename_apart ([]::'s list,True) (finite_schema_conclusion S),p)]"
+  define new where "new = finite_clause_node [] d c S"
+  define st0 where "st0 = Resolution_State (finite_clause_goals [] d c S |\<union>|
+      (resolution_pending ?st |-| {|Resolution_Call_Goal [] None d p|})) (finsert new (resolution_nodes ?st))
+    (resolution_witnesses ?st)"
+  let ?u = "finite_binding_substitution u"
+  have u': "finite_unify_pairs E = Some u" using u by (simp add: E_def)
+  have st'_def: "st' = resolution_state_substitute ?u st0" using st'_eq by (simp add: st0_def new_def)
+  have empty: "z \<notin> resolution_state_variables (Resolution_State
+      (resolution_pending ?st |-| {|Resolution_Call_Goal [] None d p|}) (resolution_nodes ?st) (resolution_witnesses ?st))" for z
+    by (simp add: resolution_state_variables_def finite_pattern_state_def)
+  have st0_vars: "fst (fst z) = []" if z: "z \<in> resolution_state_variables st0" for z
+  proof -
+    have "z \<in> resolution_state_variables (Resolution_State
+        (resolution_pending ?st |-| {|Resolution_Call_Goal [] None d p|}) (resolution_nodes ?st) (resolution_witnesses ?st)) \<or>
+        (\<exists>b. z = (([],True),b) \<and> b |\<in>| finite_schema_variables S)"
+      using z unfolding st0_def new_def by (rule finite_clause_state_variables)
+    then show ?thesis using empty by auto
+  qed
+  have st'_vars: "fst (fst z) = []" if z: "z \<in> resolution_state_variables st'" for z
+  proof -
+    obtain y where y: "y \<in> resolution_state_variables st0" "z |\<in>| finite_pattern_variables (?u y)"
+      using resolution_state_variables_substitute z unfolding st'_def by blast
+    have "z = y \<or> z \<in> finite_pairs_variables E" by (rule finite_unifier_variable[OF u' y(2)])
+    then show ?thesis
+    proof
+      assume "z = y" then show ?thesis using st0_vars[OF y(1)] by simp
+    next
+      assume "z \<in> finite_pairs_variables E"
+      then have "fst (fst z) = [] \<or> z |\<in>| finite_pattern_variables p"
+        using finite_call_pairs_variables[of z "[]" i p S, folded E_def] by blast
+      then show ?thesis using own by blast
+    qed
+  qed
+  have placed: "resolution_placed st' z" if z: "z \<in> resolution_state_variables st'" for z
+  proof -
+    have "resolution_node_substitute ?u new |\<in>| resolution_nodes st'" by (simp add: st'_def st0_def)
+    moreover have "resolution_node_position (resolution_node_substitute ?u new) = fst (fst z)"
+      using st'_vars[OF z] by (simp add: new_def finite_clause_node_def)
+    ultimately show ?thesis unfolding resolution_placed_def by blast
+  qed
+  show ?thesis by (rule resolution_registrations_heldI[OF placed]) (simp_all add: no_witness_construction_def)
+qed
+
+lemma finite_query_found_root_calls:
+  fixes R :: "('a,'s::linorder,'d,'c) resolution_outcome"
+  assumes V: "finite_valued_outcome U None B P (finite_pattern_state d p) \<theta> cb True R"
+    and found: "\<And>st'. st' |\<in>| resolution_found R \<Longrightarrow>
+      resolution_pattern_invariant_in \<Theta> P d p st' \<and> finite_focus_pending None st' = {||}"
+  shows "resolution_diagnoses R \<noteq> {||} \<or>
+    (\<exists>c \<theta>'. c |\<in>| finite_root_calls R \<and> resolution_value \<theta>' c = resolution_value \<theta> p)"
+proof -
+  let ?st0 = "finite_pattern_state d p :: ('a,'s,'d,'c) resolution_state"
+  have V0: "resolution_root_value ?st0 \<theta> (resolution_value \<theta> p)"
+    by (auto simp: resolution_root_value_def finite_pattern_state_def)
+  consider (kept) st' \<theta>' where "st' |\<in>| resolution_found R"
+      "\<forall>v. resolution_root_value ?st0 \<theta> v \<longrightarrow> resolution_root_value st' \<theta>' v"
+    | (diagnosed) D where "D |\<in>| resolution_diagnoses R"
+    using V unfolding finite_valued_outcome_def by (fastforce | metis)
+  then show ?thesis
+  proof cases
+    case (kept st' \<theta>')
+    note st' = kept(1) and rv = kept(2)
+    have I: "resolution_pattern_invariant_in \<Theta> P d p st'" and closed: "resolution_pending st' = {||}"
+      using found[OF st'] by (simp_all add: finite_focus_pending_def)
+    obtain nd where nd: "nd |\<in>| resolution_nodes st'" "resolution_node_position nd = []"
+      using I closed by (auto simp: resolution_pattern_invariant_in_def resolution_pattern_root_held_def)
+    have "resolution_value \<theta>' (resolution_node_call nd) = resolution_value \<theta> p"
+      using rv V0 nd unfolding resolution_root_value_def by blast
+    moreover have "resolution_node_call nd |\<in>| finite_root_calls R"
+      unfolding finite_root_calls_def using st' nd by (force simp: resolution_fset_simps)
+    ultimately show ?thesis by blast
+  next
+    case (diagnosed D)
+    then show ?thesis by auto
+  qed
+qed
+
+theorem finite_query_root_value_apart_in:
+  fixes P :: "('a,'s::linorder,'d,'c) finite_schema_system" and \<Xi> :: "('a,'s,'d,'c,'v) query_parameters"
+    and p :: "('s,'a+'v) resolution_variable finite_term_pattern"
+  assumes valued: "finite_commitment_exchanges_valued_by_in (parameter_table (snd \<Xi>))
+      (finite_parameters_select (snd \<Xi>) (finite_query_program P))
+      (\<lambda>z. snd z |\<notin>| finite_program_variables (finite_query_program P :: ('a+'v,'s,'d,'c) finite_schema_system))
+      no_witness_construction (parameter_commitment (snd \<Xi>)) (finite_query_program P)"
+    and apart: "finite_commits_apart (parameter_commitment (snd \<Xi>))"
+    and formed: "finite_pattern_formed p"
+    and own: "\<And>z. z |\<in>| finite_pattern_variables p \<Longrightarrow> fst (fst z) = [] \<and> (\<exists>v. snd z = Inr v)"
+    and holds: "(d,decode_finite_term (resolution_value \<theta> p)) \<in> positive_meaning (decode_finite_system P)"
+  shows "resolution_diagnoses (finite_query_search_in \<Xi> P n d p) \<noteq> {||} \<or>
+    (\<exists>c \<theta>'. c |\<in>| finite_root_calls (finite_query_search_in \<Xi> P n d p) \<and> resolution_value \<theta>' c = resolution_value \<theta> p)"
+proof -
+  let ?Q = "finite_query_program P :: ('a+'v,'s,'d,'c) finite_schema_system"
+  let ?\<Theta> = "parameter_table (snd \<Xi>)" and ?K = "parameter_commitment (snd \<Xi>)"
+  let ?sel = "finite_parameters_select (snd \<Xi>) ?Q"
+  let ?U = "\<lambda>z::('s,'a+'v) resolution_variable. snd z |\<notin>| finite_program_variables ?Q"
+  let ?st0 = "finite_pattern_state d p :: ('a+'v,'s,'d,'c) resolution_state"
+  let ?R = "finite_query_search_in \<Xi> P n d p"
+  have R: "?R = finite_committed_search_by_in ?\<Theta> ?sel no_witness_construction ?K ?Q n None {||} ?st0"
+    by (simp add: finite_query_search_in_def finite_parameters_search_def)
+  have Pf: "finite_system_formed P" by (rule finite_true_call_formed(1)[OF holds])
+  have Qf: "finite_system_formed ?Q" by (rule finite_query_program_formed[OF Pf])
+  have Qholds: "(d,decode_finite_term (resolution_value \<theta> p)) \<in> positive_meaning (decode_finite_system ?Q)"
+    by (subst finite_query_program_meaning[OF Pf]) (rule holds)
+  have foreign: "\<And>z. z |\<in>| finite_pattern_variables p \<Longrightarrow> ?U z"
+    using own finite_query_program_variables by fastforce
+  have program_foreign: "\<And>z. ?U z \<Longrightarrow> snd z |\<notin>| finite_program_variables ?Q" by simp
+  have \<kappa>: "finite_witness_construction_formed no_witness_construction" by (rule no_witness_construction_formed)
+  have sformed: "finite_selection_formed no_witness_construction ?Q ?sel"
+    unfolding finite_parameters_select_def by (rule finite_resolution_select_formed_in)
+  have free: "\<And>st N. ?sel st \<noteq> Select_Construction N"
+    by (metis finite_resolution_select_at_exact_in(2) finite_resolution_select_none_construction
+      finite_parameters_select_def)
+  have goals: "\<And>st G. ?sel st = Select_Goals G \<Longrightarrow> G |\<subseteq>| resolution_pending st"
+    using sformed unfolding finite_selection_formed_def by blast
+  have I0: "resolution_pattern_invariant_in ?\<Theta> ?Q d p ?st0" by (rule resolution_pattern_initial_invariant_in[OF Qf formed])
+  have S0: "resolution_supported_at ?U None {||} ?Q ?st0 \<theta>" by (rule finite_pattern_state_supported[OF Qholds foreign])
+  have found: "\<And>st'. st' |\<in>| resolution_found ?R \<Longrightarrow>
+      resolution_pattern_invariant_in ?\<Theta> ?Q d p st' \<and> finite_focus_pending None st' = {||}"
+    unfolding R by (rule finite_committed_search_by_found_pattern_in[OF \<kappa> goals I0])
+  have lifting: "finite_valued_outcome ?U None B ?Q st \<theta>1 (finite_commits_nothing ?K ?sel) True
+      (finite_committed_search_by_in ?\<Theta> ?sel no_witness_construction ?K ?Q k None B st)"
+    if "resolution_pattern_invariant_in ?\<Theta> ?Q d p st" "resolution_registrations_held no_witness_construction st"
+      "resolution_supported_at ?U None B ?Q st \<theta>1" for st \<theta>1 B k
+    using finite_committed_value_lifting_pattern_in[OF \<kappa> sformed valued apart free] that by blast
+  have V: "finite_valued_outcome ?U None {||} ?Q ?st0 \<theta> (finite_commits_nothing ?K ?sel) True ?R"
+  proof (cases "finite_pattern_variables p = {||}")
+    case True
+    show ?thesis unfolding R by (rule lifting[OF I0 finite_pattern_state_ground_held[OF True] S0])
+  next
+    case False
+    then obtain z0 where z0: "z0 |\<in>| finite_pattern_variables p" by (meson all_not_fin_conv)
+    show ?thesis
+    proof (cases n)
+      case 0
+      then show ?thesis unfolding R
+        by (intro finite_valued_outcome_diagnosis[where D="Resolution_Cut {|Resolution_Call_Goal [] None d p|}"])
+          (simp_all add: finite_witnessed_diagnosis_def finite_pattern_state_def finite_focus_pending_def)
+    next
+      case (Suc m)
+      let ?g0 = "Resolution_Call_Goal [] None d p :: ('a+'v,'s,'d,'c) resolution_goal"
+      let ?rec = "finite_committed_search_by_in ?\<Theta> ?sel no_witness_construction ?K ?Q m"
+      have pending: "?g0 |\<in>| resolution_pending ?st0" by (simp add: finite_pattern_state_def)
+      have focusp: "finite_focus_pending None ?st0 = {|?g0|}"
+        by (simp add: finite_focus_pending_def finite_pattern_state_def)
+      have focused: "finite_focused None ?st0 = ?st0"
+        by (simp add: finite_focused_def finite_focus_pending_def finite_pattern_state_def)
+      have notapart: "\<not> finite_root_apart None ?st0 ?g0"
+        using z0 unfolding finite_root_apart_def resolution_root_variables_def finite_exchange_changes_def
+        by (auto simp: finite_pattern_state_def Let_def resolution_fset_simps) (metis prod.collapse)
+      have focus0: "resolution_focused None []" by (simp add: resolution_focused_def)
+      have notcommitting: "\<not> finite_goal_committing ?K None ?st0 ?g0"
+        using apart notapart unfolding finite_commits_apart_def by blast
+      obtain st' \<theta>' where st': "st' |\<in>| finite_call_successors ?Q ?st0 [] None d p"
+        and S': "resolution_supported_at ?U None {||} ?Q st' \<theta>'"
+        and rv: "\<And>v. resolution_root_value ?st0 \<theta> v \<Longrightarrow> resolution_root_value st' \<theta>' v"
+        by (rule resolution_call_lifted_at_in[OF I0 S0 _ pending focus0]) (assumption, rule that)
+      have notclosed: "\<not> finite_table_closes ?\<Theta> ?g0" using False finite_table_closes_ground[of ?\<Theta> ?g0] by auto
+      have succ: "finite_committed_successors_in ?\<Theta> ?K ?Q None ?st0 ?g0 = finite_call_successors ?Q ?st0 [] None d p"
+        using notclosed False by (simp add: finite_committed_successors_in_def finite_reusable_def)
+      have Ist': "resolution_pattern_invariant_in ?\<Theta> ?Q d p st'"
+        by (rule finite_committed_successor_pattern_invariant_in[where K="?K" and F=None, OF I0 pending])
+          (simp add: succ st')
+      have Hst': "resolution_registrations_held no_witness_construction st'"
+        by (rule finite_pattern_call_held[OF _ st']) (use own in blast)
+      have kept': "finite_valued_outcome ?U None {||} ?Q st' \<theta>' (finite_commits_nothing ?K ?sel) True (?rec None {||} st')"
+        by (rule lifting[OF Ist' Hst' S'])
+      have kept: "finite_valued_outcome ?U None {||} ?Q ?st0 \<theta> (finite_commits_nothing ?K ?sel) True (?rec None {||} st')"
+        by (rule finite_valued_outcome_step[OF kept']) (use rv in blast)+
+      have barring: "finite_goal_barring ?K None {||} ?st0 ?g0 = {||}"
+        by (simp add: finite_goal_barring_def finite_material_committed_def)
+      have unpruned: "\<not> finite_pruned (finite_unbarred {||} ?st0) ?g0" "\<not> finite_pruned (finite_barred {||} ?st0) ?g0"
+        by (simp_all add: finite_pruned_def finite_barred_def finite_pattern_state_def)
+      have nonempty: "finite_committed_successors_in ?\<Theta> ?K ?Q None ?st0 ?g0 \<noteq> {||}" using st' succ by auto
+      have outcome: "finite_committed_goal_outcome_in ?\<Theta> ?rec ?K ?Q None {||} ?st0 ?g0 =
+          finite_search_join None ?st0 (finite_determinate_key []) (?rec None {||})
+            (finite_committed_successors_in ?\<Theta> ?K ?Q None ?st0 ?g0)"
+        unfolding finite_committed_goal_outcome_in_def using unpruned notcommitting nonempty by (simp add: Let_def barring)
+      have goal: "finite_valued_outcome ?U None {||} ?Q ?st0 \<theta> (finite_commits_nothing ?K ?sel) True
+          (finite_committed_goal_outcome_in ?\<Theta> ?rec ?K ?Q None {||} ?st0 ?g0)"
+        unfolding outcome
+        by (rule finite_search_join_valued[where f="?rec None {||}", OF _ kept]) (simp_all add: succ st' finite_focus_ground_def)
+      show ?thesis
+      proof (cases "?sel ?st0")
+        case (Select_Construction N)
+        then show ?thesis using free by blast
+      next
+        case (Select_Goals G)
+        have sub: "G |\<subseteq>| resolution_pending ?st0" by (rule goals[OF Select_Goals])
+        have "G \<noteq> {||}" using sformed Select_Goals unfolding finite_selection_formed_def by blast
+        then obtain g where g: "g |\<in>| G" by (meson all_not_fin_conv)
+        have "g |\<in>| resolution_pending ?st0" using sub g by (meson fsubsetD)
+        then have "g = ?g0" by (simp add: finite_pattern_state_def)
+        then have g0G: "?g0 |\<in>| G" using g by simp
+        have "?R = finite_outcome_union (fimage (finite_committed_goal_outcome_in ?\<Theta> ?rec ?K ?Q None {||} ?st0) G)"
+          unfolding Suc R[unfolded Suc] using Select_Goals focusp focused by simp
+        then show ?thesis using finite_valued_outcome_union[OF _ goal, of "fimage
+          (finite_committed_goal_outcome_in ?\<Theta> ?rec ?K ?Q None {||} ?st0) G"] g0G by simp
+      next
+        case Select_None
+        then show ?thesis unfolding Suc R[unfolded Suc] using focusp focused
+          by (intro finite_valued_outcome_diagnosis[where D="Resolution_Stuck (finite_focus_pending None ?st0)"])
+            (simp_all add: finite_witnessed_diagnosis_def)
+      qed
+    qed
+  qed
+  show ?thesis by (rule finite_query_found_root_calls[OF V found])
+qed
+
+text \<open>
+  A commitment committing nothing at the top focus is apart there, and so is the root-kept restriction of any
+  commitment: W5's named premise holds wherever the query's lifted part is either, its ground part exact wherever R5's
+  committed forms are.
+\<close>
+
+lemma finite_commits_apart_nothing:
+  "(\<And>st g. \<not> finite_goal_committing K None st g \<and> \<not> commit_material K None st g) \<Longrightarrow> finite_commits_apart K"
+  unfolding finite_commits_apart_def by blast
+
+
+theorem finite_query_search_keeps_apart_in:
+  fixes P :: "('a,'s::linorder,'d,'c) finite_schema_system" and \<Xi> :: "('a,'s,'d,'c,'v) query_parameters"
+  assumes valued: "finite_commitment_exchanges_valued_by_in (parameter_table (snd \<Xi>))
+      (finite_parameters_select (snd \<Xi>) (finite_query_program P))
+      (\<lambda>z. snd z |\<notin>| finite_program_variables (finite_query_program P :: ('a+'v,'s,'d,'c) finite_schema_system))
+      no_witness_construction (parameter_commitment (snd \<Xi>)) (finite_query_program P)"
+    and apart: "finite_commits_apart (parameter_commitment (snd \<Xi>))"
+  shows "finite_query_search_keeps \<Xi> P n"
+  unfolding finite_query_search_keeps_def
+  by (intro allI impI, rule finite_query_root_value_apart_in[OF valued apart]) auto
+
+theorem finite_query_exact_apart_in:
+  fixes P :: "('a,'s::linorder,'d,'c) finite_schema_system" and \<Xi> :: "('a,'s,'d,'c,'v) query_parameters"
+  assumes exact: "finite_committed_exact_premises_in (parameter_table (fst \<Xi>)) J (finite_parameters_select (fst \<Xi>) P)
+      no_witness_construction (parameter_commitment (fst \<Xi>)) P"
+    and valued: "finite_commitment_exchanges_valued_by_in (parameter_table (snd \<Xi>))
+      (finite_parameters_select (snd \<Xi>) (finite_query_program P))
+      (\<lambda>z. snd z |\<notin>| finite_program_variables (finite_query_program P :: ('a+'v,'s,'d,'c) finite_schema_system))
+      no_witness_construction (parameter_commitment (snd \<Xi>)) (finite_query_program P)"
+    and apart: "finite_commits_apart (parameter_commitment (snd \<Xi>))"
+  shows "finite_query_exact \<Xi> P n"
+  unfolding finite_query_exact_def
+  using finite_parameters_refutes_exact_committed[OF exact] finite_query_search_keeps_apart_in[OF valued apart] by blast
 
 end

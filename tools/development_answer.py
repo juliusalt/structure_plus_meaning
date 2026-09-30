@@ -71,8 +71,8 @@ from evidence_io import write_json
 
 ROOT = Path(__file__).resolve().parents[1]
 TOOLS = ROOT / 'tools'
-POLY = Path('/opt/isabelle/contrib/polyml-5.9.2-2/x86_64_32-linux/poly')
-HEAPS = isabelle_places.USER_HOME / '.isabelle/Isabelle2025-2/heaps/polyml-5.9.2_x86_64_32-linux'
+POLY = isabelle_places.POLY
+HEAPS = isabelle_places.HEAPS
 ENV_HOME = {'USER_HOME': str(isabelle_places.USER_HOME), 'PYTHONDONTWRITEBYTECODE': '1'}
 
 # The requested states the harness can frame. A seeded state is defined by a repository theory,

@@ -251,6 +251,26 @@ acceptable?" The answer (2026-09-27 12:46, from the console):
 > completely independent and prior to the notions implementation, but there is no requirement that keeps a notions
 > implementation restricted arbitrarily because "it was already installed".
 
+On native content and Isabelle's verification, the owner answered owner questions Q18 and Q23 of the ledger on
+2026-09-30. Q18, asked on 2026-09-24 from task 320's design, put five provisional choices, the first "(a) Extending
+Q1: an admitted native answer is published only after Isabelle verifies it through the translation; its admission
+records a verification problem, and the incumbent package stays selected until that problem's answer is admitted",
+and asked: "do these fit your intent — in particular (a), whether native content is consumed only after Isabelle's
+verification, and (b), the payload condition?" The answer (2026-09-30 23:39, from the console):
+
+> (a) Previously I wanted native content to be consumed only after Isabelle's verification, as a self-consistency
+> check, but now I think that the translation layer that would preserve the semantics of the native content is itself
+> going to be very difficult to build and prone to make these checks cosmetic. Thus, from now the native content should
+> be consumed without Isabelle's verification. The rest of the questions are covered by other answers.
+
+Q23, asked on 2026-09-24 from task 378's design, put six provisional choices on the first problem posed natively —
+(a) its requirements, (b) its least form, an asked relation and a given, (c) the owner's approval as an owner record
+citing the admitted answer, (d) its verification by Isabelle as a request after native admission, publication waiting
+for it, (e) its decomposition as a generated method, (f) the end of the HOL-constant problems — and asked: "do these
+fit your intent?" The answer (2026-09-30 23:57, from the console):
+
+> (b) and (c) ok. Other questions should be already covered
+
 ## The development process
 
 There is one process, and every problem goes through it:
@@ -698,6 +718,13 @@ policy, subject correspondence and concurrent adoption are separate premises.
   the owner's decision. Authority after genesis requires the still-open handoff O-73
   and the remaining native mathematical-proof admission under O-85. The predecessor
   contracts above do not authorize their own normative handoff.
+- Native content the loop produces — answers, their records, the notions an approved answer defines — is consumed
+  without Isabelle's verification (the owner's answer to Q18 (a), 2026-09-30). Isabelle's bootstrap role is over the
+  library's own theories: the notions, their contracts and the evaluator's exactness that the native judgment consumes.
+  A native definition's meaning is its positive meaning, fixed for every formed package; what an answer would claim
+  beyond it is checked by no one before native mathematical-proof admission (O-85), and meanwhile its criticism refutes
+  and the owner approves. No translation of native content into Isabelle is built for verification (DECISIONS.md
+  "Native content is consumed on its native judgment: …").
 
 ## Stages and gates
 
@@ -772,6 +799,14 @@ how the loop works them are DECISIONS.md "The native loop's first problem is wha
 problem is; the problem of Q2, second, exercises its answer" ([The direction of the
 work](#the-direction-of-the-work-2026-09-24)).
 
+After admission the first answer is criticized natively — every part of task 376's test outside the guard's four
+sockets is a criticism part, its rows refuting and never admitting — approved by the owner in an owner record citing
+the criticism record, and then consumed: the first problem posed again under it, the second problem posed over it.
+Native content is consumed without Isabelle's verification (the owner's answer to Q18 (a)): the answer carries no
+contract theory, and no verification or translation into Isabelle stands between its admission and its use
+(DECISIONS.md "Native content is consumed on its native judgment: the parts the verification request was to check
+become criticism, and the first answer is consumed once the owner approves it").
+
 **Gate:** selection, decomposition, scheduling and request construction are admitted
 generations, and every choice still generated outside the process is a recorded
 residual. The existing comparison and independent criticism contracts apply to every
@@ -787,8 +822,9 @@ support, fail in Isabelle or change report words are refused. The heapless check
 uses the established proof and execution boundaries. The whole problem tree replays
 from retained problems, requests, external answers and verification. Subsequent real
 development consumes the adopted result, with the total observed cost retained for
-condition 5a. The first problem's answer is judged by its native guard, verified, admitted and
-approved by the owner before the second problem is posed over it, and a failure of the
+condition 5a. The first problem's answer is judged by its native guard, admitted, criticized and
+approved by the owner before the second problem is posed over it, and is consumed without
+Isabelle's verification (Q18 (a)), and a failure of the
 second is recorded as criticism of the first. Until the second problem's native answer
 is admitted, every selection
 records the readiness and the planner's choice it rests on, with its residual; until
@@ -944,6 +980,7 @@ evidence. Theoretical cost bounds under 5b remain deferred until after genesis.
 | Depth | Admitted demand/coverage accounts justify leafhood; leaves carry support derived from the export and their least closed contexts; unresolved bounds and cycles stay explicit; repeated decompositions reuse extracted schemas. |
 | Executor inertness | Interchangeable executors produce identical admissions; no executor action outside an answer affects any state. |
 | Answer significance and criticism | Actual facet observations satisfy the intended comparison-basis contract; permitted presentation variants are accepted; required distinctions, repairs, withdrawals and scope obstructions remain explicit. |
+| Native content consumed natively | Every admitted native answer is consumed on its native judgment, its criticism record and, where it is owner-level, the owner's approval, with no Isabelle verification or translation between admission and use (Q18 (a)); the claims it leaves unchecked are retained as open limits of its basis until native proof admission (O-85). |
 | Theory and tool changes as generations | The development state is read from Isabelle's export; admitted theory and tool changes are generations with certified causes and computed dependency boundaries. |
 | Problems condition 1: computed satisfaction | Exact contracts and executions for every decision's actual subject and condition; no author-filled satisfaction table. |
 | Condition 2: workflow by construction | Omitted or mismatched obligations, stale contexts, oversized requests and unauthorized changes are refused mechanically. |
@@ -1092,7 +1129,8 @@ its contracts hold with every word equal, and the change of words remains. Open:
 - an answer's predecessors are its incumbent only; the refinement layer has no persistent native published state, so
   an adoption records the transaction of its judgment, not one against a history, and a later selection supersedes an
   earlier one only once a persistent development state holds both;
-- installation of an admitted native answer as Isabelle material is the last step of the order, and admission and
+- installation of an admitted native answer as Isabelle material, once the last step of the order, is withdrawn by the
+  owner's answer to Q18 (a), and admission and
   publication still consume the Isabelle-judged verdict; a refinement of many constants sharing new helpers cannot
   pass the answer frame, which states one equation;
 - a selected residual cannot be answered before stage 4 encodes the requirements it must meet; a selection criterion
@@ -1133,7 +1171,8 @@ first gave six tasks, recorded with their analysis in the DECISIONS.md entry "St
 inert". The second gave the order of the work, proposed as owner question Q7 and confirmed by the owner on 2026-09-24
 ("The order is right"), so the order is the owner's: the loop's notions as native definitions, beginning with
 readiness, then the verdict of a kind and request construction, then problems whose subjects are native definitions,
-answered natively, then the translation of native content into Isabelle for verification. The loop's problems about
+answered natively, then the translation of native content into Isabelle for verification — a last step the owner's
+answer to Q18 (a) (2026-09-30) withdrew: native content is consumed without Isabelle's verification. The loop's problems about
 HOL constants — the seed's refinement problems and the machinery's residuals — are the bootstrap loop, and by the same
 answer they stay only until native definitions exist, then are retired.
 
@@ -1147,8 +1186,8 @@ native loop's first problem is what a problem is; the problem of Q2, second, exe
 notion of a problem the first problem's answer, so no problem row, locus or kind prefix is built, and "Every distinction
 a native program relies on comes from a native notion: the state the native loop judges and the presentations that
 retire" reads the package by the Factor grammar's native readers rather than as rows, so its builds are N2 (the
-package), the native request at a package and the first problem's builds, N1, N3's second part and N4 being retired. The translation of admitted native content into
-Isabelle, which verifies it, is the design after it.
+package), the native request at a package and the first problem's builds, N1, N3's second part and N4 being retired. No translation of admitted native content into
+Isabelle follows it: by the owner's answer to Q18 (a) native content is consumed without Isabelle's verification.
 
 When native definitions exist is the plan's reading of the owner's answer, generated and without owner authority. The
 loop's notions are native programs already, but each is written as a HOL constant compiled afresh by the question that
@@ -1161,10 +1200,11 @@ problems are posed again under it). The owner's earlier wording of the same answ
 exist", is read the same way. From then on the loop poses no new problem about a HOL constant: the machinery's HOL
 residuals are superseded by the native problems about the package, as Q18 (d) provisionally chooses; the seeded
 refinement problems are retired with the loop that poses them, neither selected nor issued again; and every record of
-the HOL loop stays history, which the bootstrap loop's theories, kept as they stand, keep readable. Until native answers
-can be published, a landing that changes a notion's HOL program derives the package from it again, a bootstrap
-re-installation recorded as a residual, as Q18 (c) provisionally chooses. Q18 stays open; on this reading its (c) and
-(d) agree with the owner's answer.
+the HOL loop stays history, which the bootstrap loop's theories, kept as they stand, keep readable. While the bootstrap loop stands,
+a landing that changes a notion's HOL program derives the package from it again, a bootstrap re-installation recorded
+as a residual (Q18 (c)). Q18 is answered (2026-09-30): its (a) is withdrawn — native content is consumed without
+Isabelle's verification — and the owner holds its (b)–(e) covered by other answers; on this reading its (c) and (d)
+agree with the answer to Q7.
 
 The owner's direction of 2026-09-24 18:53, quoted under [Owner directions](#owner-directions) after his words of 17:50
 and 18:12 and his question rejecting the first design of the notion (task 373), fixes the native loop's first problem:
@@ -1298,9 +1338,24 @@ address-form material observation, or atoms keyed by structure in the artifact's
 planner's. 26's key uniqueness stays: a sorted class is not closed under use permutations, and an index would save only
 at the table once the candidate is read by its additions.
 
+The owner's answers to Q18 and Q23 (2026-09-30), quoted under [Owner directions](#owner-directions), withdraw the
+verification request: native content the loop produces is consumed without Isabelle's verification. This paragraph is
+the plan's reading, generated and without owner authority. DECISIONS.md "Native content is consumed on its native
+judgment: the parts the verification request was to check become criticism, and the first answer is consumed once the
+owner approves it" decides the course of the parts of task 376's test the request was to check: (b), invariance over
+presentations, and (d), non-nominality of uses, are criticism by their native samples, a difference refuting; (c) is
+criticism by a native observation, an added definition calling a program of the development package (the bootstrap
+loop's programs over presented rows) a failure row; (f) falls under (c), (e) and (b); (a) is no requirement — the
+answer carries no contract, its meaning its positive meaning, and a claim about it waits for native proof admission
+(O-85); each goes to the owner's approval. The native judgment is the guard alone. After admission the first answer is
+criticized, approved by the owner in an owner record citing its criticism record, and then consumed. The Q7 order's
+last step is withdrawn, and `Development_Verification_Frame`, which no route consumes, is retired. Isabelle keeps its
+bootstrap role over the library's own theories.
+
 Each tagged presentation still in use stays exact and replaceable and is recorded as a use of octets as structure
 until it is retired. The order and the bound on the HOL loop are the owner's (Q7, 2026-09-24), and so are the first
 problem (2026-09-24 18:53), the second and the standing of the authority question (Q2, 2026-09-24), and the native
 evaluator that constructs the missing witnesses before the route (Q27, 2026-09-25), and that a checker does
-not produce what it checks (Q28, 2026-09-25); the rest of this section, its readings of when native definitions exist and
+not produce what it checks (Q28, 2026-09-25), and that native content is consumed without Isabelle's verification (Q18
+(a), 2026-09-30); the rest of this section, its readings of when native definitions exist and
 of the answers to Q2, Q27 and Q28 included, was written outside the loop and is a residual.

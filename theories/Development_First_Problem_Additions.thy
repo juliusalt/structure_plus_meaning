@@ -36,7 +36,7 @@ lemma extension_formation_sites:
 
 lemma extension_package_sites:
   "system_definitions extension_package_system=
-    {955,956,957,958,959,960,961,962,963,964,965}\<union>system_definitions package_membership_system"
+    {955,956,957,958,959,960,961,962,963,964,965,966}\<union>system_definitions package_membership_system"
   by auto
 
 lemma payload_audit_sites:
@@ -45,11 +45,11 @@ lemma payload_audit_sites:
     empty_payload_calls_definitions empty_payload_rows_definitions empty_payloads_definitions)
 
 lemma additions_number_facts:
-  "{950,951,952,953,954}\<inter>{..<390::nat}={}" "{955,956,957,958,959,960,961,962,963,964,965}\<inter>{..<390::nat}={}"
-  "{500,501,502,503,504,505}\<inter>{..<390::nat}={}" "{950,951,952,953,954}\<inter>{955,956,957,958,959,960,961,962,963,964,965::nat}={}"
+  "{950,951,952,953,954}\<inter>{..<390::nat}={}" "{955,956,957,958,959,960,961,962,963,964,965,966}\<inter>{..<390::nat}={}"
+  "{500,501,502,503,504,505}\<inter>{..<390::nat}={}" "{950,951,952,953,954}\<inter>{955,956,957,958,959,960,961,962,963,964,965,966::nat}={}"
   "{950,951,952,953,954}\<inter>{500,501,502,503,504,505::nat}={}"
-  "{955,956,957,958,959,960,961,962,963,964,965}\<inter>{500,501,502,503,504,505::nat}={}"
-  "{950,951,952,953,954}\<subseteq>{..<970::nat}" "{955,956,957,958,959,960,961,962,963,964,965}\<subseteq>{..<970::nat}"
+  "{955,956,957,958,959,960,961,962,963,964,965,966}\<inter>{500,501,502,503,504,505::nat}={}"
+  "{950,951,952,953,954}\<subseteq>{..<970::nat}" "{955,956,957,958,959,960,961,962,963,964,965,966}\<subseteq>{..<970::nat}"
   "{..<390::nat}\<subseteq>{..<970}" "{..<506::nat}\<subseteq>{..<970}"
   "{980,981,982,983,984,985,986,987,988,989,990}\<inter>{..<970::nat}={}"
   by auto
@@ -72,8 +72,9 @@ proof -
     using membership_complete_definitions complete_below that by (meson lessThan_iff not_le subsetD)
   show ?thesis
     using fresh[of 955] fresh[of 956] fresh[of 957] fresh[of 958] fresh[of 959] fresh[of 960] fresh[of 961]
-      fresh[of 962] fresh[of 963] fresh[of 964] fresh[of 965]
-    by (simp add: systems_agree_on_added extension_package_system_def least_row_system_def added_site_system_def
+      fresh[of 962] fresh[of 963] fresh[of 964] fresh[of 965] fresh[of 966]
+    by (simp add: systems_agree_on_added extension_package_system_def least_row_system_def stored_row_system_def
+      added_site_system_def
       bounded_closure_system_def
       bounded_members_system_def bounded_member_system_def source_absences_system_def source_absence_system_def
       least_environment_system_def extension_rows_system_def extension_row_system_def)

@@ -7,8 +7,11 @@ resolved from the heap session and the cycle costs the load of the candidates al
 A theory the base holds and the tree changes is loaded from the tree as well, under a renamed
 copy (`<Name>_Probe`): the heap already holds a theory of its name, and one context cannot merge
 two theories of one base name. Every loaded theory importing it imports the copy, every qualified
-reference `Name.x` in a loaded theory is rewritten to the copy's, and the changed theories are
-loaded in dependency order before the new ones. An unchanged base theory standing on an import path
+reference `Name.x` in a loaded theory is rewritten to the copy's, as is an ML structure of the theory's name
+(its declaration `structure Name = …`, and a structure binding or an `open` of it), since ML structures are not
+qualified by their theory. Every loaded theory is given, in dependency order, to one `Thy_Info.use_theories`
+call, which loads independent theories together, runs a theory's commands beside the forked proofs of the
+theories before it, and reports the errors of every theory that fails. An unchanged base theory standing on an import path
 from a changed base theory to a loaded theory is loaded as a renamed copy too (`intermediate`), so no
 loaded theory meets the heap's copy of a theory the tree changes. The probe certifies exactly the
 theories it loads from the tree, and its summary names them. Two limits are reported, not repaired: a
@@ -32,7 +35,10 @@ sources (its `original-sources`) instead of the workspace's, so a past base is p
 A tree's theories can differ from the base without the task having changed them: the base advanced with main
 after the tree left it. Such a theory (`advanced`: the tree holds its text of the branch point, the base main's
 text) is never loaded as the task's change; the probe is refused before it writes anything, naming the theories,
-the cause and the remedy (`v2.py bring-main`, or `--base` at a heap the tree matches).
+the cause and the remedy (`v2.py bring-main`, `--base` at a heap the tree matches, or `--from-heap` for a theory).
+A theory the tree has not changed since it left main, whose base text main never held (the base holds unlanded
+work in it, as a batch's or a train's base does), is taken from the heap as `--from-heap` would take it, and named
+in the summary (`unlanded`): the probe then loads the task's theories over the work the base holds.
 """
 from __future__ import annotations
 
@@ -79,9 +85,9 @@ def git_output(*arguments, text=None):
         return None
 
 
-def advanced_theories(differing, present, main='main'):
-    """Differing theories the tree has not changed since it left main and whose accepted base text is main's:
-they differ from the base only because main advanced after the tree's branch point."""
+def untouched_theories(differing, present, main='main'):
+    """Differing theories of the tree's `theories/` that the base holds and the tree has not changed since it left
+main: the tree holds their text of its branch point."""
     theories = ROOT / 'theories'
     unchanged = [name for name, accepted in differing.items()
                  if accepted is not None and name in present and present[name].parent == theories]
@@ -93,7 +99,13 @@ they differ from the base only because main advanced after the tree's branch poi
     if ours is None or untracked is None:
         return []
     touched = {Path(line).stem for line in (ours + untracked).decode().split()}
-    unchanged = [name for name in unchanged if name not in touched]
+    return [name for name in unchanged if name not in touched]
+
+
+def advanced_theories(differing, present, main='main', untouched=None):
+    """Differing theories the tree has not changed since it left main and whose accepted base text is main's:
+they differ from the base only because main advanced after the tree's branch point."""
+    unchanged = untouched_theories(differing, present, main) if untouched is None else untouched
     batch = git_output('cat-file', '--batch', text=''.join('%s:theories/%s.thy\n' % (main, n) for n in unchanged)
                        .encode()) if unchanged else None
     advanced, position = [], 0
@@ -111,8 +123,28 @@ they differ from the base only because main advanced after the tree's branch poi
     return sorted(advanced)
 
 
+def unlanded_theories(candidates, base, main='main'):
+    """Theories among candidates (differing, untouched by the tree, not advanced) whose base text main has never
+held: the base holds unlanded work in them. The base text is read from the base's own sources
+(`original-sources`) and sought in main's history of the theory's file; a theory whose base source or history
+cannot be read is not counted, so it is loaded from the tree as any changed theory is."""
+    sources = Path(base) / 'original-sources'
+    paths = [(name, sources / (name + '.thy')) for name in candidates if (sources / (name + '.thy')).is_file()]
+    blobs = git_output('hash-object', '--stdin-paths', text=''.join('%s\n' % path for _, path in paths).encode()) \
+        if paths else None
+    if not blobs:
+        return []
+    unlanded = []
+    for (name, _), blob in zip(paths, blobs.decode().split()):
+        history = git_output('log', main, '--format=%H', '--find-object=' + blob, '--', 'theories/%s.thy' % name)
+        if history is not None and not history.strip():
+            unlanded.append(name)
+    return sorted(unlanded)
+
+
 def ordered(names):
-    """Candidates in load order, so a failure is attributed to the first theory that fails."""
+    """Candidates in dependency order, the order of the one call that loads them; every theory that fails is
+reported with its errors, wherever it stands in the order."""
     remaining, order = dict(names), []
     while remaining:
         ready = [n for n, imports in remaining.items() if not (set(imports) & set(remaining))]
@@ -128,15 +160,27 @@ def probe_name(name):
 
 
 def renamed_source(text, name, renamed):
-    """A loaded source with its own header and every qualified reference to a renamed theory renamed."""
+    """A loaded source with its own header and every qualified reference to a renamed theory renamed, and every ML
+structure of a renamed theory's name with it: its declaration, a structure binding it and an `open` of it."""
     for old, new in renamed.items():
         text = re.sub(r"(?<![\w.'])%s\.(?=[A-Za-z_])" % re.escape(old), new + '.', text)
+        text = re.sub(r"(\bstructure\s+)%s(?=\s*[=:])" % re.escape(old), lambda m: m[1] + new, text)
+        text = re.sub(r"(\bstructure\s+[A-Za-z][\w']*\s*=\s*|\bopen\s+)%s(?![\w'.])" % re.escape(old),
+                      lambda m: m[1] + new, text)
     if name in renamed:
         text = re.sub(r'^(\s*theory\s+)%s(?=\s)' % re.escape(name), lambda m: m[1] + renamed[name], text, count=1)
     return text
 
 
-CODE_TARGETS = frozenset({'SML', 'OCaml', 'Haskell', 'Scala'})
+CODE_TARGETS = frozenset({'SML', 'OCaml', 'Haskell', 'Scala'})  # the languages; a derived target extends one: SML_imp
+TARGET = re.compile(r"(?:\s|\(\*.*?\*\))*([A-Za-z][\w']*)(?:\s*\?)?(?:\s*\((?:[^()]|\([^()]*\))*\))?", re.S)
+
+
+def code_target(name):
+    """Whether a name is a code target: one of the languages, or a target derived from one (`SML_imp`)."""
+    return name in CODE_TARGETS or any(name.startswith(language + '_') for language in CODE_TARGETS)
+
+
 COMMANDS = frozenset({'text', 'txt', 'section', 'subsection', 'subsubsection', 'paragraph', 'lemma', 'lemmas',
                       'theorem', 'corollary', 'proposition', 'definition', 'abbreviation', 'fun', 'function',
                       'primrec', 'datatype', 'record', 'type_synonym', 'typedef', 'declare', 'context', 'locale',
@@ -148,7 +192,8 @@ EXPORT_CODE = re.compile(r'^[ \t]*export_code(?=\s)', re.M)
 
 def skip_code_checks(text):
     """The source with every `export_code … checking TARGET…` command blanked to its newlines, so every other
-line keeps its number, and the commands skipped, each with the line it starts at and its words."""
+line keeps its number, and the commands skipped, each with the line it starts at and its words. A target is a
+language or a target derived from one, optionally marked `?` and followed by its arguments in parentheses."""
     pieces, skipped, last = [], [], 0
     for match in EXPORT_CODE.finditer(text):
         if match.start() < last:
@@ -158,10 +203,9 @@ line keeps its number, and the commands skipped, each with the line it starts at
             if token.group() == 'in' or token.group() in COMMANDS:
                 break
             if token.group() == 'checking':
-                for target in tokens:
-                    if target.group() not in CODE_TARGETS:
-                        break
-                    end = target.end()
+                position = token.end()
+                while (target := TARGET.match(text, position)) and code_target(target[1]):
+                    end = position = target.end()
                 break
         if end is None:
             continue
@@ -200,25 +244,20 @@ among loaded theories, every theory's complete imports and the code checks skipp
 
 
 DEFAULT_TIMEOUT = 60
-# A probe's start on the base, by task 623's model (.build/tasks/623/result.md, "The estimate STARTUP_SECONDS should
-# give"; measured on base 20260926-015341-train617-583 at light load): start = START_SECONDS + SECONDS_PER_SESSION
-# x S + SECONDS_PER_GB x G, S the sessions of the base's chain above HOL (its directories), G the GB of the chain's
-# heap files down to Pure. A lower envelope: within about 1 s of every measured prefix of the chain and of a base of
-# one heap; contention only makes the start longer.
-START_SECONDS = 1.6  # the process at HOL: the JVM, Isabelle/Scala, Poly/ML's start (623's IC and IHS runs)
-SECONDS_PER_SESSION = 0.085  # Isabelle/Scala's session dependencies, per session of the chain (IBS - IHDS)
-SECONDS_PER_GB = 1.5  # Poly/ML's load of the chain's heaps, per GB of heap file (PB - PC)
+# A probe's start on the base is task 623's model, stated once in `incremental_check` (`modeled_start_seconds`, its
+# constants and their derivation): S the sessions of the base's chain above HOL (its directories), G the GB of the
+# chain's heap files down to Pure. Fitted within about 1 s of every measured prefix of the chain and of a base of one
+# heap; #944 measured it 1.0-1.15 s high on short chains (safe: a probe refused, never one admitted, on its account).
 # The rate of a load past the start, re-derived by task 625 (.build/tasks/625/derive.py) from the 504 completed
 # probes retained under .build/tasks/ on 2026-09-26 (their probe.summary.json, over 92 bases whose chains stand in
 # the store), each probe's start computed by the model above for its own base and subtracted from its seconds. Over
 # the 367 probes whose load past the start exceeds 5 s (five times the model's accuracy), the fastest loaded
 # 394,188 bytes in 11.1 s: 35,512 bytes per second. At 36,000 no such probe is estimated above its measured seconds;
-# 13 small loads (at most 239,484 bytes) are estimated 1-2.6 s above, where the start's accuracy dominates. Proofs
-# make a load slower than this, never faster, so the estimate refuses only a load that cannot fit its bound; the
-# timeout stays the backstop. (The earlier 25,000 was drawn with a constant start of 10 s.)
+# 13 small loads (at most 239,484 bytes) are estimated 1-2.6 s above, where the start's accuracy dominates. The rate
+# is fitted under the largest loads, not a lower envelope of all of them (#316's review: four small loads ran faster),
+# so it can refuse a small load that would fit only where the modeled start is past about 53 s; proofs make a load
+# slower than it, and the timeout stays the backstop. (The earlier 25,000 was drawn with a constant start of 10 s.)
 BYTES_PER_SECOND = 36000
-ISABELLE_HOME = Path('/opt/isabelle')
-HEAPS = isabelle_places.USER_HOME / '.isabelle/Isabelle2025-2/heaps/polyml-5.9.2_x86_64_32-linux'
 SESSION_ENTRY = re.compile(r'^[ \t]*session[ \t]+"?([^\s"(=]+)"?[^=\n]*=[ \t]*(?:"?([^\s"+]+)"?)?', re.M)
 
 
@@ -265,9 +304,9 @@ def session_parents(directories):
 
 def distribution_directories():
     """The session directories of the Isabelle distribution, as its ROOTS file lists them."""
-    roots = ISABELLE_HOME / 'ROOTS'
+    roots = isabelle_places.ISABELLE_HOME / 'ROOTS'
     lines = roots.read_text().splitlines() if roots.is_file() else []
-    return [ISABELLE_HOME / line.strip() for line in lines if line.strip() and not line.startswith('#')]
+    return [isabelle_places.ISABELLE_HOME / line.strip() for line in lines if line.strip() and not line.startswith('#')]
 
 
 def session_chain(session, directories):
@@ -286,9 +325,9 @@ def modeled_start(context):
     """A probe's start on the base by task 623's model: its seconds, the chain's sessions above HOL (the base's
 directories) and the GB of the chain's heap files in the store."""
     sessions = len(context['directories'])
-    heaps = [HEAPS / name for name in session_chain(context['session'], context['directories'])]
+    heaps = [isabelle_places.HEAPS / name for name in session_chain(context['session'], context['directories'])]
     gigabytes = sum(heap.stat().st_size for heap in heaps if heap.is_file()) / 1e9
-    return round(START_SECONDS + SECONDS_PER_SESSION * sessions + SECONDS_PER_GB * gigabytes, 1), sessions, gigabytes
+    return round(incremental_check.modeled_start_seconds(sessions, gigabytes), 1), sessions, gigabytes
 
 
 def load_estimate(paths, context):
@@ -300,7 +339,9 @@ the start, its sessions and GB returned beside the estimate and the bytes."""
 
 
 def last_command(text):
-    """The command a streamed log last reached: its last non-empty line, or None for an empty log."""
+    """The command a streamed log last reached: its last non-empty line, or None for an empty log. While the one
+call joins forked proofs, that line is the last statement printed, not the proof still running; a rerun with
+`--parallel-proofs 0` names the proof."""
     lines = [line.strip() for line in text.splitlines() if line.strip()]
     return lines[-1] if lines else None
 
@@ -338,19 +379,24 @@ def probe(base, work, targets, loaded, substitutions, prelude, parallel_proofs, 
                             % (base, len(absent), ', '.join(absent[:10])))
     differing = changed(context['sources'], present)
     new = {name for name, accepted in differing.items() if accepted is None}
-    advanced = [name for name in advanced_theories(differing, present)
+    untouched = untouched_theories(differing, present)
+    advanced = [name for name in advanced_theories(differing, present, untouched=untouched)
                 if name not in from_heap and name not in substitutions]
     if advanced:
         refusal = ('The probe is refused before it loads: %d theories differ from the base %s only because main '
                    'advanced after this tree left it (the tree holds their text of its branch point, the base '
                    "main's): %s. Bring main into the tree (`.claude/orchestration/v2.py bring-main`), or give "
-                   '--base a heap the tree matches.' % (len(advanced), base, ', '.join(advanced)))
+                   '--base a heap the tree matches, or take such a theory from the heap as it is '
+                   '(--from-heap THEORY).' % (len(advanced), base, ', '.join(advanced)))
         summary = {'base': str(base), 'session': context['session'], 'advanced': advanced, 'refused': refusal,
                    'loaded': False, 'certified': [], 'exit': None, 'seconds': 0, 'timed_out': False,
                    'marker': None, 'last_command': None, 'cause': refusal, 'errors': [refusal], 'messages': [],
                    'log': None, 'summary': str(work / 'probe.summary.json')}
         Path(summary['summary']).write_text(json.dumps(summary) + '\n')
         return summary
+    unlanded = unlanded_theories([name for name in untouched if name not in from_heap and name not in substitutions],
+                                 base)
+    from_heap = sorted(set(from_heap) | set(unlanded))
     loaded = set(loaded) | (set(differing) - set(from_heap) - set(substitutions)) | set(prelude)
     missing = loaded - set(present) - set(prelude)
     assert not missing, 'Not a workspace theory: ' + ', '.join(sorted(missing))
@@ -388,7 +434,7 @@ def probe(base, work, targets, loaded, substitutions, prelude, parallel_proofs, 
               'parallel_proofs': parallel_proofs, 'timeout': timeout,
               'substituted': substitutions, 'prelude': {name: str(path) for name, path in sorted(prelude.items())},
               'from_heap_despite_change': sorted(set(differing) - loaded - set(substitutions)),
-              'from_heap': sorted(from_heap), 'summary': str(work / 'probe.summary.json')}
+              'from_heap': sorted(from_heap), 'unlanded': unlanded, 'summary': str(work / 'probe.summary.json')}
     if estimate > timeout:
         refusal = ('The probe is refused before it loads: its load of %d theories (%d bytes) is estimated at '
                    '%s s, past its bound of %s s: the start on the base modeled at %s s (%d sessions above HOL, '
@@ -404,8 +450,11 @@ def probe(base, work, targets, loaded, substitutions, prelude, parallel_proofs, 
         return summary
     marker = 'PROBE THEORIES LOADED'
     script = work / 'probe.ML'
-    script.write_text(''.join('val _ = Thy_Info.use_thy_legacy "%s";\n' % (directory / renamed.get(name, name))
-                              for name in order)
+    # Each loaded path is written as `use_thy_path "PATH"`, the form the harness reads a probe's loaded theories in.
+    script.write_text('fun use_thy_path path = (path, Position.none);\n'
+                      'val _ = Runtime.toplevel_program (fn () => ignore (Thy_Info.use_theories (Options.default ()) '
+                      'Resources.default_qualifier [%s]));\n'
+                      % ', '.join('use_thy_path "%s"' % (directory / renamed.get(name, name)) for name in order)
                       + 'val _ = writeln "%s";\n' % marker)
     log = work / 'probe.log'
     options = [] if parallel_proofs is None else ['-o', 'parallel_proofs=%d' % parallel_proofs]

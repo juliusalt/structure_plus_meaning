@@ -1,6 +1,7 @@
-"""Where the proof base lives: the Isabelle heap store, the active-context pointer and the fallback base.
+"""Where the proof base lives: the Isabelle heap store, the active-context pointer and the fallback base; and where
+Isabelle itself lives: its distribution's home, the Poly/ML it runs and the directory of the store its heaps are in.
 
-The three are named here once, and every tool that spawns Isabelle or reads the base takes them from here.
+Each is named here once, and every tool that spawns Isabelle or reads the base takes them from here.
 They lie under the repository's `.build/tasks/base-lasting/`: a place that outlives a reboot of the machine,
 that every session's sandbox and the finalizer write, and that no task's cleanup removes. A task's tree is a
 git worktree inside the repository, so the place is found from the nearest directory above this file that
@@ -20,6 +21,10 @@ LASTING = repository(Path(__file__).resolve()) / '.build' / 'tasks' / 'base-last
 USER_HOME = LASTING / 'isabelle-home'
 ACTIVE_CONTEXT = LASTING / 'active-context.json'
 FALLBACK_BASE = LASTING / 'accepted'
+
+ISABELLE_HOME = Path('/opt/isabelle')
+POLY = ISABELLE_HOME / 'contrib/polyml-5.9.2-2/x86_64_32-linux/poly'
+HEAPS = USER_HOME / '.isabelle/Isabelle2025-2/heaps/polyml-5.9.2_x86_64_32-linux'
 
 # The heap store's former place. A context recorded by the tools of before this module names its heap and
 # database there; while a link stands at that place such a path and one under USER_HOME name the same file.

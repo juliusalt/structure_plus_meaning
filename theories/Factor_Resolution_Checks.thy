@@ -344,8 +344,8 @@ lemma finite_declared_check_premises_at:
     and constructions: "finite_construction_lifts (\<lambda>_. False) \<kappa> P"
   shows "finite_committed_exact_premises (\<lambda>d t s. resolution_invariant P d t s \<and> resolution_registrations_held \<kappa> s)
     (finite_resolution_select_at pr \<kappa> P) \<kappa> (finite_declared_commitment D) P"
-  by (rule finite_committed_exact_premises_select_at[OF \<kappa> finite_declared_commitment_exchanges_at[OF \<kappa> discharged only]
-    constructions])
+  by (rule finite_declared_exact_premises_by_in[OF \<kappa> finite_resolution_select_formed_in finite_table_true_empty
+    discharged only constructions])
 
 lemma finite_framed_check_premises_at:
   fixes P :: "('a,'s::linorder,'d,'c) finite_schema_system"
@@ -356,8 +356,8 @@ lemma finite_framed_check_premises_at:
     and constructions: "finite_construction_lifts (\<lambda>_. False) \<kappa> P"
   shows "finite_committed_exact_premises (\<lambda>d t s. resolution_invariant P d t s \<and> resolution_registrations_held \<kappa> s)
     (finite_resolution_select_at pr \<kappa> P) \<kappa> (finite_framed_commitment D \<Phi>) P"
-  by (rule finite_committed_exact_premises_select_at[OF \<kappa>
-    finite_framed_commitment_exchanges_at[OF \<kappa> discharged frames only] constructions])
+  by (rule finite_framed_exact_premises_by_in[OF \<kappa> finite_resolution_select_formed_in finite_table_true_empty
+    discharged frames only constructions])
 
 lemma finite_narrowed_check_premises_at:
   fixes P :: "('a,'s::linorder,'d,'c) finite_schema_system" and D :: "('a,'s,'d,'v) produced_declarations"
@@ -372,8 +372,8 @@ lemma finite_narrowed_check_premises_at:
     and constructions: "finite_construction_lifts (\<lambda>_. False) \<kappa> P"
   shows "finite_committed_exact_premises (\<lambda>d t s. resolution_invariant P d t s \<and> resolution_registrations_held \<kappa> s)
     (finite_resolution_select_at pr \<kappa> P) \<kappa> (finite_narrowed_commitment P m D \<Phi>) P"
-  by (rule finite_committed_exact_premises_select_at[OF \<kappa>
-    finite_narrowed_commitment_exchanges_at[OF \<kappa> discharged frames productions declared only] constructions])
+  by (rule finite_narrowed_exact_premises_by_in[OF \<kappa> finite_resolution_select_formed_in finite_table_true_empty
+    discharged frames productions declared only constructions])
 
 lemma finite_unproduced_check_premises_at:
   fixes P :: "('a,'s::linorder,'d,'c) finite_schema_system"
@@ -385,8 +385,8 @@ lemma finite_unproduced_check_premises_at:
   shows "finite_committed_exact_premises (\<lambda>d t s. resolution_invariant P d t s \<and> resolution_registrations_held \<kappa> s)
     (finite_resolution_select_at pr \<kappa> P) \<kappa>
     (finite_narrowed_commitment P m (unproduced (unnarrowed D) :: ('a,'s,'d,'v) produced_declarations) \<Phi>) P"
-  by (rule finite_committed_exact_premises_select_at[OF \<kappa>
-    finite_unproduced_commitment_exchanges_at[OF \<kappa> discharged frames only] constructions])
+  by (rule finite_unproduced_exact_premises_by_in[OF \<kappa> finite_resolution_select_formed_in finite_table_true_empty
+    discharged frames only constructions])
 
 lemmas finite_declared_checks_exact_at = finite_check_forms_exact[OF finite_declared_check_premises_at]
 lemmas finite_framed_checks_exact_at = finite_check_forms_exact[OF finite_framed_check_premises_at]
@@ -400,6 +400,28 @@ text \<open>
 
 lemmas finite_input_checks_exact_at =
   finite_check_forms_exact[OF finite_narrowed_check_premises_at[OF _ _ _ input_productions_discharged]]
+
+text \<open>
+  At a formed selection and a table whose calls are true (correction (16)): the check instances at the declared,
+  framed, narrowed, unproduced and input-production commitments, from the premises GT2b composes there
+  (@{thm [source] finite_declared_exact_premises_by_in} and its siblings); the priority instances above are these at
+  F1's selection and the empty table, their premises now proved so. At the waiting moded selection each is its instance
+  there (@{thm [source] finite_waiting_moded_select_formed_in}), whatever declarations, frames and modes it reads.
+\<close>
+
+lemmas finite_declared_checks_exact_by_in = finite_check_forms_exact_in[OF finite_declared_exact_premises_by_in]
+lemmas finite_framed_checks_exact_by_in = finite_check_forms_exact_in[OF finite_framed_exact_premises_by_in]
+lemmas finite_narrowed_checks_exact_by_in = finite_check_forms_exact_in[OF finite_narrowed_exact_premises_by_in]
+lemmas finite_unproduced_checks_exact_by_in = finite_check_forms_exact_in[OF finite_unproduced_exact_premises_by_in]
+lemmas finite_input_checks_exact_by_in =
+  finite_check_forms_exact_in[OF finite_narrowed_exact_premises_by_in[OF _ _ _ _ _ input_productions_discharged]]
+
+lemmas finite_declared_checks_exact_waiting_in = finite_declared_checks_exact_by_in[OF _ finite_waiting_moded_select_formed_in]
+lemmas finite_framed_checks_exact_waiting_in = finite_framed_checks_exact_by_in[OF _ finite_waiting_moded_select_formed_in]
+lemmas finite_narrowed_checks_exact_waiting_in = finite_narrowed_checks_exact_by_in[OF _ finite_waiting_moded_select_formed_in]
+lemmas finite_unproduced_checks_exact_waiting_in =
+  finite_unproduced_checks_exact_by_in[OF _ finite_waiting_moded_select_formed_in]
+lemmas finite_input_checks_exact_waiting_in = finite_input_checks_exact_by_in[OF _ finite_waiting_moded_select_formed_in]
 
 text \<open>rc's numbered and native forms at a priority (O3), the moded ones among them at the moded priority.\<close>
 
@@ -423,6 +445,10 @@ text \<open>At a table, rc's forms at a priority and their check instances, from
 
 lemmas registered_checks_exact_in = finite_check_forms_exact_in[OF registered_commitment_at_in.exact_premises_in]
 
+text \<open>At a formed selection (@{text registered_commitment_by_in}); the forms at a priority above are these there.\<close>
+
+lemmas registered_checks_exact_by_in = finite_check_forms_exact_in[OF registered_commitment_by_in.exact_premises_by_in]
+
 context committed_registrations_in
 begin
 
@@ -432,6 +458,43 @@ lemmas committed_registered_checks_exact_in =
   finite_check_demand_by_exact_in[OF registered_commitment_at_in.exact_premises_in[OF registered_at_in]]
 
 end
+
+text \<open>
+  rc's check forms at a table whose calls are true, at every formed selection and at the waiting moded selection
+  (@{text committed_registrations.registered_by_true}, @{text committed_registrations.registered_waiting}), and the native
+  check form there: the form WC3's route constants take, and its instance at the installed program at a table
+  (@{text native_waiting_check_installed_in}, #820's block at a table).
+\<close>
+
+context committed_registrations
+begin
+
+lemmas committed_registered_checks_exact_by_in =
+  finite_check_resolution_by_refutation_exact_in[OF registered_commitment_by_in.exact_premises_by_in[OF registered_by_true]]
+  finite_check_verdict_by_exact_in[OF registered_commitment_by_in.exact_premises_by_in[OF registered_by_true]]
+  finite_check_demand_by_exact_in[OF registered_commitment_by_in.exact_premises_by_in[OF registered_by_true]]
+
+lemmas committed_waiting_checks_exact_in =
+  finite_check_resolution_by_refutation_exact_in[OF registered_commitment_by_in.exact_premises_by_in[OF registered_waiting]]
+  finite_check_verdict_by_exact_in[OF registered_commitment_by_in.exact_premises_by_in[OF registered_waiting]]
+  finite_check_demand_by_exact_in[OF registered_commitment_by_in.exact_premises_by_in[OF registered_waiting]]
+
+end
+
+theorem native_waiting_check_exact_in:
+  fixes P :: "local_address option finite_native_system"
+  assumes registered: "committed_registrations \<kappa> P m D \<Phi> corr" and true: "finite_table_true P \<Theta>"
+    and result: "native_check_resolution_by_in \<Theta> (finite_waiting_moded_select_in \<Theta> \<kappa>
+      (finite_narrowed_commitment P m D \<Phi>) Dm \<Psi> M P) \<kappa> (finite_narrowed_commitment P m D \<Phi>) P R n = (T,A)"
+  shows "fimage fst T = R"
+    and "(q,Finite_Resolved C) |\<in>| T \<Longrightarrow> C \<noteq> {||} \<and> fBall C (\<lambda>p. finite_checks_schema_proof P p (fst q) (snd q)) \<and>
+      decode_finite_call_term q \<in> positive_meaning (decode_finite_system P)"
+    and "(q,r) |\<in>| T \<Longrightarrow> finite_resolution_refutes r \<Longrightarrow>
+      decode_finite_call_term q \<notin> positive_meaning (decode_finite_system P)"
+    and "A = Some B \<Longrightarrow> schema_system_formed (decode_finite_system P) \<and>
+      fset B = {q\<in>fset R. decode_finite_call_term q \<in> positive_meaning (decode_finite_system P)}"
+  using native_check_resolution_by_exact_in[OF registered_commitment_by_in.exact_premises_by_in[OF
+    committed_registrations.registered_waiting[OF registered true]] result] by blast+
 
 section \<open>The transfers at an installed program\<close>
 
@@ -1857,6 +1920,8 @@ context relocated_registrations_in
 begin
 
 lemmas native_moded_check_installed_in = native_moded_check_exact_in[OF registrations_installed_in]
+
+lemmas native_waiting_check_installed_in = native_waiting_check_exact_in[OF registrations_installed installed_true]
 
 end
 

@@ -42,8 +42,8 @@ comes from a native notion. The route rests on these accepted entries of `DECISI
 
 **The first problem's route**, each build with its review. Landed: the recording (P #581, X′ #583), the posing #397 with
 its one-citation recording #562, AX1 #930 (`Factor_Environment_Additions`), AX2a #932 (`Factor_Extension_Packages`). Open: AX2b–AX4 (#928's (c),
-from the brief #929: #955 (AX2a's clauses 957 and 958 changed so that AX2b's witnesses have W2 forms, q169) → #957
-(961's clause 0 split so that l is produced with no q, q170) → AX2b #934, and AX3a #936 → AX3b #938, which records the posing again → AX4 #940); then two rewrite
+from the brief #929: #955 (AX2a's clauses 957 and 958 changed so that AX2b's witnesses have W2 forms, q169, and 961's clause 0 split at 964 so that l
+is produced with no q, q170; landed `61e5b7e0`) → AX2b #934, and AX3a #936 → AX3b #938, which records the posing again → AX4 #940); then two rewrite
 briefs carry AX1–AX4's hand-overs into the briefs they reach, spliced so that nothing they rewrite starts first: #948
 the route's (#542, #707, #399, #709, #401, #443, #445; #709's with #880's Remains 2, #542's with review 931's 2) and
 #949 the criticism's (#549, #551, #553, #447, #449; after the design #947 too). R7 #542 (the given at the guard's calls
@@ -395,7 +395,7 @@ a theory before briefing a task that edits it.
 
 - **Under way**: D1b″ #945, continued in its tree from 2026-09-27; VK2 #924 ended partial and is
   re-planned to hand over what exists (its committing instance at a named premise that #953 discharges, q167; its
-  controls moved to #956); AX2b #934 parks until #955 and #957 land (q169, q170). AX2a #932 landed (`11a22b69`);
+  controls moved to #956); AX2b #934 continues on #955's clauses (`61e5b7e0`, q169, q170). AX2a #932 landed (`11a22b69`);
   review 933's follow-ups were mailed to AX2b #934 (2), AX3a #936 (1, 3, 4) and AX3b #938 (5).
 - **plan-134** was stopped by a classifier before its notes (2026-10-01 00:47); this file and the graph held its
   state, and nothing it decided is missing here.

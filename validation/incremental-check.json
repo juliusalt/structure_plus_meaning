@@ -1,6 +1,6 @@
 {
- "base_receipt_sha256": "e5d247bfac97c17d6cd7887667f5afb0575ecbdda6a4f1aeb4e894bdae223303",
- "checked_content_sha256": "624ebc2e748327d0836edbb25c2c7d58a0be7273d420db496eecf562f9d47559",
+ "base_receipt_sha256": "de378b32e2791abcf9358b25c5fc555d062f405fcd41380acc367adfe76f8daf",
+ "checked_content_sha256": "e4aa3df63e170154b6e14f214c6900c9eab0cf9a216277f73bb88c2d81d5c70a",
  "host_tests": {
   "kernel": {
    "exit_code": 0,
@@ -17,20 +17,76 @@
    "ran": 309,
    "skipped": 0,
    "tail": [
-    "{\"status\": \"failed\", \"error\": \"[Errno 2] No such file or directory: '/tmp/tmpkaii521t/no-project/theories/Development_Answer_a2d8d6490cc2.thy'\"}"
+    "{\"status\": \"failed\", \"error\": \"[Errno 2] No such file or directory: '/tmp/tmp43kokjtc/no-project/theories/Development_Answer_a2d8d6490cc2.thy'\"}"
    ]
   }
  },
  "phases": {
-  "base_and_impact": 0.61,
+  "base_and_impact": 0.52,
   "execution_impact": 0.0,
   "export": 0.0,
-  "proof": 35.23,
-  "recipe_impact": 0.46,
-  "recipes_and_host_tests": 11.42
+  "proof": 204.92,
+  "recipe_impact": 0.4,
+  "recipes_and_host_tests": 11.23
  },
  "rebuilt_theories": [
-  "Factor_Extension_Packages"
+  "Development_Asked_Registrations",
+  "Development_First_Request_Registrations",
+  "Development_Given_Carried_Declarations",
+  "Development_Given_Checks_Execution",
+  "Development_Given_Declarations",
+  "Development_Given_Declarations_Execution",
+  "Development_Given_Execution_Fixtures",
+  "Development_Given_Frames",
+  "Development_Given_Installed_Declarations",
+  "Development_Given_Installed_Productions",
+  "Development_Given_Modes",
+  "Development_Given_Modes_Execution",
+  "Development_Given_Productions",
+  "Development_Given_Productions_Execution",
+  "Development_Given_Query_Parameters",
+  "Development_Given_Registrations",
+  "Development_Given_Table",
+  "Development_Given_Waiting_Controls",
+  "Development_Installed_Presentations",
+  "Development_Installed_Presentations_Execution",
+  "Development_Rooted_Registrations",
+  "Development_Socket_Liveness_Execution",
+  "Factor_Access_Commitments",
+  "Factor_Artifact_Citation_Declarations",
+  "Factor_Check_Controls",
+  "Factor_Commitment_Controls",
+  "Factor_Committed_Registrations",
+  "Factor_Committing_Query_Parameters",
+  "Factor_Deferred_Search_Controls",
+  "Factor_Definition_Reading_Declarations",
+  "Factor_Framed_Commitment_Index",
+  "Factor_Input_Production_Controls",
+  "Factor_Input_Productions",
+  "Factor_Instantiation_Declarations",
+  "Factor_Least_Collections",
+  "Factor_Least_Query_Controls",
+  "Factor_Least_Witness_Registrations",
+  "Factor_Mode_Controls",
+  "Factor_Narrowed_Commitments",
+  "Factor_Narrowed_Controls",
+  "Factor_Narrowed_Productions",
+  "Factor_Narrowed_Sockets",
+  "Factor_Native_Committed_Registrations",
+  "Factor_Producer_Correspondences",
+  "Factor_Reader_Witness_Registrations",
+  "Factor_Resolution_Checks",
+  "Factor_Resolution_Controls",
+  "Factor_Resolution_Views",
+  "Factor_Root_Family_Declarations",
+  "Factor_Row_Selection_Socket_Declarations",
+  "Factor_Row_Value_Socket_Declarations",
+  "Factor_Schema_Instantiation_Declarations",
+  "Factor_Union_Declarations",
+  "Factor_Varied_Constructions",
+  "Factor_Varied_Declarations",
+  "Factor_Varied_Narrowed_Sockets",
+  "Factor_Varied_Narrowed_Transfer"
  ],
  "recipes": {
   "allocated-environments": {
@@ -190,19 +246,19 @@
    "status": "unchanged"
   }
  },
- "reused_theories": 1987,
- "seconds": 58.03,
+ "reused_theories": 1933,
+ "seconds": 227.5,
  "source_checks": {
   "missing_theory_files": [],
   "proof_escape_matches": [],
   "refusals": [],
-  "theory_count": 1988,
+  "theory_count": 1990,
   "unlisted_theories": []
  },
  "status": "accepted",
- "theories": 1988,
+ "theories": 1990,
  "validation_inputs": {
-  "ROOT": "c7c3cd145471489c3c187e2342348e6cf062594e14a10956d3cb5c2c466574c1",
+  "ROOT": "d74f9805e343c3fe8d6c67bf2d624a96d024e4ef6763ec2a3ff9828e05a87414",
   "tools/check.py": "71c91573138e10d317e5d920f5776af39687d313836a5552bbb0ec1d2d580381",
   "tools/incremental_check.py": "7f57110d9b4e04a7eb01215c21ea098fffcff71410454a248f6eb122909a1d98"
  }

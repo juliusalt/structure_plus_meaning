@@ -14760,6 +14760,15 @@ outside `rule_triple`, and no step of these families adds `insert_Diff_if`. `nat
 Recorded 2026-09-24 (task 374).
 ## The native loop's first problem is what a problem is; the problem of Q2, second, exercises its answer
 
+[Corrected by "Native content is consumed on its native judgment: the parts the verification request was to check
+become criticism, and the first answer is consumed once the owner approves it" below (task 947), after the owner's
+answers to Q18 (a) (2026-09-30 23:39: "from now the native content should be consumed without Isabelle's
+verification") and to Q23 (23:57): no verification request follows admission — the answer carries no contract theory,
+and Q23 (d) and the route's verification builds are withdrawn; an admitted answer is criticized natively, approved by
+the owner in an owner record citing its criticism record, and consumed then, with no translation of native content
+into Isabelle; the Q7 order's last step is withdrawn. Where this entry says "verified", "the bootstrap verification"
+or "publication waits for it", read that course.]
+
 [Corrected by task 928 after the owner's answer to Q33 (2026-09-27 12:46): the asked relation reads a candidate by its
 additions over the given — the pair (the given's site value, the candidate's additions), its four requirements unchanged
 on the candidate the additions present — so the posing is recorded again over the new asked relation, the old posing's
@@ -14890,7 +14899,9 @@ submitted package is identical, by native environment identity (`Factor_Environm
 those terms (`program_compilation_total_with_roots` and its executable compiler). Both are mechanical. The
 correspondence runs from the Isabelle text to the native content, the reverse of the translation the owner describes;
 it is the bootstrap's until the translation of native content into Isabelle exists (#320's Open; Q1, Q18 (a)), and
-publication of the answer as the development's notion waits for it.
+publication of the answer as the development's notion waits for it. [Corrected by "Native content is consumed on its
+native judgment: …" below (task 947): withdrawn by the owner's answer to Q18 (a); nothing is verified by Isabelle, and
+nothing waits for a translation.]
 
 ### How the loop works it
 
@@ -15036,7 +15047,8 @@ given, nothing more; every distinction it relies on is recorded above, and a bui
 locus or store that finds a problem is an index, the choice of its key the implementation's. The first problem's
 requirements are the owner's words; their encoding as native goals is generated until the owner authorizes it; the
 owner's approval is an owner record, never a premise of a native relation. The answer is native content, judged by the
-predecessor's guard and never by the program it answers (OD-2), and published only once verified (Q18 (a)). A failure
+predecessor's guard and never by the program it answers (OD-2), and published only once verified (Q18 (a)) [corrected by "Native content is consumed on its native judgment: …"
+below (task 947): consumed without Isabelle's verification once the owner has approved it]. A failure
 of the second problem is criticism of the first problem's answer, and once the owner has approved that answer only the
 owner revises it. Every notion reused is consumed through its local contract, proved once.
 
@@ -15289,6 +15301,14 @@ Recorded 2026-09-24 (task 376's decision; a design, no theory changes).
 
 ## The first problem's requirements use the test of a native distinction; the octet audit is one of its parts
 
+[Corrected by "Native content is consumed on its native judgment: the parts the verification request was to check
+become criticism, and the first answer is consumed once the owner approves it" below (task 947), after the owner's
+answer to Q18 (a) (2026-09-30): the verification request is withdrawn, so no part of the test is checked by Isabelle.
+The guard's four sockets stand; parts (b) and (d) are criticism by their native samples, (c) criticism by a native
+observation (an added definition calling a member of the development package is a failure row), (f) falls under (c),
+(e) and (b), and (a) is no requirement — the answer carries no contract, its meaning its positive meaning — each with
+the owner's approval. The column "In the verification request" of the tables below is void.]
+
 The owner, 2026-09-24 19:57 (the ledger, recorded by the monitoring session for the planner), answering Q23 (a):
 "Q23(a), to use this test and not only the octet audit. If you want that, say so on Q23 - ok tells that I endorce this
 to the planner." The sentence the owner endorses is the monitoring session's: "The next step is for the first problem's
@@ -15367,7 +15387,9 @@ members, each in its own rule.
 No part is dropped: (a)–(c) and (f) are checked mechanically before publication, by Isabelle as the bootstrap
 verifier (the owner, 2026-09-19); (d), (e), (g) and (h) are criticism, whose failures are comparison failures against
 the candidate (`Observation_Repairs`) and, once the owner has approved the answer, problems for the owner; all of it is
-before the owner's approval.
+before the owner's approval. [Corrected by "Native content is consumed on its native judgment: …" below (task 947):
+nothing is checked by Isabelle; (b), (c), (d), (e), (g) and (h) are criticism, (f) under them, (a) no requirement, all
+before the owner's approval.]
 
 ### The first problem's requirement family, corrected
 
@@ -15444,6 +15466,14 @@ encoding. This design was made outside the loop and is a residual.
 
 Recorded 2026-09-24 (task 381's decision; a design, no theory changes).
 ## Non-nominality of uses is equivariance under use permutations, a contract the verification request checks
+
+[Corrected by "Native content is consumed on its native judgment: the parts the verification request was to check
+become criticism, and the first answer is consumed once the owner approves it" below (task 947), after the owner's
+answer to Q18 (a) (2026-09-30): the verification request is withdrawn, so no answer proves or submits an equivariance
+clause. Non-nominality stays equivariance under use permutations, the library's notion, which the given's readers and
+the guard state of themselves as contracts; an answer's part (d) is criticism, the native use sample refuting, and the
+owner's approval. Q26's (b) is overtaken; its (c), a use as a leaf of its own, is now the one route to a mechanical
+admission check.]
 
 The owner, to the planner, 2026-09-24 (the ledger), at 18:12: "Every distinction a native program relies on must come
 from a native notion, not from a HOL presentation relation." At 18:36, of the first design of the notion of a problem
@@ -15618,7 +15648,8 @@ bring it into the native judgment with parts (a)–(c).
   each added entry, with its contract in the required forms over native notions' classes, the clause
   `renaming_equivariant` of its subject relation at the use action its classes derive — stated by the harness, never
   supplied by the answer, proved by the answer from the given readers' clauses and the notion's constructions, and
-  checked by Isabelle.
+  checked by Isabelle. [Corrected (task 947): withdrawn with the verification request; part (d) is the use sample's in
+  criticism and the owner's approval.]
 - **The owner's approval**, last.
 
 The row of the first problem's requirement family for 18:12, as task 381's entry corrected it, becomes:
@@ -15690,7 +15721,8 @@ renaming acting on all arguments; (b) it is checked by Isabelle in the verificat
 added entry's clause, a native sample refuting earlier in criticism, and no fifth socket; (c) uses stay presented as
 structure: a use leaf in the term language is the one route to a native syntactic check and a change of the foundation,
 the owner's to choose. Basis: the owner's words of 18:12, 18:36 and 19:57; 2026-09-19 (Isabelle verifies the native
-definitions); the first-use rule.
+definitions); the first-use rule. [Corrected (task 947): (b) is overtaken by the owner's answer to Q18 (a) — criticism
+and the owner's approval, no Isabelle check; (a) stands and (c) is put again in changed form.]
 
 ### What the builds must respect
 
@@ -21350,3 +21382,191 @@ pattern invariant and any foreign `U`; every earlier statement is its instance b
 **What the builds must respect**: GT2b's second part composes these (the narrowed productions, the composed forms, the
 transfers' premises and GT2c's premise blocks) and restates none; the contained exchange's valued form takes the calls
 and materials of its commitment at every pattern-invariant state.
+
+## Native content is consumed on its native judgment: the parts the verification request was to check become criticism, and the first answer is consumed once the owner approves it
+
+The owner, 2026-09-30 23:39 (the ledger, from the console), answering Q18 (a): "Previously I wanted native content to
+be consumed only after Isabelle's verification, as a self-consistency check, but now I think that the translation layer
+that would preserve the semantics of the native content is itself going to be very difficult to build and prone to
+make these checks cosmetic. Thus, from now the native content should be consumed without Isabelle's verification. The
+rest of the questions are covered by other answers." At 23:57, answering Q23: "(b) and (c) ok. Other questions should
+be already covered". Q23 (d) was the verification request: Isabelle accepts the answer's programs as HOL terms with
+their contracts, the submitted package identical to their compilation, publication waiting for it (task 378's entry,
+"Verification before the translation exists"); task 381's entry gave it the test's contract parts (a), (b), (c) and
+(f), task 383's entry part (d), and `Development_Verification_Frame` states its checks. The request is withdrawn and its
+builds #403 and #407 are deleted.
+
+These words are the premise. For content the native loop produces they supersede the application the development made
+of the owner's direction of 2026-09-19 ("The role of Isabelle is to verify that the native reasoning and definitions
+are internally consistent before the native machinery can itself verify this"); Isabelle's normative bootstrap role
+over the library's own theories stands (the owner, 2026-09-12). This entry decides the course of each part the
+verification request was to check, the first answer's course after admission and what "published" means without
+verification, and what of the translation, the frame and Isabelle's role remains. The guard's four sockets (G1
+retention, G2 formation and closure, G3 the callee boundary, G4 the octet audit) and the asked relation by additions
+stand (tasks 381, 928). It changes no theory.
+
+| Earlier proposal or state | Correction |
+|---|---|
+| An admitted native answer is published only after Isabelle verifies it: the answer's programs stated as HOL terms with their contract lemmas, the package identical to their compilation (task 378; Q18 (a) and Q23 (d), provisional). | Native content is consumed without Isabelle's verification (the owner). The answer is native content alone and carries no contract theory; the first answer is consumed once the owner has approved it, after its criticism; nothing between its admission and its use is Isabelle's. |
+| Parts (a), (b), (c) and (f) of task 376's test are checked by Isabelle in the verification request (task 381), and part (d) too (task 383). | (b) and (d) are criticism by their native samples, (c) criticism by a native observation, (f) falls under (c), (e) and (b), and (a) is no requirement; each with the owner's approval (below). The native judgment is the guard alone. |
+| The Q7 order's last step is the translation of native content into Isabelle for verification (the plan; HANDOFF Open 3, with N8, the installation of an admitted native answer as Isabelle material). | Withdrawn: no translation is built for verification, and none is planned. |
+| Criticism runs after admission and before verification, neither blocking nor gating it; its record and the verification record both cite the admission (#447, #553, #403). | Criticism runs after admission and before the owner's approval; its record, a generation citing the admission, goes to the owner with the answer. |
+| The owner's approval cites the admission, the criticism record and the verification record (task 434's result; HANDOFF Open 142). | The approval is an owner record citing the criticism record, whose only predecessor is the admission. |
+
+### What the withdrawn check would have checked
+
+A native definition is a positive program. A formed package — G2 checks formation and closure — has one meaning, the
+least fixed point of its consequence operator (`positive_meaning`, defined for every schema system), which native
+evaluation computes where it answers; it is not inconsistent with itself, whatever its clauses. What the verification
+request checked was the answer's claims about that meaning: each added entry's contract, stated over presentation
+classes of native notions and proved in a theory Isabelle accepts (a), its invariance over presentations (b), its
+subjects native content (c), its use equivariance (d), its stores an index's implementation (f), and the submitted
+package identical to the compilation of the terms the claims were stated of. Without the request an answer states no
+such claim: it is native content alone, its meaning its positive meaning. A particular call of it is checked natively —
+the finite proof checker reads a derivation's graph (`finite_graph_reading_conditional_sound`), as the judgment already
+does — and a universal claim about it is checked by no one before native mathematical-proof admission (O-85), the native
+machinery verifying its own content in the sense of the owner's words of 2026-09-19. Meanwhile what those claims were to
+secure is refuted by criticism where it fails, and judged by the owner.
+
+### Each part's course
+
+| Part (task 381) | What it asked of an answer | Its course now | Why |
+|---|---|---|---|
+| (a) | each added definition's contract proved, so that the notion drawing each distinction has its contract (task 376's test) | no requirement: the answer carries no contract theory; its added definitions' meaning is their positive meaning, a formed package's (G2); whether that meaning is the notion of a problem is the owner's approval; a claim about it waits for O-85 | the owner withdrew the verification; no native check of a universal claim exists before O-85, and asking an answer for claims no one checks would be the cosmetic check the owner rejected. The given's notions an added definition calls keep their contracts, library theories under Isabelle's bootstrap role, and G3 makes every callee one of them or an added definition |
+| (b) | each added entry's meaning invariant over every presentation of the native content it reads | criticism: the sample of (b) (`Criticism_Samples`, every collection enumerated in reverse) at every added entry, a difference a comparison failure refuting the entry's invariance (`criticism_refutes_presentation`); the owner's approval | no positive program's meaning over the pair is the requirement — task 383's construction in "No native program checks it over an answer", with an enumeration order in place of a use's spelling, makes the invariant candidates not recursively enumerable; a sample refutes and never establishes |
+| (c) | what an entry is about is native content: no contract statement reaching a bootstrap-loop presentation relation or datatype | criticism, by a native observation exact on its scope: each callee of an added definition, read by the definition edge reader (82, `definition_edge_reading_exact`), that is a member of the development package — read at the package's own site in the given's environment by package membership (83, `package_membership_exact`) — is a failure row; the owner's approval | without contract statements an added definition's meaning reaches a HOL presentation only through what it calls, its arguments in the native loop being native content by the asked relation. The development package's members are the bootstrap loop's native programs — readiness, the reach, the verdict and its witnesses, request construction, the decomposition's schema — whose inputs' distinctions only HOL presentation relations supply (task 376). G3 admits every given member, and the given's package holds the development package's definitions beside the readers' (its site reads 252 definitions, the rooted readers 155: `Development_Given_Execution`), so the observation refutes and never refuses admission |
+| (d) | each added entry equivariant under use permutations (`renaming_equivariant` at its classes' use action) | criticism: the use sample (`Criticism_Use_Samples`: every use of the candidate's environment moved outside it, and its uses permuted among themselves), a row refuting the entry's use equivariance (`criticism_refutes`); the owner's approval. The equivariance clauses of the given's readers and of the guard stand as library contracts | task 383's argument stands: no socket (the equivariant candidates are not recursively enumerable) and no syntactic sufficient condition while uses are structure; the one route to a mechanical admission check is a use as a leaf of its own in the term language, the owner's to choose (Q26 (c), below) |
+| (f) | every store search an added definition reaches is a carrier index's own | no part of its own: a store a given program searches is a development-package member, a row of (c); a store an added definition builds and searches with its own clauses is structure it reads, which no syntactic mark separates from a tag — part (e)'s listing and part (b)'s sample; the owner's approval | a carrier index's contract is a universal claim, as (a); without it an index is judged as any structure an answer reads |
+
+Parts (e), (g) and (h) stay criticism, as task 381 made them. The native judgment is therefore the guard's four sockets,
+and everything else of task 376's test is criticism — (b), (c), (d), (e), (g) and (h), with (f) under (c), (e) and (b),
+and (a) none — whose rows go to the owner with the answer.
+
+### The first answer's course after admission
+
+1. **Admission** (#399): the guard judges the candidate natively; an admitted candidate is a generation citing the
+   posing (#562's one-citation recording).
+2. **Criticism** (#549, #551, #553, #447, #449): at an admitted candidate only, the observations of (c), (e) and (h)
+   and the samples of (b), (d) and (g); every part's rows are comparison failures (`Observation_Repairs`) in one record,
+   a generation citing the admission. It refutes and never admits: it neither refuses the admission nor repairs the
+   answer, and a record with failures is recorded as one with none.
+3. **The owner's approval** (HANDOFF Open 142): an owner record, its payload the owner's words, inert, recorded by
+   `development_owner_approval` citing the criticism record, so that its history runs approval, criticism record,
+   admission, posing, the owner record of 18:53, and the owner approves an answer whose criticism the approval's own
+   history holds. The approval is no premise of a native relation; it is the adoption of the answer (task 378). An
+   answer the owner does not approve is not consumed: the owner's reasons make the first problem a re-evaluation problem
+   whose requirement family gains the exposed requirement.
+4. **Consumption**, which is what "published" means now: the approved answer is the development's notion of a problem,
+   owner-level, and later work consumes it on its native judgment, its criticism and the approval, with nothing of
+   Isabelle's between: the first problem is posed again under it (the least form retiring), readiness and the loop's
+   questions are re-stated over it, and the second and the authority problems are posed over it, each posing a
+   generation whose predecessors reach the approval. The HOL-constant loop retires then (Q7; Q23 (f)). Its standing is
+   recorded with it — admitted by the guard, criticized, approved by the owner, its claims beyond its positive meaning
+   unchecked — an open limit of its basis (the plan's "Adequacy as a current basis") until O-85. A persistent native
+   published state selecting it at a locus (HANDOFF Open 7) is needed at its first supersession, when a later answer
+   re-evaluates it, and not before: until then the approval is what the posings cite.
+
+### What remains of the translation, the frame and Isabelle's role
+
+- **The translation.** The Q7 order's last step, the translation of native content into Isabelle for verification, is
+  withdrawn by the owner's answer to Q18 (a) (this reading is generated): nothing native is translated to be verified,
+  and no translation is planned — HANDOFF Open 3 retires with its N8, the installation of an admitted native answer as
+  Isabelle material; N7, the verdict at a package, stays a native notion built when a problem kind asks it. The owner's
+  words of 2026-09-19 keep translation for "when required": no use requires one now, and a use that did would pose it
+  as a problem, the owner's concern that such checks are cosmetic its first criticism. Q1's rule (closed without an
+  answer) bites only where native content becomes Isabelle material, and none does.
+- **Isabelle's role.** Normative through genesis over the library's own theories (2026-09-12): the notions the native
+  judgment and the criticism consume, their contracts proved once, the evaluator's exactness, the guard's contract, the
+  criticism's refutation lemmas. Content the native loop produces — answers, records, the approved notion — is native
+  content and is consumed without Isabelle's verification; no route states a claim about an answer's definitions in a
+  theory.
+- **The frame.** `Development_Verification_Frame` is retired: no route consumes it, no theory imports it, and its checks
+  read an answer's contract theory, which no answer carries now. A build of its own deletes it — the theory, its `ROOT`
+  entry, its `THEORY_MAP.md` row and the mention in `REASONING_REUSE.md`'s non-nominality row. Its inventory of
+  bootstrap-loop HOL constants (part (c)) reappears as (c)'s observation over native sites, the development package's
+  members; the contract forms it required (the binary and unary forms over presentation classes) stay what the
+  library's own contracts take.
+
+### The owner's questions
+
+- **Q18** is answered whole: (a) as above; (b), the payload condition, is G4, the octet audit (the owner, 19:57); (c)
+  and (d) agree with the answer to Q7 (the HOL-constant loop kept standing until it retires; the machinery's residuals
+  superseded by native problems); (e) is superseded by the answer to Q2 and the direction of 18:53.
+- **Q23**: (b) the least form and (c) the approval as an owner record are the owner's; (a) was answered at 19:57; (d) is
+  withdrawn by Q18 (a); (e) the decomposition as a generated method and (f) the end of the HOL-constant problems stand
+  as task 378 chose them, the owner holding them covered by earlier answers (the depth direction of 2026-09-17; Q7) —
+  readings that are generated.
+- **Q26** (open): (a), non-nominality as equivariance under use permutations, stands as the library's notion
+  (`Presentation_Equivariance`, `Factor_Use_Renaming`), consumed by the given's readers' and the guard's clauses and by
+  the use sample; (b) is overtaken by Q18 (a) — the use sample in criticism and the owner's approval, no Isabelle check;
+  (c) changes weight: with no Isabelle check, a use as a leaf of its own in the term language is the one route to any
+  mechanical admission check of non-nominality. Provisional: not taken. The question in its changed form is drafted for
+  the planner (task 947's `result.md`).
+
+### Weighed and rejected
+
+- **The verification request kept**, Isabelle checking an answer's contract theory: withdrawn by the owner.
+- **An answer's contracts asked as native content, sampled but not proved**: a claim no one checks is the cosmetic check
+  the owner rejected; claims come with O-85.
+- **A fifth socket for (b) or (d)**: no positive program's meaning is either requirement (task 383).
+- **(c) in the guard**, G3's boundary read at the readers' package instead of the given's, so that a callee into the
+  development package is refused at admission: exact and native, but it changes the asked relation AX1–AX4 restate and
+  the posing recorded again; the guard stands (tasks 381, 928), and the rows reach the owner before anything consumes
+  the answer. Whether G3's boundary should be the readers' package is put to the planner.
+- **(c) classified by each callee's library contract**, a failure row only where the contract of a development-package
+  member reaches a bootstrap presentation, computed by the frame's closure over library theories: sound under
+  Isabelle's role over the library, but it keeps the frame alive for a distinction the development package's own site
+  already draws — every member is part of a bootstrap-loop program over presented rows (task 376).
+- **Consumption at admission**, before the approval: the owner approves the first answer directly (Q23 (c)); later
+  answers are consumed as the authority problem's answer decides.
+- **The approval citing the admission beside the criticism record**: its history would not show the criticism it was
+  given; the one-citation recording through the criticism record holds both.
+- **The frame kept as a theory no route consumes**: a check of nothing, rebuilt by every check that reaches it and read
+  as a standing route.
+- **A translation built for later use**: the owner's reason stands against it; one is posed when a use requires it.
+
+### What the builds must respect
+
+- No build asks an answer for a contract theory, states a verification request or its record, or translates native
+  content into Isabelle for verification.
+- The native judgment is the guard's four sockets on the asked relation by additions; nothing criticism records refuses
+  an admission or repairs an answer.
+- Criticism's parts are (b), (c), (d), (e), (g) and (h), with (f) under (c), (e) and (b), and (a) none; each row is a
+  comparison failure against the candidate, refuting and never admitting; an unresolved side is unavailable, never a
+  row.
+- (c)'s observation reads an added definition's callees natively (82) and membership in the development package
+  natively (83) at the package's own site in the given's environment; that site is a coordinate of the given, recorded
+  as a reliance; nothing is supplied beside the candidate.
+- The approval is an owner record citing the criticism record; the criticism record cites the admission; the admission
+  cites the posing.
+- The first answer is consumed once the owner has approved it, and not before; its unchecked claims are recorded as an
+  open limit of its basis.
+- Isabelle keeps its bootstrap role over the library's theories; every notion the judgment and the criticism consume is
+  consumed through its contract, proved once.
+
+### What the builds change
+
+- **#399, #401, #709, #443, #445** (rewritten by #948): no verification request, contract theory or verification build
+  is named; consumption follows the approval.
+- **#549**: part (c)'s observation beside (e) and (h). **#553**: (c)'s rows recorded; the record cites the admission and
+  is cited by the approval. **#447**: criticism before the owner's approval, and a control for (c). **#449**: the route
+  ends with the approval. **#551**: unchanged in content; its samples of (b) and (d) are the only checks of those parts.
+  The four are rewritten by #949.
+- **The owner's approval** (HANDOFF Open 142): an owner record citing the criticism record.
+- **New**: the frame's deletion, a build of its own. At their next edit, `Criticism_Use_Samples` ("the clause the
+  verification request asks the answer to prove") and `Development_Owner_Records` (the route's generations "its
+  verification") lose their mention of the verification.
+
+### Open
+
+Native mathematical-proof admission (O-85), the route by which claims about native content would be checked. Q26 (c).
+G3's boundary (the planner's). The persistent published state at the first supersession (HANDOFF Open 7). The entries
+that state Isabelle's verification of native content besides tasks 378, 381 and 383 — "Native definitions are
+normative; Isabelle verifies them", "Problems about native definitions are posed, answered and judged at the development
+package's rows" (#320), "The payload audit decides a definition's stated payloads …" (#428), "The native evaluator
+evaluates above an implemented base …" (#460), "A generation over a state holds its payload once …" (#482), "The native
+evaluator constructs the missing witnesses by resolution …" (#495), "A checker does not produce …" (#496) and "The
+listing policy is certified once at the empty artifact …" (#560) — are superseded here where they state it, and marked
+at their next correction. This design was made outside the loop and is a residual.
+
+Recorded 2026-10-01 (task 947's decision; a design, no theory changes).

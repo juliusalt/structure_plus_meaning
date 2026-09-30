@@ -25,9 +25,11 @@ candidate by its additions over the given).
 
 **The first problem's route**, each build with its review. Landed: the recording (P #581, X′ #583), the posing #397 with
 its one-citation recording #562, AX1 #930 (`Factor_Environment_Additions`), AX2a #932 (`Factor_Extension_Packages`) with
-#955's fix (`61e5b7e0`, q169, q170). Open: AX2b–AX4 (#928's (c), from the brief #929): the fix #959 (continuing #955:
-958's given clauses require l's row at a given site's use to be the given's, so local edges stay in the given's closure,
-q172; a view 965, a row of the least environment, so l has a W2 form, q171) → AX2b #934 (both registrations), and AX3a
+#955's and #959's fixes (`61e5b7e0`, q169, q170; `d4673a92`: 958's given clauses require l's row at a given site's use
+to be the given's, so local edges stay in the given's closure, q172; a view 965, a row of the least environment, so l
+can have a W2 form, q171). Open: AX2b–AX4 (#928's (c), from the brief #929): the fix #960 (continuing #959, after AX3a
+#936: 965's given rows the stored rows through a view 966, a stored row of a or g, so l's W2 query closes, q175) →
+AX2b #934 (both registrations), and AX3a
 #936 → AX3b #938, which records the posing again → AX4 #940; then two rewrite briefs carry AX1–AX4's hand-overs into
 the briefs they reach, spliced so that nothing they rewrite starts first: #948 the route's (#542, #707, #399, #709,
 #401, #443, #445; #709's with #880's Remains 2, #542's with review 931's 2) and #949 the criticism's (#549, #551, #553,
@@ -90,7 +92,7 @@ bootstrap loop's landed lines** are kept and none is extended (#376); their rema
 as long; GT6's run of hours makes the resolver's pole the critical one, and the AX line has slack against it. Nothing
 is added after the tail until it shortens (the approval build, Open 142, waits for that); rewrites and splices before a
 task are placed at any depth. The queue is the planner's choice, a residual until the selection problem's native
-answer (Q2): the running tasks with their reviews, the fix #959 before AX2b #934 resumes, the resolver's pole D1d
+answer (Q2): the running tasks with their reviews, the resolver's pole D1d
 → #875 and GT3 → GT6, AX3a–AX4, #956, the rewrite briefs, then the route in its chains' order, each review right after
 its build; #887 after R7's review. Word changes are serialized; none is queued.
 
@@ -316,8 +318,9 @@ a theory before briefing a task that edits it (the probe tool's next edit: next-
 
 ## Now
 
-- **Under way**: AX3a #936; the fix #959 (q171, q172), for which AX2b #934 is parked (`v2.py after 934 959`), resuming
-  on it to register both witnesses; the resolver's pole goes on at D1d #905, its last blocker #945 landed. Review 933's
+- **Under way**: AX3a #936 (its review #937 re-queued after its session could not record a verdict while #936 was in
+  its quick fix); AX2b #934 on #959's clauses (`d4673a92`), registering the bound now and l after the fix #960 (q175,
+  `v2.py after 934 960`); the resolver's pole at D1d #905. Review 933's
   follow-ups were mailed to AX2b #934 (2), AX3a #936 (1, 3, 4) and AX3b #938 (5); review 946's to D1d #905 (1, 2) and
   #875 (3–5); review 954's 1 and 2 to AX4 #940.
 - **What the next events ask**: Q34's answer; #875's figures — GT6's prediction and worker count, the checking fold

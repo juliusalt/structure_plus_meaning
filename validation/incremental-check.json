@@ -1,6 +1,6 @@
 {
- "base_receipt_sha256": "53261005864b06a3001832db06392c2e35754600e2b19addad7df87eae141a8b",
- "checked_content_sha256": "ca84a620a1be74d3b3b0131eac7e41bb74116b88239c7de085476942712f0c45",
+ "base_receipt_sha256": "fb180d1ff0621eb54efe5796988f5eec0d3751b8f5c58d59b8743b34650da88b",
+ "checked_content_sha256": "aa02ddbf1eca605713a0be63d028aa5e89bfe1325865796aff7a3be4f2fe910b",
  "host_tests": {
   "kernel": {
    "exit_code": 0,
@@ -17,21 +17,20 @@
    "ran": 309,
    "skipped": 0,
    "tail": [
-    "{\"status\": \"failed\", \"error\": \"[Errno 2] No such file or directory: '/tmp/tmppdnuakp8/no-project/theories/Development_Answer_a2d8d6490cc2.thy'\"}"
+    "{\"status\": \"failed\", \"error\": \"[Errno 2] No such file or directory: '/tmp/tmpxaa4t96e/no-project/theories/Development_Answer_a2d8d6490cc2.thy'\"}"
    ]
   }
  },
  "phases": {
-  "base_and_impact": 0.41,
+  "base_and_impact": 0.5,
   "execution_impact": 0.0,
   "export": 0.0,
-  "proof": 71.18,
-  "recipe_impact": 0.38,
-  "recipes_and_host_tests": 11.36
+  "proof": 26.31,
+  "recipe_impact": 0.4,
+  "recipes_and_host_tests": 11.68
  },
  "rebuilt_theories": [
-  "Factor_Deferred_Search",
-  "Factor_Deferred_Search_Controls"
+  "Factor_Extension_Packages"
  ],
  "recipes": {
   "allocated-environments": {
@@ -191,19 +190,19 @@
    "status": "unchanged"
   }
  },
- "reused_theories": 1985,
- "seconds": 92.3,
+ "reused_theories": 1987,
+ "seconds": 47.74,
  "source_checks": {
   "missing_theory_files": [],
   "proof_escape_matches": [],
   "refusals": [],
-  "theory_count": 1987,
+  "theory_count": 1988,
   "unlisted_theories": []
  },
  "status": "accepted",
- "theories": 1987,
+ "theories": 1988,
  "validation_inputs": {
-  "ROOT": "f6d8ffae805beb318fad2a0ff3d4c2444c605a9bc797b3b5cef438e4f3617396",
+  "ROOT": "b918c7416aed8dd174d4e1ff599fa793472a419b85ce6f68e223b375174291c9",
   "tools/check.py": "71c91573138e10d317e5d920f5776af39687d313836a5552bbb0ec1d2d580381",
   "tools/incremental_check.py": "7f57110d9b4e04a7eb01215c21ea098fffcff71410454a248f6eb122909a1d98"
  }

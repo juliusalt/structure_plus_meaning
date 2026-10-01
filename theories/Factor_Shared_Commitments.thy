@@ -2831,8 +2831,44 @@ text \<open>
   again.
 \<close>
 
+text \<open>
+  The carry threads the calls' terms over the reversed list of the table and builds the tree of its positions once
+  (@{const share_state_of_listed}), where indexing the calls into a sharing state inserts every shape into that tree
+  as it is made (@{const index_calls}); both make the same table, references and index
+  (@{text table_carry_index_calls}).
+\<close>
+
+lemma index_calls_terms:
+  "fst (index_calls C x E) = snd (keyed_share_terms (map snd C) x) \<and>
+    index_rows C x = zip (fst (keyed_share_terms (map snd C) x)) (map fst C)"
+  by (induction C arbitrary: x E) (simp_all add: case_prod_unfold)
+
 definition table_carry :: "('d \<times> finite_factor_term) list \<Rightarrow> share_state \<times> (nat,'d fset) rbt" where
-  "table_carry C = index_calls C empty_share_state RBT.empty"
+  "table_carry C = (case keyed_table_terms (\<lambda>n y R. y#R) (map snd C) (RBT.empty,0,[]) of (is,q) \<Rightarrow>
+    (share_state_of_listed q, bucket_tree (zip is (map fst C))))"
+
+lemma table_carry_index_calls:
+  "share_state_table (fst (table_carry C)) = share_state_table (fst (index_calls C empty_share_state RBT.empty)) \<and>
+    snd (table_carry C) = snd (index_calls C empty_share_state RBT.empty) \<and>
+    keyed_state_represents (fst (table_carry C)) (share_state_table (fst (table_carry C)))"
+proof -
+  let ?ts = "map snd C" and ?S = "share_terms (map snd C) []"
+  have lst: "fst (keyed_table_terms (\<lambda>n y R. y#R) ?ts (RBT.empty,0,[])) = fst ?S \<and>
+      keyed_reference_state shape_key (snd (keyed_table_terms (\<lambda>n y R. y#R) ?ts (RBT.empty,0,[]))) (snd ?S)"
+    by (rule keyed_listed_terms_exact[OF keyed_reference_state_empty])
+  have rep: "keyed_state_represents (fst (table_carry C)) (snd ?S)"
+    using share_state_of_listed[OF conjunct2[OF lst]] by (simp add: table_carry_def case_prod_unfold)
+  have tbl: "share_state_table (fst (table_carry C)) = snd ?S" by (rule share_state_table_represents[OF rep])
+  have kst: "fst (keyed_share_terms ?ts empty_share_state) = fst ?S \<and>
+      keyed_state_represents (snd (keyed_share_terms ?ts empty_share_state)) (snd ?S)"
+    by (rule keyed_share_terms_exact[OF keyed_state_represents_empty])
+  note ic = index_calls_terms[of C empty_share_state RBT.empty]
+  have tbl': "share_state_table (fst (index_calls C empty_share_state RBT.empty)) = snd ?S"
+    using share_state_table_represents[OF conjunct2[OF kst]] ic by simp
+  have E: "snd (table_carry C) = snd (index_calls C empty_share_state RBT.empty)"
+    using lst kst ic by (simp add: table_carry_def case_prod_unfold index_calls_bucket_tree)
+  show ?thesis using rep tbl tbl' E by simp
+qed
 
 lemma table_carry:
   "share_state_formed (fst (table_carry C))" "table_extends [] (share_state_table (fst (table_carry C)))"
@@ -2841,9 +2877,12 @@ proof -
   have I0: "calls_indexed (share_state_table empty_share_state) RBT.empty ({} :: ('d \<times> finite_factor_term) set)"
     by (simp add: calls_indexed_def)
   note ix = index_calls[OF share_state_empty(1) I0, of C]
-  show "share_state_formed (fst (table_carry C))" "table_extends [] (share_state_table (fst (table_carry C)))"
+  note eq = table_carry_index_calls[of C]
+  have tf: "table_formed (share_state_table (fst (table_carry C)))" using ix eq by (simp add: share_state_formed_def)
+  show "share_state_formed (fst (table_carry C))" unfolding share_state_formed_def using eq tf by blast
+  show "table_extends [] (share_state_table (fst (table_carry C)))"
     "calls_indexed (share_state_table (fst (table_carry C))) (snd (table_carry C)) (set C)"
-    using ix share_state_empty(2) by (simp_all add: table_carry_def)
+    using ix eq share_state_empty(2) by simp_all
 qed
 
 definition search_of_carried :: "('d \<times> finite_factor_term) list \<Rightarrow> share_state \<times> (nat,'d fset) rbt \<Rightarrow>

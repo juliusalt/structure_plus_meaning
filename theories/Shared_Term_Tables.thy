@@ -574,16 +574,44 @@ definition empty_share_state :: share_state where
 definition keyed_share_shape :: "shape \<Rightarrow> share_state \<Rightarrow> nat \<times> share_state" where
   "keyed_share_shape s q=keyed_table_step shape_key (\<lambda>n s P. RBT.insert n s P) s q"
 
-fun keyed_share_term :: "finite_factor_term \<Rightarrow> share_state \<Rightarrow> nat \<times> share_state" where
+text \<open>
+  The keyed step threaded through a term and a list of terms, stated once for any form of the table
+  (@{text keyed_table_term}, @{text keyed_table_terms}); the sharing state's threading is its instance at the tree of
+  positions (@{text keyed_share_term}, @{text keyed_share_terms}), and a carry that builds the tree once threads the
+  reversed list (@{text keyed_listed_terms_exact}).
+\<close>
+
+fun keyed_table_term :: "(nat \<Rightarrow> shape \<Rightarrow> 't \<Rightarrow> 't) \<Rightarrow> finite_factor_term \<Rightarrow>
+    (shape_order_key,nat) rbt\<times>nat\<times>'t \<Rightarrow> nat\<times>((shape_order_key,nat) rbt\<times>nat\<times>'t)" where
+  "keyed_table_term place (Finite_Pair t u) q=(case keyed_table_term place t q of (i,q1) \<Rightarrow>
+    (case keyed_table_term place u q1 of (j,q2) \<Rightarrow> keyed_table_step shape_key place (Pair_Shape i j) q2))"
+| "keyed_table_term place (Finite_Payload v) q=keyed_table_step shape_key place (Leaf_Shape (Payload_Leaf v)) q"
+| "keyed_table_term place (Finite_Target a) q=keyed_table_step shape_key place (Leaf_Shape (Target_Leaf a)) q"
+
+fun keyed_table_terms :: "(nat \<Rightarrow> shape \<Rightarrow> 't \<Rightarrow> 't) \<Rightarrow> finite_factor_term list \<Rightarrow>
+    (shape_order_key,nat) rbt\<times>nat\<times>'t \<Rightarrow> nat list\<times>((shape_order_key,nat) rbt\<times>nat\<times>'t)" where
+  "keyed_table_terms place [] q=([],q)"
+| "keyed_table_terms place (t#ts) q=(case keyed_table_term place t q of (i,q1) \<Rightarrow>
+    (case keyed_table_terms place ts q1 of (is,q2) \<Rightarrow> (i#is,q2)))"
+
+definition keyed_share_term :: "finite_factor_term \<Rightarrow> share_state \<Rightarrow> nat \<times> share_state" where
+  "keyed_share_term t q=keyed_table_term (\<lambda>n s P. RBT.insert n s P) t q"
+
+definition keyed_share_terms :: "finite_factor_term list \<Rightarrow> share_state \<Rightarrow> nat list \<times> share_state" where
+  "keyed_share_terms ts q=keyed_table_terms (\<lambda>n s P. RBT.insert n s P) ts q"
+
+lemma keyed_share_term_simps [simp]:
   "keyed_share_term (Finite_Pair t u) q=(case keyed_share_term t q of (i,q1) \<Rightarrow>
     (case keyed_share_term u q1 of (j,q2) \<Rightarrow> keyed_share_shape (Pair_Shape i j) q2))"
-| "keyed_share_term (Finite_Payload v) q=keyed_share_shape (Leaf_Shape (Payload_Leaf v)) q"
-| "keyed_share_term (Finite_Target a) q=keyed_share_shape (Leaf_Shape (Target_Leaf a)) q"
+  "keyed_share_term (Finite_Payload v) q=keyed_share_shape (Leaf_Shape (Payload_Leaf v)) q"
+  "keyed_share_term (Finite_Target a) q=keyed_share_shape (Leaf_Shape (Target_Leaf a)) q"
+  by (simp_all add: keyed_share_term_def keyed_share_shape_def)
 
-fun keyed_share_terms :: "finite_factor_term list \<Rightarrow> share_state \<Rightarrow> nat list \<times> share_state" where
+lemma keyed_share_terms_simps [simp]:
   "keyed_share_terms [] q=([],q)"
-| "keyed_share_terms (t#ts) q=(case keyed_share_term t q of (i,q1) \<Rightarrow>
+  "keyed_share_terms (t#ts) q=(case keyed_share_term t q of (i,q1) \<Rightarrow>
     (case keyed_share_terms ts q1 of (is,q2) \<Rightarrow> (i#is,q2)))"
+  by (simp_all add: keyed_share_terms_def keyed_share_term_def)
 
 definition keyed_state_represents :: "share_state \<Rightarrow> shape list \<Rightarrow> bool" where
   "keyed_state_represents q T \<longleftrightarrow>
@@ -601,52 +629,122 @@ proof -
   show ?thesis by (rule nth_equalityI) (simp_all add: n read value_reference_read_def)
 qed
 
+lemma keyed_positions_place:
+  assumes read: "\<forall>i. RBT.lookup P i=value_reference_read T i"
+  shows "\<forall>i. RBT.lookup (RBT.insert (length T) y P) i=value_reference_read (T@[y]) i"
+proof
+  fix i
+  have "RBT.lookup (RBT.insert (length T) y P) i=Some v \<longleftrightarrow> value_reference_read (T@[y]) i=Some v" for v
+    using tree_map_updates.updated[where i=P and k="length T" and u=y and k'=i and v=v] spec[OF read, of i]
+    by (auto simp: value_reference_read_def nth_append)
+  then show "RBT.lookup (RBT.insert (length T) y P) i=value_reference_read (T@[y]) i" by (metis option.exhaust)
+qed
+
 lemma keyed_share_shape_exact:
   assumes rep: "keyed_state_represents q T"
   shows "fst (keyed_share_shape s q)=fst (value_reference_step s T) \<and>
     keyed_state_represents (snd (keyed_share_shape s q)) (snd (value_reference_step s T))"
-proof -
-  have place: "\<forall>i. RBT.lookup (RBT.insert (length T) y P) i=value_reference_read (T@[y]) i"
-    if read: "\<forall>i. RBT.lookup P i=value_reference_read T i" for P :: "(nat,shape) rbt" and T y
-  proof
-    fix i
-    have "RBT.lookup (RBT.insert (length T) y P) i=Some v \<longleftrightarrow> value_reference_read (T@[y]) i=Some v" for v
-      using tree_map_updates.updated[where i=P and k="length T" and u=y and k'=i and v=v] spec[OF read, of i]
-      by (auto simp: value_reference_read_def nth_append)
-    then show "RBT.lookup (RBT.insert (length T) y P) i=value_reference_read (T@[y]) i" by (metis option.exhaust)
-  qed
-  show ?thesis
-    using keyed_table_step_exact[where place="\<lambda>n s P. RBT.insert n s P" and x=s,
-      OF shape_key_injective rep[unfolded keyed_state_represents_def] place]
-    unfolding keyed_share_shape_def keyed_state_represents_def .
-qed
+  using keyed_table_step_exact[where place="\<lambda>n s P. RBT.insert n s P" and x=s,
+    OF shape_key_injective rep[unfolded keyed_state_represents_def] keyed_positions_place]
+  unfolding keyed_share_shape_def keyed_state_represents_def .
+
+lemma keyed_table_term_exact:
+  assumes placed: "\<And>R T x. held R T \<Longrightarrow> held (place (length T) x R) (T@[x])"
+  shows "keyed_table_state shape_key held q T \<Longrightarrow> fst (keyed_table_term place t q)=fst (share_term t T) \<and>
+    keyed_table_state shape_key held (snd (keyed_table_term place t q)) (snd (share_term t T))"
+proof (induction t arbitrary: q T)
+  case (Finite_Pair t u)
+  obtain i q1 where k1: "keyed_table_term place t q=(i,q1)" by (cases "keyed_table_term place t q")
+  obtain i' T1 where s1: "share_term t T=(i',T1)" by (cases "share_term t T")
+  have e1: "i=i'" and r1: "keyed_table_state shape_key held q1 T1"
+    using Finite_Pair.IH(1)[OF Finite_Pair.prems] k1 s1 by simp_all
+  obtain j q2 where k2: "keyed_table_term place u q1=(j,q2)" by (cases "keyed_table_term place u q1")
+  obtain j' T2 where s2: "share_term u T1=(j',T2)" by (cases "share_term u T1")
+  have e2: "j=j'" and r2: "keyed_table_state shape_key held q2 T2" using Finite_Pair.IH(2)[OF r1] k2 s2 by simp_all
+  show ?case using keyed_table_step_exact[where x="Pair_Shape i j" and place=place and held=held,
+      OF shape_key_injective r2 placed]
+    by (simp add: k1 s1 k2 s2 e1 e2)
+qed (simp_all add: keyed_table_step_exact[where place=place and held=held, OF shape_key_injective _ placed])
+
+lemma keyed_table_terms_exact:
+  assumes placed: "\<And>R T x. held R T \<Longrightarrow> held (place (length T) x R) (T@[x])"
+  shows "keyed_table_state shape_key held q T \<Longrightarrow> fst (keyed_table_terms place ts q)=fst (share_terms ts T) \<and>
+    keyed_table_state shape_key held (snd (keyed_table_terms place ts q)) (snd (share_terms ts T))"
+proof (induction ts arbitrary: q T)
+  case (Cons t ts)
+  obtain i q1 where k1: "keyed_table_term place t q=(i,q1)" by (cases "keyed_table_term place t q")
+  obtain i' T1 where s1: "share_term t T=(i',T1)" by (cases "share_term t T")
+  have e1: "i=i'" and r1: "keyed_table_state shape_key held q1 T1"
+    using keyed_table_term_exact[where t=t and place=place and held=held, OF placed Cons.prems] k1 s1 by simp_all
+  show ?case using Cons.IH[OF r1] by (simp add: k1 s1 e1 case_prod_unfold)
+qed simp
 
 lemma keyed_share_term_exact:
   "keyed_state_represents q T \<Longrightarrow> fst (keyed_share_term t q)=fst (share_term t T) \<and>
     keyed_state_represents (snd (keyed_share_term t q)) (snd (share_term t T))"
-proof (induction t arbitrary: q T)
-  case (Finite_Pair t u)
-  obtain i q1 where k1: "keyed_share_term t q=(i,q1)" by (cases "keyed_share_term t q")
-  obtain i' T1 where s1: "share_term t T=(i',T1)" by (cases "share_term t T")
-  have e1: "i=i'" and r1: "keyed_state_represents q1 T1"
-    using Finite_Pair.IH(1)[OF Finite_Pair.prems] k1 s1 by simp_all
-  obtain j q2 where k2: "keyed_share_term u q1=(j,q2)" by (cases "keyed_share_term u q1")
-  obtain j' T2 where s2: "share_term u T1=(j',T2)" by (cases "share_term u T1")
-  have e2: "j=j'" and r2: "keyed_state_represents q2 T2" using Finite_Pair.IH(2)[OF r1] k2 s2 by simp_all
-  show ?case using keyed_share_shape_exact[OF r2, of "Pair_Shape i j"] by (simp add: k1 s1 k2 s2 e1 e2)
-qed (simp_all add: keyed_share_shape_exact)
+  unfolding keyed_share_term_def keyed_state_represents_def
+  by (rule keyed_table_term_exact[where place="\<lambda>n s P. RBT.insert n s P"
+    and held="\<lambda>P T. \<forall>i. RBT.lookup P i=value_reference_read T i", OF keyed_positions_place])
 
 lemma keyed_share_terms_exact:
   "keyed_state_represents q T \<Longrightarrow> fst (keyed_share_terms ts q)=fst (share_terms ts T) \<and>
     keyed_state_represents (snd (keyed_share_terms ts q)) (snd (share_terms ts T))"
-proof (induction ts arbitrary: q T)
-  case (Cons t ts)
-  obtain i q1 where k1: "keyed_share_term t q=(i,q1)" by (cases "keyed_share_term t q")
-  obtain i' T1 where s1: "share_term t T=(i',T1)" by (cases "share_term t T")
-  have e1: "i=i'" and r1: "keyed_state_represents q1 T1"
-    using keyed_share_term_exact[OF Cons.prems, of t] k1 s1 by simp_all
-  show ?case using Cons.IH[OF r1] by (simp add: k1 s1 e1 case_prod_unfold)
-qed simp
+  unfolding keyed_share_terms_def keyed_state_represents_def
+  by (rule keyed_table_terms_exact[where place="\<lambda>n s P. RBT.insert n s P"
+    and held="\<lambda>P T. \<forall>i. RBT.lookup P i=value_reference_read T i", OF keyed_positions_place])
+
+lemma keyed_listed_terms_exact:
+  "keyed_reference_state shape_key q T \<Longrightarrow> fst (keyed_table_terms (\<lambda>n y R. y#R) ts q)=fst (share_terms ts T) \<and>
+    keyed_reference_state shape_key (snd (keyed_table_terms (\<lambda>n y R. y#R) ts q)) (snd (share_terms ts T))"
+  unfolding keyed_reference_state_def by (rule keyed_table_terms_exact[where place="\<lambda>n y R. y#R"]) simp_all
+
+text \<open>
+  The positions of a whole table, consecutive from zero, make its tree at once: the rows of a sorted run of distinct
+  keys are the red-black tree @{text rbtreeify} builds in one pass (@{text rbt_lookup_rbtreeify}), where inserting them
+  one by one rebalances at each, and a table's positions are such a run by construction (@{text positions_tree},
+  @{text positions_tree_lookup}). A keyed state threaded over the reversed list then becomes the sharing state of the
+  same table with its tree of positions built once (@{text share_state_of_listed}).
+\<close>
+
+
+context includes rbt.lifting
+begin
+
+lift_definition positions_tree :: "'v list \<Rightarrow> (nat,'v) rbt" is "\<lambda>T. rbtreeify (zip [0..<length T] T)"
+  by (rule is_rbt_rbtreeify) simp_all
+
+lemma positions_tree_rows: "RBT.lookup (positions_tree T) = map_of (zip [0..<length T] T)"
+  by transfer (simp add: rbt_lookup_rbtreeify)
+
+end
+
+lemma positions_tree_lookup: "RBT.lookup (positions_tree T) i = value_reference_read T i"
+proof -
+  have keys: "map fst (zip [0..<length T] T) = [0..<length T]" by simp
+  have "map_of (zip [0..<length T] T) i = Some s \<longleftrightarrow> value_reference_read T i = Some s" for s
+  proof
+    assume "map_of (zip [0..<length T] T) i = Some s"
+    then have "(i,s) \<in> set (zip [0..<length T] T)" by (rule map_of_SomeD)
+    then show "value_reference_read T i = Some s" by (auto simp: in_set_zip read_some)
+  next
+    assume "value_reference_read T i = Some s"
+    then have i: "i < length T" and s: "T!i = s" by (simp_all add: read_some)
+    have mem: "(i,s) \<in> set (zip [0..<length T] T)" unfolding in_set_zip using i s by (intro exI[of _ i]) simp
+    have d: "distinct (map fst (zip [0..<length T] T))" by (simp add: keys)
+    show "map_of (zip [0..<length T] T) i = Some s" by (rule map_of_is_SomeI[OF d mem])
+  qed
+  then have "map_of (zip [0..<length T] T) i = value_reference_read T i" by (metis option.exhaust)
+  then show ?thesis by (simp add: positions_tree_rows)
+qed
+
+definition share_state_of_listed :: "(shape_order_key,nat) rbt\<times>nat\<times>shape list \<Rightarrow> share_state" where
+  "share_state_of_listed q=(case q of (M,n,R) \<Rightarrow> (M,n,positions_tree (rev R)))"
+
+lemma share_state_of_listed:
+  assumes "keyed_reference_state shape_key q T"
+  shows "keyed_state_represents (share_state_of_listed q) T"
+  using assms by (cases q) (simp add: share_state_of_listed_def keyed_reference_state_def keyed_table_state_def
+    keyed_state_represents_def positions_tree_lookup)
 
 definition keyed_shared_family ::
   "finite_factor_term list \<Rightarrow> nat list \<times> shape list \<times> (shape_order_key,nat) rbt" where

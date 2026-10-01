@@ -655,14 +655,19 @@ theorem extension_installed_lifts:
 
 end
 
-text \<open>The given's record at the asked relation's installed guard and at the first request's installed program.\<close>
+text \<open>
+  The given's record at the asked relation over additions' installed guard (990, AX4) and at the first request's
+  installed program: @{thm [source] given_readers_extension.extension_record_discharged} at each extension.
+\<close>
 
-theorem asked_installed_plain_declarations_discharged:
-  "declarations_discharged (positive_meaning asked_program)
-    (asked_extension.extension_installed_record given_plain_declarations)
-    (placed_correspondence asked_extension.installed_placement given_plain_declarations given_declarations_correspondence)"
-  using asked_extension.extension_record_discharged(3)[OF given_plain_declarations_discharged(2) given_plain_declarations_sites]
-    asked_installed_presentation_exact(3) unfolding asked_installed_presentation_def by simp
+theorem asked_additions_installed_plain_declarations_discharged:
+  "declarations_discharged (positive_meaning asked_additions_program)
+    (asked_additions_extension.extension_installed_record given_plain_declarations)
+    (placed_correspondence asked_additions_extension.installed_placement given_plain_declarations
+      given_declarations_correspondence)"
+  using asked_additions_extension.extension_record_discharged(3)[OF given_plain_declarations_discharged(2)
+    given_plain_declarations_sites] asked_additions_installed_presentation_exact(3)
+  unfolding asked_additions_installed_presentation_def by simp
 
 theorem first_request_installed_plain_declarations_discharged:
   "declarations_discharged (positive_meaning first_request_program)

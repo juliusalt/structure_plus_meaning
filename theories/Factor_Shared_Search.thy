@@ -207,6 +207,20 @@ fun shared_goal_solvable :: "shape list \<Rightarrow> ('a,'s,'d,'c) shared_goal 
 | "shared_goal_solvable T (Shared_Material_Goal q r M) =
     (finite_material_resolution (shared_material_project T M) \<noteq> Material_Waits)"
 
+text \<open>
+  As R3's test (@{thm [source] finite_solvable_material_goal_code}), the shared test decides waiting by the projected
+  skeleton and the source's groundness, building no solution set.
+\<close>
+
+declare shared_goal_solvable.simps [code del]
+
+lemma shared_goal_solvable_code [code]:
+  "shared_goal_solvable T (Shared_Call_Goal q r d p) = False"
+  "shared_goal_solvable T (Shared_Material_Goal q' r' M) = (let N = shared_material_project T M in
+    case finite_material_skeleton N of
+      Open_Reading \<Rightarrow> finite_pattern_variables (finite_material_source N) = {||} | _ \<Rightarrow> True)"
+  by (simp_all add: Let_def finite_material_resolution_waits split: material_reading.split)
+
 fun shared_call_key :: "('a,'s,'d,'c) shared_goal \<Rightarrow> nat" where
   "shared_call_key (Shared_Call_Goal q r d (Shared_Ground i)) = i"
 | "shared_call_key g = 0"

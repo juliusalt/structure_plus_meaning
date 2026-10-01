@@ -31,6 +31,52 @@ text \<open>
   its sources' narrowings agree, its productions stay discharged, and every narrowed socket keeps a production.
 \<close>
 
+text \<open>
+  The given's input record carried to the query program of any formed program is V2b's carried record there, given
+  its three discharges at the program, its sources' narrowings agreeing, its productions at the query program and the
+  static premise there: stated once, the rooted readers' carrying and every extension's (@{text query_record_Q}) its
+  instances.
+\<close>
+
+theorem query_record_at:
+  fixes P :: "(nat,nat,nat,nat) finite_schema_system"
+  assumes formed: "finite_system_formed P"
+    and discharged: "narrowed_declarations_discharged (positive_meaning (decode_finite_system P))
+      (narrowed_declarations.truncate given_input_declarations) given_declarations_correspondence"
+    and frames: "narrowed_frames_discharged (positive_meaning (decode_finite_system P))
+      (narrowed_declarations.truncate given_input_declarations) given_input_frames"
+    and productions: "productions_discharged (positive_meaning (decode_finite_system P)) P m given_input_declarations"
+    and agree: "varied_narrowings_agree P (finite_query_program P :: (nat+'v,nat,nat,nat) finite_schema_system)
+      given_input_declarations"
+    and varied: "productions_discharged
+      (positive_meaning (decode_finite_system (finite_query_program P :: (nat+'v,nat,nat,nat) finite_schema_system)))
+      (finite_query_program P :: (nat+'v,nat,nat,nat) finite_schema_system) m
+      (produced_declarations_varied P (finite_query_program P :: (nat+'v,nat,nat,nat) finite_schema_system)
+        given_input_declarations)"
+    and declared': "narrowed_productions_declared (produced_declarations_varied P
+      (finite_query_program P :: (nat+'v,nat,nat,nat) finite_schema_system) given_input_declarations)"
+  shows "varied_narrowed_record P (finite_query_program P :: (nat+'v,nat,nat,nat) finite_schema_system)
+    given_input_declarations given_declarations_correspondence given_input_frames m m"
+proof (rule varied_narrowed_record.intro, goal_cases)
+  case 1 show ?case by (rule formed)
+next
+  case 2 show ?case by (rule finite_query_program_formed[OF formed])
+next
+  case (3 d x) show ?case by (simp only: finite_query_program_meaning[OF formed])
+next
+  case 4 show ?case by (rule agree)
+next
+  case 5 show ?case by (rule discharged)
+next
+  case 6 show ?case by (rule frames)
+next
+  case 7 show ?case by (rule productions)
+next
+  case 8 show ?case by (rule varied)
+next
+  case 9 show ?case by (rule declared')
+qed
+
 theorem given_query_record_from:
   assumes agree: "varied_narrowings_agree finite_rooted_given_readers
       (given_query_program :: (nat+'v,nat,nat,nat) finite_schema_system) given_input_declarations"
@@ -42,25 +88,10 @@ theorem given_query_record_from:
       (given_query_program :: (nat+'v,nat,nat,nat) finite_schema_system) given_input_declarations)"
   shows "varied_narrowed_record finite_rooted_given_readers (given_query_program :: (nat+'v,nat,nat,nat) finite_schema_system)
     given_input_declarations given_declarations_correspondence given_input_frames m m"
-proof (rule varied_narrowed_record.intro, goal_cases)
-  case 1 show ?case by (rule finite_rooted_given_readers_formed)
-next
-  case 2 show ?case by (rule finite_query_program_formed[OF finite_rooted_given_readers_formed])
-next
-  case (3 d x) show ?case by (simp only: finite_query_program_meaning[OF finite_rooted_given_readers_formed])
-next
-  case 4 show ?case by (rule agree)
-next
-  case 5 show ?case using given_input_declarations_discharged(1) by (simp add: finite_rooted_given_readers_exact)
-next
-  case 6 show ?case using given_input_frames_discharged by (simp add: finite_rooted_given_readers_exact)
-next
-  case 7 show ?case by (rule given_input_declarations_productions)
-next
-  case 8 show ?case by (rule varied)
-next
-  case 9 show ?case by (rule declared')
-qed
+  by (rule query_record_at[OF finite_rooted_given_readers_formed
+    given_input_declarations_discharged(1)[folded finite_rooted_given_readers_exact]
+    given_input_frames_discharged[folded finite_rooted_given_readers_exact] given_input_declarations_productions
+    agree varied declared'])
 
 section \<open>The given's record carried to the query program\<close>
 
@@ -77,6 +108,99 @@ lemma query_program_clauses:
     (\<exists>S. ((d,a),S) |\<in>| finite_system_clauses P \<and> Z = finite_rename_schema Inl id id S)"
   unfolding finite_query_program_def by (force simp: fimage_iff fBex_member_iff)
 
+text \<open>
+  #953's facts on the query program at any formed program (review 954's follow-up 2): a definition with one clause
+  there has one lifted clause in its query program, matched by the clause; 48's callers keep one source wherever
+  their clauses are the rooted readers'. #953's facts at the rooted readers are their instances.
+\<close>
+
+theorem query_single_clause_at:
+  fixes P :: "(nat,nat,nat,nat) finite_schema_system"
+  assumes formed: "finite_system_formed P"
+    and one: "\<And>c S. ((d,c),S) \<in> system_clauses (decode_finite_system P) \<longleftrightarrow> c = 0 \<and> S = decode_finite_schema X"
+  shows "((d,a),Z) |\<in>| finite_system_clauses P \<longleftrightarrow> a = 0 \<and> Z = X"
+    and "((d,b),W) |\<in>| finite_system_clauses (finite_query_program P :: (nat+'v,nat,nat,nat) finite_schema_system) \<longleftrightarrow>
+      b = 0 \<and> W = finite_rename_schema Inl id id X"
+    and "\<exists>f h. finite_schema_match X (finite_rename_schema Inl id id X :: (nat+'v,nat,nat) finite_factor_schema) = Some (f,h)"
+    and "finite_varied_sources_unique_at {d} P (finite_query_program P :: (nat+'v,nat,nat,nat) finite_schema_system)"
+proof -
+  have C: "((d,a),Z) |\<in>| finite_system_clauses P \<longleftrightarrow> a = 0 \<and> Z = X" for a Z
+    by (simp only: finite_system_clause_decoded one decode_finite_schema_injective)
+  have N: "((d,a),Z) |\<in>| finite_system_clauses (finite_query_program P :: (nat+'v,nat,nat,nat) finite_schema_system) \<longleftrightarrow>
+      a = 0 \<and> Z = finite_rename_schema Inl id id X" for a Z
+    by (auto simp: query_program_clauses C)
+  show "((d,a),Z) |\<in>| finite_system_clauses P \<longleftrightarrow> a = 0 \<and> Z = X" by (rule C)
+  show "((d,b),W) |\<in>| finite_system_clauses (finite_query_program P :: (nat+'v,nat,nat,nat) finite_schema_system) \<longleftrightarrow>
+      b = 0 \<and> W = finite_rename_schema Inl id id X" by (rule N)
+  have Xf: "finite_schema_formed X"
+    by (rule finite_system_clause_formed[OF formed, where e=d and c=0]) (simp add: C)
+  have Tf: "finite_schema_formed (finite_rename_schema Inl id id X :: (nat+'v,nat,nat) finite_factor_schema)"
+    by (rule finite_system_clause_formed[OF finite_query_program_formed[OF formed], where e=d and c=0]) (simp add: N)
+  have alpha: "schema_alpha_variant (decode_finite_schema X)
+      (decode_finite_schema (finite_rename_schema Inl id id X :: (nat+'v,nat,nat) finite_factor_schema))"
+    unfolding finite_rename_schema_correct schema_alpha_variant_def
+    by (intro exI[of _ Inl] exI[of _ id]) (simp add: inj_on_def)
+  have "finite_schema_match X (finite_rename_schema Inl id id X :: (nat+'v,nat,nat) finite_factor_schema) \<noteq> None"
+    by (rule finite_schema_match_complete[OF Xf Tf alpha])
+  then show "\<exists>f h. finite_schema_match X (finite_rename_schema Inl id id X :: (nat+'v,nat,nat) finite_factor_schema) =
+      Some (f,h)" by (metis not_None_eq surj_pair)
+  show "finite_varied_sources_unique_at {d} P (finite_query_program P :: (nat+'v,nat,nat,nat) finite_schema_system)"
+    unfolding finite_varied_sources_unique_at_def by (auto simp: C)
+qed
+
+lemma query_single_registration_at:
+  fixes P :: "(nat,nat,nat,nat) finite_schema_system"
+  assumes formed: "finite_system_formed P"
+    and one: "\<And>c S. ((d,c),S) \<in> system_clauses (decode_finite_system P) \<longleftrightarrow> c = 0 \<and> S = decode_finite_schema X"
+    and at: "registration_site R = d" "registration_schema R = X"
+  obtains f1 h1 where
+    "finite_schema_match X (finite_rename_schema Inl id id X :: (nat+'v,nat,nat) finite_factor_schema) = Some (f1,h1)"
+    "registrations_varied P (finite_query_program P :: (nat+'v,nat,nat,nat) finite_schema_system) R =
+      {|registration_varied f1 (finite_rename_schema Inl id id X) R|}"
+proof -
+  obtain f1 h1 where m:
+      "finite_schema_match X (finite_rename_schema Inl id id X :: (nat+'v,nat,nat) finite_factor_schema) = Some (f1,h1)"
+    using query_single_clause_at(3)[OF formed one] by blast
+  have "registrations_varied P (finite_query_program P :: (nat+'v,nat,nat,nat) finite_schema_system) R =
+      {|registration_varied f1 (finite_rename_schema Inl id id X) R|}"
+    by (rule fset_eqI) (auto simp: registrations_varied_member at query_single_clause_at(1,2)[OF formed one] m)
+  then show ?thesis by (rule that[OF m])
+qed
+
+theorem query_union_sources_at:
+  fixes P :: "(nat,nat,nat,nat) finite_schema_system"
+  assumes formed: "finite_system_formed P"
+    and rooted: "\<And>e c S. e \<in> {50,55,57,60,63} \<Longrightarrow>
+      ((e,c),S) \<in> system_clauses (decode_finite_system P) \<longleftrightarrow> ((e,c),S) \<in> system_clauses given_rooted_readers_system"
+  shows "finite_varied_sources_unique_at {50,55,57,60,63} P
+    (finite_query_program P :: (nat+'v,nat,nat,nat) finite_schema_system)"
+  unfolding finite_varied_sources_unique_at_def
+proof (intro allI impI)
+  fix e c S c' S' c'' T f h f' h'
+  assume e: "e \<in> {50,55,57,60,63}"
+    and S: "((e,c),S) |\<in>| finite_system_clauses P"
+    and S': "((e,c'),S') |\<in>| finite_system_clauses P"
+    and T: "((e,c''),T) |\<in>| finite_system_clauses (finite_query_program P :: (nat+'v,nat,nat,nat) finite_schema_system)"
+    and m: "finite_schema_match S T = Some (f,h)" and m': "finite_schema_match S' T = Some (f',h')"
+  have Sf: "finite_schema_formed S" "finite_schema_formed S'"
+    using finite_system_clause_formed[OF formed S] finite_system_clause_formed[OF formed S'] by blast+
+  have Tf: "finite_schema_formed T"
+    by (rule finite_system_clause_formed[OF finite_query_program_formed[OF formed] T])
+  have TS: "T = finite_rename_schema f h id S" "T = finite_rename_schema f' h' id S'"
+    using finite_schema_match_exact(1)[OF Sf(1) Tf m] finite_schema_match_exact(1)[OF Sf(2) Tf m'] by blast+
+  have "schema_dependencies (decode_finite_schema T) = schema_dependencies (decode_finite_schema S)"
+    "schema_dependencies (decode_finite_schema T) = schema_dependencies (decode_finite_schema S')"
+    by (subst TS(1), simp add: finite_rename_schema_correct renamed_schema_dependencies)
+      (subst TS(2), simp add: finite_rename_schema_correct renamed_schema_dependencies)
+  then have deps: "schema_dependencies (decode_finite_schema S) = schema_dependencies (decode_finite_schema S')"
+    by simp
+  have rc: "((e,c),decode_finite_schema S) \<in> system_clauses given_rooted_readers_system"
+    "((e,c'),decode_finite_schema S') \<in> system_clauses given_rooted_readers_system"
+    using S S' rooted[OF e] by (simp_all only: finite_system_clause_decoded)
+  have "decode_finite_schema S = decode_finite_schema S'" by (rule given_union_site_distinct[OF e rc deps])
+  then show "S = S'" by (simp only: decode_finite_schema_injective)
+qed
+
 lemma rooted_clause_decoded:
   "((d,c),S) |\<in>| finite_system_clauses finite_rooted_given_readers \<longleftrightarrow>
     ((d,c),decode_finite_schema S) \<in> system_clauses given_rooted_readers_system"
@@ -90,32 +214,8 @@ theorem query_single_clause:
     and "\<exists>f h. finite_schema_match X (finite_rename_schema Inl id id X :: (nat+'v,nat,nat) finite_factor_schema) = Some (f,h)"
     and "finite_varied_sources_unique_at {d} finite_rooted_given_readers
       (given_query_program :: (nat+'v,nat,nat,nat) finite_schema_system)"
-proof -
-  have P: "((d,a),Z) |\<in>| finite_system_clauses finite_rooted_given_readers \<longleftrightarrow> a = 0 \<and> Z = X" for a Z
-    by (simp only: rooted_clause_decoded one decode_finite_schema_injective)
-  have N: "((d,a),Z) |\<in>| finite_system_clauses (given_query_program :: (nat+'v,nat,nat,nat) finite_schema_system) \<longleftrightarrow>
-      a = 0 \<and> Z = finite_rename_schema Inl id id X" for a Z
-    by (auto simp: query_program_clauses P)
-  show "((d,a),Z) |\<in>| finite_system_clauses finite_rooted_given_readers \<longleftrightarrow> a = 0 \<and> Z = X" by (rule P)
-  show "((d,b),W) |\<in>| finite_system_clauses (given_query_program :: (nat+'v,nat,nat,nat) finite_schema_system) \<longleftrightarrow>
-      b = 0 \<and> W = finite_rename_schema Inl id id X" by (rule N)
-  have Xf: "finite_schema_formed X"
-    by (rule finite_system_clause_formed[OF finite_rooted_given_readers_formed, where e=d and c=0]) (simp add: P)
-  have Tf: "finite_schema_formed (finite_rename_schema Inl id id X :: (nat+'v,nat,nat) finite_factor_schema)"
-    by (rule finite_system_clause_formed[OF finite_query_program_formed[OF finite_rooted_given_readers_formed],
-      where e=d and c=0]) (simp add: N)
-  have alpha: "schema_alpha_variant (decode_finite_schema X)
-      (decode_finite_schema (finite_rename_schema Inl id id X :: (nat+'v,nat,nat) finite_factor_schema))"
-    unfolding finite_rename_schema_correct schema_alpha_variant_def
-    by (intro exI[of _ Inl] exI[of _ id]) (simp add: inj_on_def)
-  have "finite_schema_match X (finite_rename_schema Inl id id X :: (nat+'v,nat,nat) finite_factor_schema) \<noteq> None"
-    by (rule finite_schema_match_complete[OF Xf Tf alpha])
-  then show "\<exists>f h. finite_schema_match X (finite_rename_schema Inl id id X :: (nat+'v,nat,nat) finite_factor_schema) =
-      Some (f,h)" by (metis not_None_eq surj_pair)
-  show "finite_varied_sources_unique_at {d} finite_rooted_given_readers
-      (given_query_program :: (nat+'v,nat,nat,nat) finite_schema_system)"
-    unfolding finite_varied_sources_unique_at_def by (auto simp: P)
-qed
+  using query_single_clause_at[OF finite_rooted_given_readers_formed, unfolded finite_rooted_given_readers_exact, OF one]
+  by blast+
 
 lemma query_single_registration:
   assumes one: "\<And>c S. ((d,c),S) \<in> system_clauses given_rooted_readers_system \<longleftrightarrow> c = 0 \<and> S = decode_finite_schema X"
@@ -124,46 +224,13 @@ lemma query_single_registration:
     "finite_schema_match X (finite_rename_schema Inl id id X :: (nat+'v,nat,nat) finite_factor_schema) = Some (f1,h1)"
     "registrations_varied finite_rooted_given_readers (given_query_program :: (nat+'v,nat,nat,nat) finite_schema_system) R =
       {|registration_varied f1 (finite_rename_schema Inl id id X) R|}"
-proof -
-  obtain f1 h1 where m:
-      "finite_schema_match X (finite_rename_schema Inl id id X :: (nat+'v,nat,nat) finite_factor_schema) = Some (f1,h1)"
-    using query_single_clause(3)[OF one] by blast
-  have "registrations_varied finite_rooted_given_readers (given_query_program :: (nat+'v,nat,nat,nat) finite_schema_system) R =
-      {|registration_varied f1 (finite_rename_schema Inl id id X) R|}"
-    by (rule fset_eqI) (auto simp: registrations_varied_member at query_single_clause(1,2)[OF one] m)
-  then show ?thesis by (rule that[OF m])
-qed
+  by (rule query_single_registration_at[OF finite_rooted_given_readers_formed, unfolded finite_rooted_given_readers_exact,
+    OF one at])
 
 theorem query_union_sources:
   "finite_varied_sources_unique_at {50,55,57,60,63} finite_rooted_given_readers
     (given_query_program :: (nat+'v,nat,nat,nat) finite_schema_system)"
-  unfolding finite_varied_sources_unique_at_def
-proof (intro allI impI)
-  fix e c S c' S' c'' T f h f' h'
-  assume e: "e \<in> {50,55,57,60,63}"
-    and S: "((e,c),S) |\<in>| finite_system_clauses finite_rooted_given_readers"
-    and S': "((e,c'),S') |\<in>| finite_system_clauses finite_rooted_given_readers"
-    and T: "((e,c''),T) |\<in>| finite_system_clauses (given_query_program :: (nat+'v,nat,nat,nat) finite_schema_system)"
-    and m: "finite_schema_match S T = Some (f,h)" and m': "finite_schema_match S' T = Some (f',h')"
-  have Sf: "finite_schema_formed S" "finite_schema_formed S'"
-    using finite_system_clause_formed[OF finite_rooted_given_readers_formed S]
-      finite_system_clause_formed[OF finite_rooted_given_readers_formed S'] by blast+
-  have Tf: "finite_schema_formed T"
-    by (rule finite_system_clause_formed[OF finite_query_program_formed[OF finite_rooted_given_readers_formed] T])
-  have TS: "T = finite_rename_schema f h id S" "T = finite_rename_schema f' h' id S'"
-    using finite_schema_match_exact(1)[OF Sf(1) Tf m] finite_schema_match_exact(1)[OF Sf(2) Tf m'] by blast+
-  have "schema_dependencies (decode_finite_schema T) = schema_dependencies (decode_finite_schema S)"
-    "schema_dependencies (decode_finite_schema T) = schema_dependencies (decode_finite_schema S')"
-    by (subst TS(1), simp add: finite_rename_schema_correct renamed_schema_dependencies)
-      (subst TS(2), simp add: finite_rename_schema_correct renamed_schema_dependencies)
-  then have deps: "schema_dependencies (decode_finite_schema S) = schema_dependencies (decode_finite_schema S')"
-    by simp
-  have rc: "((e,c),decode_finite_schema S) \<in> system_clauses given_rooted_readers_system"
-    "((e,c'),decode_finite_schema S') \<in> system_clauses given_rooted_readers_system"
-    using S S' by (simp_all only: rooted_clause_decoded)
-  have "decode_finite_schema S = decode_finite_schema S'" by (rule given_union_site_distinct[OF e rc deps])
-  then show "S = S'" by (simp only: decode_finite_schema_injective)
-qed
+  by (rule query_union_sources_at[OF finite_rooted_given_readers_formed]) (simp only: finite_rooted_given_readers_exact)
 
 text \<open>The record narrows at 48's callers alone: 48's sockets in #782's record, and 37's socket not at all.\<close>
 
@@ -213,6 +280,143 @@ next
   show ?thesis using given_union_sites[OF u1] given_union_socket_views[OF u1] u2 u3 pg ng by simp
 qed
 
+text \<open>
+  The record carried to the query program of any formed program whose 48 and 12 have the rooted readers' one
+  clause: the productions carry uniquely, and are discharged there from the program's meanings at 48 and 5 and 12's
+  reflexivity. #953's facts at the rooted readers are their instances.
+\<close>
+
+theorem query_input_carry_at:
+  fixes P :: "(nat,nat,nat,nat) finite_schema_system"
+  assumes formed: "finite_system_formed P"
+    and union: "\<And>c S. ((48,c),S) \<in> system_clauses (decode_finite_system P) \<longleftrightarrow>
+      c = 0 \<and> S = decode_finite_schema union_schema"
+    and identity: "\<And>c S. ((12,c),S) \<in> system_clauses (decode_finite_system P) \<longleftrightarrow>
+      c = 0 \<and> S = decode_finite_schema identity_socket_schema"
+  shows "productions_carry_uniquely P (finite_query_program P :: (nat+'v,nat,nat,nat) finite_schema_system)
+    given_input_declarations"
+  unfolding productions_carry_uniquely_def
+proof (intro allI impI)
+  fix e S s keep Vp Vh R
+  assume m: "(e,S,s,keep,Vp,Vh) |\<in>| declared_sockets given_input_declarations"
+    and p: "declared_production given_input_declarations e S s = Some R"
+  show "\<exists>R'. registrations_varied P (finite_query_program P :: (nat+'v,nat,nat,nat) finite_schema_system) R = {|R'|}"
+    using given_input_production[OF m p]
+  proof
+    assume "e \<in> {50,55,57,60,63} \<and> Vp = join_view \<and> R = union_registration \<and>
+      declared_narrowing given_input_declarations e S s = union_class"
+    then have Rr: "R = union_registration" by blast
+    obtain f1 h1 where "registrations_varied P (finite_query_program P :: (nat+'v,nat,nat,nat) finite_schema_system) R =
+        {|registration_varied f1 (finite_rename_schema Inl id id union_schema) R|}"
+      by (rule query_single_registration_at[OF formed union, of R]) (simp_all add: Rr union_registration_def)
+    then show ?thesis by blast
+  next
+    assume "e = 37 \<and> Vp = view_identity \<and> R = identity_input_registration"
+    then have Rr: "R = identity_input_registration" by blast
+    obtain f1 h1 where "registrations_varied P (finite_query_program P :: (nat+'v,nat,nat,nat) finite_schema_system) R =
+        {|registration_varied f1 (finite_rename_schema Inl id id identity_socket_schema) R|}"
+      by (rule query_single_registration_at[OF formed identity, of R])
+        (simp_all add: Rr identity_input_registration_fields)
+    then show ?thesis by blast
+  qed
+qed
+
+theorem query_input_productions_at:
+  fixes P :: "(nat,nat,nat,nat) finite_schema_system"
+  assumes formed: "finite_system_formed P"
+    and union: "\<And>c S. ((48,c),S) \<in> system_clauses (decode_finite_system P) \<longleftrightarrow>
+      c = 0 \<and> S = decode_finite_schema union_schema"
+    and identity: "\<And>c S. ((12,c),S) \<in> system_clauses (decode_finite_system P) \<longleftrightarrow>
+      c = 0 \<and> S = decode_finite_schema identity_socket_schema"
+    and agree: "varied_narrowings_agree P (finite_query_program P :: (nat+'v,nat,nat,nat) finite_schema_system)
+      given_input_declarations"
+    and mean48: "\<And>x. (48,x) \<in> positive_meaning (decode_finite_system P) \<longleftrightarrow> (48,x) \<in> positive_meaning data_union_system"
+    and mean5: "\<And>x. (5,x) \<in> positive_meaning (decode_finite_system P) \<longleftrightarrow> (5,x) \<in> positive_meaning bag_comparison_system"
+    and refl: "producer_reflexive (positive_meaning (decode_finite_system P)) 12 view_identity"
+  shows "productions_discharged
+    (positive_meaning (decode_finite_system (finite_query_program P :: (nat+'v,nat,nat,nat) finite_schema_system)))
+    (finite_query_program P :: (nat+'v,nat,nat,nat) finite_schema_system) m
+    (produced_declarations_varied P (finite_query_program P :: (nat+'v,nat,nat,nat) finite_schema_system)
+      given_input_declarations)"
+proof (rule input_productions_discharged)
+  let ?N = "finite_query_program P :: (nat+'v,nat,nat,nat) finite_schema_system"
+  let ?D = "produced_declarations_varied P ?N given_input_declarations"
+  have meaning: "positive_meaning (decode_finite_system ?N) = positive_meaning (decode_finite_system P)"
+    by (rule finite_query_program_meaning[OF formed])
+  fix e T t keep Vp Vh R'
+  assume mem: "(e,T,t,keep,Vp,Vh) |\<in>| declared_sockets ?D" and p: "declared_production ?D e T t = Some R'"
+  obtain S s where m: "(e,S,s,keep,Vp,Vh) |\<in>| declared_sockets given_input_declarations"
+      and src: "(S,s) |\<in>| varied_socket_sources P ?N (declared_sockets given_input_declarations) e T t"
+    using mem unfolding produced_varied_sockets_member by blast
+  obtain R where R: "declared_production given_input_declarations e S s = Some R" "registrations_varied P ?N R = {|R'|}"
+    using production_varied_source[OF p[unfolded produced_declarations_varied_fields] src] by blast
+  have K: "declared_narrowing ?D e T t = declared_narrowing given_input_declarations e S s"
+    using narrowing_varied_source[OF agree src] by (simp add: produced_declarations_varied_fields)
+  show "(R' = input_registration (registration_site R') (registration_schema R') Vp (registration_variable R') \<and>
+        head_registration Vp (registration_schema R') (registration_variable R') \<and>
+        producer_reflexive (positive_meaning (decode_finite_system ?N)) (registration_site R') Vp \<and>
+        (\<forall>x. declared_narrowing ?D e T t x)) \<or>
+      (head_registration Vp (registration_schema R') (registration_variable R') \<and>
+        head_registration_produces (finite_collection_construction [R'] m) ?N (registration_site R')
+          (registration_schema R') (registration_variable R') (declared_narrowing ?D e T t) \<and>
+        head_registration_answers (positive_meaning (decode_finite_system ?N)) (finite_collection_construction [R'] m) ?N
+          (registration_site R') (registration_schema R') Vp (registration_variable R'))"
+    using given_input_production[OF m R(1)]
+  proof
+    assume u: "e \<in> {50,55,57,60,63} \<and> Vp = join_view \<and> R = union_registration \<and>
+      declared_narrowing given_input_declarations e S s = union_class"
+    have Rr: "R = union_registration" and V: "Vp = join_view" using u by blast+
+    have Kun: "declared_narrowing ?D e T t = union_class" using K u by simp
+    let ?T = "finite_rename_schema Inl id id union_schema :: (nat+'v,nat,nat) finite_factor_schema"
+    obtain f1 h1 where mt: "finite_schema_match union_schema ?T = Some (f1,h1)"
+        and rv: "registrations_varied P ?N R = {|registration_varied f1 ?T R|}"
+      by (rule query_single_registration_at[OF formed union, of R]) (simp_all add: Rr union_registration_def)
+    have Sf: "finite_schema_formed union_schema"
+      by (rule finite_system_clause_formed[OF formed, where e=48 and c=0])
+        (simp add: query_single_clause_at(1)[OF formed union])
+    have Tf: "finite_schema_formed ?T"
+      by (rule finite_system_clause_formed[OF finite_query_program_formed[OF formed], where e=48 and c=0])
+        (simp add: query_single_clause_at(2)[OF formed union])
+    note mx = finite_schema_match_exact(1)[OF Sf Tf mt]
+    have TT: "?T = finite_rename_schema f1 h1 id union_schema" using mx by blast
+    have "{0,1,2} \<subseteq> schema_variables data_union_schema" by (auto simp: schema_variables_def data_union_schema_def)
+    then have vars: "{0,1,2} \<subseteq> schema_variables (decode_finite_schema union_schema)" by (simp only: union_schema_decoded)
+    have inj: "inj_on f1 {0,1,2}" by (rule inj_on_subset[OF conjunct1[OF mx] vars])
+    have R3: "R' = union_registration_at 48 5 ?T (f1 2) (f1 0) (f1 1)"
+      using R(2) rv unfolding Rr union_registration_varied by simp
+    show ?thesis
+      unfolding R3 union_registration_at_fields Kun V TT
+      by (rule disjI2, rule union_matched_production[OF inj]) (simp_all only: meaning mean48 mean5)
+  next
+    assume u: "e = 37 \<and> Vp = view_identity \<and> R = identity_input_registration"
+    have Rr: "R = identity_input_registration" and V: "Vp = view_identity" and e37: "e = 37" using u by blast+
+    let ?T = "finite_rename_schema Inl id id identity_socket_schema :: (nat+'v,nat,nat) finite_factor_schema"
+    obtain f1 h1 where mt: "finite_schema_match identity_socket_schema ?T = Some (f1,h1)"
+        and rv: "registrations_varied P ?N R = {|registration_varied f1 ?T R|}"
+      by (rule query_single_registration_at[OF formed identity, of R])
+        (simp_all add: Rr identity_input_registration_fields)
+    have Sf: "finite_schema_formed identity_socket_schema"
+      by (rule finite_system_clause_formed[OF formed, where e=12 and c=0])
+        (simp add: query_single_clause_at(1)[OF formed identity])
+    have Tf: "finite_schema_formed ?T"
+      by (rule finite_system_clause_formed[OF finite_query_program_formed[OF formed], where e=12 and c=0])
+        (simp add: query_single_clause_at(2)[OF formed identity])
+    interpret matched: finite_schema_matched identity_socket_schema ?T f1 h1
+      by (rule finite_schema_matched.intro[OF Sf Tf mt])
+    have head: "head_registration view_identity identity_socket_schema 1" by (rule identity_input_registration_head)
+    have R1: "R' = registration_varied f1 ?T R" using R(2) rv by simp
+    have R'': "R' = input_registration 12 ?T view_identity (f1 1)"
+      unfolding R1 Rr identity_input_registration_def by (rule matched.input_registration_varied[OF head])
+    have headT: "head_registration view_identity ?T (f1 1)" by (rule matched.head_registration_matched[OF head])
+    have reflN: "producer_reflexive (positive_meaning (decode_finite_system ?N)) 12 view_identity"
+      using refl by (simp only: meaning)
+    have true: "declared_narrowing given_input_declarations e S s = (\<lambda>_. True)"
+      using given_input_declarations_within[unfolded narrowings_within_def, rule_format, OF m] e37 by simp
+    have narrowing: "\<forall>x. declared_narrowing ?D e T t x" using K true by simp
+    show ?thesis unfolding R'' V using headT reflN narrowing by (simp add: input_registration_def)
+  qed
+qed
+
 theorem given_query_agree:
   "varied_narrowings_agree finite_rooted_given_readers (given_query_program :: (nat+'v,nat,nat,nat) finite_schema_system)
     given_input_declarations"
@@ -223,34 +427,8 @@ theorem given_query_agree:
 theorem given_query_carry:
   "productions_carry_uniquely finite_rooted_given_readers (given_query_program :: (nat+'v,nat,nat,nat) finite_schema_system)
     given_input_declarations"
-  unfolding productions_carry_uniquely_def
-proof (intro allI impI)
-  fix e S s keep Vp Vh R
-  assume m: "(e,S,s,keep,Vp,Vh) |\<in>| declared_sockets given_input_declarations"
-    and p: "declared_production given_input_declarations e S s = Some R"
-  show "\<exists>R'. registrations_varied finite_rooted_given_readers (given_query_program :: (nat+'v,nat,nat,nat) finite_schema_system)
-      R = {|R'|}"
-    using given_input_production[OF m p]
-  proof
-    assume "e \<in> {50,55,57,60,63} \<and> Vp = join_view \<and> R = union_registration \<and>
-      declared_narrowing given_input_declarations e S s = union_class"
-    then have Rr: "R = union_registration" by blast
-    obtain f1 h1 where "registrations_varied finite_rooted_given_readers
-        (given_query_program :: (nat+'v,nat,nat,nat) finite_schema_system) R =
-        {|registration_varied f1 (finite_rename_schema Inl id id union_schema) R|}"
-      by (rule query_single_registration[OF union_rooted_clause, of R]) (simp_all add: Rr union_registration_def)
-    then show ?thesis by blast
-  next
-    assume "e = 37 \<and> Vp = view_identity \<and> R = identity_input_registration"
-    then have Rr: "R = identity_input_registration" by blast
-    obtain f1 h1 where "registrations_varied finite_rooted_given_readers
-        (given_query_program :: (nat+'v,nat,nat,nat) finite_schema_system) R =
-        {|registration_varied f1 (finite_rename_schema Inl id id identity_socket_schema) R|}"
-      by (rule query_single_registration[OF identity_rooted_clause, of R])
-        (simp_all add: Rr identity_input_registration_fields)
-    then show ?thesis by blast
-  qed
-qed
+  by (rule query_input_carry_at[OF finite_rooted_given_readers_formed
+    union_rooted_clause[folded finite_rooted_given_readers_exact] identity_rooted_clause[folded finite_rooted_given_readers_exact]])
 
 theorem given_query_declared:
   "narrowed_productions_declared (produced_declarations_varied finite_rooted_given_readers
@@ -271,94 +449,9 @@ theorem given_query_productions:
     (given_query_program :: (nat+'v,nat,nat,nat) finite_schema_system) m
     (produced_declarations_varied finite_rooted_given_readers (given_query_program :: (nat+'v,nat,nat,nat) finite_schema_system)
       given_input_declarations)"
-proof (rule input_productions_discharged)
-  let ?P = finite_rooted_given_readers
-  let ?N = "given_query_program :: (nat+'v,nat,nat,nat) finite_schema_system"
-  let ?D = "produced_declarations_varied ?P ?N given_input_declarations"
-  fix e T t keep Vp Vh R'
-  assume mem: "(e,T,t,keep,Vp,Vh) |\<in>| declared_sockets ?D" and p: "declared_production ?D e T t = Some R'"
-  obtain S s where m: "(e,S,s,keep,Vp,Vh) |\<in>| declared_sockets given_input_declarations"
-      and src: "(S,s) |\<in>| varied_socket_sources ?P ?N (declared_sockets given_input_declarations) e T t"
-    using mem unfolding produced_varied_sockets_member by blast
-  obtain R where R: "declared_production given_input_declarations e S s = Some R" "registrations_varied ?P ?N R = {|R'|}"
-    using production_varied_source[OF p[unfolded produced_declarations_varied_fields] src] by blast
-  have K: "declared_narrowing ?D e T t = declared_narrowing given_input_declarations e S s"
-    using narrowing_varied_source[OF given_query_agree src] by (simp add: produced_declarations_varied_fields)
-  have mean48: "(48,x) \<in> positive_meaning (decode_finite_system ?N) \<longleftrightarrow> (48,x) \<in> positive_meaning data_union_system" for x
-    using given_rooted_union_meanings(1)[of x]
-    by (simp add: finite_query_program_meaning[OF finite_rooted_given_readers_formed] finite_rooted_given_readers_exact)
-  have mean5: "(5,x) \<in> positive_meaning (decode_finite_system ?N) \<longleftrightarrow> (5,x) \<in> positive_meaning bag_comparison_system" for x
-    using given_rooted_union_meanings(2)[of x]
-    by (simp add: finite_query_program_meaning[OF finite_rooted_given_readers_formed] finite_rooted_given_readers_exact)
-  show "(R' = input_registration (registration_site R') (registration_schema R') Vp (registration_variable R') \<and>
-        head_registration Vp (registration_schema R') (registration_variable R') \<and>
-        producer_reflexive (positive_meaning (decode_finite_system ?N)) (registration_site R') Vp \<and>
-        (\<forall>x. declared_narrowing ?D e T t x)) \<or>
-      (head_registration Vp (registration_schema R') (registration_variable R') \<and>
-        head_registration_produces (finite_collection_construction [R'] m) ?N (registration_site R')
-          (registration_schema R') (registration_variable R') (declared_narrowing ?D e T t) \<and>
-        head_registration_answers (positive_meaning (decode_finite_system ?N)) (finite_collection_construction [R'] m) ?N
-          (registration_site R') (registration_schema R') Vp (registration_variable R'))"
-    using given_input_production[OF m R(1)]
-  proof
-    assume u: "e \<in> {50,55,57,60,63} \<and> Vp = join_view \<and> R = union_registration \<and>
-      declared_narrowing given_input_declarations e S s = union_class"
-    have Rr: "R = union_registration" and V: "Vp = join_view" using u by blast+
-    have Kun: "declared_narrowing ?D e T t = union_class" using K u by simp
-    let ?T = "finite_rename_schema Inl id id union_schema :: (nat+'v,nat,nat) finite_factor_schema"
-    obtain f1 h1 where mt: "finite_schema_match union_schema ?T = Some (f1,h1)"
-        and rv: "registrations_varied ?P ?N R = {|registration_varied f1 ?T R|}"
-      by (rule query_single_registration[OF union_rooted_clause, of R]) (simp_all add: Rr union_registration_def)
-    have Sf: "finite_schema_formed union_schema"
-      by (rule finite_system_clause_formed[OF finite_rooted_given_readers_formed, where e=48 and c=0])
-        (simp add: query_single_clause(1)[OF union_rooted_clause])
-    have Tf: "finite_schema_formed ?T"
-      by (rule finite_system_clause_formed[OF finite_query_program_formed[OF finite_rooted_given_readers_formed],
-        where e=48 and c=0]) (simp add: query_single_clause(2)[OF union_rooted_clause])
-    note mx = finite_schema_match_exact(1)[OF Sf Tf mt]
-    have TT: "?T = finite_rename_schema f1 h1 id union_schema" using mx by blast
-    have "{0,1,2} \<subseteq> schema_variables data_union_schema" by (auto simp: schema_variables_def data_union_schema_def)
-    then have vars: "{0,1,2} \<subseteq> schema_variables (decode_finite_schema union_schema)" by (simp only: union_schema_decoded)
-    have inj: "inj_on f1 {0,1,2}" by (rule inj_on_subset[OF conjunct1[OF mx] vars])
-    have R1: "R' = registration_varied f1 ?T R" using R(2) rv by simp
-    have R3: "R' = union_registration_at 48 5 ?T (f1 2) (f1 0) (f1 1)"
-      unfolding R1 Rr
-      by (simp add: registration_varied_def union_registration_def union_registration_at_def union_family_def
-        union_family_at_def union_query_def union_query_at_def map_collection_family_def map_collection_query_def)
-    show ?thesis
-      unfolding R3 union_registration_at_fields Kun V TT
-      by (intro disjI2 conjI union_variant_head_registration[OF inj] union_at_registration_produces
-        union_at_registration_answers[OF mean48 mean5 union_variant_input])
-  next
-    assume u: "e = 37 \<and> Vp = view_identity \<and> R = identity_input_registration"
-    have Rr: "R = identity_input_registration" and V: "Vp = view_identity" and e37: "e = 37" using u by blast+
-    let ?T = "finite_rename_schema Inl id id identity_socket_schema :: (nat+'v,nat,nat) finite_factor_schema"
-    obtain f1 h1 where mt: "finite_schema_match identity_socket_schema ?T = Some (f1,h1)"
-        and rv: "registrations_varied ?P ?N R = {|registration_varied f1 ?T R|}"
-      by (rule query_single_registration[OF identity_rooted_clause, of R])
-        (simp_all add: Rr identity_input_registration_fields)
-    have Sf: "finite_schema_formed identity_socket_schema"
-      by (rule finite_system_clause_formed[OF finite_rooted_given_readers_formed, where e=12 and c=0])
-        (simp add: query_single_clause(1)[OF identity_rooted_clause])
-    have Tf: "finite_schema_formed ?T"
-      by (rule finite_system_clause_formed[OF finite_query_program_formed[OF finite_rooted_given_readers_formed],
-        where e=12 and c=0]) (simp add: query_single_clause(2)[OF identity_rooted_clause])
-    interpret matched: finite_schema_matched identity_socket_schema ?T f1 h1
-      by (rule finite_schema_matched.intro[OF Sf Tf mt])
-    have head: "head_registration view_identity identity_socket_schema 1" by (rule identity_input_registration_head)
-    have R1: "R' = registration_varied f1 ?T R" using R(2) rv by simp
-    have R'': "R' = input_registration 12 ?T view_identity (f1 1)"
-      unfolding R1 Rr identity_input_registration_def by (rule matched.input_registration_varied[OF head])
-    have headT: "head_registration view_identity ?T (f1 1)" by (rule matched.head_registration_matched[OF head])
-    have refl: "producer_reflexive (positive_meaning (decode_finite_system ?N)) 12 view_identity"
-      using given_rooted_identity_reflexive
-      by (simp only: finite_query_program_meaning[OF finite_rooted_given_readers_formed])
-    have true: "declared_narrowing given_input_declarations e S s = (\<lambda>_. True)"
-      using given_input_declarations_within[unfolded narrowings_within_def, rule_format, OF m] e37 by simp
-    have narrowing: "\<forall>x. declared_narrowing ?D e T t x" using K true by simp
-    show ?thesis unfolding R'' V using headT refl narrowing by (simp add: input_registration_def)
-  qed
-qed
+  by (rule query_input_productions_at[OF finite_rooted_given_readers_formed
+    union_rooted_clause[folded finite_rooted_given_readers_exact] identity_rooted_clause[folded finite_rooted_given_readers_exact]
+    given_query_agree given_rooted_union_meanings given_rooted_identity_reflexive])
 
 theorem given_query_record:
   "varied_narrowed_record finite_rooted_given_readers (given_query_program :: (nat+'v,nat,nat,nat) finite_schema_system)
@@ -373,6 +466,69 @@ theorem given_query_exact:
   shows "finite_query_exact (given_query_parameters m \<Theta> \<Theta>' :: (nat,nat,nat,nat,'v) query_parameters)
     finite_rooted_given_readers n"
   by (rule committing_query_exact[OF given_query_record given_input_declarations_discharged(3) true true'])
+
+section \<open>The given's input record carried to an extension's query program\<close>
+
+text \<open>
+  At every extension of the given's readers (@{text given_readers_extension}), the given's input record carried along
+  the query program's left injection is V2b's carried record there: 48 and 12 keep the rooted readers' one clause,
+  48's callers theirs, the record's discharges at the program are the rooted readers' carried by agreement
+  (@{text given_input_discharged_Q}), and the productions at the query program are discharged by #953's forms at that
+  program. W5's premise then holds at the extension's committing instance, at tables whose calls are true there.
+\<close>
+
+context given_readers_extension
+begin
+
+lemma union_clause_Q:
+  "((48,c),S) \<in> system_clauses (decode_finite_system Q) \<longleftrightarrow> c = 0 \<and> S = decode_finite_schema union_schema"
+proof -
+  have r48: "48 \<in> system_definitions given_rooted_readers_system" by (rule given_rooted_declared_sites) simp
+  show ?thesis by (simp only: rooted_clauses_Q[OF r48] union_rooted_clause)
+qed
+
+lemma identity_clause_Q:
+  "((12,c),S) \<in> system_clauses (decode_finite_system Q) \<longleftrightarrow> c = 0 \<and> S = decode_finite_schema identity_socket_schema"
+proof -
+  have r12: "12 \<in> system_definitions given_rooted_readers_system" by (rule given_rooted_declared_sites) simp
+  show ?thesis by (simp only: rooted_clauses_Q[OF r12] identity_rooted_clause)
+qed
+
+lemma union_sources_Q:
+  "finite_varied_sources_unique_at {50,55,57,60,63} Q (finite_query_program Q :: (nat+'v,nat,nat,nat) finite_schema_system)"
+proof (rule query_union_sources_at[OF target])
+  fix e :: nat and c S assume e: "e \<in> {50,55,57,60,63}"
+  have "e \<in> system_definitions given_rooted_readers_system" by (rule given_rooted_declared_sites) (use e in auto)
+  then show "((e,c),S) \<in> system_clauses (decode_finite_system Q) \<longleftrightarrow>
+      ((e,c),S) \<in> system_clauses given_rooted_readers_system"
+    by (rule rooted_clauses_Q)
+qed
+
+theorem query_record_Q:
+  "varied_narrowed_record Q (finite_query_program Q :: (nat+'v,nat,nat,nat) finite_schema_system)
+    given_input_declarations given_declarations_correspondence given_input_frames m m"
+proof -
+  let ?N = "finite_query_program Q :: (nat+'v,nat,nat,nat) finite_schema_system"
+  have agree: "varied_narrowings_agree Q ?N given_input_declarations"
+    by (rule varied_narrowings_agree_within[OF target finite_query_program_formed[OF target] union_sources_Q
+      given_input_declarations_within])
+  have carry: "productions_carry_uniquely Q ?N given_input_declarations"
+    by (rule query_input_carry_at[OF target union_clause_Q identity_clause_Q])
+  show ?thesis
+    by (rule query_record_at[OF target given_input_discharged_Q agree
+      query_input_productions_at[OF target union_clause_Q identity_clause_Q agree union_meanings_Q lookup_reflexive_Q]
+      narrowed_productions_declared_varied_within[OF target finite_query_program_formed[OF target]
+        union_sources_Q given_input_declarations_within given_input_declarations_discharged(3) carry]])
+qed
+
+theorem query_exact_Q:
+  assumes true: "finite_table_true Q \<Theta>"
+    and true': "finite_table_true (finite_query_program Q :: (nat+'v,nat,nat,nat) finite_schema_system) \<Theta>'"
+  shows "finite_query_exact (committing_query_parameters Q m given_input_declarations given_input_frames given_modes
+    \<Theta> \<Theta>' :: (nat,nat,nat,nat,'v) query_parameters) Q n"
+  by (rule committing_query_exact[OF query_record_Q given_input_declarations_discharged(3) true true'])
+
+end
 
 section \<open>The registrations' completeness at a committing instance\<close>
 
@@ -391,5 +547,23 @@ lemmas given_readers_construction_committing = given_readers_construction_comple
 lemmas readers_agreement_registrations_committing = readers_agreement_registrations_complete_in[OF committing_query_exact]
 lemmas first_request_registrations_committing = first_request_registrations_complete_in[OF committing_query_exact]
 lemmas first_request_construction_committing = first_request_construction_complete_in[OF committing_query_exact]
+
+text \<open>
+  The asked relation over additions' committing instance (AX4, the instance #399 cites): the given's registrations with
+  the added part's bound (@{const asked_additions_registrations}) complete at its program
+  (@{thm [source] asked_additions_construction_complete_in}) through W5's premise there
+  (@{thm [source] given_readers_extension.query_exact_Q}), at tables whose calls are true; the valid and the empty tables
+  are its instances.
+\<close>
+
+lemmas asked_additions_query_exact = asked_additions_extension.query_exact_Q
+lemmas asked_additions_registrations_committing =
+  asked_additions_registrations_complete_in[OF asked_additions_extension.query_exact_Q]
+lemmas asked_additions_construction_committing =
+  asked_additions_construction_complete_in[OF asked_additions_extension.query_exact_Q]
+lemmas asked_additions_construction_committing_valid =
+  asked_additions_construction_committing[OF finite_table_valid_true finite_table_valid_true]
+lemmas asked_additions_construction_committing_empty =
+  asked_additions_construction_committing[OF finite_table_true_empty finite_table_true_empty]
 
 end

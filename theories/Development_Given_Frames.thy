@@ -660,6 +660,36 @@ lemma union_registration_varied_relocated:
     union_family_def union_family_at_def union_query_def union_query_at_def family_relocated_def query_relocated_def
     map_collection_family_def map_collection_query_def)
 
+text \<open>The union registration varied unrelocated: at 48 and 5, the matched variables (review 954's follow-up 1).\<close>
+
+lemma union_registration_varied:
+  "registration_varied f T union_registration = union_registration_at 48 5 T (f 2) (f 0) (f 1)"
+  by (simp add: registration_varied_def union_registration_def union_registration_at_def union_family_def
+    union_family_at_def union_query_def union_query_at_def map_collection_family_def map_collection_query_def)
+
+text \<open>
+  48's production discharged at a clause matched from its union clause, stated once (review 954's follow-up 1): the
+  union registration there, at the matched variables, is a head registration of the join view, produces the union
+  class and answers, wherever the program means the union at its site d and the selection at s. The installed
+  programs' productions and the query programs' cite it.
+\<close>
+
+theorem union_matched_production:
+  fixes M :: "('d \<times> factor_term) set"
+  assumes inj: "inj_on f {0,1,2}"
+    and union: "\<And>t. (d,t) \<in> M \<longleftrightarrow> (48,t) \<in> positive_meaning data_union_system"
+    and selection: "\<And>t. (s,t) \<in> positive_meaning (decode_finite_system P) \<longleftrightarrow>
+      (5,t) \<in> positive_meaning bag_comparison_system"
+  shows "head_registration join_view (finite_rename_schema f h g union_schema) (f 2) \<and>
+    head_registration_produces (finite_collection_construction
+        [union_registration_at d s (finite_rename_schema f h g union_schema) (f 2) (f 0) (f 1)] n)
+      P d (finite_rename_schema f h g union_schema) (f 2) union_class \<and>
+    head_registration_answers M (finite_collection_construction
+        [union_registration_at d s (finite_rename_schema f h g union_schema) (f 2) (f 0) (f 1)] n)
+      P d (finite_rename_schema f h g union_schema) join_view (f 2)"
+  by (intro conjI union_variant_head_registration[OF inj] union_at_registration_produces
+    union_at_registration_answers[OF union selection union_variant_input])
+
 subsection \<open>48's callers: their rooted clauses are told apart by their callees\<close>
 
 lemma given_union_site_clauses:
@@ -1394,8 +1424,7 @@ proof (intro allI impI)
         (finite_collection_construction [R'] m) installed_presentation (registration_site R') (registration_schema R') Vp
         (registration_variable R')"
     unfolding R'' union_registration_at_fields K u(2) T1
-    by (intro conjI union_variant_head_registration[OF inj] union_at_registration_produces
-      union_at_registration_answers[OF union_meanings_installed(1) union_meanings_installed(2) union_variant_input])
+    by (rule union_matched_production[OF inj union_meanings_installed(1) union_meanings_installed(2)])
 qed
 
 subsection \<open>The committed registrations at the installed program\<close>
@@ -1441,18 +1470,21 @@ theorem installed_committed_exact:
 end
 
 text \<open>
-  The one record at the asked relation's installed guard (526 in the native course, #707) and at the first request's
-  installed program (561 at the installation, #547, #399): committed with every complete construction of the numbered
-  program; the plain record's carrying stands as @{thm [source] asked_installed_plain_declarations_discharged} and
+  The one record at the asked relation over additions' installed guard (990 in the native course, #707, AX4) and at
+  the first request's installed program (561 at the installation, #547, #399): committed with every complete
+  construction of the numbered program; the plain record's carrying stands as
+  @{thm [source] asked_additions_installed_plain_declarations_discharged} and
   @{thm [source] first_request_installed_plain_declarations_discharged}.
 \<close>
 
-theorem asked_installed_declarations_discharged:
-  assumes "finite_witness_construction_formed \<kappa>" "finite_construction_complete \<kappa> finite_asked_program"
-  shows "committed_registrations (asked_extension.installed_construction \<kappa>) asked_installed_presentation m'
-    asked_extension.installed_given_declarations asked_extension.installed_given_frames
-    asked_extension.installed_given_correspondence"
-  unfolding asked_installed_presentation_def by (rule asked_extension.installed_committed_registrations[OF assms])
+theorem asked_additions_installed_declarations_discharged:
+  assumes "finite_witness_construction_formed \<kappa>" "finite_construction_complete \<kappa> finite_asked_additions_program"
+  shows "committed_registrations (asked_additions_extension.installed_construction \<kappa>)
+    asked_additions_installed_presentation m'
+    asked_additions_extension.installed_given_declarations asked_additions_extension.installed_given_frames
+    asked_additions_extension.installed_given_correspondence"
+  unfolding asked_additions_installed_presentation_def
+  by (rule asked_additions_extension.installed_committed_registrations[OF assms])
 
 theorem first_request_installed_declarations_discharged:
   assumes "finite_witness_construction_formed \<kappa>" "finite_construction_complete \<kappa> finite_first_request_program"

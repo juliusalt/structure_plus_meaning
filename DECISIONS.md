@@ -21484,7 +21484,18 @@ theory changes.
     formed package. The added part's bound is a least witness: handed in for an admission (the producer knows its
     package) and collected for a refusal by a registration of W2's family form — base the root family's added sites,
     step an added definition's callees at added uses — its completeness proved once in W4a's form, as 77's
-    (`Factor_Reader_Witness_Registrations.bound_witness_registration_complete`).
+    (`Factor_Reader_Witness_Registrations.bound_witness_registration_complete`). [Corrected by task 961 after review
+    935: the registration landed by task 934 steps over every edge of the least environment l, a given site's local
+    edges included, and the reach it collects is a bound whenever any bound is, not the least one; see the entry "The
+    added part's bound is the reach over the least environment's edges" (`extension_bound_reach_passes`).]
+    [Corrected by task 961 after the planner's q180: (i) 957 also checks the extension's formation (954 at the
+    given's value and the additions), so the premises holding the least environment at 961/0 hold only where the
+    given is an environment value, the additions its rows and bindings and the extension formed: W4a's completeness
+    quantifies over every binding, and off that domain no registration over 965 is complete (two rows at one use,
+    or a stored row of a given that is no value); (ii) G3's and G4's members clauses (985/0, 989/0) read the least
+    environment beside a view (991, 992) whose clause holds the root family (79), the bound (47) and the list site,
+    since W2's form registers a witness only where every premise holding it has no other free variable. See the
+    entry "The least environment is registered over 965 on a formed extension".]
   - G3, the callee boundary: G2's package exists, each of its added members stands at a use of no given artifact (20
     against the given's rows), and each given callee is a member of the given's package (83 at (g, d), the table's); the
     given's package being closed, every given member reached is then the given's. Exact to 392 at (g, c)
@@ -21869,3 +21880,15 @@ the access's `access_call_variables`, which the deferred access reads from a nod
 Task 934 (AX2b of task 928's course (c), G2). Its basis is #955's (F) and #959's (F′): 958's given clauses require that no binding of l has the site's use as its source, and that l's row at that use is the given's (q169, q172). Without F′ no positive family is complete over arbitrary bindings of 960: a definition at a given use may call a site at its own use through a local citation, with no binding (`native_definition_edge_uses`). With F′ such a local edge stays inside the site's closure in the given, whose sites pass as given sites (`bounded_given_edge`). So the reach over l's edges from q is a bound whenever any bound is (`extension_bound_reach_passes`). It need not lie inside every bound, unlike 77's (`closed_bound_least`): a given site's own local callees are reached but need not be listed. The registration is 77's family at 960 (`closure_witness_registration 960 bounded_closure_schema 3 0 2`), complete in W4a's form.
 
 Limit, measured by the control: W2's queries run with no witness construction, so the step query (82 at l) is not answered at plain parameters: 82's reading holds material goals at 10, and R4 leaves the ground edge call open too. The collection therefore gives nothing, so the bound is unresolved, never refuted. It is answered where the search commits at the given's declared sockets (VK2's committing instance), where AX4 #940 carries the registration and AX5 #962 runs it (planner, q178). l's registration over 965 is AX2c #961's (q178).
+
+## The least environment is registered over 965 on a formed extension: one stored row at each needed use
+
+Task 961 (AX2c of task 928's course (c)), after the planner's q180. 961/0's premise-only least environment l is registered in W2's form (`least_environment_registration`, `Factor_Extension_Registrations`): `Paired_Families` of the rows 965 reads at the given, the added rows, the added binding rows and the site's use (`least_row_query`, the row free), keyed by its use, and of the added binding rows 5 selects, keyed by their slot; both identified by equality. Its completeness in W4a's `_in` form (`least_environment_registration_complete_in`) holds at every program meaning 5, 957, 964 and 965 as the readers do, the plain instance by `finite_query_exact_plain`.
+
+Equality, not 12, identifies rows: on the domain no two stored rows share a use (`least_rows_key_unique`: the extension's artifacts are functional, the added uses apart from the given's, each list enumerates its set once), so no identity is needed there, and off it no identity makes the collection complete. The domain is where 957's new formation premise (954) puts it: two counterexamples (two added rows at one use presenting different artifacts; a given that is no value whose table holds a second presentation of an added row) each pass 957 and 964 at some l while every collection over 965 fails, so the domain had to enter a premise holding l (the correction of task 928's entry). `least_row_at_values` is consumed as it stands, its table hypothesis met from the given's value (`environment_value_rows`).
+
+The proof (`least_environment_values_pass`): where some l passes 957 and 964, the collected pair presents l's environment read at the needed uses, the site's use and the endpoints of the added binding rows (`read_environment`); the root family is read there unchanged (`native_root_family_read_environment`); the members of any bound of l at a needed use form a bound of the reading, since the roots and every callee of a member at a needed use stand at a needed use (`located_at_use_edge`, `native_definition_edge_uses`), an added member's definition reading the same there and a given member's row being the given's.
+
+To make 957 call 954, AX2a's program stands over the union of package membership and AX1's formation reader (`extension_readers_base_system`, joined where they agree, `membership_formation_agreement`); `least_environment_raw` gains the formation conjunct and `least_environment_complete` the additions' and the extension's hypotheses (both marked changes, their three callers repaired); `extension_package_sites` names the formation reader's sites. G3's and G4's members clauses read l beside views 991 and 992 (`additions_members_view_schema`), whose clause holds the root family, the bound and the list site; `additions_members_clauses` and `additions_members_rule` take the view site (marked changes), the rule's conclusion unchanged.
+
+The construction the guard over additions refuses through is the given's four registrations, 960's bound and 961's l (`extension_witness_registrations`, complete in W4a's form, `extension_witness_registrations_complete_in`). Limit: G3's and G4's l at 985/0 and 989/0 (the same family at the members clause's variables), their bounds at the views (G3's the reach over l's edges, G4's also over given members read at the given's value) and q produced by 79 there are not registered yet.

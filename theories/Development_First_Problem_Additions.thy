@@ -18,14 +18,6 @@ text \<open>
 
 section \<open>The readers the goals call, joined where they agree\<close>
 
-lemma lookup_complete_definitions:
-  "system_definitions artifact_lookup_system\<subseteq>system_definitions complete_data_admission_system"
-  by (rule whole_agreement_definitions[OF complete_data_lookup_agreement])
-
-lemma membership_complete_definitions:
-  "system_definitions package_membership_system\<subseteq>system_definitions complete_data_admission_system"
-  by (rule whole_agreement_definitions[OF membership_complete_data_agreement])
-
 lemma call_admission_complete_definitions:
   "system_definitions definition_call_admission_system\<subseteq>system_definitions complete_data_admission_system"
   by (rule whole_agreement_definitions[OF call_admission_complete_data_agreement])
@@ -36,7 +28,8 @@ lemma extension_formation_sites:
 
 lemma extension_package_sites:
   "system_definitions extension_package_system=
-    {955,956,957,958,959,960,961,962,963,964,965,966}\<union>system_definitions package_membership_system"
+    {955,956,957,958,959,960,961,962,963,964,965,966}\<union>system_definitions package_membership_system\<union>
+      system_definitions extension_formation_system"
   by auto
 
 lemma payload_audit_sites:
@@ -51,53 +44,29 @@ lemma additions_number_facts:
   "{955,956,957,958,959,960,961,962,963,964,965,966}\<inter>{500,501,502,503,504,505::nat}={}"
   "{950,951,952,953,954}\<subseteq>{..<970::nat}" "{955,956,957,958,959,960,961,962,963,964,965,966}\<subseteq>{..<970::nat}"
   "{..<390::nat}\<subseteq>{..<970}" "{..<506::nat}\<subseteq>{..<970}"
-  "{980,981,982,983,984,985,986,987,988,989,990}\<inter>{..<970::nat}={}"
+  "{980,981,982,983,984,985,986,987,988,989,990,991,992}\<inter>{..<970::nat}={}"
   by auto
-
-lemma lookup_formation_agreement:
-  "systems_agree_on artifact_lookup_system extension_formation_system (system_definitions artifact_lookup_system)"
-proof -
-  have fresh: "d\<notin>system_definitions artifact_lookup_system" if "390\<le>d" for d
-    using lookup_complete_definitions complete_below that by (meson lessThan_iff not_le subsetD)
-  show ?thesis
-    using fresh[of 950] fresh[of 951] fresh[of 952] fresh[of 953] fresh[of 954]
-    by (simp add: systems_agree_on_added extension_formation_system_def added_bindings_system_def
-      added_binding_system_def added_uses_fresh_system_def added_use_fresh_system_def)
-qed
 
 lemma membership_package_agreement:
   "systems_agree_on package_membership_system extension_package_system (system_definitions package_membership_system)"
-proof -
-  have fresh: "d\<notin>system_definitions package_membership_system" if "390\<le>d" for d
-    using membership_complete_definitions complete_below that by (meson lessThan_iff not_le subsetD)
-  show ?thesis
-    using fresh[of 955] fresh[of 956] fresh[of 957] fresh[of 958] fresh[of 959] fresh[of 960] fresh[of 961]
-      fresh[of 962] fresh[of 963] fresh[of 964] fresh[of 965] fresh[of 966]
-    by (simp add: systems_agree_on_added extension_package_system_def least_row_system_def stored_row_system_def
-      added_site_system_def
-      bounded_closure_system_def
-      bounded_members_system_def bounded_member_system_def source_absences_system_def source_absence_system_def
-      least_environment_system_def extension_rows_system_def extension_row_system_def)
-qed
-
-lemma complete_formation_agreement:
-  "systems_agree_on complete_data_admission_system extension_formation_system
-    (system_definitions complete_data_admission_system\<inter>system_definitions extension_formation_system)"
-proof (rule systems_agree_on_subdomain[OF systems_agree_on_transitive[OF
-    systems_agree_on_sym[OF complete_data_lookup_agreement] lookup_formation_agreement]])
-  show "system_definitions complete_data_admission_system\<inter>system_definitions extension_formation_system\<subseteq>
-      system_definitions artifact_lookup_system"
-    using complete_below additions_number_facts(1) by (simp only: extension_formation_sites) blast
-qed
+  by (rule systems_agree_on_transitive[OF system_union_agree_left[OF extension_formation_system_formed
+    membership_formation_agreement, folded extension_readers_base_system_def]
+    systems_agree_on_subdomain[OF extension_package_base_agreement]]) simp
 
 lemma complete_package_agreement:
   "systems_agree_on complete_data_admission_system extension_package_system
     (system_definitions complete_data_admission_system\<inter>system_definitions extension_package_system)"
-proof (rule systems_agree_on_subdomain[OF systems_agree_on_transitive[OF
-    systems_agree_on_sym[OF membership_complete_data_agreement] membership_package_agreement]])
-  show "system_definitions complete_data_admission_system\<inter>system_definitions extension_package_system\<subseteq>
-      system_definitions package_membership_system"
-    using complete_below additions_number_facts(2) by (simp only: extension_package_sites) blast
+proof -
+  have union: "systems_agree_on extension_readers_base_system complete_data_admission_system
+      (system_definitions extension_readers_base_system\<inter>system_definitions complete_data_admission_system)"
+    unfolding extension_readers_base_system_def
+    by (rule overlap_agreement_union[OF package_membership_system_formed extension_formation_system_formed])
+      (rule systems_agree_on_subdomain[OF membership_complete_data_agreement], blast,
+       rule systems_agree_on_subdomain[OF systems_agree_on_sym[OF complete_formation_agreement]], blast)
+  show ?thesis
+    by (rule systems_agree_on_transitive[OF systems_agree_on_subdomain[OF systems_agree_on_sym[OF union]]
+      systems_agree_on_subdomain[OF extension_package_base_agreement]])
+      (use complete_below in auto)
 qed
 
 lemma complete_audit_agreement:
@@ -118,13 +87,9 @@ lemma additions_overlap_cover:
 lemma formation_package_agreement:
   "systems_agree_on extension_formation_system extension_package_system
     (system_definitions extension_formation_system\<inter>system_definitions extension_package_system)"
-proof (rule common_component_overlap_agreement[OF complete_formation_agreement complete_package_agreement])
-  show "system_definitions extension_formation_system\<inter>system_definitions extension_package_system\<subseteq>
-      system_definitions complete_data_admission_system"
-    unfolding extension_formation_sites extension_package_sites
-    by (rule additions_overlap_cover[OF lookup_complete_definitions membership_complete_definitions
-      additions_number_facts(4)])
-qed
+  by (rule systems_agree_on_subdomain[OF systems_agree_on_transitive[OF system_union_agree_right[OF
+    package_membership_system_formed membership_formation_agreement, folded extension_readers_base_system_def]
+    systems_agree_on_subdomain[OF extension_package_base_agreement]]]) auto
 
 lemma formation_audit_agreement:
   "systems_agree_on extension_formation_system payload_audit_system
@@ -144,8 +109,8 @@ proof (rule common_component_overlap_agreement[OF complete_package_agreement com
   show "system_definitions extension_package_system\<inter>system_definitions payload_audit_system\<subseteq>
       system_definitions complete_data_admission_system"
     unfolding extension_package_sites payload_audit_sites
-    by (rule additions_overlap_cover[OF membership_complete_definitions call_admission_complete_definitions
-      additions_number_facts(6)])
+    using membership_complete_definitions lookup_complete_definitions call_admission_complete_definitions complete_below
+    by auto
 qed
 
 definition additions_pair_readers_system :: "(nat,nat,nat,nat) schema_system" where
@@ -247,7 +212,7 @@ proof -
 qed
 
 lemma additions_fresh:
-  assumes "d\<in>{980,981,982,983,984,985,986,987,988,989,990}"
+  assumes "d\<in>{980,981,982,983,984,985,986,987,988,989,990,991,992}"
   shows "d\<notin>system_definitions additions_readers_system"
   using assms additions_readers_below additions_number_facts(11) by blast
 
@@ -262,8 +227,10 @@ text \<open>
   element (@{const addition_element_clauses}): a member of the given's package (83) or the callee. G3's callee is
   a definition read in the environment the family was read in, its callees in the bound, at a use absent among
   the given's use keys (950, key absence against the given's artifact table). G4's callee is a definition, read
-  there or at the given's value, its callees in the bound, stating no payload but the empty one (505). The
-  numbers 980 to 990 are above every numbered site of the readers.
+  there or at the given's value, its callees in the bound, stating no payload but the empty one (505). At a site
+  of an added use the members clause reads the least environment and a view of it (991 for G3, 992 for G4) whose
+  clause reads the root family and the bound, so that each premise holding a witness has no other free variable
+  (task 961, the planner's q180). The numbers 980 to 992 are above every numbered site of the readers.
 \<close>
 
 definition additions_retention_schema :: "(nat,nat,nat) factor_schema" where
@@ -306,15 +273,22 @@ abbreviation additions_pair_pattern :: "nat term_pattern" where
     (Pattern_Pair (Pattern_Pair (Pattern_Variable 4) (Pattern_Variable 5))
       (Pattern_Pair (Pattern_Variable 6) (Pattern_Variable 7)))"
 
+definition additions_members_view_schema :: "nat \<Rightarrow> (nat,nat,nat) factor_schema" where
+  "additions_members_view_schema list_site=data_rule
+    (Pattern_Pair (Pattern_Pair (Pattern_Pair (Pattern_Pair data_x data_y) (Pattern_Pair data_z data_w))
+      (Pattern_Variable 8)) (Pattern_Pair (Pattern_Variable 6) (Pattern_Variable 7)))
+    {(0,79,citation_observation_pattern (Pattern_Variable 8) (Pattern_Variable 6) (Pattern_Variable 7)
+        (Pattern_Variable 9)),
+     (1,47,Pattern_Pair (Pattern_Variable 9) (Pattern_Variable 10)),
+     (2,list_site,Pattern_Pair (Pattern_Pair (Pattern_Pair (Pattern_Pair data_x data_y) (Pattern_Pair data_z data_w))
+        (Pattern_Pair (Pattern_Variable 8) (Pattern_Variable 10))) (Pattern_Variable 10))}"
+
 definition additions_members_added_schema :: "nat \<Rightarrow> (nat,nat,nat) factor_schema" where
-  "additions_members_added_schema list_site=data_rule additions_pair_pattern
+  "additions_members_added_schema view_site=data_rule additions_pair_pattern
     {(0,957,Pattern_Pair (Pattern_Pair (Pattern_Pair data_x data_y)
         (Pattern_Pair (Pattern_Variable 4) (Pattern_Variable 5))) (Pattern_Variable 8)),
-     (1,79,citation_observation_pattern (Pattern_Variable 8) (Pattern_Variable 6) (Pattern_Variable 7)
-        (Pattern_Variable 9)),
-     (2,47,Pattern_Pair (Pattern_Variable 9) (Pattern_Variable 10)),
-     (3,list_site,Pattern_Pair (Pattern_Pair (Pattern_Pair (Pattern_Pair data_x data_y) (Pattern_Pair data_z data_w))
-        (Pattern_Pair (Pattern_Variable 8) (Pattern_Variable 10))) (Pattern_Variable 10))}"
+     (1,view_site,Pattern_Pair (Pattern_Pair (Pattern_Pair (Pattern_Pair data_x data_y) (Pattern_Pair data_z data_w))
+        (Pattern_Variable 8)) (Pattern_Pair (Pattern_Variable 6) (Pattern_Variable 7)))}"
 
 definition additions_members_given_schema :: "nat \<Rightarrow> (nat,nat,nat) factor_schema" where
   "additions_members_given_schema list_site=data_rule additions_pair_pattern
@@ -324,9 +298,9 @@ definition additions_members_given_schema :: "nat \<Rightarrow> (nat,nat,nat) fa
      (2,list_site,Pattern_Pair (Pattern_Pair (Pattern_Pair (Pattern_Pair data_x data_y) (Pattern_Pair data_z data_w))
         (Pattern_Pair (Pattern_Pair data_x data_y) (Pattern_Variable 10))) (Pattern_Variable 10))}"
 
-definition additions_members_clauses :: "nat \<Rightarrow> (nat\<times>(nat,nat,nat) factor_schema) set" where
-  "additions_members_clauses list_site=
-    {(0,additions_members_added_schema list_site),(1,additions_members_given_schema list_site)}"
+definition additions_members_clauses :: "nat \<Rightarrow> nat \<Rightarrow> (nat\<times>(nat,nat,nat) factor_schema) set" where
+  "additions_members_clauses view_site list_site=
+    {(0,additions_members_added_schema view_site),(1,additions_members_given_schema list_site)}"
 
 definition additions_retention_system :: "(nat,nat,nat,nat) schema_system" where
   "additions_retention_system=add_view_definition additions_readers_system 980 data_x {(0,additions_retention_schema)}"
@@ -346,8 +320,13 @@ definition additions_boundary_list_system :: "(nat,nat,nat,nat) schema_system" w
   "additions_boundary_list_system=
     add_view_definition additions_boundary_element_system 984 data_x (context_list_clauses 983 984)"
 
+definition additions_boundary_view_system :: "(nat,nat,nat,nat) schema_system" where
+  "additions_boundary_view_system=
+    add_view_definition additions_boundary_list_system 991 data_x {(0,additions_members_view_schema 984)}"
+
 definition additions_boundary_system :: "(nat,nat,nat,nat) schema_system" where
-  "additions_boundary_system=add_view_definition additions_boundary_list_system 985 data_x (additions_members_clauses 984)"
+  "additions_boundary_system=
+    add_view_definition additions_boundary_view_system 985 data_x (additions_members_clauses 991 984)"
 
 definition additions_audit_callee_system :: "(nat,nat,nat,nat) schema_system" where
   "additions_audit_callee_system=add_view_definition additions_boundary_system 986 data_x additions_audit_callee_clauses"
@@ -360,8 +339,12 @@ definition additions_audit_list_system :: "(nat,nat,nat,nat) schema_system" wher
   "additions_audit_list_system=
     add_view_definition additions_audit_element_system 988 data_x (context_list_clauses 987 988)"
 
+definition additions_audit_view_system :: "(nat,nat,nat,nat) schema_system" where
+  "additions_audit_view_system=
+    add_view_definition additions_audit_list_system 992 data_x {(0,additions_members_view_schema 988)}"
+
 definition additions_goals_system :: "(nat,nat,nat,nat) schema_system" where
-  "additions_goals_system=add_view_definition additions_audit_list_system 989 data_x (additions_members_clauses 988)"
+  "additions_goals_system=add_view_definition additions_audit_view_system 989 data_x (additions_members_clauses 992 988)"
 
 lemma additions_retention_system_formed [simp]: "schema_system_formed additions_retention_system"
   unfolding additions_retention_system_def
@@ -418,15 +401,26 @@ lemma additions_boundary_list_definitions [simp]:
   "system_definitions additions_boundary_list_system=insert 984 (system_definitions additions_boundary_element_system)"
   by (simp add: additions_boundary_list_system_def)
 
+lemma additions_boundary_view_system_formed [simp]: "schema_system_formed additions_boundary_view_system"
+  unfolding additions_boundary_view_system_def
+  using additions_reader_sites
+  by (intro add_recursive_definition_formed[OF additions_boundary_list_system_formed])
+    (auto simp: additions_members_view_schema_def
+      schema_formed_def schema_dependencies_def single_valued_def rel_dom_def rel_ran_def additions_fresh)
+
+lemma additions_boundary_view_definitions [simp]:
+  "system_definitions additions_boundary_view_system=insert 991 (system_definitions additions_boundary_list_system)"
+  by (simp add: additions_boundary_view_system_def)
+
 lemma additions_boundary_system_formed [simp]: "schema_system_formed additions_boundary_system"
   unfolding additions_boundary_system_def
   using additions_reader_sites
-  by (intro add_recursive_definition_formed[OF additions_boundary_list_system_formed])
+  by (intro add_recursive_definition_formed[OF additions_boundary_view_system_formed])
     (auto simp: additions_members_clauses_def additions_members_added_schema_def additions_members_given_schema_def
       schema_formed_def schema_dependencies_def single_valued_def rel_dom_def rel_ran_def additions_fresh)
 
 lemma additions_boundary_definitions [simp]:
-  "system_definitions additions_boundary_system=insert 985 (system_definitions additions_boundary_list_system)"
+  "system_definitions additions_boundary_system=insert 985 (system_definitions additions_boundary_view_system)"
   by (simp add: additions_boundary_system_def)
 
 lemma additions_audit_callee_system_formed [simp]: "schema_system_formed additions_audit_callee_system"
@@ -463,15 +457,26 @@ lemma additions_audit_list_definitions [simp]:
   "system_definitions additions_audit_list_system=insert 988 (system_definitions additions_audit_element_system)"
   by (simp add: additions_audit_list_system_def)
 
+lemma additions_audit_view_system_formed [simp]: "schema_system_formed additions_audit_view_system"
+  unfolding additions_audit_view_system_def
+  using additions_reader_sites
+  by (intro add_recursive_definition_formed[OF additions_audit_list_system_formed])
+    (auto simp: additions_members_view_schema_def
+      schema_formed_def schema_dependencies_def single_valued_def rel_dom_def rel_ran_def additions_fresh)
+
+lemma additions_audit_view_definitions [simp]:
+  "system_definitions additions_audit_view_system=insert 992 (system_definitions additions_audit_list_system)"
+  by (simp add: additions_audit_view_system_def)
+
 lemma additions_goals_formed [simp]: "schema_system_formed additions_goals_system"
   unfolding additions_goals_system_def
   using additions_reader_sites
-  by (intro add_recursive_definition_formed[OF additions_audit_list_system_formed])
+  by (intro add_recursive_definition_formed[OF additions_audit_view_system_formed])
     (auto simp: additions_members_clauses_def additions_members_added_schema_def additions_members_given_schema_def
       schema_formed_def schema_dependencies_def single_valued_def rel_dom_def rel_ran_def additions_fresh)
 
 lemma additions_goals_definitions [simp]:
-  "system_definitions additions_goals_system=insert 989 (system_definitions additions_audit_list_system)"
+  "system_definitions additions_goals_system=insert 989 (system_definitions additions_audit_view_system)"
   by (simp add: additions_goals_system_def)
 
 lemma additions_goals_call:
@@ -502,10 +507,15 @@ proof -
     using added_variable_calls[OF additions_boundary_element_system_formed
       additions_boundary_list_system_formed[unfolded additions_boundary_list_system_def] belement]
     by (simp only: additions_boundary_list_system_def[symmetric])
+  have bview: "schema_call_formed additions_boundary_view_system d t \<longleftrightarrow>
+      d\<in>system_definitions additions_boundary_view_system \<and> term_formed t" for d t
+    using added_variable_calls[OF additions_boundary_list_system_formed
+      additions_boundary_view_system_formed[unfolded additions_boundary_view_system_def] blist]
+    by (simp only: additions_boundary_view_system_def[symmetric])
   have boundary: "schema_call_formed additions_boundary_system d t \<longleftrightarrow>
       d\<in>system_definitions additions_boundary_system \<and> term_formed t" for d t
-    using added_variable_calls[OF additions_boundary_list_system_formed
-      additions_boundary_system_formed[unfolded additions_boundary_system_def] blist]
+    using added_variable_calls[OF additions_boundary_view_system_formed
+      additions_boundary_system_formed[unfolded additions_boundary_system_def] bview]
     by (simp only: additions_boundary_system_def[symmetric])
   have acallee: "schema_call_formed additions_audit_callee_system d t \<longleftrightarrow>
       d\<in>system_definitions additions_audit_callee_system \<and> term_formed t" for d t
@@ -522,9 +532,14 @@ proof -
     using added_variable_calls[OF additions_audit_element_system_formed
       additions_audit_list_system_formed[unfolded additions_audit_list_system_def] aelement]
     by (simp only: additions_audit_list_system_def[symmetric])
-  show ?thesis
+  have aview: "schema_call_formed additions_audit_view_system d t \<longleftrightarrow>
+      d\<in>system_definitions additions_audit_view_system \<and> term_formed t" for d t
     using added_variable_calls[OF additions_audit_list_system_formed
-      additions_goals_formed[unfolded additions_goals_system_def] alist]
+      additions_audit_view_system_formed[unfolded additions_audit_view_system_def] alist]
+    by (simp only: additions_audit_view_system_def[symmetric])
+  show ?thesis
+    using added_variable_calls[OF additions_audit_view_system_formed
+      additions_goals_formed[unfolded additions_goals_system_def] aview]
     by (simp only: additions_goals_system_def[symmetric])
 qed
 
@@ -534,38 +549,45 @@ lemma additions_goals_families:
   "((982,c),S)\<in>system_clauses additions_goals_system \<longleftrightarrow> c=0 \<and> S=additions_boundary_callee_schema"
   "((983,c),S)\<in>system_clauses additions_goals_system \<longleftrightarrow> (c,S)\<in>addition_element_clauses 982"
   "((984,c),S)\<in>system_clauses additions_goals_system \<longleftrightarrow> (c,S)\<in>context_list_clauses 983 984"
-  "((985,c),S)\<in>system_clauses additions_goals_system \<longleftrightarrow> (c,S)\<in>additions_members_clauses 984"
+  "((985,c),S)\<in>system_clauses additions_goals_system \<longleftrightarrow> (c,S)\<in>additions_members_clauses 991 984"
   "((986,c),S)\<in>system_clauses additions_goals_system \<longleftrightarrow> (c,S)\<in>additions_audit_callee_clauses"
   "((987,c),S)\<in>system_clauses additions_goals_system \<longleftrightarrow> (c,S)\<in>addition_element_clauses 986"
   "((988,c),S)\<in>system_clauses additions_goals_system \<longleftrightarrow> (c,S)\<in>context_list_clauses 987 988"
-  "((989,c),S)\<in>system_clauses additions_goals_system \<longleftrightarrow> (c,S)\<in>additions_members_clauses 988"
+  "((989,c),S)\<in>system_clauses additions_goals_system \<longleftrightarrow> (c,S)\<in>additions_members_clauses 992 988"
+  "((991,c),S)\<in>system_clauses additions_goals_system \<longleftrightarrow> c=0 \<and> S=additions_members_view_schema 984"
+  "((992,c),S)\<in>system_clauses additions_goals_system \<longleftrightarrow> c=0 \<and> S=additions_members_view_schema 988"
 proof -
   have owned: "((d,c),S)\<in>system_clauses additions_readers_system \<Longrightarrow> d\<in>system_definitions additions_readers_system"
     for d c S
     using additions_readers_formed unfolding schema_system_formed_def by blast
   have absent: "((d,c),S)\<notin>system_clauses additions_readers_system"
-    if "d\<in>{980,981,982,983,984,985,986,987,988,989}" for d c S
+    if "d\<in>{980,981,982,983,984,985,986,987,988,989,991,992}" for d c S
     using that additions_fresh[of d] owned by auto
   show "((980,c),S)\<in>system_clauses additions_goals_system \<longleftrightarrow> c=0 \<and> S=additions_retention_schema"
     "((981,c),S)\<in>system_clauses additions_goals_system \<longleftrightarrow> c=0 \<and> S=additions_package_schema"
     "((982,c),S)\<in>system_clauses additions_goals_system \<longleftrightarrow> c=0 \<and> S=additions_boundary_callee_schema"
     "((983,c),S)\<in>system_clauses additions_goals_system \<longleftrightarrow> (c,S)\<in>addition_element_clauses 982"
     "((984,c),S)\<in>system_clauses additions_goals_system \<longleftrightarrow> (c,S)\<in>context_list_clauses 983 984"
-    "((985,c),S)\<in>system_clauses additions_goals_system \<longleftrightarrow> (c,S)\<in>additions_members_clauses 984"
+    "((985,c),S)\<in>system_clauses additions_goals_system \<longleftrightarrow> (c,S)\<in>additions_members_clauses 991 984"
     "((986,c),S)\<in>system_clauses additions_goals_system \<longleftrightarrow> (c,S)\<in>additions_audit_callee_clauses"
     "((987,c),S)\<in>system_clauses additions_goals_system \<longleftrightarrow> (c,S)\<in>addition_element_clauses 986"
     "((988,c),S)\<in>system_clauses additions_goals_system \<longleftrightarrow> (c,S)\<in>context_list_clauses 987 988"
-    "((989,c),S)\<in>system_clauses additions_goals_system \<longleftrightarrow> (c,S)\<in>additions_members_clauses 988"
-    using absent by (auto simp: additions_goals_system_def additions_audit_list_system_def
+    "((989,c),S)\<in>system_clauses additions_goals_system \<longleftrightarrow> (c,S)\<in>additions_members_clauses 992 988"
+    "((991,c),S)\<in>system_clauses additions_goals_system \<longleftrightarrow> c=0 \<and> S=additions_members_view_schema 984"
+    "((992,c),S)\<in>system_clauses additions_goals_system \<longleftrightarrow> c=0 \<and> S=additions_members_view_schema 988"
+    using absent by (auto simp: additions_goals_system_def additions_audit_view_system_def additions_audit_list_system_def
       additions_audit_element_system_def additions_audit_callee_system_def additions_boundary_system_def
+      additions_boundary_view_system_def
       additions_boundary_list_system_def additions_boundary_element_system_def additions_boundary_callee_system_def
       additions_package_goal_system_def additions_retention_system_def)
 qed
 
 lemma additions_goals_agreement:
   "systems_agree_on additions_readers_system additions_goals_system (system_definitions additions_readers_system)"
-  using additions_fresh by (simp add: systems_agree_on_added additions_goals_system_def additions_audit_list_system_def
+  using additions_fresh by (simp add: systems_agree_on_added additions_goals_system_def additions_audit_view_system_def
+    additions_audit_list_system_def
     additions_audit_element_system_def additions_audit_callee_system_def additions_boundary_system_def
+    additions_boundary_view_system_def
     additions_boundary_list_system_def additions_boundary_element_system_def additions_boundary_callee_system_def
     additions_package_goal_system_def additions_retention_system_def)
 
@@ -921,9 +943,57 @@ next
   qed
 qed
 
+lemma additions_members_view_meaning:
+  assumes view: "\<And>c S. ((vs,c),S)\<in>system_clauses additions_goals_system \<longleftrightarrow> c=0 \<and> S=additions_members_view_schema ls"
+    and vmember: "vs\<in>system_definitions additions_goals_system"
+  shows "(vs,Pair_Term (Pair_Term (Pair_Term (Pair_Term a0 a1) (Pair_Term gu gr)) l) (Pair_Term u r))
+      \<in>positive_meaning additions_goals_system \<longleftrightarrow>
+    term_formed a0 \<and> term_formed a1 \<and> term_formed gu \<and> term_formed gr \<and> term_formed l \<and> term_formed u \<and>
+    term_formed r \<and> (\<exists>q k. (47,Pair_Term q k)\<in>positive_meaning data_subset_system \<and>
+      (79,citation_observation_argument l u r q)\<in>positive_meaning root_family_reading_system \<and>
+      (ls,Pair_Term (Pair_Term (Pair_Term (Pair_Term a0 a1) (Pair_Term gu gr)) (Pair_Term l k)) k)
+        \<in>positive_meaning additions_goals_system)" (is "?lhs \<longleftrightarrow> ?rhs")
+proof
+  assume ?lhs
+  then obtain c S f where clause: "((vs,c),S)\<in>system_clauses additions_goals_system"
+    and vars: "\<forall>a\<in>schema_variables S. term_formed (f a)"
+    and conclusion: "Pair_Term (Pair_Term (Pair_Term (Pair_Term a0 a1) (Pair_Term gu gr)) l) (Pair_Term u r)=
+      evaluate_pattern f (schema_conclusion S)"
+    and support: "\<forall>s e p. (s,e,p)\<in>schema_premises S \<longrightarrow> (e,evaluate_pattern f p)\<in>positive_meaning additions_goals_system"
+    by (blast dest: additions_goals_valuation)
+  have S: "S=additions_members_view_schema ls" using clause view by blast
+  have fvals: "f 0=a0" "f 1=a1" "f 2=gu" "f 3=gr" "f 8=l" "f 6=u" "f 7=r"
+    using conclusion by (simp_all add: S additions_members_view_schema_def)
+  have "term_formed (f 0) \<and> term_formed (f 1) \<and> term_formed (f 2) \<and> term_formed (f 3) \<and> term_formed (f 8) \<and>
+    term_formed (f 6) \<and> term_formed (f 7) \<and> (47,Pair_Term (f 9) (f 10))\<in>positive_meaning data_subset_system \<and>
+    (79,citation_observation_argument (f 8) (f 6) (f 7) (f 9))\<in>positive_meaning root_family_reading_system \<and>
+    (ls,Pair_Term (Pair_Term (Pair_Term (Pair_Term (f 0) (f 1)) (Pair_Term (f 2) (f 3))) (Pair_Term (f 8) (f 10))) (f 10))
+      \<in>positive_meaning additions_goals_system"
+    using vars support by (auto simp: S additions_members_view_schema_def schema_variables_def additions_goals_components)
+  then show ?rhs unfolding fvals by blast
+next
+  assume ?rhs
+  then obtain q k where formed: "term_formed a0" "term_formed a1" "term_formed gu" "term_formed gr" "term_formed l"
+      "term_formed u" "term_formed r"
+    and sub: "(47,Pair_Term q k)\<in>positive_meaning data_subset_system"
+    and read: "(79,citation_observation_argument l u r q)\<in>positive_meaning root_family_reading_system"
+    and list: "(ls,Pair_Term (Pair_Term (Pair_Term (Pair_Term a0 a1) (Pair_Term gu gr)) (Pair_Term l k)) k)
+      \<in>positive_meaning additions_goals_system" by blast
+  have qk: "term_formed q" "term_formed k" using schema_call_formed_target[OF positive_meaning_formed[OF sub]] by simp_all
+  let ?f="\<lambda>i::nat. if i=0 then a0 else if i=1 then a1 else if i=2 then gu else if i=3 then gr else if i=6 then u
+    else if i=7 then r else if i=8 then l else if i=9 then q else k"
+  have "(vs,evaluate_pattern ?f (schema_conclusion (additions_members_view_schema ls)))
+      \<in>positive_meaning additions_goals_system"
+    by (rule ordinary_positive_valuation_step[where c=0])
+      (use vmember formed qk sub read list in \<open>auto simp: view additions_members_view_schema_def
+        schema_variables_def additions_goals_call additions_goals_components\<close>)
+  then show ?lhs by (simp add: additions_members_view_schema_def)
+qed
+
 lemma additions_members_rule:
-  assumes family: "\<And>c S. ((n,c),S)\<in>system_clauses additions_goals_system \<longleftrightarrow> (c,S)\<in>additions_members_clauses ls"
-    and member: "n\<in>system_definitions additions_goals_system"
+  assumes family: "\<And>c S. ((n,c),S)\<in>system_clauses additions_goals_system \<longleftrightarrow> (c,S)\<in>additions_members_clauses vs ls"
+    and view: "\<And>c S. ((vs,c),S)\<in>system_clauses additions_goals_system \<longleftrightarrow> c=0 \<and> S=additions_members_view_schema ls"
+    and member: "n\<in>system_definitions additions_goals_system" and vmember: "vs\<in>system_definitions additions_goals_system"
   shows "(n,z)\<in>positive_meaning additions_goals_system \<longleftrightarrow> (\<exists>a0 a1 gu gr ar br u r q k.
     z=Pair_Term (Pair_Term (Pair_Term a0 a1) (Pair_Term gu gr)) (Pair_Term (Pair_Term ar br) (Pair_Term u r)) \<and>
     term_formed ar \<and> term_formed br \<and> (47,Pair_Term q k)\<in>positive_meaning data_subset_system \<and>
@@ -940,23 +1010,27 @@ proof
     and vars: "\<forall>a\<in>schema_variables S. term_formed (f a)" and conclusion: "z=evaluate_pattern f (schema_conclusion S)"
     and support: "\<forall>s e p. (s,e,p)\<in>schema_premises S \<longrightarrow> (e,evaluate_pattern f p)\<in>positive_meaning additions_goals_system"
     by (blast dest: additions_goals_valuation)
-  have "(c,S)\<in>additions_members_clauses ls" using clause family by blast
-  then consider "S=additions_members_added_schema ls" | "S=additions_members_given_schema ls"
+  have "(c,S)\<in>additions_members_clauses vs ls" using clause family by blast
+  then consider "S=additions_members_added_schema vs" | "S=additions_members_given_schema ls"
     by (auto simp: additions_members_clauses_def)
   then show ?rhs
   proof cases
     case 1
-    have "z=Pair_Term (Pair_Term (Pair_Term (f 0) (f 1)) (Pair_Term (f 2) (f 3)))
+    have parts: "z=Pair_Term (Pair_Term (Pair_Term (f 0) (f 1)) (Pair_Term (f 2) (f 3)))
         (Pair_Term (Pair_Term (f 4) (f 5)) (Pair_Term (f 6) (f 7))) \<and>
-      term_formed (f 4) \<and> term_formed (f 5) \<and> (47,Pair_Term (f 9) (f 10))\<in>positive_meaning data_subset_system \<and>
+      term_formed (f 4) \<and> term_formed (f 5) \<and>
       (957,Pair_Term (Pair_Term (Pair_Term (f 0) (f 1)) (Pair_Term (f 4) (f 5))) (f 8))
         \<in>positive_meaning extension_package_system \<and>
-      (79,citation_observation_argument (f 8) (f 6) (f 7) (f 9))\<in>positive_meaning root_family_reading_system \<and>
-      (ls,Pair_Term (Pair_Term (Pair_Term (Pair_Term (f 0) (f 1)) (Pair_Term (f 2) (f 3))) (Pair_Term (f 8) (f 10))) (f 10))
+      (vs,Pair_Term (Pair_Term (Pair_Term (Pair_Term (f 0) (f 1)) (Pair_Term (f 2) (f 3))) (f 8)) (Pair_Term (f 6) (f 7)))
         \<in>positive_meaning additions_goals_system"
       using vars conclusion support
       by (auto simp: 1 additions_members_added_schema_def schema_variables_def additions_goals_components)
-    then show ?rhs by blast
+    then obtain q k where "(47,Pair_Term q k)\<in>positive_meaning data_subset_system"
+      "(79,citation_observation_argument (f 8) (f 6) (f 7) q)\<in>positive_meaning root_family_reading_system"
+      "(ls,Pair_Term (Pair_Term (Pair_Term (Pair_Term (f 0) (f 1)) (Pair_Term (f 2) (f 3))) (Pair_Term (f 8) k)) k)
+        \<in>positive_meaning additions_goals_system"
+      unfolding additions_members_view_meaning[OF view vmember] by blast
+    then show ?rhs using parts by blast
   next
     case 2
     have "z=Pair_Term (Pair_Term (Pair_Term (f 0) (f 1)) (Pair_Term (f 2) (f 3)))
@@ -1001,12 +1075,15 @@ next
       using schema_call_formed_target[OF positive_meaning_formed[OF read]] by simp_all
     have gf: "term_formed gu" "term_formed gr"
       using schema_call_formed_target[OF positive_meaning_formed[OF list]] by simp_all
+    have viewed: "(vs,Pair_Term (Pair_Term (Pair_Term (Pair_Term a0 a1) (Pair_Term gu gr)) l) (Pair_Term u r))
+        \<in>positive_meaning additions_goals_system"
+      unfolding additions_members_view_meaning[OF view vmember] using lf ur gf sub read list by blast
     let ?f="\<lambda>i::nat. if i=0 then a0 else if i=1 then a1 else if i=2 then gu else if i=3 then gr else if i=4 then ar
-      else if i=5 then br else if i=6 then u else if i=7 then r else if i=8 then l else if i=9 then q else k"
-    have "(n,evaluate_pattern ?f (schema_conclusion (additions_members_added_schema ls)))
+      else if i=5 then br else if i=6 then u else if i=7 then r else l"
+    have "(n,evaluate_pattern ?f (schema_conclusion (additions_members_added_schema vs)))
         \<in>positive_meaning additions_goals_system"
       by (rule ordinary_positive_valuation_step[where c=0])
-        (use member lf ur gf bounds qk sub least read list in \<open>auto simp: family additions_members_clauses_def
+        (use member lf ur gf bounds least viewed in \<open>auto simp: family additions_members_clauses_def
           additions_members_added_schema_def schema_variables_def additions_goals_call additions_goals_components\<close>)
     then show ?thesis by (simp add: z additions_members_added_schema_def)
   next
@@ -1700,7 +1777,7 @@ proof -
      (79,citation_observation_argument (Pair_Term a0 a1) u r q)\<in>positive_meaning root_family_reading_system \<and>
      (984,Pair_Term (Pair_Term (Pair_Term (Pair_Term a0 a1) (Pair_Term gu gr)) (Pair_Term (Pair_Term a0 a1) k)) k)
        \<in>positive_meaning additions_goals_system))" for z
-    by (rule additions_members_rule[OF additions_goals_families(6)]) simp
+    by (rule additions_members_rule[OF additions_goals_families(6) additions_goals_families(11)]) simp_all
   show ?thesis
   proof
     assume holds: "(985,?z)\<in>positive_meaning additions_goals_system"
@@ -1772,7 +1849,7 @@ proof -
       obtain l where l: "environment_value_presents ?L l"
         "(957,Pair_Term (Pair_Term e (Pair_Term ar br)) l)\<in>positive_meaning extension_package_system"
         using least_environment_complete[OF given rows additions_least_formed[OF additions ff]
-          additions_least_bindings[OF additions] additions_least_artifacts[OF additions] part apart] by blast
+          additions_least_bindings[OF additions] additions_least_artifacts[OF additions] part apart additions ff] by blast
       obtain ds where read: "(79,citation_observation_argument l (use_data_term u) (Payload_Term r)
           (data_list_term (map (\<lambda>d. definition_site_value d) ds)))\<in>positive_meaning root_family_reading_system"
         and range: "rel_ran Q=set ds" using root_family_reading_total[OF l(1) familyL] by blast
@@ -1882,7 +1959,7 @@ proof -
      (79,citation_observation_argument (Pair_Term a0 a1) u r q)\<in>positive_meaning root_family_reading_system \<and>
      (988,Pair_Term (Pair_Term (Pair_Term (Pair_Term a0 a1) (Pair_Term gu gr)) (Pair_Term (Pair_Term a0 a1) k)) k)
        \<in>positive_meaning additions_goals_system))" for z
-    by (rule additions_members_rule[OF additions_goals_families(10)]) simp
+    by (rule additions_members_rule[OF additions_goals_families(10) additions_goals_families(12)]) simp_all
   show ?thesis
   proof
     assume holds: "(989,?z)\<in>positive_meaning additions_goals_system"
@@ -1956,7 +2033,7 @@ proof -
       obtain l where l: "environment_value_presents ?L l"
         "(957,Pair_Term (Pair_Term e (Pair_Term ar br)) l)\<in>positive_meaning extension_package_system"
         using least_environment_complete[OF given rows additions_least_formed[OF additions ff]
-          additions_least_bindings[OF additions] additions_least_artifacts[OF additions] part apart] by blast
+          additions_least_bindings[OF additions] additions_least_artifacts[OF additions] part apart additions ff] by blast
       obtain ds where read: "(79,citation_observation_argument l (use_data_term u) (Payload_Term r)
           (data_list_term (map (\<lambda>d. definition_site_value d) ds)))\<in>positive_meaning root_family_reading_system"
         and range: "rel_ran Q=set ds" using root_family_reading_total[OF l(1) familyL] by blast
@@ -2587,8 +2664,10 @@ text \<open>
   Read for commitment: the views of G1 and G2 and the two callees bind every variable their premises use in their
   heads; the element and list clauses are the notion of additions' and the context list's, read where they were
   installed. The two members clauses hold premise-only witnesses: at a site of an added use the least environment
-  (variable 8), the root family read there (9) and the bound (10); at a site of a given use the root family and the
-  bound. They are the witnesses of 961's added-site clause and 960's bound, handed in by a producer for an admission
+  (variable 8), read beside the view (991, 992) whose clause holds the root family read there (9) and the bound
+  (10); at a site of a given use the root family and the bound. Every premise holding a witness has no other free
+  variable, as W2's registrations need (task 961). They are the witnesses of 961's added-site clause and 960's bound,
+  handed in by a producer for an admission
   and collected for a refusal where the asked program is installed; each of G3 and G4 receives them again, since
   every socket receives the whole pair and nothing else. No socket of these clauses is declared here.
 \<close>
@@ -2600,12 +2679,14 @@ lemma additions_premise_only_variables:
   "schema_variables additions_audit_read_schema=pattern_variables (schema_conclusion additions_audit_read_schema)"
   "schema_variables additions_audit_given_schema=pattern_variables (schema_conclusion additions_audit_given_schema)"
   "schema_variables (additions_members_added_schema ls)-
-    pattern_variables (schema_conclusion (additions_members_added_schema ls))={8,9,10}"
+    pattern_variables (schema_conclusion (additions_members_added_schema ls))={8}"
+  "schema_variables (additions_members_view_schema ls)-
+    pattern_variables (schema_conclusion (additions_members_view_schema ls))={9,10}"
   "schema_variables (additions_members_given_schema ls)-
     pattern_variables (schema_conclusion (additions_members_given_schema ls))={9,10}"
   by (auto simp: schema_variables_def additions_retention_schema_def additions_package_schema_def
     additions_boundary_callee_schema_def additions_audit_read_schema_def additions_audit_given_schema_def
-    additions_members_added_schema_def additions_members_given_schema_def)
+    additions_members_added_schema_def additions_members_given_schema_def additions_members_view_schema_def)
 
 lemma additions_pair_readers_payloads [lineage_payloads]: "system_payloads additions_pair_readers_system\<subseteq>{[]}"
   unfolding additions_pair_readers_system_def by (intro lineage_payload_steps lineage_payloads)
@@ -2640,6 +2721,11 @@ lemma additions_boundary_list_system_payloads [lineage_payloads]:
   by ((intro lineage_payload_steps lineage_payloads)?; auto simp: lineage_payload_simps context_list_clauses_def
     context_list_nil_schema_def context_list_step_schema_def)
 
+lemma additions_boundary_view_system_payloads [lineage_payloads]:
+  "system_payloads additions_boundary_view_system\<subseteq>{[]}"
+  unfolding additions_boundary_view_system_def
+  by ((intro lineage_payload_steps lineage_payloads)?; auto simp: lineage_payload_simps additions_members_view_schema_def)
+
 lemma additions_boundary_system_payloads [lineage_payloads]: "system_payloads additions_boundary_system\<subseteq>{[]}"
   unfolding additions_boundary_system_def
   by ((intro lineage_payload_steps lineage_payloads)?; auto simp: lineage_payload_simps additions_members_clauses_def
@@ -2662,6 +2748,11 @@ lemma additions_audit_list_system_payloads [lineage_payloads]:
   unfolding additions_audit_list_system_def
   by ((intro lineage_payload_steps lineage_payloads)?; auto simp: lineage_payload_simps context_list_clauses_def
     context_list_nil_schema_def context_list_step_schema_def)
+
+lemma additions_audit_view_system_payloads [lineage_payloads]:
+  "system_payloads additions_audit_view_system\<subseteq>{[]}"
+  unfolding additions_audit_view_system_def
+  by ((intro lineage_payload_steps lineage_payloads)?; auto simp: lineage_payload_simps additions_members_view_schema_def)
 
 lemma additions_goals_system_payloads [lineage_payloads]: "system_payloads additions_goals_system\<subseteq>{[]}"
   unfolding additions_goals_system_def

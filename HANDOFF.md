@@ -36,7 +36,9 @@ whose calls are true (#831's section, #880). #547 is not reached by #928 and kee
 collected only where the query search commits at the given's declared sockets). #966 lands the framed index read by
 its priority (q182); the edge query (82's definition reading) stays cut at n=400 at both instances and the lifted
 material test was never called: #986 (continues #966) investigates why and proposes the controls (77/2 refuted, 77/1
-resolved). AX5's brief is rewritten from #986's and #968's results, which guard it until then. #967 (the
+resolved). AX5's brief is rewritten from #968's proposals (its `result.md`, (4)) and #986's result, which guards it.
+#968 found the material goal's waiting test building R1's whole solution set at a ground source (18!·14! at the small
+given's 18-address artifact): its code equation is a fix at the queue's head, before AX5, R7 and GT6. #967 (the
 construction's value once per construction) after #966 and WC3.
 
 **The given's calls, decided once** (#831's section; #496's "77's least bound at the given and at a candidate"): a
@@ -71,8 +73,8 @@ translation into Isabelle and the verification frame (Q18 (a), #947, #950). The 
 and none is extended (#376); their remains are under Open and in `.build/plans/next-edits.md`.
 
 **Shape and order.** No build waits on a review, and no task on an investigation (its tree never lands, so the harness
-would hold the dependent); the dependency goes through the brief's Inputs. Guards kept on purpose: AX5 #962 on #968
-and #986, removed when its brief is rewritten. The longest chain runs from D153 #987, D3a #977 and GT3c #989 through
+would hold the dependent); the dependency goes through the brief's Inputs. A guard kept on purpose: AX5 #962 on #986,
+removed when its brief is rewritten. The longest chain runs from D153 #987, D3a #977 and GT3c #989 through
 D3b2 → D3b3 → GT6 → R7 → #707 → #399 → … → #449 → #450; GT6's hours make the resolver's pole critical, the AX line
 has slack. Nothing is added after the tail until it shortens (the approval build, Open 142, waits); splices before a
 task go at any depth. The queue is the planner's choice, a residual until Q2's native answer: the running tasks with
@@ -290,13 +292,15 @@ re-root trigger, and a probe past its bound above `Factor_Least_Collections`: 23
 
 ## Now
 
-- **Under way**: AX4 #940 (q183 and q184 answered), D3b1m #982, #968 (continuing; #961 has landed). Queued to start:
-  #966 (its import lands), D153 #987, D3a #977, GT3c #989 beside it, then #986 (after #966) and brief AX2d #988
-  (after #940).
+- **Under way**: AX4 #940 (q183 and q184 answered), D3b1m #982, D3a #977 (q185 answered: three restatements on the
+  producing side). Queued to start: the waiting test's fix (#968's (2)) at the head, #966 (its import lands), D153 #987,
+  GT3c #989 beside D3a, then #986 (after #966) and brief AX2d #988 (after #940).
 - **What the next events ask**: D153's decision — an owner question if it changes a notion's definition or the
   language; its builds placed before GT6, D3b2, D3b3 and the remaining fixes kept, rewritten or dropped; GT6's brief
-  rewritten. #986's and #968's results: AX5's brief rewritten, its guards removed, the controls (77/2 refuted, 77/1
-  resolved at the committing instance) placed as a build. AX4's landing: #988 briefs AX2d1 and AX2d2 (AX5 and #948
+  rewritten. #986's result: AX5's brief rewritten with #968's (4), its guard removed, the controls (77/2 refuted, 77/1
+  resolved at the committing instance) placed as a build; the admissions #968 left unresolved at plain parameters
+  (witnessed failures at 5 under 960's and 961's registrations and the l hand-in) judged at the committing instance.
+  AX4's landing: #988 briefs AX2d1 and AX2d2 (AX5 and #948
   re-pointed onto AX2d2 at its placement), then #948 and #949 start, their proposals placed by rewrite. GT3c's
   landing: WC3 carries its forms (mailed). The re-run of #718's 77 and 79 fixtures with review 858's attributions
   (next-edits 364–366) at a measured need.

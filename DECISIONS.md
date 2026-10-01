@@ -19203,7 +19203,13 @@ search keeps its statement.
 - *Statements.* R3–R5, K2, F2a–F2d and GT2–GT3b kept by name and statement. D1b: `deferred_formed` gains the goal
   records' clause and `deferred_formedD` its conclusion; `deferred_bind`'s and `deferred_update`'s definitions restated,
   their lemmas' statements kept; `deferred_update_keys` retired or kept as the list form proved equal at a formed record
-  (the builder's; nothing outside the theory reads it).
+  (the builder's; nothing outside the theory reads it). [Corrected by task 977, as the planner accepted on q185: three
+  of D1b's statements are restated where the writes by difference cannot keep them — `deferred_update`'s last
+  conclusion stated by its lookups (every other number's record unchanged; a record at its own number exists), since a
+  record is now written over the domain's keys rather than recomputed; `deferred_update_fold` with the premise that
+  every goal is formed (`deferred_goal_formed`), which `deferred_formed`'s goal clause supplies; `deferred_node_stale`
+  with the holders clause, every place establishing staleness discharging it. `deferred_update_keys` is retired; no
+  theory outside `Factor_Deferred_Search` read it. Every other statement is kept.]
 - *Control and measurement.* The deferred search's control evaluated again (`Factor_Deferred_Search_Controls`, all
   equal); held, before and after in one hold: the route at the given's 77 at 30, 300 and 350 steps and 77/1 at 200, as
   #905 and #875 ran them, with #875's second hold's split at 300–350 (entry tests, holders, registered moves, records)

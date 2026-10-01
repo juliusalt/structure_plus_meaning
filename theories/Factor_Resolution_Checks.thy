@@ -2590,6 +2590,176 @@ next
     using r t c by blast
 qed
 
+text \<open>
+  The kept state's binding lookup (task 1018, review 1004's follow-up 1): a node entry's bindings read as references of
+  the shared state as it stands, never shared again. Where every binding is a ground reference
+  (@{text shared_ground_bindings}) and no variable has two, the lookup is the functional relation's lookup
+  (@{const finite_relation_option}) with its domain the bound variables; any other node has none
+  (@{text shared_binding_references}). A ground binding projects to the term at its reference and every substitution
+  keeps it, so the lookup reads every node's bindings at a formed shared state (@{text shared_state_reads_bindings_by})
+  and at every deferred committed representation (@{text deferred_committed_reads_bindings}). Two tables one sharing
+  state represents read every reference alike (@{text keyed_state_reference_terms}).
+\<close>
+
+lemma keyed_state_reference_terms:
+  assumes rep: "keyed_state_represents q T" and rep': "keyed_state_represents q T'"
+  shows "reference_term T = reference_term T'"
+proof -
+  obtain M n R where qq: "q = (M,n,R)" by (cases q) auto
+  have "value_reference_read T = value_reference_read T'"
+  proof (rule ext)
+    fix i show "value_reference_read T i = value_reference_read T' i"
+      using rep rep' by (simp add: qq keyed_state_represents_def keyed_table_state_def)
+  qed
+  then show ?thesis by (simp add: reference_term_def)
+qed
+
+definition shared_ground_bindings :: "('a \<times> 'v shared_pattern) fset \<Rightarrow> ('a \<times> nat) fset option" where
+  "shared_ground_bindings A = (if fBall A (\<lambda>z. case snd z of Shared_Ground i \<Rightarrow> True | _ \<Rightarrow> False)
+    then Some (fimage (\<lambda>z. (fst z, case snd z of Shared_Ground i \<Rightarrow> i | _ \<Rightarrow> 0)) A) else None)"
+
+lemma shared_ground_bindings_some:
+  assumes some: "shared_ground_bindings A = Some R"
+  shows "(a,p) |\<in>| A \<Longrightarrow> \<exists>i. p = Shared_Ground i"
+    and "(a,r) |\<in>| R \<longleftrightarrow> (a,Shared_Ground r) |\<in>| A"
+proof -
+  have g: "fBall A (\<lambda>z. case snd z of Shared_Ground i \<Rightarrow> True | _ \<Rightarrow> False)"
+    and R: "R = fimage (\<lambda>z. (fst z, case snd z of Shared_Ground i \<Rightarrow> i | _ \<Rightarrow> 0)) A"
+    using some by (simp_all add: shared_ground_bindings_def split: if_splits)
+  have gr: "\<exists>i. p = Shared_Ground i" if "(a,p) |\<in>| A" for a p
+    using fbspec[OF g that] by (cases p) simp_all
+  show "(a,p) |\<in>| A \<Longrightarrow> \<exists>i. p = Shared_Ground i" by (rule gr)
+  show "(a,r) |\<in>| R \<longleftrightarrow> (a,Shared_Ground r) |\<in>| A"
+  proof
+    assume "(a,r) |\<in>| R"
+    then obtain z where z: "z |\<in>| A" "(a,r) = (fst z, case snd z of Shared_Ground i \<Rightarrow> i | _ \<Rightarrow> 0)"
+      unfolding R by auto
+    obtain i where i: "snd z = Shared_Ground i" using gr[of "fst z" "snd z"] z(1) by auto
+    show "(a,Shared_Ground r) |\<in>| A" using z i by (cases z) auto
+  next
+    assume a: "(a,Shared_Ground r) |\<in>| A"
+    show "(a,r) |\<in>| R" unfolding R
+      using fimageI[OF a, of "\<lambda>z. (fst z, case snd z of Shared_Ground i \<Rightarrow> i | _ \<Rightarrow> 0)"] by simp
+  qed
+qed
+
+definition shared_binding_references ::
+    "('a,'s::linorder,'d,'c) shared_state \<Rightarrow> 's list \<Rightarrow> (('a \<Rightarrow> nat option) \<times> 'a fset) option" where
+  "shared_binding_references s q = (case RBT.lookup (shared_nodes s) q of None \<Rightarrow> None
+    | Some hn \<Rightarrow> (case shared_ground_bindings (shared_derivation_bindings (shared_entry_node hn)) of None \<Rightarrow> None
+      | Some R \<Rightarrow> if finite_relation_functional R then Some (finite_relation_option R, fimage fst R) else None))"
+
+lemma shared_binding_references_read:
+  assumes formed: "shared_state_formed \<kappa> P s" and q: "RBT.lookup (shared_nodes s) q = Some hn"
+    and B: "shared_binding_references s q = Some B"
+    and g: "\<And>u. g (finite_exact_term_pattern u) = finite_exact_term_pattern u"
+  shows "finite_bindings_read (shared_state_table s) B
+    (fimage (\<lambda>z. (fst z, finite_residual_term (g (shared_pattern_project (shared_state_table s) (snd z)))))
+      (shared_derivation_bindings (shared_entry_node hn)))"
+proof -
+  let ?T = "shared_state_table s" and ?A = "shared_derivation_bindings (shared_entry_node hn)"
+  let ?f = "\<lambda>z. (fst z, finite_residual_term (g (shared_pattern_project (shared_state_table s) (snd z))))"
+  obtain R where R: "shared_ground_bindings ?A = Some R" and fR: "finite_relation_functional R"
+    and BR: "B = (finite_relation_option R, fimage fst R)"
+    using B q by (auto simp: shared_binding_references_def split: option.splits if_splits)
+  have nf: "node_entry_formed ?T q hn" using formed q by (auto simp: shared_state_formed_def)
+  have tf: "table_formed ?T" using formed by (simp add: shared_state_formed_def share_state_formed_def)
+  have dec: "\<exists>u. reference_term ?T r = Some u" if a: "(a,Shared_Ground r) |\<in>| ?A" for a r
+  proof -
+    have "shared_pattern_formed ?T (Shared_Ground r)"
+      using nf a by (force simp: node_entry_formed_def shared_derivation_formed_def)
+    then show ?thesis using table_formed_decodes[OF tf] by simp
+  qed
+  have look: "fst B a = Some r \<longleftrightarrow> (a,Shared_Ground r) |\<in>| ?A" for a r
+    using finite_relation_option_correct[OF fR, of a r] shared_ground_bindings_some(2)[OF R, of a r] BR by simp
+  have proj: "finite_residual_term (g (shared_pattern_project ?T (Shared_Ground r))) = u"
+    if "reference_term ?T r = Some u" for r u using that g by simp
+  have dom: "a |\<in>| snd B \<longleftrightarrow> fst B a \<noteq> None" for a
+  proof -
+    have "a |\<in>| fimage fst R \<longleftrightarrow> (\<exists>r. (a,r) |\<in>| R)" by force
+    moreover have "finite_relation_option R a \<noteq> None \<longleftrightarrow> (\<exists>r. (a,r) |\<in>| R)"
+      using finite_relation_option_correct[OF fR, of a] by (cases "finite_relation_option R a") auto
+    ultimately show ?thesis using BR by simp
+  qed
+  have mem: "(a,x) |\<in>| fimage ?f ?A \<longleftrightarrow> (\<exists>r. fst B a = Some r \<and> reference_term ?T r = Some x)" for a x
+  proof
+    assume "(a,x) |\<in>| fimage ?f ?A"
+    then obtain z where z: "z |\<in>| ?A" "(a,x) = ?f z" by blast
+    obtain p where zp: "z = (a,p)" "x = finite_residual_term (g (shared_pattern_project ?T p))" using z(2) by (cases z) simp
+    obtain r where r: "p = Shared_Ground r" using shared_ground_bindings_some(1)[OF R] z(1) zp(1) by blast
+    obtain u where u: "reference_term ?T r = Some u" using dec z(1) zp(1) r by blast
+    show "\<exists>r. fst B a = Some r \<and> reference_term ?T r = Some x" using look z(1) zp r u proj[OF u] by auto
+  next
+    assume "\<exists>r. fst B a = Some r \<and> reference_term ?T r = Some x"
+    then obtain r where r: "(a,Shared_Ground r) |\<in>| ?A" "reference_term ?T r = Some x" using look by blast
+    show "(a,x) |\<in>| fimage ?f ?A" using fimageI[OF r(1), of ?f] proj[OF r(2)] by simp
+  qed
+  show ?thesis unfolding finite_bindings_read_def using look dec dom mem by blast
+qed
+
+lemma shared_state_reads_bindings_by:
+  assumes formed: "shared_state_formed \<kappa> P s"
+    and g: "\<And>u. g (finite_exact_term_pattern u) = finite_exact_term_pattern u"
+    and h: "\<And>m. resolution_node_position (h m) = resolution_node_position m \<and>
+      resolution_node_bindings (h m) = fimage (\<lambda>z. (fst z, g (snd z))) (resolution_node_bindings m)"
+    and N: "\<And>m'. m' |\<in>| N \<Longrightarrow> \<exists>m. m |\<in>| resolution_nodes (shared_state_project s) \<and> m' = h m"
+  shows "finite_reads_bindings (shared_binding_references s) (shared_sharing s) N"
+  unfolding finite_reads_bindings_def
+proof (intro allI impI)
+  fix T m' B
+  assume rep: "keyed_state_represents (shared_sharing s) T" and m': "m' |\<in>| N"
+    and B: "shared_binding_references s (resolution_node_position m') = Some B"
+  let ?T = "shared_state_table s"
+  have rep0: "keyed_state_represents (shared_sharing s) ?T"
+    using formed by (simp add: shared_state_formed_def share_state_formed_def)
+  have same: "reference_term T = reference_term ?T" by (rule keyed_state_reference_terms[OF rep rep0])
+  obtain m where m: "m |\<in>| resolution_nodes (shared_state_project s)" and mm: "m' = h m" using N[OF m'] by blast
+  obtain hn where hn: "hn |\<in>| tree_values (shared_nodes s)"
+    and mh: "m = shared_derivation_project ?T (shared_entry_node hn)"
+    using m by (auto simp: shared_state_project_fields)
+  obtain q where q: "RBT.lookup (shared_nodes s) q = Some hn" using hn by (auto simp: tree_values_member)
+  have nf: "node_entry_formed ?T q hn" using formed q by (auto simp: shared_state_formed_def)
+  have p': "resolution_node_position m' = resolution_node_position m" using h[of m] mm by simp
+  have pos: "resolution_node_position m' = q" using nf mh p'
+    by (simp add: node_entry_formed_def shared_derivation_project_def read_derivation_project_def)
+  have vals: "finite_node_values m' = fimage (\<lambda>z. (fst z, finite_residual_term (g (shared_pattern_project ?T (snd z)))))
+      (shared_derivation_bindings (shared_entry_node hn))"
+    using h[of m] mh mm by (simp add: finite_node_values_def shared_derivation_project_simps fset.map_comp comp_def split_def)
+  have "finite_bindings_read ?T B (finite_node_values m')"
+    unfolding vals by (rule shared_binding_references_read[OF formed q B[unfolded pos] g])
+  then show "finite_bindings_read T B (finite_node_values m')"
+    by (simp add: finite_bindings_read_def same)
+qed
+
+lemma deferred_committed_reads_bindings:
+  assumes formed: "deferred_committed_formed \<kappa> P s"
+  shows "finite_reads_bindings (shared_binding_references (search_state (committed_inner s)))
+    (shared_sharing (search_state (committed_inner s))) (resolution_nodes (deferred_committed_project s))"
+proof (cases s)
+  case (Inr r)
+  have f: "shared_state_formed \<kappa> P (search_state r)" using formed Inr by (simp add: search_formed_def)
+  have "finite_reads_bindings (shared_binding_references (search_state r)) (shared_sharing (search_state r))
+      (resolution_nodes (shared_state_project (search_state r)))"
+    by (rule shared_state_reads_bindings_by[OF f, where g="\<lambda>p. p" and h="\<lambda>m. m"]) simp_all
+  then show ?thesis using Inr by simp
+next
+  case (Inl d)
+  let ?s = "search_state (deferred_inner d)"
+  let ?\<sigma> = "deferred_substitution d"
+  have f: "shared_state_formed \<kappa> P ?s" using formed Inl
+    by (simp add: deferred_formed_def deferred_parts_formed_def search_formed_def)
+  have h: "resolution_node_position (resolution_node_substitute ?\<sigma> m) = resolution_node_position m \<and>
+      resolution_node_bindings (resolution_node_substitute ?\<sigma> m) =
+        fimage (\<lambda>z. (fst z, finite_pattern_substitute ?\<sigma> (snd z))) (resolution_node_bindings m)" for m
+    by (cases m) (simp add: split_def)
+  have N: "\<exists>m. m |\<in>| resolution_nodes (shared_state_project ?s) \<and> m' = resolution_node_substitute ?\<sigma> m"
+    if "m' |\<in>| resolution_nodes (deferred_project d)" for m'
+    using that by (auto simp: deferred_project_def resolution_state_substitute_def)
+  have "finite_reads_bindings (shared_binding_references ?s) (shared_sharing ?s) (resolution_nodes (deferred_project d))"
+    by (rule shared_state_reads_bindings_by[OF f finite_exact_term_pattern_substitute h N])
+  then show ?thesis unfolding Inl committed_inner.simps deferred_committed_project.simps .
+qed
+
 definition moded_deferred_route_keeping_in ::
     "(('d\<times>finite_factor_term)\<times>('a,'s,'c) finite_schema_proof) list \<Rightarrow>
       ('a,'s::linorder,'d,'c) finite_witness_construction \<Rightarrow> ('a,'s,'d,'c) finite_schema_system \<Rightarrow>
@@ -2660,6 +2830,18 @@ proof -
   then show ?thesis using deferred_committed_reads_calls[of \<kappa> P "snd y"] by (simp add: deferred_raised_in_def)
 qed
 
+corollary moded_deferred_route_keeping_in_binds:
+  assumes sock: "clause_sockets_distinct P"
+    and y: "y |\<in>| represented_found (moded_deferred_route_keeping_in es \<kappa> P D Dm M (access_narrowed_commitment P m D \<Phi>)
+      (finite_declared_raisers P (resolution_declarations.truncate D)) F0 d t n)"
+  shows "finite_reads_bindings (shared_binding_references (search_state (committed_inner (snd y))))
+    (shared_sharing (search_state (committed_inner (snd y)))) (resolution_nodes (fst y))"
+proof -
+  have "deferred_raised_in \<kappa> P (map fst es) (snd y) \<and> deferred_committed_project (snd y) = fst y"
+    by (rule moded_deferred_route_keeping_in_formed[OF sock y])
+  then show ?thesis using deferred_committed_reads_bindings[of \<kappa> P "snd y"] by (simp add: deferred_raised_in_def)
+qed
+
 lemma fBex_fimage_iff: "fBex (fimage f A) Q \<longleftrightarrow> fBex A (\<lambda>x. Q (f x))"
   including fset.lifting by transfer auto
 
@@ -2668,10 +2850,11 @@ lemma fBex_member_cong: "(\<And>x. x |\<in>| A \<Longrightarrow> Q x \<longleftr
 
 text \<open>
   The route constants read the kept states (task 1003): at a program whose clause sockets are distinct, the graph
-  truth and the graph verdicts of the check search at a listed table read each found state's calls from the
-  representation the search kept it at (@{const finite_read_graph_true_in}, @{const finite_read_graph_verdicts_in}),
-  equal to C's at the found state (@{text finite_read_graph_true_in_exact}, @{text finite_read_graph_verdicts_in_exact});
-  the constants' meaning is unchanged.
+  truth and the graph verdicts of the check search at a listed table read each found state's calls, and since task
+  1018 its nodes' bindings (@{const shared_binding_references}), from the representation the search kept it at
+  (@{const finite_bound_graph_true_in}, @{const finite_bound_graph_verdicts_in}), so a node whose bindings are ground
+  references is checked over references, equal to C's at the found state (@{text finite_bound_graph_true_in_exact},
+  @{text finite_bound_graph_verdicts_in_exact}); the constants' meaning is unchanged.
 \<close>
 
 declare moded_check_graph_true_listed_code [code del] moded_check_graph_verdicts_listed_code [code del]
@@ -2680,7 +2863,8 @@ lemma moded_check_graph_true_listed_kept [code]:
   "moded_check_graph_true_listed es \<kappa> P m D \<Phi> Dm M d t n = (if clause_sockets_distinct P
     then fBex (represented_found (moded_deferred_route_keeping_in es \<kappa> P D Dm M (access_narrowed_commitment P m D \<Phi>)
         (finite_declared_raisers P (resolution_declarations.truncate D)) (Some []) d t n))
-      (\<lambda>y. finite_read_graph_true_in (listed_table es) P d t (shared_call_references (search_state (committed_inner (snd y))))
+      (\<lambda>y. finite_bound_graph_true_in (listed_table es) P d t (shared_call_references (search_state (committed_inner (snd y))))
+        (shared_binding_references (search_state (committed_inner (snd y))))
         (shared_sharing (search_state (committed_inner (snd y)))) (fst y))
     else fBex (resolution_found (moded_deferred_route_search_in es \<kappa> P m D \<Phi> Dm M (access_narrowed_commitment P m D \<Phi>)
         (finite_declared_raisers P (resolution_declarations.truncate D)) (clause_sockets_distinct P) (Some []) d t n))
@@ -2698,18 +2882,20 @@ next
     using arg_cong[OF moded_deferred_route_keeping_in_project[of es \<kappa> P D Dm M "access_narrowed_commitment P m D \<Phi>"
       "finite_declared_raisers P (resolution_declarations.truncate D)" "Some []" d t n m \<Phi>], of resolution_found] True
     by simp
-  have r: "finite_read_graph_true_in (listed_table es) P d t (shared_call_references (search_state (committed_inner (snd y))))
+  have r: "finite_bound_graph_true_in (listed_table es) P d t (shared_call_references (search_state (committed_inner (snd y))))
+      (shared_binding_references (search_state (committed_inner (snd y))))
       (shared_sharing (search_state (committed_inner (snd y)))) (fst y) = finite_state_graph_true_in (listed_table es) P d t (fst y)"
     if "y |\<in>| represented_found ?K" for y
-    by (rule finite_read_graph_true_in_exact[OF moded_deferred_route_keeping_in_reads[OF True that]])
+    by (rule finite_bound_graph_true_in_exact[OF moded_deferred_route_keeping_in_reads[OF True that] moded_deferred_route_keeping_in_binds[OF True that]])
   show ?thesis unfolding moded_check_graph_true_listed_code p fBex_fimage_iff if_P[OF True]
     by (rule fBex_member_cong) (simp only: r)
 qed
 
 lemma moded_check_graph_verdicts_listed_kept [code]:
   "moded_check_graph_verdicts_listed es \<kappa> P m D \<Phi> Dm M d t n = (if clause_sockets_distinct P
-    then ffUnion (fimage (\<lambda>y. finite_read_graph_verdicts_in (listed_table es) P d t
+    then ffUnion (fimage (\<lambda>y. finite_bound_graph_verdicts_in (listed_table es) P d t
         (shared_call_references (search_state (committed_inner (snd y))))
+        (shared_binding_references (search_state (committed_inner (snd y))))
         (shared_sharing (search_state (committed_inner (snd y)))) (fst y))
       (represented_found (moded_deferred_route_keeping_in es \<kappa> P D Dm M (access_narrowed_commitment P m D \<Phi>)
         (finite_declared_raisers P (resolution_declarations.truncate D)) (Some []) d t n)))
@@ -2729,12 +2915,14 @@ next
     using arg_cong[OF moded_deferred_route_keeping_in_project[of es \<kappa> P D Dm M "access_narrowed_commitment P m D \<Phi>"
       "finite_declared_raisers P (resolution_declarations.truncate D)" "Some []" d t n m \<Phi>], of resolution_found] True
     by simp
-  have r: "finite_read_graph_verdicts_in (listed_table es) P d t (shared_call_references (search_state (committed_inner (snd y))))
+  have r: "finite_bound_graph_verdicts_in (listed_table es) P d t (shared_call_references (search_state (committed_inner (snd y))))
+      (shared_binding_references (search_state (committed_inner (snd y))))
       (shared_sharing (search_state (committed_inner (snd y)))) (fst y) = finite_state_graph_verdicts_in (listed_table es) P d t (fst y)"
     if "y |\<in>| represented_found ?K" for y
-    by (rule finite_read_graph_verdicts_in_exact[OF moded_deferred_route_keeping_in_reads[OF True that]])
-  have "fimage (\<lambda>y. finite_read_graph_verdicts_in (listed_table es) P d t
+    by (rule finite_bound_graph_verdicts_in_exact[OF moded_deferred_route_keeping_in_reads[OF True that] moded_deferred_route_keeping_in_binds[OF True that]])
+  have "fimage (\<lambda>y. finite_bound_graph_verdicts_in (listed_table es) P d t
         (shared_call_references (search_state (committed_inner (snd y))))
+        (shared_binding_references (search_state (committed_inner (snd y))))
         (shared_sharing (search_state (committed_inner (snd y)))) (fst y)) (represented_found ?K) =
       fimage (finite_state_graph_verdicts_in (listed_table es) P d t) (fimage fst (represented_found ?K))"
     unfolding fset.map_comp comp_def by (rule fset.map_cong0) (simp only: r)
@@ -2776,8 +2964,9 @@ text \<open>
   (@{text moded_demand_graph_true_in_true}) and equal at two tables of the same calls
   (@{text moded_demand_graph_true_in_calls}), and the native form, the two together at a native program as the native
   check form pairs its results and its demand (@{text native_moded_graph_verdicts_in}). Each at a listed table has its
-  code equation through the route's search (@{text moded_check_graph_verdicts_listed_code},
-  @{text moded_check_graph_true_listed_code}).
+  code equation through the route's search keeping its found states (@{text moded_check_graph_verdicts_listed_kept},
+  @{text moded_check_graph_true_listed_kept}, in effect since task 1003 in place of the route's search's
+  @{text moded_check_graph_verdicts_listed_code} and @{text moded_check_graph_true_listed_code}).
 \<close>
 
 definition moded_demand_graph_verdicts_in where

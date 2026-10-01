@@ -89,7 +89,7 @@ dependency goes through the brief's Inputs, but for the guard AX5 #962 on #1000,
 The longest chain runs D3b2 #979 → #1010 → D3b3 → F-b1 #1014 → F-b2 #1016 → GT6 → R7 → #707 → #399 → … → #449 → #450; GT6's hours make the resolver's
 pole critical, the AX line has slack. Nothing is added after the tail until it shortens (the approval build, Open 142,
 waits); splices before a task go at any depth. The queue, the planner's choice and a residual until Q2's native
-answer: the pole (M2, D3b2 #979 and #1010, #1007, #1018, D3b3, F-a #1012, F-b1 #1014, F-b2 #1016, WC3, GT6), #1008, #1009 and #1000 beside it, the briefs
+answer: the pole (M2, D3b2 #979 and #1010, #1018, D3b3, F-a #1012, F-b1 #1014, F-b2 #1016, WC3, GT6), #1008, #1009 and #1000 beside it, the briefs
 (#988, #948), the AX line, the route in its chains' order, each review after its build; #887 after R7's review.
 
 ## Decisions
@@ -311,8 +311,7 @@ owner's re-root trigger, and a probe past its bound above `Factor_Least_Collecti
 ## Now
 
 - **Under way**: M2 #998; D3b2's plain side #979 (continuing in its tree), then its committed side #1010; #1018 (C's
-  binding lookup over #1003's kept states, measured at 11; before GT6); #1007 (review 1001's follow-ups,
-  before GT6); #1019 (GT6's environment level: the courses measured). #1002 and #1003 landed (`521bd3b2`, `e5f48639`). The
+  binding lookup over #1003's kept states, measured at 11; before GT6); #1019 (GT6's environment level: the courses measured). #1002, #1003 and #1007 landed (`521bd3b2`, `e5f48639`, `155f8081`). The
   owner closed Q26 (2026-10-01).
 - **What the next events ask**: #1019's result: a design of GT6's environment level (its state count) placed before
   GT6, GT6 waiting on it; Q35's answer (if no, F4 replaces M1 and M2);

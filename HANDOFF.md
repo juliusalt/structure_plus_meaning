@@ -41,7 +41,7 @@ and keeps its brief.
 **The given's calls, decided once** (#831's section; #496's "77's least bound at the given and at a candidate"): a
 table of certified ground calls every judgment's search closes, its validity checked once over graphs and retained; a
 candidate's part is its additions. Landed through VK2 #924 (`Development_Given_Query_Parameters`, the given's
-committing instance) and #953. Open: #956 (the carried record's code, handed over as it stands) → #966 (the record
+committing instance), #953 and #956 (`4cbb135c`, the carried record's code). Open: #966 (the record
 tabulated once per record; 77 refused and resolved at the committing instance, q178's first test; whether a query
 meets a root-held committable goal, on which task 918's answer 4 waits) → AX5 #962; #967 (the construction's value
 once per construction, after #966 and WC3 #916) → R7 #542; GT3 #876 (the table at the plain searches) → GT3b #970 (the
@@ -75,7 +75,7 @@ and none is extended (#376); their remains are under Open and in `.build/plans/n
 #878 → R7, deeper once D3's builds are spliced; GT6's hours make the resolver's pole critical, the AX line has slack. Nothing is added after the tail until it
 shortens (the approval build, Open 142, waits for that); splices before a task go at any depth. The queue is the
 planner's choice, a residual until the selection problem's native answer (Q2): the running tasks with their reviews,
-the pole (GT3 → GT3b → WC3, D3 #969, #965 → GT6), the AX line (#956, #968, #966, #961, #940, #962), the rewrite briefs, then the
+the pole (GT3 → GT3b → WC3, D3 #969, #965 → GT6), the AX line (#968, #966, #961, #940, #962), the rewrite briefs, then the
 route in its chains' order, each review after its build; #887 after R7's review. Word changes are serialized; none is
 queued.
 
@@ -299,7 +299,7 @@ re-root trigger, and a probe past its bound above `Factor_Least_Collections`: 23
 ## Now
 
 - **Under way**: GT3 #876; AX2c #961 (q180 answered: both edits of the guard's program its own, main brought in since
-  #938 landed); startable: D3 #969, #965, #956 (re-planned to hand over its code; #966 runs its controls), #968; GT3b #970 continues
+  #938 landed); startable: D3 #969, #965, #966 (the carried record tabulated, then VK2's controls), #968; GT3b #970 continues
   #876 after it lands (q181).
 - **What the next events ask**: Q34's answer; D3's decision and build rows (spliced after WC3, before GT6); #965's call
   mix (how much GT6 gains from D3's builds rests on its share past 300 steps); #968's attribution, from which AX5's

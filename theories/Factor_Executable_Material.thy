@@ -2,51 +2,131 @@ theory Factor_Executable_Material
   imports Factor_Executable_Terms Factor_Finite_Artifact_Enumeration
 begin
 
-section \<open>Reading the actual enumeration terms\<close>
+section \<open>Reading a list over its terminator\<close>
 
-fun finite_enumeration_read ::
-  "(finite_factor_term \<Rightarrow> 'a option) \<Rightarrow> finite_factor_term \<Rightarrow> 'a list option" where
-  "finite_enumeration_read read (Finite_Target t) =
-    (case t of Finite_Whole C \<Rightarrow> if C=finite_empty_artifact then Some [] else None
-      | _ \<Rightarrow> None)"
-| "finite_enumeration_read read (Finite_Payload v) = None"
-| "finite_enumeration_read read (Finite_Pair x xs) =
+text \<open>
+  A list term pairs its entries in order before a terminator leaf. Its reader takes the terminator as a
+  parameter: the terminator reads the empty list, any other leaf has no reading, and a pair reads its entry
+  and then the rest. A material field's enumeration is this reader at the empty artifact's whole target, a
+  data list at the empty payload: one reader, at each list notion's terminator.
+\<close>
+
+fun finite_list_read ::
+  "finite_factor_term \<Rightarrow> (finite_factor_term \<Rightarrow> 'a option) \<Rightarrow> finite_factor_term \<Rightarrow> 'a list option" where
+  "finite_list_read z read (Finite_Target t) = (if Finite_Target t = z then Some [] else None)"
+| "finite_list_read z read (Finite_Payload v) = (if Finite_Payload v = z then Some [] else None)"
+| "finite_list_read z read (Finite_Pair x xs) =
     (case read x of None \<Rightarrow> None
-      | Some a \<Rightarrow> map_option (Cons a) (finite_enumeration_read read xs))"
+      | Some a \<Rightarrow> map_option (Cons a) (finite_list_read z read xs))"
+
+lemma finite_list_read_correct:
+  fixes read :: "finite_factor_term \<Rightarrow> 'a option" and make :: "'a \<Rightarrow> factor_term"
+    and mk_list :: "factor_term list \<Rightarrow> factor_term"
+  assumes reads: "\<And>t a. read t = Some a \<longleftrightarrow> decode_finite_term t = make a"
+    and leaf: "\<And>x y. z \<noteq> Finite_Pair x y"
+    and nil: "mk_list [] = decode_finite_term z"
+    and cons: "\<And>u us. mk_list (u#us) = Pair_Term u (mk_list us)"
+  shows "finite_list_read z read t = Some xs \<longleftrightarrow> decode_finite_term t = mk_list (map make xs)"
+proof (induction t arbitrary: xs)
+  case (Finite_Target u)
+  show ?case
+  proof (cases xs)
+    case Nil
+    have "decode_finite_term (Finite_Target u) = mk_list (map make xs) \<longleftrightarrow> Finite_Target u = z"
+      by (simp only: Nil list.map nil decode_finite_term_injective)
+    then show ?thesis by (simp add: Nil)
+  next
+    case (Cons a as)
+    then show ?thesis by (simp add: cons)
+  qed
+next
+  case (Finite_Payload v)
+  show ?case
+  proof (cases xs)
+    case Nil
+    have "decode_finite_term (Finite_Payload v) = mk_list (map make xs) \<longleftrightarrow> Finite_Payload v = z"
+      by (simp only: Nil list.map nil decode_finite_term_injective)
+    then show ?thesis by (simp add: Nil)
+  next
+    case (Cons a as)
+    then show ?thesis by (simp add: cons)
+  qed
+next
+  case (Finite_Pair x tail)
+  have nil_read: "finite_list_read z read (Finite_Pair x tail) \<noteq> Some []"
+    by (cases "read x"; cases "finite_list_read z read tail") auto
+  have cons_read: "finite_list_read z read (Finite_Pair x tail) = Some (a#as) \<longleftrightarrow>
+    read x = Some a \<and> finite_list_read z read tail = Some as" for a as
+    by (cases "read x"; cases "finite_list_read z read tail") auto
+  show ?case
+  proof (cases xs)
+    case Nil
+    have "Finite_Pair x tail \<noteq> z" using leaf[of x tail] by auto
+    then have "decode_finite_term (Finite_Pair x tail) \<noteq> mk_list (map make xs)"
+      by (simp only: Nil list.map nil decode_finite_term_injective not_False_eq_True)
+    then show ?thesis using nil_read Nil by simp
+  next
+    case (Cons a as)
+    have parse: "finite_list_read z read (Finite_Pair x tail) = Some xs \<longleftrightarrow>
+      read x = Some a \<and> finite_list_read z read tail = Some as"
+      by (simp only: Cons cons_read)
+    have encoded: "decode_finite_term (Finite_Pair x tail) = mk_list (map make xs) \<longleftrightarrow>
+      decode_finite_term x = make a \<and> decode_finite_term tail = mk_list (map make as)"
+      by (simp add: Cons cons)
+    show ?thesis by (simp only: parse encoded reads Finite_Pair.IH(2))
+  qed
+qed
+
+lemma finite_list_read_term:
+  assumes reads: "\<And>x. rd (mk x) = Some x" and leaf: "\<And>x y. z \<noteq> Finite_Pair x y"
+  shows "finite_list_read z rd (foldr Finite_Pair (map mk xs) z) = Some xs"
+proof (induction xs)
+  case Nil
+  show ?case using leaf by (cases z) auto
+next
+  case (Cons x xs)
+  then show ?case by (simp add: reads)
+qed
+
+lemma finite_list_read_injective:
+  assumes inj: "\<And>u u' x. rd u = Some x \<Longrightarrow> rd u' = Some x \<Longrightarrow> u = u'"
+  shows "finite_list_read z rd t = Some xs \<Longrightarrow> finite_list_read z rd t' = Some xs \<Longrightarrow> t = t'"
+proof (induction t arbitrary: t' xs)
+  case (Finite_Target x)
+  then show ?case by (cases t') (auto split: if_splits option.splits)
+next
+  case (Finite_Payload v)
+  then show ?case by (cases t') (auto split: if_splits option.splits)
+next
+  case (Finite_Pair u w)
+  from Finite_Pair.prems(1) obtain y ys where ru: "rd u = Some y"
+    and rw: "finite_list_read z rd w = Some ys" and xs: "xs = y#ys"
+    by (auto split: option.splits)
+  from Finite_Pair.prems(2) xs obtain u' w' where t': "t' = Finite_Pair u' w'" and ru': "rd u' = Some y"
+    and rw': "finite_list_read z rd w' = Some ys"
+    by (cases t') (auto split: if_splits option.splits)
+  show ?case using inj[OF ru ru'] Finite_Pair.IH(2)[OF rw rw'] t' by simp
+qed
+
+text \<open>The enumeration of a material field and a data list are the reader at their terminators.\<close>
+
+abbreviation finite_enumeration_read ::
+  "(finite_factor_term \<Rightarrow> 'a option) \<Rightarrow> finite_factor_term \<Rightarrow> 'a list option" where
+  "finite_enumeration_read \<equiv> finite_list_read (Finite_Target (Finite_Whole finite_empty_artifact))"
 
 lemma finite_enumeration_read_correct:
   fixes read :: "finite_factor_term \<Rightarrow> 'a option" and make :: "'a \<Rightarrow> factor_term"
   assumes reads: "\<And>t a. read t = Some a \<longleftrightarrow> decode_finite_term t = make a"
   shows "finite_enumeration_read read t = Some xs \<longleftrightarrow>
     decode_finite_term t = enumeration_term (map make xs)"
-proof (induction t arbitrary: xs)
-  case (Finite_Target t)
-  then show ?case by (cases t; cases xs) auto
-next
-  case (Finite_Payload v)
-  then show ?case by (cases xs) auto
-next
-  case (Finite_Pair x tail)
-  have nil: "finite_enumeration_read read (Finite_Pair x tail) \<noteq> Some []"
-    by (cases "read x"; cases "finite_enumeration_read read tail") auto
-  have cons: "finite_enumeration_read read (Finite_Pair x tail) = Some (a#as) \<longleftrightarrow>
-    read x = Some a \<and> finite_enumeration_read read tail = Some as" for a as
-    by (cases "read x"; cases "finite_enumeration_read read tail") auto
-  show ?case
-  proof (cases xs)
-    case Nil
-    then show ?thesis using nil by simp
-  next
-    case (Cons a as)
-    have parse: "finite_enumeration_read read (Finite_Pair x tail) = Some xs \<longleftrightarrow>
-      read x = Some a \<and> finite_enumeration_read read tail = Some as"
-      by (simp only: Cons cons)
-    have encoded: "decode_finite_term (Finite_Pair x tail) = enumeration_term (map make xs) \<longleftrightarrow>
-      decode_finite_term x = make a \<and> decode_finite_term tail = enumeration_term (map make as)"
-      by (simp add: Cons)
-    show ?thesis by (simp only: parse encoded reads Finite_Pair.IH(2))
-  qed
-qed
+  by (rule finite_list_read_correct[where mk_list=enumeration_term, OF reads]) simp_all
+
+lemma finite_list_read_data_correct:
+  fixes read :: "finite_factor_term \<Rightarrow> 'a option" and make :: "'a \<Rightarrow> factor_term"
+  assumes reads: "\<And>t a. read t = Some a \<longleftrightarrow> decode_finite_term t = make a"
+  shows "finite_list_read (Finite_Payload []) read t = Some xs \<longleftrightarrow>
+    decode_finite_term t = data_list_term (map make xs)"
+  by (rule finite_list_read_correct[where mk_list=data_list_term, OF reads]) simp_all
 
 fun finite_occurrence_read ::
   "finite_exact_artifact \<Rightarrow> finite_factor_term \<Rightarrow> local_address option" where

@@ -21661,6 +21661,9 @@ theory changes.
   (#831); the per-judgment part is the added rows' 11s, which (c) leaves as a judgment's largest part.
 - *Disposition.* A notion change: the planner's, not this decision's. Recommended not before GT6 and R7; its trigger R7's
   control candidate, if the added rows' 11s make a judgment unaffordable, or GT6's measured production unplaceable.
+  [Taken by task 987, provisionally (an owner question): #972 found GT6's production unplaceable without it — the
+  form (i), its builds and the fixes that remain are the entry "The material premise observes an artifact's incidence
+  and attachments as its data class presents them: …".]
 
 **(b) 26's key uniqueness over a sorted presentation: not taken.**
 - 26 (`environment_admission_schema`) checks unique use keys and unique source-slot keys through 21
@@ -22148,3 +22151,237 @@ What is decided.
 
 Limits. The table is shared and indexed once a search (once a call), not once a demand; the framed index is once a
 call and once a demand, as before. The bottom-up table at #830's fixtures is GT6's.
+
+## The material premise observes an artifact's incidence and attachments as its data class presents them: its atoms keep each address beside its anchor, and artifact admission is linear
+
+Task 987, a design (Open 153), triggered by #972's attribution (`.build/tasks/972/result.md`, `measurement.md`): 11 at
+large k runs in two phases — A, 0's walk building 10's atoms field V1, ≈ 1,190 s once at k = 621; B, ≈ 5.2 k² states (9
+converting the incidence and attachment fields, 8 walking V1 at every leaf) at 0.44, 2.4 and 16 ms a state at k = 23, 66
+and 151 — and no representation fix brings B near 1 ms at k ≥ 250: with D3a, ordered persistent sets and the collapse,
+GT6's 11 is ≈ 40,000 s CPU, its largest call ≈ 5,000 s. Inputs besides: #965 (GT6's calls: 165 artifacts, k ≤ 621,
+Σ k² = 4.74 M; 11's S(k) = 5.233 k² + 16.4 k − 9.6, 25.1 M states), #973 (the given's deep-route chain: 9's three call
+goals and 10's material premise), #928's (a) (the argument and the disposition marked above), #831's section, the
+entries "Complete material equations and direct opaque values", "Artifact admission derives from complete observed
+material" and "A program's payload literals are the octets it reads"; the owner's answer to Q33. No theory changes.
+
+**What is decided.**
+- *The form (F1).* `Factor_Material_Observation.material_observation` states its incidence, counted and functional fields
+  in address form, as the artifact's data class presents them: `edges = data_list_term (map incidence_data E)`,
+  `counts = data_list_term (map address_pair_data B)`, `functions = data_list_term (map address_pair_data F)` — the three
+  relational fields of `Factor_Artifact_Values.artifact_data_term` for the same enumeration, one construction (the three
+  term constructions move below the observation; nothing is copied). The atoms field is unchanged,
+  `enumeration_term (map (atom_term R) A)`: each address payload beside its occurrence anchor, the one bridge from an
+  occurrence anchor to its address (1, 8 and 45 read it). The source, the premise kind, the five-field material record
+  and its native syntax are unchanged.
+- *10 over the data's own fields.* `artifact_projection_schema` becomes: conclusion
+  `Pair V0 (Pair V5 (Pair V2 (Pair V3 V4)))`, one call premise `(0,0,Pair V1 V5)` (the carrier projection), the material
+  premise `(4,artifact_projection_material)` as it is — no 9, no 8. 11 at an artifact of k addresses is then 0's walk
+  over the carrier (k + 1 states) and the material premise solved from its ground skeleton by R1 (the atoms' addresses
+  from the walk, the relational fields ground from the data): ≈ k + 5 states instead of ≈ 5.2 k².
+- *Its standing.* It changes the definition of the Factor language's material premise, which is the owner's: decided
+  provisionally and put to the owner ("What is the owner's", below); the builds proceed on it. If the owner declines, the
+  course is F4, an implementation of 11 that changes no notion.
+
+**Why the join is the cost, and why F1 removes it.** The observation states incidence and attachments over occurrence
+anchors; the data class over address payloads; 10 joins the two through the atoms field, each of the ≈ 3|E| + |B| + |F|
+leaves an equality walk over the carrier rows (8). A payload and a target are leaves, matched whole or against a
+literal, and two a program does not state are indistinguishable to it
+(`Factor_Positive_Parametricity.positive_meaning_unlisted_payloads`, `_targets`), so over these presentations every
+native implementation of the join is quadratic (#928's (a)). In address form no join is left: the primitive's own check
+(`finite_material_observation`, R1's solution) relates the addresses inside the language's semantics, as R1 already reads
+the atoms' payloads as addresses ("the material equation's own reading"). No program reads an address: programs compare
+addresses only for equality, through a variable that occurs twice, and the given's programs state the empty payload
+alone.
+
+**What the anchor form loses, and what it keeps.** Nothing of the observation's content: the atoms field is a bijection
+of R's addresses with R's occurrence anchors, so the anchor-form fields are recovered from the address-form ones through
+the atoms — that recovery is 9's meaning (`material_projection_incidence`, `material_projection_attachment`), a native
+definition that stays. A program that relates an incidence endpoint to an occurrence target reads it through the atoms
+(8), as 45 does today. The given's readers consume the data class alone — families, records, citations, headed
+material, environments, all over addresses — so the primitive then observes what its readers read, once.
+
+**The forms weighed** (figures from #972's and #965's models; estimates, none measured).
+
+| Form | What it changes | 11 at k = 621 | 11 over the given | Disposition |
+|---|---|---|---|---|
+| Now (anchor form, 9/8 join) | — | 2.03 M states: A ≈ 1,190 s; B at 270–415 ms a state, ≈ 0.55–0.84 M s | 25.1 M states, ≈ 2.7×10⁶ s | — |
+| Representation fixes alone (D3a, D3b, ordered sets, the collapse) | implementations: code equations and representations | ≈ 2.5 ms a state, ≈ 5,000 s | ≈ 40,000 s CPU | not enough (#972) |
+| F1: the relational fields in address form, the atoms kept | the Factor language's material-premise definition; the clauses of the given's readers 1 and 10; the contracts of 1, 10, 11, 12 and 45 kept by statement | ≈ 626 states; ≈ 0.3–0.6 ms a state with D3b3 (< 1 s), ≈ 200–300 s without it; its check ≈ 0.1–0.2 s with C2 and C3 | ≤ 29.6 K states (Σ k ≤ the given's 28,729 addresses), ≈ 10–30 s CPU with D3b3, at most ≈ 3,600 s without it | taken, provisionally (an owner question) |
+| F2: a second, address-form premise kind beside the anchor form | the language's syntax: schemas, the native grammar and its readers (55–65), the compiler, finite and executable schemas, renaming, substitution, the payload audit, the leaf and placeholder maps, the clause match, R6 | as F1 | as F1 | rejected: strictly wider, and the anchor-form fields then observe twice what the address form and the atoms observe once |
+| F3: atoms keyed by structure in the artifact's data class (positions as paths, #928's (ii)) | a presentation class of the artifact notion: every reader of artifact data (7, 12, 26, 37, families, records, citations) and the given's value | alone none: 10 still joins the observation's payload addresses | — | rejected: it needs F1 besides |
+| F4: 11 over its data directly, no material premise (the carrier distinct through 1, every endpoint and attachment address a member of the carrier, incidence and functional keys unique, values formed) | an implementation of 11's notion (Q33: free); 11's clause and readers above the given's; the given's value | ≈ 5–6 k² ≈ 2.0–2.3 M states over ground lists, ≈ 0.1–0.3 ms a state: ≈ 200–700 s | ≈ 25–28 M states, ≈ 2,500–8,400 s CPU | the course if the owner declines F1; 10's projection direction (45) keeps the join |
+| 8's lookup a native index | — | none exact to the notions is sub-quadratic (#928's (a): an address offers no path) | — | rejected |
+
+F1's figures: 0's walk binds V1's open tail once a step; with D3b3 the waiting material premise is kept as placed and
+the bind reaches only 0's own two-variable goal (#972 measured 0.95 ms a state at s ≤ 30 with five holders); without
+D3b3 the material goal is substituted at every step — #972's A, its own column and its share of the holders, registered
+buckets and records, about a quarter of c_A(s) = 3.8×10⁻⁴ s^2.6 ms. The material premise's resolution at a ground
+skeleton of 621 rows is one state, its HOL work (R from the rows, its formation, k anchors bound) of the order of 10⁵–10⁶
+operations. F4's per-state cost is an estimate for walks over ground lists held as shared references.
+
+**What is the owner's.** The material premise is the language's; its definition is a notion's definition, not an
+implementation (Q33: "a notions definition is completely independent and prior to the notions implementation"). The
+question, for the planner to put, with its provisional choice (yes: M1 and M2 proceed on it): *The Factor language's
+material premise observes an artifact's incidence and its counted and functional attachments in address form — the
+artifact's data class's own fields, address payloads compared for equality — its atoms field keeping each address beside
+its occurrence anchor, instead of incidence and attachments over anchors. Do you accept this change of the language's
+material observation?* Basis: #972 (11 over the given 2.7×10⁶ s now, ≈ 40,000 s CPU after every representation fix,
+seconds after F1); #928's (a), which named this change with its trigger, GT6's production unplaceable, now met; the
+owner's direction of 2026-09-19 (structure explicit, octets inert: addresses stay opaque payloads, compared for equality
+by programs and related only inside the primitive's own check, as the atoms' already are); irredundancy (the relational
+fields observed once, in the form every reader consumes; the anchor form recoverable through the atoms by 9). If the
+owner declines: F4, Q33-free, its figures above; the join stays at 10's projection direction.
+
+**What it re-derives.**
+- *The language's primitive and its executable side.* `Factor_Material_Observation`: the definition, `material_tuple`,
+  and `material_observation_formed`, `_incidence_empty`, `_total`, `_exact`, `_rejects_omitted_incidence`,
+  `_has_native_quotation` re-proved, their statements kept where they are stated through R's tables or `material_tuple`
+  and restated where one names an anchor-form field; `incidence_term` and `attachment_term` stay (9's anchor-form
+  presentations). `Factor_Executable_Material` (the executable observation's field readers), `Factor_Finite_Material_Arguments`
+  (the operands from rows), `Factor_Material_Checking`; `Factor_Executable_Instances` and the finite proof checker through
+  the executable equation (expected to stand).
+- *R1.* `Factor_Material_Resolution`: the incidence and attachment entry readers (`finite_incidence_entry`,
+  `finite_attachment_entry`) read payload addresses, `finite_anchor_address` serves the atoms alone, and the three
+  relational fields are read at the data list's terminator; the skeleton's type, the solution, `finite_material_resolution_exact`
+  and its siblings kept as statements. D3b1m's theory (#982) re-proved where it reads those entries or terminators;
+  `Factor_Resolution_Material_Discharge`, `Factor_Resolution_Acceptance`, `Factor_Resolution_Lifting` and
+  `Factor_Least_Witness_Registrations` re-checked (they use the solution through its exactness).
+- *The programs with material premises.* 1 (`distinct_payloads_material`: its three empty fields `Pattern_Payload []`,
+  the data list's empty form, where they were the empty enumeration's target); 10 (above); 45 (clause unchanged,
+  `target_projection_*` re-proved); `Factor_Material_Meaning` and `Factor_Native_Incidence` (statements kept);
+  `Factor_Incidence_Queries` (its contract restated: the query yields `incidence_data e`, the incidence's address triple);
+  the controls whose evaluations read the fields (`Factor_Resolution_Controls`' site-1 material control,
+  `Factor_Material_Reading_Controls`, `Factor_Executed_Controls`, `Factor_Finite_Native_Controls`).
+- *The given's readers (8, 9, 10, 11 and their callers).* 1's and 10's clauses change; 8, 9, 11, 12 and 45 keep theirs.
+  9 is no longer called by 10 and stays in the lineage with its theorems (its retirement would renumber the readers'
+  lineage; taken only with a restatement of it). The contracts `artifact_projection_exact`, `artifact_admission_exact`,
+  `artifact_identity_exact` and 45's are kept by statement. The payload lineage facts (`Factor_Reader_Payloads`): 1 states
+  the empty payload where it stated the empty artifact's target — still `{[]}`. The readers' finite presentation
+  (`Development_Given_Readers.finite_given_readers_code`, derived part by part) is re-derived.
+- *Declarations, frames, modes and registrations at those sites.* R6's material socket of 10
+  (`Development_Given_Declarations`: `given_artifact_socket_schema`, `artifact_projection_parts`, the socket's discharge) at
+  the new clause; 10's call sockets 1–3 (to 9) cease to exist — none was declared (#973); frames naming 10's sockets
+  (`Development_Given_Frames`) re-derived; R6's material socket of 45 (clause unchanged) re-proved only where its
+  discharge unfolds the observation. At 8, 9 and 11 nothing is declared; 12's input production at 37.0/2 reads
+  `artifact_identity_exact`, kept, and stands; no mode names 1–12 or 45; the registrations (at 77, 392, 525, 561, 960)
+  are proved over the readers' meanings, which are kept, and stand.
+- *The given's value and what is computed from it.* The readers' package holds 1's and 10's clauses, so the given's value
+  (`development_given_value`) changes, and with it, each computed by construction and re-derived by the rebuild: the
+  given's installation (`Development_Given_Installation`), the native state's first generation (`Development_Native_State`),
+  the guard's and the asked program's installations over the given's reader package (AX3a and AX3b:
+  `Development_First_Problem_Additions`, `Development_First_Problem_Asked` and their installation code equations), the
+  first request's installation (`Development_First_Request_Program`), V3's installed presentations and their control,
+  R6b's carrying to the installed programs (`Development_Given_Installed_Declarations`,
+  `Development_Given_Installed_Productions`), the figures `Development_Given_Execution` prints (its 28,729 addresses)
+  and the rows quoting them. The posing record is recorded again over the new given: by AX4 #940's recording if it comes
+  after M2, by M2's landing if AX4 has recorded it before — a re-derivation reaching the posing record, the planner's.
+- *The table.* GT5's calls (`Development_Given_Table`) stand: the call families and the readers' meanings are kept.
+  GT6's table, not yet produced, is produced over the new readers; its certificates at 11 and 10 are the short
+  derivations.
+- *The payload audit.* Its statements stand; 505 at the given's value is computed again; the given's programs still state
+  the empty payload alone.
+- *Recorded words.* Every recipe reaches `Factor_Material_Observation` (all 52), and the exported executable observation
+  changes, so every recipe executes again; a word changes only where a recipe's subject holds a material premise that
+  reads or binds a relational field — the native controls', native evaluation's, program evaluation's, digit replay
+  cases' and source development's subjects are the candidates. The check names them; each is re-recorded in M2's landing,
+  the word changes serialized by the planner. The bootstrap loop's retained answers judge Isabelle states and are not
+  reached. No recipe reaches the given's value, the native state or the posing, so none of them holds a recorded word.
+
+**The builds, in order.**
+- **M1 — the data form below the observation** (`Factor_Material_Observation`, `Factor_Self_Contained_Terms`,
+  `Factor_Artifact_Values`, `Factor_Material_Resolution`; after D3b1m #982 lands, since both touch R1): `data_list_term`,
+  `incidence_data` and `address_pair_data`, with the lemmas about them that need nothing above the observation
+  (injectivity, formation), moved into `Factor_Material_Observation` or a theory below it that both import, names and
+  statements kept; R1's list-field reader takes its terminator as a parameter, instantiated at the enumeration terminator,
+  statements kept. No meaning, clause or word changes; the library rebuilds. About 100–150K.
+- **M2 — the switch, one landing** (the library proves only with all of it), in this order so that a partial stops at a
+  coherent part: (1) the observation's definition and theorems, `Factor_Executable_Material`,
+  `Factor_Finite_Material_Arguments`, `Factor_Material_Checking`; (2) R1's entry readers and the data-list terminator at
+  the three fields, D3b1m's theory, the discharge and the theories using the solution; (3) 1's and 10's clauses, the
+  contracts of 1, 10, 11, 12 and 45, `Factor_Material_Data_Projection`'s proofs over the atoms; (4) `Factor_Material_Meaning`,
+  `Factor_Native_Incidence`, `Factor_Incidence_Queries` (restated); (5) `Development_Given_Declarations`,
+  `Development_Given_Frames` and whatever of the given's computed theories the rebuild breaks; (6) the controls and every
+  differing word, named; the heads of "Complete material equations and direct opaque values" and "Artifact admission
+  derives from complete observed material" marked where they state the anchor form as present. About 300–400K, the
+  course's largest; if the planner's room for a build is smaller, M2 is two consecutive sessions on one tree, (1)–(2) and
+  (3)–(6), checked once at the end. The whole library rebuilds.
+- **Then GT6's brief rewritten** (below).
+- *Order with the rest.* M1 after #982; M2 after M1. M2 and D3a, D3b2, D3b3 change disjoint theories (the material line
+  against the deferred search's) and commute but for their controls; M2 before D3b3's control is preferred, so that D3b3
+  measures the chain M2 leaves. M2 before AX4 #940 records the posing, where the AX line's slack allows, so the posing is
+  recorded once. GT6 after M2, D3b3, C3 and C2.
+
+**#972's fixes after F1, and their order.**
+- *D3b3 (D3′'s (b)) — needed, as designed.* After M2 the chain at 10 is the atoms field's open tail, bound once a step by
+  0's walk while the waiting material premise holds it — exactly (b). Kept as placed, the walk is flat (≈ 0.3–0.6 ms a
+  step, < 1 s at k = 621); not kept, ≈ 200–300 s at k = 621 and up to ≈ 3,600 s over the given. Its design stands: F1
+  leaves the atoms field and its tail as they are, and in the admission direction the relational fields are ground.
+- *D3b2 — kept as D3b3's base; its share at the given withdrawn.* D3′'s (b) builds on D3b2's records-based goal reads,
+  and (a)'s eligibility is general (D3b1's region). Its target at the given — 9's three call goals, 65.1 % of 77's goal
+  side at 300–350 (#973) — no longer exists, since 10 calls no 9; its own share is measured again after M2 (M973's
+  classification). The planner may narrow D3b2 to what D3b3 needs.
+- *D3a — kept, as placed* (after GT3b): its share on the environment-level route does not depend on F1.
+- *Ordered persistent sets (#972's follow-up 2) — not before GT6.* After F1 no goal of 11's derivation holds the anchors
+  but the kept material premise. What still grows with k is 7 (and 12's 7): ≈ 24 k states a call at 0.21, 0.55 and 1.7 ms
+  a state at k = 23, 66 and 151 (#972's searches over #965's 24 k states), ∝ k^1.1, ≈ 8 ms at 621: ≈ 2 min for 7 at the
+  largest artifact, ≈ 3,000 s CPU over the given's 330 calls. Trigger: GT6's step (2) showing 7's part, or c_env, beyond
+  what its run can bear.
+- *The collapse code equation (3) — not before GT6.* Its share was in B (2.8 of 16 ms a state at k = 151), which F1
+  removes. A code equation with no statement change, taken by the next build restating those code equations (D3b2 or
+  D3b3) if its figures show a share.
+- *The check's C3, then C2 — needed, before GT6.* After F1 every one of 0's ≈ k nodes calls the remaining atom rows, each
+  anchor holding R; C re-shares each node's call and forms each anchor's artifact (#972: 11's check grows as k^2.6 a node),
+  ≈ k²/2 formations of R a call, of the order of 10³ s for the largest call. C3 (formation once per distinct artifact and
+  target, an exact cache) and C2 (C over the found state's shared form, R one reference) bring a node to ≈ 0.1–0.3 ms
+  (#972): the largest call's check ≈ 0.1–0.2 s, the given's 11 checks seconds. C3 first (code equations only), C2 after.
+  C1 stands (`Factor_Resolution_Checks` imports `Factor_Resolution_Graph_Checks` since #970).
+
+**GT6's brief then** (#965's follow-up 3, the prediction recomputed).
+- After M2, D3b3, C3 and C2 (D3a and D3b2 as placed); ordered sets and the collapse are not prerequisites.
+- The prediction: 11 at the given's 165 artifacts ≤ Σ (k + 5) ≤ 29.6 K states, ≈ 10–30 s CPU, its checks seconds; 12's
+  two 11s the same; 7 (and 12's) ≈ 24 k states a call, ≈ 0.9–1 M states, ≈ 3,000 s CPU, the largest call ≈ 2 min — the
+  artifact part about an hour of CPU and minutes of wall on 16 workers. The environment-level part (26 at the given's value
+  and its suffix calls, 156, 79/82/83, 80 and 77, the guard at (g, g)) is unchanged by F1: #965's ≈ 1.6–3.9 M states at
+  11–15 ms a state, 17,600–58,500 s, sequential — now GT6's dominant part, D3a's and D3b3's effect on it read by GT6's
+  step (2) (c_env).
+- Its step (2) fits 11 against k + c, not #829's 4.54 k² + 75 k − 40 or #965's 5.233 k²; its step (3)'s order stands (11
+  by ascending size, 7, 12, then the environment level).
+- The candidate's part at a judgment (#928's (c)): the added rows' 11s ≈ Σ (kᵢ + 5) states instead of
+  Σ (4.54 kᵢ² + 75 kᵢ − 40) (≈ 115 against ≈ 63 K at a row of 110 addresses); a judgment's states are then the added
+  rows' 7s and 12s, 26's key comparisons and the added definitions' readings.
+
+**What the builds must respect.**
+- One construction of each field: the observation's relational fields are the data class's terms (`data_list_term`,
+  `incidence_data`, `address_pair_data`), moved, not copied; the atoms field and its enumeration form unchanged.
+- No program reads an address's octets: the primitive relates addresses inside its own check, as it reads the atoms'
+  payloads today; programs compare them only for equality; the given's programs state the empty payload alone (G4).
+- Kept by statement: the contracts of 1, 10, 11, 12 and 45; R1's skeleton type, solution and exactness; the
+  observation's theorems but where they name an anchor-form field; 9's theorems. Restated: `material_observation`,
+  `material_tuple`, `incidence_query_exact`, and an observation theorem naming an anchor-form field.
+- 10's clause keeps sockets 0 and 4, its variable numbers and `artifact_projection_material`; sockets 1–3 are removed,
+  nothing renumbered. 8, 9 and 45 keep their clauses; no site is renumbered.
+- Every word that differs is named and re-recorded deliberately in M2's landing; none changes silently.
+- The given's value changes once (M2); the posing is recorded over it once where the order allows.
+
+**Weighed and rejected.**
+- The atoms field in the data-list form too, one list form in the observation: it changes 0's clause and the atoms'
+  presentation that 0, 1, 8 and 45 read, for no cost; the atoms hold anchors, which are not data, so the observation's own
+  enumeration form is theirs. Not taken.
+- Retiring 9 with M2: no longer called by 10, but removing a site from the readers' lineage changes every later
+  definitions fact; its meaning, an observation's anchor-form fields read through its atoms, stays a native relation.
+  Kept; retired only with a restatement of the lineage.
+- The enumeration terminator kept on the relational fields, 10 reterminating each by a walk: still O(k), but two
+  presentations of one list notion and three more chains held by the material premise. Rejected.
+- Staging the switch through a second name (a parallel copy of the material line, then a rename): it doubles M2.
+  Rejected.
+- F2, F3 and a native index: in the table.
+
+**Limits.**
+- Every figure is #972's or #965's model applied, not measured: 0's walk with the material premise kept, the resolution
+  at a 621-row skeleton, F4's per-state cost, 7's growth beyond k = 151, Σ k over the given's distinct artifacts (bounded
+  by its 28,729 addresses). M2's controls and GT6's step (2) measure them.
+- GT6's environment-level part is not addressed here.
+- F1's exactness rests on the observation's theorems re-proved in M2; an observation of an unformed artifact is refused
+  as now.
+
+Recorded 2026-10-01.

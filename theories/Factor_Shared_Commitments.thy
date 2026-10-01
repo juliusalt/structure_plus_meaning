@@ -1936,6 +1936,151 @@ text \<open>
   with formed classes (@{text focused_kept_select}).
 \<close>
 
+text \<open>
+  The focused selection at a closed class @{text Z} (GT3b, task 970): a goal of the class closes the focus first, with
+  the settled ones; at the empty class it is today's (@{text focused_kept_select_in_empty}), so today's reading is
+  its instance (task 989).
+\<close>
+
+definition focused_kept_select_in :: "('s list, ('a,'s,'d,'c) shared_goal_entry) rbt \<Rightarrow>
+    (('a,'s,'d,'c) shared_goal_entry fset \<Rightarrow> ('a,'s,'d,'c) shared_goal_entry fset) \<Rightarrow>
+    's list \<Rightarrow> ('a,'s::linorder,'d,'c) shared_search \<Rightarrow>
+    (('a,'s,'d,'c) shared_goal_entry,('a,'s,'d,'c) shared_node_entry,nat,'a,'s,'d,'c) search_access \<Rightarrow>
+    (('a,'s,'d,'c) shared_goal_entry,('a,'s,'d,'c) shared_node_entry,nat,'a,'s,'d,'c) search_access \<Rightarrow>
+    (('a,'s,'d,'c) shared_node_entry, ('a,'s,'d,'c) shared_goal_entry) access_selection" where
+  "focused_kept_select_in Z pc f r V W = (let N = access_construction_nodes W in
+    if N \<noteq> {||} then Access_Construction (access_first_nodes W N)
+    else let H = search_held_over V r; L = map snd (tree_prefix (class_candidates (search_classes r)) f);
+      c0 = access_first_goals W ((case find (\<lambda>h. h |\<notin>| H \<and> access_settled W h) L of None \<Rightarrow> {||} | Some h \<Rightarrow> {|h|}) |\<union>|
+        (case find (\<lambda>h. h |\<notin>| H) (map snd (tree_prefix Z f)) of None \<Rightarrow> {||} | Some h \<Rightarrow> {|h|}));
+      S = (if c0 \<noteq> {||} then c0 else
+        let cp = pc (fset_of_list (filter (\<lambda>h. h |\<notin>| H) L)) in
+        if cp \<noteq> {||} then access_first_goals W cp else
+        let c1 = (case find (\<lambda>h. h |\<notin>| H \<and> access_single W h) L of None \<Rightarrow> {||} | Some h \<Rightarrow> {|h|}) in
+        if c1 \<noteq> {||} then c1 else access_waiting_selection W (access_goals W |-| H)) in
+      if S = {||} then Access_None else Access_Goals S)"
+
+theorem focused_kept_select_over_in:
+  fixes N :: "('a,'s::linorder,'d,'c) shared_node_entry \<Rightarrow> ('a,'s,'d,'c) resolution_node"
+    and Fr :: "('a,'s,'d,'c) shared_node_entry \<Rightarrow> 'a fset"
+    and VN :: "('a,'s,'d,'c) shared_node_entry \<Rightarrow> 'a \<Rightarrow> bool"
+    and C :: "('a,'s,'d,'c) shared_node_entry \<Rightarrow> ('s,'a) resolution_variable fset"
+  assumes r: "search_formed \<kappa> P r" and K: "search_classes_formed r"
+    and Z: "\<And>p. RBT.lookup Z p = class_value E (shared_goals (search_state r)) p"
+    and EC: "\<And>h. E h \<Longrightarrow> shared_goal_is_call (shared_entry_goal h)"
+  defines "V \<equiv> (shared_access \<kappa> P r)\<lparr>access_node := N, access_free := Fr, access_value_none := VN,
+    access_call_variables := C\<rparr>"
+  assumes pc: "\<And>A. (\<And>h. h |\<in>| A \<Longrightarrow> h |\<in>| access_focus_goals (Some f) V) \<Longrightarrow> pc A = ffilter rp A"
+  shows "focused_kept_select_in Z pc f r V (access_focused (Some f) V) = access_select_in E rp (access_focused (Some f) V)"
+proof -
+  let ?V = V and ?W = "access_focused (Some f) V"
+  let ?s = "search_state r" and ?G = "shared_goals (search_state r)" and ?K = "search_classes r"
+  let ?H = "search_held_over V r" and ?L = "map snd (tree_prefix (class_candidates (search_classes r)) f)"
+  let ?Lz = "map snd (tree_prefix Z f)"
+  have s: "shared_state_formed \<kappa> P ?s" using search_formedD(1)[OF r] .
+  have tst: "access_candidate ?V h = access_candidate (state_access ?s) h \<and>
+      access_settled ?V h = access_settled (state_access ?s) h \<and> access_single ?V h = access_single (state_access ?s) h" for h
+    by (simp add: V_def shared_access_def Let_def access_candidate_def access_settled_def access_single_def
+      access_pruned_def access_pruned_among_def access_reusable_def access_waits_def access_ground_def)
+  have tc: "RBT.lookup (class_candidates ?K) p = class_value (access_candidate ?V) ?G p" for p
+  proof (cases "RBT.lookup ?G p")
+    case None
+    then show ?thesis using K by (simp add: classes_formed_def class_value_def)
+  next
+    case (Some h)
+    then show ?thesis using K kept_tests[OF r Some] tst[of h] by (simp add: classes_formed_def class_value_def)
+  qed
+  have posc: "access_goal_position ?W h = p" if "RBT.lookup (class_candidates ?K) p = Some h" for p h
+  proof -
+    have "RBT.lookup ?G p = Some h" using that tc[of p] by (auto simp: class_value_def split: option.splits if_splits)
+    then show ?thesis using shared_goal_lookup_position[OF s] by (simp add: V_def shared_access_simps)
+  qed
+  have posz: "access_goal_position ?W h = p" if "RBT.lookup Z p = Some h" for p h
+  proof -
+    have "RBT.lookup ?G p = Some h" using that Z[of p] by (auto simp: class_value_def split: option.splits if_splits)
+    then show ?thesis using shared_goal_lookup_position[OF s] by (simp add: V_def shared_access_simps)
+  qed
+  have cw: "access_candidate ?W h = access_candidate ?V h" for h by (simp add: access_candidate_def)
+  have Vg: "access_goals V = access_goals (shared_access \<kappa> P r)"
+    "access_goal_position V = access_goal_position (shared_access \<kappa> P r)" by (simp_all add: V_def)
+  have Lmem: "h \<in> snd ` set (tree_prefix (class_candidates (search_classes r)) f) \<longleftrightarrow>
+      h |\<in>| access_goals ?W \<and> access_candidate ?W h" for h
+  proof -
+    have "h \<in> snd ` set (tree_prefix (class_candidates (search_classes r)) f) \<longleftrightarrow>
+        (\<exists>p. RBT.lookup ?G p = Some h \<and> access_candidate ?V h \<and> take (length f) p = f)"
+      unfolding tree_prefix(3) tc by (auto simp: class_value_def split: option.splits if_splits)
+    also have "\<dots> \<longleftrightarrow> h |\<in>| access_goals ?W \<and> access_candidate ?W h"
+      by (auto simp: cw Vg access_focus_goals_def ffilter.rep_eq shared_access_simps tree_values_member
+        dest: shared_goal_lookup_position[OF s])
+    finally show ?thesis .
+  qed
+  have Zmem: "h \<in> snd ` set (tree_prefix Z f) \<longleftrightarrow> h |\<in>| access_goals ?W \<and> E h" for h
+  proof -
+    have "h \<in> snd ` set (tree_prefix Z f) \<longleftrightarrow> (\<exists>p. RBT.lookup ?G p = Some h \<and> E h \<and> take (length f) p = f)"
+      unfolding tree_prefix(3) Z by (auto simp: class_value_def split: option.splits if_splits)
+    also have "\<dots> \<longleftrightarrow> h |\<in>| access_goals ?W \<and> E h"
+      by (auto simp: Vg access_focus_goals_def ffilter.rep_eq shared_access_simps tree_values_member
+        dest: shared_goal_lookup_position[OF s])
+    finally show ?thesis .
+  qed
+  have hs: "access_holdable ?W h = access_holdable ?V h" "access_held ?W h = access_held ?V h" for h
+    by (simp_all add: access_held_def)
+  have held: "?H = ffilter (\<lambda>h. access_holdable V h \<and> access_held V h) (access_goals V)"
+    unfolding V_def by (rule search_held_over_nodes[OF r])
+  have A: "ffilter (\<lambda>h. \<not> (access_holdable ?W h \<and> access_held ?W h)) (access_goals ?W) = access_goals ?W |-| ?H"
+    by (rule fset_eqI) (auto simp: hs held ffilter.rep_eq access_focus_goals_def)
+  have hc: "fset_of_list (filter (\<lambda>h. h |\<notin>| ?H) ?L) = ffilter (access_candidate ?W) (access_goals ?W |-| ?H)"
+    by (rule fset_eqI) (auto simp: fset_of_list.rep_eq ffilter.rep_eq Lmem)
+  have h0: "fset_of_list (filter (\<lambda>h. h |\<notin>| ?H \<and> access_settled ?W h) ?L) =
+      ffilter (\<lambda>h. access_candidate ?W h \<and> access_settled ?W h) (access_goals ?W |-| ?H)"
+    by (rule fset_eqI) (auto simp: fset_of_list.rep_eq ffilter.rep_eq Lmem)
+  have hz: "fset_of_list (filter (\<lambda>h. h |\<notin>| ?H) ?Lz) = ffilter E (access_goals ?W |-| ?H)"
+    by (rule fset_eqI) (auto simp: fset_of_list.rep_eq ffilter.rep_eq Zmem)
+  have h1: "fset_of_list (filter (\<lambda>h. h |\<notin>| ?H \<and> access_single ?W h) ?L) =
+      ffilter (\<lambda>h. access_candidate ?W h \<and> access_single ?W h) (access_goals ?W |-| ?H)"
+    by (rule fset_eqI) (auto simp: fset_of_list.rep_eq ffilter.rep_eq Lmem)
+  have first: "access_first_goals ?W (fset_of_list (filter X ?L)) = (case find X ?L of None \<Rightarrow> {||} | Some h \<Rightarrow> {|h|})"
+    for X unfolding access_first_goals_def by (rule prefix_first) (rule posc)
+  have firstz: "access_first_goals ?W (fset_of_list (filter X ?Lz)) = (case find X ?Lz of None \<Rightarrow> {||} | Some h \<Rightarrow> {|h|})"
+    for X unfolding access_first_goals_def by (rule prefix_first) (rule posz)
+  have none: "((case find X ?L of None \<Rightarrow> {||} | Some h \<Rightarrow> {|h|}) = {||}) = (fset_of_list (filter X ?L) = {||})" for X
+  proof -
+    have "((case find X ?L of None \<Rightarrow> {||} | Some h \<Rightarrow> {|h|}) = {||}) = (find X ?L = None)"
+      by (cases "find X ?L") simp_all
+    also have "\<dots> = (fset_of_list (filter X ?L) = {||})" by (auto simp: find_None_iff fset_eq_iff fset_of_list.rep_eq)
+    finally show ?thesis .
+  qed
+  have e0: "(case find (\<lambda>h. h |\<notin>| ?H \<and> access_settled ?W h) ?L of None \<Rightarrow> {||} | Some h \<Rightarrow> {|h|}) =
+      access_first_goals ?W (ffilter (\<lambda>h. access_candidate ?W h \<and> access_settled ?W h) (access_goals ?W |-| ?H))"
+    by (simp only: first[symmetric] h0)
+  have ez: "(case find (\<lambda>h. h |\<notin>| ?H) ?Lz of None \<Rightarrow> {||} | Some h \<Rightarrow> {|h|}) =
+      access_first_goals ?W (ffilter E (access_goals ?W |-| ?H))"
+    by (simp only: firstz[symmetric] hz)
+  have e1: "(case find (\<lambda>h. h |\<notin>| ?H \<and> access_single ?W h) ?L of None \<Rightarrow> {||} | Some h \<Rightarrow> {|h|}) =
+      access_first_goals ?W (ffilter (\<lambda>h. access_candidate ?W h \<and> access_single ?W h) (access_goals ?W |-| ?H))"
+    by (simp only: first[symmetric] h1)
+  have n1: "(access_first_goals ?W (ffilter (\<lambda>h. access_candidate ?W h \<and> access_single ?W h) (access_goals ?W |-| ?H)) = {||}) =
+      (ffilter (\<lambda>h. access_candidate ?W h \<and> access_single ?W h) (access_goals ?W |-| ?H) = {||})"
+    by (simp only: h1[symmetric] first none)
+  have cand: "access_candidate ?W h" if "E h" for h
+    using EC[OF that] by (simp add: cw V_def access_candidate_def shared_access_simps)
+  have un: "ffilter (\<lambda>h. access_candidate ?W h \<and> (access_settled ?W h \<or> E h)) (access_goals ?W |-| ?H) =
+      ffilter (\<lambda>h. access_candidate ?W h \<and> access_settled ?W h) (access_goals ?W |-| ?H) |\<union>| ffilter E (access_goals ?W |-| ?H)"
+    using cand by (auto simp: ffilter.rep_eq)
+  have c0: "access_first_goals ?W ((case find (\<lambda>h. h |\<notin>| ?H \<and> access_settled ?W h) ?L of None \<Rightarrow> {||} | Some h \<Rightarrow> {|h|}) |\<union>|
+        (case find (\<lambda>h. h |\<notin>| ?H) ?Lz of None \<Rightarrow> {||} | Some h \<Rightarrow> {|h|})) =
+      access_first_goals ?W (ffilter (\<lambda>h. access_candidate ?W h \<and> (access_settled ?W h \<or> E h)) (access_goals ?W |-| ?H))"
+    unfolding e0 ez un access_first_goals_def by (rule positioned_first_union)
+  have fe: "access_first_goals ?W X = {||} \<longleftrightarrow> X = {||}" for X
+    unfolding access_first_goals_def by (rule positioned_first_empty_iff)
+  have pcx: "pc (ffilter (access_candidate ?W) (access_goals ?W |-| ?H)) =
+      ffilter rp (ffilter (access_candidate ?W) (access_goals ?W |-| ?H))"
+    by (rule pc) (auto simp: ffilter.rep_eq)
+  show ?thesis
+    unfolding focused_kept_select_in_def Let_def
+    by (simp only: access_select_in_def access_goal_choice_classes_in Let_def A hc pcx c0 fe e1 n1)
+qed
+
 definition focused_kept_select :: "(('a,'s,'d,'c) shared_goal_entry fset \<Rightarrow> ('a,'s,'d,'c) shared_goal_entry fset) \<Rightarrow>
     's list \<Rightarrow> ('a,'s::linorder,'d,'c) shared_search \<Rightarrow>
     (('a,'s,'d,'c) shared_goal_entry,('a,'s,'d,'c) shared_node_entry,nat,'a,'s,'d,'c) search_access \<Rightarrow>
@@ -1958,6 +2103,20 @@ text \<open>
   (@{thm [source] kept_select_over}); the shared access is its instance, and so is the deferred search's.
 \<close>
 
+lemma focused_kept_select_in_empty:
+  fixes r :: "('a,'s::linorder,'d,'c) shared_search"
+  shows "focused_kept_select_in RBT.empty pc f r V W = focused_kept_select pc f r V W"
+proof -
+  have z: "find X (map snd (tree_prefix (RBT.empty :: ('s::linorder list,('a,'s,'d,'c) shared_goal_entry) rbt) f)) = None"
+    for X
+    by (auto simp: find_None_iff tree_prefix(3))
+  have o: "access_first_goals W (case find X L of None \<Rightarrow> {||} | Some h \<Rightarrow> {|h|}) =
+      (case find X L of None \<Rightarrow> {||} | Some h \<Rightarrow> {|h|})" for X and L :: "('a,'s,'d,'c) shared_goal_entry list"
+    by (cases "find X L") (auto simp: access_first_goals_def positioned_first_def ffilter.rep_eq fset_eq_iff
+      finite_position_less_list)
+  show ?thesis by (simp add: focused_kept_select_in_def focused_kept_select_def z o Let_def)
+qed
+
 theorem focused_kept_select_over:
   fixes N :: "('a,'s::linorder,'d,'c) shared_node_entry \<Rightarrow> ('a,'s,'d,'c) resolution_node"
     and Fr :: "('a,'s,'d,'c) shared_node_entry \<Rightarrow> 'a fset"
@@ -1969,81 +2128,12 @@ theorem focused_kept_select_over:
   assumes pc: "\<And>A. (\<And>h. h |\<in>| A \<Longrightarrow> h |\<in>| access_focus_goals (Some f) V) \<Longrightarrow> pc A = ffilter rp A"
   shows "focused_kept_select pc f r V (access_focused (Some f) V) = access_select rp (access_focused (Some f) V)"
 proof -
-  let ?V = V and ?W = "access_focused (Some f) V"
-  let ?s = "search_state r" and ?G = "shared_goals (search_state r)" and ?K = "search_classes r"
-  let ?H = "search_held_over V r" and ?L = "map snd (tree_prefix (class_candidates (search_classes r)) f)"
-  have s: "shared_state_formed \<kappa> P ?s" using search_formedD(1)[OF r] .
-  have tst: "access_candidate ?V h = access_candidate (state_access ?s) h \<and>
-      access_settled ?V h = access_settled (state_access ?s) h \<and> access_single ?V h = access_single (state_access ?s) h" for h
-    by (simp add: V_def shared_access_def Let_def access_candidate_def access_settled_def access_single_def
-      access_pruned_def access_pruned_among_def access_reusable_def access_waits_def access_ground_def)
-  have tc: "RBT.lookup (class_candidates ?K) p = class_value (access_candidate ?V) ?G p" for p
-  proof (cases "RBT.lookup ?G p")
-    case None
-    then show ?thesis using K by (simp add: classes_formed_def class_value_def)
-  next
-    case (Some h)
-    then show ?thesis using K kept_tests[OF r Some] tst[of h] by (simp add: classes_formed_def class_value_def)
-  qed
-  have posc: "access_goal_position ?W h = p" if "RBT.lookup (class_candidates ?K) p = Some h" for p h
-  proof -
-    have "RBT.lookup ?G p = Some h" using that tc[of p] by (auto simp: class_value_def split: option.splits if_splits)
-    then show ?thesis using shared_goal_lookup_position[OF s] by (simp add: V_def shared_access_simps)
-  qed
-  have cw: "access_candidate ?W h = access_candidate ?V h" for h by (simp add: access_candidate_def)
-  have Vg: "access_goals V = access_goals (shared_access \<kappa> P r)"
-    "access_goal_position V = access_goal_position (shared_access \<kappa> P r)" by (simp_all add: V_def)
-  have Lmem: "h \<in> snd ` set (tree_prefix (class_candidates (search_classes r)) f) \<longleftrightarrow>
-      h |\<in>| access_goals ?W \<and> access_candidate ?W h" for h
-  proof -
-    have "h \<in> snd ` set (tree_prefix (class_candidates (search_classes r)) f) \<longleftrightarrow>
-        (\<exists>p. RBT.lookup ?G p = Some h \<and> access_candidate ?V h \<and> take (length f) p = f)"
-      unfolding tree_prefix(3) tc by (auto simp: class_value_def split: option.splits if_splits)
-    also have "\<dots> \<longleftrightarrow> h |\<in>| access_goals ?W \<and> access_candidate ?W h"
-      by (auto simp: cw Vg access_focus_goals_def ffilter.rep_eq shared_access_simps tree_values_member
-        dest: shared_goal_lookup_position[OF s])
-    finally show ?thesis .
-  qed
-  have hs: "access_holdable ?W h = access_holdable ?V h" "access_held ?W h = access_held ?V h" for h
-    by (simp_all add: access_held_def)
-  have held: "?H = ffilter (\<lambda>h. access_holdable V h \<and> access_held V h) (access_goals V)"
-    unfolding V_def by (rule search_held_over_nodes[OF r])
-  have A: "ffilter (\<lambda>h. \<not> (access_holdable ?W h \<and> access_held ?W h)) (access_goals ?W) = access_goals ?W |-| ?H"
-    by (rule fset_eqI) (auto simp: hs held ffilter.rep_eq access_focus_goals_def)
-  have hc: "fset_of_list (filter (\<lambda>h. h |\<notin>| ?H) ?L) = ffilter (access_candidate ?W) (access_goals ?W |-| ?H)"
-    by (rule fset_eqI) (auto simp: fset_of_list.rep_eq ffilter.rep_eq Lmem)
-  have h0: "fset_of_list (filter (\<lambda>h. h |\<notin>| ?H \<and> access_settled ?W h) ?L) =
-      ffilter (\<lambda>h. access_candidate ?W h \<and> access_settled ?W h) (access_goals ?W |-| ?H)"
-    by (rule fset_eqI) (auto simp: fset_of_list.rep_eq ffilter.rep_eq Lmem)
-  have h1: "fset_of_list (filter (\<lambda>h. h |\<notin>| ?H \<and> access_single ?W h) ?L) =
-      ffilter (\<lambda>h. access_candidate ?W h \<and> access_single ?W h) (access_goals ?W |-| ?H)"
-    by (rule fset_eqI) (auto simp: fset_of_list.rep_eq ffilter.rep_eq Lmem)
-  have first: "access_first_goals ?W (fset_of_list (filter X ?L)) = (case find X ?L of None \<Rightarrow> {||} | Some h \<Rightarrow> {|h|})"
-    for X unfolding access_first_goals_def by (rule prefix_first) (rule posc)
-  have none: "((case find X ?L of None \<Rightarrow> {||} | Some h \<Rightarrow> {|h|}) = {||}) = (fset_of_list (filter X ?L) = {||})" for X
-  proof -
-    have "((case find X ?L of None \<Rightarrow> {||} | Some h \<Rightarrow> {|h|}) = {||}) = (find X ?L = None)"
-      by (cases "find X ?L") simp_all
-    also have "\<dots> = (fset_of_list (filter X ?L) = {||})" by (auto simp: find_None_iff fset_eq_iff fset_of_list.rep_eq)
-    finally show ?thesis .
-  qed
-  have e0: "(case find (\<lambda>h. h |\<notin>| ?H \<and> access_settled ?W h) ?L of None \<Rightarrow> {||} | Some h \<Rightarrow> {|h|}) =
-      access_first_goals ?W (ffilter (\<lambda>h. access_candidate ?W h \<and> access_settled ?W h) (access_goals ?W |-| ?H))"
-    by (simp only: first[symmetric] h0)
-  have n0: "(access_first_goals ?W (ffilter (\<lambda>h. access_candidate ?W h \<and> access_settled ?W h) (access_goals ?W |-| ?H)) = {||}) =
-      (ffilter (\<lambda>h. access_candidate ?W h \<and> access_settled ?W h) (access_goals ?W |-| ?H) = {||})"
-    by (simp only: h0[symmetric] first none)
-  have e1: "(case find (\<lambda>h. h |\<notin>| ?H \<and> access_single ?W h) ?L of None \<Rightarrow> {||} | Some h \<Rightarrow> {|h|}) =
-      access_first_goals ?W (ffilter (\<lambda>h. access_candidate ?W h \<and> access_single ?W h) (access_goals ?W |-| ?H))"
-    by (simp only: first[symmetric] h1)
-  have n1: "(access_first_goals ?W (ffilter (\<lambda>h. access_candidate ?W h \<and> access_single ?W h) (access_goals ?W |-| ?H)) = {||}) =
-      (ffilter (\<lambda>h. access_candidate ?W h \<and> access_single ?W h) (access_goals ?W |-| ?H) = {||})"
-    by (simp only: h1[symmetric] first none)
-  have pcx: "pc (ffilter (access_candidate ?W) (access_goals ?W |-| ?H)) =
-      ffilter rp (ffilter (access_candidate ?W) (access_goals ?W |-| ?H))"
-    by (rule pc) (auto simp: ffilter.rep_eq)
-  show ?thesis
-    by (simp only: focused_kept_select_def access_select_def access_goal_choice_classes Let_def A hc pcx e0 n0 e1 n1)
+  have Z: "RBT.lookup RBT.empty p = class_value (\<lambda>h. False) (shared_goals (search_state r)) p" for p
+    by (simp add: class_value_def split: option.split)
+  have "focused_kept_select_in RBT.empty pc f r V (access_focused (Some f) V) =
+      access_select_in (\<lambda>h. False) rp (access_focused (Some f) V)"
+    unfolding V_def by (rule focused_kept_select_over_in[OF r K Z]) (simp, rule pc[unfolded V_def], assumption)
+  then show ?thesis by (simp only: focused_kept_select_in_empty access_select_in_empty)
 qed
 
 theorem focused_kept_select:
@@ -2083,24 +2173,34 @@ proof -
 qed
 
 
-definition committed_kept_select :: "('a,'s,'d,'c) finite_witness_construction \<Rightarrow> ('a,'s,'d,'c) finite_schema_system \<Rightarrow>
+text \<open>
+  The committed selection at a closed class @{text Z}: the whole focus selected by the kept classes with @{text Z} first,
+  a proper focus by @{const focused_kept_select_in}. At the empty class it is today's @{text committed_kept_select}, at
+  the search's own closed class the selection at a table (@{text committed_kept_select_in}): both read through one
+  statement (@{text committed_kept_select_at_over}, task 989).
+\<close>
+
+definition committed_kept_select_at :: "('s list, ('a,'s,'d,'c) shared_goal_entry) rbt \<Rightarrow>
+    ('a,'s,'d,'c) finite_witness_construction \<Rightarrow> ('a,'s,'d,'c) finite_schema_system \<Rightarrow>
     (('a,'s,'d,'c) shared_goal_entry fset \<Rightarrow> ('a,'s,'d,'c) shared_goal_entry fset) \<Rightarrow> 's list option \<Rightarrow>
     ('a,'s::linorder,'d,'c) shared_search \<Rightarrow>
     (('a,'s,'d,'c) shared_goal_entry,('a,'s,'d,'c) shared_node_entry,nat,'a,'s,'d,'c) search_access \<Rightarrow>
     (('a,'s,'d,'c) shared_node_entry, ('a,'s,'d,'c) shared_goal_entry) access_selection" where
-  "committed_kept_select \<kappa> P pc F r V = (if F = None \<or> F = Some [] then kept_select_by pc r V
-    else focused_kept_select pc (the F) r V (shared_focused (the F) r V))"
+  "committed_kept_select_at Z \<kappa> P pc F r V = (if F = None \<or> F = Some [] then kept_select_by_in Z pc r V
+    else focused_kept_select_in Z pc (the F) r V (shared_focused (the F) r V))"
 
-theorem committed_kept_select_over:
+theorem committed_kept_select_at_over:
   fixes N :: "('a,'s::linorder,'d,'c) shared_node_entry \<Rightarrow> ('a,'s,'d,'c) resolution_node"
     and Fr :: "('a,'s,'d,'c) shared_node_entry \<Rightarrow> 'a fset"
     and VN :: "('a,'s,'d,'c) shared_node_entry \<Rightarrow> 'a \<Rightarrow> bool"
     and C :: "('a,'s,'d,'c) shared_node_entry \<Rightarrow> ('s,'a) resolution_variable fset"
   assumes r: "search_formed \<kappa> P r" and K: "search_classes_formed r"
+    and Z: "\<And>p. RBT.lookup Z p = class_value E (shared_goals (search_state r)) p"
+    and EC: "\<And>h. E h \<Longrightarrow> shared_goal_is_call (shared_entry_goal h)"
   defines "V \<equiv> (shared_access \<kappa> P r)\<lparr>access_node := N, access_free := Fr, access_value_none := VN,
     access_call_variables := C\<rparr>"
   assumes pc: "\<And>A. (\<And>h. h |\<in>| A \<Longrightarrow> h |\<in>| access_focus_goals F V) \<Longrightarrow> pc A = ffilter rp A"
-  shows "committed_kept_select \<kappa> P pc F r V = access_select rp (access_focused F V)"
+  shows "committed_kept_select_at Z \<kappa> P pc F r V = access_select_in E rp (access_focused F V)"
 proof (cases "F = None \<or> F = Some []")
   case True
   let ?K = "search_classes r"
@@ -2112,19 +2212,51 @@ proof (cases "F = None \<or> F = Some []")
   have goals: "access_goals V = tree_values (shared_goals (search_state r))" by (simp add: V_def shared_access_simps)
   have X: "h |\<in>| access_focus_goals F V" if "h |\<in>| ?X" for h
     using that class_tree_member[OF tc, of h] by (auto simp: fg goals fset_of_list.rep_eq)
-  have e: "kept_select_by pc r V = kept_select_by (ffilter rp) r V"
-    by (simp only: kept_select_by_def Let_def pc[OF X])
-  have e1: "kept_select_by (ffilter rp) r V = access_select rp V"
-    unfolding V_def by (rule kept_select_over[OF r K])
-  show ?thesis using True by (simp only: committed_kept_select_def e e1 access_focused_whole[OF True] if_True)
+  have e: "kept_select_by_in Z pc r V = kept_select_by_in Z (ffilter rp) r V"
+    by (simp only: kept_select_by_in_def Let_def pc[OF X])
+  have e1: "kept_select_by_in Z (ffilter rp) r V = access_select_in E rp V"
+    unfolding V_def by (rule kept_select_over_in[OF r K Z]) (erule EC)
+  show ?thesis using True by (simp only: committed_kept_select_at_def e e1 access_focused_whole[OF True] if_True)
 next
   case False
   obtain g where g: "F = Some g" and gne: "g \<noteq> []" using False by (cases F) auto
-  have "committed_kept_select \<kappa> P pc F r V = focused_kept_select pc g r V (access_focused F V)"
-    using gne by (simp add: committed_kept_select_def g shared_focused_over[OF r] V_def)
-  also have "\<dots> = access_select rp (access_focused F V)"
-    unfolding g V_def by (rule focused_kept_select_over[OF r K]) (rule pc, simp add: g V_def)
+  have "committed_kept_select_at Z \<kappa> P pc F r V = focused_kept_select_in Z pc g r V (access_focused F V)"
+    using gne by (simp add: committed_kept_select_at_def g shared_focused_over[OF r] V_def)
+  also have "\<dots> = access_select_in E rp (access_focused F V)"
+    unfolding g V_def by (rule focused_kept_select_over_in[OF r K Z]) (erule EC, rule pc, simp add: g V_def)
   finally show ?thesis .
+qed
+
+definition committed_kept_select :: "('a,'s,'d,'c) finite_witness_construction \<Rightarrow> ('a,'s,'d,'c) finite_schema_system \<Rightarrow>
+    (('a,'s,'d,'c) shared_goal_entry fset \<Rightarrow> ('a,'s,'d,'c) shared_goal_entry fset) \<Rightarrow> 's list option \<Rightarrow>
+    ('a,'s::linorder,'d,'c) shared_search \<Rightarrow>
+    (('a,'s,'d,'c) shared_goal_entry,('a,'s,'d,'c) shared_node_entry,nat,'a,'s,'d,'c) search_access \<Rightarrow>
+    (('a,'s,'d,'c) shared_node_entry, ('a,'s,'d,'c) shared_goal_entry) access_selection" where
+  "committed_kept_select \<kappa> P pc F r V = (if F = None \<or> F = Some [] then kept_select_by pc r V
+    else focused_kept_select pc (the F) r V (shared_focused (the F) r V))"
+
+lemma committed_kept_select_at_empty:
+  fixes r :: "('a,'s::linorder,'d,'c) shared_search"
+  shows "committed_kept_select_at RBT.empty \<kappa> P pc F r V = committed_kept_select \<kappa> P pc F r V"
+  by (simp add: committed_kept_select_at_def committed_kept_select_def kept_select_by_in_empty
+    focused_kept_select_in_empty)
+
+theorem committed_kept_select_over:
+  fixes N :: "('a,'s::linorder,'d,'c) shared_node_entry \<Rightarrow> ('a,'s,'d,'c) resolution_node"
+    and Fr :: "('a,'s,'d,'c) shared_node_entry \<Rightarrow> 'a fset"
+    and VN :: "('a,'s,'d,'c) shared_node_entry \<Rightarrow> 'a \<Rightarrow> bool"
+    and C :: "('a,'s,'d,'c) shared_node_entry \<Rightarrow> ('s,'a) resolution_variable fset"
+  assumes r: "search_formed \<kappa> P r" and K: "search_classes_formed r"
+  defines "V \<equiv> (shared_access \<kappa> P r)\<lparr>access_node := N, access_free := Fr, access_value_none := VN,
+    access_call_variables := C\<rparr>"
+  assumes pc: "\<And>A. (\<And>h. h |\<in>| A \<Longrightarrow> h |\<in>| access_focus_goals F V) \<Longrightarrow> pc A = ffilter rp A"
+  shows "committed_kept_select \<kappa> P pc F r V = access_select rp (access_focused F V)"
+proof -
+  have Z: "RBT.lookup RBT.empty p = class_value (\<lambda>h. False) (shared_goals (search_state r)) p" for p
+    by (simp add: class_value_def split: option.split)
+  have "committed_kept_select_at RBT.empty \<kappa> P pc F r V = access_select_in (\<lambda>h. False) rp (access_focused F V)"
+    unfolding V_def by (rule committed_kept_select_at_over[OF r K Z]) (simp, rule pc[unfolded V_def], assumption)
+  then show ?thesis by (simp add: committed_kept_select_at_empty access_select_in_empty)
 qed
 
 theorem committed_kept_select:
@@ -2305,7 +2437,8 @@ text \<open>
   A structure is the structure at the empty table and back (@{text committed_representation_structure_in_empty},
   @{text committed_representation_structure_of_empty}), and so is a tested form. The shared state at a table
   (@{const search_of_in}) is the committed representation whose successors close a goal the index closes
-  (@{const search_successors_in}) and whose found states are shared again with the table's calls (@{const search_of_in});
+  (@{const search_successors_in}) and whose found states are shared again from the table's sharing, made once
+  (@{text table_carry}, @{text search_of_carried});
   a call at the focus keeps its clause alternatives and is never closed (GT2a's @{const finite_committed_successors_in}).
   Its selection reads the closed class beside the settled one, at a proper focus as a range of it
   (@{text committed_kept_select_over_in}), and its search is GT2a's committed search at the table at the projection
@@ -2380,12 +2513,89 @@ next
   then show ?thesis using assms by (simp add: shared_committed_representation_def)
 qed
 
+text \<open>
+  The table carried through a re-share (task 989): the table's calls are shared and indexed once, from the empty
+  sharing state (@{text table_carry}); a state the search shares again is shared from that sharing state
+  (@{const share_resolution_state_from}), so every reference the table's index holds stays the same term
+  (@{thm [source] share_term_preserves}, through @{thm [source] calls_indexed_extends}) and the table is not attached
+  again.
+\<close>
+
+definition table_carry :: "('d \<times> finite_factor_term) list \<Rightarrow> share_state \<times> (nat,'d fset) rbt" where
+  "table_carry C = index_calls C (RBT.empty,0,[]) RBT.empty"
+
+lemma table_carry:
+  "share_state_formed (fst (table_carry C))" "table_extends [] (share_state_table (fst (table_carry C)))"
+  "calls_indexed (share_state_table (fst (table_carry C))) (snd (table_carry C)) (set C)"
+proof -
+  have I0: "calls_indexed (share_state_table (RBT.empty,0,[])) RBT.empty ({} :: ('d \<times> finite_factor_term) set)"
+    by (simp add: calls_indexed_def)
+  note ix = index_calls[OF share_state_empty(1) I0, of C]
+  show "share_state_formed (fst (table_carry C))" "table_extends [] (share_state_table (fst (table_carry C)))"
+    "calls_indexed (share_state_table (fst (table_carry C))) (snd (table_carry C)) (set C)"
+    using ix share_state_empty(2) by (simp_all add: table_carry_def)
+qed
+
+definition search_of_carried :: "('d \<times> finite_factor_term) list \<Rightarrow> share_state \<times> (nat,'d fset) rbt \<Rightarrow>
+    ('a,'s,'d,'c) finite_schema_system \<Rightarrow> ('a,'s::linorder,'d,'c) resolution_state \<Rightarrow> ('a,'s,'d,'c) shared_search" where
+  "search_of_carried C X P st = (let s = share_resolution_state_from (fst X) P st in
+    \<lparr>search_state = s, search_registered = fold (\<lambda>z t. tree_add (fst z) (shared_goal_registered (snd z)) t)
+      (RBT.entries (shared_goals s)) RBT.empty, search_values = RBT.empty,
+     search_classes = classes_update (map fst (RBT.entries (shared_goals s))) s empty_classes,
+     search_calls = C, search_index = snd X,
+     search_closed = fold (\<lambda>p t. closed_put p s (snd X) t) (RBT.keys (shared_goals s)) RBT.empty\<rparr>)"
+
+lemma search_of_carried:
+  assumes d: "resolution_positions_distinct st" and x: "share_state_formed (fst X)"
+    and e: "table_extends [] (share_state_table (fst X))"
+    and I: "calls_indexed (share_state_table (fst X)) (snd X) (set C)"
+  shows "search_formed \<kappa> P (search_of_carried C X P st)" and "search_project (search_of_carried C X P st) = st"
+    and "search_calls (search_of_carried C X P st) = C" and "search_classes_formed (search_of_carried C X P st)"
+proof -
+  let ?s = "share_resolution_state_from (fst X) P st"
+  note sr = share_resolution_state_from[OF d x e]
+  have ext: "table_extends (share_state_table (fst X)) (share_state_table (shared_sharing ?s))"
+    using keyed_share_grounds[where G = "resolution_grounds st", OF x] sr(3) by simp
+  have rf: "search_registered_formed (search_of_carried C X P st)"
+    unfolding search_registered_formed_def search_of_carried_def Let_def
+    by (auto simp: tree_add_fold_member RBT.lookup_in_tree)
+  have vf: "search_values_formed \<kappa> P (search_of_carried C X P st)"
+    by (simp add: search_values_formed_def search_of_carried_def Let_def)
+  have keys: "p \<in> set (RBT.keys (shared_goals ?s)) \<longleftrightarrow> RBT.lookup (shared_goals ?s) p \<noteq> None" for p
+    using RBT.lookup_keys[of "shared_goals ?s"] by (auto simp: dom_def)
+  have cf: "search_closing_formed (search_of_carried C X P st)"
+    unfolding search_closing_formed_def
+  proof (intro conjI allI)
+    show "calls_indexed (search_table (search_of_carried C X P st)) (search_index (search_of_carried C X P st))
+        (set (search_calls (search_of_carried C X P st)))"
+      using calls_indexed_extends[OF I ext] by (simp add: search_of_carried_def Let_def)
+    fix p
+    show "RBT.lookup (search_closed (search_of_carried C X P st)) p =
+        (case RBT.lookup (shared_goals (search_state (search_of_carried C X P st))) p of
+          None \<Rightarrow> None | Some h \<Rightarrow> if search_closes (search_of_carried C X P st) h then Some h else None)"
+      using keys[of p] by (auto simp: search_of_carried_def Let_def closed_put_fold search_closes_def split: option.split)
+  qed
+  show f: "search_formed \<kappa> P (search_of_carried C X P st)"
+    unfolding search_formed_def using sr(1) rf vf cf by (simp add: search_of_carried_def Let_def)
+  show "search_project (search_of_carried C X P st) = st" using sr(2) by (simp add: search_of_carried_def Let_def)
+  show "search_calls (search_of_carried C X P st) = C" by (simp add: search_of_carried_def Let_def)
+  have none: "RBT.lookup t p = None" if "p \<notin> set (map fst (RBT.entries t))" for t :: "('x::linorder,'y) rbt" and p
+    using that by (cases "RBT.lookup t p") (force simp: RBT.lookup_in_tree)+
+  have "classes_formed (search_state (search_of_carried C X P st))
+      (classes_update (map fst (RBT.entries (shared_goals (search_state (search_of_carried C X P st)))))
+        (search_state (search_of_carried C X P st)) empty_classes)"
+    by (rule classes_update_formed[OF f]) (simp add: none empty_classes_def class_value_def)
+  then show "search_classes_formed (search_of_carried C X P st)" by (simp add: search_of_carried_def Let_def)
+qed
+
+lemmas search_of_carried_table = search_of_carried[OF _ table_carry]
+
 definition shared_committed_representation_in :: "('a,'s,'d,'c) finite_witness_construction \<Rightarrow>
     ('a,'s,'d,'c) finite_schema_system \<Rightarrow> ('d \<times> finite_factor_term) list \<Rightarrow>
     (('a,'s::linorder,'d,'c) shared_search, ('a,'s,'d,'c) shared_goal_entry, ('a,'s,'d,'c) shared_node_entry,
       nat, 'a, 's, 'd, 'c) committed_representation" where
-  "shared_committed_representation_in \<kappa> P C = (shared_committed_representation \<kappa> P)\<lparr>
-    rep_successors := search_successors_in \<kappa> P, rep_share := search_of_in C P\<rparr>"
+  "shared_committed_representation_in \<kappa> P C = (let X = table_carry C in (shared_committed_representation \<kappa> P)\<lparr>
+    rep_successors := search_successors_in \<kappa> P, rep_share := search_of_carried C X P\<rparr>)"
 
 lemma shared_committed_in_fields:
   "rep_access (shared_committed_representation_in \<kappa> P C) = shared_access \<kappa> P"
@@ -2399,8 +2609,8 @@ lemma shared_committed_in_fields:
   "rep_solution_successors (shared_committed_representation_in \<kappa> P C) =
     rep_solution_successors (shared_committed_representation \<kappa> P)"
   "rep_substitute (shared_committed_representation_in \<kappa> P C) = rep_substitute (shared_committed_representation \<kappa> P)"
-  "rep_share (shared_committed_representation_in \<kappa> P C) = search_of_in C P"
-  by (simp_all add: shared_committed_representation_in_def shared_committed_representation_def fun_eq_iff)
+  "rep_share (shared_committed_representation_in \<kappa> P C) = search_of_carried C (table_carry C) P"
+  by (simp_all add: shared_committed_representation_in_def shared_committed_representation_def fun_eq_iff Let_def)
 
 theorem shared_committed_structure_in:
   assumes sock: "clause_sockets_distinct P"
@@ -2468,7 +2678,7 @@ proof -
     case (9 s)
     have pl: "search_placeable (search_project s)" using 9 by simp
     have d: "resolution_positions_distinct (search_project s)" using pl by (simp add: search_placeable_def)
-    show ?case using search_of_in[OF d] pl by (simp add: fd)
+    show ?case using search_of_carried_table[OF d] pl by (simp add: fd)
   qed
 qed
 
@@ -2480,144 +2690,7 @@ text \<open>
   (@{const search_closed}).
 \<close>
 
-definition focused_kept_select_in :: "('s list, ('a,'s,'d,'c) shared_goal_entry) rbt \<Rightarrow>
-    (('a,'s,'d,'c) shared_goal_entry fset \<Rightarrow> ('a,'s,'d,'c) shared_goal_entry fset) \<Rightarrow>
-    's list \<Rightarrow> ('a,'s::linorder,'d,'c) shared_search \<Rightarrow>
-    (('a,'s,'d,'c) shared_goal_entry,('a,'s,'d,'c) shared_node_entry,nat,'a,'s,'d,'c) search_access \<Rightarrow>
-    (('a,'s,'d,'c) shared_goal_entry,('a,'s,'d,'c) shared_node_entry,nat,'a,'s,'d,'c) search_access \<Rightarrow>
-    (('a,'s,'d,'c) shared_node_entry, ('a,'s,'d,'c) shared_goal_entry) access_selection" where
-  "focused_kept_select_in Z pc f r V W = (let N = access_construction_nodes W in
-    if N \<noteq> {||} then Access_Construction (access_first_nodes W N)
-    else let H = search_held_over V r; L = map snd (tree_prefix (class_candidates (search_classes r)) f);
-      c0 = access_first_goals W ((case find (\<lambda>h. h |\<notin>| H \<and> access_settled W h) L of None \<Rightarrow> {||} | Some h \<Rightarrow> {|h|}) |\<union>|
-        (case find (\<lambda>h. h |\<notin>| H) (map snd (tree_prefix Z f)) of None \<Rightarrow> {||} | Some h \<Rightarrow> {|h|}));
-      S = (if c0 \<noteq> {||} then c0 else
-        let cp = pc (fset_of_list (filter (\<lambda>h. h |\<notin>| H) L)) in
-        if cp \<noteq> {||} then access_first_goals W cp else
-        let c1 = (case find (\<lambda>h. h |\<notin>| H \<and> access_single W h) L of None \<Rightarrow> {||} | Some h \<Rightarrow> {|h|}) in
-        if c1 \<noteq> {||} then c1 else access_waiting_selection W (access_goals W |-| H)) in
-      if S = {||} then Access_None else Access_Goals S)"
 
-theorem focused_kept_select_over_in:
-  fixes N :: "('a,'s::linorder,'d,'c) shared_node_entry \<Rightarrow> ('a,'s,'d,'c) resolution_node"
-    and Fr :: "('a,'s,'d,'c) shared_node_entry \<Rightarrow> 'a fset"
-    and VN :: "('a,'s,'d,'c) shared_node_entry \<Rightarrow> 'a \<Rightarrow> bool"
-    and C :: "('a,'s,'d,'c) shared_node_entry \<Rightarrow> ('s,'a) resolution_variable fset"
-  assumes r: "search_formed \<kappa> P r" and K: "search_classes_formed r"
-    and Z: "\<And>p. RBT.lookup Z p = class_value E (shared_goals (search_state r)) p"
-    and EC: "\<And>h. E h \<Longrightarrow> shared_goal_is_call (shared_entry_goal h)"
-  defines "V \<equiv> (shared_access \<kappa> P r)\<lparr>access_node := N, access_free := Fr, access_value_none := VN,
-    access_call_variables := C\<rparr>"
-  assumes pc: "\<And>A. (\<And>h. h |\<in>| A \<Longrightarrow> h |\<in>| access_focus_goals (Some f) V) \<Longrightarrow> pc A = ffilter rp A"
-  shows "focused_kept_select_in Z pc f r V (access_focused (Some f) V) = access_select_in E rp (access_focused (Some f) V)"
-proof -
-  let ?V = V and ?W = "access_focused (Some f) V"
-  let ?s = "search_state r" and ?G = "shared_goals (search_state r)" and ?K = "search_classes r"
-  let ?H = "search_held_over V r" and ?L = "map snd (tree_prefix (class_candidates (search_classes r)) f)"
-  let ?Lz = "map snd (tree_prefix Z f)"
-  have s: "shared_state_formed \<kappa> P ?s" using search_formedD(1)[OF r] .
-  have tst: "access_candidate ?V h = access_candidate (state_access ?s) h \<and>
-      access_settled ?V h = access_settled (state_access ?s) h \<and> access_single ?V h = access_single (state_access ?s) h" for h
-    by (simp add: V_def shared_access_def Let_def access_candidate_def access_settled_def access_single_def
-      access_pruned_def access_pruned_among_def access_reusable_def access_waits_def access_ground_def)
-  have tc: "RBT.lookup (class_candidates ?K) p = class_value (access_candidate ?V) ?G p" for p
-  proof (cases "RBT.lookup ?G p")
-    case None
-    then show ?thesis using K by (simp add: classes_formed_def class_value_def)
-  next
-    case (Some h)
-    then show ?thesis using K kept_tests[OF r Some] tst[of h] by (simp add: classes_formed_def class_value_def)
-  qed
-  have posc: "access_goal_position ?W h = p" if "RBT.lookup (class_candidates ?K) p = Some h" for p h
-  proof -
-    have "RBT.lookup ?G p = Some h" using that tc[of p] by (auto simp: class_value_def split: option.splits if_splits)
-    then show ?thesis using shared_goal_lookup_position[OF s] by (simp add: V_def shared_access_simps)
-  qed
-  have posz: "access_goal_position ?W h = p" if "RBT.lookup Z p = Some h" for p h
-  proof -
-    have "RBT.lookup ?G p = Some h" using that Z[of p] by (auto simp: class_value_def split: option.splits if_splits)
-    then show ?thesis using shared_goal_lookup_position[OF s] by (simp add: V_def shared_access_simps)
-  qed
-  have cw: "access_candidate ?W h = access_candidate ?V h" for h by (simp add: access_candidate_def)
-  have Vg: "access_goals V = access_goals (shared_access \<kappa> P r)"
-    "access_goal_position V = access_goal_position (shared_access \<kappa> P r)" by (simp_all add: V_def)
-  have Lmem: "h \<in> snd ` set (tree_prefix (class_candidates (search_classes r)) f) \<longleftrightarrow>
-      h |\<in>| access_goals ?W \<and> access_candidate ?W h" for h
-  proof -
-    have "h \<in> snd ` set (tree_prefix (class_candidates (search_classes r)) f) \<longleftrightarrow>
-        (\<exists>p. RBT.lookup ?G p = Some h \<and> access_candidate ?V h \<and> take (length f) p = f)"
-      unfolding tree_prefix(3) tc by (auto simp: class_value_def split: option.splits if_splits)
-    also have "\<dots> \<longleftrightarrow> h |\<in>| access_goals ?W \<and> access_candidate ?W h"
-      by (auto simp: cw Vg access_focus_goals_def ffilter.rep_eq shared_access_simps tree_values_member
-        dest: shared_goal_lookup_position[OF s])
-    finally show ?thesis .
-  qed
-  have Zmem: "h \<in> snd ` set (tree_prefix Z f) \<longleftrightarrow> h |\<in>| access_goals ?W \<and> E h" for h
-  proof -
-    have "h \<in> snd ` set (tree_prefix Z f) \<longleftrightarrow> (\<exists>p. RBT.lookup ?G p = Some h \<and> E h \<and> take (length f) p = f)"
-      unfolding tree_prefix(3) Z by (auto simp: class_value_def split: option.splits if_splits)
-    also have "\<dots> \<longleftrightarrow> h |\<in>| access_goals ?W \<and> E h"
-      by (auto simp: Vg access_focus_goals_def ffilter.rep_eq shared_access_simps tree_values_member
-        dest: shared_goal_lookup_position[OF s])
-    finally show ?thesis .
-  qed
-  have hs: "access_holdable ?W h = access_holdable ?V h" "access_held ?W h = access_held ?V h" for h
-    by (simp_all add: access_held_def)
-  have held: "?H = ffilter (\<lambda>h. access_holdable V h \<and> access_held V h) (access_goals V)"
-    unfolding V_def by (rule search_held_over_nodes[OF r])
-  have A: "ffilter (\<lambda>h. \<not> (access_holdable ?W h \<and> access_held ?W h)) (access_goals ?W) = access_goals ?W |-| ?H"
-    by (rule fset_eqI) (auto simp: hs held ffilter.rep_eq access_focus_goals_def)
-  have hc: "fset_of_list (filter (\<lambda>h. h |\<notin>| ?H) ?L) = ffilter (access_candidate ?W) (access_goals ?W |-| ?H)"
-    by (rule fset_eqI) (auto simp: fset_of_list.rep_eq ffilter.rep_eq Lmem)
-  have h0: "fset_of_list (filter (\<lambda>h. h |\<notin>| ?H \<and> access_settled ?W h) ?L) =
-      ffilter (\<lambda>h. access_candidate ?W h \<and> access_settled ?W h) (access_goals ?W |-| ?H)"
-    by (rule fset_eqI) (auto simp: fset_of_list.rep_eq ffilter.rep_eq Lmem)
-  have hz: "fset_of_list (filter (\<lambda>h. h |\<notin>| ?H) ?Lz) = ffilter E (access_goals ?W |-| ?H)"
-    by (rule fset_eqI) (auto simp: fset_of_list.rep_eq ffilter.rep_eq Zmem)
-  have h1: "fset_of_list (filter (\<lambda>h. h |\<notin>| ?H \<and> access_single ?W h) ?L) =
-      ffilter (\<lambda>h. access_candidate ?W h \<and> access_single ?W h) (access_goals ?W |-| ?H)"
-    by (rule fset_eqI) (auto simp: fset_of_list.rep_eq ffilter.rep_eq Lmem)
-  have first: "access_first_goals ?W (fset_of_list (filter X ?L)) = (case find X ?L of None \<Rightarrow> {||} | Some h \<Rightarrow> {|h|})"
-    for X unfolding access_first_goals_def by (rule prefix_first) (rule posc)
-  have firstz: "access_first_goals ?W (fset_of_list (filter X ?Lz)) = (case find X ?Lz of None \<Rightarrow> {||} | Some h \<Rightarrow> {|h|})"
-    for X unfolding access_first_goals_def by (rule prefix_first) (rule posz)
-  have none: "((case find X ?L of None \<Rightarrow> {||} | Some h \<Rightarrow> {|h|}) = {||}) = (fset_of_list (filter X ?L) = {||})" for X
-  proof -
-    have "((case find X ?L of None \<Rightarrow> {||} | Some h \<Rightarrow> {|h|}) = {||}) = (find X ?L = None)"
-      by (cases "find X ?L") simp_all
-    also have "\<dots> = (fset_of_list (filter X ?L) = {||})" by (auto simp: find_None_iff fset_eq_iff fset_of_list.rep_eq)
-    finally show ?thesis .
-  qed
-  have e0: "(case find (\<lambda>h. h |\<notin>| ?H \<and> access_settled ?W h) ?L of None \<Rightarrow> {||} | Some h \<Rightarrow> {|h|}) =
-      access_first_goals ?W (ffilter (\<lambda>h. access_candidate ?W h \<and> access_settled ?W h) (access_goals ?W |-| ?H))"
-    by (simp only: first[symmetric] h0)
-  have ez: "(case find (\<lambda>h. h |\<notin>| ?H) ?Lz of None \<Rightarrow> {||} | Some h \<Rightarrow> {|h|}) =
-      access_first_goals ?W (ffilter E (access_goals ?W |-| ?H))"
-    by (simp only: firstz[symmetric] hz)
-  have e1: "(case find (\<lambda>h. h |\<notin>| ?H \<and> access_single ?W h) ?L of None \<Rightarrow> {||} | Some h \<Rightarrow> {|h|}) =
-      access_first_goals ?W (ffilter (\<lambda>h. access_candidate ?W h \<and> access_single ?W h) (access_goals ?W |-| ?H))"
-    by (simp only: first[symmetric] h1)
-  have n1: "(access_first_goals ?W (ffilter (\<lambda>h. access_candidate ?W h \<and> access_single ?W h) (access_goals ?W |-| ?H)) = {||}) =
-      (ffilter (\<lambda>h. access_candidate ?W h \<and> access_single ?W h) (access_goals ?W |-| ?H) = {||})"
-    by (simp only: h1[symmetric] first none)
-  have cand: "access_candidate ?W h" if "E h" for h
-    using EC[OF that] by (simp add: cw V_def access_candidate_def shared_access_simps)
-  have un: "ffilter (\<lambda>h. access_candidate ?W h \<and> (access_settled ?W h \<or> E h)) (access_goals ?W |-| ?H) =
-      ffilter (\<lambda>h. access_candidate ?W h \<and> access_settled ?W h) (access_goals ?W |-| ?H) |\<union>| ffilter E (access_goals ?W |-| ?H)"
-    using cand by (auto simp: ffilter.rep_eq)
-  have c0: "access_first_goals ?W ((case find (\<lambda>h. h |\<notin>| ?H \<and> access_settled ?W h) ?L of None \<Rightarrow> {||} | Some h \<Rightarrow> {|h|}) |\<union>|
-        (case find (\<lambda>h. h |\<notin>| ?H) ?Lz of None \<Rightarrow> {||} | Some h \<Rightarrow> {|h|})) =
-      access_first_goals ?W (ffilter (\<lambda>h. access_candidate ?W h \<and> (access_settled ?W h \<or> E h)) (access_goals ?W |-| ?H))"
-    unfolding e0 ez un access_first_goals_def by (rule positioned_first_union)
-  have fe: "access_first_goals ?W X = {||} \<longleftrightarrow> X = {||}" for X
-    unfolding access_first_goals_def by (rule positioned_first_empty_iff)
-  have pcx: "pc (ffilter (access_candidate ?W) (access_goals ?W |-| ?H)) =
-      ffilter rp (ffilter (access_candidate ?W) (access_goals ?W |-| ?H))"
-    by (rule pc) (auto simp: ffilter.rep_eq)
-  show ?thesis
-    unfolding focused_kept_select_in_def Let_def
-    by (simp only: access_select_in_def access_goal_choice_classes_in Let_def A hc pcx c0 fe e1 n1)
-qed
 
 definition committed_kept_select_in :: "('a,'s,'d,'c) finite_witness_construction \<Rightarrow> ('a,'s,'d,'c) finite_schema_system \<Rightarrow>
     (('a,'s,'d,'c) shared_goal_entry fset \<Rightarrow> ('a,'s,'d,'c) shared_goal_entry fset) \<Rightarrow> 's list option \<Rightarrow>
@@ -2626,6 +2699,10 @@ definition committed_kept_select_in :: "('a,'s,'d,'c) finite_witness_constructio
     (('a,'s,'d,'c) shared_node_entry, ('a,'s,'d,'c) shared_goal_entry) access_selection" where
   "committed_kept_select_in \<kappa> P pc F r V = (if F = None \<or> F = Some [] then kept_select_by_in (search_closed r) pc r V
     else focused_kept_select_in (search_closed r) pc (the F) r V (shared_focused (the F) r V))"
+
+lemma committed_kept_select_in_at:
+  "committed_kept_select_in \<kappa> P pc F r V = committed_kept_select_at (search_closed r) \<kappa> P pc F r V"
+  by (simp add: committed_kept_select_in_def committed_kept_select_at_def)
 
 theorem committed_kept_select_over_in:
   fixes N :: "('a,'s::linorder,'d,'c) shared_node_entry \<Rightarrow> ('a,'s,'d,'c) resolution_node"
@@ -2637,31 +2714,12 @@ theorem committed_kept_select_over_in:
     access_call_variables := C\<rparr>"
   assumes pc: "\<And>A. (\<And>h. h |\<in>| A \<Longrightarrow> h |\<in>| access_focus_goals F V) \<Longrightarrow> pc A = ffilter rp A"
   shows "committed_kept_select_in \<kappa> P pc F r V = access_select_in (search_closes r) rp (access_focused F V)"
-proof (cases "F = None \<or> F = Some []")
-  case True
-  let ?K = "search_classes r"
-  let ?X = "fset_of_list (map snd (RBT.entries (class_candidates ?K))) |-| search_held_over V r"
-  have tc: "\<And>p. RBT.lookup (class_candidates ?K) p = class_value (kept_candidate (search_table r)) (shared_goals (search_state r)) p"
-    using K by (simp add: classes_formed_def)
-  have fg: "access_focus_goals F V = access_goals V"
-    using arg_cong[OF access_focused_whole[OF True, of V], of access_goals] by simp
-  have goals: "access_goals V = tree_values (shared_goals (search_state r))" by (simp add: V_def shared_access_simps)
-  have X: "h |\<in>| access_focus_goals F V" if "h |\<in>| ?X" for h
-    using that class_tree_member[OF tc, of h] by (auto simp: fg goals fset_of_list.rep_eq)
-  have e: "kept_select_by_in (search_closed r) pc r V = kept_select_by_in (search_closed r) (ffilter rp) r V"
-    by (simp only: kept_select_by_in_def Let_def pc[OF X])
-  have e1: "kept_select_by_in (search_closed r) (ffilter rp) r V = access_select_in (search_closes r) rp V"
-    unfolding V_def by (rule kept_select_over_in[OF r K search_closed_class[OF r]]) (erule search_closes_call)
-  show ?thesis using True by (simp only: committed_kept_select_in_def e e1 access_focused_whole[OF True] if_True)
-next
-  case False
-  obtain g where g: "F = Some g" and gne: "g \<noteq> []" using False by (cases F) auto
-  have "committed_kept_select_in \<kappa> P pc F r V = focused_kept_select_in (search_closed r) pc g r V (access_focused F V)"
-    using gne by (simp add: committed_kept_select_in_def g shared_focused_over[OF r] V_def)
-  also have "\<dots> = access_select_in (search_closes r) rp (access_focused F V)"
-    unfolding g V_def by (rule focused_kept_select_over_in[OF r K search_closed_class[OF r]])
-      (erule search_closes_call, rule pc, simp add: g V_def)
-  finally show ?thesis .
+proof -
+  have "committed_kept_select_at (search_closed r) \<kappa> P pc F r V =
+      access_select_in (search_closes r) rp (access_focused F V)"
+    unfolding V_def by (rule committed_kept_select_at_over[OF r K search_closed_class[OF r]])
+      (erule search_closes_call, rule pc[unfolded V_def], assumption)
+  then show ?thesis by (simp add: committed_kept_select_in_at)
 qed
 
 corollary committed_kept_select_in_filter:

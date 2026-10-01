@@ -22134,10 +22134,13 @@ What is decided.
    copied. GT2a's committed successors read the table only in the default branch, so a call at a committed sub-search's
    focus keeps its clause alternatives and is never closed.
 2. The committed representations at a table are F2c's and D1d's with three fields changed: the successors close a goal
-   the inner index closes (`search_successors_in`, `deferred_successors_in`), a found state is shared again with the
-   table's calls (`search_of_in`, `deferred_committed_of_in`), and a substitution outside the deferred bind makes its
-   state with the table attached (`deferred_substitute_in`). Every step keeps the table's calls (the frame lemmas), so
-   the closing test of every reached state is the table's.
+   the inner index closes (`search_successors_in`, `deferred_successors_in`), a found state is shared again from the
+   table's sharing state, made once (`table_carry`, `search_of_carried`, `deferred_committed_of_carried`; task 989:
+   `share_resolution_state_from` and `deferred_of_search`, with today's `share_resolution_state` and `deferred_of`
+   their instances, so the table is carried through the re-share rather than attached again, its references and
+   index kept by `share_term_preserves` and `calls_indexed_extends`), and a substitution outside the deferred bind
+   makes its state from that sharing state too (`deferred_substitute_in`). Every step keeps the table's calls (the frame
+   lemmas), so the closing test of every reached state is the table's.
 3. The closed class enters the committed selection as it entered the plain one: at the whole focus through
    `kept_select_by_in`, at a proper focus as the first of two key ranges under the focus, the kept candidates' settled
    one (FI) and the closed class's (`focused_kept_select_in`).
@@ -22148,9 +22151,31 @@ What is decided.
 5. At a table whose calls are true but whose certificates the checker does not accept, the route's verdict form is
    GT4's graph verdicts of the check search's found states (`moded_check_graph_verdicts_in`, sound where the calls are
    true); the found states read the table's calls alone (`moded_deferred_route_search_in_calls`).
+6. (task 989) Today's selections are the instances at the empty class of one statement at a closed class: the focused
+   selection (`focused_kept_select_in_empty`), the committed one (`committed_kept_select_at`, read through
+   `committed_kept_select_at_over`; `committed_kept_select_at_empty`, `committed_kept_select_in_at`), the route's
+   (`route_select_at`, `route_select_at_over`) and the deferred one (`deferred_kept_select_at`); `focused_kept_select_over`,
+   `committed_kept_select_over`, `route_select_over`, `deferred_kept_select` and their `_in` forms are each derived,
+   names and statements kept.
+7. (task 989) Item (7) at a demand, at the moded selection: GT4's graph verdicts of each call's check search
+   (`moded_demand_graph_verdicts_in`), the calls they accept (`moded_demand_graph_true_in`, true where the table's calls
+   are true), and the native pair of the two (`native_moded_graph_verdicts_in`), each at a listed table with its code
+   equation; at the waiting selection they are WC3's.
 
-Limits. The table is shared and indexed once a search (once a call), not once a demand; the framed index is once a
-call and once a demand, as before. The bottom-up table at #830's fixtures is GT6's.
+Limits. The table is shared and indexed once a representation (once a call), the re-share of a found state and the
+substitution outside the deferred bind both reading the sharing state made there (`deferred_substitute_carried`): a
+re-share no longer attaches it, but the term table holds the table's calls, and its reads — `search_table` is the
+reversed shape list — are linear in them, so a step at a table of 10,000 calls costs about 0.18 ms a projection more
+(task 989's measurement); the term table's reads are the term-table fix #995's. The framed index is once a call and
+once a demand, as before. The selected-representation lemmas (`kept_selected_formed`, `deferred_kept_selected_formed`,
+`deferred_route_formed`, `deferred_route_search`) and today's searches and code equations are not instances of the
+at-table ones: the representations at a table differ from today's in their successors and their re-share, equal only
+on states without calls; they stay as they are (review 877's follow-up 2 closed so). The truth part of
+`finite_state_graph_verdicts_in` is not equal at two tables of the same true calls: its tree disjunct checks a
+certificate assembled from the entries' own certificates. At a table the route's consumers take a found state's truth
+as the graph check alone, which reads the table by its calls alone; that form, its calls lemma and these forms over it
+are C3/C2 #993's. The native listed constant in a control (a native program with a table) and the bottom-up table at
+#830's fixtures are GT6 #878's.
 
 ## The material premise observes an artifact's incidence and attachments as its data class presents them: its atoms keep each address beside its anchor, and artifact admission is linear
 

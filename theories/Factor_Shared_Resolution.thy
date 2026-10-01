@@ -2785,20 +2785,39 @@ definition share_resolution_state :: "('a,'s,'d,'c) finite_schema_system \<Right
     (shared_place_nodes (resolution_node_rows st)
       (shared_empty (keyed_share_grounds (resolution_grounds st) (RBT.empty,0,[])) (resolution_witnesses st)))"
 
-theorem share_resolution_state:
+text \<open>
+  A state is shared from any formed sharing state, its ground terms shared after what that state holds: every
+  reference the sharing state gives stays the same term (@{thm [source] share_term_preserves}), so a table shared
+  into it once is carried through every state shared from it. The state shared from the empty sharing state is
+  @{const share_resolution_state}.
+\<close>
+
+definition share_resolution_state_from :: "share_state \<Rightarrow> ('a,'s,'d,'c) finite_schema_system \<Rightarrow>
+    ('a,'s::linorder,'d,'c) resolution_state \<Rightarrow> ('a,'s,'d,'c) shared_state" where
+  "share_resolution_state_from x0 P st = shared_place_goals P (resolution_goal_rows st)
+    (shared_place_nodes (resolution_node_rows st)
+      (shared_empty (keyed_share_grounds (resolution_grounds st) x0) (resolution_witnesses st)))"
+
+lemma share_resolution_state_from_empty:
+  "share_resolution_state P st = share_resolution_state_from (RBT.empty,0,[]) P st"
+  by (simp add: share_resolution_state_def share_resolution_state_from_def)
+
+theorem share_resolution_state_from:
   fixes P :: "('a,'s::linorder,'d,'c) finite_schema_system" and st :: "('a,'s,'d,'c) resolution_state"
-  assumes d: "resolution_positions_distinct st"
-  shows "shared_state_formed \<kappa> P (share_resolution_state P st)"
-    and "shared_state_project (share_resolution_state P st) = st"
+  assumes d: "resolution_positions_distinct st" and x0: "share_state_formed x0"
+    and e0: "table_extends [] (share_state_table x0)"
+  shows "shared_state_formed \<kappa> P (share_resolution_state_from x0 P st)"
+    and "shared_state_project (share_resolution_state_from x0 P st) = st"
+    and "shared_sharing (share_resolution_state_from x0 P st) = keyed_share_grounds (resolution_grounds st) x0"
 proof -
-  let ?x = "keyed_share_grounds (resolution_grounds st) (RBT.empty,0,[])"
+  let ?x = "keyed_share_grounds (resolution_grounds st) x0"
   let ?NR = "fimage (\<lambda>nd. (resolution_node_position nd, nd)) (resolution_nodes st)"
   let ?GR = "fimage (\<lambda>g. (resolution_goal_position g, g)) (resolution_pending st)"
   let ?s0 = "shared_empty ?x (resolution_witnesses st) :: ('a,'s,'d,'c) shared_state"
   let ?s1 = "shared_place_nodes (finite_functional_rows ?NR) ?s0"
-  note kx = keyed_share_grounds[where G = "resolution_grounds st", OF share_state_empty(1)]
+  note kx = keyed_share_grounds[where G = "resolution_grounds st", OF x0]
   have xf: "share_state_formed ?x" using kx(1) .
-  have ext: "table_extends [] (share_state_table ?x)" using kx(2) share_state_empty(2) by simp
+  have ext: "table_extends [] (share_state_table ?x)" using table_extends_trans[OF e0 kx(2)] .
   have hx: "\<And>u. u |\<in>| resolution_grounds st \<Longrightarrow> table_holds (share_state_table ?x) u" using kx(3) .
   have e1: "shared_state_formed \<kappa> P ?s0" by (rule shared_empty(1)[OF xf ext])
   have e2: "shared_state_project ?s0 = Resolution_State {||} {||} (resolution_witnesses st)"
@@ -2853,21 +2872,30 @@ proof -
     ultimately show "table_holds (shared_state_table ?s1) u" using hx by simp
   qed
   note g = shared_place_goals[OF conjunct1[OF n] finite_functional_rows_distinct_keys[OF gfun] gfree gpos gheld]
-  have eq: "share_resolution_state P st = shared_place_goals P (finite_functional_rows ?GR) ?s1"
-    by (simp add: share_resolution_state_def resolution_goal_rows_def resolution_node_rows_def)
-  show "shared_state_formed \<kappa> P (share_resolution_state P st)" using g eq by simp
+  have eq: "share_resolution_state_from x0 P st = shared_place_goals P (finite_functional_rows ?GR) ?s1"
+    by (simp add: share_resolution_state_from_def resolution_goal_rows_def resolution_node_rows_def)
+  show "shared_state_formed \<kappa> P (share_resolution_state_from x0 P st)" using g eq by simp
   have nl: "fset_of_list (map snd (finite_functional_rows ?NR)) = resolution_nodes st"
     by (unfold fset_of_list_eq_set) (simp add: nrows fimage.rep_eq image_image)
   have gl: "fset_of_list (map snd (finite_functional_rows ?GR)) = resolution_pending st"
     by (unfold fset_of_list_eq_set) (simp add: grows fimage.rep_eq image_image)
-  have p1: "resolution_pending (shared_state_project (share_resolution_state P st)) = resolution_pending st"
+  have p1: "resolution_pending (shared_state_project (share_resolution_state_from x0 P st)) = resolution_pending st"
     using g n e2 gl eq by simp
-  have p2: "resolution_nodes (shared_state_project (share_resolution_state P st)) = resolution_nodes st"
+  have p2: "resolution_nodes (shared_state_project (share_resolution_state_from x0 P st)) = resolution_nodes st"
     using g n e2 nl eq by simp
-  have p3: "resolution_witnesses (shared_state_project (share_resolution_state P st)) = resolution_witnesses st"
+  have p3: "resolution_witnesses (shared_state_project (share_resolution_state_from x0 P st)) = resolution_witnesses st"
     using g n e2 eq by simp
-  show "shared_state_project (share_resolution_state P st) = st"
-    using p1 p2 p3 by (cases "shared_state_project (share_resolution_state P st)", cases st) simp
+  show "shared_state_project (share_resolution_state_from x0 P st) = st"
+    using p1 p2 p3 by (cases "shared_state_project (share_resolution_state_from x0 P st)", cases st) simp
+  show "shared_sharing (share_resolution_state_from x0 P st) = ?x" using g n e5 eq by simp
 qed
+
+theorem share_resolution_state:
+  fixes P :: "('a,'s::linorder,'d,'c) finite_schema_system" and st :: "('a,'s,'d,'c) resolution_state"
+  assumes d: "resolution_positions_distinct st"
+  shows "shared_state_formed \<kappa> P (share_resolution_state P st)"
+    and "shared_state_project (share_resolution_state P st) = st"
+  using share_resolution_state_from[OF d share_state_empty(1)] share_state_empty(2)
+  by (simp_all add: share_resolution_state_from_empty)
 
 end

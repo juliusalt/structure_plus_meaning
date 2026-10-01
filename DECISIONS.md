@@ -17795,6 +17795,14 @@ answer wherever 12 has one: its input.
 
 [Corrected by task 794, a design, from correction (13)'s question (#789's, placed before R7 #542 by the planner) and
 its counts (`.build/tasks/789/result.md`, `.build/tasks/789/p1/probe.log`). (14) A check keeps its first found state.
+[Narrowed by task 1020 (#1008, #1019): the check keeps the found states of its *first finding block*, and a block — the
+successors of one determinate key — is joined as a union. At a ground goal whose clause alternatives add ground premises
+only (21's comparisons of keys differing in several components: one left or right difference a differing component,
+each of key 0) every alternative continues the search, so a check of a ground root keeps every derivation of its first
+finding blocks: 21's found states 3, 3, 20, 60, 90, 90 at L = 2–7, more than 10⁵ states at L = 8. One found state at a
+ground goal needs an order among a block's members; its form, the statements it keeps and its trigger are course (b) of
+task 1020's addition to the section "The given's calls are decided once", deferred there. What follows stands of
+blocks.]
 Under correction (13) 12 is produced at 37.0/2 and its committed sub-search is the check 12(t4,t4): 11(t4) twice and
 7(t4,t4), whose four bag comparisons 6(Fk,Fk) walk the looked-up artifact's fields. At 77/2 that check, not 11's cost,
 is met first (#789: not returned in 45 s, ≥ 1,668 states, 605 steps and 52 dead ends at 5, 351 steps at 2, no step
@@ -19964,6 +19972,181 @@ occurrence; it reads no name, position or payload; the restriction reads a commi
 **The builds**: rows VK1 and VK2 of the table below, and GT2b #889's valued pass. Recorded 2026-09-27 (task 918's
 decision; a design, no theory changes).]
 
+[Added by task 1020, a design, from #1019 (`.build/tasks/1019/result.md`, `.build/tasks/1019/measurement.md`, its driver
+`.build/tasks/1019/draft/theories/M1019.thy`), with #1008's depth profiles, #1006's c(D) and #1018's check over
+references: GT6's course, and #1019's question (e). #1019 counted GT6's environment level (21–26, 156 and the package
+readers 79, 77, 80, 82, 83 at the given's value) at more than 3×10⁹ states as GT5's families stand — every data
+selection over the given's rows recognizing the list it walks (5's clauses `5 0: 2 4` and `5 1: 2 5`, 2.2–2.9 states a
+node, about 7.1×10⁵ a selection, about 4,076 selections) and 21's found states unbounded; with the data recognitions in
+the table and one found state at a ground goal, at least 2.05×10⁷ states and 1.7×10⁵ s sequential, 1.66×10⁷ states and
+1.1×10⁵ s of them 21's key uniqueness at the bindings' suffixes; and GT6's entries as briefed about 1.2×10⁶ s, the route
+constant at a listed table sharing its table three times a call and each call's table the listed table of every call
+before it. Five courses are decided here; (c), 21's key uniqueness at long lists, by the design placed beside this one.]
+
+**(a) The data recognitions in GT5's families: taken (GT5b).** GT5's calls gain one family, after the identity calls
+and before the environment calls: 2, data recognition, at each of the given's artifact-row presentations
+(`environment_artifact_rows_term`, 261) and binding rows (`binding_data`, about 1,051); and 4, data-list recognition, at
+every suffix of the rows term and of the bindings term (`data_list_term`, 1,314), the shortest first. These are calls the
+given's readers make at the given's value: a data selection (5) calls 2 at every row it skips and at the row it selects,
+and 4 at the rest of the list where it selects; 37's artifact lookup selects over the rows and 38's binding lookup over
+the bindings at every call of 24, 156 and 79–83. So the family is a family of the given's calls, computed from the
+given's value through the presenters 21's, 23's and 25's calls already use, never supplied beside it; no reader, clause
+or asked relation changes. At the table a selection walks two states a row (the skipped row's 2 closed, 5's next step)
+and stops at its match, the rest closed by 4's entry: 24 at a binding takes 676 states (#1019, `rs`; 1,294 with 2
+alone) against about 2.1×10⁶, and the selections' 2.9×10⁹ states become about 7.1×10⁵ over 24's calls and their like in
+156 and 79–83. Certified once: 2 at the rows about 6–7×10⁵ states (2.2–2.9 a node of the 245,069-node rows term), at the
+bindings about 10⁵, 4 at each suffix three states (its head's 2 and the shorter suffix's 4 entries): about 10⁶ states,
+each 2 independent of every other, 4's chains shortest first. GT5's statements are kept by name and statement, the
+lemmas that unfold `given_table_calls` re-proved: the family's sites lie in the rooted readers' callee closure (5 calls 2
+and 4), so the agreement and relocation transfers stand; nothing evaluates GT5, so no recorded word changes. Not taken:
+the keys' parts (#1019's `k`: 2 at every subterm of every binding, 195,120 entries), which removes 40 % of 21's states and
+little of its seconds and is moot under (c); a selection that does not recognize what it skips, which changes 5's
+clauses — a reader's notion — where the table decides the same recognitions once.
+
+**(b) One found state at a ground goal: deferred, its form and trigger stated.** K1's first join
+(`finite_search_join`) keeps the found states of its first finding block, a block being the successors of one
+determinate key (`finite_determinate_key`: the goals the step adds under the goal that hold a variable), joined as a
+union. At a ground goal one block holds its clause alternatives that add ground premises only, and each continues the
+search: 21's comparisons of keys differing in several components have one left or right difference a differing
+component, each of key 0, so the found states multiply along 20's chain (#1008; the marked narrowing of (14)). One found
+state needs an order among a block's members: a first member is a function of a finite set only through an order, K1's
+key reads no clause key, name or position, and the route's types order the sockets alone (`'s::linorder`) — an order on
+clause keys or sites would change K2's and the route forms' statements. The form, when built: the block key refined to
+the pair of the determinate key and the list, in socket order, of the successor's ground premise calls under the goal,
+each compared as a term in the prefix-key order of `Ordered_Finite_Terms`, equal refined keys still a union; at the
+representation the premises' calls compared by their shared references through `compare_shared_references`
+(`Shared_Term_Tables`' order, exact to the decoded terms' prefix keys, `Prefix_Key_Comparisons`), the blocks made through
+a comparator (`Linear_Comparisons`). Its correctness needs nothing new: the lifting's first-join case reads a block
+before x0's and x0's own block, whatever the partition; the ground-founds premise (`finite_ground_founds_by_in`) and its
+discharge (`finite_committed_ground_founds_at_in`) read only that a join's found states are found states of its parts;
+K1's join laws (`finite_search_join_found`, `_union`, `_block`, `_unfound`, `_lifted`) are restated at a linearly ordered
+key, `finite_key_blocks` generalized from nat (today's join its instance); every verdict and K2's exactness kept, the
+certificate kept the first in the order. Why deferred: under (c) 21 makes one comparison a suffix (adjacent keys), whose
+few derivations continue a search of a few states, so 21's family is about 4×10⁴ states with or without (b); without
+(c), (b) bounds 21's found states but leaves its 1.66×10⁷ states and 1.1×10⁵ s on one chain (each suffix's call reads
+the shorter suffix's entry), beyond a run of hours. So (b) never decides whether GT6 is within the machine, while its
+build changes the resolver's core and representations (`Factor_Resolution_Lifting`, `Factor_Search_Representations`,
+`Factor_Shared_Commitments`, the deferred search) under every open build of the pole. Its trigger: (c) declined by the
+design beside this one (then (b), with a course for 21's quadratic family, precedes GT6), or a found-state count above
+one at a ground root, growing with the call, in GT6's fit, R7's or a judgment's figures. #1019's variant (every ground
+goal at any focus, in the order of the set's listing) is a measurement device, not a function of the set.
+
+**(d) The priority class read without walking the input: taken (RP); the class kept by the steps deferred.** At the
+selections over the rows the route's priority class (`admitted_priority_class`) is about 80 % of a state (24: 58 → 33 ms
+a call, every other state, about 0.2 µs a node of the 5 goal's remaining list) and at 77 at least 90 % (0.15 ms a pending
+goal; #1019 (4)): the commitment priority (`access_commitment_priority` through `accessed_call`, two thirds of it) and the
+mode binder (`access_mode_binder`, a third) read a call goal's viewed input and output through its projected goal
+(`access_goal`, `resolution_view_pattern`), and the projection decodes the goal's whole pattern at every test. In the
+shared pattern a ground subterm is one reference (F2a), and a view is a linear pattern, so its parts' variables are the
+cached variables of the shared sub-patterns at its holes, read along its region (D3b1's regions;
+`shared_read_variables_project`): a read the size of the view. RP: the commitment access gains that read — a call goal's
+viewed input's and output's variables at a view, none where the view does not match — computed at the shared and the
+deferred commitment access from the goal entry's shared pattern, exact to `resolution_view_pattern`'s parts' variables
+at the projected goal, a clause of the commitment access's exactness (`access_commitment_exact`) its constructors
+establish; `accessed_call`, `access_mode_binder` and `access_waiting_variables` read it. Kept: `commitment_priority_exact`,
+the moded priority's statements, `admitted_priority_class`'s lemma and every committed and route statement; every class,
+verdict and recorded word as today. Effect: a selection state about five times cheaper (24: about 2–4 s a call against
+11–13 s of states), 77's class microseconds a pending goal. The class kept by the steps, #1019's other half, is deferred:
+it reads other goals' presence and bindings, for which #871 made it once a step where the selection reaches it, as
+correction (16) makes the waiting set; its trigger the class's share above a tenth of a step at 77 at GT6's table after
+RP, the trigger WC3 states for its waiting set.
+
+**(e) GT6's table carried once: taken — one shared table carried across GT6's calls and extended by each entry
+(#1019's question).** A table is read by its calls alone and a verdict does not depend on it (decision 3;
+`moded_deferred_route_search_in_calls`), so an entry no search meets costs a logarithmic lookup, never a verdict. Giving
+each call only the calls its search can meet would compute them per call from the clauses and the call's subterms and
+share the restricted table per call — 24's holds (a)'s recognitions at every row and suffix, about 3×10⁷ nodes walked a
+call — more than carrying; one carried table also serves the consumers' judgments as it stands. Two parts: (e1) GT6's
+production carries one table value across its calls, extended by each entry — folded into GT6's brief; (e2) the route's
+search at a listed table carries its table once a call, where today three `table_carry`s make the search's
+representation, the commitment tests' and the initial state, and a form at a given carried value whose predicate is the
+one `search_of_carried` takes (`table_carry`'s lemma), with the extension's lemma (a carried value extended by a call is a
+carried value of the extended list, from `share_term_preserves` and the index's update) — RK's. Cost: the carry shares
+each entry's term once, about 0.2 µs a node: about 10⁹ nodes over GT5's families (24's and 25's the rows term at every
+binding, 82's and 83's the environment at every edge and definition), about 200 s once against about 1.2×10⁶ s, and each
+call's root shared into it, at most 0.06 s. Building the families' terms from their parts' references
+(`keyed_share_shape`), O(1) an entry, is not taken; its trigger a consumer whose judgment costs less than one carry.
+Kept: the route constants and their code equations' statements, restated through one carry.
+
+**(f) Found states kept shared: taken (RK).** A call's found state projected at its end (24: 13.2 s with `r`, 6.2 s
+with `rs`; 82, 83: 2.6–2.7 s) and a committed sub-search's found states projected and shared again (`rep_share` in
+`tested_committed_goal_outcome`'s committing branch: 12's production at 37's lookup, 1.7–13.5 s each at 79, 82 and 83)
+are fixed costs a call: about 6.5×10³ s over 24's calls, 4×10³ s over 82's and 4.5×10³ s over 83's. RK: the committing
+branch continues each kept found state of the sub-search from the representation it was found at (#1003's keeping
+search: `keeping_found_formed`, formed and projecting to its state) rather than sharing its projection again, the least
+answers chosen by comparing the kept states' answer references (`compare_shared_references`, exact to `finite_kept`'s
+term key), the barring reading the representation's node positions (`rep_node_positions`); a kept outcome's projected
+state is computed only where a form reads it (the result form), GT4's graph truth and verdicts reading the kept
+representation (C2's rows, #1018's binding lookup). Correctness: each continuation is from a formed representation
+projecting to the state today's re-share gives, so the tested search's projection (`tested_representation_formed.tested_search`)
+and #1003's statements hold as stated. Kept: R5's, F2c's, D1d's, K2's and #1003's statements and the route constants'.
+
+**GT6's environment level predicted.** States are #1019's at its route (main 80868470; M2, D3b2, D3b3, F-a and F-b
+not landed), seconds sequential CPU at its shared runs' load. The column after the pole and the courses is an estimate
+from #1019's part timers and #1006's: F-a removes the carries (#1008: about 0.033 D ms a step at the table's ground
+chains), RP about 80 % of a selection state, RK the fixed costs a call; RP's, RK's and GT6's own figures measure it.
+
+| Part (calls) | States | CPU s at #1019's route | CPU s after F-a, F-b, RP, RK | Run |
+|---|---:|---:|---:|---|
+| (a)'s family: 2 at 261 rows and about 1,051 bindings, 4 at 1,314 suffixes | about 7–8×10⁵ | not run | about 1–2×10³ (1–2 ms a state) | 2 in parallel; 4's chains |
+| 22 at the rows (261) | 1.1×10⁴ | about 130 | about 50 | parallel |
+| 23, 25, 26 (the suffix chains) | about 5×10³ | about 10 | about 10 | chains |
+| 24 at the bindings (1,051) | 7.1×10⁵ | 1.8–2.1×10⁴ | about 2–4×10³ (2–4 s a call) | parallel |
+| 21 at both tables' suffixes (1,313) | (c): about 4×10⁴; not (c), with (b): 1.79×10⁷ | (c): tens; not (c): 1.13×10⁵ | as at left | one chain a table |
+| 156, 80 | about 4×10³ | about 30 | about 15 | |
+| 79, 77 | more than 2.5×10³ | more than 100 (79: one step past 50 s) | at least 50 | |
+| 82 at the edges (665) | more than 7.3×10⁵ | more than 2.6×10⁴ | at least 6.7×10³ (10 s a call) | parallel |
+| 83 at the definitions (252) | more than 1.23×10⁶ | more than 1.0×10⁴ | at least 1.8×10³ (7 s a call) | parallel |
+| the entries | — | about 1.2×10⁶ as briefed | about 200 once, about 300 the roots' shares | |
+| **with (c)** | **at least 3.5×10⁶** | **at least 5.8×10⁴ (about 16 h), (a)'s not run** | **at least 1.2–1.5×10⁴ (3.5–4 h)** | |
+| **without (c), (b) then taken** | **at least 2.1×10⁷** | **at least 1.7×10⁵** | **at least 1.25×10⁵, 1.13×10⁵ of it on one chain** | |
+
+Wall time on this machine at 16 workers (Isabelle's parallel map within one process): with (c), the parallel families
+((a)'s 2s, 22, 24, 82, 83) about 1.3×10⁴ s of CPU, about 800 s; the chains (4, 21, 23, 25 by suffix), 26, 156, 80, 79, 77
+and the carry in sequence, at least about 400 s; 11, 7 and 12 (11 about 50 s of CPU after M2, D3b3, F-a and F-b, #1006
+(5); 7 and 12 about 0.8 M states, #831) about 100 s: at least about 0.4 h, the package calls' remainders unmeasured.
+Without (c): 21's chain alone about 1.13×10⁵ s, at least 31 h. Peak memory: recorded by none of #1006, #1008 and #1019;
+the production is one process whose threads share the carried table (the given's value's distinct subterms and a shape an
+entry), a few GiB predicted, recorded by GT6's step (2). Per state: #1006's c(D) — about 3.2×10⁻⁴ D² + 3 ms after D3b2
+and D3b3 (or M2 and D3b3), about 15 ms at D = 621 and 29 ms at D = 1,051 after F-a and F-b — is the cost at a chain
+whose goals hold variables (77 at the empty table; 11 after M2: about 27 s at k = 621 with D3b3, about 5 s with F-a and
+F-b). GT6's environment-level goals at the table are ground (#1008): no cubic part, D at most about 1,077, the cost
+following the pending goals and #1019's parts — at a selection state 22–70 ms today, about 4–14 ms after F-a and RP,
+0.3–4 ms elsewhere, about 1–5 ms on the level's mean. The package calls (79, 77, 80, 82, 83) are measured to their end
+in GT6's step (2), at the route RP and RK leave and at GT6's table of the calls before them: one call each (82 at its
+first edge, 83 at its first definition), shared, the session parked for a run past three minutes; their figures times
+their counts are the package part of the prediction GT6 asks of the planner before its run.
+
+**The builds**: rows GT5b, RP and RK of the builds table below. GT5b any time before GT6, beside the pole (no open build
+changes `Development_Given_Table`); RP after F-b2 #1016 — and through it after D3b2 #979 and #1010, D3b3 #983, F-a #1012
+and F-b1 #1014 — then RK, both before WC3 #916 and GT6 #878, which stay beside each other (the planner's answer 3 to
+q160): RP and RK change theories WC3 restates, and WC3's waiting set reads a socket's viewed input through RP's read.
+GT6's brief is rewritten with: GT5b's family among its calls; (e1); each family's independent calls (2, 22, 24, 82, 83,
+and 11, 7, 12 as before) through the parallel map at the table of the families before them, the suffix chains in order;
+a found state's graph read from its kept representation and checked by GT4 at that table; the package calls to their end
+in its step (2); the record naming the families' counts. (b) and (d)'s second half are not placed; their triggers above.
+Every other open build keeps its brief.
+
+**What the builds must respect.**
+- Only cost changes at RP and RK: every statement of R3–R5, K1, K2, F2a–F2d, the access, GT2–GT3c, D1b–D1d, D3a–D3b3,
+  F-a, F-b, #1003, #1018 and the route constants kept by name and statement; a definition on the producing side may
+  change under them; an exactness or formation predicate gains a clause its constructors establish; every verdict and
+  recorded word unchanged; a control whose figure changes reports both, and R4's beside.
+- GT5b changes no reader, clause or asked relation; its family is computed from the given's value through the presenters
+  GT5's calls use, never supplied; GT5's statements kept; nothing evaluated.
+- The table is read by its calls alone; an entry no search meets never changes a verdict; a carried value satisfies the
+  predicate `search_of_carried` takes and is extended, never re-identified; no reference is compared across two tables.
+- GT6's validity is its retained check over graphs (#831's answer 6); a found state's truth is the graph check alone;
+  no counterpart decides a call (Q27); a checker checks what is provided (Q28).
+- Nothing reads the bootstrap loop's datatypes; sites compared for equality; payloads inert; a reference compared as a
+  number for equality only, ordered only through `compare_shared_references` where (b)'s form is built.
+
+**What it relies on** (task 376's test): the family's calls are the given's readers' calls at subterms of the given's
+value, read through its presentation; the view read compares a pattern's skeleton with a view's linear pattern, reading
+no name or position; a kept continuation reads a representation's formation; a carried table is one table, extended.
+
+Recorded 2026-10-01 (task 1020's decision; a design, no theory changes).
+
 ### What of the counterpart line stays
 
 | Piece | Standing | Role and reason |
@@ -20014,7 +20197,10 @@ decision; a design, no theory changes).]
 | GT3 | [Added by task 831.] The table in F2's shared representation (`Factor_Search_Representations`, `Factor_Shared_Search`, `Factor_Shared_Commitments`): the table indexed by a call's site and shared reference (a `Carrier_Indexes` instance), the closing test through the access, the shared searches' code equations at a table | GT2, #830's fix at its cause | about 200K |
 | GT4 | [Added by task 831.] C at a table (`Factor_Resolution_Graph_Checks`): a closed premise discharged to an assertion node, the check reading the assumption boundary among the table's calls (`finite_graph_reading_conditional_sound`); the nodes' linking through an index of the found state's nodes by position (#703's quadratic `finite_premise_nodes`); a table's validity (each entry's graph read with its assumptions among earlier entries) and its soundness; the result forms' code equations at a table [marked by task 882: done by #841, `finite_table_graph_checks` over the rows in production order, `finite_table_graph_checks_valid`, `finite_table_graph_checks_produced`, `finite_state_graph_check_accepts_valid`; the judgment's verdict at a checked table read from its graph alone, `finite_state_graph_verdicts_in` (task 882)] | GT1 | about 200K |
 | GT5 | [Added by task 831.] The given's table (`Development_Given_Table`, new, beside `Development_Given_Registrations`): its calls from the given's value in their order — 11 at its artifact presentations, 7 and 12 at each with itself, 26 at its environment value and its lists' suffixes, 156 at its site value, 79, 82 and 83 (80, 77) at its package, the four sockets and 526 at (g, g) — and the binding count B; the table valid at every numbered program agreeing with the rooted readers on those calls' callee closure (the asked program, the first request's), and relocated to the asked relation's and the first request's installations (GT2's relocation) | GT2, #798 | about 120K |
-| GT6 | [Added by task 831.] The given's table produced (`Development_Given_Table_Execution`, new, imported by no theory): bottom-up at K2's check forms at the table so far with the given's modes, declarations and registrations, 77's bound at the given handed in, 7's, 11's and 12's roots through the parallel map, the fit tested at the smallest rows first; each certificate checked over its graph with GT4; the retained record (the calls' order, each entry's node count and graph digest, the validity outcome, the base and the resolver); states, seconds and memory by part | GT3, GT4, GT5 | about 100K, a run of hours placed by the planner |
+| GT6 | [Added by task 831.] The given's table produced (`Development_Given_Table_Execution`, new, imported by no theory): bottom-up at K2's check forms at the table so far with the given's modes, declarations and registrations, 77's bound at the given handed in, 7's, 11's and 12's roots through the parallel map, the fit tested at the smallest rows first; each certificate checked over its graph with GT4; the retained record (the calls' order, each entry's node count and graph digest, the validity outcome, the base and the resolver); states, seconds and memory by part [marked by task 1020: after GT5b, RP and RK as well; the production at one table carried across its calls and extended by each entry, each family's independent calls through the parallel map, the suffix chains in order, a found state's graph read from its kept representation; the package calls measured to their end in its fit] | GT3, GT4, GT5; GT5b, RP, RK | about 100K, a run of hours placed by the planner |
+| GT5b | [Added by task 1020, course (a).] The given's recognitions in GT5's families (`Development_Given_Table`): one family after the identity calls — 2 at each artifact-row presentation and binding row, 4 at every suffix of the rows term and of the bindings term, the shortest first — in `given_reader_calls`; GT5's statements kept, the lemmas unfolding `given_table_calls` re-proved; nothing evaluated | GT5 | about 40K |
+| RP | [Added by task 1020, course (d).] The priority read without walking the input (`Factor_Access_Commitments`, the theories building `shared_commitment_access` and `deferred_commitment_access`, `Factor_Resolution_Checks` where its code reads them, the control theories): the commitment access's read of a call goal's viewed parts' variables from its shared pattern along the view's region, exact to `resolution_view_pattern`'s at the projection, a clause of `access_commitment_exact`; `accessed_call`, `access_mode_binder` and `access_waiting_variables` through it; every statement kept; held measurement at 24 at a binding and 77 at GT6's table by #1019's timers 132, 171 and 172, and the class's share against (d)'s trigger | F-b2 #1016 | about 120K |
+| RK | [Added by task 1020, courses (e) and (f).] The route keeps its found states shared and carries its table once (`Factor_Shared_Commitments`, `Factor_Deferred_Commitments`, `Factor_Resolution_Checks`, the control theories): the committing branch continuing a sub-search's kept representations, the least answers by reference comparison, a kept outcome's projected state computed where read; the route's search at a listed table through one `table_carry`, a form at a carried value, the extension lemma; every statement kept; held measurement of 24's and 83's fixed costs a call | RP | about 150K |
 | W5 | [Added by task 831; task 496's entry, "77's least bound at the given and at a candidate …".] W2's queries resolved by R5's committed search at a table (`Factor_Least_Collections`: `finite_query_search`, `finite_query_answers` and `finite_identity_check` at the committed search with the given's declarations and selection, a statement change of W2's definitions; `Factor_Least_Witness_Registrations`, `Factor_Reader_Witness_Registrations`): a query's completeness from R5's lifting at its pattern root, every value outside a committed goal's output kept, and a valid table's closing keeping it [Corrected by task 918: the query's completeness is VK1's value lifting at the pattern root, the given's committing instance the root-kept restriction of the given's lifted commitment — every value outside a step's changes kept by the discharges' valuations, and a registration's element never moved because the restriction commits no root-held goal at the top; VK2 discharges W5's named premise there]; W4a's completeness carried; the given's four registrations complete there, at the rooted readers and by agreement at the asked and first request's programs; a control: 77 at a two-definition package with a missing callee refuted through the registration at a table, R4's value beside | GT2, I3a #815, #798 | about 250K |
 | OS1 | [Added by task 835, correction (15).] An open premise's truth (`Factor_Resolution_Material_Discharge`, beside `finite_closed_premise_true`): `finite_open_node_true` — at an invariant state (`resolution_invariant`) and a support at a focus (`resolution_supported_at`), a node every goal pending under whose position is in the focus has a true call, by induction over the nodes under it through `resolution_node_linked` (a pending premise by the support, a child node by induction, a reused premise by `resolution_solved_node_true`, a material premise pending by the support or done by `finite_material_done_ground_satisfied`); `finite_open_premise_true` — a call premise of a node whose instance under the binding is ground and every goal pending under whose position is in the focus is true, `finite_closed_premise_true` its closed case, kept [built by task 853: `finite_open_node_true` is stated at a valuation formed at every variable, the goals pending under the node holding at it, not at the support — at the support it fails where a node's call holds a variable no goal constrains and the support's value there is unformed; `finite_open_premise_true` is the support's form, its instance ground, through the support made formed (the goals under the premise keep their values, `finite_goal_holds_formed`); `finite_material_socket_exchange` retired (review 724's follow-up 4), and `resolution_value_substitute_decoded`, `finite_material_ground_substitute`, `evaluate_material_variables_formed` moved up from `Factor_Resolution_Socket_Discharges`, names and statements kept] | none unlanded | about 80K |
 | OS2 | [Added by task 835, correction (15).] The framed test with open siblings (`Factor_Resolution_Commitments`, `Factor_Resolution_Socket_Discharges`; `Factor_Narrowed_Productions` and any theory whose proof unfolds the test; the controls): `finite_children_framed`'s closed disjunct for a call premise at a key other than the socket's — nothing pending under it — replaced by: every goal pending under it holds no variable of the binding at the socket premise's pattern or at a frame variable (its instance ground and its pattern outside the frame kept); material premises unchanged; every statement kept by name and statement, the definition's change named; `finite_framed_instance_true` with the open case (OS1); the exchange's valuation, new-instance and context lemmas (`finite_framed_exchange_valuation`, `finite_framed_new_instance`, `finite_framed_call_context`, `finite_framed_socket_class_context`) with the open siblings' goals kept by the condition; the controls whose values change evaluated again (the framed, carrier, narrowed and input-production controls, K2's check control, O4's and I3a's execution lemmas — I3a's trace then showing the production met), a changed value reported with R4's beside; a control: a parent whose other child has goals pending under it when the socket is taken, the production met, a false call refuted as by R4 [built by task 855: the definition as above, its variables `finite_socket_binding_variables` (the node binding at the frame and at the socket key's premise patterns); the row form `finite_free_premise_row` and the framed bound `finite_premise_only_framed_bound`, `finite_premise_only_bound` and `finite_framed_premise_only` its instances; the open case through `finite_open_premise_holds_in` (the goals under the premise holding at θ), `finite_open_premise_true_in` its support's form; the exchange's valuation, new-instance and context lemmas needed no change — a goal under an open sibling keeps its values at the new valuation already by the holders test (every focused goal holding a changed output or absorbed variable is the socket's sibling or the socket) and by the free premise-only variables' definition (only the parent's children hold them), so no proof reads the new condition; it stands as correction (15) decided, and dropping it is the planner's. Values: at 77/1 200 the production is met, 220 states against 614, the verdict unchanged; every other control keeps its values; the new control (26(x,y) :- 2(x,x) in I2's program) resolves the true call in 30 states against 58 without the production and refutes the false one in 6, R4 beside] | OS1; the lander rule with #834 and #724 (both edit `Factor_Resolution_Commitments`) | about 250K |

@@ -35,8 +35,10 @@ text \<open>
   insertion where it is absent, threaded through the terms' structure, since a run over a fixed list
   cannot supply the references a pair's shape names. That step is stated once, generic in the value and an
   injective key (@{text keyed_reference_step}, @{text keyed_reference_step_exact}): its insertion is the
-  index notion's update (@{text tree_map_updates}) at the first-occurrence table (@{text keyed_reference_insert}),
-  and the build takes it at the shape key. The index of shapes is a carrier index
+  index notion's update (@{text tree_map_updates}) at the first-occurrence table (@{text keyed_reference_insert}).
+  The build of shapes takes its key tree and keeps, in place of the reversed table, the tree of the table's
+  positions, a shape added at the table's length inserted there too (@{text keyed_share_shape}), so that a
+  position is read by one lookup (@{text keyed_state_positions}). The index of shapes is a carrier index
   through the red-black tree's instance (@{text shape_carrier_index}); a target leaf's shape is keyed by
   the order of @{text Ordered_Finite_Terms}.
 
@@ -99,23 +101,37 @@ lemma pair_decoded_some_eq:
   "Some t=pair_decoded a b \<longleftrightarrow> (\<exists>x y. a=Some x \<and> b=Some y \<and> t=Finite_Pair x y)"
   by (auto simp: pair_decoded_def split: option.splits)
 
-function reference_term :: "shape list \<Rightarrow> nat \<Rightarrow> finite_factor_term option" where
-  "reference_term T i=(case value_reference_read T i of None \<Rightarrow> None
+text \<open>
+  The decode reads the table through a read of its positions, stated once (@{text read_reference_term}); the decode
+  over a table is its instance at the list's read (@{const value_reference_read}), and every other read of the same
+  positions, an array's or a tree's, is another instance with the same decode.
+\<close>
+
+function read_reference_term :: "(nat \<Rightarrow> shape option) \<Rightarrow> nat \<Rightarrow> finite_factor_term option" where
+  "read_reference_term rd i=(case rd i of None \<Rightarrow> None
     | Some (Leaf_Shape l) \<Rightarrow> Some (leaf_term l)
-    | Some (Pair_Shape j k) \<Rightarrow> (if j<i \<and> k<i then pair_decoded (reference_term T j) (reference_term T k) else None))"
+    | Some (Pair_Shape j k) \<Rightarrow> (if j<i \<and> k<i then pair_decoded (read_reference_term rd j) (read_reference_term rd k) else None))"
   by pat_completeness auto
 termination by (relation "measure snd") auto
 
-declare reference_term.simps [simp del]
+declare read_reference_term.simps [simp del]
+
+definition reference_term :: "shape list \<Rightarrow> nat \<Rightarrow> finite_factor_term option" where
+  "reference_term T=read_reference_term (value_reference_read T)"
+
+lemma reference_term_simps: "reference_term T i=(case value_reference_read T i of None \<Rightarrow> None
+    | Some (Leaf_Shape l) \<Rightarrow> Some (leaf_term l)
+    | Some (Pair_Shape j k) \<Rightarrow> (if j<i \<and> k<i then pair_decoded (reference_term T j) (reference_term T k) else None))"
+  unfolding reference_term_def by (rule read_reference_term.simps)
 
 lemma reference_factor_leaf:
   "value_reference_read T i=Some (Leaf_Shape l) \<Longrightarrow> reference_term T i=Some (leaf_term l)"
-  by (simp add: reference_term.simps[of T i])
+  by (simp add: reference_term_simps[of T i])
 
 lemma reference_term_pair:
   "value_reference_read T i=Some (Pair_Shape j k) \<Longrightarrow> j<i \<Longrightarrow> k<i \<Longrightarrow>
     reference_term T i=pair_decoded (reference_term T j) (reference_term T k)"
-  by (simp add: reference_term.simps[of T i])
+  by (simp add: reference_term_simps[of T i])
 
 lemma reference_term_cases:
   assumes decoded: "reference_term T i=Some t"
@@ -124,20 +140,20 @@ lemma reference_term_cases:
       "reference_term T j=Some x" "reference_term T k=Some y" "t=Finite_Pair x y"
 proof (cases "value_reference_read T i")
   case None
-  then show ?thesis using decoded by (simp add: reference_term.simps[of T i])
+  then show ?thesis using decoded by (simp add: reference_term_simps[of T i])
 next
   case (Some s)
   show ?thesis
   proof (cases s)
     case (Leaf_Shape l)
-    have "t=leaf_term l" using decoded Some Leaf_Shape by (simp add: reference_term.simps[of T i])
+    have "t=leaf_term l" using decoded Some Leaf_Shape by (simp add: reference_term_simps[of T i])
     then show ?thesis using leaf Some Leaf_Shape by blast
   next
     case (Pair_Shape j k)
     have ordered: "j<i \<and> k<i"
-      using decoded Some Pair_Shape by (simp add: reference_term.simps[of T i] split: if_splits)
+      using decoded Some Pair_Shape by (simp add: reference_term_simps[of T i] split: if_splits)
     have "pair_decoded (reference_term T j) (reference_term T k)=Some t"
-      using decoded Some Pair_Shape ordered by (simp add: reference_term.simps[of T i])
+      using decoded Some Pair_Shape ordered by (simp add: reference_term_simps[of T i])
     then obtain x y where "reference_term T j=Some x" "reference_term T k=Some y" "t=Finite_Pair x y"
       by (auto simp: pair_decoded_some)
     then show ?thesis using pair Some Pair_Shape ordered by blast
@@ -427,7 +443,7 @@ qed
 
 subsection \<open>The build: the keyed step threaded through the terms\<close>
 
-type_synonym share_state = "(shape_order_key,nat) rbt \<times> nat \<times> shape list"
+type_synonym share_state = "(shape_order_key,nat) rbt \<times> nat \<times> (nat,shape) rbt"
 
 text \<open>
   The keyed first-occurrence step, for any value and injective key: the table is kept reversed with its
@@ -520,8 +536,18 @@ lemma keyed_reference_state_table: "keyed_reference_state key q T \<Longrightarr
 lemma keyed_reference_state_empty: "keyed_reference_state key (RBT.empty,0,[]) []"
   by (simp add: keyed_reference_state_def)
 
+text \<open>
+  The sharing state of shapes is the keyed state's tree of keys and the table's length, with the table held as the
+  tree of its positions: a shape the key tree does not hold is inserted at the table's length in both trees, the index
+  notion's update at each. The empty sharing state holds nothing.
+\<close>
+
+definition empty_share_state :: share_state where
+  "empty_share_state=(RBT.empty,0,RBT.empty)"
+
 definition keyed_share_shape :: "shape \<Rightarrow> share_state \<Rightarrow> nat \<times> share_state" where
-  "keyed_share_shape=keyed_reference_step shape_key"
+  "keyed_share_shape s q=(case q of (M,n,P) \<Rightarrow> (case RBT.lookup M (shape_key s) of
+    Some i \<Rightarrow> (i,q) | None \<Rightarrow> (n,(RBT.insert (shape_key s) n M,Suc n,RBT.insert n s P))))"
 
 fun keyed_share_term :: "finite_factor_term \<Rightarrow> share_state \<Rightarrow> nat \<times> share_state" where
   "keyed_share_term (Finite_Pair t u) q=(case keyed_share_term t q of (i,q1) \<Rightarrow>
@@ -535,14 +561,49 @@ fun keyed_share_terms :: "finite_factor_term list \<Rightarrow> share_state \<Ri
     (case keyed_share_terms ts q1 of (is,q2) \<Rightarrow> (i#is,q2)))"
 
 definition keyed_state_represents :: "share_state \<Rightarrow> shape list \<Rightarrow> bool" where
-  "keyed_state_represents=keyed_reference_state shape_key"
+  "keyed_state_represents q T \<longleftrightarrow> (case q of (M,n,P) \<Rightarrow> n=length T \<and>
+    (\<forall>i. RBT.lookup P i=value_reference_read T i) \<and> (\<forall>y. RBT.lookup M (shape_key y)=value_reference_index y T))"
+
+lemma keyed_state_represents_empty: "keyed_state_represents empty_share_state []"
+  by (simp add: keyed_state_represents_def empty_share_state_def value_reference_read_def)
+
+lemma keyed_state_positions:
+  assumes rep: "keyed_state_represents (M,n,P) T"
+  shows "map (\<lambda>i. the (RBT.lookup P i)) [0..<n]=T"
+proof -
+  have n: "n=length T" and read: "\<And>i. RBT.lookup P i=value_reference_read T i"
+    using rep by (simp_all add: keyed_state_represents_def)
+  show ?thesis by (rule nth_equalityI) (simp_all add: n read value_reference_read_def)
+qed
 
 lemma keyed_share_shape_exact:
   assumes rep: "keyed_state_represents q T"
   shows "fst (keyed_share_shape s q)=fst (value_reference_step s T) \<and>
     keyed_state_represents (snd (keyed_share_shape s q)) (snd (value_reference_step s T))"
-  using keyed_reference_step_exact[OF shape_key_injective, where q=q and T=T and x=s] rep
-  by (simp add: keyed_share_shape_def keyed_state_represents_def keyed_reference_state_def)
+proof -
+  obtain M n P where q: "q=(M,n,P)" by (cases q) auto
+  have n: "n=length T" and read: "\<And>i. RBT.lookup P i=value_reference_read T i"
+    and index: "\<And>y. RBT.lookup M (shape_key y)=value_reference_index y T"
+    using rep by (simp_all add: q keyed_state_represents_def)
+  show ?thesis
+  proof (cases "value_reference_index s T")
+    case (Some i)
+    then show ?thesis using rep index[of s] by (simp add: q keyed_share_shape_def value_reference_step_def)
+  next
+    case None
+    have moved: "RBT.lookup (RBT.insert (shape_key s) n M) (shape_key y)=value_reference_index y (T@[s])" for y
+      using keyed_reference_insert[OF shape_key_injective index None] n by simp
+    have placed: "RBT.lookup (RBT.insert n s P) i=value_reference_read (T@[s]) i" for i
+    proof -
+      have "RBT.lookup (RBT.insert n s P) i=Some v \<longleftrightarrow> value_reference_read (T@[s]) i=Some v" for v
+        using tree_map_updates.updated[where i=P and k=n and u=s and k'=i and v=v] read[of i] n
+        by (auto simp: value_reference_read_def nth_append)
+      then show ?thesis by (metis option.exhaust)
+    qed
+    show ?thesis using None index[of s] n moved placed
+      by (simp add: q keyed_share_shape_def value_reference_step_def keyed_state_represents_def)
+  qed
+qed
 
 lemma keyed_share_term_exact:
   "keyed_state_represents q T \<Longrightarrow> fst (keyed_share_term t q)=fst (share_term t T) \<and>
@@ -573,18 +634,22 @@ qed simp
 
 definition keyed_shared_family ::
   "finite_factor_term list \<Rightarrow> nat list \<times> shape list \<times> (shape_order_key,nat) rbt" where
-  "keyed_shared_family ts=(case keyed_share_terms ts (RBT.empty,0,[]) of (is,(M,n,R)) \<Rightarrow> (is,rev R,M))"
+  "keyed_shared_family ts=(case keyed_share_terms ts empty_share_state of (is,(M,n,P)) \<Rightarrow>
+    (is,map (\<lambda>i. the (RBT.lookup P i)) [0..<n],M))"
 
 theorem keyed_shared_family_exact:
   assumes built: "keyed_shared_family ts=(is,T,M)"
   shows "(is,T)=share_terms ts [] \<and> (\<forall>s. RBT.lookup M (shape_key s)=value_reference_index s T)"
 proof -
-  have start: "keyed_state_represents (RBT.empty,0,[]) []" by (simp add: keyed_state_represents_def keyed_reference_state_def)
-  obtain is' M' n R where run: "keyed_share_terms ts (RBT.empty,0,[])=(is',(M',n,R))"
-    by (cases "keyed_share_terms ts (RBT.empty,0,[])") auto
-  have fields: "is=is'" "T=rev R" "M=M'" using built run by (simp_all add: keyed_shared_family_def)
-  show ?thesis using keyed_share_terms_exact[OF start, of ts] run fields
-    by (cases "share_terms ts []") (simp add: keyed_state_represents_def keyed_reference_state_def)
+  have start: "keyed_state_represents empty_share_state []" by (rule keyed_state_represents_empty)
+  obtain is' M' n P where run: "keyed_share_terms ts empty_share_state=(is',(M',n,P))"
+    by (cases "keyed_share_terms ts empty_share_state") auto
+  have fields: "is=is'" "T=map (\<lambda>i. the (RBT.lookup P i)) [0..<n]" "M=M'"
+    using built run by (simp_all add: keyed_shared_family_def)
+  have rep: "keyed_state_represents (M',n,P) (snd (share_terms ts []))" and same: "is'=fst (share_terms ts [])"
+    using keyed_share_terms_exact[OF start, of ts] run by simp_all
+  have "T=snd (share_terms ts [])" using keyed_state_positions[OF rep] fields(2) by simp
+  then show ?thesis using rep same fields by (cases "share_terms ts []") (simp add: keyed_state_represents_def)
 qed
 
 corollary keyed_shared_family_index:

@@ -55,8 +55,8 @@ follow-up 3), review 877's follow-up 1, review 971's follow-up 6 and #989's nati
 
 **11 at large k, and a search step at depth.** D153 #987 decided F1, provisionally (Q35): the material premise's
 relational fields in address form, the atoms kept, 10 over the data's own fields; 11 at k addresses about k + 5
-states against about 5.2 k²; F4, Q33-free, if the owner declines. M1 #996 → M2 #998 (one landing re-recording its
-differing words; reviews #997, #999) → D3b3 #983, GT6 and #988. GT6's environment-level part (#965) is dominant and
+states against about 5.2 k²; F4, Q33-free, if the owner declines. M1 #996 landed (`9cfa70bc`); M2 #998 (one landing
+re-recording its differing words; review #999) → D3b3 #983, GT6, #1000 and #988. GT6's environment-level part (#965) is dominant and
 unaddressed; GT6's step (2) measures it. D3: D3b1 #975 and D3b1m #982 landed; D3a #977 resumes from the theory it
 installed in its tree; D3b2 #979 after D3a and #995; D3b3 #983 after D3b2 and M2. q162's held goals and construction
 nodes and FI's remaining costs (next-edits 384, 385): under 1 % at the given, taken at the next restater of the route
@@ -298,7 +298,7 @@ owner's re-root trigger, and a probe past its bound above `Factor_Least_Collecti
 ## Now
 
 - **Under way**: D3a #977 resuming from its installed theory (q185's three restatements accepted); the term-table fix
-  #995 (q187: the share state's third component the position tree, the empty state named once); M1 #996 next.
+  #995 (q187: the share state's third component the position tree, the empty state named once); M2 #998.
 - **What the next events ask**: Q35's answer (if no, F4 replaces M1 and M2); #1000's result (after M2): the controls
   (77/1 resolved, 77/2 refuted at the committing instance) placed as a build where F1 suffices, else Open 157 designed;
   the count fix (Open 155) if it is needed; AX5's brief rewritten, its guard removed; M2's landing: #988 briefs AX2d1

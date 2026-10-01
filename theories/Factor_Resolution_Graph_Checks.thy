@@ -2484,7 +2484,7 @@ definition finite_indexed_links ::
 
 definition finite_indexed_links_rows ::
     "('a,'s::linorder,'d,'c) resolution_node list \<Rightarrow> (('a,'s,'d,'c) resolution_node \<times> ('s \<times> ('a,'s,'d,'c) resolution_node) fset) list" where
-  "finite_indexed_links_rows ns = (case finite_share_rows ns (RBT.empty,0,[]) of (rows,q0) \<Rightarrow>
+  "finite_indexed_links_rows ns = (case finite_share_rows ns empty_share_state of (rows,q0) \<Rightarrow>
     map (\<lambda>m. (m,finite_indexed_links (finite_position_index rows) (finite_group_index rows) q0 m)) ns)"
 
 text \<open>
@@ -2495,7 +2495,7 @@ text \<open>
 \<close>
 
 lemma finite_indexed_links_rows_once [code]:
-  "finite_indexed_links_rows ns = (case finite_share_rows ns (RBT.empty,0,[]) of (rows,q0) \<Rightarrow>
+  "finite_indexed_links_rows ns = (case finite_share_rows ns empty_share_state of (rows,q0) \<Rightarrow>
     let PI = finite_position_index rows; G = finite_group_index rows in
     map (\<lambda>m. (m,finite_indexed_links PI G q0 m)) ns)"
   by (simp add: finite_indexed_links_rows_def Let_def split: prod.split)
@@ -2506,13 +2506,13 @@ text \<open>
 \<close>
 
 lemma finite_share_index_exact:
-  assumes listed: "finite_post_listed (fset N) ns" and run: "finite_share_rows ns (RBT.empty,0,[]) = (rows,q0)"
+  assumes listed: "finite_post_listed (fset N) ns" and run: "finite_share_rows ns empty_share_state = (rows,q0)"
   shows "finite_indexed_premise_nodes (finite_position_index rows) (finite_group_index rows) q0 nd s e p =
     finite_premise_nodes N nd s e p"
 proof -
   note P = finite_post_listed_positions[OF listed]
   let ?res = "\<lambda>m. finite_residual_term (resolution_node_call m)"
-  have start: "keyed_state_represents (RBT.empty,0,[]) []" by (simp add: keyed_state_represents_def keyed_reference_state_def)
+  have start: "keyed_state_represents empty_share_state []" by (rule keyed_state_represents_empty)
   obtain T' where rep: "keyed_state_represents q0 T'" and ft: "table_formed T'" and fsts: "map fst rows = ns"
       and rw: "\<forall>row\<in>set rows. fst (snd row) = ?res (fst row) \<and> reference_term T' (snd (snd row)) = Some (fst (snd row))"
     using finite_share_rows_exact[OF start table_formed_empty, of ns] run by auto
@@ -2562,7 +2562,7 @@ lemma finite_indexed_links_rows_exact:
   assumes listed: "finite_post_listed (fset N) ns"
   shows "finite_indexed_links_rows ns = map (\<lambda>m. (m,finite_node_links N m)) ns"
 proof -
-  obtain rows q0 where run: "finite_share_rows ns (RBT.empty,0,[]) = (rows,q0)" by (cases "finite_share_rows ns (RBT.empty,0,[])")
+  obtain rows q0 where run: "finite_share_rows ns empty_share_state = (rows,q0)" by (cases "finite_share_rows ns empty_share_state")
   have links: "finite_indexed_links (finite_position_index rows) (finite_group_index rows) q0 m = finite_node_links N m" for m
     by (simp add: finite_indexed_links_def finite_node_links_def finite_share_index_exact[OF listed run])
   show ?thesis using run links by (simp add: finite_indexed_links_rows_def)
@@ -2587,7 +2587,7 @@ definition finite_indexed_table_rows ::
     "('a,'s,'d,'c) resolution_table \<Rightarrow> ('a,'s::linorder,'d,'c) resolution_node list \<Rightarrow>
       (('a,'s,'d,'c) resolution_node \<times> ('s \<times> ('a,'s,'d,'c) resolution_node) fset \<times>
         ('s \<times> ('a,'s,'d,'c) resolution_node) fset) list" where
-  "finite_indexed_table_rows \<Theta> ns = (case finite_share_rows ns (RBT.empty,0,[]) of (rows,q0) \<Rightarrow>
+  "finite_indexed_table_rows \<Theta> ns = (case finite_share_rows ns empty_share_state of (rows,q0) \<Rightarrow>
     let PI = finite_position_index rows; G = finite_group_index rows in
     map (\<lambda>m. (m,finite_indexed_links PI G q0 m,finite_indexed_table_links \<Theta> PI G q0 m)) ns)"
 
@@ -2601,7 +2601,7 @@ lemma finite_indexed_table_rows_exact:
   assumes listed: "finite_post_listed (fset N) ns"
   shows "finite_indexed_table_rows \<Theta> ns = map (\<lambda>m. (m,finite_node_links N m,finite_table_links \<Theta> N m)) ns"
 proof -
-  obtain rows q0 where run: "finite_share_rows ns (RBT.empty,0,[]) = (rows,q0)" by (cases "finite_share_rows ns (RBT.empty,0,[])")
+  obtain rows q0 where run: "finite_share_rows ns empty_share_state = (rows,q0)" by (cases "finite_share_rows ns empty_share_state")
   note index = finite_share_index_exact[OF listed run]
   have links: "finite_indexed_links (finite_position_index rows) (finite_group_index rows) q0 m = finite_node_links N m" for m
     by (simp add: finite_indexed_links_def finite_node_links_def index)

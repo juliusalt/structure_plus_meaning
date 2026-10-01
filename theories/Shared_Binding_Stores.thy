@@ -698,7 +698,7 @@ next
   have "b \<noteq> a" using none unbound.prems(2) by auto
   then have h: "\<not> (\<exists>r' u. (M(a := Some (ra, q))) b = Some (r', u) \<and> r \<le> r' \<and> r' < n)" using none by simp
   show ?case by (simp only: binding_resolve_from_unfollowed[of "M(a := Some (ra, q))" b r n, OF h]
-      binding_resolve_from_unfollowed[of M b r n, OF unbound.hyps] shared_pattern_project.simps(1))
+      binding_resolve_from_unfollowed[of M b r n, OF unbound.hyps] shared_pattern_project_simps(1))
 next
   case (ground n r M i)
   then show ?case using shared_pattern_extended[OF ground.prems(3) ground.prems(7) ground.prems(4)[rule_format]]

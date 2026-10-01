@@ -221,6 +221,32 @@ lemma shared_goal_solvable_code [code]:
       Open_Reading \<Rightarrow> finite_pattern_variables (finite_material_source N) = {||} | _ \<Rightarrow> True)"
   by (simp_all add: Let_def finite_material_resolution_waits split: material_reading.split)
 
+text \<open>
+  The test through a read of the table's positions (@{const read_material_project}): its code at a sharing state's table
+  reads the state's tree of positions.
+\<close>
+
+fun read_goal_solvable :: "(nat \<Rightarrow> shape option) \<Rightarrow> ('a,'s,'d,'c) shared_goal \<Rightarrow> bool" where
+  "read_goal_solvable rd (Shared_Call_Goal q r d p) = False"
+| "read_goal_solvable rd (Shared_Material_Goal q r M) =
+    (finite_material_resolution (read_material_project rd M) \<noteq> Material_Waits)"
+
+declare read_goal_solvable.simps [code del]
+
+lemma read_goal_solvable_code [code]:
+  "read_goal_solvable rd (Shared_Call_Goal q r d p) = False"
+  "read_goal_solvable rd (Shared_Material_Goal q' r' M) = (let N = read_material_project rd M in
+    case finite_material_skeleton N of
+      Open_Reading \<Rightarrow> finite_pattern_variables (finite_material_source N) = {||} | _ \<Rightarrow> True)"
+  by (simp_all add: Let_def finite_material_resolution_waits split: material_reading.split)
+
+lemma read_goal_solvable_list: "read_goal_solvable (value_reference_read T) g = shared_goal_solvable T g"
+  by (cases g) (simp_all add: read_material_project_list)
+
+lemma shared_goal_solvable_state [code_unfold]:
+  "shared_goal_solvable (share_state_table q) = read_goal_solvable (share_state_read q)"
+  by (simp add: fun_eq_iff share_state_read[symmetric] read_goal_solvable_list)
+
 fun shared_call_key :: "('a,'s,'d,'c) shared_goal \<Rightarrow> nat" where
   "shared_call_key (Shared_Call_Goal q r d (Shared_Ground i)) = i"
 | "shared_call_key g = 0"
@@ -3147,9 +3173,9 @@ definition solution_grounds :: "('a \<times> finite_factor_term) fset fset \<Rig
 
 definition shared_solution_alternatives :: "share_state \<Rightarrow> 'a shared_material \<Rightarrow> 'a finite_material_pattern \<Rightarrow>
     ('a \<times> finite_factor_term) fset fset \<Rightarrow> ('a finite_pattern_pairs \<times> ('a \<times> 'a shared_pattern) list) fset" where
-  "shared_solution_alternatives x gM M Ws = (let T = share_state_table x in ffUnion (fimage (\<lambda>W. ffUnion (fimage (\<lambda>E.
-      case shared_unify_pairs T (shared_material_pairs x gM E) of None \<Rightarrow> {||} | Some s \<Rightarrow> {|(E,s)|})
-    (finite_material_instance_pairs W M))) Ws))"
+  "shared_solution_alternatives x gM M Ws = ffUnion (fimage (\<lambda>W. ffUnion (fimage (\<lambda>E.
+      case shared_unify_pairs (share_state_table x) (shared_material_pairs x gM E) of None \<Rightarrow> {||} | Some s \<Rightarrow> {|(E,s)|})
+    (finite_material_instance_pairs W M))) Ws)"
 
 theorem search_call_successors:
   assumes r: "search_formed \<kappa> P r" and pl: "search_placeable (search_project r)" and sock: "clause_sockets_distinct P"

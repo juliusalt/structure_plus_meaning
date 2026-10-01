@@ -44,12 +44,28 @@ fun shared_pattern_formed :: "shape list \<Rightarrow> 'a shared_pattern \<Right
     A = shared_pattern_variables p |\<union>| shared_pattern_variables q \<and>
     shared_pattern_formed T p \<and> shared_pattern_formed T q"
 
-fun shared_pattern_project :: "shape list \<Rightarrow> 'a shared_pattern \<Rightarrow> 'a finite_term_pattern" where
+text \<open>
+  The projection reads the table through a read of its positions, as the decode does (@{const read_reference_term}),
+  stated once; the projection over a table is its instance at the list's read.
+\<close>
+
+fun read_pattern_project :: "(nat \<Rightarrow> shape option) \<Rightarrow> 'a shared_pattern \<Rightarrow> 'a finite_term_pattern" where
+  "read_pattern_project rd (Shared_Variable a) = Finite_Variable a"
+| "read_pattern_project rd (Shared_Ground i) =
+    (case read_reference_term rd i of Some t \<Rightarrow> finite_exact_term_pattern t | None \<Rightarrow> Finite_Pattern_Payload [])"
+| "read_pattern_project rd (Shared_Node A p q) =
+    Finite_Pattern_Pair (read_pattern_project rd p) (read_pattern_project rd q)"
+
+definition shared_pattern_project :: "shape list \<Rightarrow> 'a shared_pattern \<Rightarrow> 'a finite_term_pattern" where
+  "shared_pattern_project T=read_pattern_project (value_reference_read T)"
+
+lemma shared_pattern_project_simps [simp]:
   "shared_pattern_project T (Shared_Variable a) = Finite_Variable a"
-| "shared_pattern_project T (Shared_Ground i) =
+  "shared_pattern_project T (Shared_Ground i) =
     (case reference_term T i of Some t \<Rightarrow> finite_exact_term_pattern t | None \<Rightarrow> Finite_Pattern_Payload [])"
-| "shared_pattern_project T (Shared_Node A p q) =
+  "shared_pattern_project T (Shared_Node A p q) =
     Finite_Pattern_Pair (shared_pattern_project T p) (shared_pattern_project T q)"
+  by (simp_all add: shared_pattern_project_def reference_term_def)
 
 text \<open>A ground reference is a canonical shared term of the table, and so decodes over a formed table.\<close>
 
@@ -85,35 +101,25 @@ text \<open>
   decode and of a pattern's projection; the array is made once for the pattern it projects.
 \<close>
 
-function array_reference_term :: "shape iarray \<Rightarrow> nat \<Rightarrow> finite_factor_term option" where
-  "array_reference_term A i = (if i < IArray.length A then (case IArray.sub A i of
-      Leaf_Shape l \<Rightarrow> Some (leaf_term l)
-    | Pair_Shape j k \<Rightarrow> (if j < i \<and> k < i then pair_decoded (array_reference_term A j) (array_reference_term A k) else None))
-    else None)"
-  by pat_completeness auto
-termination by (relation "measure snd") auto
+definition array_read :: "shape iarray \<Rightarrow> nat \<Rightarrow> shape option" where
+  "array_read A i = (if i < IArray.length A then Some (IArray.sub A i) else None)"
 
-declare array_reference_term.simps [simp del]
+lemma array_read_list: "array_read (IArray T) = value_reference_read T"
+  by (rule ext) (simp add: array_read_def value_reference_read_def)
+
+definition array_reference_term :: "shape iarray \<Rightarrow> nat \<Rightarrow> finite_factor_term option" where
+  "array_reference_term A = read_reference_term (array_read A)"
 
 lemma array_reference_term: "array_reference_term (IArray T) i = reference_term T i"
-proof (induction i rule: less_induct)
-  case (less i)
-  show ?case
-    by (auto simp: array_reference_term.simps[of "IArray T" i] reference_term.simps[of T i] value_reference_read_def
-      less.IH split: shape.split)
-qed
+  by (simp add: array_reference_term_def array_read_list reference_term_def)
 
-fun array_pattern_project :: "shape iarray \<Rightarrow> 'a shared_pattern \<Rightarrow> 'a finite_term_pattern" where
-  "array_pattern_project A (Shared_Variable a) = Finite_Variable a"
-| "array_pattern_project A (Shared_Ground i) =
-    (case array_reference_term A i of Some t \<Rightarrow> finite_exact_term_pattern t | None \<Rightarrow> Finite_Pattern_Payload [])"
-| "array_pattern_project A (Shared_Node B p q) =
-    Finite_Pattern_Pair (array_pattern_project A p) (array_pattern_project A q)"
+definition array_pattern_project :: "shape iarray \<Rightarrow> 'a shared_pattern \<Rightarrow> 'a finite_term_pattern" where
+  "array_pattern_project A = read_pattern_project (array_read A)"
 
 lemma array_pattern_project: "array_pattern_project (IArray T) p = shared_pattern_project T p"
-  by (induction p) (simp_all add: array_reference_term)
+  by (simp add: array_pattern_project_def array_read_list shared_pattern_project_def)
 
-declare reference_term.simps [code del] shared_pattern_project.simps [code del]
+declare reference_term_def [code del] shared_pattern_project_def [code del]
 
 lemma reference_term_array_code [code]: "reference_term T i = array_reference_term (IArray T) i"
   by (simp add: array_reference_term)
@@ -298,11 +304,46 @@ text \<open>
   they are equal and fails otherwise, whatever the terms they hold; a reference against a pair descends one
   level; the occurs check reads the cache. Its recursion is R2's, so it is stated as a partial function
   whose equation holds unconditionally, and its equality to R2 over the projection shows it returns on
-  every formed input.
+  every formed input. It reads the table through a read of its positions (@{text read_ground_view}), stated once; the
+  unifier over a table is its instance at the list's read.
 \<close>
 
-partial_function (option) shared_unify_pairs ::
+definition read_ground_view :: "(nat \<Rightarrow> shape option) \<Rightarrow> nat \<Rightarrow> (nat \<times> nat) option" where
+  "read_ground_view rd i = (case rd i of Some (Pair_Shape j k) \<Rightarrow> Some (j, k) | _ \<Rightarrow> None)"
+
+lemma shared_ground_view_read: "shared_ground_view T = read_ground_view (value_reference_read T)"
+  by (rule ext) (simp add: shared_ground_view_def read_ground_view_def split: option.splits shape.splits)
+
+partial_function (option) read_unify_pairs ::
+    "(nat \<Rightarrow> shape option) \<Rightarrow> 'a shared_pattern_pairs \<Rightarrow> ('a \<times> 'a shared_pattern) list option" where
+  "read_unify_pairs rd E = (case E of
+    [] \<Rightarrow> Some []
+  | x # F \<Rightarrow> (case x of (p, q) \<Rightarrow> (case p of
+      Shared_Variable a \<Rightarrow>
+        (if q = Shared_Variable a then read_unify_pairs rd F
+         else if a |\<in>| shared_pattern_variables q then None
+         else Option.bind (read_unify_pairs rd (shared_pairs_substitute (shared_eliminator a q) {|a|} F))
+           (\<lambda>s. Some ((a, shared_substitute (shared_binding_substitution s) (shared_binding_domain s) q) # s)))
+    | Shared_Ground i \<Rightarrow> (case q of
+        Shared_Variable b \<Rightarrow> read_unify_pairs rd ((Shared_Variable b, p) # F)
+      | Shared_Ground j \<Rightarrow> (if i = j then read_unify_pairs rd F else None)
+      | Shared_Node B p' q' \<Rightarrow> (case read_ground_view rd i of None \<Rightarrow> None
+          | Some (j, k) \<Rightarrow> read_unify_pairs rd ((Shared_Ground j, p') # (Shared_Ground k, q') # F)))
+    | Shared_Node A p1 q1 \<Rightarrow> (case q of
+        Shared_Variable b \<Rightarrow> read_unify_pairs rd ((Shared_Variable b, p) # F)
+      | Shared_Ground j \<Rightarrow> (case read_ground_view rd j of None \<Rightarrow> None
+          | Some (k, l) \<Rightarrow> read_unify_pairs rd ((p1, Shared_Ground k) # (q1, Shared_Ground l) # F))
+      | Shared_Node B p' q' \<Rightarrow> read_unify_pairs rd ((p1, p') # (q1, q') # F)))))"
+
+text \<open>Its equation is the code of the unifier: a code equation proved, as every partial function's is.\<close>
+
+declare read_unify_pairs.simps [code]
+
+definition shared_unify_pairs ::
     "shape list \<Rightarrow> 'a shared_pattern_pairs \<Rightarrow> ('a \<times> 'a shared_pattern) list option" where
+  "shared_unify_pairs T = read_unify_pairs (value_reference_read T)"
+
+lemma shared_unify_pairs_simps:
   "shared_unify_pairs T E = (case E of
     [] \<Rightarrow> Some []
   | x # F \<Rightarrow> (case x of (p, q) \<Rightarrow> (case p of
@@ -321,10 +362,7 @@ partial_function (option) shared_unify_pairs ::
       | Shared_Ground j \<Rightarrow> (case shared_ground_view T j of None \<Rightarrow> None
           | Some (k, l) \<Rightarrow> shared_unify_pairs T ((p1, Shared_Ground k) # (q1, Shared_Ground l) # F))
       | Shared_Node B p' q' \<Rightarrow> shared_unify_pairs T ((p1, p') # (q1, q') # F)))))"
-
-text \<open>Its equation is the code of the unifier: a code equation proved, as every partial function's is.\<close>
-
-declare shared_unify_pairs.simps [code]
+  unfolding shared_unify_pairs_def shared_ground_view_read by (rule read_unify_pairs.simps)
 
 subsection \<open>R2 at ground patterns\<close>
 
@@ -383,7 +421,7 @@ proof -
     show "Q E"
     proof (cases E)
       case Nil
-      have "shared_unify_pairs T E = Some []" by (rule trans[OF shared_unify_pairs.simps]) (simp add: Nil)
+      have "shared_unify_pairs T E = Some []" by (rule trans[OF shared_unify_pairs_simps]) (simp add: Nil)
       then show ?thesis by (simp add: Q_def Nil)
     next
       case (Cons x E')
@@ -402,7 +440,7 @@ proof -
           show ?thesis
           proof (rule same[of E'])
             show "shared_unify_pairs T E = shared_unify_pairs T E'"
-              by (rule trans[OF shared_unify_pairs.simps]) (simp add: Cons x pv True)
+              by (rule trans[OF shared_unify_pairs_simps]) (simp add: Cons x pv True)
             show "finite_unify_pairs (shared_pairs_project T E) = finite_unify_pairs (shared_pairs_project T E')"
               by (simp add: Cons x pv True)
             show "Q E'" by (rule IH[OF fE' drop])
@@ -418,7 +456,7 @@ proof -
             show ?thesis
             proof (rule fails)
               show "shared_unify_pairs T E = None"
-                by (rule trans[OF shared_unify_pairs.simps]) (simp add: Cons x pv False True)
+                by (rule trans[OF shared_unify_pairs_simps]) (simp add: Cons x pv False True)
               show "finite_unify_pairs (shared_pairs_project T E) = None"
                 using True pq by (simp add: Cons x pv vq)
             qed
@@ -441,7 +479,7 @@ proof -
             qed
             have eq: "shared_unify_pairs T E = Option.bind (shared_unify_pairs T E'')
                 (\<lambda>s. Some ((a, shared_substitute (shared_binding_substitution s) (shared_binding_domain s) q) # s))"
-              by (rule trans[OF shared_unify_pairs.simps]) (simp add: Cons x pv False fresh E''_def)
+              by (rule trans[OF shared_unify_pairs_simps]) (simp add: Cons x pv False fresh E''_def)
             have req: "finite_unify_pairs (shared_pairs_project T E) =
                 map_option (\<lambda>s. (a, finite_pattern_substitute (finite_binding_substitution s)
                   (shared_pattern_project T q)) # s) (finite_unify_pairs (shared_pairs_project T E''))"
@@ -483,7 +521,7 @@ proof -
           show ?thesis
           proof (rule same[of "(Shared_Variable b, p) # E'"])
             show "shared_unify_pairs T E = shared_unify_pairs T ((Shared_Variable b, p) # E')"
-              by (rule trans[OF shared_unify_pairs.simps]) (simp add: Cons x pg Shared_Variable)
+              by (rule trans[OF shared_unify_pairs_simps]) (simp add: Cons x pg Shared_Variable)
             show "finite_unify_pairs (shared_pairs_project T E) =
                 finite_unify_pairs (shared_pairs_project T ((Shared_Variable b, p) # E'))"
               using turn by (simp add: Cons x Shared_Variable pt)
@@ -507,7 +545,7 @@ proof -
             show ?thesis
             proof (rule same[of E'])
               show "shared_unify_pairs T E = shared_unify_pairs T E'"
-                by (rule trans[OF shared_unify_pairs.simps]) (simp add: Cons x pg qg True)
+                by (rule trans[OF shared_unify_pairs_simps]) (simp add: Cons x pg qg True)
               show "finite_unify_pairs (shared_pairs_project T E) = finite_unify_pairs (shared_pairs_project T E')"
                 using True iff ti uj by (simp add: Cons x pg qg finite_unify_pairs_exact_equal)
               show "Q E'" by (rule IH[OF fE' drop])
@@ -517,7 +555,7 @@ proof -
             show ?thesis
             proof (rule fails)
               show "shared_unify_pairs T E = None"
-                by (rule trans[OF shared_unify_pairs.simps]) (simp add: Cons x pg qg False)
+                by (rule trans[OF shared_unify_pairs_simps]) (simp add: Cons x pg qg False)
               show "finite_unify_pairs (shared_pairs_project T E) = None"
                 using False iff ti uj by (simp add: Cons x pg qg finite_unify_pairs_exact_differ)
             qed
@@ -536,7 +574,7 @@ proof -
             show ?thesis
             proof (rule same[of F'])
               show "shared_unify_pairs T E = shared_unify_pairs T F'"
-                by (rule trans[OF shared_unify_pairs.simps]) (simp add: Cons x pg qn view F'_def)
+                by (rule trans[OF shared_unify_pairs_simps]) (simp add: Cons x pg qn view F'_def)
               show "finite_unify_pairs (shared_pairs_project T E) = finite_unify_pairs (shared_pairs_project T F')"
                 by (simp add: Cons x pg qn ti uj vk Finite_Pair F'_def)
               show "Q F'"
@@ -556,7 +594,7 @@ proof -
             show ?thesis
             proof (rule fails)
               show "shared_unify_pairs T E = None"
-                by (rule trans[OF shared_unify_pairs.simps]) (simp add: Cons x pg qn view)
+                by (rule trans[OF shared_unify_pairs_simps]) (simp add: Cons x pg qn view)
               show "finite_unify_pairs (shared_pairs_project T E) = None"
                 by (simp add: Cons x pg qn ti Finite_Target)
             qed
@@ -567,7 +605,7 @@ proof -
             show ?thesis
             proof (rule fails)
               show "shared_unify_pairs T E = None"
-                by (rule trans[OF shared_unify_pairs.simps]) (simp add: Cons x pg qn view)
+                by (rule trans[OF shared_unify_pairs_simps]) (simp add: Cons x pg qn view)
               show "finite_unify_pairs (shared_pairs_project T E) = None"
                 by (simp add: Cons x pg qn ti Finite_Payload)
             qed
@@ -587,7 +625,7 @@ proof -
           show ?thesis
           proof (rule same[of "(Shared_Variable b, p) # E'"])
             show "shared_unify_pairs T E = shared_unify_pairs T ((Shared_Variable b, p) # E')"
-              by (rule trans[OF shared_unify_pairs.simps]) (simp add: Cons x pn Shared_Variable)
+              by (rule trans[OF shared_unify_pairs_simps]) (simp add: Cons x pn Shared_Variable)
             show "finite_unify_pairs (shared_pairs_project T E) =
                 finite_unify_pairs (shared_pairs_project T ((Shared_Variable b, p) # E'))"
               using turn by (simp add: Cons x Shared_Variable)
@@ -614,7 +652,7 @@ proof -
             show ?thesis
             proof (rule same[of F'])
               show "shared_unify_pairs T E = shared_unify_pairs T F'"
-                by (rule trans[OF shared_unify_pairs.simps]) (simp add: Cons x pn qg view F'_def)
+                by (rule trans[OF shared_unify_pairs_simps]) (simp add: Cons x pn qg view F'_def)
               show "finite_unify_pairs (shared_pairs_project T E) = finite_unify_pairs (shared_pairs_project T F')"
                 by (simp add: Cons x pn qg uj uk ul Finite_Pair F'_def)
               show "Q F'"
@@ -634,7 +672,7 @@ proof -
             show ?thesis
             proof (rule fails)
               show "shared_unify_pairs T E = None"
-                by (rule trans[OF shared_unify_pairs.simps]) (simp add: Cons x pn qg view)
+                by (rule trans[OF shared_unify_pairs_simps]) (simp add: Cons x pn qg view)
               show "finite_unify_pairs (shared_pairs_project T E) = None"
                 by (simp add: Cons x pn qg uj Finite_Target)
             qed
@@ -645,7 +683,7 @@ proof -
             show ?thesis
             proof (rule fails)
               show "shared_unify_pairs T E = None"
-                by (rule trans[OF shared_unify_pairs.simps]) (simp add: Cons x pn qg view)
+                by (rule trans[OF shared_unify_pairs_simps]) (simp add: Cons x pn qg view)
               show "finite_unify_pairs (shared_pairs_project T E) = None"
                 by (simp add: Cons x pn qg uj Finite_Payload)
             qed
@@ -658,7 +696,7 @@ proof -
           show ?thesis
           proof (rule same[of F'])
             show "shared_unify_pairs T E = shared_unify_pairs T F'"
-              by (rule trans[OF shared_unify_pairs.simps]) (simp add: Cons x pn qn F'_def)
+              by (rule trans[OF shared_unify_pairs_simps]) (simp add: Cons x pn qn F'_def)
             show "finite_unify_pairs (shared_pairs_project T E) = finite_unify_pairs (shared_pairs_project T F')"
               by (simp add: Cons x pn qn F'_def)
             show "Q F'"

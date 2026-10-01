@@ -2,10 +2,10 @@
  "boundary": "The complete original development questions reconstruct every actual producer result and independent original-goal reference. Computed observations construct ordinary native criteria with a proved original-subject equation. The closed native cycle derives producer selection through generation, original-condition compilation, certified observations, independent criticism, comparison, revision and admission. The unique native choice executes subsequent original requests; every resulting claim is checked against the original request again. Empty original scope refuses, retaining the unexecuted requests. A single-question scope exercises actual choice ambiguity. The finite producer and subject scope, broader development coverage and genesis remain explicit.",
  "complete_recipe_source_manifest": "native-steering-sources.json",
  "complete_review": {
-  "base_receipt_sha256": "ef35e0ec0eb98bf0e971f21fa915434a78e19855589627bfe39cc9f2e9887687",
+  "base_receipt_sha256": "a1263400aa325bda4ae162c1fc4d547848edd55700e973d17eb6363c171dc889",
   "records": 3,
   "reports_equal": true,
-  "seconds": 16.53,
+  "seconds": 13.6,
   "status": "accepted"
  },
  "execution_boundary": {
@@ -16,7 +16,7 @@
    "code_target": "Eval",
    "complete_artifact_transport": true,
    "complete_term_transport": true,
-   "module_sha256": "cf6e445e292ffbd940f922f3ff52c82b966a7b62a6e3b9f461b8e67fdb32df2a",
+   "module_sha256": "4f6a8d05d7ca6ceeec5bf9423297bff85dd8c4095897fdf592ac8f735e71e3c3",
    "subject_contracts": {
     "development_subject_investigation.yxml": "7cd41a8d57b1dd9271afbb16320f6d62285c6bda923ddd7fbdb4228004a6d6c4"
    },
@@ -85,24 +85,24 @@
  },
  "reports_equal": true,
  "retention": "The accepted base proof and the incremental proof of every changed theory and dependent supplied the exported module; every complete report boundary equals its retained original. Generated result bulk is not a repository input.",
- "source_manifest_sha256": "437e97ae2fd6389ff146e01c26b44f6732df8b636f343d4802064bf8bde24427",
+ "source_manifest_sha256": "2c8dac09fe16f83f33e564e745fb8e13c868d4c0eebdaaf4b7ac24eb3c5ef48f",
  "sources_rebuilt": false,
  "status": "accepted",
  "steps": [
   {
    "exit_code": 0,
    "name": "presentation",
-   "seconds": 14.358675683004549
+   "seconds": 13.518997473001946
   },
   {
    "exit_code": 0,
    "name": "presentation-empty",
-   "seconds": 16.379495169006987
+   "seconds": 13.083404300996335
   },
   {
    "exit_code": 0,
    "name": "presentation-first",
-   "seconds": 13.413070615992183
+   "seconds": 12.18043864100764
   }
  ]
 }

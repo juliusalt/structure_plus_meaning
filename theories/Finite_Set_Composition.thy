@@ -39,6 +39,21 @@ lemma finite_first_projection_member:
   "a |\<in>| fimage fst R \<longleftrightarrow> (\<exists>b. (a,b) |\<in>| R)"
   by (simp only: finite_image_member split_paired_Ex fst_conv; blast)
 
+text \<open>A pair stands among the first components' firsts and the seconds exactly when some row has them.\<close>
+
+lemma finite_clause_site_member:
+  "(d,T) |\<in>| fimage (\<lambda>z. (fst (fst z),snd z)) C \<longleftrightarrow> (\<exists>c. ((d,c),T) |\<in>| C)"
+proof
+  assume "(d,T) |\<in>| fimage (\<lambda>z. (fst (fst z),snd z)) C"
+  then obtain z where z: "z |\<in>| C" "(d,T) = (fst (fst z),snd z)" by (auto simp: fimage.rep_eq)
+  then have "((d,snd (fst z)),T) = z" by (cases z) auto
+  then show "\<exists>c. ((d,c),T) |\<in>| C" using z(1) by metis
+next
+  assume "\<exists>c. ((d,c),T) |\<in>| C"
+  then obtain c where "((d,c),T) |\<in>| C" by blast
+  from fimageI[OF this, of "\<lambda>z. (fst (fst z),snd z)"] show "(d,T) |\<in>| fimage (\<lambda>z. (fst (fst z),snd z)) C" by simp
+qed
+
 lemma finite_second_projection_member:
   "b |\<in>| fimage snd R \<longleftrightarrow> (\<exists>a. (a,b) |\<in>| R)"
   by (simp only: finite_image_member split_paired_Ex snd_conv; blast)

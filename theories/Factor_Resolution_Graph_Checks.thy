@@ -4272,17 +4272,20 @@ qed
 subsection \<open>Bindings read as references\<close>
 
 text \<open>
-  A node's bindings are read by a list of references when each variable the list keys has a reference the table
-  decodes, and the node binds exactly the decoded terms at exactly the keyed variables. The bindings are then
-  functional, and their domain is the list's keys.
+  A node's bindings are read by a lookup of references, a function from variables to references with its domain a
+  finite set, when each variable the lookup gives a reference has one the table decodes, the domain is the variables
+  it gives one, and the node binds exactly the decoded terms at exactly those variables. The bindings are then
+  functional, and their domain is the lookup's. The lookup is never a listing: a listing of an unordered set of
+  bindings would need an order on variables the route does not have.
 \<close>
 
-definition finite_bindings_read :: "shape list \<Rightarrow> ('a \<times> nat) list \<Rightarrow> ('a \<times> finite_factor_term) fset \<Rightarrow> bool" where
-  "finite_bindings_read T B V \<longleftrightarrow> (\<forall>a r. map_of B a = Some r \<longrightarrow> (\<exists>u. reference_term T r = Some u)) \<and>
-    (\<forall>a x. (a,x) |\<in>| V \<longleftrightarrow> (\<exists>r. map_of B a = Some r \<and> reference_term T r = Some x))"
+definition finite_bindings_read :: "shape list \<Rightarrow> (('a \<Rightarrow> nat option) \<times> 'a fset) \<Rightarrow> ('a \<times> finite_factor_term) fset \<Rightarrow> bool" where
+  "finite_bindings_read T B V \<longleftrightarrow> (\<forall>a r. fst B a = Some r \<longrightarrow> (\<exists>u. reference_term T r = Some u)) \<and>
+    (\<forall>a. a |\<in>| snd B \<longleftrightarrow> fst B a \<noteq> None) \<and>
+    (\<forall>a x. (a,x) |\<in>| V \<longleftrightarrow> (\<exists>r. fst B a = Some r \<and> reference_term T r = Some x))"
 
 lemma finite_bindings_read_member:
-  "finite_bindings_read T B V \<Longrightarrow> (a,x) |\<in>| V \<longleftrightarrow> (\<exists>r. map_of B a = Some r \<and> reference_term T r = Some x)"
+  "finite_bindings_read T B V \<Longrightarrow> (a,x) |\<in>| V \<longleftrightarrow> (\<exists>r. fst B a = Some r \<and> reference_term T r = Some x)"
   by (simp add: finite_bindings_read_def)
 
 lemma finite_bindings_read_functional:
@@ -4290,44 +4293,44 @@ lemma finite_bindings_read_functional:
   shows "finite_relation_functional V"
 proof (rule finite_relation_functional_intro)
   fix a u w assume u: "(a,u) |\<in>| V" and w: "(a,w) |\<in>| V"
-  obtain r where r: "map_of B a = Some r" "reference_term T r = Some u" using finite_bindings_read_member[OF read] u by blast
-  obtain r' where r': "map_of B a = Some r'" "reference_term T r' = Some w" using finite_bindings_read_member[OF read] w by blast
+  obtain r where r: "fst B a = Some r" "reference_term T r = Some u" using finite_bindings_read_member[OF read] u by blast
+  obtain r' where r': "fst B a = Some r'" "reference_term T r' = Some w" using finite_bindings_read_member[OF read] w by blast
   show "u = w" using r r' by simp
 qed
 
 lemma finite_bindings_read_domain:
   assumes read: "finite_bindings_read T B V"
-  shows "fimage fst V = fset_of_list (map fst B)"
+  shows "fimage fst V = snd B"
 proof (rule fset_eqI)
   fix a
   have "a |\<in>| fimage fst V \<longleftrightarrow> (\<exists>x. (a,x) |\<in>| V)" by force
-  also have "\<dots> \<longleftrightarrow> map_of B a \<noteq> None"
+  also have "\<dots> \<longleftrightarrow> fst B a \<noteq> None"
   proof
     assume "\<exists>x. (a,x) |\<in>| V"
-    then show "map_of B a \<noteq> None" using finite_bindings_read_member[OF read] by blast
+    then show "fst B a \<noteq> None" using finite_bindings_read_member[OF read] by blast
   next
-    assume "map_of B a \<noteq> None"
-    then obtain r where r: "map_of B a = Some r" by blast
+    assume "fst B a \<noteq> None"
+    then obtain r where r: "fst B a = Some r" by blast
     then obtain x where "reference_term T r = Some x" using read unfolding finite_bindings_read_def by blast
     then show "\<exists>x. (a,x) |\<in>| V" using finite_bindings_read_member[OF read] r by blast
   qed
-  also have "\<dots> \<longleftrightarrow> a |\<in>| fset_of_list (map fst B)"
-    by (simp add: map_of_eq_None_iff fset_of_list_elem fset_of_list.rep_eq)
-  finally show "a |\<in>| fimage fst V \<longleftrightarrow> a |\<in>| fset_of_list (map fst B)" .
+  also have "\<dots> \<longleftrightarrow> a |\<in>| snd B" using read unfolding finite_bindings_read_def by blast
+  finally show "a |\<in>| fimage fst V \<longleftrightarrow> a |\<in>| snd B" .
 qed
 
 lemma finite_bindings_read_extends:
   assumes read: "finite_bindings_read T B V" and ext: "\<And>i u. reference_term T i = Some u \<Longrightarrow> reference_term T' i = Some u"
   shows "finite_bindings_read T' B V"
 proof -
-  have held: "\<exists>u. reference_term T r = Some u" if "map_of B a = Some r" for a r
+  have held: "\<exists>u. reference_term T r = Some u" if "fst B a = Some r" for a r
     using read that unfolding finite_bindings_read_def by blast
-  have same: "reference_term T' r = Some x \<longleftrightarrow> reference_term T r = Some x" if "map_of B a = Some r" for a r x
+  have same: "reference_term T' r = Some x \<longleftrightarrow> reference_term T r = Some x" if "fst B a = Some r" for a r x
     using held[OF that] ext by force
-  have "(a,x) |\<in>| V \<longleftrightarrow> (\<exists>r. map_of B a = Some r \<and> reference_term T' r = Some x)" for a x
+  have "(a,x) |\<in>| V \<longleftrightarrow> (\<exists>r. fst B a = Some r \<and> reference_term T' r = Some x)" for a x
     using finite_bindings_read_member[OF read, of a x] same by blast
-  moreover have "\<exists>u. reference_term T' r = Some u" if "map_of B a = Some r" for a r
+  moreover have "\<exists>u. reference_term T' r = Some u" if "fst B a = Some r" for a r
     using held[OF that] ext by blast
+  moreover have "\<forall>a. a |\<in>| snd B \<longleftrightarrow> fst B a \<noteq> None" using read unfolding finite_bindings_read_def by blast
   ultimately show ?thesis unfolding finite_bindings_read_def by blast
 qed
 
@@ -4548,17 +4551,17 @@ text \<open>
 \<close>
 
 definition finite_admitted_instance_reference_at ::
-    "('a,'s,'d,'c) finite_schema_system \<Rightarrow> share_state \<Rightarrow> 'd \<Rightarrow> 'c \<Rightarrow> ('a \<times> nat) list \<Rightarrow>
+    "('a,'s,'d,'c) finite_schema_system \<Rightarrow> share_state \<Rightarrow> 'd \<Rightarrow> 'c \<Rightarrow> (('a \<Rightarrow> nat option) \<times> 'a fset) \<Rightarrow>
       ('a \<times> finite_factor_term) fset \<Rightarrow> nat \<Rightarrow> ('s \<times> ('d \<times> nat)) fset \<Rightarrow> bool" where
   "finite_admitted_instance_reference_at P q d c B V i QR \<longleftrightarrow>
     fBex (finite_system_interfaces P) (\<lambda>(e,p). e=d \<and> finite_reference_matched q p i) \<and>
     fBex (finite_system_clauses P) (\<lambda>((e,k),S). e=d \<and> k=c \<and> finite_schema_formed S \<and>
-      fset_of_list (map fst B) = finite_schema_variables S \<and>
+      snd B = finite_schema_variables S \<and>
       fBall V (\<lambda>(a,x). a |\<in>| finite_schema_call_variables S \<or> finite_term_formed x) \<and>
-      finite_instance_reference q (map_of B) (finite_schema_conclusion S) = Some i \<and>
+      finite_instance_reference q (fst B) (finite_schema_conclusion S) = Some i \<and>
       finite_relation_functional QR \<and> fimage fst QR = fimage fst (finite_schema_premises S) \<and>
       fBall (finite_schema_premises S) (\<lambda>(s,e,p). fBex QR (\<lambda>(r,e',j). r=s \<and> e'=e \<and>
-        finite_instance_reference q (map_of B) p = Some j)) \<and>
+        finite_instance_reference q (fst B) p = Some j)) \<and>
       finite_schema_material_satisfied S V) \<and>
     fBall QR (\<lambda>(s,e,j). fBex (finite_system_interfaces P) (\<lambda>(e',p). e'=e \<and> finite_reference_matched q p j))"
 
@@ -4569,13 +4572,13 @@ lemma finite_admitted_instance_reference_exact:
     and Q: "Q = fimage (\<lambda>(s,e,j). (s,e,the (reference_term T j))) QR"
   shows "finite_admitted_instance_reference_at P q d c B V i QR \<longleftrightarrow> finite_admitted_instance_formed_at P d c V t Q"
 proof -
-  have \<sigma>: "\<And>a x. (a,x) |\<in>| V \<longleftrightarrow> (\<exists>r. map_of B a = Some r \<and> reference_term T r = Some x)"
+  have \<sigma>: "\<And>a x. (a,x) |\<in>| V \<longleftrightarrow> (\<exists>r. fst B a = Some r \<and> reference_term T r = Some x)"
     by (rule finite_bindings_read_member[OF read])
-  have inst: "finite_pattern_instance V p u \<longleftrightarrow> finite_instance_reference q (map_of B) p = Some j"
+  have inst: "finite_pattern_instance V p u \<longleftrightarrow> finite_instance_reference q (fst B) p = Some j"
     if "reference_term T j = Some u" for p u j
     using finite_instance_reference_exact[OF rep tf \<sigma> that, of p] by (simp add: finite_pattern_instances_member)
   have fV: "finite_relation_functional V" by (rule finite_bindings_read_functional[OF read])
-  have dV: "fimage fst V = fset_of_list (map fst B)" by (rule finite_bindings_read_domain[OF read])
+  have dV: "fimage fst V = snd B" by (rule finite_bindings_read_domain[OF read])
   have dec: "reference_term T j = Some (the (reference_term T j))" if "(s,e,j) |\<in>| QR" for s e j
     using fbspec[OF held that] by auto
   have I1: "finite_pattern_matched p t \<longleftrightarrow> finite_reference_matched q p i" for p
@@ -4610,10 +4613,10 @@ proof -
     unfolding Qimg by (rule finite_relation_functional_value_image[OF injQ])
   have kQ: "fimage fst Q = fimage fst QR" unfolding Q by (rule fset_eqI) force
   have pQ: "fBex Q (\<lambda>(r,e,x). r=s \<and> e=d' \<and> finite_pattern_instance V p x) \<longleftrightarrow>
-      fBex QR (\<lambda>(r,e',j). r=s \<and> e'=d' \<and> finite_instance_reference q (map_of B) p = Some j)" for s d' p
+      fBex QR (\<lambda>(r,e',j). r=s \<and> e'=d' \<and> finite_instance_reference q (fst B) p = Some j)" for s d' p
   proof -
     have pw: "finite_pattern_instance V p (the (reference_term T j)) \<longleftrightarrow>
-        finite_instance_reference q (map_of B) p = Some j" if "(r,e,j) |\<in>| QR" for r e j
+        finite_instance_reference q (fst B) p = Some j" if "(r,e,j) |\<in>| QR" for r e j
       by (rule inst[OF dec[OF that]])
     have img: "fBex Q Pm \<longleftrightarrow> fBex QR (\<lambda>x. Pm ((\<lambda>(s,e,j). (s,e,the (reference_term T j))) x))" for Pm
       unfolding Q by auto
@@ -4627,7 +4630,7 @@ proof -
   have prem: "finite_schema_premise_instance S V Q \<longleftrightarrow> finite_relation_functional QR \<and>
       fimage fst QR = fimage fst (finite_schema_premises S) \<and>
       fBall (finite_schema_premises S) (\<lambda>(s,e,p). fBex QR (\<lambda>(r,e',j). r=s \<and> e'=e \<and>
-        finite_instance_reference q (map_of B) p = Some j))" for S
+        finite_instance_reference q (fst B) p = Some j))" for S
     unfolding finite_schema_premise_instance_def fQ kQ by (simp only: pQ)
   have cl: "(e=d \<and> k=c \<and> finite_schema_formed S \<and>
       finite_relation_functional V \<and> fimage fst V = finite_schema_variables S \<and>
@@ -4635,12 +4638,12 @@ proof -
       finite_pattern_instance V (finite_schema_conclusion S) t \<and> finite_schema_premise_instance S V Q \<and>
       finite_schema_material_satisfied S V) \<longleftrightarrow>
     (e=d \<and> k=c \<and> finite_schema_formed S \<and>
-      fset_of_list (map fst B) = finite_schema_variables S \<and>
+      snd B = finite_schema_variables S \<and>
       fBall V (\<lambda>(a,x). a |\<in>| finite_schema_call_variables S \<or> finite_term_formed x) \<and>
-      finite_instance_reference q (map_of B) (finite_schema_conclusion S) = Some i \<and>
+      finite_instance_reference q (fst B) (finite_schema_conclusion S) = Some i \<and>
       finite_relation_functional QR \<and> fimage fst QR = fimage fst (finite_schema_premises S) \<and>
       fBall (finite_schema_premises S) (\<lambda>(s,e,p). fBex QR (\<lambda>(r,e',j). r=s \<and> e'=e \<and>
-        finite_instance_reference q (map_of B) p = Some j)) \<and>
+        finite_instance_reference q (fst B) p = Some j)) \<and>
       finite_schema_material_satisfied S V)" for e k S
     using fV dV inst[OF t, of "finite_schema_conclusion S"] prem[of S] by simp
   have C: "fBex (finite_system_clauses P) (\<lambda>((e,k),S). e=d \<and> k=c \<and> finite_schema_formed S \<and>
@@ -4649,12 +4652,12 @@ proof -
       finite_pattern_instance V (finite_schema_conclusion S) t \<and> finite_schema_premise_instance S V Q \<and>
       finite_schema_material_satisfied S V) \<longleftrightarrow>
     fBex (finite_system_clauses P) (\<lambda>((e,k),S). e=d \<and> k=c \<and> finite_schema_formed S \<and>
-      fset_of_list (map fst B) = finite_schema_variables S \<and>
+      snd B = finite_schema_variables S \<and>
       fBall V (\<lambda>(a,x). a |\<in>| finite_schema_call_variables S \<or> finite_term_formed x) \<and>
-      finite_instance_reference q (map_of B) (finite_schema_conclusion S) = Some i \<and>
+      finite_instance_reference q (fst B) (finite_schema_conclusion S) = Some i \<and>
       finite_relation_functional QR \<and> fimage fst QR = fimage fst (finite_schema_premises S) \<and>
       fBall (finite_schema_premises S) (\<lambda>(s,e,p). fBex QR (\<lambda>(r,e',j). r=s \<and> e'=e \<and>
-        finite_instance_reference q (map_of B) p = Some j)) \<and>
+        finite_instance_reference q (fst B) p = Some j)) \<and>
       finite_schema_material_satisfied S V)"
   proof (rule fBex_cong[OF refl], goal_cases)
     case (1 x)
@@ -4676,11 +4679,11 @@ text \<open>
 
 definition finite_bound_premise_nodes ::
     "('s list, ('a,'s::linorder,'d,'c) resolution_node \<times> nat) rbt \<Rightarrow> (nat, ('a,'s,'d,'c) resolution_node list) rbt \<Rightarrow>
-      share_state \<Rightarrow> ('a \<times> nat) list option \<Rightarrow> ('a,'s,'d,'c) resolution_node \<Rightarrow> 's \<Rightarrow> 'd \<Rightarrow> 'a finite_term_pattern \<Rightarrow>
+      share_state \<Rightarrow> (('a \<Rightarrow> nat option) \<times> 'a fset) option \<Rightarrow> ('a,'s,'d,'c) resolution_node \<Rightarrow> 's \<Rightarrow> 'd \<Rightarrow> 'a finite_term_pattern \<Rightarrow>
       ('a,'s,'d,'c) resolution_node fset" where
   "finite_bound_premise_nodes PI G q0 \<beta> nd s e p = finite_premise_reference_nodes PI G (case \<beta> of
       None \<Rightarrow> fimage (\<lambda>x. fst (keyed_share_term x q0)) (finite_pattern_instances (finite_node_values nd) p)
-    | Some B \<Rightarrow> (case finite_instance_reference q0 (map_of B) p of None \<Rightarrow> {||} | Some r \<Rightarrow> {|r|})) nd s e"
+    | Some B \<Rightarrow> (case finite_instance_reference q0 (fst B) p of None \<Rightarrow> {||} | Some r \<Rightarrow> {|r|})) nd s e"
 
 lemma finite_bound_premise_nodes_none:
   "finite_bound_premise_nodes PI G q0 None nd s e p = finite_indexed_premise_nodes PI G q0 nd s e p"
@@ -4688,13 +4691,13 @@ lemma finite_bound_premise_nodes_none:
 
 definition finite_bound_links ::
     "('s list, ('a,'s::linorder,'d,'c) resolution_node \<times> nat) rbt \<Rightarrow> (nat, ('a,'s,'d,'c) resolution_node list) rbt \<Rightarrow>
-      share_state \<Rightarrow> ('a \<times> nat) list option \<Rightarrow> ('a,'s,'d,'c) resolution_node \<Rightarrow> ('s \<times> ('a,'s,'d,'c) resolution_node) fset" where
+      share_state \<Rightarrow> (('a \<Rightarrow> nat option) \<times> 'a fset) option \<Rightarrow> ('a,'s,'d,'c) resolution_node \<Rightarrow> ('s \<times> ('a,'s,'d,'c) resolution_node) fset" where
   "finite_bound_links PI G q0 \<beta> nd = ffUnion (fimage (\<lambda>(s,e,p). fimage (\<lambda>m. (s,m))
     (finite_bound_premise_nodes PI G q0 \<beta> nd s e p)) (finite_schema_premises (resolution_node_schema nd)))"
 
 definition finite_bound_table_links ::
     "('a,'s,'d,'c) resolution_table \<Rightarrow> ('s list, ('a,'s::linorder,'d,'c) resolution_node \<times> nat) rbt \<Rightarrow>
-      (nat, ('a,'s,'d,'c) resolution_node list) rbt \<Rightarrow> share_state \<Rightarrow> ('a \<times> nat) list option \<Rightarrow>
+      (nat, ('a,'s,'d,'c) resolution_node list) rbt \<Rightarrow> share_state \<Rightarrow> (('a \<Rightarrow> nat option) \<times> 'a fset) option \<Rightarrow>
       ('a,'s,'d,'c) resolution_node \<Rightarrow> ('s \<times> ('a,'s,'d,'c) resolution_node) fset" where
   "finite_bound_table_links \<Theta> PI G q0 \<beta> nd = ffUnion (fimage (\<lambda>(s,e,p).
       let U = ffilter (\<lambda>u. resolution_table_lookup \<Theta> (e,u) \<noteq> None) (finite_pattern_instances (finite_node_values nd) p) in
@@ -4731,9 +4734,9 @@ proof (rule finite_read_index_facts[OF listed rep0 f0 L run])
   next
     case (Some B0)
     have read: "finite_bindings_read T' B0 (finite_node_values nd)" by (rule finite_bindings_read_extends[OF B[OF nd Some] pres])
-    have \<sigma>: "\<And>a x. (a,x) |\<in>| finite_node_values nd \<longleftrightarrow> (\<exists>r. map_of B0 a = Some r \<and> reference_term T' r = Some x)"
+    have \<sigma>: "\<And>a x. (a,x) |\<in>| finite_node_values nd \<longleftrightarrow> (\<exists>r. fst B0 a = Some r \<and> reference_term T' r = Some x)"
       by (rule finite_bindings_read_member[OF read])
-    have IR: "r |\<in>| (case finite_instance_reference q0 (map_of B0) p of None \<Rightarrow> {||} | Some r' \<Rightarrow> {|r'|}) \<longleftrightarrow>
+    have IR: "r |\<in>| (case finite_instance_reference q0 (fst B0) p of None \<Rightarrow> {||} | Some r' \<Rightarrow> {|r'|}) \<longleftrightarrow>
         finite_residual_term (resolution_node_call m) |\<in>| finite_pattern_instances (finite_node_values nd) p"
       if m: "m |\<in>| N" and k: "finite_term_keyed q0 r (finite_residual_term (resolution_node_call m))" for m r
       using finite_instance_reference_exact[OF rep ft \<sigma> refd[OF m k], of p] by (auto split: option.splits)
@@ -4752,7 +4755,7 @@ text \<open>
 \<close>
 
 definition finite_reads_bindings ::
-    "('s list \<Rightarrow> ('a \<times> nat) list option) \<Rightarrow> share_state \<Rightarrow> ('a,'s,'d,'c) resolution_node fset \<Rightarrow> bool" where
+    "('s list \<Rightarrow> (('a \<Rightarrow> nat option) \<times> 'a fset) option) \<Rightarrow> share_state \<Rightarrow> ('a,'s,'d,'c) resolution_node fset \<Rightarrow> bool" where
   "finite_reads_bindings Bv q N \<longleftrightarrow> (\<forall>T. keyed_state_represents q T \<longrightarrow> (\<forall>m B. m |\<in>| N \<longrightarrow>
     Bv (resolution_node_position m) = Some B \<longrightarrow> finite_bindings_read T B (finite_node_values m)))"
 
@@ -4760,7 +4763,7 @@ lemma finite_reads_bindings_none: "finite_reads_bindings (\<lambda>_. None) q N"
   by (simp add: finite_reads_bindings_def)
 
 definition finite_bound_check_rows ::
-    "('a,'s,'d,'c) resolution_table \<Rightarrow> ('s list \<Rightarrow> nat option) \<Rightarrow> ('s list \<Rightarrow> ('a \<times> nat) list option) \<Rightarrow> share_state \<Rightarrow>
+    "('a,'s,'d,'c) resolution_table \<Rightarrow> ('s list \<Rightarrow> nat option) \<Rightarrow> ('s list \<Rightarrow> (('a \<Rightarrow> nat option) \<times> 'a fset) option) \<Rightarrow> share_state \<Rightarrow>
       ('a,'s::linorder,'d,'c) resolution_node list \<Rightarrow>
       bool \<times> share_state \<times> ('s list, ('a,'s,'d,'c) resolution_node \<times> nat) rbt \<times>
         (('a,'s,'d,'c) resolution_node \<times> ('s \<times> ('a,'s,'d,'c) resolution_node) fset \<times>
@@ -4793,7 +4796,7 @@ text \<open>
 
 definition finite_reference_row_check ::
     "('a,'s,'d,'c) finite_schema_system \<Rightarrow> share_state \<Rightarrow> ('s list, ('a,'s::linorder,'d,'c) resolution_node \<times> nat) rbt \<Rightarrow>
-      ('s list \<Rightarrow> ('a \<times> nat) list option) \<Rightarrow>
+      ('s list \<Rightarrow> (('a \<Rightarrow> nat option) \<times> 'a fset) option) \<Rightarrow>
       ('a,'s,'d,'c) resolution_node \<times> ('s \<times> ('a,'s,'d,'c) resolution_node) fset \<times>
         ('s \<times> ('a,'s,'d,'c) resolution_node) fset \<Rightarrow> bool" where
   "finite_reference_row_check P q0 PI Bv row = (case row of (m,L,TL) \<Rightarrow>
@@ -4806,7 +4809,7 @@ definition finite_reference_row_check ::
 
 definition finite_reference_reached_graph_check ::
     "('a,'s::linorder,'d,'c) finite_schema_system \<Rightarrow> share_state \<Rightarrow> ('s list, ('a,'s,'d,'c) resolution_node \<times> nat) rbt \<Rightarrow>
-      ('s list \<Rightarrow> ('a \<times> nat) list option) \<Rightarrow> 'd \<Rightarrow> finite_factor_term \<Rightarrow>
+      ('s list \<Rightarrow> (('a \<Rightarrow> nat option) \<times> 'a fset) option) \<Rightarrow> 'd \<Rightarrow> finite_factor_term \<Rightarrow>
       (('a,'s,'d,'c) resolution_node \<times> ('s \<times> ('a,'s,'d,'c) resolution_node) fset \<times>
         ('s \<times> ('a,'s,'d,'c) resolution_node) fset) list \<Rightarrow> ('s list, unit) rbt \<Rightarrow> ('a,'s,'d,'c) resolution_node \<Rightarrow> bool" where
   "finite_reference_reached_graph_check P q0 PI Bv d t LS R nd =
@@ -4992,7 +4995,7 @@ definition finite_reading_by ::
       ((('a,'s,'d,'c) resolution_node \<times> ('s \<times> ('a,'s,'d,'c) resolution_node) fset \<times>
         ('s \<times> ('a,'s,'d,'c) resolution_node) fset) list \<Rightarrow> (('s list, unit) rbt \<Rightarrow> ('a,'s,'d,'c) resolution_node \<Rightarrow> bool) \<Rightarrow> 'r) \<Rightarrow>
       ('a,'s::linorder,'d,'c) finite_schema_system \<Rightarrow> 'd \<Rightarrow> finite_factor_term \<Rightarrow> ('a,'s,'d,'c) resolution_table \<Rightarrow>
-      ('s list \<Rightarrow> nat option) \<Rightarrow> ('s list \<Rightarrow> ('a \<times> nat) list option) \<Rightarrow> share_state \<Rightarrow> ('a,'s,'d,'c) resolution_state \<Rightarrow> 'r" where
+      ('s list \<Rightarrow> nat option) \<Rightarrow> ('s list \<Rightarrow> (('a \<Rightarrow> nat option) \<times> 'a fset) option) \<Rightarrow> share_state \<Rightarrow> ('a,'s,'d,'c) resolution_state \<Rightarrow> 'r" where
   "finite_reading_by C \<rho> P d t \<Theta> L Bv q st = (case finite_post_listing (fset (resolution_nodes st)) of
       None \<Rightarrow> C st
     | Some ns \<Rightarrow> (case finite_bound_check_rows \<Theta> L Bv q ns of (fl,q0,PI,LS) \<Rightarrow>
@@ -5100,21 +5103,21 @@ lemma finite_verdict_roots_code:
 
 definition finite_bound_verdicts_in ::
     "('a,'s,'d,'c) resolution_table \<Rightarrow> ('a,'s::linorder,'d,'c) finite_schema_system \<Rightarrow> 'd \<Rightarrow> finite_factor_term \<Rightarrow>
-      ('s list \<Rightarrow> nat option) \<Rightarrow> ('s list \<Rightarrow> ('a \<times> nat) list option) \<Rightarrow> share_state \<Rightarrow> ('a,'s,'d,'c) resolution_state \<Rightarrow>
+      ('s list \<Rightarrow> nat option) \<Rightarrow> ('s list \<Rightarrow> (('a \<Rightarrow> nat option) \<times> 'a fset) option) \<Rightarrow> share_state \<Rightarrow> ('a,'s,'d,'c) resolution_state \<Rightarrow>
       (('a,'s,'c) finite_schema_proof \<times> bool) fset" where
   "finite_bound_verdicts_in \<Theta> P d t L Bv q st =
     finite_reading_by (finite_state_verdicts_in \<Theta> P d t) (finite_verdict_roots P d t \<Theta> st) P d t \<Theta> L Bv q st"
 
 definition finite_bound_graph_verdicts_in ::
     "('a,'s,'d,'c) resolution_table \<Rightarrow> ('a,'s::linorder,'d,'c) finite_schema_system \<Rightarrow> 'd \<Rightarrow> finite_factor_term \<Rightarrow>
-      ('s list \<Rightarrow> nat option) \<Rightarrow> ('s list \<Rightarrow> ('a \<times> nat) list option) \<Rightarrow> share_state \<Rightarrow> ('a,'s,'d,'c) resolution_state \<Rightarrow>
+      ('s list \<Rightarrow> nat option) \<Rightarrow> ('s list \<Rightarrow> (('a \<Rightarrow> nat option) \<times> 'a fset) option) \<Rightarrow> share_state \<Rightarrow> ('a,'s,'d,'c) resolution_state \<Rightarrow>
       (('a,'s,'c) finite_schema_proof \<times> bool) fset" where
   "finite_bound_graph_verdicts_in \<Theta> P d t L Bv q st =
     finite_reading_by (finite_state_graph_verdicts_in \<Theta> P d t) (finite_graph_verdict_roots P d t \<Theta> st) P d t \<Theta> L Bv q st"
 
 definition finite_bound_graph_true_in ::
     "('a,'s,'d,'c) resolution_table \<Rightarrow> ('a,'s::linorder,'d,'c) finite_schema_system \<Rightarrow> 'd \<Rightarrow> finite_factor_term \<Rightarrow>
-      ('s list \<Rightarrow> nat option) \<Rightarrow> ('s list \<Rightarrow> ('a \<times> nat) list option) \<Rightarrow> share_state \<Rightarrow> ('a,'s,'d,'c) resolution_state \<Rightarrow>
+      ('s list \<Rightarrow> nat option) \<Rightarrow> ('s list \<Rightarrow> (('a \<Rightarrow> nat option) \<times> 'a fset) option) \<Rightarrow> share_state \<Rightarrow> ('a,'s,'d,'c) resolution_state \<Rightarrow>
       bool" where
   "finite_bound_graph_true_in \<Theta> P d t L Bv q st =
     finite_reading_by (finite_state_graph_true_in \<Theta> P d t) (finite_true_roots st) P d t \<Theta> L Bv q st"

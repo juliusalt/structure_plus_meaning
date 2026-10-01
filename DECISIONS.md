@@ -22209,6 +22209,24 @@ What is decided.
    follow-up 1) is next-edits item 436, taken at a measured need. Measured (task 1003's `measurement.md`): at 11,
    k = 23/32, the graph truth 0.36/1.36 s today, 0.22/0.91 s read from the kept states (0.54 ms a node at k = 32), every
    node's call read by reference; the rest is #1002's per-node check over references.
+   (task 1018, reviews 1004 and 1005) The per-node check over references reads its bindings from the kept states.
+   The binding lookup is a function from variables to references with its domain a finite set, never a listing: a
+   listing of a node's unordered bindings would need an order on variables the route does not have, and an order on
+   them would constrain every route constant for an implementation's sake (the planner's answer to q192). So
+   `finite_bindings_read`, `finite_reads_bindings`, `finite_bound_check_rows`, the `finite_bound_*` readings and
+   `finite_admitted_instance_reference_at` change in the type of their binding parameter only, each kept otherwise by
+   name and statement. The kept state gives the lookup as the node entry's bindings stand
+   (`shared_binding_references`): where every binding is a `Shared_Ground` reference and no variable has two, the
+   functional relation's lookup (`finite_relation_option`) and its domain; any other node has none and is checked as
+   C3 checks it. Nothing is shared again. A ground binding projects to the term at its reference and every
+   substitution keeps it, so the lookup reads every node's bindings at a formed shared state and at every deferred
+   committed representation (`shared_state_reads_bindings_by`, `deferred_committed_reads_bindings`,
+   `moded_deferred_route_keeping_in_binds`), and the route constants' kept code equations read the kept states through
+   `finite_bound_graph_true_in` and `finite_bound_graph_verdicts_in`, equal to C's at every found state. Measured (task
+   1018's `measurement.md`): at 11 the graph truth over the kept states 0.022/0.048 s at k = 23/32 against #1003's
+   read 0.191/0.774 s in the same run, 0.024/0.028 ms a node (#1003: 0.54 ms at k = 32), all but two nodes of each
+   call read with the lookup; at 7, k = 151, 0.08 ms a node either way. 11 at k = 151 is unmeasured, its search past
+   the bound (71 s at k = 50); a node there, by the growth from 23 to 32, ≈ 0.06 ms, well under 1 ms.
 
 Limits. The table is shared and indexed once a representation (once a call), the re-share of a found state and the
 substitution outside the deferred bind both reading the sharing state made there (`deferred_substitute_carried`): a

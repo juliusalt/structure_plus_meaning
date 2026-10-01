@@ -70,8 +70,14 @@ courses — (a) the data recognitions in GT5's families and (b) one found state 
 3×10⁹ states to about 2×10⁷ (1.7×10⁵ s); (c) 21's key uniqueness over ordered keys removes its largest part (1.1×10⁵ s);
 (e) one table carried across GT6's calls removes its entries' cost (1.2×10⁶ s as briefed, about 200 s); (d) the
 priority class read without walking the input (80 % of a selection's state) and (f) found states kept shared the rest.
-Two designs before GT6: #1020 ((a), (b), (d)–(f), GT6's prediction with (c) in both branches) and #1021 ((c) under
-Q33, task 928's (b) reopened). D3: D3b1 #975, D3b1m #982 and D3a #977
+#1020 decided (task 1020's addition to "The given's calls are decided once", `21af9981`): (a) taken as GT5b, a family
+of the given's calls; (b) deferred (its form and trigger there: (c) declined, or a found-state count above one growing
+with the call); (d)'s first half taken as RP, its second deferred; (e) one table carried across GT6's calls, the
+production's part folded into GT6's rewrite and the route's single carry in RK; (f) taken in RK. With (c), GT6's
+environment level about 1.2–1.5×10⁴ s of CPU after the pole, RP and RK, about 0.4 h of wall at 16 workers; without (c),
+21's chain alone at least 31 h. The brief #1022 writes GT5b (beside the pole, before GT6), RP (after F-b2 #1016) and RK
+(after RP, before WC3 and GT6), and WC3's brief again; #1021 decides (c) — declined, (b) and a course for 21's quadratic
+family precede GT6. GT6's brief is rewritten when #1021 has decided and the pole has landed. D3: D3b1 #975, D3b1m #982 and D3a #977
 landed; D3b2 is divided at its partial session: #979 the plain side (the kept goals, the route keeping none; its second session partial too, a third continuing from
 `.build/tasks/979/draft/candL`), #1010
 the committed side (continues #979: the route keeping every call goal, q189, and the measurement past 350); D3b3 #983,
@@ -90,10 +96,10 @@ kept, none extended (#376); their remains are under Open and in `.build/plans/ne
 
 **Shape and order.** No build waits on a review, nor any task on an investigation (its tree never lands): the
 dependency goes through the brief's Inputs, but for the guard AX5 #962 on #1000, removed when its brief is rewritten.
-The longest chain runs D3b2 #979 → #1010 → D3b3 → F-b1 #1014 → F-b2 #1016 → GT6 → R7 → #707 → #399 → … → #449 → #450; GT6's hours make the resolver's
+The longest chain runs D3b2 #979 → #1010 → D3b3 → F-b1 #1014 → F-b2 #1016 → RP → RK (#1022's) → GT6 → R7 → #707 → #399 → … → #449 → #450; GT6's hours make the resolver's
 pole critical, the AX line has slack. Nothing is added after the tail until it shortens (the approval build, Open 142,
 waits); splices before a task go at any depth. The queue, the planner's choice and a residual until Q2's native
-answer: the pole (M2, D3b2 #979 and #1010, D3b3, F-a #1012, F-b1 #1014, F-b2 #1016, WC3, GT6), the designs #1020 and #1021 and #1000 beside it, the briefs
+answer: the pole (M2, D3b2 #979 and #1010, D3b3, F-a #1012, F-b1 #1014, F-b2 #1016, WC3, GT6), #1021, the brief #1022 and #1000 beside it, the briefs
 (#988, #948), the AX line, the route in its chains' order, each review after its build; #887 after R7's review.
 
 ## Decisions
@@ -232,8 +238,8 @@ What landed that open work builds on; each theory's contract is its THEORY_MAP.m
 REASONING_REUSE.md's, how it went `PLANNING_LOG.md`.
 
 - **Entries** (`DECISIONS.md`): #378, #376, #381, #383, #428, #460 (withdrawn by Q27), #482, #560, #495 and #496 with
-  their additions and corrections, #613, #782, #817, #928, #934, #947, #987 (D153); designs' verdicts in their
-  `verdict.md`; the attributions #481, #644, #715, #829, #830, #851, #886, #896, #944, #965, #968, #972 and #973 in
+  their additions and corrections, #613, #782, #817, #928, #934, #947, #987 (D153), #1020 (GT6's courses); designs' verdicts in their
+  `verdict.md`; the attributions #481, #644, #715, #829, #830, #851, #886, #896, #944, #965, #968, #972, #973 and #1019 in
   their `result.md`.
 - **The package and the given**: `Development_Package_Program` (derived again when one of its six programs changes,
   Q18 (c)), `Development_Given_Readers`, `_Program`, `_Installation`, the payload theories, `Development_Native_State`.
@@ -315,14 +321,15 @@ owner's re-root trigger, and a probe past its bound above `Factor_Least_Collecti
 ## Now
 
 - **Under way**: M2 #998 (its run); D3b2's plain side #979, a third session continuing in its tree from
-  `.build/tasks/979/draft/candL` (the second ended partial at the goal side's main lemma), then its committed side #1010;  the designs #1020 and #1021 before GT6 (from #1019, accepted).
-- **What the next events ask**: the verdicts of #1020 and #1021 and their builds' rows placed (a brief where they are
-  several, folded into open briefs where the designs name them); #979's next end; #1000's result (after M2): the controls
+  `.build/tasks/979/draft/candL` (the second ended partial at the goal side's main lemma), then its committed side #1010;  #1021 ((c)) and the brief #1022 (GT5b, RP, RK from #1020).
+- **What the next events ask**: #1021's verdict ((c) taken: its build placed; declined: (b) and a course for 21
+  designed before GT6); #1022's proposal placed (GT5b spliced before GT6, RP after F-b2, RK before WC3 and GT6, WC3's
+  brief rewritten); #979's next end; #1000's result (after M2): the controls
   (77/1 resolved, 77/2 refuted at the committing instance) placed as a build where F1 suffices, else Open 157 designed;
   the count fix (Open 155) if it is needed; AX5's brief rewritten, its guard removed; M2's landing: #988 briefs AX2d1
   and AX2d2 (AX5 and #948 re-pointed onto AX2d2 at
   its placement), then #948's proposals placed by rewrite; GT6's brief rewritten after M2, D3b3, #1002, #1003,
-  F-a, F-b and the designs #1020 and #1021, with #1018's figures (shared runs: 11's check over references small
+  F-a, F-b, RP, RK and #1021, from task 1020's list, with #1018's figures (shared runs: 11's check over references small
   beside its search; a held third point at k = 50, review 1018's 2 and 5), #1006's c(D) and per-call figures (its (5): 11 ≈ 27 s at k = 621 after M2 and D3b3, ≈ 5 s
   with F-a and F-b) and its follow-up 4 (each state's depth recorded beside its cost), and the leaves' scan at its tables
   (next-edits 436, #1003's (3) deferred by q191). The re-run of #718's 77 and 79 fixtures with review 858's attributions (next-edits 364–366) at a measured

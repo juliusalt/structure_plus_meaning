@@ -15,7 +15,8 @@ text \<open>
   positions and variables, the nodes at a position, a goal and a node decoded one at a time where its pattern is read.
   What the access does not present and the tests read of every node or goal, cheaply, is given beside it
   (@{text commitment_access}, formed at the same state, @{text commitment_formed}): the positions holding a node, a
-  node's site, clause and call variables, a call goal's site. Nothing here decodes the state.
+  node's site and clause, a call goal's site; a node's call variables are the access's own
+  (@{text access_call_variables}). Nothing here decodes the state.
 \<close>
 
 subsection \<open>What the tests read beside the access\<close>
@@ -24,7 +25,6 @@ record ('g,'n,'a,'s,'d) commitment_access =
   commitment_node_positions :: "'s list fset"
   commitment_node_site :: "'n \<Rightarrow> 'd"
   commitment_node_schema :: "'n \<Rightarrow> ('a,'s,'d) finite_factor_schema"
-  commitment_call_variables :: "'n \<Rightarrow> ('s,'a) resolution_variable fset"
   commitment_goal_site :: "'g \<Rightarrow> 'd option"
 
 locale commitment_formed = access_formed \<kappa> P V st
@@ -34,8 +34,6 @@ locale commitment_formed = access_formed \<kappa> P V st
   assumes positions: "q |\<in>| commitment_node_positions E \<longleftrightarrow> access_nodes_at V q \<noteq> {||}"
     and node_site: "n |\<in>| access_nodes_at V q \<Longrightarrow> commitment_node_site E n = resolution_node_site (access_node V n)"
     and node_schema: "n |\<in>| access_nodes_at V q \<Longrightarrow> commitment_node_schema E n = resolution_node_schema (access_node V n)"
-    and call_variables: "n |\<in>| access_nodes_at V q \<Longrightarrow>
-      commitment_call_variables E n = finite_pattern_variables (resolution_node_call (access_node V n))"
     and goal_site: "h |\<in>| access_goals V \<Longrightarrow> commitment_goal_site E h = (case access_goal V h of
       Resolution_Call_Goal q r d p \<Rightarrow> Some d | Resolution_Material_Goal q r M \<Rightarrow> None)"
 
@@ -65,8 +63,7 @@ proof (rule commitment_formed.intro[OF focused], unfold_locales)
     if "n |\<in>| access_nodes_at (access_focused F V) q" for n q using node_site that by simp
   show "commitment_node_schema E n = resolution_node_schema (access_node (access_focused F V) n)"
     if "n |\<in>| access_nodes_at (access_focused F V) q" for n q using node_schema that by simp
-  show "commitment_call_variables E n = finite_pattern_variables (resolution_node_call (access_node (access_focused F V) n))"
-    if "n |\<in>| access_nodes_at (access_focused F V) q" for n q using call_variables that by simp
+
   show "commitment_goal_site E h = (case access_goal (access_focused F V) h of
       Resolution_Call_Goal q r d p \<Rightarrow> Some d | Resolution_Material_Goal q r M \<Rightarrow> None)"
     if "h |\<in>| access_goals (access_focused F V)" for h
@@ -161,7 +158,7 @@ definition access_socket_holders where
     fBall (access_focus_goals F V) (\<lambda>h'. h' = h \<or> access_variables V h' |\<inter>| Y = {||} \<or>
       (access_goal_position V h' \<noteq> [] \<and> butlast (access_goal_position V h') = butlast q)) \<and>
     fBall (commitment_node_positions E) (\<lambda>q'. take (length q') (butlast q) = q' \<or>
-      fBall (access_nodes_at V q') (\<lambda>n. commitment_call_variables E n |\<inter>| Y = {||}))"
+      fBall (access_nodes_at V q') (\<lambda>n. access_call_variables V n |\<inter>| Y = {||}))"
 
 definition access_free_premise_row where
   "access_free_premise_row V nd a \<longleftrightarrow>
@@ -291,7 +288,7 @@ lemma socket_holders_exact:
   shows "access_socket_holders F V E q Y h \<longleftrightarrow> finite_socket_holders F st q Y (access_goal V h)"
   unfolding access_socket_holders_def finite_socket_holders_def focus_ball nodes_ball
   by (intro conj_cong fBall_cong[OF refl] refl)
-    (auto simp: focus_goal goal_eq[OF h] variables goal_position node_position call_variables)
+    (auto simp: focus_goal goal_eq[OF h] variables goal_position node_position node_call_variables)
 
 lemma free_premise_row_exact: "access_free_premise_row V nd a \<longleftrightarrow> finite_free_premise_row st nd a"
   unfolding access_free_premise_row_def finite_free_premise_row_def pending_ball
@@ -869,9 +866,8 @@ end
 subsection \<open>What the shared state presents beside its access\<close>
 
 text \<open>
-  The shared state keeps a node's site and clause as they are, its call as a shared pattern whose variables are read
-  without projecting it, and a goal's site in its constructor; the positions holding a node are the keys of its node
-  tree. Formed at the state the shared access presents (@{thm [source] shared_access_formed}).
+  The shared state keeps a node's site and clause as they are and a goal's site in its constructor; the positions
+  holding a node are the keys of its node tree. Formed at the state the shared access presents (@{thm [source] shared_access_formed}).
 \<close>
 
 definition shared_commitment_access :: "('a,'s::linorder,'d,'c) shared_search \<Rightarrow>
@@ -879,7 +875,7 @@ definition shared_commitment_access :: "('a,'s::linorder,'d,'c) shared_search \<
   "shared_commitment_access r = \<lparr>commitment_node_positions = fset_of_list (RBT.keys (shared_nodes (search_state r))),
      commitment_node_site = (\<lambda>hn. shared_derivation_site (shared_entry_node hn)),
      commitment_node_schema = (\<lambda>hn. shared_derivation_schema (shared_entry_node hn)),
-     commitment_call_variables = (\<lambda>hn. shared_pattern_variables (shared_derivation_call (shared_entry_node hn))),
+
      commitment_goal_site = (\<lambda>h. case shared_entry_goal h of Shared_Call_Goal q rr d p \<Rightarrow> Some d
        | Shared_Material_Goal q rr M \<Rightarrow> None)\<rparr>"
 
@@ -901,16 +897,6 @@ proof -
           RBT.lookup_keys[symmetric] domIff)
     subgoal for n q by (simp add: shared_commitment_access_def shared_access_simps shared_derivation_project_def)
     subgoal for n q by (simp add: shared_commitment_access_def shared_access_simps shared_derivation_project_def)
-    subgoal for n q
-    proof -
-      assume "n |\<in>| access_nodes_at (shared_access \<kappa> P r) q"
-      then have "RBT.lookup (shared_nodes (search_state r)) q = Some n" by (rule at)
-      then have "shared_pattern_formed (search_table r) (shared_derivation_call (shared_entry_node n))"
-        using nf by (auto simp: node_entry_formed_def shared_derivation_formed_def)
-      then show ?thesis
-        by (simp add: shared_commitment_access_def shared_access_simps shared_derivation_project_def
-          shared_pattern_variables_project)
-    qed
     subgoal for h
       by (cases "shared_entry_goal h") (simp_all add: shared_commitment_access_def shared_access_simps)
     done

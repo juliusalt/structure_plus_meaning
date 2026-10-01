@@ -8,7 +8,8 @@ text \<open>
   @{const development_given_value} through their presenters, never supplied beside them, in the order the production
   takes them (bottom-up: 11 at the given's artifacts by ascending size, 7 and 12 at each with itself, the environment
   admission's list traversals from the shortest suffix up and 26 at the environment value, 156 at the site value, the
-  package's readers 79, 77, 80, 82 and 83 at the given's package, the guard's four sockets and 526 at (g, g)). Which
+  package's readers 79, 77, 80, 82 and 83 at the given's package). The guard at the given with no additions is the
+  table's entries (task 928's entry, course (c)): no guard call at (g, g) is an entry. Which
   calls a judgment meets is observed by GT6 and R7, not proved here: a call the table lacks costs its derivation, never
   a verdict. The table's validity is GT6's retained outcome and enters as a premise; it is carried by GT2c's transfers
   (@{text Factor_Resolution_Checks}): its calls true at every numbered program agreeing with the rooted readers on their
@@ -107,17 +108,10 @@ definition given_package_calls :: "(nat\<times>finite_factor_term) list" where
       map (\<lambda>d. (83,given_table_data (package_subject_argument e u r (definition_site_value d))))
         (sorted_list_of_fset (finite_system_definitions P)))"
 
-text \<open>The guard's four sockets, by socket, and 526, each at the pair (g, g): the guard hands its whole subject to each.\<close>
-
-definition given_guard_calls :: "(nat\<times>finite_factor_term) list" where
-  "given_guard_calls=map (\<lambda>(s,d). (d,Finite_Pair development_given_value development_given_value))
-      (sorted_list_of_set first_problem_requirements) @
-    [(526,Finite_Pair development_given_value development_given_value)]"
-
 text \<open>
-  The readers' part, at the sites of the given's readers, and the table's calls. The guard's sockets 520, 521 and 525
-  and 526 are the asked program's, not the readers': a table valid at the rooted readers holds none of them, and those
-  entries are certified at the asked program.
+  The readers' part, at the sites of the given's readers, and the table's calls: the readers' part alone (GT6's, which
+  produces and retains it). The guard's part at (g, g), once certified at the old asked program, is retired with it
+  (task 928's entry): the guard over additions at the given with no additions reads the readers' calls.
 \<close>
 
 definition given_reader_calls :: "(nat\<times>finite_factor_term) list" where
@@ -125,7 +119,7 @@ definition given_reader_calls :: "(nat\<times>finite_factor_term) list" where
     [(156,development_given_value)] @ given_package_calls"
 
 definition given_table_calls :: "(nat\<times>finite_factor_term) list" where
-  "given_table_calls=given_reader_calls @ given_guard_calls"
+  "given_table_calls=given_reader_calls"
 
 section \<open>The table at the numbered programs\<close>
 
@@ -235,21 +229,22 @@ corollary installed_given_table_true:
 
 end
 
-section \<open>The asked program and the first request's program\<close>
+section \<open>The asked relation over additions and the first request's program\<close>
 
 text \<open>
-  The instances at the asked relation's program (@{const asked_program_system}, presented by
-  @{const finite_asked_program}) and the first request's (@{const first_request_program_system}), and at their
-  installations. The guard's part, certified at the asked program, reaches the asked installation through
-  @{text asked_installed_table_true_at} from its validity there (@{thm [source] finite_table_valid_true}).
+  The instances at the asked relation over additions (@{const asked_additions_program_system}, presented by
+  @{const finite_asked_additions_program}) and the first request's (@{const first_request_program_system}), and at
+  their installations.
 \<close>
 
-lemmas asked_readers_table_true=given_readers_extension.readers_table_true[OF asked_extension.readers_extension]
-lemmas asked_installed_table_true_at=given_readers_extension.installed_table_true_at[OF asked_extension.readers_extension,
-  folded asked_installed_presentation_def]
-lemmas asked_installed_given_table_true=
-  given_readers_extension.installed_given_table_true[OF asked_extension.readers_extension,
-  folded asked_installed_presentation_def]
+lemmas asked_additions_readers_table_true=
+  given_readers_extension.readers_table_true[OF asked_additions_extension.readers_extension]
+lemmas asked_additions_installed_table_true_at=
+  given_readers_extension.installed_table_true_at[OF asked_additions_extension.readers_extension,
+  folded asked_additions_installed_presentation_def]
+lemmas asked_additions_installed_given_table_true=
+  given_readers_extension.installed_given_table_true[OF asked_additions_extension.readers_extension,
+  folded asked_additions_installed_presentation_def]
 
 lemmas first_request_readers_table_true=
   given_readers_extension.readers_table_true[OF first_request_extension.readers_extension]

@@ -13,10 +13,10 @@ text \<open>
   (@{const finite_moded_priority}); no consumer declaration is added for 5 or 0 (correction (12), "113's 6").
 
   The sites are the given's numbered readers' (@{const finite_rooted_given_readers}), which the asked program and the
-  first request's program keep with their clauses (@{thm [source] asked_readers_agreement},
+  first request's program keep with their clauses (@{thm [source] asked_additions_readers_agreement},
   @{thm [source] first_request_readers_agreement}): at those three programs the modes are @{text given_modes}
   itself. The whole view is the selection's view the root family's records declare (@{const selection_view}). Where the programs are installed, the modes are relocated by O1's relocation with the placements the
-  records' carrying uses (@{const given_readers_placement}, @{const asked_placement},
+  records' carrying uses (@{const given_readers_placement}, @{const asked_additions_placement},
   @{const first_request_placement}), the views kept.
 \<close>
 
@@ -59,23 +59,23 @@ lemma given_modes_relocated_formed: "modes_formed (modes_relocated g given_modes
 definition given_placed_modes :: "local_address option definition_site resolution_modes" where
   "given_placed_modes = modes_relocated given_readers_placement given_modes"
 
-definition asked_placed_modes :: "local_address option definition_site resolution_modes" where
-  "asked_placed_modes = modes_relocated asked_placement given_modes"
+definition asked_additions_placed_modes :: "local_address option definition_site resolution_modes" where
+  "asked_additions_placed_modes = modes_relocated asked_additions_placement given_modes"
 
 definition first_request_placed_modes :: "local_address option definition_site resolution_modes" where
   "first_request_placed_modes = modes_relocated first_request_placement given_modes"
 
 lemma given_placed_modes_formed:
-  "modes_formed given_placed_modes" "modes_formed asked_placed_modes" "modes_formed first_request_placed_modes"
-  by (simp_all only: given_placed_modes_def asked_placed_modes_def first_request_placed_modes_def
+  "modes_formed given_placed_modes" "modes_formed asked_additions_placed_modes" "modes_formed first_request_placed_modes"
+  by (simp_all only: given_placed_modes_def asked_additions_placed_modes_def first_request_placed_modes_def
     given_modes_relocated_formed)
 
 lemma given_placed_modes_member:
   "(e,V) |\<in>| given_placed_modes \<longleftrightarrow> e = given_readers_placement 5 \<and> (V = given_row_view \<or> V = selection_view)"
-  "(e,V) |\<in>| asked_placed_modes \<longleftrightarrow> e = asked_placement 5 \<and> (V = given_row_view \<or> V = selection_view)"
+  "(e,V) |\<in>| asked_additions_placed_modes \<longleftrightarrow> e = asked_additions_placement 5 \<and> (V = given_row_view \<or> V = selection_view)"
   "(e,V) |\<in>| first_request_placed_modes \<longleftrightarrow>
     e = first_request_placement 5 \<and> (V = given_row_view \<or> V = selection_view)"
-  by (auto simp: given_placed_modes_def asked_placed_modes_def first_request_placed_modes_def given_modes_relocated)
+  by (auto simp: given_placed_modes_def asked_additions_placed_modes_def first_request_placed_modes_def given_modes_relocated)
 
 lemma given_modes_first_request_sites: "fst ` fset given_modes \<subseteq> system_definitions first_request_program_system"
   using first_request_sites by (simp add: given_modes_sites)

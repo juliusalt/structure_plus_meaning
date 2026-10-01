@@ -19105,7 +19105,10 @@ or a prefix is; a node's solvedness is the zero of its count.
 - Renaming apart by a counter in R3: R3's variables carry their position (F4 finds a registered variable's node by it); a
   statement change of R3.
 - Goals deferred too, the unifier dereferencing through the store: the unifier, the alternatives and every test read a
-  goal's pattern, and goals are few (19 at step 350, their substitution 0.6 s over 300 steps).
+  goal's pattern, and goals are few (19 at step 350, their substitution 0.6 s over 300 steps). [Corrected by task 969's
+  addition "The goal side at depth: …" below: the goals are few but hold the open chain (#875: 112 variables and
+  331-node patterns at step 340, their substitution 42 ms a step at 300–350); a goal is kept as placed under the store
+  wherever no binding reaches the region its site's interface and clause heads read, the inner search kept formed.]
 - The deferred records keyed by positions: three or four list-keyed operations a holder at ≈ 10–20 µs, 127 holders at step
   350, 5–10 ms a step and growing with the depth squared.
 
@@ -19116,6 +19119,262 @@ runs and the copy re-pointed, #875's); the library's `shared_derivation_substitu
 leaves the route with D1b, the eager node substitution standing only in the shared representation.
 
 [Recorded 2026-09-27 (task 890's decision; a design, no theory changes).]
+
+### The goal side at depth: a goal kept as placed while no binding reaches the region its site's clauses read, the goal side's sets kept by the variables law
+
+[Added by task 969, a design, from investigation #875 (`.build/tasks/875/result.md`, accepted; its held figures in
+`.build/tasks/875/measurement.md`): at the given the route's step at steps 300–350 costs 112–147 ms, growing with the
+depth, against D1's predicted 6–9 ms. The deferred bind takes 94 % of it, its goal side 78–80 % — the goals' patterns
+substituted 37 %, their alternatives recounted 7 %, the entry tests 3 %, the holders added 11 %, the registered buckets
+moved 18 % — and the node records 16 %. The goals hold the open chain a recursion builds (112 variables and 331-node
+patterns near step 340; 28 and 82 at 30–300), where D1 assumed them clause-sized. This addition decides the goal side's
+representation before GT6 #878 (#875's follow-ups 1 and 2), places #875's follow-up 3 (the node records), and gives how
+each goal-side read is kept, the step predicted and the builds. A design; no theory changes.]
+
+| Earlier proposal or state | Correction |
+|---|---|
+| D1, "Weighed and not taken": goals deferred too, not taken since "goals are few (19 at step 350, their substitution 0.6 s over 300 steps)" | The goals are few but hold the open chain: their substitution is 1.54 s over 300 steps and 42 ms a step at 300–350. A call goal is kept as placed under the store while no binding reaches the region its site's interface and clause heads read (D3b); every other goal is substituted as today. |
+| D1: "F2a's pattern caches and the goals' sets stay clause-sized fsets" | F2a's caches stay fsets, since no kept goal's pattern is walked; a goal's variables are a record of keys kept by the variables law, as a node's call's are (D3a). |
+| D1c: the goal side's operations a step bounded | Their number is bounded (#875: ≈ 9 updates and ≈ 8 holder adds a bind), but each rewrote every position part or registered position the goal holds; D3a writes only the difference the bind makes. |
+| D1b's node update reads every key of a record, decoding it, against the domain | The domain's keys are looked up in the record and replaced by their images' keys; no key is decoded on the update (#875's follow-up 3, D3a). |
+
+**What the step pays at depth.** #875's second hold at steps 300–350 (5.755 s over 50 steps): the goal entries
+substituted 2.762 s — the pattern substituted (`keyed_substitute`) 2.119 s, 36,800 cache tests `A |∩| D` at 34 µs and
+18,425 nodes rebuilt; the alternatives recounted on re-entry 0.430 s, 200 at 2.2 ms; the entry test
+`variables |∩| D` 0.199 s — the holders added 0.635 s (400 adds of 70 position parts each), the registered buckets moved
+1.064 s (450 moves, `tree_move` over the union of the old and new registered sets, 62 positions each), the node records
+0.939 s (6,125 records, 64 keys decoded each through `rev` of the numbering), the open counts 0.069 s, the rest 0.29 s.
+Each substitution walks the chain's spine from the goal's root to the bound tail (147 tests, 74 rebuilds a substitution);
+each test scans a list-based cache of up to the goal's variables, and each comparison walks two variables' positions,
+which grow with the depth as well: a goal's substitution costs the depth times its variables times the positions'
+length, and every index write the size of its variable or registered set.
+
+**The course.** Both parts of the cause are removed: the indexes and the entry test are written from the difference a
+bind makes, and a goal that holds a chain's tail outside the region its site's clauses read is not walked at all.
+1. *The goal side's sets by the variables law (D3a).* A goal's variables are a record of `deferred_key`s, as a node's
+   call's are (D1b): the bind looks the domain's keys up in it and replaces them by the keys of their images' variables,
+   and from that difference writes the indexes — the goal's position added to the holder buckets of the images'
+   variables' position parts only (the holder index is a superset: the old parts already hold the position by its
+   formation), and the registered buckets changed only at the registered positions the difference adds or removes. The
+   entry test is the record's. The node records take the same form (#875's follow-up 3). Of the step at 300–350 it
+   removes the entry tests, the holders, the registered moves and the records: 46 %.
+2. *A call goal kept as placed while no binding reaches its region (D3b).* What the search reads of a pending call goal
+   is its count of alternatives, its kind, whether it holds a leaf, its variables, its groundness and — at a ground goal
+   or at a site a declaration names — its pattern. The count is the number of the site's interface-and-clause pairs
+   whose renamed interface and head unify with the goal (`finite_call_alternative_set`). Where the interface and every
+   clause head of the site are linear (no variable at two positions of one pattern) and their variables fresh, whether
+   they unify with a goal pattern depends only on its subterms at the positions where the interface or a head has a
+   constructor or a literal — the site's *region*: a binding of variables occurring in the goal only outside the region
+   changes neither unifiability nor the count (D3b1). So a call goal at such a site — no declaration naming its site,
+   not at the root, no node at its position, its pattern holding a leaf, its resolution not ground — is *kept* across a
+   bind whose domain meets none of its region's variables: its stored pattern stays as placed, the store holding the
+   binding as it does for nodes, and only its record and the indexes change by D3a's difference. A bind reaching a kept
+   goal's region, its resolution becoming ground, or its selection *brings it current*: its pattern is resolved through
+   the store (D1a's resolution, memoized by D1b″) and re-entered as today. A chain's holders read the chain's top through
+   their sites' heads, and the chain grows at its tail, outside every holder's region: a holder is walked once, when it
+   is brought current, not at every bind.
+3. *Nodes and goals, one notion.* D1 kept a node as placed because its readers read only its call's variables and its
+   groundness — an empty region; D3 keeps a goal as placed while every binding stays outside the region its readers
+   read. A pattern is kept as placed under the store while no binding reaches the region its readers read, and is
+   resolved where a reader reads past that region.
+
+**D3a — the goal side's sets by the variables law.** In `Factor_Deferred_Search`; every operation of the inner shared
+search keeps its statement.
+- *Goal records.* A tree from a goal's position (or its number: the builder's; a number is a key, never read where the
+  position order or a prefix is) to the keys of the goal's variables, a keyed set over `deferred_key` as D1b's node
+  records; the names of a placed goal's variables numbered where it is placed (`deferred_number_names`). Formed: exactly
+  the keys of the goal's variables, every one numbered; established by `deferred_of` and kept by every step (placement,
+  removal, the bind, the construction, the refresh). The root's call goal, whose variables stand at the unnumbered root
+  (D1b″), is read by its cache until its selection, or the root is numbered at `deferred_of` (the builder's; D1b″'s
+  statements kept either way).
+- *The bind's goal side.* At each position the holder index finds for the domain, the entry test looks the domain's
+  keys up in the goal's record; a goal the domain reaches is substituted and re-entered as today
+  (`shared_goal_entry_substitute`) and written through a deferred form of `shared_goal_substitute_at` and
+  `search_update` that adds the goal's position to the holder buckets of its images' variables' position parts only, and
+  moves its registered bucket entries only at the registered positions the record's difference adds (an image's
+  variable with the registered flag) or removes (a bound registered variable's position at which the new record holds no
+  other registered key: a range lookup over the keys of that position's number) — where `tree_move` sorted and walked the
+  union of the two sets. Formed: the inner search's formation (the holder buckets a superset; `search_registered_formed`)
+  and the records exact; the projection the shared bind's, so `deferred_bind`'s statements are kept.
+- *Node records.* `deferred_update` over the domain's keys: a domain key present in the record replaced by the keys of
+  its image's variables, the others untouched, no key decoded; a key decoded only where the access reads a node's call
+  variables, through an index from numbers to positions kept with the numbering or an array made once where the access
+  is built (the builder's), never `rev` of the numbering per decode (review 904's follow-up 2).
+- *Statements.* R3–R5, K2, F2a–F2d and GT2–GT3b kept by name and statement. D1b: `deferred_formed` gains the goal
+  records' clause and `deferred_formedD` its conclusion; `deferred_bind`'s and `deferred_update`'s definitions restated,
+  their lemmas' statements kept; `deferred_update_keys` retired or kept as the list form proved equal at a formed record
+  (the builder's; nothing outside the theory reads it).
+- *Control and measurement.* The deferred search's control evaluated again (`Factor_Deferred_Search_Controls`, all
+  equal); held, before and after in one hold: the route at the given's 77 at 30, 300 and 350 steps and 77/1 at 200, as
+  #905 and #875 ran them, with #875's second hold's split at 300–350 (entry tests, holders, registered moves, records)
+  through a draft driver.
+
+**D3b1 — the region a linear pattern reads.** A new theory above `Factor_Pattern_Unification`,
+`Factor_Program_Resolution` and `Factor_Shared_Patterns`, no search in it:
+- the positions of a finite term pattern and its region (`finite_pattern_region`: the positions where it has a
+  constructor or a literal, closed under prefixes), a linear pattern (`finite_pattern_linear`: no variable at two of its
+  positions), the variables of a pattern at a set of positions;
+- the unification theorem: for linear `i` and `h` whose variables are disjoint, occur in neither `g` nor an image of
+  `σ`, and `σ` binding no variable of `g` at a position of `finite_pattern_region i ∪ finite_pattern_region h`:
+  `finite_unify_pairs [(i,g),(h,g)] = None ⟷ finite_unify_pairs [(i, σ g),(h, σ g)] = None` (σ applied by
+  `finite_pattern_substitute`), through `finite_unify_pairs_none_iff` — a unifier of the substituted pairs composed
+  with `σ` unifies the original ones for every `σ`; a unifier `τ` of the original pairs gives one of the substituted
+  pairs that is `τ` at `g`'s variables in the region and sends a variable of `i` or `h` at a position of `σ g` to the
+  subterm there (the builder's proof);
+- its count form: at a site whose interface and every clause head are linear, `finite_goal_alternatives` of a call goal
+  at `q` with `finite_pattern_substitute σ p` equals its value with `p`, when `σ` binds no variable of `p` at a position
+  of the site's region (the union of its interface's and heads' regions, which renaming apart keeps) and no variable
+  renamed at `q` (`finite_rename_apart (q,_)`) occurs in `p` or an image of `σ` — the members of the two
+  `finite_call_alternative_set`s corresponding one to one by interface, clause and schema, the unifier changed;
+- the shared read: the variables of a shared pattern at the positions of a region (a walk along the region that stops
+  at a reference, which holds none), equal to the projection's;
+- REASONING_REUSE.md's row for the pattern of reasoning: a reading that depends only on the region it reads is kept
+  across every change outside that region.
+New statements only.
+
+**D3b2 — kept goals in the deferred search.** In `Factor_Deferred_Search` and `Factor_Deferred_Commitments`:
+- *Formation.* D1b's goal clause — a goal holds no variable the store binds — becomes: every goal is *current* (that
+  clause) or *kept*: a call goal not at the root, no node at its position, at a site whose interface and clause heads
+  are linear and that no declaration names, its stored pattern holding a leaf, none of the stored pattern's variables at
+  a position of its site's region bound in the store, its resolution not ground. Every goal's record holds the keys of
+  its *resolution's* variables; the holder buckets are a superset of the resolutions' variables' position parts; the
+  registered buckets hold, as `search_registered_formed` states it, every goal at the registered positions of its
+  resolution's variables. The inner shared search stays a formed shared
+  search with formed classes: a kept goal is a formed entry of its stored pattern, its count that pattern's.
+- *Projection and access.* `deferred_project` resolves every goal through the store as it resolves every node, a
+  current goal its own resolution. The deferred access reads a goal's variables (`access_variables`) and whether it
+  holds a registered variable (`access_holdable`) from its record, decodes a goal (`access_goal`) at its resolution, and
+  takes every other goal field — the count, the kind, the solvability, the leaf, the key, the closings, the holders and
+  the registered positions — from the inner search as today. `deferred_access_formed` keeps its statement: at a kept
+  goal the count is its resolution's by D3b1, the leaf is kept by substitution, and the key, the closings, pruning, reuse
+  and F3's waits are those of a non-ground goal (`goal_settled`, `goal_single`).
+- *The bind.* At a goal the domain reaches: kept when it is eligible after the bind — its region's variables, read at
+  its entry by D3b1's shared read along its site's region and kept as keys beside its record, meet no domain key, and its
+  record stays nonempty — its record and the indexes written by D3a's difference, its stored pattern, entry and classes
+  untouched; otherwise brought current — resolved through the store after the bind (D1a's bind law: the resolution
+  through `store_bind` is the substitution of the resolution before) — and re-entered as today, its region's keys read
+  again where it is eligible.
+- *The steps.* A selected kept goal is brought current before its successors, the projection unchanged; a step places
+  current goals; the construction and the refresh read the goals holding a registered variable through their records
+  (`search_goal_holders` read through the record at a kept goal).
+- *The committed side.* `Factor_Deferred_Commitments`' reads of goals' variables (the deferred bind's condition,
+  `deferred_goal_variables`, `deferred_committed_of`'s rooted test) are read through the records; no goal at a declared
+  site is kept, so every commitment test reads a current goal's pattern as today; a kept goal inside a committed
+  sub-search is kept as in the plain search. R5's, F2c's and K2's statements kept.
+- *Control and measurement.* D1b's and D1d's controls evaluated again, all equal, and one where goals are kept: a
+  two-clause list builder whose list a pending consumer at a linear site holds — the consumer kept at every bind after
+  the first, brought current at its selection, the found state the shared search's. Held, before and after: the route at
+  the given's 77 at 30, 300 and 350 steps and at a depth past 350 the hold allows, 77/1 at 200, with the share of the
+  goals a bind reaches that are kept, the goals brought current, and the step at 330–350 by part.
+- If its relations exceed a build's room, the committed side is a build of its own after it (D3b3).
+
+**How each goal-side read is kept.**
+
+| Read | Today | Under D3 |
+|---|---|---|
+| A goal's alternatives | Recounted at the re-entry of every goal a bind reaches | A kept goal's entry keeps its count, equal to its resolution's (D3b1); a current goal recounted at re-entry as today; a goal brought current recounted once |
+| The entry test | `variables |∩| D` over the goal's list cache | The domain's keys looked up in the record (D3a) |
+| The holders | The position added at every variable's position part at each write | Added at the images' variables' parts only (D3a); a superset of the resolutions' parts (D3b2) |
+| The registered buckets | `tree_move` over the union of the old and new registered sets | Moved where the record's difference adds or removes a registered position (D3a); covering the resolutions' registered positions (D3b2) |
+| The kept classes (#865, D1c, FI, GT3) | Written at the goals a step touches | Unchanged: a kept goal's entry and classes are untouched and are its resolution's (a call; settled exactly at no alternative, single at one, F3's tests and GT3's closing read ground goals, which are current); a goal brought current re-enters through `search_update` |
+| The waiting class (correction (16), WC3) | Over the access: a socket's parent through the node index, its pending premises' variable sets, the frame's images | Unchanged over the access: a socket stands at a declared site and is current; a sibling's variables are its record's (`access_variables`); the frame's images are read through the store |
+| R3's classes (iv) | Ground, independent (the variables and the holders), solvable material, leaf | Read through the access's fields as listed; a material goal is current |
+| F4's goal holders | The stored pattern's cache | The record at a kept goal |
+
+**The step predicted** (the route at the given; #875's held parts; the seconds of a run and, at 300–350, a step):
+
+| Part | #875 | After D3a | After D3a and D3b |
+|---|---:|---:|---:|
+| At 300 steps: the entry (`deferred_of`) | 0.142 s | 0.14 s | 0.14 s |
+| — goal entries substituted (≈ 81 % of 1.11 s) / of it the entry test | ≈ 0.90 / ≈ 0.06 s | ≈ 0.84 / ≈ 0.003 s | 0.13–0.25 s |
+| — holders added / registered moves and touched classes | ≈ 0.21 / 0.430 s | ≈ 0.02 / ≈ 0.03 s | ≈ 0.02 / ≈ 0.03 s |
+| — node records (5,726) | 0.310 s | ≈ 0.03 s | ≈ 0.03 s |
+| — the selection / the plain successors | 0.240 / ≈ 0.20 s | 0.24 / 0.20 s | 0.24 / 0.20 s |
+| The run, 300 steps (instrumented / library) | 2.438 / 2.420 s | ≈ 1.5 s | 0.8–0.95 s |
+| At 300–350, a step: the pattern substituted / alternatives recounted | 42.4 / 8.6 ms | 42.4 / 8.6 ms | 2.6–10 ms together |
+| — entry tests / holders / registered moves / records | 4.0 / 12.7 / 21.3 / 18.8 ms | 0.2 / 0.4 / 0.6 / 0.8 ms | 0.2 / 0.4 / 0.6 / 0.8 ms |
+| — open counts / selection and plain successors | 1.4 / 5.7 ms | 1.4 / 5.7 ms | 1.4 / 5.7 ms |
+| A step at 300–350 (330–350) | 115 (147) ms | ≈ 60 (≈ 80) ms | 11–19 ms |
+| The run, 350 steps (library) | 8.07 s | ≈ 4.5 s | 1.4–1.9 s |
+| The run, 30 steps (library) | 0.253 s | ≈ 0.25 s | ≈ 0.25 s |
+| 77/1 at 200 (library) | 0.079 s | 0.07–0.08 s | 0.07–0.08 s |
+
+Method: D3a's unit costs are a lookup or an insert at a few keys where the parts paid one at every key the goal holds
+(an insert at a list key ≈ 10–20 µs, q159; a record update ≈ 4–5 µs at four domain keys, D1's 1–2 µs for two to four
+red-black operations); D3b's range assumes the chain's holders are 80–95 % of the goals a bind reaches at 300–350 and
+that they stand at linear, undeclared sites, which no measurement has shown yet (see Left). What D3 leaves at 300–350
+is the plain successors (4 ms a step, unattributed beyond #875's split), the selection (2 ms), the open counts and the
+node records (137 a bind, linear in the depth), each measured again by D3b2. These are estimates; D3a and D3b2 measure
+them, and #965 recomputes GT6's prediction from the step they measure.
+
+**The builds.**
+
+| Build | Theories | States | Keeps | After | Beside |
+|---|---|---|---|---|---|
+| D3a | `Factor_Deferred_Search`; `Factor_Deferred_Search_Controls` | the goal records and their formation; the deferred goal substitution at a position with the holders and registered buckets written by difference; `deferred_update` over the domain's keys; the decode through an index or an array | R3–R5, K2, F2a–F2d, GT2–GT3b; D1b's statements but `deferred_formed` (a clause added) and `deferred_formedD` (a conclusion added) | GT3 #876, GT3b #970 | D3b1 |
+| D3b1 | a new theory above `Factor_Pattern_Unification`, `Factor_Program_Resolution` and `Factor_Shared_Patterns`; `ROOT`; REASONING_REUSE.md's row | regions, linear patterns, the unification and count invariance, the shared read along a region | everything (new) | — | GT3, GT3b, D3a |
+| D3b2 | `Factor_Deferred_Search`, `Factor_Deferred_Commitments`, the control theories | kept goals: the formation's goal clause, the projection, the access's goal fields, the bind's keep and bring-current, the steps, the committed side's goal reads | R3–R5, K2, F2a–F2d, GT2–GT3b; D1b's and D1d's statements but the formation's goal clause and the access's goal fields | D3a, D3b1 | — |
+
+**The order.** D3b1 now: it restates nothing and stands beside GT3 and GT3b. D3a after GT3b #970: GT3 and GT3b restate
+`Factor_Deferred_Search` and `Factor_Deferred_Commitments` (the table's index, closing and class in the inner shared
+search; the deferred searches' and the route constants' code equations at a table). D3b2 after D3a and D3b1. WC3 #916
+after D3b2, and GT6 #878 after D3b2 beside WC3; #965's prediction recomputed when D3a and D3b2 land. D3 before WC3
+because GT6 does not wait on WC3 and D3 after it would put WC3's build and review on GT6's chain, and because D3 changes
+nothing WC3 delivers: WC3's kept set of pending framed sockets is a set of the inner shared search, which D3 leaves as
+it is, and its waiting set is stated over the access, whose `access_variables` D3b2 serves from the records.
+
+**What the builds must respect.**
+- R3–R5, K2, F2a–F2d and GT2–GT3b's statements kept by name and statement: the deferred representation's steps project
+  to R3's (`represented_search`), D1d's committed representation over it to R5's; the searches' states, verdicts and
+  every recorded word as they are.
+- The inner shared search stays a formed shared search with formed classes: a kept goal is a formed entry of its stored
+  pattern; F2b2's statements are read of it as today; no store is read by `shared_state_project`.
+- A kept goal's entry fields are read only where D3b1 makes them its resolution's — the count, the kind, the leaf — its
+  variables and registered positions from its record; it is resolved only where a reader reads its pattern: at its
+  selection, at its grounding, at the projection. No test made a step resolves a kept goal; the builder lists every read
+  of `access_goal` on the route and where it is made, and a read at a kept goal each step goes to the planner.
+- No goal at a site a declaration names, at a site whose interface or a clause head is not linear, at the root, of a
+  material premise, or whose stored pattern holds no leaf is kept.
+- The formation of the records, of the kept goals' eligibility and of the indexes is established by the constructors
+  and kept by every step, never checked again (REASONING_REUSE.md, "A check made where its premise is established").
+- A number is a key: never presented, never compared across two searches, never read where the position order or a
+  prefix is.
+- No library theory on the route evaluates or imports a refinement collection; controls stand in theories imported by
+  none. The given's readers as installed are the builds' scope (task 928's reading); no clause of any program changes;
+  no recorded word changes; payloads stay inert.
+
+**What it relies on** (task 376's test): the bind reads the unifier's domain and images, the goals' records and the
+indexes, and compares keys for equality; a goal's eligibility reads its site's interface and heads — their linearity
+and regions — whether a declaration names its site, sites compared for equality, and the domain's keys against its
+region's; positions are read as keys where no order is and as positions where the order or a prefix is; the count's
+invariance is a theorem of R2 over finite patterns.
+
+**Weighed and not taken.**
+- Ordered variable sets at F2a's pattern caches (#875's follow-up 1, short of deferral): a type change of the shared
+  pattern's cache at every pattern of F2a–F2d and D1a–D1d, the variables' names unordered at the search's type (#926: a
+  key needs the deferred search's numbering), and the walk kept: a substitution would still rebuild the spine to the
+  bound tail, its constant divided, linear in the depth at every bind.
+- Every goal kept as placed, the unifier dereferencing through the store (D1's "goals deferred too" in full): every
+  read of a goal's pattern — the count at every goal a bind reaches, the step's unifier, the commitment tests at views,
+  the waiting class — would read through the store, an occurs check reading the resolved variables of a subterm, and the
+  inner search's goal entries and classes would be formed for no pattern they hold, so F2b2's statements would not apply
+  to its goals. The region keeps the same goals — those holding a chain's tail outside their sites' regions — with the
+  inner search formed and every read but the decode left where it is.
+- Recounting a kept goal's alternatives on its resolution at every bind: a resolution walks the chain, which the
+  region makes unnecessary.
+- Kept goals at declared sites through records of their views' parts: the commitment tests read a goal's call pattern
+  at its views; taken only if D3b2's figures show the chain held at declared sites (Left).
+- The goal side numbered (D1e): D3a leaves a lookup or two at list keys a write; its trigger stands. Groundness counters
+  over the store (D1): the node records a bind are 137 at step 350, each a few µs after D3a; their trigger stands.
+
+**Left.** The goals that hold the chain at the given are not yet identified by site: if they stand at declared or
+nonlinear sites, D3b keeps none of them, and the course is records of their views' parts read by the commitment tests
+(at declared sites) or a recount reading the region and the repeated variables' subterms (at nonlinear sites) — measured
+by D3b2, or earlier by an investigation of the sites of the goals the bind reaches at 300–350 (the planner's). The plain
+successors and the selection at depth (≈ 6 ms a step at 300–350), D1e and the groundness counters on their triggers, and
+GT6's prediction (#965) at D3a and D3b2.
+
+[Recorded 2026-10-01 (task 969's decision; a design, no theory changes).]
 
 ### The given's calls are decided once: a table of certified calls every judgment closes, and the candidate's part each judgment derives
 

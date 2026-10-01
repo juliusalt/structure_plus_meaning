@@ -22160,7 +22160,33 @@ What is decided.
 7. (task 989) Item (7) at a demand, at the moded selection: GT4's graph verdicts of each call's check search
    (`moded_demand_graph_verdicts_in`), the calls they accept (`moded_demand_graph_true_in`, true where the table's calls
    are true), and the native pair of the two (`native_moded_graph_verdicts_in`), each at a listed table with its code
-   equation; at the waiting selection they are WC3's.
+   equation; at the waiting selection they are WC3's. (task 993, the planner's answer to #989's question) At a table a
+   found state's truth is its graph check alone, `finite_state_graph_true_in`: a root whose graph reading holds at the
+   table, sound where the table's calls are true (`finite_state_graph_true_in_sound`), holding at every found state there
+   (`finite_state_graph_true_in_found`, from `finite_state_graph_check_found_true`), reading the table by its calls
+   alone (`finite_state_graph_true_in_calls`) and building no certificate; #968's re-check of the entries' certificates
+   is not made. The check search's truth `moded_check_graph_true_in` reads it, equal at two tables of the same calls
+   (`moded_check_graph_true_in_calls`, through GT2a's `finite_committed_search_calls`), and the demand's
+   `moded_demand_graph_true_in` is restated over it (its statement `moded_demand_graph_true_in_true` kept;
+   `moded_demand_graph_true_in_calls`), so the native pair reads it too. GT4's verdict form keeps its tree disjunct
+   (`finite_state_graph_verdicts_in`, the verdicts reported beside the truth; a graph truth is a true verdict there,
+   `finite_state_graph_true_in_verdicts`), the empty table's verdicts as they are.
+8. (task 993) The check of a found derivation reads its rows from a representation and forms once a table. C2: the
+   rows take each node's call reference from a representation of the found state (`finite_read_rows`, a lookup of
+   positions and a sharing state; re-sharing is the instance that reads none, `finite_share_rows_read`), exact where the
+   sharing state represents a formed table holding each node's call at the reference read (`finite_reads_calls`); C's
+   verdicts, graph verdicts and graph truth over the read rows equal C's at the projected state
+   (`finite_read_verdicts_in_exact`, `finite_read_graph_verdicts_in_exact`, `finite_read_graph_true_in_exact`), stated
+   at any representation so that the search keeping its shared found states consumes them unproved. C3: an admitted
+   instance's formation splits off exactly (`finite_admitted_instance_at_formed`: the call, the premise calls, and the
+   values no call holds), and a table whose leaves are formed, checked once a table (`finite_share_leaves_formed`),
+   forms every call it holds (`finite_share_leaves_formed_reference`), so the check over its rows reads no call's
+   formation (`finite_formed_table_exact`); the code equations of C's three forms use it on today's path
+   (`finite_state_verdicts_in_checked`, `finite_state_graph_verdicts_in_checked`, `finite_state_graph_true_in_checked`,
+   `finite_state_verdicts_checked`), each equal to C's on every input. Measured (task 993's `measurement.md`): at 11,
+   k = 32, C 1.45 ms a node today, 0.69 with C3, 0.40 over read rows; the rest is the links' re-share of every premise
+   instance and the instance checks' term comparisons, which walk the artifact an anchor and stay ∝ k^≈2.5 — reading
+   them over references is the follow-up that makes the search keep its shared found states.
 
 Limits. The table is shared and indexed once a representation (once a call), the re-share of a found state and the
 substitution outside the deferred bind both reading the sharing state made there (`deferred_substitute_carried`): a

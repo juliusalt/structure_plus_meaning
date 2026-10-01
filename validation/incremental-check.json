@@ -1,6 +1,6 @@
 {
- "base_receipt_sha256": "a1263400aa325bda4ae162c1fc4d547848edd55700e973d17eb6363c171dc889",
- "checked_content_sha256": "1389aaa62732801227007ee2beb44d9aff66683a781ace853a44203c48b2424d",
+ "base_receipt_sha256": "d179e143b0af016dedef6d2291b64a86db21278bf333e70931224d1b311d1fb3",
+ "checked_content_sha256": "4748c6d825dc56a6af83f978b111ea26f07195e8e65b4fbbe44d2c48ca9634ff",
  "host_tests": {
   "kernel": {
    "exit_code": 0,
@@ -17,120 +17,35 @@
    "ran": 314,
    "skipped": 0,
    "tail": [
-    "{\"status\": \"failed\", \"error\": \"[Errno 2] No such file or directory: '/tmp/tmp4uh6uk1x/no-project/theories/Development_Answer_a2d8d6490cc2.thy'\"}"
+    "{\"status\": \"failed\", \"error\": \"[Errno 2] No such file or directory: '/tmp/tmp4_755mtd/no-project/theories/Development_Answer_a2d8d6490cc2.thy'\"}"
    ]
   }
  },
  "phases": {
-  "base_and_impact": 0.42,
-  "execution_impact": 0.14,
-  "export": 2.82,
-  "proof": 290.58,
-  "recipe_impact": 0.43,
-  "recipes_and_host_tests": 33.9
+  "base_and_impact": 0.43,
+  "execution_impact": 0.0,
+  "export": 0.0,
+  "proof": 141.61,
+  "recipe_impact": 0.35,
+  "recipes_and_host_tests": 11.24
  },
  "rebuilt_theories": [
-  "Admitted_Conditional_Applications",
-  "Cached_Faceted_Questions",
-  "Certificate_Construction_Review",
-  "Conditional_Application_Review",
-  "Criticism_Octet_Samples",
-  "Criticism_Samples",
-  "Criticism_Use_Samples",
   "Development_First_Problem_Additions_Controls",
   "Development_Given_Checks_Execution",
   "Development_Given_Declarations_Execution",
   "Development_Given_Table",
   "Development_Given_Waiting_Controls",
-  "Development_Machinery",
-  "Development_Machinery_Reports",
-  "Development_Presentation",
-  "Development_Row_Contexts",
-  "Development_Seed_Loop",
-  "Development_Seed_Publication",
-  "Development_Seed_Referenced_Publication",
-  "Development_Seed_Verification",
-  "Faceted_Native_Questions",
-  "Factor_Access_Commitments",
   "Factor_Check_Controls",
   "Factor_Commitment_Controls",
   "Factor_Deferred_Commitment_Controls",
-  "Factor_Deferred_Commitments",
-  "Factor_Deferred_Search",
-  "Factor_Deferred_Search_Controls",
-  "Factor_Executed_Controls",
-  "Factor_Implemented_Base_Evaluation",
   "Factor_Input_Production_Controls",
   "Factor_Least_Query_Controls",
-  "Factor_Material_Tails",
   "Factor_Mode_Controls",
   "Factor_Narrowed_Controls",
-  "Factor_Pattern_Regions",
   "Factor_Resolution_Checks",
   "Factor_Resolution_Controls",
   "Factor_Resolution_Graph_Checks",
-  "Factor_Shared_Commitments",
-  "Factor_Shared_Patterns",
-  "Factor_Shared_Resolution",
-  "Factor_Shared_Search",
-  "Factor_Source_Execution_Sharing",
-  "Factor_Table_Search_Controls",
-  "Material_Application_Observations",
-  "Native_Control_Acceptance_Profile",
-  "Native_Control_Admitted_Selection",
-  "Native_Control_Artifact_Comparison",
-  "Native_Control_Artifact_Reused_Execution",
-  "Native_Control_Artifact_Source",
-  "Native_Control_Cause_Continuation",
-  "Native_Control_Cause_Review",
-  "Native_Control_Child_Review",
-  "Native_Control_Closed_Installation",
-  "Native_Control_Compile_Profile",
-  "Native_Control_Constructed_Source_View",
-  "Native_Control_Context_Execution",
-  "Native_Control_Filtered_Judgment",
-  "Native_Control_Finite_Guard",
-  "Native_Control_Guard_Construction",
-  "Native_Control_Guard_Execution",
-  "Native_Control_Guard_Source",
-  "Native_Control_Guard_Transport",
-  "Native_Control_Installed_Guard",
-  "Native_Control_Judgment_Graph",
-  "Native_Control_Judgment_Review",
-  "Native_Control_Judgment_Scope",
-  "Native_Control_Judgment_Source",
-  "Native_Control_Literal_Boundary",
-  "Native_Control_Prepared_Cause_Review",
-  "Native_Control_Quotation_Construction",
-  "Native_Control_Quoted_Judgment",
-  "Native_Control_Receiving_Controls",
-  "Native_Control_Receiving_Review",
-  "Native_Control_Refinement_Composition",
-  "Native_Control_Reviewed_Receiving",
-  "Native_Control_Selected_Root",
-  "Native_Control_Source_Execution",
-  "Native_Control_Source_Profile",
-  "Native_Control_Sourced_Children",
-  "Native_Control_Syntax_Candidate",
-  "Native_Control_Syntax_Execution",
-  "Native_Control_Syntax_Statements",
-  "Native_Control_Union_Observation_Execution",
-  "Native_Development_Execution",
-  "Native_Development_Execution_Base",
-  "Native_Development_Machinery",
-  "Native_Development_Seed",
-  "Native_Development_Steering",
-  "Native_Source_Development",
-  "Native_Workflow_Execution",
-  "Native_Workflow_Execution_Base",
-  "Positioned_Native_Evaluation",
-  "Presented_Publication_Values",
-  "Shared_Binding_Stores",
-  "Shared_Call_Closures",
-  "Shared_Native_Evaluation",
-  "Shared_Term_Tables",
-  "Shared_Term_Words",
-  "Workflow_Presentation"
+  "Factor_Table_Search_Controls"
  ],
  "recipes": {
   "allocated-environments": {
@@ -227,19 +142,13 @@
    "status": "unchanged"
   },
   "native-development": {
-   "exit_code": 0,
-   "seconds": 11.59,
-   "status": "accepted"
+   "status": "unchanged"
   },
   "native-development-machinery": {
-   "exit_code": 0,
-   "seconds": 33.9,
-   "status": "accepted"
+   "status": "unchanged"
   },
   "native-development-seed": {
-   "exit_code": 0,
-   "seconds": 32.19,
-   "status": "accepted"
+   "status": "unchanged"
   },
   "native-evaluation": {
    "status": "unchanged"
@@ -263,14 +172,10 @@
    "status": "unchanged"
   },
   "native-steering": {
-   "exit_code": 0,
-   "seconds": 13.6,
-   "status": "accepted"
+   "status": "unchanged"
   },
   "native-workflow": {
-   "exit_code": 0,
-   "seconds": 12.54,
-   "status": "accepted"
+   "status": "unchanged"
   },
   "quoted-history": {
    "status": "unchanged"
@@ -291,9 +196,7 @@
    "status": "unchanged"
   },
   "source-development": {
-   "exit_code": 0,
-   "seconds": 14.7,
-   "status": "accepted"
+   "status": "unchanged"
   },
   "use-allocation": {
    "status": "unchanged"
@@ -302,8 +205,8 @@
    "status": "unchanged"
   }
  },
- "reused_theories": 1899,
- "seconds": 335.0,
+ "reused_theories": 1984,
+ "seconds": 159.39,
  "source_checks": {
   "missing_theory_files": [],
   "proof_escape_matches": [],

@@ -110,7 +110,9 @@ lemma table_search_controls:
     moded_check_demand_listed table_search_entries no_witness_construction table_control_program 0
       table_route_declarations {||} no_declarations {||} table_route_demand 3 = Some {|(1,Finite_Payload [1])|} \<and>
     moded_demand_graph_true_listed table_unaccepted_entries no_witness_construction table_control_program 0
-      table_route_declarations {||} no_declarations {||} table_route_demand 3 = {|(1,Finite_Payload [1])|})"
+      table_route_declarations {||} no_declarations {||} table_route_demand 3 = {|(1,Finite_Payload [1])|} \<and>
+    moded_check_graph_true_listed table_unaccepted_entries no_witness_construction table_control_program 0
+      table_route_declarations {||} no_declarations {||} 1 (Finite_Payload [1]) 3)"
   by eval
 
 end

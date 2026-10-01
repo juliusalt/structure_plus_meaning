@@ -47,7 +47,8 @@ every judgment's search closes, its validity checked once over graphs and retain
 additions. Landed: GT3 #876, GT3b #970, GT3c #989 (`3852d3aa`: the table carried through re-shares and shared once
 per representation; (7)'s demand and native graph-verdict forms). Its measurement put the rest of a step's cost at a
 table in the term table's reads (#810's projection code equations copy the whole table into an array at each
-projection): the fix #995 (no review), before GT6 #878, C3/C2 #993, D3b2 #979 and WC3 #916, with review 990's tidies.
+projection): the fix #995 landed (`93ed9e07`: the share state's table the tree of its positions, every read
+logarithmic; q187's form A); its consolidations #1001 (continues #995) after D3a, before WC3.
 #993 also states the graph check alone at a table, the calls
 lemma and #989's forms over it. GT6 #878 (produced once, a run of hours; record `validation/given-table.json`) →
 #542, #547, #707, #399; its brief is rewritten after M2, D3b3, C3/C2 and #995, with D153's prediction (#965's
@@ -76,7 +77,7 @@ dependency goes through the brief's Inputs, but for the guard AX5 #962 on #1000,
 The longest chain runs M1 → M2 → D3b3 → GT6 → R7 → #707 → #399 → … → #449 → #450; GT6's hours make the resolver's
 pole critical, the AX line has slack. Nothing is added after the tail until it shortens (the approval build, Open 142,
 waits); splices before a task go at any depth. The queue, the planner's choice and a residual until Q2's native
-answer: the pole (#995, D3a, M1, M2, #993, D3b2, D3b3, GT6, WC3), #1000 after M2, the briefs
+answer: the pole (D3a, M2, #993, D3b2, D3b3, GT6, WC3), #1000 after M2, #1001 after D3a, the briefs
 (#988, #948), the AX line, the route in its chains' order, each review after its build; #887 after R7's review.
 
 ## Decisions
@@ -297,9 +298,11 @@ owner's re-root trigger, and a probe past its bound above `Factor_Least_Collecti
 
 ## Now
 
-- **Under way**: D3a #977 resuming from its installed theory (q185's three restatements accepted); the term-table fix
-  #995 (q187: the share state's third component the position tree, the empty state named once); M2 #998.
-- **What the next events ask**: Q35's answer (if no, F4 replaces M1 and M2); #1000's result (after M2): the controls
+- **Under way**: D3a #977 resuming from its installed theory (q185's three restatements accepted); M2 #998; #1001
+  (review 995's consolidations) after D3a.
+- **What the next events ask**: #993's result: its (c) (q188: the route's committed search keeping the shared found
+  states, the per-node check over references) created as a build from its Follow-ups, before GT6 and WC3; Q35's
+  answer (if no, F4 replaces M1 and M2); #1000's result (after M2): the controls
   (77/1 resolved, 77/2 refuted at the committing instance) placed as a build where F1 suffices, else Open 157 designed;
   the count fix (Open 155) if it is needed; AX5's brief rewritten, its guard removed; M2's landing: #988 briefs AX2d1
   and AX2d2 (AX5 and #948 re-pointed onto AX2d2 at

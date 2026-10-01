@@ -965,8 +965,8 @@ definition commitment_tests ::
       (access_goal_position V h, if pd = None then B else B |\<union>| rep_node_positions R r', r')),
     tests_position = (\<lambda>r V x h. access_goal_position V h)\<rparr>"
 
-lemma commitment_tests_exact:
-  assumes st: "committed_representation_structure R Fi \<kappa> P"
+lemma commitment_tests_exact_in:
+  assumes st: "committed_representation_structure_in R Fi \<kappa> P \<Theta>"
     and ce: "commitment_formed \<kappa> P (rep_access R r) (rep_project R r) (ce r)"
     and exact: "access_commitment_exact Kc K" and Fr: "Fi r"
     and h: "h |\<in>| access_goals (rep_access R r)"
@@ -977,7 +977,7 @@ lemma commitment_tests_exact:
 proof -
   let ?V = "rep_access R r" let ?st = "rep_project R r" let ?g = "access_goal ?V h" let ?E = "ce r"
   let ?W = "access_focused F ?V"
-  interpret s: committed_representation_structure R Fi \<kappa> P by (rule st)
+  interpret s: committed_representation_structure_in R Fi \<kappa> P \<Theta> by (rule st)
   interpret c: commitment_formed \<kappa> P ?V ?st ?E by (rule ce)
   interpret f: commitment_formed \<kappa> P ?W "finite_focused F ?st" ?E by (rule c.commitment_focused)
   note ex = exact[unfolded access_commitment_exact_def, rule_format, OF c.commitment_self h]
@@ -1035,6 +1035,47 @@ proof -
     using pri call mat Fr' pr' by (simp add: commitment_tests_def Let_def)
 qed
 
+lemma commitment_tests_exact:
+  assumes st: "committed_representation_structure R Fi \<kappa> P"
+    and ce: "commitment_formed \<kappa> P (rep_access R r) (rep_project R r) (ce r)"
+    and exact: "access_commitment_exact Kc K" and Fr: "Fi r"
+    and h: "h |\<in>| access_goals (rep_access R r)"
+    and guard: "\<And>h' F. h' |\<in>| access_goals (rep_access R r) \<Longrightarrow> \<not> gd r h' \<Longrightarrow>
+      \<not> finite_moded_priority K Dm M (finite_focused F (rep_project R r)) (access_goal (rep_access R r) h')"
+  shows "tests_exact_at R (commitment_tests R ce Kc Dm M gd) Fi K (finite_moded_priority K Dm M) F B r (rep_access R r)
+      (tests_prepare (commitment_tests R ce Kc Dm M gd) F r (rep_access R r)) h"
+  using commitment_tests_exact_in[where Fi = Fi and ce = ce and gd = gd and r = r and Dm = Dm and M = M and Kc = Kc
+    and K = K, OF committed_representation_structure_in_empty[OF st] ce exact Fr h guard] .
+
+theorem commitment_tests_formed_in:
+  assumes st: "committed_representation_structure_in R Fi \<kappa> P \<Theta>"
+    and ce: "\<And>s. Fi s \<Longrightarrow> commitment_formed \<kappa> P (rep_access R s) (rep_project R s) (ce s)"
+    and exact: "access_commitment_exact Kc K"
+    and guard: "\<And>s h F. Fi s \<Longrightarrow> h |\<in>| access_goals (rep_access R s) \<Longrightarrow> \<not> gd s h \<Longrightarrow>
+      \<not> commit_call K F (rep_project R s) (access_goal (rep_access R s) h) \<and>
+      \<not> commit_material K F (rep_project R s) (access_goal (rep_access R s) h) \<and>
+      \<not> finite_moded_priority K Dm M (finite_focused F (rep_project R s)) (access_goal (rep_access R s) h)"
+    and closes: "\<And>s h. Fi s \<Longrightarrow> h |\<in>| access_goals (rep_access R s) \<Longrightarrow>
+      cl s h \<longleftrightarrow> finite_table_closes \<Theta> (access_goal (rep_access R s) h)"
+  shows "tested_representation_formed_in R Fi \<kappa> P \<Theta> K (finite_moded_priority K Dm M) (commitment_tests R ce Kc Dm M gd) gd cl"
+proof (rule tested_representation_formed_in.intro[OF st], unfold_locales, goal_cases)
+  case (1 s h F)
+  then show ?case by (rule guard)
+next
+  case (2 s h F B)
+  have g: "\<And>h' F'. h' |\<in>| access_goals (rep_access R s) \<Longrightarrow> \<not> gd s h' \<Longrightarrow>
+      \<not> finite_moded_priority K Dm M (finite_focused F' (rep_project R s)) (access_goal (rep_access R s) h')"
+    using guard[OF 2(1)] by blast
+  show ?case by (rule commitment_tests_exact_in[where ce=ce and gd=gd and Dm=Dm and M=M, OF st ce[OF 2(1)] exact 2(1) 2(2) g])
+next
+  case (3 s h x)
+  interpret c: commitment_formed \<kappa> P "rep_access R s" "rep_project R s" "ce s" by (rule ce[OF 3(1)])
+  show ?case using c.goal_position[OF 3(2)] by (simp add: commitment_tests_def)
+next
+  case (4 s h)
+  then show ?case by (rule closes)
+qed
+
 theorem commitment_tests_formed:
   assumes st: "committed_representation_structure R Fi \<kappa> P"
     and ce: "\<And>s. Fi s \<Longrightarrow> commitment_formed \<kappa> P (rep_access R s) (rep_project R s) (ce s)"
@@ -1044,19 +1085,12 @@ theorem commitment_tests_formed:
       \<not> commit_material K F (rep_project R s) (access_goal (rep_access R s) h) \<and>
       \<not> finite_moded_priority K Dm M (finite_focused F (rep_project R s)) (access_goal (rep_access R s) h)"
   shows "tested_representation_formed R Fi \<kappa> P K (finite_moded_priority K Dm M) (commitment_tests R ce Kc Dm M gd) gd"
-proof (rule tested_representation_formed.intro[OF st], unfold_locales, goal_cases)
-  case (1 s h F)
-  then show ?case by (rule guard)
-next
-  case (2 s h F B)
-  have g: "\<And>h' F'. h' |\<in>| access_goals (rep_access R s) \<Longrightarrow> \<not> gd s h' \<Longrightarrow>
-      \<not> finite_moded_priority K Dm M (finite_focused F' (rep_project R s)) (access_goal (rep_access R s) h')"
-    using guard[OF 2(1)] by blast
-  show ?case by (rule commitment_tests_exact[where ce=ce and gd=gd and Dm=Dm and M=M, OF st ce[OF 2(1)] exact 2(1) 2(2) g])
-next
-  case (3 s h x)
-  interpret c: commitment_formed \<kappa> P "rep_access R s" "rep_project R s" "ce s" by (rule ce[OF 3(1)])
-  show ?case using c.goal_position[OF 3(2)] by (simp add: commitment_tests_def)
+proof -
+  have "tested_representation_formed_in R Fi \<kappa> P resolution_empty_table K (finite_moded_priority K Dm M)
+      (commitment_tests R ce Kc Dm M gd) gd (\<lambda>s h. False)"
+    by (rule commitment_tests_formed_in[OF committed_representation_structure_in_empty[OF st] ce exact guard])
+      (simp_all add: finite_table_closes_empty)
+  then show ?thesis by (rule tested_representation_formed_of_empty)
 qed
 
 end

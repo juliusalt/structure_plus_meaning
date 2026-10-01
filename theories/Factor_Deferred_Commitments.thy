@@ -501,9 +501,9 @@ proof -
         (simp_all add: shared_commitment_access_def deferred_access_def shared_access_simps fset_of_list.rep_eq
           RBT.lookup_keys[symmetric] domIff)
     subgoal for n q
-      by (simp add: shared_commitment_access_def deferred_access_def deferred_node_def shared_derivation_project_def)
+      by (simp add: shared_commitment_access_def deferred_access_def deferred_node_def shared_derivation_project_simps)
     subgoal for n q
-      by (simp add: shared_commitment_access_def deferred_access_def deferred_node_def shared_derivation_project_def)
+      by (simp add: shared_commitment_access_def deferred_access_def deferred_node_def shared_derivation_project_simps)
     subgoal for h
       by (cases "shared_entry_goal h") (simp_all add: shared_commitment_access_def deferred_access_def shared_access_simps)
     done

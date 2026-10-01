@@ -46,7 +46,7 @@ lemma share_state_table_represents:
 
 lemma share_state_empty:
   "share_state_formed empty_share_state" "share_state_table empty_share_state = []"
-  by (simp_all add: share_state_formed_def share_state_table_def empty_share_state_def keyed_state_represents_def
+  by (simp_all add: share_state_formed_def share_state_table_def empty_share_state_def keyed_state_represents_def keyed_table_state_def
     value_reference_read_def table_formed_empty)
 
 lemma share_state_formed_table:
@@ -168,8 +168,8 @@ lemma keyed_share_shape_present:
 proof -
   obtain M n P where qq: "q = (M,n,P)" by (cases q) auto
   have "RBT.lookup M (shape_key s) = value_reference_index s T"
-    using rep by (simp add: qq keyed_state_represents_def)
-  with found show ?thesis by (simp add: qq keyed_share_shape_def)
+    using rep by (simp add: qq keyed_state_represents_def keyed_table_state_def)
+  with found show ?thesis by (simp add: qq keyed_share_shape_def keyed_table_step_def)
 qed
 
 lemma keyed_share_term_present:
@@ -462,13 +462,31 @@ definition shared_material_formed :: "shape list \<Rightarrow> 'a shared_materia
     shared_pattern_formed T (shared_material_atoms M) \<and> shared_pattern_formed T (shared_material_edges M) \<and>
     shared_pattern_formed T (shared_material_counts M) \<and> shared_pattern_formed T (shared_material_functions M)"
 
+text \<open>
+  A material projects through a read of the table's positions (@{const read_pattern_project}), stated once, as a goal
+  and a node do (@{text read_goal_project}, @{text read_derivation_project}); the projection over a table is its
+  instance at the list's read, its former equation kept (@{text shared_material_project_simps}).
+\<close>
+
+definition read_material_project :: "(nat \<Rightarrow> shape option) \<Rightarrow> 'a shared_material \<Rightarrow> 'a finite_material_pattern" where
+  "read_material_project rd M =
+    \<lparr>finite_material_source = read_pattern_project rd (shared_material_source M),
+     finite_material_atoms = read_pattern_project rd (shared_material_atoms M),
+     finite_material_edges = read_pattern_project rd (shared_material_edges M),
+     finite_material_counts = read_pattern_project rd (shared_material_counts M),
+     finite_material_functions = read_pattern_project rd (shared_material_functions M)\<rparr>"
+
 definition shared_material_project :: "shape list \<Rightarrow> 'a shared_material \<Rightarrow> 'a finite_material_pattern" where
+  "shared_material_project T=read_material_project (value_reference_read T)"
+
+lemma shared_material_project_simps:
   "shared_material_project T M =
     \<lparr>finite_material_source = shared_pattern_project T (shared_material_source M),
      finite_material_atoms = shared_pattern_project T (shared_material_atoms M),
      finite_material_edges = shared_pattern_project T (shared_material_edges M),
      finite_material_counts = shared_pattern_project T (shared_material_counts M),
      finite_material_functions = shared_pattern_project T (shared_material_functions M)\<rparr>"
+  by (simp add: shared_material_project_def read_material_project_def shared_pattern_project_def)
 
 definition shared_material_substitute ::
     "('a \<Rightarrow> 'a shared_pattern) \<Rightarrow> 'a fset \<Rightarrow> 'a shared_material \<Rightarrow> 'a shared_material" where
@@ -494,14 +512,14 @@ definition shared_material_of :: "share_state \<Rightarrow> 'a finite_material_p
 
 lemma shared_material_variables_project:
   "shared_material_formed T M \<Longrightarrow> shared_material_variables M = finite_material_variables (shared_material_project T M)"
-  by (simp add: shared_material_formed_def shared_material_variables_def shared_material_project_def
+  by (simp add: shared_material_formed_def shared_material_variables_def shared_material_project_simps
     finite_material_variables_def shared_pattern_variables_project[of T])
 
 lemma shared_material_substitute_project:
   assumes "shared_material_formed T M" and "\<And>a. a |\<notin>| D \<Longrightarrow> \<sigma> a = Shared_Variable a"
   shows "shared_material_project T (shared_material_substitute \<sigma> D M) =
     finite_material_pattern_substitute (\<lambda>a. shared_pattern_project T (\<sigma> a)) (shared_material_project T M)"
-  using assms by (simp add: shared_material_formed_def shared_material_project_def shared_material_substitute_def
+  using assms by (simp add: shared_material_formed_def shared_material_project_simps shared_material_substitute_def
     finite_material_pattern_substitute_def shared_substitute_project)
 
 lemma shared_material_substitute_formed:
@@ -520,7 +538,7 @@ proof -
     and e3 = shared_pattern_extends[OF tf f(3) ext] and e4 = shared_pattern_extends[OF tf f(4) ext]
     and e5 = shared_pattern_extends[OF tf f(5) ext]
   show "shared_material_formed T' M" "shared_material_project T' M = shared_material_project T M"
-    using e1 e2 e3 e4 e5 by (simp_all add: shared_material_formed_def shared_material_project_def)
+    using e1 e2 e3 e4 e5 by (simp_all add: shared_material_formed_def shared_material_project_simps)
 qed
 
 lemma shared_material_of_exact:
@@ -539,7 +557,7 @@ proof -
     and s3 = k[where p = "finite_material_edges M", OF h3] and s4 = k[where p = "finite_material_counts M", OF h4]
     and s5 = k[where p = "finite_material_functions M", OF h5]
   show ?thesis using s1 s2 s3 s4 s5
-    by (cases M) (simp add: shared_material_formed_def shared_material_project_def shared_material_of_def)
+    by (cases M) (simp add: shared_material_formed_def shared_material_project_simps shared_material_of_def)
 qed
 
 subsection \<open>Goals\<close>
@@ -560,9 +578,17 @@ fun shared_goal_formed :: "shape list \<Rightarrow> ('a,'s,'d,'c) shared_goal \<
   "shared_goal_formed T (Shared_Call_Goal q r d p) \<longleftrightarrow> shared_pattern_formed T p \<and> shared_collapsed p"
 | "shared_goal_formed T (Shared_Material_Goal q r M) \<longleftrightarrow> shared_material_formed T M"
 
-fun shared_goal_project :: "shape list \<Rightarrow> ('a,'s,'d,'c) shared_goal \<Rightarrow> ('a,'s,'d,'c) resolution_goal" where
+fun read_goal_project :: "(nat \<Rightarrow> shape option) \<Rightarrow> ('a,'s,'d,'c) shared_goal \<Rightarrow> ('a,'s,'d,'c) resolution_goal" where
+  "read_goal_project rd (Shared_Call_Goal q r d p) = Resolution_Call_Goal q r d (read_pattern_project rd p)"
+| "read_goal_project rd (Shared_Material_Goal q r M) = Resolution_Material_Goal q r (read_material_project rd M)"
+
+definition shared_goal_project :: "shape list \<Rightarrow> ('a,'s,'d,'c) shared_goal \<Rightarrow> ('a,'s,'d,'c) resolution_goal" where
+  "shared_goal_project T=read_goal_project (value_reference_read T)"
+
+lemma shared_goal_project_simps [simp]:
   "shared_goal_project T (Shared_Call_Goal q r d p) = Resolution_Call_Goal q r d (shared_pattern_project T p)"
-| "shared_goal_project T (Shared_Material_Goal q r M) = Resolution_Material_Goal q r (shared_material_project T M)"
+  "shared_goal_project T (Shared_Material_Goal q' r' M) = Resolution_Material_Goal q' r' (shared_material_project T M)"
+  by (simp_all add: shared_goal_project_def shared_pattern_project_def shared_material_project_def)
 
 fun goal_grounds :: "('a,'s,'d,'c) resolution_goal \<Rightarrow> finite_factor_term fset" where
   "goal_grounds (Resolution_Call_Goal q r d p) = pattern_grounds p"
@@ -664,10 +690,20 @@ definition shared_derivation_formed :: "shape list \<Rightarrow> ('a,'s,'d,'c) s
   "shared_derivation_formed T nd \<longleftrightarrow> shared_pattern_formed T (shared_derivation_call nd) \<and>
     shared_collapsed (shared_derivation_call nd) \<and> fBall (shared_derivation_bindings nd) (\<lambda>z. shared_pattern_formed T (snd z))"
 
+definition read_derivation_project ::
+    "(nat \<Rightarrow> shape option) \<Rightarrow> ('a,'s,'d,'c) shared_derivation \<Rightarrow> ('a,'s,'d,'c) resolution_node" where
+  "read_derivation_project rd nd = Resolution_Node (shared_derivation_position nd) (shared_derivation_site nd)
+    (shared_derivation_clause nd) (shared_derivation_schema nd) (read_pattern_project rd (shared_derivation_call nd))
+    (fimage (\<lambda>z. (fst z, read_pattern_project rd (snd z))) (shared_derivation_bindings nd))"
+
 definition shared_derivation_project :: "shape list \<Rightarrow> ('a,'s,'d,'c) shared_derivation \<Rightarrow> ('a,'s,'d,'c) resolution_node" where
+  "shared_derivation_project T=read_derivation_project (value_reference_read T)"
+
+lemma shared_derivation_project_simps:
   "shared_derivation_project T nd = Resolution_Node (shared_derivation_position nd) (shared_derivation_site nd)
     (shared_derivation_clause nd) (shared_derivation_schema nd) (shared_pattern_project T (shared_derivation_call nd))
     (fimage (\<lambda>z. (fst z, shared_pattern_project T (snd z))) (shared_derivation_bindings nd))"
+  by (simp add: shared_derivation_project_def read_derivation_project_def shared_pattern_project_def)
 
 definition node_grounds :: "('a,'s,'d,'c) resolution_node \<Rightarrow> finite_factor_term fset" where
   "node_grounds nd = pattern_grounds (resolution_node_call nd) |\<union>|
@@ -693,7 +729,7 @@ lemma shared_derivation_project_fields [simp]:
   "resolution_node_call (shared_derivation_project T nd) = shared_pattern_project T (shared_derivation_call nd)"
   "resolution_node_bindings (shared_derivation_project T nd) =
     fimage (\<lambda>z. (fst z, shared_pattern_project T (snd z))) (shared_derivation_bindings nd)"
-  by (simp_all add: shared_derivation_project_def)
+  by (simp_all add: shared_derivation_project_simps)
 
 lemma shared_derivation_variables_project:
   assumes "shared_derivation_formed T nd"
@@ -731,7 +767,7 @@ proof -
       fimage (\<lambda>z. (fst z, shared_pattern_project T (snd z))) (shared_derivation_bindings nd)"
     using b by (intro fimage_cong_on) simp
   with c show "shared_derivation_project T' nd = shared_derivation_project T nd"
-    by (simp add: shared_derivation_project_def)
+    by (simp add: shared_derivation_project_simps)
 qed
 
 lemma shared_derivation_of_exact:
@@ -756,7 +792,7 @@ proof -
       (resolution_node_bindings nd)) = resolution_node_bindings nd"
     using b by (force simp: fimage_fimage intro: fimage_fixed)
   then show ?thesis using c b
-    by (cases nd) (auto simp: shared_derivation_of_def shared_derivation_formed_def shared_derivation_project_def)
+    by (cases nd) (auto simp: shared_derivation_of_def shared_derivation_formed_def shared_derivation_project_simps)
 qed
 
 lemma shared_derivation_substitute_fields [simp]:
@@ -808,7 +844,7 @@ proof -
       (shared_derivation_clause nd) (shared_derivation_schema nd) c' (fimage (\<lambda>z. (fst z, shared_substitute \<sigma> D (snd z))) ?B), q')"
     using e by (simp add: shared_derivation_substitute_def)
   show ?thesis unfolding r using k b bs
-    by (cases nd) (auto simp: shared_derivation_formed_def shared_derivation_project_def)
+    by (cases nd) (auto simp: shared_derivation_formed_def shared_derivation_project_simps)
 qed
 
 subsection \<open>A call goal's alternatives, computed by the shared unifier\<close>
@@ -1108,22 +1144,10 @@ lemma shared_goal_call_refs_formed:
 subsection \<open>The table read by position\<close>
 
 text \<open>
-  The sharing state holds its table as the tree of its positions. Beside it the shared state holds a tree from each
-  position of the table to the shape there, extended by the positions a step appends, each read in the sharing state.
-  Every position reads there what the table holds (@{text position_index_formed}), and the positions a formed table held
-  before an extension read the same shapes after it.
+  The sharing state holds its table as the tree of its positions (@{const share_state_read}), the one tree of them the
+  shared state holds. A table's length grows under an extension, and the positions a formed table held before an
+  extension read the same shapes after it.
 \<close>
-
-definition position_index_formed :: "share_state \<Rightarrow> (nat, shape) rbt \<Rightarrow> bool" where
-  "position_index_formed x t \<longleftrightarrow> (\<forall>i. RBT.lookup t i = value_reference_read (share_state_table x) i)"
-
-definition position_index_extend :: "share_state \<Rightarrow> share_state \<Rightarrow> (nat, shape) rbt \<Rightarrow> (nat, shape) rbt" where
-  "position_index_extend x x' t = fold (\<lambda>i u. RBT.insert i (the (RBT.lookup (snd (snd x')) i)) u)
-    [fst (snd x)..<fst (snd x')] t"
-
-lemma lookup_fold_insert:
-  "RBT.lookup (fold (\<lambda>i u. RBT.insert i (f i) u) xs t) j = (if j \<in> set xs then Some (f j) else RBT.lookup t j)"
-  by (induction xs arbitrary: t) auto
 
 lemma table_extends_length:
   assumes tf: "table_formed T" and ext: "table_extends T T'"
@@ -1166,49 +1190,12 @@ proof -
   qed
 qed
 
-lemma position_index_extend:
-  assumes x: "share_state_formed x" and x': "share_state_formed x'"
-    and ext: "table_extends (share_state_table x) (share_state_table x')" and t: "position_index_formed x t"
-  shows "position_index_formed x' (position_index_extend x x' t)"
-  unfolding position_index_formed_def
-proof
-  fix j
-  let ?T = "share_state_table x" and ?T' = "share_state_table x'"
-  have n: "fst (snd x) = length ?T" by (simp add: share_state_table_def)
-  have n': "fst (snd x') = length ?T'" by (simp add: share_state_table_def)
-  have R': "\<And>i. RBT.lookup (snd (snd x')) i = value_reference_read ?T' i" using x'
-    by (cases x') (simp add: share_state_formed_def keyed_state_represents_def)
-  have tf: "table_formed ?T" and tf': "table_formed ?T'" using x x' by (simp_all add: share_state_formed_def)
-  have look: "RBT.lookup (position_index_extend x x' t) j =
-      (if length ?T \<le> j \<and> j < length ?T' then Some (?T' ! j) else RBT.lookup t j)"
-  proof -
-    have "RBT.lookup (position_index_extend x x' t) j = (if j \<in> set [fst (snd x)..<fst (snd x')]
-        then Some (the (RBT.lookup (snd (snd x')) j)) else RBT.lookup t j)"
-      by (simp add: position_index_extend_def lookup_fold_insert)
-    moreover have "j < length ?T' \<Longrightarrow> the (RBT.lookup (snd (snd x')) j) = ?T' ! j"
-      using R'[of j] by (simp add: value_reference_read_def)
-    ultimately show ?thesis using n n' by auto
-  qed
-  have old: "RBT.lookup t j = value_reference_read ?T j" using t by (simp add: position_index_formed_def)
-  show "RBT.lookup (position_index_extend x x' t) j = value_reference_read ?T' j"
-  proof (cases "j < length ?T")
-    case True
-    then show ?thesis using look old extends_read[OF tf tf' ext True] by simp
-  next
-    case False
-    then show ?thesis using look old by (auto simp: value_reference_read_def)
-  qed
-qed
-
-text \<open>
-  The extension reads each appended position's shape by one lookup in the sharing state's tree of positions.
-\<close>
 
 subsection \<open>The state, its projection and its formation\<close>
 
 record (overloaded) ('a,'s::linorder,'d,'c) shared_state =
   shared_sharing :: share_state
-  shared_positions :: "(nat, shape) rbt"
+
   shared_goals :: "('s list, ('a,'s,'d,'c) shared_goal_entry) rbt"
   shared_nodes :: "('s list, ('a,'s,'d,'c) shared_node_entry) rbt"
   shared_witnesses :: "(('s,'a) resolution_variable \<times> finite_factor_term) fset"
@@ -1296,36 +1283,19 @@ text \<open>
 \<close>
 
 text \<open>
-  A material, a goal and a node project through a read of the table's positions (@{const read_pattern_project}); the
-  projections over a table, over an array of it and over a sharing state's tree are its instances.
+  The projections over a table are the instances at the list's read of the projections through a read of the table's
+  positions (@{const read_material_project}, @{const read_goal_project}, @{const read_derivation_project}); those over
+  an array of it and over a sharing state's tree are their instances too.
 \<close>
 
-definition read_material_project :: "(nat \<Rightarrow> shape option) \<Rightarrow> 'a shared_material \<Rightarrow> 'a finite_material_pattern" where
-  "read_material_project rd M =
-    \<lparr>finite_material_source = read_pattern_project rd (shared_material_source M),
-     finite_material_atoms = read_pattern_project rd (shared_material_atoms M),
-     finite_material_edges = read_pattern_project rd (shared_material_edges M),
-     finite_material_counts = read_pattern_project rd (shared_material_counts M),
-     finite_material_functions = read_pattern_project rd (shared_material_functions M)\<rparr>"
-
-fun read_goal_project :: "(nat \<Rightarrow> shape option) \<Rightarrow> ('a,'s,'d,'c) shared_goal \<Rightarrow> ('a,'s,'d,'c) resolution_goal" where
-  "read_goal_project rd (Shared_Call_Goal q r d p) = Resolution_Call_Goal q r d (read_pattern_project rd p)"
-| "read_goal_project rd (Shared_Material_Goal q r M) = Resolution_Material_Goal q r (read_material_project rd M)"
-
-definition read_derivation_project ::
-    "(nat \<Rightarrow> shape option) \<Rightarrow> ('a,'s,'d,'c) shared_derivation \<Rightarrow> ('a,'s,'d,'c) resolution_node" where
-  "read_derivation_project rd nd = Resolution_Node (shared_derivation_position nd) (shared_derivation_site nd)
-    (shared_derivation_clause nd) (shared_derivation_schema nd) (read_pattern_project rd (shared_derivation_call nd))
-    (fimage (\<lambda>z. (fst z, read_pattern_project rd (snd z))) (shared_derivation_bindings nd))"
-
 lemma read_material_project_list: "read_material_project (value_reference_read T) M = shared_material_project T M"
-  by (simp add: read_material_project_def shared_material_project_def shared_pattern_project_def)
+  by (simp add: shared_material_project_def)
 
 lemma read_goal_project_list: "read_goal_project (value_reference_read T) g = shared_goal_project T g"
-  by (cases g) (simp_all add: read_material_project_list shared_pattern_project_def)
+  by (simp add: shared_goal_project_def)
 
 lemma read_derivation_project_list: "read_derivation_project (value_reference_read T) nd = shared_derivation_project T nd"
-  by (simp add: read_derivation_project_def shared_derivation_project_def shared_pattern_project_def)
+  by (simp add: shared_derivation_project_def)
 
 definition array_material_project :: "shape iarray \<Rightarrow> 'a shared_material \<Rightarrow> 'a finite_material_pattern" where
   "array_material_project A = read_material_project (array_read A)"
@@ -1345,7 +1315,7 @@ lemma array_goal_project: "array_goal_project (IArray T) g = shared_goal_project
 lemma array_derivation_project: "array_derivation_project (IArray T) nd = shared_derivation_project T nd"
   by (simp add: array_derivation_project_def array_read_list read_derivation_project_list)
 
-declare shared_material_project_def [code del] shared_goal_project.simps [code del]
+declare shared_material_project_def [code del] shared_goal_project_def [code del]
   shared_derivation_project_def [code del] shared_state_project_def [code del]
 
 lemma shared_material_project_array_code [code]: "shared_material_project T M = array_material_project (IArray T) M"
@@ -1496,7 +1466,7 @@ definition shared_recorded_at :: "('a,'s::linorder,'d,'c) shared_state \<Rightar
 definition shared_state_formed :: "('a,'s,'d,'c) finite_witness_construction \<Rightarrow>
     ('a,'s,'d,'c) finite_schema_system \<Rightarrow> ('a,'s::linorder,'d,'c) shared_state \<Rightarrow> bool" where
   "shared_state_formed \<kappa> P s \<longleftrightarrow> share_state_formed (shared_sharing s) \<and>
-    position_index_formed (shared_sharing s) (shared_positions s) \<and>
+
     (\<forall>q h. RBT.lookup (shared_goals s) q = Some h \<longrightarrow> goal_entry_formed P (shared_state_table s) q h) \<and>
     (\<forall>q hn. RBT.lookup (shared_nodes s) q = Some hn \<longrightarrow> node_entry_formed (shared_state_table s) q hn) \<and>
     (\<forall>i x. x |\<in>| tree_bucket (shared_goal_calls s) i \<longrightarrow> i < length (shared_state_table s)) \<and>
@@ -1874,7 +1844,7 @@ definition shared_replace :: "'s::linorder list \<Rightarrow> ('a,'s,'d,'c) shar
 
 lemma shared_replace_fields [simp]:
   "shared_sharing (shared_replace q go no s) = shared_sharing s"
-  "shared_positions (shared_replace q go no s) = shared_positions s"
+
   "shared_witnesses (shared_replace q go no s) = shared_witnesses s"
   "RBT.lookup (shared_goals (shared_replace q go no s)) p = (if p = q then go else RBT.lookup (shared_goals s) p)"
   "RBT.lookup (shared_nodes (shared_replace q go no s)) p = (if p = q then no else RBT.lookup (shared_nodes s) p)"
@@ -1955,7 +1925,7 @@ proof -
   have u1: "\<forall>p a hn. a |\<in>| tree_bucket (shared_unconstructed ?s') p \<longrightarrow> RBT.lookup (shared_nodes ?s') p = Some hn \<longrightarrow>
       finite_registered_value \<kappa> P (shared_derivation_project (shared_state_table ?s') (shared_entry_node hn)) a = None"
     using unc by simp
-  have sh: "share_state_formed (shared_sharing ?s')" "position_index_formed (shared_sharing ?s') (shared_positions ?s')"
+  have sh: "share_state_formed (shared_sharing ?s')"
     using s by (simp_all add: shared_state_formed_def)
   show ?thesis unfolding shared_state_formed_def using sh g1 n1 c1 c2 rec o1 u1 by blast
 qed
@@ -2126,7 +2096,7 @@ text \<open>
 subsection \<open>Extending the table under a formed state\<close>
 
 definition shared_reshare :: "share_state \<Rightarrow> ('a,'s::linorder,'d,'c) shared_state \<Rightarrow> ('a,'s,'d,'c) shared_state" where
-  "shared_reshare x s = s\<lparr>shared_sharing := x, shared_positions := position_index_extend (shared_sharing s) x (shared_positions s)\<rparr>"
+  "shared_reshare x s = s\<lparr>shared_sharing := x\<rparr>"
 
 lemma shared_reshare:
   assumes s: "shared_state_formed \<kappa> P s" and x: "share_state_formed x"
@@ -2144,9 +2114,7 @@ proof -
       shared_derivation_project ?T' (shared_entry_node hn) = shared_derivation_project ?T (shared_entry_node hn)"
     if "RBT.lookup (shared_nodes s) q = Some hn" for q hn
     using node_entry_extends[OF tf shared_entries_formed(2)[OF s that] ext] .
-  have pos: "position_index_formed x (shared_positions ?s')"
-    using position_index_extend[OF shared_entries_formed(3)[OF s] x ext] s
-    by (simp add: shared_reshare_def shared_state_formed_def)
+
   have rec: "\<forall>q. shared_recorded_at ?s' q" using s by (simp add: shared_reshare_def shared_recorded_at_def shared_state_formed_def)
   have c1: "\<forall>i y. y |\<in>| tree_bucket (shared_goal_calls ?s') i \<longrightarrow> i < length ?T'"
     using s le unfolding shared_state_formed_def shared_reshare_def by (simp, meson less_le_trans)
@@ -2163,7 +2131,7 @@ proof -
     using s ne by (simp add: shared_reshare_def shared_state_formed_def)
   have tbl: "shared_state_table ?s' = ?T'" by (simp add: shared_reshare_def)
   show "shared_state_formed \<kappa> P ?s'"
-    unfolding shared_state_formed_def tbl using x pos g1 n1 c1 c2 rec o1 u1 by (simp add: shared_reshare_def)
+    unfolding shared_state_formed_def tbl using x g1 n1 c1 c2 rec o1 u1 by (simp add: shared_reshare_def)
   have gp: "map_option (\<lambda>h. shared_goal_project ?T' (shared_entry_goal h)) (RBT.lookup (shared_goals s) p) =
       map_option (\<lambda>h. shared_goal_project ?T (shared_entry_goal h)) (RBT.lookup (shared_goals s) p)" for p
     using ge by (cases "RBT.lookup (shared_goals s) p") simp_all
@@ -2665,7 +2633,7 @@ text \<open>
 
 definition shared_empty :: "share_state \<Rightarrow> (('s,'a) resolution_variable \<times> finite_factor_term) fset \<Rightarrow>
     ('a,'s::linorder,'d,'c) shared_state" where
-  "shared_empty x W = \<lparr>shared_sharing = x, shared_positions = position_index_extend empty_share_state x RBT.empty,
+  "shared_empty x W = \<lparr>shared_sharing = x,
     shared_goals = RBT.empty, shared_nodes = RBT.empty, shared_witnesses = W, shared_holders = RBT.empty,
     shared_open = RBT.empty, shared_goal_calls = RBT.empty, shared_node_calls = RBT.empty,
     shared_unconstructed = RBT.empty\<rparr>"
@@ -2678,12 +2646,7 @@ lemma shared_empty:
     and "RBT.lookup (shared_nodes (shared_empty x W)) p = None"
     and "shared_sharing (shared_empty x W) = x"
 proof -
-  have e: "position_index_formed empty_share_state RBT.empty"
-    by (simp add: position_index_formed_def value_reference_read_def share_state_empty)
-  have pos: "position_index_formed x (position_index_extend empty_share_state x RBT.empty)"
-    using position_index_extend[OF share_state_empty(1) x _ e] ext share_state_empty(2) by simp
   have sel: "shared_sharing (shared_empty x W) = x"
-    "shared_positions (shared_empty x W) = position_index_extend empty_share_state x RBT.empty"
     "shared_goals (shared_empty x W) = RBT.empty" "shared_nodes (shared_empty x W) = RBT.empty"
     "shared_holders (shared_empty x W) = RBT.empty" "shared_open (shared_empty x W) = RBT.empty"
     "shared_goal_calls (shared_empty x W) = RBT.empty" "shared_node_calls (shared_empty x W) = RBT.empty"
@@ -2691,7 +2654,7 @@ proof -
     by (simp_all add: shared_empty_def)
   have rec: "\<forall>q. shared_recorded_at (shared_empty x W) q" by (simp add: shared_recorded_at_def sel)
   show "shared_state_formed \<kappa> P (shared_empty x W)"
-    unfolding shared_state_formed_def using x pos rec
+    unfolding shared_state_formed_def using x rec
     by (simp add: sel tree_bucket_def tree_count_def open_count_def open_children_def tree_keys_under_def)
   show "shared_state_project (shared_empty x W) = Resolution_State {||} {||} W"
     by (simp add: shared_state_project_def shared_empty_def)

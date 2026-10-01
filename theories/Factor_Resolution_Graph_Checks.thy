@@ -3857,7 +3857,7 @@ lemma finite_share_leaves_formed_reference:
 proof (rule finite_reference_formed[OF _ r])
   fix j l assume read: "value_reference_read T j = Some (Leaf_Shape l)"
   obtain M n P where q: "q = (M,n,P)" by (cases q)
-  have n: "n = length T" and P: "RBT.lookup P j = value_reference_read T j" using rep q by (simp_all add: keyed_state_represents_def)
+  have n: "n = length T" and P: "RBT.lookup P j = value_reference_read T j" using rep q by (simp_all add: keyed_state_represents_def keyed_table_state_def)
   have j: "j \<in> set [0..<n]" using read n by (simp add: read_some)
   have all: "\<forall>i\<in>set [0..<n]. (case RBT.lookup P i of Some (Leaf_Shape l) \<Rightarrow> finite_term_formed (leaf_term l) | _ \<Rightarrow> True)"
     using leaves q by (simp only: finite_share_leaves_formed_def list_all_iff prod.case)

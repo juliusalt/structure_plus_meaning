@@ -178,7 +178,7 @@ proof -
       using z unfolding fimage.rep_eq by (rule image_eqI)
   qed
   then show ?thesis
-    by (simp add: shared_free_registered_def finite_free_registered_def shared_derivation_project_def)
+    by (simp add: shared_free_registered_def finite_free_registered_def shared_derivation_project_simps)
 qed
 
 subsection \<open>Kinds, leaves and keys of shared goals\<close>
@@ -202,28 +202,11 @@ fun shared_goal_leaf :: "('a,'s,'d,'c) shared_goal \<Rightarrow> bool" where
   "shared_goal_leaf (Shared_Call_Goal q r d p) = shared_has_leaf p"
 | "shared_goal_leaf (Shared_Material_Goal q r M) = False"
 
-fun shared_goal_solvable :: "shape list \<Rightarrow> ('a,'s,'d,'c) shared_goal \<Rightarrow> bool" where
-  "shared_goal_solvable T (Shared_Call_Goal q r d p) = False"
-| "shared_goal_solvable T (Shared_Material_Goal q r M) =
-    (finite_material_resolution (shared_material_project T M) \<noteq> Material_Waits)"
-
 text \<open>
-  As R3's test (@{thm [source] finite_solvable_material_goal_code}), the shared test decides waiting by the projected
-  skeleton and the source's groundness, building no solution set.
-\<close>
-
-declare shared_goal_solvable.simps [code del]
-
-lemma shared_goal_solvable_code [code]:
-  "shared_goal_solvable T (Shared_Call_Goal q r d p) = False"
-  "shared_goal_solvable T (Shared_Material_Goal q' r' M) = (let N = shared_material_project T M in
-    case finite_material_skeleton N of
-      Open_Reading \<Rightarrow> finite_pattern_variables (finite_material_source N) = {||} | _ \<Rightarrow> True)"
-  by (simp_all add: Let_def finite_material_resolution_waits split: material_reading.split)
-
-text \<open>
-  The test through a read of the table's positions (@{const read_material_project}): its code at a sharing state's table
-  reads the state's tree of positions.
+  The test reads the table through a read of its positions (@{const read_material_project}), stated once: the test over
+  a table is its instance at the list's read, its code that instance of the read's code, and its code at a sharing
+  state's table reads the state's tree of positions. As R3's test (@{thm [source] finite_solvable_material_goal_code}),
+  it decides waiting by the projected skeleton and the source's groundness, building no solution set.
 \<close>
 
 fun read_goal_solvable :: "(nat \<Rightarrow> shape option) \<Rightarrow> ('a,'s,'d,'c) shared_goal \<Rightarrow> bool" where
@@ -240,8 +223,27 @@ lemma read_goal_solvable_code [code]:
       Open_Reading \<Rightarrow> finite_pattern_variables (finite_material_source N) = {||} | _ \<Rightarrow> True)"
   by (simp_all add: Let_def finite_material_resolution_waits split: material_reading.split)
 
+definition shared_goal_solvable :: "shape list \<Rightarrow> ('a,'s,'d,'c) shared_goal \<Rightarrow> bool" where
+  "shared_goal_solvable T=read_goal_solvable (value_reference_read T)"
+
+lemma shared_goal_solvable_simps [simp]:
+  "shared_goal_solvable T (Shared_Call_Goal q r d p) = False"
+  "shared_goal_solvable T (Shared_Material_Goal q' r' M) =
+    (finite_material_resolution (shared_material_project T M) \<noteq> Material_Waits)"
+  by (simp_all add: shared_goal_solvable_def read_material_project_list)
+
+declare shared_goal_solvable_def [code del]
+
+lemma shared_goal_solvable_code [code]:
+  "shared_goal_solvable T (Shared_Call_Goal q r d p) = False"
+  "shared_goal_solvable T (Shared_Material_Goal q' r' M) = (let N = shared_material_project T M in
+    case finite_material_skeleton N of
+      Open_Reading \<Rightarrow> finite_pattern_variables (finite_material_source N) = {||} | _ \<Rightarrow> True)"
+  using read_goal_solvable_code[where rd="value_reference_read T"]
+  by (simp_all only: shared_goal_solvable_def read_material_project_list)
+
 lemma read_goal_solvable_list: "read_goal_solvable (value_reference_read T) g = shared_goal_solvable T g"
-  by (cases g) (simp_all add: read_material_project_list)
+  by (simp add: shared_goal_solvable_def)
 
 lemma shared_goal_solvable_state [code_unfold]:
   "shared_goal_solvable (share_state_table q) = read_goal_solvable (share_state_read q)"
@@ -532,7 +534,7 @@ proof -
       using nf by (auto simp: node_entry_formed_def shared_derivation_formed_def)
     then show "shared_pattern_variables (shared_derivation_call (shared_entry_node n)) =
         finite_pattern_variables (resolution_node_call (shared_derivation_project ?T (shared_entry_node n)))"
-      by (simp add: shared_derivation_project_def shared_pattern_variables_project)
+      by (simp add: shared_derivation_project_simps shared_pattern_variables_project)
   next
     fix h assume h: "RBT.lookup (shared_goals ?s) (shared_goal_position (shared_entry_goal h)) = Some h"
       and held: "finite_held \<kappa> (search_project r) (shared_goal_project ?T (shared_entry_goal h))"
@@ -592,7 +594,7 @@ proof -
     note eqv = collapsed_ground_project_eq[OF tf psf psv cf]
     show "shared_closes hn h \<longleftrightarrow> resolution_node_site (shared_derivation_project ?T (shared_entry_node hn)) = d \<and>
         resolution_node_call (shared_derivation_project ?T (shared_entry_node hn)) = p"
-      using eqv pp e by (auto simp: shared_closes_def shared_derivation_project_def)
+      using eqv pp e by (auto simp: shared_closes_def shared_derivation_project_simps)
   next
     fix h q rr d p hn q'
     assume h: "RBT.lookup (shared_goals ?s) (shared_goal_position (shared_entry_goal h)) = Some h"
@@ -984,7 +986,7 @@ proof -
     using nf x by (simp_all add: node_entry_formed_def shared_derivation_formed_def)
   have eq: "shared_pattern_project T x = pc \<longleftrightarrow> x = Shared_Ground i"
     by (subst gp[symmetric]) (rule collapsed_ground_project_eq[OF tf gf xf])
-  show ?thesis using x eq by (cases x) (auto simp: node_ground_key_def shared_derivation_project_def)
+  show ?thesis using x eq by (cases x) (auto simp: node_ground_key_def shared_derivation_project_simps)
 qed
 
 lemma goal_ground_key_pending:
@@ -1042,7 +1044,7 @@ proof -
     by (rule node_ground_key_project[OF tf shared_entries_formed(2)[OF s that] gf gp])
   have pos: "resolution_node_position (shared_derivation_project ?T (shared_entry_node hn)) = p2"
     if "RBT.lookup (shared_nodes s) p2 = Some hn" for p2 hn
-    using shared_node_lookup_position[OF s that] by (simp add: shared_derivation_project_def)
+    using shared_node_lookup_position[OF s that] by (simp add: shared_derivation_project_simps)
   show ?thesis
   proof
     assume "\<exists>nd. nd |\<in>| resolution_nodes (shared_state_project s) \<and> resolution_node_position nd = q' \<and>
@@ -3248,7 +3250,7 @@ proof -
     from keyed_pattern_at_exact[OF rep tf, where p = "finite_exact_term_pattern v", OF this] show ?thesis by blast
   qed
   show ?thesis using k[of a] k[of b] k[of c] k[of e] k[of f] gM
-    by (simp add: Ee shared_material_pairs_def shared_material_formed_def shared_material_project_def)
+    by (simp add: Ee shared_material_pairs_def shared_material_formed_def shared_material_project_simps)
 qed
 
 lemma shared_solution_alternatives_project:

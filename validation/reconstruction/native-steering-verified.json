@@ -2,10 +2,10 @@
  "boundary": "The complete original development questions reconstruct every actual producer result and independent original-goal reference. Computed observations construct ordinary native criteria with a proved original-subject equation. The closed native cycle derives producer selection through generation, original-condition compilation, certified observations, independent criticism, comparison, revision and admission. The unique native choice executes subsequent original requests; every resulting claim is checked against the original request again. Empty original scope refuses, retaining the unexecuted requests. A single-question scope exercises actual choice ambiguity. The finite producer and subject scope, broader development coverage and genesis remain explicit.",
  "complete_recipe_source_manifest": "native-steering-sources.json",
  "complete_review": {
-  "base_receipt_sha256": "6d381b321f6fcd363cd37333b3fe82321380844c2b2e6ee0bf6995789fbf22ca",
+  "base_receipt_sha256": "0e8c5edb1e6fdecf937f1dfc9eeb28e77c2a185a9ec3bbb1e9d7e84720c4ca23",
   "records": 3,
   "reports_equal": true,
-  "seconds": 14.72,
+  "seconds": 18.57,
   "status": "accepted"
  },
  "execution_boundary": {
@@ -16,9 +16,9 @@
    "code_target": "Eval",
    "complete_artifact_transport": true,
    "complete_term_transport": true,
-   "module_sha256": "b32d06529d0ddf807f2a7eeb6c62bf584387caf390d2d6f00905ea13b1ceb0ca",
+   "module_sha256": "1caa3b2248fccca7f76a5e04337dca12ec13650588170f59e74edf694214c02f",
    "subject_contracts": {
-    "development_subject_investigation.yxml": "7cd41a8d57b1dd9271afbb16320f6d62285c6bda923ddd7fbdb4228004a6d6c4"
+    "development_subject_investigation.yxml": "128cb9dcbd981a9bba3d5feb404ed3c491008e40180b7806fddddee27ccf227c"
    },
    "theory": "Native_Development_Steering"
   },
@@ -85,24 +85,24 @@
  },
  "reports_equal": true,
  "retention": "The accepted base proof and the incremental proof of every changed theory and dependent supplied the exported module; every complete report boundary equals its retained original. Generated result bulk is not a repository input.",
- "source_manifest_sha256": "620158c7d519c6d4bd91cd0c06b395eed9fdac76048598a369e40b63f45770e7",
+ "source_manifest_sha256": "a84a886db31afbb37dd35a4f603f841e0ed07c80de71b2ced26eaa2cb10f6653",
  "sources_rebuilt": false,
  "status": "accepted",
  "steps": [
   {
    "exit_code": 0,
    "name": "presentation",
-   "seconds": 14.552360795001732
+   "seconds": 18.392616258002818
   },
   {
    "exit_code": 0,
    "name": "presentation-empty",
-   "seconds": 14.089655965013662
+   "seconds": 15.674988846993074
   },
   {
    "exit_code": 0,
    "name": "presentation-first",
-   "seconds": 14.499374311999418
+   "seconds": 16.360352363000857
   }
  ]
 }

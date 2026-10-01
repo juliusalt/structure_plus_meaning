@@ -2,23 +2,23 @@
  "boundary": "A run without --proof reconstructs the complete contracts from HOL. The actual source reader supplies the program and the complete finite evaluator retains every progressive preceding state with all original activated clauses, bindings and premise occurrences. Independent conditions assess original requested positive meaning, source identity, availability, the complete state sequence and exact schema witnesses. Every source, candidate history, answer difference, assessment, comparison and revision is reproduced. The finite scope does not establish arbitrary-method coverage, native proof-artifact construction, native mathematical-proof checking, complete development-cycle enforcement, the whole cost account or genesis.",
  "complete_recipe_source_manifest": "native-histories-sources.json",
  "complete_review": {
-  "base_receipt_sha256": "ef35e0ec0eb98bf0e971f21fa915434a78e19855589627bfe39cc9f2e9887687",
+  "base_receipt_sha256": "0e8c5edb1e6fdecf937f1dfc9eeb28e77c2a185a9ec3bbb1e9d7e84720c4ca23",
   "records": 1,
   "reports_equal": true,
-  "seconds": 4.57,
+  "seconds": 3.57,
   "status": "accepted"
  },
  "execution_boundary": {
   "declared_inputs": {
-   "validation/reconstruction/native-histories-reports.json": "bcc8d75f552037c4c8280176963e00bd063ec981442d50b7ddc8af704c83234e"
+   "validation/reconstruction/native-histories-reports.json": "a45e8eb83cd2fa017899006d378610cdab2517787faf8987114f33a6a0b6a7bb"
   },
   "export": {
    "code_target": "Eval",
    "complete_artifact_transport": true,
    "complete_term_transport": true,
-   "module_sha256": "e29e00ed1f37394cc91cfdfea653b8987d0c564ec2138b2226163655012f0bcd",
+   "module_sha256": "22e94523b1adb3891ce34dbab205d091af92c936d24f545af8933820065bfbaf",
    "subject_contracts": {
-    "native_history_investigation.yxml": "9fbb68824b4448d6815848afa0f2134a092e6cdda52fe53fd9c2df3704b3a420"
+    "native_history_investigation.yxml": "47f8cfbc2c5bc394af56872201f896a7d65d2068f9b9fd4b31c8a9fe502988ad"
    },
    "theory": "Native_History_Investigation_Execution"
   },
@@ -63,7 +63,7 @@
  "report_boundaries": {
   "presentation": {
    "records": 1,
-   "sha256": "a7e44e6235bf14e160fca7d708d68785ab6247939ef786c95ec68a177c194280",
+   "sha256": "ff9c535aaaa5960fca6123b3b21da5b23af4eb5da582c05e06c9f2c0abb889eb",
    "tags": {
     "PRESENTED_REPORT_WORD": 1
    }
@@ -71,14 +71,14 @@
  },
  "reports_equal": true,
  "retention": "The accepted base proof and the incremental proof of every changed theory and dependent supplied the exported module; every complete report boundary equals its retained original. Generated result bulk is not a repository input.",
- "source_manifest_sha256": "fb9cab5e19d2a1edd564efdeeb561633627119e5cf1a14fb56904206ad4fcf6a",
+ "source_manifest_sha256": "4ac6768aec63defef6223fe30b4eaade7177d21b4bf69387b763b6dcc555a874",
  "sources_rebuilt": false,
  "status": "accepted",
  "steps": [
   {
    "exit_code": 0,
    "name": "presentation",
-   "seconds": 4.477203930990072
+   "seconds": 3.5193269010051154
   }
  ]
 }

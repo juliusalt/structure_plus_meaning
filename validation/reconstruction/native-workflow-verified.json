@@ -2,10 +2,10 @@
  "boundary": "The source boundary reconstructs all complete native comparisons, including original requirements, generated rule applications, complete executions, all certificates, admission results, comparisons and revisions. Every observation has a proved subject equation. Compilation binds every workflow position to its original native goals. Adequacy of those goals for real development roles, candidate scope, operative integration, condition-6 coverage, the complete cost account and genesis remain separate requirements.",
  "complete_recipe_source_manifest": "native-workflow-sources.json",
  "complete_review": {
-  "base_receipt_sha256": "6d381b321f6fcd363cd37333b3fe82321380844c2b2e6ee0bf6995789fbf22ca",
+  "base_receipt_sha256": "0e8c5edb1e6fdecf937f1dfc9eeb28e77c2a185a9ec3bbb1e9d7e84720c4ca23",
   "records": 4,
   "reports_equal": true,
-  "seconds": 17.7,
+  "seconds": 16.85,
   "status": "accepted"
  },
  "execution_boundary": {
@@ -16,12 +16,12 @@
    "code_target": "Eval",
    "complete_artifact_transport": true,
    "complete_term_transport": true,
-   "module_sha256": "ba8407560caf724f31f9e44cb49fe5d6d00fdd983ea806b05633d7ee5beeb70c",
+   "module_sha256": "c70ccf85f77e365ee27cce02dab691cec8eb8233650d9341eb1add690122957f",
    "subject_contracts": {
-    "required_workflow_investigation.yxml": "90a13a5ed5ef14628961e7556047c2d1d496e611b1a3a30ecb745db7696f5235",
-    "required_workflow_scope_investigation.yxml": "030ecd816ccb21530573277f119d348fb2d1e10c90a3fe66c1247996b28565d6",
+    "required_workflow_investigation.yxml": "aa0631ac5f369984a5885412a70f4764ee66c4df09ab03b9f94ee942f469217e",
+    "required_workflow_scope_investigation.yxml": "724a7eec8d4e79aeeeb661db2a9f63c613147e871d4816708b133bc587956a20",
     "workflow_input_scope_investigation.yxml": "87c566b856d86cdd7fcc76e657557e11a3defa2f08849172171f01dca5c13c89",
-    "workflow_investigation.yxml": "831b9895b27f022ab12c1609efb7292f336f1844a808d827c659811f4791efc0"
+    "workflow_investigation.yxml": "ab568f60ecaebb7dcae1da2ce8d45a1b0db4cfa9915d2d15c318fc66e8f3e01c"
    },
    "theory": "Native_Workflow_Execution"
   },
@@ -95,29 +95,29 @@
  },
  "reports_equal": true,
  "retention": "The accepted base proof and the incremental proof of every changed theory and dependent supplied the exported module; every complete report boundary equals its retained original. Generated result bulk is not a repository input.",
- "source_manifest_sha256": "387c81a3521da1e98157c3d3ad6eb9b9952f455cfb901d62940bea1e1f40c9e6",
+ "source_manifest_sha256": "dacbf27c5d9388708a7ac8b77f8dc27bfeb5fb0a2016cd92d5d085a2826d967b",
  "sources_rebuilt": false,
  "status": "accepted",
  "steps": [
   {
    "exit_code": 0,
    "name": "presentation-workflow",
-   "seconds": 12.329275930998847
+   "seconds": 14.53061565500684
   },
   {
    "exit_code": 0,
    "name": "presentation-requirements",
-   "seconds": 14.55244165500335
+   "seconds": 16.69139296800131
   },
   {
    "exit_code": 0,
    "name": "presentation-input-scope",
-   "seconds": 15.00102212400816
+   "seconds": 12.919314604994725
   },
   {
    "exit_code": 0,
    "name": "presentation-expanded",
-   "seconds": 17.563796515009017
+   "seconds": 12.893031673011137
   }
  ]
 }

@@ -2,10 +2,10 @@
  "boundary": "A run without --proof reconstructs the complete contracts from HOL. The actual source reader supplies the native program, and a shared structural goal constructor installs pair and list requirements before compiling their complete source extension. Computed observations compare original goal meaning, every retained artifact and outgoing binding, and refusal of unsupported requests. All subjects, counterexample terms, condition observations, comparisons, adequacy results and revisions are reproduced. The selected scope does not establish unrestricted coverage, complete development-cycle enforcement, native proof construction, the complete cost account or genesis.",
  "complete_recipe_source_manifest": "native-admission-sources.json",
  "complete_review": {
-  "base_receipt_sha256": "ef35e0ec0eb98bf0e971f21fa915434a78e19855589627bfe39cc9f2e9887687",
+  "base_receipt_sha256": "0e8c5edb1e6fdecf937f1dfc9eeb28e77c2a185a9ec3bbb1e9d7e84720c4ca23",
   "records": 1,
   "reports_equal": true,
-  "seconds": 7.09,
+  "seconds": 6.68,
   "status": "accepted"
  },
  "execution_boundary": {
@@ -16,9 +16,9 @@
    "code_target": "Eval",
    "complete_artifact_transport": true,
    "complete_term_transport": true,
-   "module_sha256": "9b811c5d2bfc6113a74bd9632e9f1bb5ea56f6284adf4eafc91d988027beb653",
+   "module_sha256": "6b68d02e3861e67859e88154c0732ee05b9039cc8c2e1d75d9d7def4cfd25e64",
    "subject_contracts": {
-    "native_admission_investigation.yxml": "69249d15493bf7982f47259fb29d8e58f9adf3a90e9a9ec91d1154c3a11a4a2e"
+    "native_admission_investigation.yxml": "3e71ea30664fe64e74989aea0e0475772146f7b6d3e412406862b830d71fdb5c"
    },
    "theory": "Native_Admission_Investigation_Execution"
   },
@@ -71,14 +71,14 @@
  },
  "reports_equal": true,
  "retention": "The accepted base proof and the incremental proof of every changed theory and dependent supplied the exported module; every complete report boundary equals its retained original. Generated result bulk is not a repository input.",
- "source_manifest_sha256": "af3e4c83d6189d35efdf57875a74a3efe497111d05c28373251b5bc49993f271",
+ "source_manifest_sha256": "70bcf8ecbbb3cb95c70a7e4e95a6a69c748da1324b99a26d6bbd1d44a30a418f",
  "sources_rebuilt": false,
  "status": "accepted",
  "steps": [
   {
    "exit_code": 0,
    "name": "presentation",
-   "seconds": 6.992216457001632
+   "seconds": 6.583039209988783
   }
  ]
 }

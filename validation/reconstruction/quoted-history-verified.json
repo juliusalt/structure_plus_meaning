@@ -2,10 +2,10 @@
  "boundary": "The actual quoted judgment and generation-backend contracts establish the complete original scope and certification used by the constructed policy check. Every original history subject, method, full result, inspection, source and revision is retained. The additional raw omitted-replay control remains separate from the closed operation. Full physical cost, all six workflow conditions, historical permission and reachability, native mathematical-proof admission, genesis and final audit remain open.",
  "complete_recipe_source_manifest": "quoted-history-sources.json",
  "complete_review": {
-  "base_receipt_sha256": "ef35e0ec0eb98bf0e971f21fa915434a78e19855589627bfe39cc9f2e9887687",
+  "base_receipt_sha256": "0e8c5edb1e6fdecf937f1dfc9eeb28e77c2a185a9ec3bbb1e9d7e84720c4ca23",
   "records": 1,
   "reports_equal": true,
-  "seconds": 27.42,
+  "seconds": 28.76,
   "status": "accepted"
  },
  "execution_boundary": {
@@ -16,9 +16,9 @@
    "code_target": "Eval",
    "complete_artifact_transport": true,
    "complete_term_transport": true,
-   "module_sha256": "ec901f3f894be5bfa8e89cc088004ef7cb2958ff0d9b8116a0ffbc130332d7b8",
+   "module_sha256": "5f54dc42af030cc2e9e1d27fa5274f7e10e60cb95ae59aa6f81833a450b99ec9",
    "subject_contracts": {
-    "quoted_history_investigation.yxml": "add11d701b2ab500c4e7211f8da6a4f9d035a69259550f57e348661f1c4a63a8"
+    "quoted_history_investigation.yxml": "0daf0fa198d580a332ac6d406746d6ff05fc5f9f63d481e19f1e8ee046a4469f"
    },
    "theory": "Quoted_History_Execution"
   },
@@ -73,14 +73,14 @@
  },
  "reports_equal": true,
  "retention": "The accepted base proof and the incremental proof of every changed theory and dependent supplied the exported module; every complete report boundary equals its retained original. Generated result bulk is not a repository input.",
- "source_manifest_sha256": "13cd7a2ac6b618b60d8ce153532de80485ad3e17686049bf861eec1297af4cf2",
+ "source_manifest_sha256": "288a9c51c27cf8c7fc69f7b0a6f7e6215016e96ae66d73e71a40c57dabfde438",
  "sources_rebuilt": false,
  "status": "accepted",
  "steps": [
   {
    "exit_code": 0,
    "name": "presentation",
-   "seconds": 27.336722253006883
+   "seconds": 28.651602596000885
   }
  ]
 }

@@ -2,23 +2,23 @@
  "boundary": "The initial shared development cycle retains every actual subject, candidate, condition, comparison, revision, original-scope criticism and admission. Missing original identity/sharing witnesses prevent admission despite comparison selection. The scoped gate does not establish the complete workflow.",
  "complete_recipe_source_manifest": "certificate-development-sources.json",
  "complete_review": {
-  "base_receipt_sha256": "ef35e0ec0eb98bf0e971f21fa915434a78e19855589627bfe39cc9f2e9887687",
+  "base_receipt_sha256": "0e8c5edb1e6fdecf937f1dfc9eeb28e77c2a185a9ec3bbb1e9d7e84720c4ca23",
   "records": 1,
   "reports_equal": true,
-  "seconds": 4.43,
+  "seconds": 3.72,
   "status": "accepted"
  },
  "execution_boundary": {
   "declared_inputs": {
-   "validation/reconstruction/certificate-development-reports.json": "d25a3dfe5c39774d1964edf39beae54dfceaa4d451a880bb66f49e922ffd5b0d"
+   "validation/reconstruction/certificate-development-reports.json": "683c8eacedd494c01b08314c860d18a876ae26f6597b90d6b177d875e73ef8b7"
   },
   "export": {
    "code_target": "Eval",
    "complete_artifact_transport": true,
    "complete_term_transport": true,
-   "module_sha256": "e672e27b97bfedec2d93501d509f9f55e993aa65da65141afe4d1565c15476a3",
+   "module_sha256": "1360a6336e319ff6c9142e2bdd0ad8ec94045b015f1e7fc1f01def5563b5c5dd",
    "subject_contracts": {
-    "native_certificate_investigation.yxml": "90e4d93c758c0d0ddc26014e9ffa6b94c930e844d60898d781c238406b736763"
+    "native_certificate_investigation.yxml": "b688ebb7baaf7bb81851f457ef404b43d03bfa69d2d59a943316c73a61566666"
    },
    "theory": "Native_Certificate_Development_Execution"
   },
@@ -63,7 +63,7 @@
  "report_boundaries": {
   "presentation": {
    "records": 1,
-   "sha256": "31c1e67d0fdd6bc5d747cb6134abd0b728b52012264208d16f8ae7721faa3c9d",
+   "sha256": "1263d77e8164f929f9d503077b1d22f3bfddf4dd3607784a3667b2ad07626583",
    "tags": {
     "PRESENTED_REPORT_WORD": 1
    }
@@ -71,14 +71,14 @@
  },
  "reports_equal": true,
  "retention": "The accepted base proof and the incremental proof of every changed theory and dependent supplied the exported module; every complete report boundary equals its retained original. Generated result bulk is not a repository input.",
- "source_manifest_sha256": "d8cdef5fec128ec2ccd753f7237327d186939dc743a2314fdc5d13d8e9898a52",
+ "source_manifest_sha256": "c21c54d410db82b961775e12afacf67a684c6adaa11ada743846fa8ac9e1fe56",
  "sources_rebuilt": false,
  "status": "accepted",
  "steps": [
   {
    "exit_code": 0,
    "name": "presentation",
-   "seconds": 4.32835001499916
+   "seconds": 3.620229898006073
   }
  ]
 }

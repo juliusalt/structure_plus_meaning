@@ -2,10 +2,10 @@
  "boundary": "A run without --proof reconstructs the complete contracts from HOL. The actual source reader supplies the native program, and a shared structural goal constructor installs every goal occurrence and a final conjunction before compiling their complete source extension. Computed observations compare the original same-term conjunction, every retained artifact and outgoing binding, and refusal of unsupported requests. All subjects, counterexample terms, condition observations, comparisons, adequacy results and revisions are reproduced. The selected scope does not establish unrestricted coverage, complete development-cycle enforcement, native proof construction, the complete cost account or genesis.",
  "complete_recipe_source_manifest": "native-requirements-sources.json",
  "complete_review": {
-  "base_receipt_sha256": "ef35e0ec0eb98bf0e971f21fa915434a78e19855589627bfe39cc9f2e9887687",
+  "base_receipt_sha256": "0e8c5edb1e6fdecf937f1dfc9eeb28e77c2a185a9ec3bbb1e9d7e84720c4ca23",
   "records": 1,
   "reports_equal": true,
-  "seconds": 6.99,
+  "seconds": 6.28,
   "status": "accepted"
  },
  "execution_boundary": {
@@ -16,9 +16,9 @@
    "code_target": "Eval",
    "complete_artifact_transport": true,
    "complete_term_transport": true,
-   "module_sha256": "11e59f896789f363206aedb47e46ab3e710b03bb0d0fe913f5435bd82770be0b",
+   "module_sha256": "9cbac8e15fdf9c62ef8cbcea47b7c3597f620ec8d5f8107f14f85edf01db92ac",
    "subject_contracts": {
-    "native_requirement_investigation.yxml": "f686fd5c93ba37e63859a5b25528ba9a2b5ed130b15fc4d157464bf18528c4ea"
+    "native_requirement_investigation.yxml": "8507dd45e92a0a69ab02a68fd0e4c7ac1a53c194a1eb60f597f25010fecb0f99"
    },
    "theory": "Native_Requirement_Investigation_Execution"
   },
@@ -71,14 +71,14 @@
  },
  "reports_equal": true,
  "retention": "The accepted base proof and the incremental proof of every changed theory and dependent supplied the exported module; every complete report boundary equals its retained original. Generated result bulk is not a repository input.",
- "source_manifest_sha256": "57b880d1ce93ea86606a576b1bc3d4981bb28c421880efef372bcce24a4cb347",
+ "source_manifest_sha256": "7fc3d41c7465849cf3b02ab81cd8d80c4034593c821ee1f5ddf5d4d325126f9b",
  "sources_rebuilt": false,
  "status": "accepted",
  "steps": [
   {
    "exit_code": 0,
    "name": "presentation",
-   "seconds": 6.891917045999435
+   "seconds": 6.179857542985701
   }
  ]
 }

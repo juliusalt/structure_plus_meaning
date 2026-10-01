@@ -2,10 +2,10 @@
  "boundary": "A run without --proof reconstructs proof and exported code from repository sources. Every claim-table control, paired projection, fibre control, source reader application and guided construction is a definition over the existing child example and its native operations, and every result is presented. The assertion child remains an assumption; whole-graph and closed-proof admission are separate.",
  "complete_recipe_source_manifest": "native-child-sources.json",
  "complete_review": {
-  "base_receipt_sha256": "ef35e0ec0eb98bf0e971f21fa915434a78e19855589627bfe39cc9f2e9887687",
+  "base_receipt_sha256": "0e8c5edb1e6fdecf937f1dfc9eeb28e77c2a185a9ec3bbb1e9d7e84720c4ca23",
   "records": 1,
   "reports_equal": true,
-  "seconds": 5.78,
+  "seconds": 5.18,
   "status": "accepted"
  },
  "execution_boundary": {
@@ -16,7 +16,7 @@
    "code_target": "Eval",
    "complete_artifact_transport": true,
    "complete_term_transport": true,
-   "module_sha256": "1838cd40a869df4b39450bcaebc0d2fcaf7eb0f124acb3aacdf3a56b7bbdd014",
+   "module_sha256": "787a4b6d1d1573f47dfa6c5f27170af6aa9f0cd25110a72d3dd2c85e1229032a",
    "subject_contracts": {},
    "theory": "Inference_Claim_Input_Execution"
   },
@@ -69,14 +69,14 @@
  },
  "reports_equal": true,
  "retention": "The accepted base proof and the incremental proof of every changed theory and dependent supplied the exported module; every complete report boundary equals its retained original. Generated result bulk is not a repository input.",
- "source_manifest_sha256": "e8d6319f61afce75a05ecd23d029dc942607c2f6b1244964d0fee309b8483d9e",
+ "source_manifest_sha256": "ed24c38ae7d883405c9d94f73603d1a32d353e6f1cba87f9b69bfd00a2ba2ce6",
  "sources_rebuilt": false,
  "status": "accepted",
  "steps": [
   {
    "exit_code": 0,
    "name": "presentation",
-   "seconds": 5.681787649999023
+   "seconds": 5.073246575993835
   }
  ]
 }

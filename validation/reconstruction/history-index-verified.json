@@ -2,10 +2,10 @@
  "boundary": "Actual indexed histories preserve every original request, policy, material and ordered ledger field and the complete decoded admission index. The original transition determines reference outputs independently. Shared actual operations feed adverse cache and transition controls; persistent subsequent steps and all original source cases are retained with complete observations, comparisons and revisions. Complete workflow adequacy, physical cost, historical permission and reachability, native mathematical-proof admission, generation-store adoption and genesis remain open.",
  "complete_recipe_source_manifest": "history-index-sources.json",
  "complete_review": {
-  "base_receipt_sha256": "ef35e0ec0eb98bf0e971f21fa915434a78e19855589627bfe39cc9f2e9887687",
+  "base_receipt_sha256": "0e8c5edb1e6fdecf937f1dfc9eeb28e77c2a185a9ec3bbb1e9d7e84720c4ca23",
   "records": 1,
   "reports_equal": true,
-  "seconds": 10.94,
+  "seconds": 10.55,
   "status": "accepted"
  },
  "execution_boundary": {
@@ -16,9 +16,9 @@
    "code_target": "Eval",
    "complete_artifact_transport": true,
    "complete_term_transport": true,
-   "module_sha256": "be322a865dc0252ee4027d5fe4e8d79488cb5d8a7f31533797236c696eab0c4d",
+   "module_sha256": "1a23b76092d17f794108a5da2ffc0e11bdc671b5c674d8b23bc992fc751943fb",
    "subject_contracts": {
-    "history_index_investigation.yxml": "2bc061644cb26a2a2f0f0e4d37a9ab7c29633e1b15ba2e6858ca9411773520ad"
+    "history_index_investigation.yxml": "d8d5bf80286e6795287e00ab5b0155e66b4bf73dadad5e64e9b55db85c107294"
    },
    "theory": "History_Index_Execution"
   },
@@ -71,14 +71,14 @@
  },
  "reports_equal": true,
  "retention": "The accepted base proof and the incremental proof of every changed theory and dependent supplied the exported module; every complete report boundary equals its retained original. Generated result bulk is not a repository input.",
- "source_manifest_sha256": "6e1166c57b69694899ddc1b8eb31ad6fb1148c298a9592856c940f2a978a08b3",
+ "source_manifest_sha256": "12c13040e7b1366daac09bd54c8a148c20e717cb279b5ef45ba9e94e809ae0ad",
  "sources_rebuilt": false,
  "status": "accepted",
  "steps": [
   {
    "exit_code": 0,
    "name": "presentation",
-   "seconds": 10.847712468006648
+   "seconds": 10.45358556699648
   }
  ]
 }

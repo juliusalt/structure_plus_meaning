@@ -2,10 +2,10 @@
  "boundary": "The native literal replay and joined generation constructor derive the complete source cause. Every certificate key and unavailable constructor position is retained. All original and candidate data readings, soundness and completeness observations, comparisons and revision reasons are reproduced from source. The original quotation relation remains the meaning boundary; full workflow policy, cost and genesis remain open.",
  "complete_recipe_source_manifest": "data-reading-sources.json",
  "complete_review": {
-  "base_receipt_sha256": "ef35e0ec0eb98bf0e971f21fa915434a78e19855589627bfe39cc9f2e9887687",
+  "base_receipt_sha256": "0e8c5edb1e6fdecf937f1dfc9eeb28e77c2a185a9ec3bbb1e9d7e84720c4ca23",
   "records": 1,
   "reports_equal": true,
-  "seconds": 4.58,
+  "seconds": 3.87,
   "status": "accepted"
  },
  "execution_boundary": {
@@ -16,7 +16,7 @@
    "code_target": "Eval",
    "complete_artifact_transport": true,
    "complete_term_transport": true,
-   "module_sha256": "c7fb38409e5de84dd9ca82bb6e44a6fea4bf4c1f8fd147d192285d1b9448e518",
+   "module_sha256": "c31dfe97b09e0b4039adeb4f87eef51ab8fa637dac3d7bf1a18579bd86d603f1",
    "subject_contracts": {
     "data_reading_investigation.yxml": "782111d36f049abcfa3c18e82de019443cc3c3eea5d9d2a8d9f0a5d5a9a6495c"
    },
@@ -71,14 +71,14 @@
  },
  "reports_equal": true,
  "retention": "The accepted base proof and the incremental proof of every changed theory and dependent supplied the exported module; every complete report boundary equals its retained original. Generated result bulk is not a repository input.",
- "source_manifest_sha256": "7949bddb122f5884e6001cb3a9c119c293c0c1d646a10c1533ed0a417624ec94",
+ "source_manifest_sha256": "35824df4cab0154d9c61874203727667107326fc07b5e35bcb4ab784c6852c36",
  "sources_rebuilt": false,
  "status": "accepted",
  "steps": [
   {
    "exit_code": 0,
    "name": "presentation",
-   "seconds": 4.476597877001041
+   "seconds": 3.7699763489945326
   }
  ]
 }

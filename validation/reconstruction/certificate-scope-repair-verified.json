@@ -2,23 +2,23 @@
  "boundary": "The actual scope correction retains every full original input and appends compiled native sources and independently checked supplied certificates. Every complete input, source/proof check, original family, conflict witness, comparison and revision is reproduced. The correction is assessed against the original retention and coverage conditions.",
  "complete_recipe_source_manifest": "certificate-scope-repair-sources.json",
  "complete_review": {
-  "base_receipt_sha256": "ef35e0ec0eb98bf0e971f21fa915434a78e19855589627bfe39cc9f2e9887687",
+  "base_receipt_sha256": "0e8c5edb1e6fdecf937f1dfc9eeb28e77c2a185a9ec3bbb1e9d7e84720c4ca23",
   "records": 1,
   "reports_equal": true,
-  "seconds": 3.72,
+  "seconds": 2.82,
   "status": "accepted"
  },
  "execution_boundary": {
   "declared_inputs": {
-   "validation/reconstruction/certificate-scope-repair-reports.json": "fbfa0c45e509de808dc5433a1dc94ec3620fe6b4d038850c939950dc7ee82159"
+   "validation/reconstruction/certificate-scope-repair-reports.json": "3893289621fcbab507cc9ca1b73e5c4db20c834fe4d332856f5e2e3cbc9baf7d"
   },
   "export": {
    "code_target": "Eval",
    "complete_artifact_transport": true,
    "complete_term_transport": true,
-   "module_sha256": "496b50b0b1030cf7f49a4dbf72400aa5f2988323ee05d0c7570e99086d566494",
+   "module_sha256": "d89634eca5fbeabb795729a80ab2b814016909b8f39d23e3f056a1c545a3c87f",
    "subject_contracts": {
-    "certificate_scope_repair_investigation.yxml": "76e5ae3caebb12fe9654d8b97beb0efd1deb823ec6965f8b07b66ee4cec42cf2"
+    "certificate_scope_repair_investigation.yxml": "638f6e7e9d4f5e5fb2df150faafdfddb0dc720d0b47b96787cbb0e60b9b6bf22"
    },
    "theory": "Native_Certificate_Scope_Repair_Execution"
   },
@@ -63,7 +63,7 @@
  "report_boundaries": {
   "presentation": {
    "records": 1,
-   "sha256": "2fb63488ae7b0014b93eec2bb54522a3f94d1419a405154c1987fca2baf7d772",
+   "sha256": "d07f4bdb3bcb484b2a654169eb875b7ffd294971f86f4df462726091e02717a6",
    "tags": {
     "PRESENTED_REPORT_WORD": 1
    }
@@ -71,14 +71,14 @@
  },
  "reports_equal": true,
  "retention": "The accepted base proof and the incremental proof of every changed theory and dependent supplied the exported module; every complete report boundary equals its retained original. Generated result bulk is not a repository input.",
- "source_manifest_sha256": "291a847d0a1a5875ab61f3280f964e93a1d92b3107abb1267182df27569d2ced",
+ "source_manifest_sha256": "419a045875b68be7121a2cf62423748b040c8b65679757b2d0e5a4636c8fccc7",
  "sources_rebuilt": false,
  "status": "accepted",
  "steps": [
   {
    "exit_code": 0,
    "name": "presentation",
-   "seconds": 3.628942437004298
+   "seconds": 2.717830736990436
   }
  ]
 }

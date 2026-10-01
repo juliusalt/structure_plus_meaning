@@ -2,10 +2,10 @@
  "boundary": "Complete original source, requirements and terms determine each full decision and its exact target-certificate replay family. Every native graph, call, extending and retained environment, original-condition assessment, comparison and revision is reproduced. Derived sharing preserves the complete public reports. This scoped composition does not establish whole-workflow enforcement, original-policy and historical permission, complete subject and criticism coverage, physical cost or genesis.",
  "complete_recipe_source_manifest": "decision-replay-sources.json",
  "complete_review": {
-  "base_receipt_sha256": "ef35e0ec0eb98bf0e971f21fa915434a78e19855589627bfe39cc9f2e9887687",
+  "base_receipt_sha256": "0e8c5edb1e6fdecf937f1dfc9eeb28e77c2a185a9ec3bbb1e9d7e84720c4ca23",
   "records": 1,
   "reports_equal": true,
-  "seconds": 7.69,
+  "seconds": 7.64,
   "status": "accepted"
  },
  "execution_boundary": {
@@ -16,9 +16,9 @@
    "code_target": "Eval",
    "complete_artifact_transport": true,
    "complete_term_transport": true,
-   "module_sha256": "b8ae1f2dcc9dbf7c4b01413ea509c6c845ebec6f27fc24b31b51adaa081f6f27",
+   "module_sha256": "a3cc2d8df63af84788d5fb3400e26c6a5ecc6cdac3833dd12a8a254ef9469d73",
    "subject_contracts": {
-    "decision_replay_investigation.yxml": "e58e228e0956bfe0196ff30f1fdca1ab4dac362cf8136a049c444e83a978da16"
+    "decision_replay_investigation.yxml": "1ef46aabb969456a82d8a07b1f1ab90df12b33fd2b64c946ce45c0cddb571543"
    },
    "theory": "Decision_Replay_Execution"
   },
@@ -71,14 +71,14 @@
  },
  "reports_equal": true,
  "retention": "The accepted base proof and the incremental proof of every changed theory and dependent supplied the exported module; every complete report boundary equals its retained original. Generated result bulk is not a repository input.",
- "source_manifest_sha256": "554ea3735c3089b0b872558a9e4d587869f7761b686072180ed224d09a857f61",
+ "source_manifest_sha256": "e40ac70d40151cefe72518ca19475059cbc8ffcde65ce37eec9dc96d44497b2e",
  "sources_rebuilt": false,
  "status": "accepted",
  "steps": [
   {
    "exit_code": 0,
    "name": "presentation",
-   "seconds": 7.586810769993463
+   "seconds": 7.542972958995961
   }
  ]
 }

@@ -2,10 +2,10 @@
  "boundary": "The complete original replay packet is rebuilt and executed from repository sources. Every context, candidate result, original certified-cause report, comparison, revision and source correspondence is retained in the complete native presented word through lossless compression. The original reconstruction stage, complete-report and unchanged-input checks are reused. Full physical cost, all six workflow conditions, historical permission and reachability, native mathematical-proof admission, genesis and final audit remain open.",
  "complete_recipe_source_manifest": "digit-replay-sources.json",
  "complete_review": {
-  "base_receipt_sha256": "ef35e0ec0eb98bf0e971f21fa915434a78e19855589627bfe39cc9f2e9887687",
+  "base_receipt_sha256": "0e8c5edb1e6fdecf937f1dfc9eeb28e77c2a185a9ec3bbb1e9d7e84720c4ca23",
   "records": 1,
   "reports_equal": true,
-  "seconds": 27.02,
+  "seconds": 28.75,
   "status": "accepted"
  },
  "execution_boundary": {
@@ -16,9 +16,9 @@
    "code_target": "Eval",
    "complete_artifact_transport": true,
    "complete_term_transport": true,
-   "module_sha256": "50a61a2d21dc4c4a45a48d13d37ac8a166b924e4da8b8b675e0901a3a41e8e80",
+   "module_sha256": "3039b50993741a0c2e1277b50d2d698ff4733a1c98ea3e3d2b1fcdef8cb4fc19",
    "subject_contracts": {
-    "digit_replay_investigation.yxml": "2590e49a3e11c7f0e2e24a3452c2555a3121e109110860e971650bf090c5227d"
+    "digit_replay_investigation.yxml": "a35b45dfbf934a7f5a2d4069ce9ff05017e7cf850c755be4c429b4d49bda1108"
    },
    "theory": "Digit_Replay_Execution"
   },
@@ -73,14 +73,14 @@
  },
  "reports_equal": true,
  "retention": "The accepted base proof and the incremental proof of every changed theory and dependent supplied the exported module; every complete report boundary equals its retained original. Generated result bulk is not a repository input.",
- "source_manifest_sha256": "95b2f281e59b24906ea3f35a1ef0185deb291006cd764e9a8000cb2d8883c723",
+ "source_manifest_sha256": "4c45a841abd3cf3ce999d08af158afb3f44cd4260d6fa69ae380729abd07986c",
  "sources_rebuilt": false,
  "status": "accepted",
  "steps": [
   {
    "exit_code": 0,
    "name": "presentation",
-   "seconds": 26.931747357011773
+   "seconds": 28.6004887290037
   }
  ]
 }

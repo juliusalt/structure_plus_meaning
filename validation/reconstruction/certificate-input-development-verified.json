@@ -2,23 +2,23 @@
  "boundary": "The shared development cycle executes the natively selected expanded input scope. It preserves every original input and output, retains supplied proof-check reasons, computes every actual method result and condition, and admits only candidates satisfying all scoped conditions, basis readiness and computed criticism. Complete workflow enforcement, arbitrary development adequacy, cost and genesis remain required.",
  "complete_recipe_source_manifest": "certificate-input-development-sources.json",
  "complete_review": {
-  "base_receipt_sha256": "ef35e0ec0eb98bf0e971f21fa915434a78e19855589627bfe39cc9f2e9887687",
+  "base_receipt_sha256": "0e8c5edb1e6fdecf937f1dfc9eeb28e77c2a185a9ec3bbb1e9d7e84720c4ca23",
   "records": 1,
   "reports_equal": true,
-  "seconds": 4.68,
+  "seconds": 3.82,
   "status": "accepted"
  },
  "execution_boundary": {
   "declared_inputs": {
-   "validation/reconstruction/certificate-input-development-reports.json": "a4b3f96e5f2f406fe8b3bcbced924095a4ba0bd3ba58836e5b78e5ce69182d51"
+   "validation/reconstruction/certificate-input-development-reports.json": "a46820c918581055fa99f57cafc37bac19784c6bafe828f530ded3ab7e8d19ad"
   },
   "export": {
    "code_target": "Eval",
    "complete_artifact_transport": true,
    "complete_term_transport": true,
-   "module_sha256": "8c50d711b62e8e53e529d093e5c4fac138b62071bdd8195912d7a2ac67ccd2c2",
+   "module_sha256": "f68dbd395fee48fbacc034cf0e94f20e9ca68c99c99db5102215f16b0bd0c11c",
    "subject_contracts": {
-    "native_certificate_input_investigation.yxml": "4d421230f3506b8b92019ac6cb07e0fb7d02c30b87461b49ed60db09033d4c70"
+    "native_certificate_input_investigation.yxml": "e80a5f1f391e9eb5169fc75f50b8a5c43025656e542c3437d2e461bc85f78e14"
    },
    "theory": "Native_Certificate_Input_Execution"
   },
@@ -63,7 +63,7 @@
  "report_boundaries": {
   "presentation": {
    "records": 1,
-   "sha256": "c8b84110b78d683d0a1ce507aef2c0d366cb542d705e201aa53a1b22096591bd",
+   "sha256": "30a4842566279a29067ac17133e1dafdf6e7b31139a1dc5641a7c6d101a47775",
    "tags": {
     "PRESENTED_REPORT_WORD": 1
    }
@@ -71,14 +71,14 @@
  },
  "reports_equal": true,
  "retention": "The accepted base proof and the incremental proof of every changed theory and dependent supplied the exported module; every complete report boundary equals its retained original. Generated result bulk is not a repository input.",
- "source_manifest_sha256": "c3cfc39f6a409c21be730161104b44c5f405c9ecb3e43e56ac9027949a8a4b08",
+ "source_manifest_sha256": "f4ff67ebcad51b5e8dc1a596e98e1b168179d37af57b645e1ac00a0fc0f26099",
  "sources_rebuilt": false,
  "status": "accepted",
  "steps": [
   {
    "exit_code": 0,
    "name": "presentation",
-   "seconds": 4.577099477988668
+   "seconds": 3.7201213969965465
   }
  ]
 }

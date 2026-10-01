@@ -78,12 +78,12 @@ environment level about 1.2–1.5×10⁴ s of CPU after the pole, RP and RK, abo
 entry, its addition "Course (b) reopened (task 1021)"): 21's notion implemented over an index of its keys' shapes in a
 production program P′ beside the given's readers (their meaning P′'s at every site by a law of programs; the given's
 readers, value, posing and records unchanged), GT6's 21 part from 31 h on one chain to about a minute; (b) stays at its
-second trigger. #1022 placed GT5b #1024 (beside the pole, before GT6), RP #1026 (after F-b2 #1016) and RK #1028 (after
+second trigger. #1022 placed GT5b #1024 (landed as `e0968848`: `given_recognition_calls`), RP #1026 (after F-b2 #1016) and RK #1028 (after
 RP, before WC3 and GT6), and rewrote WC3 #916's brief (after RK; its waiting set read through RP's read); #1023 placed KX1a #1030 and KX1b #1032 (the key code and
 insertion, then the fold and 21's second implementation; beside the pole), KX2a #1034 (the law of programs and P′) and
 KX2b #1036 (GT5's environment family at P′; after KX2a and GT5b #1024, before GT6), each with its review. GT6's brief is rewritten once the pole, RP, RK, GT5b and KX2 stand. D3: D3b1 #975, D3b1m #982 and D3a #977
-landed; D3b2 is divided at its partial session: #979 the plain side (the kept goals, the route keeping none; three sessions partial, a fourth continuing from the
-third's Remains 1–4), #1010
+landed; D3b2 is divided at its partial session: #979 the plain side (the kept goals, the route keeping none; four sessions partial, a fifth continuing from the
+fourth's Remains 1–3, (5′) at the guard keeping nothing), #1010
 the committed side (continues #979: the route keeping every call goal, q189, and the measurement past 350); D3b3 #983,
 after both and M2, passes the guard in `moded_deferred_route_with` (mailed). q162's held goals and construction nodes
 (next-edits 384) are F-b's; FI's remaining costs (385) at the next restater of the route constants' code if a figure
@@ -103,7 +103,7 @@ dependency goes through the brief's Inputs, but for the guard AX5 #962 on #1000,
 The longest chain runs D3b2 #979 → #1010 → D3b3 → F-b1 #1014 → F-b2 #1016 → RP #1026 → RK #1028 → GT6 → R7 → #707 → #399 → … → #449 → #450; GT6's hours make the resolver's
 pole critical, the AX line has slack. Nothing is added after the tail until it shortens (the approval build, Open 142,
 waits); splices before a task go at any depth. The queue, the planner's choice and a residual until Q2's native
-answer: the pole (M2, D3b2 #979 and #1010, D3b3, F-a #1012, F-b1 #1014, F-b2 #1016, WC3, GT6), GT5b #1024, the KX line #1030–#1036 and #1000 beside it, the briefs
+answer: the pole (M2, D3b2 #979 and #1010, D3b3, F-a #1012, F-b1 #1014, F-b2 #1016, WC3, GT6), the KX line #1030–#1036 and #1000 beside it, the briefs
 (#988, #948), the AX line, the route in its chains' order, each review after its build; #887 after R7's review.
 
 ## Decisions
@@ -268,7 +268,8 @@ REASONING_REUSE.md's, how it went `PLANNING_LOG.md`.
   `Factor_Construction_Holders`, `Factor_Least_Witness_Registrations` and the `*_Registrations` theories; VK2
   `Development_Given_Query_Parameters`; `Factor_Finite_Schema_Matching`, the `Factor_Varied_*` theories,
   `Development_Installed_Presentations`, `Factor_Committed_Registrations`, `Factor_Native_Committed_Registrations`.
-- **The given's table's calls**: `Development_Given_Table` (GT5); K3 `Development_Given_Checks_Execution`.
+- **The given's table's calls**: `Development_Given_Table` (GT5; GT5b's `given_recognition_calls`, #1020's course
+  (a)); K3 `Development_Given_Checks_Execution`.
 - **Briefs whose findings stand**: #434 (the approval record's place; parts (g), (h), (e)) and #451 (the readings of
   "generation" and "adoption"), each in its `result.md`.
 
@@ -328,8 +329,8 @@ owner's re-root trigger, and a probe past its bound above `Factor_Least_Collecti
 ## Now
 
 - **Under way**: M2 #998 (landing; q194: its Deliverable gained the 7 reports whose words differ by the same
-  material premise, `program_evaluation_material`, re-recorded with native-evaluation's in one landing); D3b2's plain side #979, a fourth session continuing in its tree (the third ended partial in the steps
-  section, its Remains 1–4), then its committed side #1010;  GT5b #1024 and KX1a #1030 beside the pole.
+  material premise, `program_evaluation_material`, re-recorded with native-evaluation's in one landing); D3b2's plain side #979, a fifth session continuing in its tree (the fourth ended partial with the
+  steps done: the held probe of the tail, (5′) at the guard keeping nothing and (7′) remain), then its committed side #1010; KX1a #1030 beside the pole.
 - **What the next events ask**: #979's next end; #1000's result (after M2): the controls
   (77/1 resolved, 77/2 refuted at the committing instance) placed as a build where F1 suffices, else Open 157 designed;
   the count fix (Open 155) if it is needed; AX5's brief rewritten, its guard removed; M2's landing: #988 briefs AX2d1
@@ -339,7 +340,13 @@ owner's re-root trigger, and a probe past its bound above `Factor_Least_Collecti
   empty record), with #1018's figures (shared runs: 11's check over references small
   beside its search; a held third point at k = 50, review 1018's 2 and 5), #1006's c(D) and per-call figures (its (5): 11 ≈ 27 s at k = 621 after M2 and D3b3, ≈ 5 s
   with F-a and F-b) and its follow-up 4 (each state's depth recorded beside its cost), and the leaves' scan at its tables
-  (next-edits 436, #1003's (3) deferred by q191). The re-run of #718's 77 and 79 fixtures with review 858's attributions (next-edits 364–366) at a measured
+  (next-edits 436, #1003's (3) deferred by q191); and review 1025's follow-ups (GT5b): each repeated call produced once
+  (4 and 21 at the empty payload stand twice in `given_table_calls`); the two `drop 0` entries (4 at the whole rows and
+  bindings, met by no search) kept knowingly, two cheap certificates; 24's carrier recognitions (`binding_entry_schema`
+  socket 2: 2 at each address skipped, 4 at the carrier's rest, within #1019's 676 states at 24) a family of the same
+  kind where the figures show them; and the marked correction of DECISIONS.md task 1020's addition, course (a), which
+  misplaces 24's selections: 24 selects over the rows by 5 itself (`binding_entry_schema` sockets 0 and 1), not through
+  37. The re-run of #718's 77 and 79 fixtures with review 858's attributions (next-edits 364–366) at a measured
   need.
 - **Briefs nearest their rooms**: #542 and #399, which #948 re-estimates; #949 put #551 at about 170K and #449 at
   about 200K.

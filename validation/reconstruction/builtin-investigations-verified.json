@@ -2,10 +2,10 @@
  "boundary": "Every registered original-subject operation computes its complete observations, comparison, repairs and revision for empty, partial, complete and repeated selections; pattern markers also exercise the distinct and collapsed presentations. The typed owner contracts remain exact. These fixed scopes do not derive arbitrary development choices or establish practical gate 5a.",
  "complete_recipe_source_manifest": "builtin-investigations-sources.json",
  "complete_review": {
-  "base_receipt_sha256": "ef35e0ec0eb98bf0e971f21fa915434a78e19855589627bfe39cc9f2e9887687",
+  "base_receipt_sha256": "0e8c5edb1e6fdecf937f1dfc9eeb28e77c2a185a9ec3bbb1e9d7e84720c4ca23",
   "records": 1,
   "reports_equal": true,
-  "seconds": 2.12,
+  "seconds": 2.02,
   "status": "accepted"
  },
  "execution_boundary": {
@@ -16,21 +16,21 @@
    "code_target": "Eval",
    "complete_artifact_transport": false,
    "complete_term_transport": false,
-   "module_sha256": "8771c2a9eee2c45d2468a2918cd79d083e7b92d3730f18ec16a28f8dddff916b",
+   "module_sha256": "da27abe0c08c39b427dda4bffa14ed1a66fa930759ef9a2ce2397515529d89a5",
    "subject_contracts": {
-    "collection_investigation.yxml": "a8e39a4a7d275107044f1bf9c8eaf03104138f7d36644fb0932fb34c3a46fd98",
+    "collection_investigation.yxml": "1d82651b03c4c2170bd53a3c5a03306ab34ebedba221d1d25609a2ac4028d0e3",
     "completion_investigation.yxml": "14738a80191f198604772b636afa323452a4de13de93cee029205f768e56e6e1",
-    "input_investigation.yxml": "1bf14767c07957d94261767b0b08e21e8f7810d1affd84299c5604d2857af1e0",
-    "observation_investigation.yxml": "d9b4570f78881ca10f21c1f1c7edf152c39e89070903fb7a63a83ef8182cf63f",
-    "pair_scope_investigation.yxml": "75eca3a081dc4cd0829db599d32ec3ba3cfaf3188c82dd2be911f3175f552394",
+    "input_investigation.yxml": "b0a6d79b7915f5e7bc1578519416bd153224c1908182fe56b6460dce14af583a",
+    "observation_investigation.yxml": "9f0a0c15f490d8eaf136130871b1a183b0ee7cc98f611dc63707b31d2edbd38e",
+    "pair_scope_investigation.yxml": "c02c1a9acad1f279b6d552e389bae707e9e0f76dd83902c97654656cf1513c6c",
     "pattern_investigation.yxml": "d912814fbfe1b35e58fb8de47a13bc07a4933dc0d35e41190c70a0eda670244e",
-    "permission_investigation.yxml": "ebfcd8d87039719aee5feff07238d63b3718a34c0caf894fc87be5d69a3fe1e6",
-    "proof_probes_investigation.yxml": "60fa5c6af7e89d25c0fcd03118ffee8708b3404fa09379feea5102fc7f250a3b",
-    "reasoning_method_investigation.yxml": "f9531f7e7022c3be6b9273b656badf89ba06af7aa047494d0588e9abc1e8ea4a",
+    "permission_investigation.yxml": "3b5dc1cc8b1621cabb4eb79a595deaf386b810c0505a165dbe027814811f5cab",
+    "proof_probes_investigation.yxml": "75ee3cb302f1b3e746ffd5fa518f465612e390169cd99227b16975cb178e8933",
+    "reasoning_method_investigation.yxml": "a43f0dab0b32a3afe48bb947b8830555bf169f089ae890d5ebc3478359d906cf",
     "revision_investigation.yxml": "6aec00ed35ee823943bbca9bd406f7771527115b6779cb715eed51a026183e3c",
     "schema_sockets_investigation.yxml": "4d8dd077094612e6009a8dae843519b06ec91cb11b02332682b8ab921ea1a68b",
-    "scope_investigation.yxml": "24088346ca8f571de532d1c0debbeecde700d89f288c031ee831c557c0179027",
-    "table_investigation.yxml": "afd51224baca83aab3addf7c11124231fc00bd60631e51584e6c3769d209be8c"
+    "scope_investigation.yxml": "5d9e42308b2de5974dd1da7c6164960be82d0b370e0bb8d65ea9c6dfc5850ea2",
+    "table_investigation.yxml": "d0e8c1280215686162b07649a6077e374c09114867daaf2f42ef2a183eb7a44a"
    },
    "theory": "Builtin_Investigation_Execution"
   },
@@ -83,14 +83,14 @@
  },
  "reports_equal": true,
  "retention": "The accepted base proof and the incremental proof of every changed theory and dependent supplied the exported module; every complete report boundary equals its retained original. Generated result bulk is not a repository input.",
- "source_manifest_sha256": "9f7bf5d6fefe1efb9f4753703babda04572f40b6aabf3155377516c9e7b57db1",
+ "source_manifest_sha256": "eb6b5165fdab4d90fe7e8fa742ebe335fe4ecb776a4c16187dea17611bfc3182",
  "sources_rebuilt": false,
  "status": "accepted",
  "steps": [
   {
    "exit_code": 0,
    "name": "presentation",
-   "seconds": 2.0669458369957283
+   "seconds": 1.9676969669963
   }
  ]
 }

@@ -22118,3 +22118,33 @@ The proof (`least_environment_values_pass`): where some l passes 957 and 964, th
 To make 957 call 954, AX2a's program stands over the union of package membership and AX1's formation reader (`extension_readers_base_system`, joined where they agree, `membership_formation_agreement`); `least_environment_raw` gains the formation conjunct and `least_environment_complete` the additions' and the extension's hypotheses (both marked changes, their three callers repaired); `extension_package_sites` names the formation reader's sites. G3's and G4's members clauses read l beside views 991 and 992 (`additions_members_view_schema`), whose clause holds the root family, the bound and the list site; `additions_members_clauses` and `additions_members_rule` take the view site (marked changes), the rule's conclusion unchanged.
 
 The construction the guard over additions refuses through is the given's four registrations, 960's bound and 961's l (`extension_witness_registrations`, complete in W4a's form, `extension_witness_registrations_complete_in`). Limit: G3's and G4's l at 985/0 and 989/0 (the same family at the members clause's variables), their bounds at the views (G3's the reach over l's edges, G4's also over given members read at the given's value) and q produced by 79 there are not registered yet.
+## The committed side at a table: the committed representations' successors close, their states keep the table's calls, and the route constants run at a listed table
+
+Task 970 (GT3b of "The given's calls are decided once", task 495's entry; #876's items (5)–(8), q181).
+
+What is decided.
+1. The committed step's locales are stated once at a table: the structure's successors at `finite_goal_successors_in Θ`,
+   the tested and selected forms at a closing test `cl` exact for `finite_table_closes Θ` and the selection
+   `access_select_in (cl s)` (`committed_representation_structure_in`, `tested_representation_formed_in`,
+   `selected_representation_formed_in`). Today's three locales are their instances at the empty table and the test
+   closing nothing; their lemmas keep name and statement and are re-exported from the instances, the proofs moved, not
+   copied. GT2a's committed successors read the table only in the default branch, so a call at a committed sub-search's
+   focus keeps its clause alternatives and is never closed.
+2. The committed representations at a table are F2c's and D1d's with three fields changed: the successors close a goal
+   the inner index closes (`search_successors_in`, `deferred_successors_in`), a found state is shared again with the
+   table's calls (`search_of_in`, `deferred_committed_of_in`), and a substitution outside the deferred bind makes its
+   state with the table attached (`deferred_substitute_in`). Every step keeps the table's calls (the frame lemmas), so
+   the closing test of every reached state is the table's.
+3. The closed class enters the committed selection as it entered the plain one: at the whole focus through
+   `kept_select_by_in`, at a proper focus as the first of two key ranges under the focus, the kept candidates' settled
+   one (FI) and the closed class's (`focused_kept_select_in`).
+4. The route constants at a table are new constants at a listed table (`*_listed`), today's constants their instances
+   at `[]`; their code runs the route's search over the deferred committed representation at the table
+   (`moded_deferred_route_search_in`) and reads it by GT4's result form at the table. Today's constants and code
+   equations stand.
+5. At a table whose calls are true but whose certificates the checker does not accept, the route's verdict form is
+   GT4's graph verdicts of the check search's found states (`moded_check_graph_verdicts_in`, sound where the calls are
+   true); the found states read the table's calls alone (`moded_deferred_route_search_in_calls`).
+
+Limits. The table is shared and indexed once a search (once a call), not once a demand; the framed index is once a
+call and once a demand, as before. The bottom-up table at #830's fixtures is GT6's.

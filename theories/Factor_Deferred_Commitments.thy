@@ -622,4 +622,358 @@ lemma finite_committed_search_deferred_code [code]:
 
 export_code finite_committed_search checking SML
 
+section \<open>The committed search over the deferred search at a table of certified calls\<close>
+
+text \<open>
+  GT3b (task 970). D1d's committed representation at a table: its successors close a goal the inner search's index
+  closes, the store and records standing (@{const deferred_successors_in}, @{const search_successors_in}); a state
+  shared again or substituted outside the deferred bind is made with the table's calls attached
+  (@{text deferred_committed_of_in}, @{text deferred_substitute_in}), so the table's calls are kept by every step.
+  Its search is GT2a's committed search at the table at the projection (@{text deferred_kept_committed_search_in}).
+\<close>
+
+definition deferred_committed_of_in :: "('d \<times> finite_factor_term) list \<Rightarrow> ('a,'s,'d,'c) finite_schema_system \<Rightarrow>
+    ('a,'s::linorder,'d,'c) resolution_state \<Rightarrow> ('a,'s,'d,'c) deferred_search + ('a,'s,'d,'c) shared_search" where
+  "deferred_committed_of_in C P st =
+    (if search_variables_rooted st then Inl (deferred_of_in C P st) else Inr (search_of_in C P st))"
+
+lemma deferred_committed_of_in:
+  assumes pl: "search_placeable st"
+  shows "deferred_committed_formed \<kappa> P (deferred_committed_of_in C P st)"
+    and "deferred_committed_project (deferred_committed_of_in C P st) = st"
+    and "search_calls (committed_inner (deferred_committed_of_in C P st)) = C"
+proof -
+  have d: "resolution_positions_distinct st" using pl by (simp add: search_placeable_def)
+  have "deferred_committed_formed \<kappa> P (deferred_committed_of_in C P st) \<and>
+      deferred_committed_project (deferred_committed_of_in C P st) = st \<and>
+      search_calls (committed_inner (deferred_committed_of_in C P st)) = C"
+  proof (cases "search_variables_rooted st")
+    case True
+    then show ?thesis using deferred_of_in_rooted[OF d True] pl
+      by (simp add: deferred_committed_of_in_def)
+  next
+    case False
+    then show ?thesis using search_of_in[OF d] pl
+      by (simp add: deferred_committed_of_in_def)
+  qed
+  then show "deferred_committed_formed \<kappa> P (deferred_committed_of_in C P st)"
+    and "deferred_committed_project (deferred_committed_of_in C P st) = st"
+    and "search_calls (committed_inner (deferred_committed_of_in C P st)) = C" by blast+
+qed
+
+text \<open>A substitution at a table: through the deferred bind where @{const deferred_substitute} binds, the table's calls
+  attached where the state is made again.\<close>
+
+definition deferred_substitute_in :: "('d \<times> finite_factor_term) list \<Rightarrow> ('a,'s,'d,'c) finite_schema_system \<Rightarrow>
+    (('s,'a) resolution_variable \<Rightarrow> ('s,'a) resolution_variable finite_term_pattern) \<Rightarrow> ('s,'a) resolution_variable fset \<Rightarrow>
+    ('a,'s::linorder,'d,'c) deferred_search \<Rightarrow> ('a,'s,'d,'c) deferred_search + ('a,'s,'d,'c) shared_search" where
+  "deferred_substitute_in C P \<sigma> D d = (let G = deferred_goal_variables d;
+      L = remdups (filter (\<lambda>a. a |\<in>| D \<and> \<sigma> a \<noteq> Finite_Variable a) G);
+      at = (\<lambda>x. RBT.lookup (shared_nodes (search_state (deferred_inner d))) (fst (fst x)) \<noteq> None) in
+    if fBall D (\<lambda>a. \<sigma> a = Finite_Variable a \<or> a \<in> set G) \<and>
+      list_all (\<lambda>a. at a \<and> fBall (finite_pattern_variables (\<sigma> a)) (\<lambda>b. b \<notin> set L \<and> b \<in> set G \<and> at b)) L
+    then Inl (let r1 = search_reshare (plain_grounds \<sigma> D) (deferred_inner d) in
+      deferred_bind P (map (\<lambda>a. (a, keyed_pattern_at (shared_sharing (search_state r1)) (\<sigma> a))) L)
+        (d\<lparr>deferred_inner := r1\<rparr>))
+    else deferred_committed_of_in C P (resolution_state_substitute \<sigma> (deferred_project d)))"
+
+theorem deferred_substitute_in:
+  fixes d :: "('a,'s::linorder,'d,'c) deferred_search"
+  assumes d: "deferred_formed \<kappa> P d" and pl: "search_placeable (deferred_project d)"
+    and out: "\<And>a. a |\<notin>| D \<Longrightarrow> \<sigma> a = Finite_Variable a"
+  shows "deferred_committed_formed \<kappa> P (deferred_substitute_in C P \<sigma> D d)"
+    and "deferred_committed_project (deferred_substitute_in C P \<sigma> D d) = resolution_state_substitute \<sigma> (deferred_project d)"
+    and "search_calls (deferred_inner d) = C \<Longrightarrow> search_calls (committed_inner (deferred_substitute_in C P \<sigma> D d)) = C"
+proof -
+  note sub = deferred_substitute[where D = D and \<sigma> = \<sigma>, OF d pl out]
+  have pl': "search_placeable (resolution_state_substitute \<sigma> (deferred_project d))" by (rule search_placeable_substitute[OF pl])
+  note ofi = deferred_committed_of_in[OF pl']
+  have all: "deferred_committed_formed \<kappa> P (deferred_substitute_in C P \<sigma> D d) \<and>
+      deferred_committed_project (deferred_substitute_in C P \<sigma> D d) = resolution_state_substitute \<sigma> (deferred_project d) \<and>
+      (search_calls (deferred_inner d) = C \<longrightarrow> search_calls (committed_inner (deferred_substitute_in C P \<sigma> D d)) = C)"
+    using sub ofi unfolding deferred_substitute_in_def deferred_substitute_def Let_def
+    by (auto simp: search_calls_frame split: if_splits)
+  then show "deferred_committed_formed \<kappa> P (deferred_substitute_in C P \<sigma> D d)"
+    and "deferred_committed_project (deferred_substitute_in C P \<sigma> D d) = resolution_state_substitute \<sigma> (deferred_project d)"
+    and "search_calls (deferred_inner d) = C \<Longrightarrow> search_calls (committed_inner (deferred_substitute_in C P \<sigma> D d)) = C"
+    by blast+
+qed
+
+lemma deferred_call_successors_frame:
+  assumes "d' |\<in>| deferred_call_successors P d h"
+  shows "search_frame (deferred_inner d') = search_frame (deferred_inner d)"
+proof (cases "shared_entry_goal h")
+  case (Shared_Call_Goal q rr e gp)
+  have m: "d' |\<in>| search_call_successors_with (\<lambda>\<sigma> r. deferred_bind P \<sigma> (deferred_at q d r)) P (deferred_inner d) q e gp"
+    using assms Shared_Call_Goal by (simp add: deferred_call_successors_def)
+  show ?thesis by (rule search_call_successors_with_frame[where g = "\<lambda>d. search_frame (deferred_inner d)", OF m]) simp
+next
+  case (Shared_Material_Goal q rr gM)
+  then show ?thesis using assms by (simp add: deferred_call_successors_def)
+qed
+
+lemma deferred_solution_successors_frame:
+  assumes "d' |\<in>| deferred_solution_successors P d h Ws"
+  shows "search_frame (deferred_inner d') = search_frame (deferred_inner d)"
+proof (cases "shared_entry_goal h")
+  case (Shared_Material_Goal q rr gM)
+  have m: "d' |\<in>| search_solution_successors_with (\<lambda>\<sigma> r. deferred_bind P \<sigma> (deferred_at q d r)) P (deferred_inner d) q gM
+      (shared_material_project (search_table (deferred_inner d)) gM) Ws"
+    using assms Shared_Material_Goal by (simp add: deferred_solution_successors_def)
+  show ?thesis by (rule search_solution_successors_with_frame[where g = "\<lambda>d. search_frame (deferred_inner d)", OF m]) simp
+next
+  case (Shared_Call_Goal q rr e gp)
+  then show ?thesis using assms by (simp add: deferred_solution_successors_def)
+qed
+
+definition deferred_committed_representation_in :: "('a,'s,'d,'c) finite_witness_construction \<Rightarrow>
+    ('a,'s,'d,'c) finite_schema_system \<Rightarrow> ('d \<times> finite_factor_term) list \<Rightarrow>
+    (('a,'s::linorder,'d,'c) deferred_search + ('a,'s,'d,'c) shared_search, ('a,'s,'d,'c) shared_goal_entry,
+      ('a,'s,'d,'c) shared_node_entry, nat, 'a, 's, 'd, 'c) committed_representation" where
+  "deferred_committed_representation_in \<kappa> P C = (deferred_committed_representation \<kappa> P)\<lparr>
+    rep_successors := (\<lambda>s h. case s of Inl d \<Rightarrow> fimage Inl (deferred_successors_in \<kappa> P d h)
+      | Inr r \<Rightarrow> fimage Inr (search_successors_in \<kappa> P r h)),
+    rep_substitute := (\<lambda>s \<sigma> D. case s of Inl d \<Rightarrow> deferred_substitute_in C P \<sigma> D d
+      | Inr r \<Rightarrow> Inr (search_substitute_plain P \<sigma> D r)),
+    rep_share := deferred_committed_of_in C P\<rparr>"
+
+lemma deferred_committed_in_fields:
+  "rep_access (deferred_committed_representation_in \<kappa> P C) = rep_access (deferred_committed_representation \<kappa> P)"
+  "rep_empty (deferred_committed_representation_in \<kappa> P C) = rep_empty (deferred_committed_representation \<kappa> P)"
+  "rep_project (deferred_committed_representation_in \<kappa> P C) = deferred_committed_project"
+  "rep_refresh (deferred_committed_representation_in \<kappa> P C) = rep_refresh (deferred_committed_representation \<kappa> P)"
+  "rep_construct (deferred_committed_representation_in \<kappa> P C) = rep_construct (deferred_committed_representation \<kappa> P)"
+  "rep_node_positions (deferred_committed_representation_in \<kappa> P C) = rep_node_positions (deferred_committed_representation \<kappa> P)"
+  "rep_call_successors (deferred_committed_representation_in \<kappa> P C) =
+    rep_call_successors (deferred_committed_representation \<kappa> P)"
+  "rep_solution_successors (deferred_committed_representation_in \<kappa> P C) =
+    rep_solution_successors (deferred_committed_representation \<kappa> P)"
+  "rep_successors (deferred_committed_representation_in \<kappa> P C) (Inl d) h = fimage Inl (deferred_successors_in \<kappa> P d h)"
+  "rep_successors (deferred_committed_representation_in \<kappa> P C) (Inr r) h = fimage Inr (search_successors_in \<kappa> P r h)"
+  "rep_substitute (deferred_committed_representation_in \<kappa> P C) (Inl d) \<sigma> D = deferred_substitute_in C P \<sigma> D d"
+  "rep_substitute (deferred_committed_representation_in \<kappa> P C) (Inr r) \<sigma> D = Inr (search_substitute_plain P \<sigma> D r)"
+  "rep_share (deferred_committed_representation_in \<kappa> P C) = deferred_committed_of_in C P"
+  by (simp_all add: deferred_committed_representation_in_def deferred_committed_representation_def)
+
+theorem deferred_committed_structure_in:
+  assumes sock: "clause_sockets_distinct P"
+    and tbl: "\<And>d t. (d,t) \<in> set C \<longleftrightarrow> resolution_table_lookup \<Theta> (d,t) \<noteq> None"
+  shows "committed_representation_structure_in (deferred_committed_representation_in \<kappa> P C)
+    (\<lambda>s. deferred_committed_formed \<kappa> P s \<and> search_calls (committed_inner s) = C) \<kappa> P \<Theta>"
+proof -
+  let ?R = "deferred_committed_representation \<kappa> P" and ?Q = "deferred_committed_representation_in \<kappa> P C"
+  interpret b: committed_representation_structure ?R "deferred_committed_formed \<kappa> P" \<kappa> P
+    by (rule deferred_committed_structure[OF sock])
+  note fd = deferred_committed_in_fields[of \<kappa> P C]
+  show ?thesis
+  proof (rule committed_representation_structure_in.intro, goal_cases)
+    case (1 s)
+    then show ?case using b.access[of s] by (simp add: fd deferred_committed_fields)
+  next
+    case (2 s)
+    then show ?case using b.refresh[of s]
+      by (cases s) (auto simp: fd deferred_committed_fields shared_committed_representation_def search_calls_frame)
+  next
+    case (3 s m q)
+    then show ?case using b.construct[of s m q]
+      by (cases s) (auto simp: fd deferred_committed_fields shared_committed_representation_def search_calls_frame)
+  next
+    case (4 s h)
+    show ?case
+    proof (cases s)
+      case (Inl d)
+      have f: "deferred_formed \<kappa> P d" "search_placeable (deferred_project d)" "search_calls (deferred_inner d) = C"
+        using 4(1) Inl by simp_all
+      have h: "h |\<in>| access_goals (deferred_access \<kappa> P d)" using 4(2) Inl by (simp add: fd deferred_committed_fields)
+      have D': "\<And>e t. (e,t) \<in> set (search_calls (deferred_inner d)) \<longleftrightarrow> resolution_table_lookup \<Theta> (e,t) \<noteq> None"
+        using tbl f(3) by simp
+      note c = deferred_successors_in[OF f(1) f(2) sock h D']
+      have p: "fimage (rep_project ?Q) (rep_successors ?Q s h) =
+          finite_goal_successors_in \<Theta> P (rep_project ?Q s) (access_goal (rep_access ?Q s) h)"
+        using c(1) Inl by (simp add: fd deferred_committed_fields deferred_committed_images comp_def)
+      have q: "deferred_committed_formed \<kappa> P s' \<and> search_calls (committed_inner s') = C"
+        if s': "s' |\<in>| rep_successors ?Q s h" for s'
+      proof -
+        obtain d' where e: "s' = Inl d'" and m: "d' |\<in>| deferred_successors_in \<kappa> P d h" using s' Inl by (auto simp: fd)
+        show ?thesis using c(2)[OF m] f(3) e by (simp add: search_calls_frame)
+      qed
+      show ?thesis using p q by blast
+    next
+      case (Inr r)
+      have f: "search_formed \<kappa> P r" "search_placeable (search_project r)" "search_classes_formed r" "search_calls r = C"
+        using 4(1) Inr by simp_all
+      have h: "h |\<in>| access_goals (shared_access \<kappa> P r)" using 4(2) Inr
+        by (simp add: fd deferred_committed_fields shared_committed_representation_def)
+      have D': "\<And>e t. (e,t) \<in> set (search_calls r) \<longleftrightarrow> resolution_table_lookup \<Theta> (e,t) \<noteq> None" using tbl f(4) by simp
+      note c = search_successors_in[OF f(1) f(2) sock h D']
+      have p: "fimage (rep_project ?Q) (rep_successors ?Q s h) =
+          finite_goal_successors_in \<Theta> P (rep_project ?Q s) (access_goal (rep_access ?Q s) h)"
+        using c(1) Inr
+        by (simp add: fd deferred_committed_fields deferred_committed_images shared_committed_representation_def comp_def)
+      have q: "deferred_committed_formed \<kappa> P s' \<and> search_calls (committed_inner s') = C"
+        if s': "s' |\<in>| rep_successors ?Q s h" for s'
+      proof -
+        obtain r' where e: "s' = Inr r'" and m: "r' |\<in>| search_successors_in \<kappa> P r h" using s' Inr by (auto simp: fd)
+        show ?thesis using c(2)[OF m] c(3)[OF m f(3)] f(4) e by (simp add: search_calls_frame)
+      qed
+      show ?thesis using p q by blast
+    qed
+  next
+    case (5 s h q rr d p)
+    have f: "deferred_committed_formed \<kappa> P s" "search_calls (committed_inner s) = C" using 5(1) by simp_all
+    have h: "h |\<in>| access_goals (rep_access ?R s)" and g: "access_goal (rep_access ?R s) h = Resolution_Call_Goal q rr d p"
+      using 5(2,3) by (simp_all add: fd)
+    note c = b.call[OF f(1) h g]
+    have k: "search_calls (committed_inner s') = C" if s': "s' |\<in>| rep_call_successors ?R s h" for s'
+    proof (cases s)
+      case (Inl dd)
+      then obtain d' where e: "s' = Inl d'" and m: "d' |\<in>| deferred_call_successors P dd h"
+        using s' by (auto simp: deferred_committed_fields)
+      show ?thesis using deferred_call_successors_frame[OF m] f(2) Inl e by (simp add: search_calls_frame)
+    next
+      case (Inr r)
+      then obtain r' where e: "s' = Inr r'" and m: "r' |\<in>| rep_call_successors (shared_committed_representation \<kappa> P) r h"
+        using s' by (auto simp: deferred_committed_fields)
+      show ?thesis using shared_call_successors_frame[OF m] f(2) Inr e by (simp add: search_calls_frame)
+    qed
+    show ?case using c k by (auto simp: fd deferred_committed_fields)
+  next
+    case (6 s h q rr M Ws)
+    have f: "deferred_committed_formed \<kappa> P s" "search_calls (committed_inner s) = C" using 6(1) by simp_all
+    have h: "h |\<in>| access_goals (rep_access ?R s)" and g: "access_goal (rep_access ?R s) h = Resolution_Material_Goal q rr M"
+      using 6(2,3) by (simp_all add: fd)
+    note c = b.solution[OF f(1) h g, of Ws]
+    have k: "search_calls (committed_inner s') = C" if s': "s' |\<in>| rep_solution_successors ?R s h Ws" for s'
+    proof (cases s)
+      case (Inl dd)
+      then obtain d' where e: "s' = Inl d'" and m: "d' |\<in>| deferred_solution_successors P dd h Ws"
+        using s' by (auto simp: deferred_committed_fields)
+      show ?thesis using deferred_solution_successors_frame[OF m] f(2) Inl e by (simp add: search_calls_frame)
+    next
+      case (Inr r)
+      then obtain r' where e: "s' = Inr r'"
+        and m: "r' |\<in>| rep_solution_successors (shared_committed_representation \<kappa> P) r h Ws"
+        using s' by (auto simp: deferred_committed_fields)
+      show ?thesis using shared_solution_successors_frame[OF m] f(2) Inr e by (simp add: search_calls_frame)
+    qed
+    show ?case using c k by (auto simp: fd deferred_committed_fields)
+  next
+    case (7 s q)
+    then show ?case using b.positions[of s q] by (simp add: fd deferred_committed_fields)
+  next
+    case (8 s \<sigma> D)
+    show ?case
+    proof (cases s)
+      case (Inl d)
+      have f: "deferred_formed \<kappa> P d" "search_placeable (deferred_project d)" "search_calls (deferred_inner d) = C"
+        using 8(1) Inl by simp_all
+      note c = deferred_substitute_in[where \<sigma> = \<sigma> and D = D and C = C, OF f(1) f(2) 8(2)]
+      show ?thesis using c(1) c(2) c(3) f(3) Inl by (simp add: fd)
+    next
+      case (Inr r)
+      have f: "deferred_committed_formed \<kappa> P (Inr r)" "search_calls r = C" using 8(1) Inr by simp_all
+      note c = b.substitute[of "Inr r" D \<sigma>, OF f(1) 8(2)]
+      show ?thesis using c f(2) Inr
+        by (simp add: fd deferred_committed_fields shared_committed_representation_def search_calls_frame, metis)
+    qed
+  next
+    case (9 s)
+    have pl: "search_placeable (deferred_committed_project s)" using 9 by (cases s) simp_all
+    show ?case using deferred_committed_of_in[OF pl] by (simp add: fd)
+  qed
+qed
+
+text \<open>The closing test a deferred state reads is its inner search's.\<close>
+
+lemma deferred_committed_closes:
+  assumes f: "deferred_committed_formed \<kappa> P s" and c: "search_calls (committed_inner s) = C"
+    and tbl: "\<And>d t. (d,t) \<in> set C \<longleftrightarrow> resolution_table_lookup \<Theta> (d,t) \<noteq> None"
+    and h: "h |\<in>| access_goals (rep_access (deferred_committed_representation_in \<kappa> P C) s)"
+  shows "search_closes (committed_inner s) h \<longleftrightarrow>
+    finite_table_closes \<Theta> (access_goal (rep_access (deferred_committed_representation_in \<kappa> P C) s) h)"
+proof -
+  have r: "search_formed \<kappa> P (committed_inner s)" using f by (cases s) (auto dest: deferred_formedD(1))
+  have eg: "access_goals (rep_access (deferred_committed_representation_in \<kappa> P C) s) =
+      access_goals (shared_access \<kappa> P (committed_inner s))"
+    by (cases s) (simp_all add: deferred_committed_in_fields deferred_committed_fields deferred_access_def
+      shared_committed_representation_def)
+  have ea: "access_goal (rep_access (deferred_committed_representation_in \<kappa> P C) s) =
+      access_goal (shared_access \<kappa> P (committed_inner s))"
+    by (cases s) (simp_all add: deferred_committed_in_fields deferred_committed_fields deferred_access_def
+      shared_committed_representation_def)
+  have D': "\<And>d t. (d,t) \<in> set (search_calls (committed_inner s)) \<longleftrightarrow> resolution_table_lookup \<Theta> (d,t) \<noteq> None"
+    using tbl c by simp
+  show ?thesis using search_closes_table[OF r _ D'] h unfolding eg ea by blast
+qed
+
+lemma deferred_kept_select_in:
+  assumes f: "deferred_committed_formed \<kappa> P s"
+  shows "committed_kept_select_in \<kappa> P (ffilter X) F (committed_inner s) (rep_access (deferred_committed_representation_in \<kappa> P C) s) =
+    access_select_in (search_closes (committed_inner s)) X
+      (access_focused F (rep_access (deferred_committed_representation_in \<kappa> P C) s))"
+proof (cases s)
+  case (Inl d)
+  have r: "search_formed \<kappa> P (deferred_inner d)" and K: "search_classes_formed (deferred_inner d)"
+    using f Inl deferred_formedD(1,2) by auto
+  have "committed_kept_select_in \<kappa> P (ffilter X) F (deferred_inner d) (deferred_access \<kappa> P d) =
+      access_select_in (search_closes (deferred_inner d)) X (access_focused F (deferred_access \<kappa> P d))"
+    unfolding deferred_access_def by (rule committed_kept_select_over_in[OF r K]) (rule refl)
+  then show ?thesis using Inl by (simp add: deferred_committed_in_fields deferred_committed_fields)
+next
+  case (Inr r)
+  have "search_formed \<kappa> P r" "search_classes_formed r" using f Inr by simp_all
+  then show ?thesis using Inr committed_kept_select_in_filter
+    by (simp add: deferred_committed_in_fields deferred_committed_fields shared_committed_representation_def)
+qed
+
+definition deferred_kept_tests_select_in where
+  "deferred_kept_tests_select_in \<kappa> P T gd F s V x =
+    committed_kept_select_in \<kappa> P (ffilter (\<lambda>h. gd s h \<and> tests_priority T F s V x h)) F (committed_inner s) V"
+
+lemma deferred_kept_selected_formed_in:
+  assumes tf: "tested_representation_formed_in (deferred_committed_representation_in \<kappa> P C) Fi \<kappa> P \<Theta> K pr T gd
+      (\<lambda>s. search_closes (committed_inner s))"
+    and fi: "\<And>s. Fi s \<Longrightarrow> deferred_committed_formed \<kappa> P s"
+  shows "selected_representation_formed_in (deferred_committed_representation_in \<kappa> P C) Fi \<kappa> P \<Theta> K pr T gd
+    (\<lambda>s. search_closes (committed_inner s)) (deferred_focus_empty \<kappa> P) (deferred_kept_tests_select_in \<kappa> P T gd)
+    (tests_prepare T)"
+proof (rule selected_representation_formed_in.intro[OF tf], unfold_locales, goal_cases)
+  case (1 s F)
+  show ?case using deferred_focus_empty[of \<kappa> P F s] by (simp add: deferred_committed_in_fields)
+next
+  case (2 s F)
+  show ?case unfolding deferred_kept_tests_select_in_def by (rule deferred_kept_select_in[OF fi[OF 2]])
+next
+  case (3 s F B rec)
+  show ?case by (rule refl)
+qed
+
+theorem deferred_kept_committed_search_in:
+  assumes sock: "clause_sockets_distinct P" and pl: "search_placeable st"
+    and tbl: "\<And>d t. (d,t) \<in> set C \<longleftrightarrow> resolution_table_lookup \<Theta> (d,t) \<noteq> None"
+  shows "selected_committed_search (deferred_committed_representation_in \<kappa> P C)
+      (projected_tests (deferred_committed_representation_in \<kappa> P C) K pr (\<lambda>r h. True)) (\<lambda>r h. True)
+      (deferred_focus_empty \<kappa> P)
+      (deferred_kept_tests_select_in \<kappa> P (projected_tests (deferred_committed_representation_in \<kappa> P C) K pr (\<lambda>r h. True))
+        (\<lambda>r h. True))
+      (tests_prepare (projected_tests (deferred_committed_representation_in \<kappa> P C) K pr (\<lambda>r h. True))) \<kappa> P n F B
+      (deferred_committed_of_in C P st) =
+    finite_committed_search_by_in \<Theta> (finite_resolution_select_in \<Theta> pr \<kappa> P) \<kappa> K P n F B st"
+proof -
+  let ?Q = "deferred_committed_representation_in \<kappa> P C"
+  let ?Fi = "\<lambda>s. deferred_committed_formed \<kappa> P s \<and> search_calls (committed_inner s) = C"
+  have st: "committed_representation_structure_in ?Q ?Fi \<kappa> P \<Theta>" by (rule deferred_committed_structure_in[OF sock tbl])
+  have cl: "search_closes (committed_inner s) h \<longleftrightarrow> finite_table_closes \<Theta> (access_goal (rep_access ?Q s) h)"
+    if s: "?Fi s" and h: "h |\<in>| access_goals (rep_access ?Q s)" for s h
+    using deferred_committed_closes[OF conjunct1[OF s] conjunct2[OF s] tbl h] .
+  interpret selected_representation_formed_in ?Q ?Fi \<kappa> P \<Theta> K pr "projected_tests ?Q K pr (\<lambda>r h. True)" "\<lambda>r h. True"
+      "\<lambda>s. search_closes (committed_inner s)" "deferred_focus_empty \<kappa> P"
+      "deferred_kept_tests_select_in \<kappa> P (projected_tests ?Q K pr (\<lambda>r h. True)) (\<lambda>r h. True)"
+      "tests_prepare (projected_tests ?Q K pr (\<lambda>r h. True))"
+    by (rule deferred_kept_selected_formed_in[OF projected_tested_in[OF st cl]]) simp_all
+  have f: "?Fi (deferred_committed_of_in C P st)"
+    using deferred_committed_of_in[OF pl] by simp
+  show ?thesis using selected_committed[OF f] deferred_committed_of_in(2)[OF pl] by (simp add: deferred_committed_in_fields)
+qed
+
 end

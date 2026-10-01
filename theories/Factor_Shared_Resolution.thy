@@ -14,7 +14,18 @@ text \<open>
 \<close>
 
 definition share_state_table :: "share_state \<Rightarrow> shape list" where
-  "share_state_table q = rev (snd (snd q))"
+  "share_state_table q = map (\<lambda>i. the (RBT.lookup (snd (snd q)) i)) [0..<fst (snd q)]"
+
+text \<open>
+  The table is read off the state's tree of positions: a position below the table's length reads its shape by one
+  lookup (@{text share_state_read}), the list's read at every position.
+\<close>
+
+definition share_state_read :: "share_state \<Rightarrow> nat \<Rightarrow> shape option" where
+  "share_state_read q i = (if i < fst (snd q) then Some (the (RBT.lookup (snd (snd q)) i)) else None)"
+
+lemma share_state_read [code_unfold]: "value_reference_read (share_state_table q) = share_state_read q"
+  by (rule ext) (simp add: share_state_table_def share_state_read_def value_reference_read_def)
 
 definition share_state_formed :: "share_state \<Rightarrow> bool" where
   "share_state_formed q \<longleftrightarrow> keyed_state_represents q (share_state_table q) \<and> table_formed (share_state_table q)"
@@ -31,13 +42,12 @@ lemma table_extends_trans: "table_extends T T' \<Longrightarrow> table_extends T
 lemma share_state_table_represents:
   assumes "keyed_state_represents q T"
   shows "share_state_table q = T"
-  using keyed_reference_state_table[of shape_key q T] assms
-  by (simp add: keyed_state_represents_def share_state_table_def)
+  using assms by (cases q) (simp add: share_state_table_def keyed_state_positions)
 
 lemma share_state_empty:
-  "share_state_formed (RBT.empty,0,[])" "share_state_table (RBT.empty,0,[]) = []"
-  by (simp_all add: share_state_formed_def share_state_table_def keyed_state_represents_def
-    keyed_reference_state_empty table_formed_empty)
+  "share_state_formed empty_share_state" "share_state_table empty_share_state = []"
+  by (simp_all add: share_state_formed_def share_state_table_def empty_share_state_def keyed_state_represents_def
+    value_reference_read_def table_formed_empty)
 
 lemma share_state_formed_table:
   "share_state_formed q \<Longrightarrow> table_formed (share_state_table q)"
@@ -156,10 +166,10 @@ lemma keyed_share_shape_present:
   assumes rep: "keyed_state_represents q T" and found: "value_reference_index s T = Some i"
   shows "keyed_share_shape s q = (i, q)"
 proof -
-  obtain M n R where qq: "q = (M,n,R)" by (cases q) auto
+  obtain M n P where qq: "q = (M,n,P)" by (cases q) auto
   have "RBT.lookup M (shape_key s) = value_reference_index s T"
-    using rep by (simp add: qq keyed_state_represents_def keyed_reference_state_def)
-  with found show ?thesis by (simp add: qq keyed_share_shape_def keyed_reference_step_def)
+    using rep by (simp add: qq keyed_state_represents_def)
+  with found show ?thesis by (simp add: qq keyed_share_shape_def)
 qed
 
 lemma keyed_share_term_present:
@@ -827,12 +837,13 @@ definition shared_call_pairs :: "share_state \<Rightarrow> 's list \<Rightarrow>
 definition shared_call_alternatives :: "('a,'s,'d,'c) finite_schema_system \<Rightarrow> share_state \<Rightarrow> 's list \<Rightarrow> 'd \<Rightarrow>
     ('s,'a) resolution_variable shared_pattern \<Rightarrow> ('a finite_term_pattern \<times> 'c \<times> ('a,'s,'d) finite_factor_schema \<times>
       (('s,'a) resolution_variable \<times> ('s,'a) resolution_variable shared_pattern) list) fset" where
-  "shared_call_alternatives P x q d gp = (let T = share_state_table x in
+  "shared_call_alternatives P x q d gp =
     ffUnion (fimage (\<lambda>(e,i). if e \<noteq> d then {||} else
       ffUnion (fimage (\<lambda>((e',c),S). if e' \<noteq> d then {||} else
-        (case shared_unify_pairs T (shared_call_pairs x q i S gp) of None \<Rightarrow> {||} | Some s \<Rightarrow> {|(i,c,S,s)|}))
+        (case shared_unify_pairs (share_state_table x) (shared_call_pairs x q i S gp) of None \<Rightarrow> {||}
+          | Some s \<Rightarrow> {|(i,c,S,s)|}))
         (finite_system_clauses P)))
-    (finite_system_interfaces P)))"
+    (finite_system_interfaces P))"
 
 lemma shared_call_alternatives_member:
   "z |\<in>| shared_call_alternatives P x q d gp \<longleftrightarrow> (\<exists>i c S s. z = (i,c,S,s) \<and> (d,i) |\<in>| finite_system_interfaces P \<and>
@@ -1097,8 +1108,8 @@ lemma shared_goal_call_refs_formed:
 subsection \<open>The table read by position\<close>
 
 text \<open>
-  The table is kept reversed in the sharing state. Beside it the state holds a tree from each position of the table to
-  the shape there, extended by the positions a step appends: their shapes stand at the front of the reversed table.
+  The sharing state holds its table as the tree of its positions. Beside it the shared state holds a tree from each
+  position of the table to the shape there, extended by the positions a step appends, each read in the sharing state.
   Every position reads there what the table holds (@{text position_index_formed}), and the positions a formed table held
   before an extension read the same shapes after it.
 \<close>
@@ -1107,7 +1118,7 @@ definition position_index_formed :: "share_state \<Rightarrow> (nat, shape) rbt 
   "position_index_formed x t \<longleftrightarrow> (\<forall>i. RBT.lookup t i = value_reference_read (share_state_table x) i)"
 
 definition position_index_extend :: "share_state \<Rightarrow> share_state \<Rightarrow> (nat, shape) rbt \<Rightarrow> (nat, shape) rbt" where
-  "position_index_extend x x' t = fold (\<lambda>i u. RBT.insert i (snd (snd x') ! (fst (snd x') - Suc i)) u)
+  "position_index_extend x x' t = fold (\<lambda>i u. RBT.insert i (the (RBT.lookup (snd (snd x')) i)) u)
     [fst (snd x)..<fst (snd x')] t"
 
 lemma lookup_fold_insert:
@@ -1163,19 +1174,19 @@ lemma position_index_extend:
 proof
   fix j
   let ?T = "share_state_table x" and ?T' = "share_state_table x'"
-  have n: "fst (snd x) = length ?T" using x
-    by (cases x) (simp add: share_state_formed_def keyed_state_represents_def keyed_reference_state_def share_state_table_def)
-  have n': "fst (snd x') = length ?T'" and R': "snd (snd x') = rev ?T'" using x'
-    by (cases x', simp add: share_state_formed_def keyed_state_represents_def keyed_reference_state_def share_state_table_def)+
+  have n: "fst (snd x) = length ?T" by (simp add: share_state_table_def)
+  have n': "fst (snd x') = length ?T'" by (simp add: share_state_table_def)
+  have R': "\<And>i. RBT.lookup (snd (snd x')) i = value_reference_read ?T' i" using x'
+    by (cases x') (simp add: share_state_formed_def keyed_state_represents_def)
   have tf: "table_formed ?T" and tf': "table_formed ?T'" using x x' by (simp_all add: share_state_formed_def)
   have look: "RBT.lookup (position_index_extend x x' t) j =
       (if length ?T \<le> j \<and> j < length ?T' then Some (?T' ! j) else RBT.lookup t j)"
   proof -
     have "RBT.lookup (position_index_extend x x' t) j = (if j \<in> set [fst (snd x)..<fst (snd x')]
-        then Some (snd (snd x') ! (fst (snd x') - Suc j)) else RBT.lookup t j)"
+        then Some (the (RBT.lookup (snd (snd x')) j)) else RBT.lookup t j)"
       by (simp add: position_index_extend_def lookup_fold_insert)
-    moreover have "j < length ?T' \<Longrightarrow> snd (snd x') ! (fst (snd x') - Suc j) = ?T' ! j"
-      using R' n' by (simp add: rev_nth)
+    moreover have "j < length ?T' \<Longrightarrow> the (RBT.lookup (snd (snd x')) j) = ?T' ! j"
+      using R'[of j] by (simp add: value_reference_read_def)
     ultimately show ?thesis using n n' by auto
   qed
   have old: "RBT.lookup t j = value_reference_read ?T j" using t by (simp add: position_index_formed_def)
@@ -1190,17 +1201,8 @@ proof
 qed
 
 text \<open>
-  The extension reads each appended position's shape at its place in the reversed table, a walk of the list to that
-  place: from the empty index, as the shared state of an R3 state is made (@{text shared_empty}), the walks sum to the
-  table's length squared (#788: 18 s at 58,745 shapes). Its code reads the appended shapes once, from an array of the
-  reversed table's prefix they occupy: the same shapes, inserted at the same positions in the same order.
+  The extension reads each appended position's shape by one lookup in the sharing state's tree of positions.
 \<close>
-
-lemma position_index_extend_code [code]:
-  "position_index_extend x x' t = (let A = IArray (take (fst (snd x') - fst (snd x)) (snd (snd x'))) in
-    fold (\<lambda>i u. RBT.insert i (IArray.sub A (fst (snd x') - Suc i)) u) [fst (snd x)..<fst (snd x')] t)"
-  unfolding position_index_extend_def Let_def
-  by (rule fold_cong) auto
 
 subsection \<open>The state, its projection and its formation\<close>
 
@@ -1293,31 +1295,55 @@ text \<open>
   (@{thm [source] array_pattern_project}): the same projections, each reference read by one access.
 \<close>
 
-definition array_material_project :: "shape iarray \<Rightarrow> 'a shared_material \<Rightarrow> 'a finite_material_pattern" where
-  "array_material_project A M =
-    \<lparr>finite_material_source = array_pattern_project A (shared_material_source M),
-     finite_material_atoms = array_pattern_project A (shared_material_atoms M),
-     finite_material_edges = array_pattern_project A (shared_material_edges M),
-     finite_material_counts = array_pattern_project A (shared_material_counts M),
-     finite_material_functions = array_pattern_project A (shared_material_functions M)\<rparr>"
+text \<open>
+  A material, a goal and a node project through a read of the table's positions (@{const read_pattern_project}); the
+  projections over a table, over an array of it and over a sharing state's tree are its instances.
+\<close>
 
-fun array_goal_project :: "shape iarray \<Rightarrow> ('a,'s,'d,'c) shared_goal \<Rightarrow> ('a,'s,'d,'c) resolution_goal" where
-  "array_goal_project A (Shared_Call_Goal q r d p) = Resolution_Call_Goal q r d (array_pattern_project A p)"
-| "array_goal_project A (Shared_Material_Goal q r M) = Resolution_Material_Goal q r (array_material_project A M)"
+definition read_material_project :: "(nat \<Rightarrow> shape option) \<Rightarrow> 'a shared_material \<Rightarrow> 'a finite_material_pattern" where
+  "read_material_project rd M =
+    \<lparr>finite_material_source = read_pattern_project rd (shared_material_source M),
+     finite_material_atoms = read_pattern_project rd (shared_material_atoms M),
+     finite_material_edges = read_pattern_project rd (shared_material_edges M),
+     finite_material_counts = read_pattern_project rd (shared_material_counts M),
+     finite_material_functions = read_pattern_project rd (shared_material_functions M)\<rparr>"
+
+fun read_goal_project :: "(nat \<Rightarrow> shape option) \<Rightarrow> ('a,'s,'d,'c) shared_goal \<Rightarrow> ('a,'s,'d,'c) resolution_goal" where
+  "read_goal_project rd (Shared_Call_Goal q r d p) = Resolution_Call_Goal q r d (read_pattern_project rd p)"
+| "read_goal_project rd (Shared_Material_Goal q r M) = Resolution_Material_Goal q r (read_material_project rd M)"
+
+definition read_derivation_project ::
+    "(nat \<Rightarrow> shape option) \<Rightarrow> ('a,'s,'d,'c) shared_derivation \<Rightarrow> ('a,'s,'d,'c) resolution_node" where
+  "read_derivation_project rd nd = Resolution_Node (shared_derivation_position nd) (shared_derivation_site nd)
+    (shared_derivation_clause nd) (shared_derivation_schema nd) (read_pattern_project rd (shared_derivation_call nd))
+    (fimage (\<lambda>z. (fst z, read_pattern_project rd (snd z))) (shared_derivation_bindings nd))"
+
+lemma read_material_project_list: "read_material_project (value_reference_read T) M = shared_material_project T M"
+  by (simp add: read_material_project_def shared_material_project_def shared_pattern_project_def)
+
+lemma read_goal_project_list: "read_goal_project (value_reference_read T) g = shared_goal_project T g"
+  by (cases g) (simp_all add: read_material_project_list shared_pattern_project_def)
+
+lemma read_derivation_project_list: "read_derivation_project (value_reference_read T) nd = shared_derivation_project T nd"
+  by (simp add: read_derivation_project_def shared_derivation_project_def shared_pattern_project_def)
+
+definition array_material_project :: "shape iarray \<Rightarrow> 'a shared_material \<Rightarrow> 'a finite_material_pattern" where
+  "array_material_project A = read_material_project (array_read A)"
+
+definition array_goal_project :: "shape iarray \<Rightarrow> ('a,'s,'d,'c) shared_goal \<Rightarrow> ('a,'s,'d,'c) resolution_goal" where
+  "array_goal_project A = read_goal_project (array_read A)"
 
 definition array_derivation_project :: "shape iarray \<Rightarrow> ('a,'s,'d,'c) shared_derivation \<Rightarrow> ('a,'s,'d,'c) resolution_node" where
-  "array_derivation_project A nd = Resolution_Node (shared_derivation_position nd) (shared_derivation_site nd)
-    (shared_derivation_clause nd) (shared_derivation_schema nd) (array_pattern_project A (shared_derivation_call nd))
-    (fimage (\<lambda>z. (fst z, array_pattern_project A (snd z))) (shared_derivation_bindings nd))"
+  "array_derivation_project A = read_derivation_project (array_read A)"
 
 lemma array_material_project: "array_material_project (IArray T) M = shared_material_project T M"
-  by (simp add: array_material_project_def shared_material_project_def array_pattern_project)
+  by (simp add: array_material_project_def array_read_list read_material_project_list)
 
 lemma array_goal_project: "array_goal_project (IArray T) g = shared_goal_project T g"
-  by (cases g) (simp_all add: array_pattern_project array_material_project)
+  by (simp add: array_goal_project_def array_read_list read_goal_project_list)
 
 lemma array_derivation_project: "array_derivation_project (IArray T) nd = shared_derivation_project T nd"
-  by (simp add: array_derivation_project_def shared_derivation_project_def array_pattern_project)
+  by (simp add: array_derivation_project_def array_read_list read_derivation_project_list)
 
 declare shared_material_project_def [code del] shared_goal_project.simps [code del]
   shared_derivation_project_def [code del] shared_state_project_def [code del]
@@ -1338,6 +1364,34 @@ lemma shared_state_project_array_code [code]:
     (fimage (\<lambda>hn. array_derivation_project A (shared_entry_node hn)) (tree_values (shared_nodes s)))
     (shared_witnesses s))"
   unfolding shared_state_project_def Let_def by (simp add: array_goal_project array_derivation_project)
+
+text \<open>
+  At a sharing state's table every decode, projection and unification reads the state's tree of positions
+  (@{thm [source] share_state_read}), each reference by one lookup and no array made: these are the code of every
+  reader whose table is a sharing state's, and of a whole state's projection.
+\<close>
+
+lemma share_state_projects [code_unfold]:
+  "reference_term (share_state_table q) = read_reference_term (share_state_read q)"
+  "shared_pattern_project (share_state_table q) = read_pattern_project (share_state_read q)"
+  "shared_unify_pairs (share_state_table q) = read_unify_pairs (share_state_read q)"
+  "shared_material_project (share_state_table q) = read_material_project (share_state_read q)"
+  "shared_goal_project (share_state_table q) = read_goal_project (share_state_read q)"
+  "shared_derivation_project (share_state_table q) = read_derivation_project (share_state_read q)"
+  by (simp_all add: fun_eq_iff reference_term_def shared_pattern_project_def shared_unify_pairs_def share_state_read
+    read_material_project_list[symmetric] read_goal_project_list[symmetric] read_derivation_project_list[symmetric])
+
+lemma share_state_length [code_unfold]: "length (share_state_table q) = fst (snd q)"
+  by (simp add: share_state_table_def)
+
+declare shared_state_project_array_code [code del]
+
+lemma shared_state_project_read_code [code]:
+  "shared_state_project s = Resolution_State
+    (fimage (\<lambda>h. read_goal_project (share_state_read (shared_sharing s)) (shared_entry_goal h)) (tree_values (shared_goals s)))
+    (fimage (\<lambda>hn. read_derivation_project (share_state_read (shared_sharing s)) (shared_entry_node hn)) (tree_values (shared_nodes s)))
+    (shared_witnesses s)"
+  by (simp add: shared_state_project_def share_state_projects)
 
 lemma shared_state_project_member:
   "g |\<in>| resolution_pending (shared_state_project s) \<longleftrightarrow>
@@ -2611,7 +2665,7 @@ text \<open>
 
 definition shared_empty :: "share_state \<Rightarrow> (('s,'a) resolution_variable \<times> finite_factor_term) fset \<Rightarrow>
     ('a,'s::linorder,'d,'c) shared_state" where
-  "shared_empty x W = \<lparr>shared_sharing = x, shared_positions = position_index_extend (RBT.empty,0,[]) x RBT.empty,
+  "shared_empty x W = \<lparr>shared_sharing = x, shared_positions = position_index_extend empty_share_state x RBT.empty,
     shared_goals = RBT.empty, shared_nodes = RBT.empty, shared_witnesses = W, shared_holders = RBT.empty,
     shared_open = RBT.empty, shared_goal_calls = RBT.empty, shared_node_calls = RBT.empty,
     shared_unconstructed = RBT.empty\<rparr>"
@@ -2624,12 +2678,12 @@ lemma shared_empty:
     and "RBT.lookup (shared_nodes (shared_empty x W)) p = None"
     and "shared_sharing (shared_empty x W) = x"
 proof -
-  have e: "position_index_formed (RBT.empty,0,[]) RBT.empty"
+  have e: "position_index_formed empty_share_state RBT.empty"
     by (simp add: position_index_formed_def value_reference_read_def share_state_empty)
-  have pos: "position_index_formed x (position_index_extend (RBT.empty,0,[]) x RBT.empty)"
+  have pos: "position_index_formed x (position_index_extend empty_share_state x RBT.empty)"
     using position_index_extend[OF share_state_empty(1) x _ e] ext share_state_empty(2) by simp
   have sel: "shared_sharing (shared_empty x W) = x"
-    "shared_positions (shared_empty x W) = position_index_extend (RBT.empty,0,[]) x RBT.empty"
+    "shared_positions (shared_empty x W) = position_index_extend empty_share_state x RBT.empty"
     "shared_goals (shared_empty x W) = RBT.empty" "shared_nodes (shared_empty x W) = RBT.empty"
     "shared_holders (shared_empty x W) = RBT.empty" "shared_open (shared_empty x W) = RBT.empty"
     "shared_goal_calls (shared_empty x W) = RBT.empty" "shared_node_calls (shared_empty x W) = RBT.empty"
@@ -2783,7 +2837,7 @@ definition share_resolution_state :: "('a,'s,'d,'c) finite_schema_system \<Right
     ('a,'s,'d,'c) shared_state" where
   "share_resolution_state P st = shared_place_goals P (resolution_goal_rows st)
     (shared_place_nodes (resolution_node_rows st)
-      (shared_empty (keyed_share_grounds (resolution_grounds st) (RBT.empty,0,[])) (resolution_witnesses st)))"
+      (shared_empty (keyed_share_grounds (resolution_grounds st) empty_share_state) (resolution_witnesses st)))"
 
 text \<open>
   A state is shared from any formed sharing state, its ground terms shared after what that state holds: every
@@ -2799,7 +2853,7 @@ definition share_resolution_state_from :: "share_state \<Rightarrow> ('a,'s,'d,'
       (shared_empty (keyed_share_grounds (resolution_grounds st) x0) (resolution_witnesses st)))"
 
 lemma share_resolution_state_from_empty:
-  "share_resolution_state P st = share_resolution_state_from (RBT.empty,0,[]) P st"
+  "share_resolution_state P st = share_resolution_state_from empty_share_state P st"
   by (simp add: share_resolution_state_def share_resolution_state_from_def)
 
 theorem share_resolution_state_from:

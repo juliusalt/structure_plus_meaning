@@ -243,7 +243,6 @@ lemma finite_exact_residual_ground:
   "finite_pattern_variables p = {||} \<Longrightarrow> finite_exact_term_pattern (finite_residual_term p) = p"
   by (induction p) simp_all
 
-
 lemma keyed_ground_at:
   assumes rep: "keyed_state_represents q T" and tf: "table_formed T" and held: "table_holds T t"
   shows "reference_term T (fst (keyed_share_term t q)) = Some t" "fst (keyed_share_term t q) < length T"
@@ -280,7 +279,7 @@ next
     note g = keyed_ground_at[OF rep tf this]
     have "finite_exact_term_pattern ?t = Finite_Pattern_Pair p r"
       using finite_exact_residual_ground[of "Finite_Pattern_Pair p r"] True by (simp del: finite_residual_term.simps)
-    with g True show ?thesis by (simp del: keyed_share_term.simps finite_residual_term.simps)
+    with g True show ?thesis by (simp del: keyed_share_term_simps finite_residual_term.simps)
   next
     case False
     have ip: "shared_pattern_formed T (keyed_pattern_at q p) \<and> shared_pattern_project T (keyed_pattern_at q p) = p \<and>
@@ -1145,8 +1144,7 @@ subsection \<open>The table read by position\<close>
 
 text \<open>
   The sharing state holds its table as the tree of its positions (@{const share_state_read}), the one tree of them the
-  shared state holds. A table's length grows under an extension, and the positions a formed table held before an
-  extension read the same shapes after it.
+  shared state holds. A table's length grows under an extension.
 \<close>
 
 lemma table_extends_length:
@@ -1159,43 +1157,10 @@ proof (cases "length T")
   then show ?thesis using Suc reference_term_bound[of T' n t] by simp
 qed simp
 
-lemma extends_read:
-  assumes tf: "table_formed T" and tf': "table_formed T'" and ext: "table_extends T T'" and i: "i < length T"
-  shows "value_reference_read T' i = value_reference_read T i"
-proof -
-  obtain u where u: "reference_term T i = Some u" using table_formed_decodes[OF tf i] by auto
-  have u': "reference_term T' i = Some u" using ext u by (simp add: table_extends_def)
-  from u show ?thesis
-  proof (cases rule: reference_term_cases)
-    case (leaf l)
-    have "reference_term T' i = Some (leaf_term l)" using u' leaf(2) by simp
-    then have "value_reference_read T' i = Some (Leaf_Shape l)" by (rule reference_factor_leaf_read)
-    with leaf(1) show ?thesis by simp
-  next
-    case (pair j k x y)
-    obtain j' k' where r': "value_reference_read T' i = Some (Pair_Shape j' k')"
-      and x': "reference_term T' j' = Some x" and y': "reference_term T' k' = Some y"
-      using u'
-    proof (cases rule: reference_term_cases)
-      case (leaf l)
-      then show ?thesis using pair(6) by (cases l) simp_all
-    next
-      case (pair j'' k'' x'' y'')
-      then show ?thesis using \<open>u = Finite_Pair x y\<close> by (auto intro: that)
-    qed
-    have "reference_term T' j = Some x" "reference_term T' k = Some y"
-      using ext pair(4,5) by (simp_all add: table_extends_def)
-    then have "j' = j" "k' = k" using reference_term_injective[OF tf'] x' y' by blast+
-    with r' pair(1) show ?thesis by simp
-  qed
-qed
-
-
 subsection \<open>The state, its projection and its formation\<close>
 
 record (overloaded) ('a,'s::linorder,'d,'c) shared_state =
   shared_sharing :: share_state
-
   shared_goals :: "('s list, ('a,'s,'d,'c) shared_goal_entry) rbt"
   shared_nodes :: "('s list, ('a,'s,'d,'c) shared_node_entry) rbt"
   shared_witnesses :: "(('s,'a) resolution_variable \<times> finite_factor_term) fset"
@@ -1338,7 +1303,13 @@ lemma shared_state_project_array_code [code]:
 text \<open>
   At a sharing state's table every decode, projection and unification reads the state's tree of positions
   (@{thm [source] share_state_read}), each reference by one lookup and no array made: these are the code of every
-  reader whose table is a sharing state's, and of a whole state's projection.
+  reader whose table is a sharing state's, and of a whole state's projection. They apply where
+  @{text "share_state_table q"} stands under the reader's head as the code is generated: a @{text let} that binds the
+  bare table, or another reader of it, reads the whole table per call. The resolver's controls check that the code of
+  the shared search, of R5's kept committed search and of the carry, as their context holds it, reaches no
+  @{const share_state_table} (@{text Factor_Resolution_Controls}); the deferred route's code equations
+  (@{text Factor_Deferred_Search}, @{text Factor_Deferred_Commitments}) stand outside that context and are not checked
+  there.
 \<close>
 
 lemma share_state_projects [code_unfold]:
@@ -1466,7 +1437,6 @@ definition shared_recorded_at :: "('a,'s::linorder,'d,'c) shared_state \<Rightar
 definition shared_state_formed :: "('a,'s,'d,'c) finite_witness_construction \<Rightarrow>
     ('a,'s,'d,'c) finite_schema_system \<Rightarrow> ('a,'s::linorder,'d,'c) shared_state \<Rightarrow> bool" where
   "shared_state_formed \<kappa> P s \<longleftrightarrow> share_state_formed (shared_sharing s) \<and>
-
     (\<forall>q h. RBT.lookup (shared_goals s) q = Some h \<longrightarrow> goal_entry_formed P (shared_state_table s) q h) \<and>
     (\<forall>q hn. RBT.lookup (shared_nodes s) q = Some hn \<longrightarrow> node_entry_formed (shared_state_table s) q hn) \<and>
     (\<forall>i x. x |\<in>| tree_bucket (shared_goal_calls s) i \<longrightarrow> i < length (shared_state_table s)) \<and>
@@ -1844,7 +1814,6 @@ definition shared_replace :: "'s::linorder list \<Rightarrow> ('a,'s,'d,'c) shar
 
 lemma shared_replace_fields [simp]:
   "shared_sharing (shared_replace q go no s) = shared_sharing s"
-
   "shared_witnesses (shared_replace q go no s) = shared_witnesses s"
   "RBT.lookup (shared_goals (shared_replace q go no s)) p = (if p = q then go else RBT.lookup (shared_goals s) p)"
   "RBT.lookup (shared_nodes (shared_replace q go no s)) p = (if p = q then no else RBT.lookup (shared_nodes s) p)"
@@ -2114,7 +2083,6 @@ proof -
       shared_derivation_project ?T' (shared_entry_node hn) = shared_derivation_project ?T (shared_entry_node hn)"
     if "RBT.lookup (shared_nodes s) q = Some hn" for q hn
     using node_entry_extends[OF tf shared_entries_formed(2)[OF s that] ext] .
-
   have rec: "\<forall>q. shared_recorded_at ?s' q" using s by (simp add: shared_reshare_def shared_recorded_at_def shared_state_formed_def)
   have c1: "\<forall>i y. y |\<in>| tree_bucket (shared_goal_calls ?s') i \<longrightarrow> i < length ?T'"
     using s le unfolding shared_state_formed_def shared_reshare_def by (simp, meson less_le_trans)

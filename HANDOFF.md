@@ -48,11 +48,14 @@ additions. Landed: GT3 #876, GT3b #970, GT3c #989 (`3852d3aa`: the table carried
 per representation; (7)'s demand and native graph-verdict forms). Its measurement put the rest of a step's cost at a
 table in the term table's reads (#810's projection code equations copy the whole table into an array at each
 projection): the fix #995 landed (`93ed9e07`: the share state's table the tree of its positions, every read
-logarithmic; q187's form A); its consolidations #1001 (continues #995) after D3a, before WC3.
-#993 also states the graph check alone at a table, the calls
-lemma and #989's forms over it. GT6 #878 (produced once, a run of hours; record `validation/given-table.json`) →
-#542, #547, #707, #399; its brief is rewritten after M2, D3b3, C3/C2 and #995, with D153's prediction (#965's
-follow-up 3), review 877's follow-up 1, review 971's follow-up 6 and #989's native listed constant.
+logarithmic; q187's form A); its consolidations #1001 (continues #995) after D3a, before WC3. C3/C2 #993 landed
+(`c48eb46b`: at a table a found state's truth is the graph check alone, with the calls lemma; C2's rows read from a
+sharing state at any representation; C3 formation once a table). Its remains, before GT6: #1002, C's per-node check
+over references (with review 994's 2, 4, 5), now; #1003, the route's search keeping its shared found states (q188's
+(c), with review 994's 1 and 3: the leaves' flag, the route-level completeness #547, #707 and #399 read), after #1001
+and before WC3. GT6 #878 (produced once, a run of hours; record `validation/given-table.json`) → #542, #547, #707,
+#399; its brief is rewritten after M2, D3b3, #1002 and #1003, with D153's prediction (#965's follow-up 3), review
+877's follow-up 1, review 971's follow-up 6 and #989's native listed constant.
 
 **11 at large k, and a search step at depth.** D153 #987 decided F1, provisionally (Q35): the material premise's
 relational fields in address form, the atoms kept, 10 over the data's own fields; 11 at k addresses about k + 5
@@ -77,7 +80,7 @@ dependency goes through the brief's Inputs, but for the guard AX5 #962 on #1000,
 The longest chain runs M1 → M2 → D3b3 → GT6 → R7 → #707 → #399 → … → #449 → #450; GT6's hours make the resolver's
 pole critical, the AX line has slack. Nothing is added after the tail until it shortens (the approval build, Open 142,
 waits); splices before a task go at any depth. The queue, the planner's choice and a residual until Q2's native
-answer: the pole (D3a, M2, #993, D3b2, D3b3, GT6, WC3), #1000 after M2, #1001 after D3a, the briefs
+answer: the pole (D3a, M2, #1002, #1001, #1003, D3b2, D3b3, WC3, GT6), #1000 after M2, the briefs
 (#988, #948), the AX line, the route in its chains' order, each review after its build; #887 after R7's review.
 
 ## Decisions
@@ -300,9 +303,7 @@ owner's re-root trigger, and a probe past its bound above `Factor_Least_Collecti
 
 - **Under way**: D3a #977 resuming from its installed theory (q185's three restatements accepted); M2 #998; #1001
   (review 995's consolidations) after D3a.
-- **What the next events ask**: #993's result: its (c) (q188: the route's committed search keeping the shared found
-  states, the per-node check over references) created as a build from its Follow-ups, before GT6 and WC3; Q35's
-  answer (if no, F4 replaces M1 and M2); #1000's result (after M2): the controls
+- **What the next events ask**: Q35's answer (if no, F4 replaces M1 and M2); #1000's result (after M2): the controls
   (77/1 resolved, 77/2 refuted at the committing instance) placed as a build where F1 suffices, else Open 157 designed;
   the count fix (Open 155) if it is needed; AX5's brief rewritten, its guard removed; M2's landing: #988 briefs AX2d1
   and AX2d2 (AX5 and #948 re-pointed onto AX2d2 at

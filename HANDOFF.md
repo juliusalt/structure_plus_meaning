@@ -61,8 +61,9 @@ and before WC3. GT6 #878 (produced once, a run of hours; record `validation/give
 relational fields in address form, the atoms kept, 10 over the data's own fields; 11 at k addresses about k + 5
 states against about 5.2 k²; F4, Q33-free, if the owner declines. M1 #996 landed (`9cfa70bc`); M2 #998 (one landing
 re-recording its differing words; review #999) → D3b3 #983, GT6, #1000 and #988. GT6's environment-level part (#965) is dominant and
-unaddressed; GT6's step (2) measures it. D3: D3b1 #975 and D3b1m #982 landed; D3a #977 resumes from the theory it
-installed in its tree; D3b2 #979 after D3a and #995; D3b3 #983 after D3b2 and M2. q162's held goals and construction
+unaddressed; GT6's step (2) measures it. D3: D3b1 #975 and D3b1m #982 landed; D3a #977 (`d20da0bb`) landed, review 978's
+follow-ups 1–6 mailed to D3b2 #979; D3b3 #983 after D3b2 and M2; #1006 attributes the step's doubling every 50 steps
+past 350 (review 978's 2), which D3b2, D3b3 and GT6's prediction take. q162's held goals and construction
 nodes and FI's remaining costs (next-edits 384, 385): under 1 % at the given, taken at the next restater of the route
 constants' code if a figure asks.
 
@@ -80,7 +81,7 @@ dependency goes through the brief's Inputs, but for the guard AX5 #962 on #1000,
 The longest chain runs M1 → M2 → D3b3 → GT6 → R7 → #707 → #399 → … → #449 → #450; GT6's hours make the resolver's
 pole critical, the AX line has slack. Nothing is added after the tail until it shortens (the approval build, Open 142,
 waits); splices before a task go at any depth. The queue, the planner's choice and a residual until Q2's native
-answer: the pole (D3a, M2, #1002, #1001, #1003, D3b2, D3b3, WC3, GT6), #1000 after M2, the briefs
+answer: the pole (M2, #1002, D3b2, #1001, #1003, D3b3, WC3, GT6), #1006 and #1000 beside it, the briefs
 (#988, #948), the AX line, the route in its chains' order, each review after its build; #887 after R7's review.
 
 ## Decisions
@@ -103,7 +104,7 @@ Taken by the planning episodes, where they are not entries of `DECISIONS.md`.
 - **17:50, 18:12, 18:36**: the native notion of a problem is the loop's product; a design is judged by what its
   identity rests on; a presentation supplies no meaning; a row, a locus, a prefix, a key or a family index is
   structure.
-- **Closed without an answer** (2026-09-30, 10-01): Q1, Q3–Q5, Q8–Q16, Q21, Q22, Q24, Q25; each provisional choice a
+- **Closed without an answer** (2026-09-30, 10-01): Q1, Q3–Q5, Q8–Q16, Q21, Q22, Q24–Q26; each provisional choice a
   generated choice, revisable on a reason.
 - **Nothing of the native loop is built over the bootstrap loop's presentations** (`development_problem`, task 9's
   rows and loci, `readiness_presents`, `state_presents`, `development_rows_present`, `request_presents`), none is
@@ -301,9 +302,11 @@ owner's re-root trigger, and a probe past its bound above `Factor_Least_Collecti
 
 ## Now
 
-- **Under way**: D3a #977 resuming from its installed theory (q185's three restatements accepted); M2 #998; #1001
-  (review 995's consolidations) after D3a.
-- **What the next events ask**: Q35's answer (if no, F4 replaces M1 and M2); #1000's result (after M2): the controls
+- **Under way**: M2 #998; #1002 (C's per-node check over references); D3b2 #979 (mailed review 978's follow-ups 1–6,
+  `.build/plans/plan-141/t979.md`); #1001; #1006 (the step past 350). The owner closed Q26 (2026-10-01).
+- **What the next events ask**: #1006's result (a cause D3b2, D3b3 and review 978's 3 and 4 leave becomes a fix
+  before GT6; GT6's per-call prediction from the measured growth); Q35's answer (if no, F4 replaces M1 and M2);
+  #1000's result (after M2): the controls
   (77/1 resolved, 77/2 refuted at the committing instance) placed as a build where F1 suffices, else Open 157 designed;
   the count fix (Open 155) if it is needed; AX5's brief rewritten, its guard removed; M2's landing: #988 briefs AX2d1
   and AX2d2 (AX5 and #948 re-pointed onto AX2d2 at

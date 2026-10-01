@@ -895,8 +895,8 @@ proof -
       by (cases "RBT.lookup (shared_nodes (search_state r)) q")
         (simp_all add: shared_commitment_access_def shared_access_simps fset_of_list.rep_eq
           RBT.lookup_keys[symmetric] domIff)
-    subgoal for n q by (simp add: shared_commitment_access_def shared_access_simps shared_derivation_project_def)
-    subgoal for n q by (simp add: shared_commitment_access_def shared_access_simps shared_derivation_project_def)
+    subgoal for n q by (simp add: shared_commitment_access_def shared_access_simps shared_derivation_project_simps)
+    subgoal for n q by (simp add: shared_commitment_access_def shared_access_simps shared_derivation_project_simps)
     subgoal for h
       by (cases "shared_entry_goal h") (simp_all add: shared_commitment_access_def shared_access_simps)
     done

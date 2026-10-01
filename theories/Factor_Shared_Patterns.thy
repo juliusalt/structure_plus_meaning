@@ -107,6 +107,20 @@ definition array_read :: "shape iarray \<Rightarrow> nat \<Rightarrow> shape opt
 lemma array_read_list: "array_read (IArray T) = value_reference_read T"
   by (rule ext) (simp add: array_read_def value_reference_read_def)
 
+text \<open>
+  The array is an index of the table's positions: the index notion at the array made of a table, read by position,
+  each position its own key (@{text array_positions}).
+\<close>
+
+lemma array_position_index:
+  "carrier_index (\<lambda>T i s. value_reference_read T i=Some s) (\<lambda>_. True) (UNIV::nat set) id IArray
+    (\<lambda>A i s. array_read A i=Some s)"
+  by (rule carrier_index.intro) (simp_all add: array_read_list)
+
+interpretation array_positions: carrier_index "\<lambda>T i s. value_reference_read T i=Some s" "\<lambda>_. True"
+  "UNIV::nat set" id IArray "\<lambda>A i s. array_read A i=Some s"
+  by (rule array_position_index)
+
 definition array_reference_term :: "shape iarray \<Rightarrow> nat \<Rightarrow> finite_factor_term option" where
   "array_reference_term A = read_reference_term (array_read A)"
 

@@ -22463,18 +22463,39 @@ array forms now its instances) and the state's tree are instances; the decode an
 defined as the list instances (`reference_term_simps`, `shared_pattern_project_simps`, `shared_unify_pairs_simps` keep
 their former equations). At a sharing state's table every such reader is coded through the tree by `[code_unfold]`
 equations that hold unconditionally (`share_state_projects`, `share_state_length`, `shared_goal_solvable_state`,
-`shared_state_project_read_code`), so no definition above `Factor_Shared_Resolution` changed and no premise was added.
+`shared_state_project_read_code`), so no statement above `Factor_Shared_Resolution` changed, but the empty-state
+exception, and no premise was added.
 
 The literal empty state is the constant `empty_share_state`; the statements that held the literal say it over the
 constant, content unchanged — `share_state_empty`, the `shared_empty` fields, `finite_share_index_exact`'s premise —
 the one exception the planner accepted to "kept by name and statement". `position_index_extend_code` is retired (the
-extension's definition reads each appended shape by one lookup). `shared_positions` stays: `shared_entries_formed`
-names its formation beside the other entries.
+extension's definition reads each appended shape by one lookup). `shared_positions` stayed beside the sharing state's
+tree until task 1001 retired it (below).
 
-Limits. The list projections of a material, a goal and a node and `shared_goal_solvable` keep their own definitions
-beside the read forms, related by `read_*_list`, since their unfoldings are cited throughout the searches; the index
-notion is not interpreted at the array by position (next-edits 337's second part). Measured (`.build/tasks/995/
+Limits (task 995; task 1001 closed them, below). The list projections of a material, a goal and a node and
+`shared_goal_solvable` kept their own definitions beside the read forms, related by `read_*_list`; the index notion was
+not interpreted at the array by position (next-edits 337's second part). Measured (`.build/tasks/995/
 measurement.md`, shared, beside main's line reloaded the same way): at the empty table within noise of main's (77/1 at
 bound 400 0.69–0.71 s against 0.70–0.72 s); 100 projections at 10,000 calls 0.6–0.8 ms against 18.2 ms before; 77/1
 at 10,000 non-closing entries 0.73–0.75 s against main's 2.02 s, within noise of the empty table; 113/7 at 2,000 at
 10,000 entries 0.05–0.06 s above its empty table (main's 0.72–0.76 s), the once-per-run carry of the calls.
+
+Task 1001, from #995's review (follow-ups 1–5). The shared state held two trees of the table's positions, the sharing
+state's and `shared_positions`, each appended shape inserted in both: `shared_positions`, `position_index_formed`,
+`position_index_extend` and `lookup_fold_insert` are retired; `shared_state_formed` no longer states the second tree and
+`shared_reshare`, `shared_empty` no longer build it (`shared_entries_formed` never named it and stands as it was;
+`shared_replace_fields` and the `shared_empty` selectors lose the retired field's clause). The step that adds a value is
+stated once over the table's form, the form's placing update and the relation the form holds to the table
+(`keyed_table_step`, `keyed_table_state`, `keyed_table_step_exact`); `keyed_reference_step` (a reversed list) and
+`keyed_share_shape` (the tree of positions) are its instances, `keyed_reference_state` and `keyed_state_represents` the
+relation's, their exactness statements kept. The list projections of a material, a goal and a node and
+`shared_goal_solvable` are defined as the read's instances at the list's read, their former equations kept as
+`shared_material_project_simps`, `shared_goal_project_simps` `[simp]`, `shared_derivation_project_simps`,
+`shared_goal_solvable_simps` `[simp]`, re-cited where the searches cited the definitions (`Factor_Shared_Search`,
+`Factor_Deferred_Search`, `Factor_Deferred_Commitments`, `Factor_Access_Commitments`); `shared_goal_solvable_code` is
+the instance of `read_goal_solvable_code`. The index notion is interpreted at the immutable array by position
+(`array_position_index`, `array_positions`). The code route's premise is named in `Factor_Shared_Resolution`'s row: the
+reads are logarithmic only where `share_state_table x` stands under an unfolded head, #995's driver its measurement.
+Measured (`.build/tasks/1001/measurement.md`, shared, CPU 22 %, no waiting, scale factor 1.0): the carry of 10,000
+calls 0.0165 s, against #995's 0.0431 s and #989's 0.0086 s (one tree insertion a shape beside the key tree's, where
+#989 made a cons); 100 projections at 10,000 calls 0.7–0.9 ms, as #995's.

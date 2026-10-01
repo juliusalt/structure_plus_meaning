@@ -2,10 +2,10 @@
  "boundary": "The original policy questions and complete source-change requests reconstruct all observations, native generation, criticism, comparison, revision, selection, installation and subsequent query evidence. A unique complete target is selected through the existing computed native producer choice. Final admission preserves the original target meaning, old material and ordered query scope. Empty and ambiguous choices, unreadable or incompatible sources, absent entries and missing required query evidence remain explicit. The requested finite target family, wider discovery, global cost, historical authority, native mathematical proof admission and genesis are separate boundaries.",
  "complete_recipe_source_manifest": "source-development-sources.json",
  "complete_review": {
-  "base_receipt_sha256": "ef35e0ec0eb98bf0e971f21fa915434a78e19855589627bfe39cc9f2e9887687",
+  "base_receipt_sha256": "a1263400aa325bda4ae162c1fc4d547848edd55700e973d17eb6363c171dc889",
   "records": 3,
   "reports_equal": true,
-  "seconds": 17.84,
+  "seconds": 14.7,
   "status": "accepted"
  },
  "execution_boundary": {
@@ -16,7 +16,7 @@
    "code_target": "Eval",
    "complete_artifact_transport": true,
    "complete_term_transport": true,
-   "module_sha256": "2736dbb9ba6113f355c026a44a6fdd53bcd77f44e47fc8b5762861c145bc072e",
+   "module_sha256": "e5196b34e1cd602eadf907c2bbfdb07525905020fe29a30ae109997692cb4c45",
    "subject_contracts": {
     "development_subject_investigation.yxml": "7cd41a8d57b1dd9271afbb16320f6d62285c6bda923ddd7fbdb4228004a6d6c4"
    },
@@ -85,24 +85,24 @@
  },
  "reports_equal": true,
  "retention": "The accepted base proof and the incremental proof of every changed theory and dependent supplied the exported module; every complete report boundary equals its retained original. Generated result bulk is not a repository input.",
- "source_manifest_sha256": "25c3d1a10be727ffc83143634036923db1d22c1adb709b877b7ce108b64c1473",
+ "source_manifest_sha256": "8a46ddd58956c4c76fe88186aae653ed51e609974ef0f97234ce63f5f0349b04",
  "sources_rebuilt": false,
  "status": "accepted",
  "steps": [
   {
    "exit_code": 0,
    "name": "presentation",
-   "seconds": 17.701804184995126
+   "seconds": 14.59619213998667
   },
   {
    "exit_code": 0,
    "name": "presentation-empty",
-   "seconds": 10.15746668400243
+   "seconds": 13.390202266004053
   },
   {
    "exit_code": 0,
    "name": "presentation-first",
-   "seconds": 17.297706027005916
+   "seconds": 14.146544333998463
   }
  ]
 }

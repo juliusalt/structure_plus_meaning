@@ -238,8 +238,8 @@ definition octet_control_material :: "local_address finite_material_pattern" whe
   "octet_control_material=\<lparr>finite_material_source=Finite_Pattern_Target (Finite_Whole octet_control_target),
     finite_material_atoms=Finite_Pattern_Pair (Finite_Pattern_Pair (native_var 0)
       (Finite_Pattern_Target (Finite_Anchor octet_control_target [5]))) control_empty_target,
-    finite_material_edges=control_empty_target, finite_material_counts=control_empty_target,
-    finite_material_functions=control_empty_target\<rparr>"
+    finite_material_edges=Finite_Pattern_Payload [], finite_material_counts=Finite_Pattern_Payload [],
+    finite_material_functions=Finite_Pattern_Payload []\<rparr>"
 
 definition octet_material_entry :: "local_address option definition_site" where
   "octet_material_entry=(Some [4,3,6],[0])"
@@ -262,7 +262,7 @@ definition octet_control_material_reading :: "unit \<Rightarrow> bool list" wher
   "octet_control_material_reading _=(let P=octet_control_program; ts=octet_control_terms;
       ps=octet_sample_pairs P ts; p=Finite_Payload [5]; q=criticism_octet_sample P ts p in
     case criticism_table P [octet_material_entry] ps of None \<Rightarrow> [False]
-    | Some A \<Rightarrow> [finite_system_payloads P={||},q\<noteq>p,
+    | Some A \<Rightarrow> [finite_system_payloads P={|[]|},q\<noteq>p,
         criticism_record [octet_material_entry] ps A={|(p,q,octet_material_entry,())|},
         criticism_refuted [octet_material_entry] ps A={|octet_material_entry|},
         finite_entry_materials P octet_material_entry\<noteq>{||},

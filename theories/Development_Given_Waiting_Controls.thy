@@ -46,9 +46,11 @@ text \<open>
   the last leaf (1) changed refuted at bound 500, at the moded selection (@{term False}) and at the waiting moded
   selection (@{term True}), with the states each search visits; at depth 2 the call with its last leaf changed, which
   the moded selection leaves unresolved at 800 (4,166 states) and does not return at larger bounds, refuted at the
-  waiting moded selection at 1500 in 4,785 states, the same at 800: its search is exhausted below either bound. The
+  waiting moded selection at 1500 in 3,211 states (4,785 before M2, task 998, which leaves 10 calling 0 alone beside
+  its material premise: every row visits fewer states, 1,645, 1,709, 1,598, 1,737, 1,739 and 1,746 at depth 1 before),
+  the same at 800: its search is exhausted below either bound. The
   other depth-2 rows (the moded selection's, the true call and the first leaf changed at both) cost more than a check
-  carries at every rebuild: they stand in the task's measurement (`.build/tasks/914/measurement.md`): at depth 2 the
+  carries at every rebuild: they stand in the task's measurement (`.build/tasks/914/measurement.md`, before M2): at depth 2 the
   true call resolved at 1500 in 4,437 states at the moded selection and 4,590 at the waiting moded selection, the call
   with its first leaf changed refuted in 3,987 (at 800) and 4,159 (at 1500). R4 (@{const finite_program_resolution})
   returns no verdict at depth 1 within 10 s at 500 (review 828's follow-up 6 found the same), so no R4 value stands
@@ -58,8 +60,8 @@ text \<open>
 lemma given_waiting_control:
   "map (\<lambda>(w,k,v,n). given_waiting_row w k v n)
      [(False,1,0,500),(True,1,0,500),(False,1,2,500),(True,1,2,500),(False,1,1,500),(True,1,1,500),(True,2,1,1500)] =
-   [(Some True,1645),(Some True,1709),(Some False,1598),(Some False,1737),(Some False,1739),(Some False,1746),
-    (Some False,4785)]"
+   [(Some True,981),(Some True,1045),(Some False,934),(Some False,1073),(Some False,1075),(Some False,1082),
+    (Some False,3211)]"
   by eval
 
 end

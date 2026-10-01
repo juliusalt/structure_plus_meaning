@@ -167,10 +167,10 @@ qed
 section \<open>The artifact's enumeration inside 10, committed at its material socket\<close>
 
 text \<open>
-  10's clause observes the artifact at its input through its complete material equation and converts the observed
-  fields through 0 and 9. Every enumeration of the artifact is a solution of the material premise, and each one
-  extends to a true instance of the clause keeping the head's input: its converted fields are the data of that
-  enumeration. The socket is declared without the kept head.
+  10's clause observes the artifact at its input through its complete material equation, whose incidence and
+  attachment fields are already the artifact's data, and converts the atoms through 0. Every enumeration of the
+  artifact is a solution of the material premise, and each one extends to a true instance of the clause keeping the
+  head's input: its fields are the data of that enumeration. The socket is declared without the kept head.
 \<close>
 
 definition given_artifact_material :: "nat finite_material_pattern" where
@@ -183,12 +183,9 @@ lemma given_artifact_material_decoded: "decode_finite_material given_artifact_ma
 
 definition given_artifact_socket_schema :: "(nat,nat,nat) finite_factor_schema" where
   "given_artifact_socket_schema = \<lparr>finite_schema_conclusion = Finite_Pattern_Pair (Finite_Variable 0)
-      (Finite_Pattern_Pair (Finite_Variable 5) (Finite_Pattern_Pair (Finite_Variable 6)
-        (Finite_Pattern_Pair (Finite_Variable 7) (Finite_Variable 8)))),
-    finite_schema_premises = {|(0,0,Finite_Pattern_Pair (Finite_Variable 1) (Finite_Variable 5)),
-      (1,9,Finite_Pattern_Pair (Finite_Variable 1) (Finite_Pattern_Pair (Finite_Variable 2) (Finite_Variable 6))),
-      (2,9,Finite_Pattern_Pair (Finite_Variable 1) (Finite_Pattern_Pair (Finite_Variable 3) (Finite_Variable 7))),
-      (3,9,Finite_Pattern_Pair (Finite_Variable 1) (Finite_Pattern_Pair (Finite_Variable 4) (Finite_Variable 8)))|},
+      (Finite_Pattern_Pair (Finite_Variable 5) (Finite_Pattern_Pair (Finite_Variable 2)
+        (Finite_Pattern_Pair (Finite_Variable 3) (Finite_Variable 4)))),
+    finite_schema_premises = {|(0,0,Finite_Pattern_Pair (Finite_Variable 1) (Finite_Variable 5))|},
     finite_schema_materials = {|(4,given_artifact_material)|}\<rparr>"
 
 lemma given_artifact_socket_decoded: "decode_finite_schema given_artifact_socket_schema = artifact_projection_schema"
@@ -196,24 +193,20 @@ lemma given_artifact_socket_decoded: "decode_finite_schema given_artifact_socket
     map_relation_values_def artifact_projection_schema_def given_artifact_material_decoded)
 
 lemma artifact_projection_parts:
-  "schema_premises artifact_projection_schema =
-    {(0,0,Pattern_Pair (Pattern_Variable 1) (Pattern_Variable 5)),
-     (1,9,Pattern_Pair (Pattern_Variable 1) (Pattern_Pair (Pattern_Variable 2) (Pattern_Variable 6))),
-     (2,9,Pattern_Pair (Pattern_Variable 1) (Pattern_Pair (Pattern_Variable 3) (Pattern_Variable 7))),
-     (3,9,Pattern_Pair (Pattern_Variable 1) (Pattern_Pair (Pattern_Variable 4) (Pattern_Variable 8)))}"
+  "schema_premises artifact_projection_schema = {(0,0,Pattern_Pair (Pattern_Variable 1) (Pattern_Variable 5))}"
   "schema_material_premises artifact_projection_schema = {(4,artifact_projection_material)}"
   "schema_conclusion artifact_projection_schema = Pattern_Pair (Pattern_Variable 0) (Pattern_Pair (Pattern_Variable 5)
-    (Pattern_Pair (Pattern_Variable 6) (Pattern_Pair (Pattern_Variable 7) (Pattern_Variable 8))))"
+    (Pattern_Pair (Pattern_Variable 2) (Pattern_Pair (Pattern_Variable 3) (Pattern_Variable 4))))"
   "material_variables artifact_projection_material = {0,1,2,3,4}"
-  "schema_variables artifact_projection_schema = {0,1,2,3,4,5,6,7,8}"
+  "schema_variables artifact_projection_schema = {0,1,2,3,4,5}"
   by (auto simp: artifact_projection_schema_def artifact_projection_material_def material_variables_def
     material_fields_def schema_variables_def)
 
 lemma artifact_material_solution:
   assumes "evaluate_material_satisfaction g artifact_projection_material"
   obtains R A E B F where "artifact_enumeration R A E B F" "g 0 = Target_Term (Whole_Artifact R)"
-    "g 1 = enumeration_term (map (atom_term R) A)" "g 2 = enumeration_term (map (incidence_term R) E)"
-    "g 3 = enumeration_term (map (attachment_term R) B)" "g 4 = enumeration_term (map (attachment_term R) F)"
+    "g 1 = enumeration_term (map (atom_term R) A)" "g 2 = data_list_term (map incidence_data E)"
+    "g 3 = data_list_term (map address_pair_data B)" "g 4 = data_list_term (map address_pair_data F)"
     "term_formed (g 0)" "term_formed (g 1)" "term_formed (g 2)" "term_formed (g 3)" "term_formed (g 4)"
 proof -
   have obs: "material_observation (g 0) (g 1) (g 2) (g 3) (g 4)"
@@ -245,32 +238,22 @@ proof (rule conjI, rule allI, rule impI, rule conjI)
       and source: "evaluate_pattern g (material_source N) = evaluate_pattern h (material_source N)"
     have N: "N = artifact_projection_material" using n by (simp add: artifact_projection_parts)
     obtain R A E B F where e: "artifact_enumeration R A E B F" and g0: "g 0 = Target_Term (Whole_Artifact R)"
-      and g1: "g 1 = enumeration_term (map (atom_term R) A)" and g2: "g 2 = enumeration_term (map (incidence_term R) E)"
-      and g3: "g 3 = enumeration_term (map (attachment_term R) B)"
-      and g4: "g 4 = enumeration_term (map (attachment_term R) F)"
+      and g1: "g 1 = enumeration_term (map (atom_term R) A)" and g2: "g 2 = data_list_term (map incidence_data E)"
+      and g3: "g 3 = data_list_term (map address_pair_data B)"
+      and g4: "g 4 = data_list_term (map address_pair_data F)"
       and fg: "term_formed (g 0)" "term_formed (g 1)" "term_formed (g 2)" "term_formed (g 3)" "term_formed (g 4)"
       using sat unfolding N by (rule artifact_material_solution)
     have formed: "exact_formed R" and atoms: "set A = rra_carrier (object_structure R)"
       using artifact_enumeration_material[OF e] by simp_all
-    let ?h = "\<lambda>a::nat. if a \<le> 4 then g a else if a = 5 then data_list_term (map Payload_Term A)
-      else if a = 6 then data_list_term (map incidence_data E) else if a = 7 then data_list_term (map address_pair_data B)
-      else data_list_term (map address_pair_data F)"
+    let ?h = "\<lambda>a::nat. if a \<le> 4 then g a else data_list_term (map Payload_Term A)"
     have p0: "(0,Pair_Term (g 1) (data_list_term (map Payload_Term A))) \<in> positive_meaning material_data_system"
       using material_data_carrier[OF formed] atoms g1 by simp
-    have p1: "(9,Pair_Term (g 1) (Pair_Term (g 2) (data_list_term (map incidence_data E)))) \<in> positive_meaning material_data_system"
-      using material_projection_incidence_list[OF formed atoms] fg(3) g1 g2 by simp
-    have p2: "(9,Pair_Term (g 1) (Pair_Term (g 3) (data_list_term (map address_pair_data B)))) \<in> positive_meaning material_data_system"
-      using material_projection_attachment_list[OF formed atoms] fg(4) g1 g3 by simp
-    have p3: "(9,Pair_Term (g 1) (Pair_Term (g 4) (data_list_term (map address_pair_data F)))) \<in> positive_meaning material_data_system"
-      using material_projection_attachment_list[OF formed atoms] fg(5) g1 g4 by simp
-    have f: "term_formed (data_list_term (map Payload_Term A))" "term_formed (data_list_term (map incidence_data E))"
-      "term_formed (data_list_term (map address_pair_data B))" "term_formed (data_list_term (map address_pair_data F))"
-      using positive_meaning_formed[OF p0] positive_meaning_formed[OF p1] positive_meaning_formed[OF p2]
-        positive_meaning_formed[OF p3] by (simp_all add: material_data_call)
+    have f: "term_formed (data_list_term (map Payload_Term A))"
+      using positive_meaning_formed[OF p0] by (simp add: material_data_call)
     have obs: "material_observation (g 0) (g 1) (g 2) (g 3) (g 4)"
       using sat unfolding N by (simp add: artifact_projection_material_def)
     have true: "clause_true ?M artifact_projection_schema ?h"
-      using p0 p1 p2 p3 f fg obs
+      using p0 f fg obs
       by (auto simp: clause_true_def artifact_projection_parts artifact_projection_old_meaning artifact_projection_material_def)
     have kept: "head_kept False view_identity given_artifact_socket_schema h ?h"
       using source by (simp add: head_kept_identity given_artifact_socket_decoded artifact_projection_parts N artifact_projection_material_def)

@@ -161,95 +161,30 @@ next
     (auto simp: atom_term_def finite_occurrence_read_correct occurrence_term_def split: if_splits)
 qed
 
-fun finite_incidence_read ::
-  "finite_exact_artifact \<Rightarrow> finite_factor_term \<Rightarrow>
-    (local_address \<times> local_address \<times> local_address) option" where
-  "finite_incidence_read C (Finite_Pair x (Finite_Pair y z)) =
-    (case (finite_occurrence_read C x,finite_occurrence_read C y,finite_occurrence_read C z) of
-      (Some a,Some b,Some c) \<Rightarrow> Some (a,b,c) | _ \<Rightarrow> None)"
-| "finite_incidence_read C t = None"
+text \<open>
+  An attachment and an incidence are read in the artifact data class's address form: an attachment a pair of
+  payloads, its address and its value, an incidence a payload, its first address, before an attachment-shaped
+  pair of addresses. No artifact is consulted: the addresses are opaque payloads, related to the atoms' anchors
+  by the observation's own check.
+\<close>
 
-lemma finite_incidence_read_pair:
-  "finite_incidence_read C (Finite_Pair x (Finite_Pair y z)) = Some (a,b,c) \<longleftrightarrow>
-    finite_occurrence_read C x = Some a \<and>
-    finite_occurrence_read C y = Some b \<and> finite_occurrence_read C z = Some c"
-  by (cases "finite_occurrence_read C x"; cases "finite_occurrence_read C y";
-      cases "finite_occurrence_read C z") auto
-
-lemma finite_incidence_read_correct:
-  "finite_incidence_read C t = Some e \<longleftrightarrow>
-    decode_finite_term t = incidence_term (decode_finite_object C) e"
-proof -
-  obtain a b c where eshape: "e=(a,b,c)" by (cases e) auto
-  show ?thesis
-  proof (cases t)
-    case (Finite_Target x)
-    then show ?thesis by (simp add: incidence_term_def eshape)
-  next
-    case (Finite_Payload v)
-    then show ?thesis by (simp add: incidence_term_def eshape)
-  next
-    case (Finite_Pair x tail)
-    have tshape: "t=Finite_Pair x tail" by (rule Finite_Pair)
-    show ?thesis
-    proof (cases tail)
-      case (Finite_Target y)
-      then show ?thesis by (simp add: tshape incidence_term_def eshape)
-    next
-      case (Finite_Payload v)
-      then show ?thesis by (simp add: tshape incidence_term_def eshape)
-    next
-      case (Finite_Pair y z)
-      show ?thesis
-        by (simp only: tshape Finite_Pair eshape finite_incidence_read_pair
-            finite_occurrence_read_correct decode_finite_term.simps incidence_term_def prod.case)
-           simp
-    qed
-  qed
-qed
-
-fun finite_attachment_read ::
-  "finite_exact_artifact \<Rightarrow> finite_factor_term \<Rightarrow> (local_address \<times> octets) option" where
-  "finite_attachment_read C (Finite_Pair x (Finite_Payload v)) =
-    map_option (\<lambda>a. (a,v)) (finite_occurrence_read C x)"
-| "finite_attachment_read C t = None"
-
-lemma finite_attachment_read_pair:
-  "finite_attachment_read C (Finite_Pair x (Finite_Payload v)) = Some (a,w) \<longleftrightarrow>
-    w=v \<and> finite_occurrence_read C x = Some a"
-  by (cases "finite_occurrence_read C x") auto
+fun finite_attachment_read :: "finite_factor_term \<Rightarrow> (local_address \<times> octets) option" where
+  "finite_attachment_read (Finite_Pair (Finite_Payload a) (Finite_Payload v)) = Some (a,v)"
+| "finite_attachment_read t = None"
 
 lemma finite_attachment_read_correct:
-  "finite_attachment_read C t = Some av \<longleftrightarrow>
-    decode_finite_term t = attachment_term (decode_finite_object C) av"
-proof -
-  obtain a w where av: "av=(a,w)" by (cases av) auto
-  show ?thesis
-  proof (cases t)
-    case (Finite_Target x)
-    then show ?thesis by (simp add: av attachment_term_def)
-  next
-    case (Finite_Payload v)
-    then show ?thesis by (simp add: av attachment_term_def)
-  next
-    case (Finite_Pair x y)
-    have tshape: "t=Finite_Pair x y" by (rule Finite_Pair)
-    show ?thesis
-    proof (cases y)
-      case (Finite_Target z)
-      then show ?thesis by (simp add: tshape av attachment_term_def)
-    next
-      case (Finite_Payload v)
-      show ?thesis
-        by (simp only: tshape Finite_Payload av finite_attachment_read_pair
-            finite_occurrence_read_correct decode_finite_term.simps attachment_term_def prod.case)
-           auto
-    next
-      case (Finite_Pair y z)
-      then show ?thesis by (simp add: tshape av attachment_term_def)
-    qed
-  qed
-qed
+  "finite_attachment_read t = Some z \<longleftrightarrow> decode_finite_term t = address_pair_data z"
+  by (cases t rule: finite_attachment_read.cases; cases z) (auto simp: address_pair_data_def)
+
+fun finite_incidence_read ::
+  "finite_factor_term \<Rightarrow> (local_address \<times> local_address \<times> local_address) option" where
+  "finite_incidence_read (Finite_Pair (Finite_Payload a) p) = map_option (Pair a) (finite_attachment_read p)"
+| "finite_incidence_read t = None"
+
+lemma finite_incidence_read_correct:
+  "finite_incidence_read t = Some z \<longleftrightarrow> decode_finite_term t = incidence_data z"
+  by (cases t rule: finite_incidence_read.cases; cases z)
+    (auto simp: incidence_data_def finite_attachment_read_correct[symmetric])
 
 section \<open>Checking the complete artifact equation\<close>
 
@@ -258,9 +193,9 @@ fun finite_material_observation ::
     finite_factor_term \<Rightarrow> finite_factor_term \<Rightarrow> bool" where
   "finite_material_observation (Finite_Target (Finite_Whole C)) atoms edges counts functions =
     (case (finite_enumeration_read (finite_atom_read C) atoms,
-           finite_enumeration_read (finite_incidence_read C) edges,
-           finite_enumeration_read (finite_attachment_read C) counts,
-           finite_enumeration_read (finite_attachment_read C) functions) of
+           finite_list_read (Finite_Payload []) finite_incidence_read edges,
+           finite_list_read (Finite_Payload []) finite_attachment_read counts,
+           finite_list_read (Finite_Payload []) finite_attachment_read functions) of
       (Some A,Some E,Some B,Some F) \<Rightarrow> finite_artifact_enumeration C A E B F | _ \<Rightarrow> False)"
 | "finite_material_observation source atoms edges counts functions = False"
 
@@ -268,9 +203,9 @@ lemma finite_material_observation_whole:
   "finite_material_observation (Finite_Target (Finite_Whole C)) atoms edges counts functions \<longleftrightarrow>
     (\<exists>A E B F. finite_artifact_enumeration C A E B F \<and>
       finite_enumeration_read (finite_atom_read C) atoms = Some A \<and>
-      finite_enumeration_read (finite_incidence_read C) edges = Some E \<and>
-      finite_enumeration_read (finite_attachment_read C) counts = Some B \<and>
-      finite_enumeration_read (finite_attachment_read C) functions = Some F)"
+      finite_list_read (Finite_Payload []) finite_incidence_read edges = Some E \<and>
+      finite_list_read (Finite_Payload []) finite_attachment_read counts = Some B \<and>
+      finite_list_read (Finite_Payload []) finite_attachment_read functions = Some F)"
   by (auto split: option.splits)
 
 theorem finite_material_observation_correct:
@@ -285,12 +220,12 @@ proof (cases source)
     have atom: "\<And>a A. finite_enumeration_read (finite_atom_read C) a = Some A \<longleftrightarrow>
       decode_finite_term a = enumeration_term (map (atom_term (decode_finite_object C)) A)"
       by (rule finite_enumeration_read_correct[OF finite_atom_read_correct])
-    have edge: "\<And>e E. finite_enumeration_read (finite_incidence_read C) e = Some E \<longleftrightarrow>
-      decode_finite_term e = enumeration_term (map (incidence_term (decode_finite_object C)) E)"
-      by (rule finite_enumeration_read_correct[OF finite_incidence_read_correct])
-    have attach: "\<And>b B. finite_enumeration_read (finite_attachment_read C) b = Some B \<longleftrightarrow>
-      decode_finite_term b = enumeration_term (map (attachment_term (decode_finite_object C)) B)"
-      by (rule finite_enumeration_read_correct[OF finite_attachment_read_correct])
+    have edge: "\<And>e E. finite_list_read (Finite_Payload []) finite_incidence_read e = Some E \<longleftrightarrow>
+      decode_finite_term e = data_list_term (map incidence_data E)"
+      by (rule finite_list_read_data_correct[OF finite_incidence_read_correct])
+    have attach: "\<And>b B. finite_list_read (Finite_Payload []) finite_attachment_read b = Some B \<longleftrightarrow>
+      decode_finite_term b = data_list_term (map address_pair_data B)"
+      by (rule finite_list_read_data_correct[OF finite_attachment_read_correct])
     show ?thesis
       using Finite_Target Finite_Whole
       by (simp only: finite_material_observation_whole atom edge attach finite_artifact_enumeration_correct)
@@ -308,8 +243,8 @@ next
 qed
 
 text \<open>
-  The checker reads each actual enumeration term and compares the reconstructed
-  finite value with the complete supplied artifact. Distinctness applies to the
+  The checker reads the atoms' enumeration and the three data lists and compares
+  the reconstructed finite value with the complete supplied artifact. Distinctness applies to the
   carrier, incidence, and functional relation; anonymous repetitions are counted
   as a multiset. Every allowed enumeration is checked by the same equation.
   All recursion follows supplied term structure, including on malformed inputs.

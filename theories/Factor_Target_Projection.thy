@@ -242,8 +242,8 @@ next
     using artifact_enumeration_material[OF enumeration] by auto
   have inside: "set A\<subseteq>rra_carrier (object_structure R)" using atoms by simp
   have observation: "material_observation (Target_Term (Whole_Artifact R))
-    (enumeration_term (map (atom_term R) A)) (enumeration_term (map (incidence_term R) E))
-    (enumeration_term (map (attachment_term R) B)) (enumeration_term (map (attachment_term R) F))"
+    (enumeration_term (map (atom_term R) A)) (data_list_term (map incidence_data E))
+    (data_list_term (map address_pair_data B)) (data_list_term (map address_pair_data F))"
     using enumeration by (simp only: material_observation_exact)
   have lookup: "(8,material_projection_argument (enumeration_term (map (atom_term R) A))
     (Target_Term x) (Payload_Term r))\<in>positive_meaning material_data_system"
@@ -252,9 +252,9 @@ next
     by (simp only: target_projection_fields, rule disjI2,
       rule exI[of _ "Target_Term (Whole_Artifact R)"],
       rule exI[of _ "enumeration_term (map (atom_term R) A)"],
-      rule exI[of _ "enumeration_term (map (incidence_term R) E)"],
-      rule exI[of _ "enumeration_term (map (attachment_term R) B)"],
-      rule exI[of _ "enumeration_term (map (attachment_term R) F)"],
+      rule exI[of _ "data_list_term (map incidence_data E)"],
+      rule exI[of _ "data_list_term (map address_pair_data B)"],
+      rule exI[of _ "data_list_term (map address_pair_data F)"],
       rule exI[of _ "Target_Term x"], rule exI[of _ "Payload_Term r"], rule exI[of _ v])
       (use observation lookup artifact_projection_complete[OF parts(2)] parts(3) in simp)
 qed

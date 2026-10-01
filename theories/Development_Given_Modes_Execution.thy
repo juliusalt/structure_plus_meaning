@@ -49,18 +49,20 @@ definition modes_113_7 :: "bool \<Rightarrow> nat \<Rightarrow> bool option \<ti
 text \<open>
   Each row: the verdict (resolved: @{term "Some True"}; unresolved: @{term None}), the kinds of the diagnoses the
   search left (0 a cut at the bound, 2 a witnessed failure) and the states it visited. 113/7 at 230, R3's least bound,
-  is resolved at both selections, in 413 states at the moded selection against 514 at R5's default: 5 at the whole
+  is resolved at both selections, in 401 states at the moded selection against 457 at R5's default: 5 at the whole
   view binds 6.1/1's output in the bag checks. 77/1 and 77/2 are unresolved at both: the order alone does not resolve
   77 (correction (12), "The prediction, checked"), the next costs being the production at 37.0/2 (correction (13))
-  and 11's premise-only target (RD1). At 200 the moded search visits more states at 77/1 (614 against 280): past
-  5's binding at 37.0/1 it reaches 12's committed sub-search, whose least presentation is (13)'s cost.
+  and 11's premise-only target (RD1). At 200 the moded search visits more states at 77/1 (1,086 against 449): past
+  5's binding at 37.0/1 it reaches 12's committed sub-search, whose least presentation is (13)'s cost. Since M2
+  (task 998), 10 calls 0 alone beside its material premise: 113/7 resolves in fewer states at both selections, R5's
+  default leaving no cut, and within the same bounds the searches at 77 reach further (614, 280 and 326 before).
 \<close>
 
 lemma given_modes_controls:
-  "modes_113_7 True 230 = (Some True, [], 413) \<and> modes_113_7 False 230 = (Some True, [0], 514) \<and>
-   modes_77_1 True 200 = (None, [0,2], 614) \<and> modes_77_1 False 200 = (None, [0,2], 280) \<and>
+  "modes_113_7 True 230 = (Some True, [], 401) \<and> modes_113_7 False 230 = (Some True, [], 457) \<and>
+   modes_77_1 True 200 = (None, [0,2], 1086) \<and> modes_77_1 False 200 = (None, [0,2], 449) \<and>
    modes_77_2 True 200 = (None, [0], 201) \<and>
-   modes_77_2 True 300 = (None, [0,2], 326)"
+   modes_77_2 True 300 = (None, [0,2], 563)"
   by eval
 
 end

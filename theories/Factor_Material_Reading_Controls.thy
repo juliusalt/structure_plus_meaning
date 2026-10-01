@@ -29,8 +29,8 @@ definition reading_control_wrong_leaf :: "nat finite_material_pattern" where
     finite_material_functions=Finite_Variable 4\<rparr>"
 
 lemma reading_control_wrong_leaf_refused:
-  "finite_enumeration_pattern_read (finite_incidence_entry (finite_atom_entries
-      (finite_material_atoms reading_control_wrong_leaf))) (finite_material_edges reading_control_wrong_leaf) = Open_Reading"
+  "finite_list_pattern_read (Finite_Payload []) finite_incidence_entry
+    (finite_material_edges reading_control_wrong_leaf) = Open_Reading"
   "finite_pattern_variables (finite_material_source reading_control_wrong_leaf) \<noteq> {||}"
   "finite_material_resolution reading_control_wrong_leaf = Material_Solutions {||}"
   by (simp_all add: reading_control_wrong_leaf_def finite_material_resolution_unreadable_field finite_material_skeleton_unreadable_iff finite_atom_entry_def
@@ -59,11 +59,16 @@ definition reading_control_environment :: "local_address option finite_artifact_
       empty_installation_program reading_control_fact_program (\<lambda>_. (None,[])) of
     Some (K,v) \<Rightarrow> K | None \<Rightarrow> finite_empty_environment)"
 
-definition reading_control_large :: finite_factor_term where
-  "reading_control_large = (case finite_environment_value reading_control_environment of
+text \<open>
+  The artifact of k addresses in that environment (its 1-, 5- and 18-address artifacts, #968's and #991's fixtures),
+  its data read from the environment's presented value.
+\<close>
+
+definition reading_control_sized :: "nat \<Rightarrow> finite_factor_term" where
+  "reading_control_sized k = (case finite_environment_value reading_control_environment of
       Finite_Pair A B \<Rightarrow> (case finite_data_list_read A of
           Some rows \<Rightarrow> (case filter (\<lambda>t. case finite_artifact_value_read t of
-              Some C \<Rightarrow> fcard (finite_carrier (finite_structure C)) = 18 | None \<Rightarrow> False)
+              Some C \<Rightarrow> fcard (finite_carrier (finite_structure C)) = k | None \<Rightarrow> False)
             (map (\<lambda>r. case r of Finite_Pair u d \<Rightarrow> d | t \<Rightarrow> t) rows) of t # ts \<Rightarrow> t | [] \<Rightarrow> Finite_Payload [])
         | None \<Rightarrow> Finite_Payload [])
     | t \<Rightarrow> t)"
@@ -102,29 +107,43 @@ definition reading_control_report :: "(unit \<Rightarrow> bool) \<Rightarrow> fi
 definition reading_control_chain_value :: "nat \<Rightarrow> finite_factor_term" where
   "reading_control_chain_value k = finite_artifact_value (reading_control_chain k)"
 
+text \<open>
+  R4's verdict beside it, the plain resolution at the same call (1 resolved, 0 refuted, 2 unresolved), where its
+  material premise is reached with a ground source only at artifacts small enough for every enumeration.
+\<close>
+
+definition reading_control_plain :: "finite_factor_term \<Rightarrow> nat \<Rightarrow> nat" where
+  "reading_control_plain t n = (case finite_program_resolution no_witness_construction finite_rooted_given_readers 11 t n of
+    Finite_Resolved C \<Rightarrow> 1 | Finite_Refuted \<Rightarrow> 0 | Finite_Unresolved D \<Rightarrow> 2)"
+
 ML \<open>
 local
   val report = @{code reading_control_report}
   val chain = @{code reading_control_chain_value}
-  val large = @{code reading_control_large}
+  val sized = @{code reading_control_sized}
+  val plain = @{code reading_control_plain}
   val nat = @{code nat_of_integer} o IntInf.fromInt
   val int_of = IntInf.toInt o @{code integer_of_nat}
-  fun run (name, t) =
+  fun run (name, k, t, r4) =
     let
       val states = Unsynchronized.ref 0
       fun tk () = (states := !states + 1; true)
       val t0 = Timing.start ()
       val r = map int_of (report tk t (nat 3000))
       val tm = Timing.result t0
-    in (name, r, !states, tm) end
-  val calls = map (fn k => ("chain k=" ^ Int.toString k, chain (nat k))) [1, 2, 3, 8] @ [("77/1's 18-address", large)]
+      val p = if r4 then SOME (int_of (plain t (nat 800))) else NONE
+    in (name, k, r, !states, tm, p) end
+  val calls = map (fn k => ("chain k=" ^ Int.toString k, k, chain (nat k), k <= 3)) [1, 2, 3, 8] @
+    map (fn k => ("77/1's " ^ Int.toString k ^ "-address", k, sized (nat k), k <= 5)) [1, 5, 18]
   val results = map run calls
-  fun line (name, r, s, tm) =
+  fun line (name, k, r, s, tm, p) =
     "READING CONTROL " ^ name ^ ": verdict/certificates/checked " ^ commas (map Int.toString r) ^
-      ", states " ^ Int.toString s ^ ", " ^ Timing.message tm
+      ", states " ^ Int.toString s ^ " (k + 5 = " ^ Int.toString (k + 5) ^ "), R4 " ^
+      (case p of SOME v => Int.toString v | NONE => "not run") ^ ", " ^ Timing.message tm
 in
   val _ = List.app (writeln o line) results
-  val _ = if forall (fn (_, r, _, _) => (case r of [1, c, 1] => c > 0 | _ => false)) results then ()
+  val _ = if forall (fn (_, _, r, _, _, p) => (case r of [1, c, 1] => c > 0 | _ => false) andalso
+      (case p of SOME v => v = 1 | NONE => true)) results then ()
     else error ("Reading control failed: " ^ space_implode "; " (map line results))
 end
 \<close>

@@ -6,7 +6,9 @@ text \<open>
   GT5 of DECISIONS.md, task 495's entry, the section "The given's calls are decided once": the given's table as a
   notion. Its calls are a function of the given's value, computed here from @{const given_environment} and
   @{const development_given_value} through their presenters, never supplied beside them, in the order the production
-  takes them (bottom-up: 11 at the given's artifacts by ascending size, 7 and 12 at each with itself, the environment
+  takes them (bottom-up: 11 at the given's artifacts by ascending size, 7 and 12 at each with itself, the data
+  recognitions the given's selections make (2 at each artifact-row presentation and binding row, 4 at every suffix of
+  the rows term and of the bindings term, the shortest first: GT5b, course (a) of task 1020's addition), the environment
   admission's list traversals from the shortest suffix up and 26 at the environment value, 156 at the site value, the
   package's readers 79, 77, 80, 82 and 83 at the given's package). The guard at the given with no additions is the
   table's entries (task 928's entry, course (c)): no guard call at (g, g) is an entry. Which
@@ -70,6 +72,27 @@ definition given_identity_calls :: "(nat\<times>finite_factor_term) list" where
     (12,Finite_Pair (given_artifact_value q) (given_artifact_value q))]) given_artifacts)"
 
 text \<open>
+  The data recognitions of GT5b: a data selection (5) calls 2 at every entry it skips and at the entry it selects, and
+  4 at the rest of the list where it selects. 24 at each binding selects its source and target rows over the rows term
+  by 5 itself, and 37's artifact lookup selects over the given's artifact rows and 38's binding lookup over its
+  bindings at the calls of 156 and 79 to 83. So these are calls the given's readers make at the given's value, computed
+  here from it through the presenters the environment calls below use, never supplied beside it: 2 at the presentation
+  of each artifact row and at each binding row, then 4 at every suffix of the rows term and then of the bindings term,
+  from the empty suffix to the whole list. Every entry's own calls stand before it (a suffix's head's 2 and the shorter
+  suffix's 4); the family stands before the environment calls, whose 24 selects over the rows, and before 156 and the
+  package's calls, which select through 37 and 38.
+\<close>
+
+definition given_recognition_calls :: "(nat\<times>finite_factor_term) list" where
+  "given_recognition_calls=
+    map (\<lambda>q. (2,given_table_data (environment_artifact_rows_term q))) given_artifact_rows @
+    map (\<lambda>b. (2,given_table_data (binding_data b))) given_binding_rows @
+    map (\<lambda>i. (4,given_table_data (data_list_term (map environment_artifact_rows_term (drop i given_artifact_rows)))))
+      (rev [0..<Suc given_row_count]) @
+    map (\<lambda>i. (4,given_table_data (data_list_term (map binding_data (drop i given_binding_rows)))))
+      (rev [0..<Suc given_binding_count])"
+
+text \<open>
   26's clause calls 23 and 21 at the artifact rows and 25 at the rows paired with the bindings and 21 at the bindings;
   the list traversals call 23 and 21 at every suffix of the rows and 22 at each row, 25 at the rows paired with every
   suffix of the bindings, 24 at the rows paired with each binding and 21 at every suffix of the bindings. The shortest
@@ -115,7 +138,7 @@ text \<open>
 \<close>
 
 definition given_reader_calls :: "(nat\<times>finite_factor_term) list" where
-  "given_reader_calls=given_artifact_calls @ given_identity_calls @ given_environment_calls @
+  "given_reader_calls=given_artifact_calls @ given_identity_calls @ given_recognition_calls @ given_environment_calls @
     [(156,development_given_value)] @ given_package_calls"
 
 definition given_table_calls :: "(nat\<times>finite_factor_term) list" where

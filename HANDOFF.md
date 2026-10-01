@@ -48,18 +48,21 @@ of certified ground calls every judgment's search closes, its validity checked o
 candidate's part is its additions (#928). Landed: the table through R3–R5 and C (GT1a–GT2c, GT4–GT4c), GT5 #845, W5
 #847, VK1 #920, GT2b (#889, #922), #942 (every discharge valued at a true table), VK2 #924 (the given's committing
 instance, `Development_Given_Query_Parameters`) and #953 (its premise discharged at the given). Open: VK2's controls
-#956 (after D1d: its code equations make the committing instance executable; 77 refused there, the first test of q178's
-course; whether a query meets a root-held committable goal, on which task 918's answer 4 waits); GT3 #876 → GT6 #878
-(the table produced once, a run of hours, its record `validation/given-table.json`, after #875's prediction and worker
-count) → #542, #547, #707, #399. The table is the readers' part, its guard part retired by AX4, so GT6 and #875 do not
+#956 (its code equations make the committing instance executable; 77 refused there, the first test of q178's course;
+whether a query meets a root-held committable goal, on which task 918's answer 4 waits); GT3 #876 → GT6 #878 (the table
+produced once, a run of hours, its record `validation/given-table.json`, after #875's fixes and the prediction #965) →
+#542, #547, #707, #399. The table is the readers' part, its guard part retired by AX4, so GT6, #875 and #965 do not
 wait on the AX line; #547 does not wait on VK2.
 
 **A search step's cost** (#830's and #886's attributions; D1 #890: nodes kept as placed under a binding store, 6–8 ms a
 step predicted at 30–350 steps, GT6 52–85 h on one worker): landed D1b (#903, #926, #945: the deferred search, a node's
-ground resolution memoized); open D1d #905 (the deferred committed search, the route through it) → GT3 #876 and #875
-(the deferred route held: GT6's prediction and worker count, D1e's and the groundness counters' triggers, reviews 927's
-2–3 and 946's 3–5; first, D1d's steps 300–350 at about 114 ms against 6–9 ms predicted, implement-905's report). At
-#875's figures, placed at the next restater of the route constants' code (WC3 #916 if the
+ground resolution memoized) and D1d #905 (`e7fa2aaa`: the deferred committed search, the route through it), which
+measured 8.8 ms a step at 30 steps and 8.1 at 300 but about 114 ms at 300–350. Open: #875 attributes the step (review
+906's 1, 2 and 6: the shared search's fallback, the full re-sharing of every found state after a committed sub-search,
+the goal side's position-keyed operations, the holder walk; D1e's and the groundness counters' triggers; reviews 927's
+2–3 and 946's 3–5) and proposes the fixes, placed before GT6; then #965 predicts GT6 (its call mix through both routes,
+review 906's 3; workers and memory). Also at #875's figures, placed at the next restater of the route constants' code
+(WC3 #916 if the
 figures come first): the kept held goals and construction nodes (q162; `.build/tasks/901/result.md` Remains (a)–(e),
 next-edits 384) and FI's remaining costs (review 895's 2 and 5, next-edits 385).
 
@@ -78,11 +81,11 @@ the index form's retirement and the machinery's native verification stage; on Q1
 landed lines are kept and none is extended (#376); their remains are under Open and in `.build/plans/next-edits.md`.
 
 **Shape and order.** No build waits on a review. The longest chains, 12 deep, end at #450: AX2b #934 → AX2c #961 → AX4
-#940 → #948 → R7 #542 → #707 → #399 → #709 → #553 → #447 → #449 → #450, and D1d #905 → GT3 #876 → GT6 #878 → R7 about
-as long; GT6's hours make the resolver's pole critical, the AX line has slack. Nothing is added after the tail until
+#940 → #948 → R7 #542 → #707 → #399 → #709 → #553 → #447 → #449 → #450, and #875 → #965 → GT6 #878 → R7 (GT3 #876
+beside) about as long; GT6's hours make the resolver's pole critical, the AX line has slack. Nothing is added after the tail until
 it shortens (the approval build, Open 142, waits for that); splices before a task are placed at any depth. The queue is
 the planner's choice, a residual until the selection problem's native answer (Q2): the running tasks with their
-reviews, the pole D1d → #875, GT3 → GT6, the AX line (#934, #938, #961, #956, #940, #962), the rewrite briefs, then the
+reviews, the pole #875 → #965 and GT3 → GT6, the AX line (#934, #938, #961, #956, #940, #962), the rewrite briefs, then the
 route in its chains' order, each review after its build; #887 after R7's review. Word changes are serialized; none is
 queued.
 
@@ -309,10 +312,11 @@ a theory before briefing a task that edits it.
 
 ## Now
 
-- **Under way**: D1d #905; AX2b #934 landing its bound part (q177, q178); AX3b #938 startable now, its brief rewritten.
-  What each open task's first session was mailed is in `.build/plans/mailed.md`.
-- **What the next events ask**: Q34's answer; #875's figures — GT6's prediction and worker count, the checking fold
-  measured at samples, the kept forms (q162) and FI's remaining costs, and with them the re-run of #718's 77 and 79
+- **Under way**: AX2b #934 landing its bound part (q177, q178); AX3b #938, its brief rewritten; GT3 #876; startable:
+  #875 (re-planned within its room) and #956. What each open task's first session was mailed is in
+  `.build/plans/mailed.md`.
+- **What the next events ask**: Q34's answer; #875's figures — the step attributed and its fixes, placed before GT6 and
+  #965's prediction; the checking fold measured at samples, the kept forms (q162) and FI's remaining costs, and with them the re-run of #718's 77 and 79
   fixtures with review 858's attributions (next-edits 364–366); #956's 77 refusal at the committing instance (q178's
   course) and its observation of a query meeting a root-held committable goal, on which task 918's answer 4 waits; at
   AX4's landing #948 and #949 start, their proposals placed by rewrite.

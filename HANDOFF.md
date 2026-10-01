@@ -62,11 +62,14 @@ decided a combination: D3a (goal variables as records by the variables law, the 
 difference, node records over the domain's keys) and D3b (call goals at linear undeclared sites kept as placed under the
 store across binds not reaching their region), predicted 11–19 ms a step at 300–350. #973 found that this keeps none of
 the given's chain holders (0 of 250 reached goals at 300–350): three call goals at site 9, whose payload clause repeats
-a variable (65.1 % of the goal side), and 10's material premise at a declared socket (34.4 %); its proposals, (a) a
-nonlinear site's region extended by its repeated variables' subtrees and (b) waiting material premises kept, go to the
-design D3′ (continuing #969). The builds, each with its review: D3b1 #975 (the region, told to state it in (a)'s general
-form), D3a #977 (after GT3b and D3′), D3b2 #979 (after D3a, D3b1 and D3′, its brief rewritten from D3′'s draft), then
-WC3 #916 and GT6 #878.
+a variable (65.1 % of the goal side), and 10's material premise at a declared socket (34.4 %). D3′ #981 (`7625c51a`, an
+addition to the same section) widened it: (a) a call goal at any undeclared site kept while no binding reaches its
+site's extended region (with the repeated variables' subtrees), (b) a waiting material premise kept while only its
+fields' open tails are bound, the deferred route's guard reading its solvability first; 99.6 % of the goal side kept,
+the step predicted 9–12 ms at 300–350. The builds, each with its review: D3b1 #975 landed (`2337a4b8`,
+`Factor_Pattern_Regions`, the region in (a)'s general form); D3b1m #982 (the open tails) now; D3a #977 after GT3b;
+D3b2 #979 (revised to (a), with D3b1's review's follow-ups 1, 2, 4: the reads made executable, the section's remaining
+linear wording corrected) after D3a; D3b3 #983 ((b)) after D3b2 and D3b1m; then WC3 #916 and GT6 #878.
 #965 found GT6 beyond the machine at the current route: 28–30 M states (11's 25.1 M, S(k) ≈ 5.2 k²), 99.4 % past the
 300th state of their call, a state's cost growing with depth and with the artifact (20–113 ms at k = 151 and 621 at
 shallow states), the check after the search large; near 1 ms a state flat it is 25,100 s CPU and 2,030 s wall on 16
@@ -87,11 +90,12 @@ and none is extended (#376); their remains are under Open and in `.build/plans/n
 **Shape and order.** No build waits on a review, and no task on an investigation: its tree never lands, so the harness
 would hold the dependent for it (#965 never started behind #875); the dependency goes through the brief's Inputs, its
 `result.md`. The one such edge kept is AX5 #962 on #968, a guard until #968's verdict rewrites AX5's brief. The longest
-chain, 14 deep, ends at #450 through GT3b #970 → D3a #977 → D3b2 #979 → WC3 #916 and GT6 #878 → R7 #542 → #707 → #399
+chain, 15 deep, ends at #450 through GT3b #970 → D3a #977 → D3b2 #979 → D3b3 #983 → WC3 #916 and GT6 #878 → R7 #542 →
+#707 → #399
 → … → #449 → #450; GT6's hours make the resolver's pole critical, the AX line (AX2c #961 → AX4 #940 → #948 → R7) has
 slack. Nothing is added after the tail until it shortens (the approval build, Open 142, waits for that); splices before
 a task go at any depth. The queue is the planner's choice, a residual until the selection problem's native answer (Q2):
-the running tasks with their reviews, the pole (GT3b, #972, D3′, D3's builds → WC3 and GT6), the AX line (#966, #968,
+the running tasks with their reviews, the pole (GT3b, #972, D3's builds → WC3 and GT6), the AX line (#966, #968,
 #961, #940, #962), the rewrite briefs, then the route in its chains' order, each review after its build; #887 after
 R7's review. Word changes are serialized; none is queued.
 
@@ -255,7 +259,8 @@ REASONING_REUSE.md's, how it went `PLANNING_LOG.md`.
   `Factor_Resolution_Checks` (the check forms and route constants), `Factor_Framed_Commitment_Index`,
   `Factor_Input_Productions`; its states (`Factor_Shared_Patterns`, `Factor_Indexed_Resolution`,
   `Factor_Shared_Resolution`, `Factor_Search_Representations`, `Factor_Shared_Search`, `Factor_Shared_Commitments`,
-  `Factor_Access_Commitments`, `Shared_Binding_Stores`, `Factor_Deferred_Search`); C `Factor_Resolution_Graph_Checks`;
+  `Factor_Access_Commitments`, `Shared_Binding_Stores`, `Factor_Deferred_Search`, `Factor_Pattern_Regions`); C
+  `Factor_Resolution_Graph_Checks`;
   controls in the `*_Controls` theories and `Factor_Committed_Traces`.
 - **Declarations**: the `Factor_*_Declarations` theories; `Development_Given_Declarations`, `_Carried_Declarations`
   (`given_declarations`), `_Frames`, `_Installed_Declarations`, `_Modes`, `_Productions`, `_Installed_Productions`.
@@ -316,15 +321,14 @@ re-root trigger, and a probe past its bound above `Factor_Least_Collections`: 23
 ## Now
 
 - **Under way**: GT3b #970 (told review 877's follow-ups), #966 (rescoped, q182), the investigation #972, D3b1 #975
-  (told to state the region in #973's general form), the design D3′ (continuing #969), AX2c #961 (q180's two edits,
+  D3b1m #982, AX2c #961 (q180's two edits,
   parked for its check), #968 (re-planned after its partial: 980's states are the given's 26, which a table of 11×3 and
   26 closes; 26's entry, the code forms' non-return with a construction and the admissions after AX2c remain; told when
   #961 lands).
 - **What the next events ask**: Q34's answer; #966's priority fix (a theory GT3b or D3 restates, or a statement
   change, comes to the planner) and its controls (77 refused at the committing instance, q178's first test; a query
   meeting a root-held committable goal, task 918's answer 4); #972's attribution (the large-k and check fixes placed
-  before GT6; Open 153 if none brings a state near 1 ms); D3′'s addition (D3a's and D3b2's briefs rewritten from its
-  drafts, a D3b3 placed if (b) is one); #968's attribution, from which AX5's brief is rewritten (a table of the fixtures' given calls, hand-ins,
+  before GT6; Open 153 if none brings a state near 1 ms); #968's attribution, from which AX5's brief is rewritten (a table of the fixtures' given calls, hand-ins,
   order) and its guard edge removed; GT6 #878's brief rewritten after #972's fixes, with #965's follow-up 3 and the
   follow-ups of review 877 GT3b leaves; the re-run of #718's 77 and 79 fixtures with review 858's attributions
   (next-edits 364–366) at a measured need; at AX4's landing #948 and #949 start, their proposals placed by rewrite.

@@ -1363,6 +1363,8 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Factor_Committing_Query_Parameters
     Factor_Native_Committed_Registrations
     Factor_Reader_Witness_Registrations
+    Factor_Extension_Registrations
+    Factor_Extension_Registration_Controls
     Finite_Presented_Coordinates
     Finite_Presented_Structures
     Finite_Presented_Investigations
@@ -1980,6 +1982,8 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Development_Native_State
     Development_Given_Table
     Development_First_Problem
+    Development_First_Problem_Additions_Fixtures
+    Development_First_Problem_Additions_Controls
     Development_Bounded_Recording_Execution
     Development_Native_State_Execution
     Development_First_Problem_Execution

@@ -2522,13 +2522,13 @@ text \<open>
 \<close>
 
 definition table_carry :: "('d \<times> finite_factor_term) list \<Rightarrow> share_state \<times> (nat,'d fset) rbt" where
-  "table_carry C = index_calls C (RBT.empty,0,[]) RBT.empty"
+  "table_carry C = index_calls C empty_share_state RBT.empty"
 
 lemma table_carry:
   "share_state_formed (fst (table_carry C))" "table_extends [] (share_state_table (fst (table_carry C)))"
   "calls_indexed (share_state_table (fst (table_carry C))) (snd (table_carry C)) (set C)"
 proof -
-  have I0: "calls_indexed (share_state_table (RBT.empty,0,[])) RBT.empty ({} :: ('d \<times> finite_factor_term) set)"
+  have I0: "calls_indexed (share_state_table empty_share_state) RBT.empty ({} :: ('d \<times> finite_factor_term) set)"
     by (simp add: calls_indexed_def)
   note ix = index_calls[OF share_state_empty(1) I0, of C]
   show "share_state_formed (fst (table_carry C))" "table_extends [] (share_state_table (fst (table_carry C)))"

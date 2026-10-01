@@ -19,10 +19,28 @@ text \<open>
   certificate the checker does not accept, the tree result resolves nothing through the entry, while the route's search
   still closes the call by the table's calls alone and GT4's graph verdict of its found state holds
   (@{const moded_check_graph_verdicts_listed}).
+
+  The committed and demand constants at the listed table (task 989), each through its code equation, equal GT2c's and
+  GT2a's forms at the table computed by their own equations, at both calls and at the demand of both; the demand accepts
+  the true call; at the table whose certificate the checker refuses the demand's graph verdicts accept the true call
+  alone (@{const moded_demand_graph_true_listed}).
 \<close>
+
+
 
 abbreviation table_route_declarations :: "(nat,nat,nat,unit) produced_declarations" where
   "table_route_declarations \<equiv> unproduced (unnarrowed no_declarations)"
+
+abbreviation table_route_commitment :: "(nat,nat,nat,nat) resolution_commitment" where
+  "table_route_commitment \<equiv> finite_narrowed_commitment table_control_program 0 table_route_declarations {||}"
+
+abbreviation table_route_selection ::
+    "(nat,nat,nat,nat) resolution_state \<Rightarrow> (nat,nat,nat,nat) resolution_selection" where
+  "table_route_selection \<equiv> finite_resolution_select_in table_control_table
+    (finite_moded_priority table_route_commitment no_declarations {||}) no_witness_construction table_control_program"
+
+abbreviation table_route_demand :: "(nat \<times> finite_factor_term) fset" where
+  "table_route_demand \<equiv> {|(1,Finite_Payload [1]),(1,Finite_Payload [2])|}"
 
 definition table_route_search ::
     "((nat \<times> finite_factor_term) \<times> (nat,nat,nat) finite_schema_proof) list \<Rightarrow> finite_factor_term \<Rightarrow> nat \<Rightarrow>
@@ -72,7 +90,27 @@ lemma table_search_controls:
     finite_resolution_verdict (table_route_check table_unaccepted_entries (Finite_Payload [1]) 3) = None \<and>
     table_search_nodes (table_route_search table_unaccepted_entries (Finite_Payload [1]) 2) = {|1|} \<and>
     fimage snd (moded_check_graph_verdicts_listed table_unaccepted_entries no_witness_construction table_control_program 0
-      table_route_declarations {||} no_declarations {||} 1 (Finite_Payload [1]) 3) = {|True|})"
+      table_route_declarations {||} no_declarations {||} 1 (Finite_Payload [1]) 3) = {|True|} \<and>
+    moded_committed_resolution_listed table_search_entries no_witness_construction table_control_program 0
+      table_route_declarations {||} no_declarations {||} 1 (Finite_Payload [1]) 3 = finite_committed_resolution_by_in
+      table_control_table table_route_selection no_witness_construction table_route_commitment table_control_program 1
+      (Finite_Payload [1]) 3 \<and>
+    moded_committed_resolution_listed table_search_entries no_witness_construction table_control_program 0
+      table_route_declarations {||} no_declarations {||} 1 (Finite_Payload [2]) 3 = finite_committed_resolution_by_in
+      table_control_table table_route_selection no_witness_construction table_route_commitment table_control_program 1
+      (Finite_Payload [2]) 3 \<and>
+    moded_check_demand_listed table_search_entries no_witness_construction table_control_program 0
+      table_route_declarations {||} no_declarations {||} table_route_demand 3 = finite_check_demand_by_in
+      table_control_table table_route_selection no_witness_construction table_route_commitment table_control_program
+      table_route_demand 3 \<and>
+    moded_committed_demand_listed table_search_entries no_witness_construction table_control_program 0
+      table_route_declarations {||} no_declarations {||} table_route_demand 3 = finite_committed_demand_by_in
+      table_control_table table_route_selection no_witness_construction table_route_commitment table_control_program
+      table_route_demand 3 \<and>
+    moded_check_demand_listed table_search_entries no_witness_construction table_control_program 0
+      table_route_declarations {||} no_declarations {||} table_route_demand 3 = Some {|(1,Finite_Payload [1])|} \<and>
+    moded_demand_graph_true_listed table_unaccepted_entries no_witness_construction table_control_program 0
+      table_route_declarations {||} no_declarations {||} table_route_demand 3 = {|(1,Finite_Payload [1])|})"
   by eval
 
 end

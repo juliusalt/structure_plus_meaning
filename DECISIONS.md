@@ -21872,6 +21872,10 @@ theory changes.
   keys are checked only where it adds them. It would change 20 and 21, low in the lineage (a rebuild of nearly the whole
   library), the given's value, the posing and the table. Not taken; its trigger a measured need (GT6's figures showing
   26's part material, or a keyed table at a candidate's size).
+  [Reopened by task 1021 after #1019's figures (21 at the given's 1,051 bindings' suffixes ≈ 1.66 × 10⁷ states and
+  ≈ 1.1 × 10⁵ s, the largest part of GT6's environment level): taken, not as a sorted presentation but as a second
+  implementation of 21's notion over an index of its keys' shapes, in a production program beside the given's readers;
+  see "Course (b) reopened (task 1021)" below.]
 
 **(c) The asked relation reads a candidate by its additions: taken.**
 - *The notion.* A candidate of the first problem is native content added to the given: its environment extends the
@@ -22046,6 +22050,140 @@ relation, retired at their next edit; the working rule in HANDOFF.md that the gi
 clause refined or restated" corrected there.
 
 Recorded 2026-09-27 (task 928's decision; a design, no theory changes).
+
+### Course (b) reopened (task 1021): the keyed list implemented over an index of its keys' shapes, in a production program beside the given's readers
+
+Task 1021, a design, from #1019 (`.build/tasks/1019/result.md` (5), `.build/tasks/1019/measurement.md` (5) and its
+prediction's table) and the owner's answer to Q33. Course (b) was declined above while the table was not the cost
+(≈ 0.4 M comparisons of ≈ 30 M states), its trigger "GT6's figures showing 26's part material". #1019 gives them: with
+the data recognitions in GT5's families and one found state kept at a ground goal, 21 at the bindings' suffixes is
+≈ 1.66 × 10⁷ states and ≈ 1.1 × 10⁵ s sequential (T(L) ≈ 2.9 × 10⁻⁴ L² s a suffix), 21 at the 261 rows' suffixes
+≈ 1.22 × 10⁶ states and ≈ 3.2 × 10³ s — about two thirds of the environment level's lower bound (≥ 1.7 × 10⁵ s). No
+figure was measured anew.
+
+**Why the cost is the implementation's, and no search removes it.** 21 holds at a list through `keyed_list_cons_schema`
+(20 at the head key and the tail, 21 at the tail), 20 through `key_absence_cons_schema` (3 at the key and each later
+key, 20 at the rest): every derivation of 21 at L keys holds L(L − 1)/2 data inequalities, so its certificate is
+quadratic whatever the search does, and GT5 produces 21 at every suffix, each root's 20 the L − 1 comparisons of its
+head. Only another program has smaller certificates. The keyed-list notion is its meaning (`keyed_list_exact`: 21 holds
+at t exactly when t is `pair_list_term xs` with `formed_key_rows xs` and `distinct (map fst xs)`), and by the owner's
+answer to Q33 any implementation exact to it at every term may stand in for the installed clauses.
+
+**What an implementation may read.** A key of the given's artifact rows is a use (`use_data_term`: unary natural words,
+the empty payload alone); a key of its bindings is a use beside a slot (`binding_data`: the left pair
+`Pair (use_data_term u) (Payload_Term k)`). A use is structure, followed node by node as 3 already follows it. A slot is
+an opaque address: no rule decomposes a payload, and two payloads a program does not state are indistinguishable to it
+(`Factor_Positive_Parametricity.positive_meaning_unlisted_payloads`), so a payload is compared for equality only — by the
+carrier set of a material observation (`Factor_Distinct_Payloads.distinct_payload_list_exact`) or by 3. A sorted
+presentation or sorted witness is ruled out twice: ordering slots reads octets, and checking that a sorted list is a
+permutation of the given one is a bag comparison, quadratic again. What remains is the index notion ("A refinement
+applies a notion; an index is one", `Carrier_Indexes`) at its native carrier's presentation (`Native_Path_Stores`:
+`bit_term`, `path_term`, `store_term`): the keys indexed by their shape, every payload leaf one opaque position whose
+value is kept beside the path and compared for equality. This is at once course (b)'s "native refinement program" and
+its "evaluation over an index of the keys": an index evaluated by the program's own clauses.
+
+**The decision: 21's notion gets a second implementation, linear in the keys for the given's keys, and the given's
+production uses it.**
+1. *The key's code.* A self-contained data term has a shape path and a payload tuple: a pair is the bit True followed by
+   its left's code and its right's, the empty payload the bits False False, a non-empty payload the bits False True with
+   the payload appended to the tuple. The code is prefix-free, and path and tuple together determine the term. Natively
+   one definition relates (key, path tail, path, tuple tail, tuple) as difference lists, by three clauses: the empty
+   payload; a payload x under the premise that [x, the empty payload] is a distinct payload list (site 1: x not empty,
+   compared for equality only — at the empty payload this alternative is refuted in a state); a pair, its right's code
+   first, then its left's into that. A target leaf has no clause, so a key holding one has no code, as 21 refuses it.
+2. *The insertion.* A path store presented by `store_term` (the empty store the empty payload, a node its optional value
+   beside its two children), its value at a path a bucket: the keyed list of the tuples whose keys have that path, each
+   beside the empty payload (`pair_list_term`). One definition inserts a tuple at a path with its absence checked: it
+   descends by the path's bits, creating None nodes in the empty store; at the path's end a node without bucket gains
+   the bucket of the one tuple, and a node with bucket B gains the tuple at B's head under 20 at (tuple, B). Seven
+   clauses, at most one of whose heads matches given the store and the path; every output is bound by a head from the
+   inputs, so the evaluator constructs it through the program's own clauses (Q27): no premise-only witness the clauses
+   leave open, no least witness, nothing handed in or registered (Q28 concerns none of it).
+3. *The fold.* One definition threads a store left to right: at the empty list any store; at a row (k, v), k's code, the
+   insertion of its tuple at its path, and the fold of the rest from the result. Every argument of every premise is
+   ground once its row's code and insertion are resolved.
+4. *The implementation.* 21's second family is one clause: 21 holds at t where the fold holds at t from the empty store.
+   Its meaning is 21's at every term: the code is a function, injective with its tuple; the insertion refuses exactly a
+   tuple already in its bucket; so the fold from the empty store holds exactly at keyed lists of formed self-contained
+   keys with no key twice, call formation giving every value's formation. The cost at a list is linear in the keys'
+   sizes plus 20's comparisons within each bucket — none for the rows (each use its own path), Σ_u b_u (b_u − 1)/2 for
+   the bindings, b_u the bindings at source use u.
+5. *Where it stands: P′, a production program beside the given's readers.* P′ is the given's rooted readers
+   (`finite_rooted_given_readers`) with site 21's clause family replaced by the clause of 4 and the code, the insertion
+   and the fold added at fresh sites. 21 is a view over `key_absence_system` and the new sites call 1 and 20 only, so
+   nothing 21 calls reaches 21. P′ has the rooted readers' meaning at every one of their sites: two formed programs
+   that differ only in one definition's clause family, and have equal meaning there, have equal meaning everywhere
+   (both inclusions by induction on the least fixed points); stated once as a law of programs — a reader's
+   implementation swapped under Q33 is its first use — and instantiated at 21, its premise 21's meaning in P′ and in
+   the rooted readers (each the notion's, by KX1's contract and `keyed_list_exact` carried by dependency locality,
+   `Factor_Positive_Locality.positive_meaning_dependency_locality`). The given's readers, their package, the given's
+   value, the posing, the installations and every given-specific record stand as they are.
+6. *The table.* GT5's environment family changes at the keyed lists only: in place of 21 at every suffix of the rows and
+   of the bindings, the fold at every suffix with the store of the rows before it (the shortest suffix first, each root's
+   recursive fold an entry), then 21 at the two whole lists, then 26 — these roots at P′; every other root where GT5 and
+   GT6's brief place it. A fold root reads its row's key and one bucket: ≈ 80–150 states, its depth the key's. The roots
+   at P′ meet no commitment (the code, the insertion, the fold, 1, 20 and 3 are searched plainly), so they are resolved at
+   K2's check form with the empty record, exact there (`Factor_Resolution_Commitments.finite_declared_none_exact`), and
+   no declaration, frame or registration is carried to P′. The entries certified at P′ are true at the rooted readers
+   by 5; every consumer of the table reads its calls' truth — GT4's graph verdicts
+   (`Factor_Resolution_Graph_Checks.finite_state_graph_verdicts_in_true`), GT2c's transfers to the asked program and the
+   installations (Q33 (d)) — and reads them unchanged. The retained record names the program each entry was checked at.
+
+**Predictions** (GT6's 21 part, the table's entry costs excluded as in #1019).
+
+| Branch | States | CPU s | Wall | Certificates |
+|---|---|---|---|---|
+| 21 as it stands, at #1019's costs | 1.66 × 10⁷ (bindings) + 1.22 × 10⁶ (rows) | ≈ 1.13 × 10⁵ | ≈ 31 h in GT5's order (each suffix's root after its tail's); ≈ 2 h on 16 workers once GT5 states 20 at each suffix's head and tail before its 21 (each 21 root then closes both premises, the 20 roots independent, the longest ≈ 320 s) | ≈ 1.8 × 10⁷ nodes, ≈ 1.25 × 10⁴ s checked at 0.7 ms a node |
+| as it stands, after the step fixes (D3b2, D3b3, F-a, F-b) | the same | ≈ 9.7 × 10⁴ if only the depth part of the per-state cost goes (the growth with states taken, ≈ 0.5 ms a 1,000 states, half of it the bind, is named by no placed build); ≈ 2.7–7 × 10³ if that goes too (0.15–0.4 ms a state) | ≈ 1.7 h; ≈ 3–8 min on 16 workers (with the head family) | the same |
+| the second implementation at P′ | ≈ 1–2 × 10⁵ in 1,314 fold roots, and at most 5 Σ_u b_u² ≤ 5 × 10⁵ more in the buckets' absences if a source use holds up to 100 bindings | ≈ 10–60 at the shallow roots' 0.1–0.2 ms a state (#1019, L = 3–10) | ≈ 1 min (the roots chained by their entries) | ≈ 1–7 × 10⁵ nodes, ≈ 1–8 min |
+
+The fold roots' entries hold their prefixes' stores; as shared terms these share all but one path each (≈ 10⁵ distinct
+nodes), unshared in a listed table each call shares they would cost what #1019's (e) names, which the course beside
+decides. #1019's `k` family (2 at every key subterm) is then not needed: no comparison of whole keys remains.
+
+**Weighed and not taken.**
+- *21 as it stands, GT6 bearing it.* Exact and buildless, but ≈ 1.1 × 10⁵ CPU s, the whole machine for ≈ 2 h at every
+  production of the table — and each change of the given's value recomputes the table ("What a replacement changes"
+  above) — and GT5 changes anyway (the head family) for it to run in parallel at all.
+- *The given's readers changed in place* (21's family, or 26's clause, in the numbered lineage): every definitions lemma
+  above `keyed_list_system` lists its sites, and the given's value, the posing, the installations and the given-specific
+  records would be re-derived. P′ beside them changes none of these.
+- *26's clause redirected in P′ to a new site*, 21 kept: the same meaning; replacing 21's family serves every keyed list
+  P′ reads (rows, bindings, socket rows) and leaves 26's clause and its records as they are.
+- *A sorted presentation or a sorted witness*: orders slots (octets read) and needs a permutation check (quadratic).
+- *A store built by unification alone* (each row's search binding the store's free parts): exact and deterministic for
+  keys without payloads, but a bucket shared by keys of one use and different slots has no deterministic construction
+  (an open list), so a refutation is never found.
+- *The store as a provided witness* (handed in, or registered in W2's family form): a hand-in admits and never refutes,
+  and a registration's completeness is a proof of its own; the fold constructs the store through its own heads.
+- *One material observation per bucket at the end* (site 1 at the bucket's slots, linear within a bucket): it needs the
+  final store, an output no entry can close (the table closes only a ground goal); the absence at insertion keeps every
+  root's call ground.
+
+**What the builds must respect.** 21's meaning in P′ exactly `keyed_list_exact`'s right side at every term, proved
+once; the given's readers, their package, the given's value and every given-specific record unchanged; the new clauses
+state the empty payload alone; a payload read only as one opaque leaf and compared for equality (site 1, 20, 3); the
+store indexes keys by shape and orders nothing — no order on uses, 21's equivariance under use permutations being its
+meaning's, with no new statement owed; no witness handed in or registered; P′'s entries consumed by their truth; no
+recorded word changes; a candidate's judgment untouched (the route searches the given's readers and the asked program,
+and course (c)'s 21 at a candidate's additions is (m² + b²)/2 comparisons).
+
+**The builds.**
+
+| Build | Theories | What it establishes | After | Size |
+|---|---|---|---|---|
+| KX1 | `Factor_Keyed_List_Index` (new, the builder's name), `ROOT`, `THEORY_MAP.md` | the key code (shape path and payload tuple, prefix-free, jointly injective) and its native definition; the insertion with absence into a path store, its contract against `store_term` of `Binary_Path_Stores.store_update` (the index notion's update, `Carrier_Indexes.updated_carrier_index` where its laws fit); the fold; a numbered system over `key_absence_system` with these sites and 21's second family, its 21 exactly `keyed_list_exact`'s right side at every term; payloads; controls in one evaluation imported by no theory (distinct and repeated keys with no, one and two non-empty payloads, against `keyed_list_system`'s 21) | — (beside the pole: no resolver theory, no given theory) | ≈ 350K (divisible after the insertion) |
+| KX2 | the law of programs (a Factor theory, the builder's name; cited instead if the library states it), a given theory for P′ (the builder's name), `Development_Given_Table` | equal meaning at one definition gives equal meaning everywhere; P′ (the rooted readers with KX1's sites and 21's second family), its finite presentation's code equation, its meaning at every rooted-readers site; GT5's environment family at P′ (the fold at every suffix with its prefix's store, 21 at the whole lists, 26) and its entries' truth at the rooted readers; a control: the fold's roots over the given's rows, states and seconds | KX1; folded with the GT5 family changes of the course decided beside this one | ≈ 250K |
+
+Order: KX1 now, beside the pole's open builds (D3b2 #979 and #1010, D3b3 #983, F-a #1012, F-b1 #1014, F-b2 #1016, M2
+#998 where open); KX2 after KX1 and before GT6 #878, whose brief then resolves the environment family's keyed-list roots
+and 26 at P′. Two builds beside six on the pole: GT6 waits on them only if they slip.
+
+**Left to the planner.** The placement; GT5's family changes of both designs in one build; should KX2 not have landed
+when GT6 is otherwise ready, GT6 with 21 as it stands and GT5's head family (20 at each suffix's head and tail) — the
+first two rows of the predictions.
+
+Recorded 2026-10-01 (task 1021's decision; a design, no theory changes).
 ### GT2b's first part: the direct producer's, the material single solution's and the socket kinds' discharges, valued, at a table whose calls are true
 
 Task 889, GT2b's first part (task 918's division, q161 (A); the planner's answer to q163). Each discharge of R5's exchange in

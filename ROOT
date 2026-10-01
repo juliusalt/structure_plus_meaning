@@ -1721,6 +1721,7 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Factor_Shared_Resolution
     Factor_Shared_Search
     Factor_Deferred_Search
+    Factor_Table_Search_Controls
     Factor_Shared_Commitments
     Factor_Access_Commitments
     Factor_Deferred_Commitments

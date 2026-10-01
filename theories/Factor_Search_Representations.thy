@@ -681,6 +681,35 @@ definition access_select :: "('g \<Rightarrow> bool) \<Rightarrow> ('g,'n,'k,'a,
     else let S = access_goal_choice rp V (ffilter (\<lambda>h. \<not> (access_holdable V h \<and> access_held V h)) (access_goals V)) in
       if S = {||} then Access_None else Access_Goals S)"
 
+text \<open>
+  The choice and the selection at a table of certified calls (task 876): a ground call the table closes joins the first
+  class, as R3's choice at a table has it (@{const finite_goal_choice_in}). The test is an argument, a goal's closing as
+  the representation reads it; today's choice and selection are their instances at the test that closes nothing.
+\<close>
+
+definition access_goal_choice_in ::
+    "('g \<Rightarrow> bool) \<Rightarrow> ('g \<Rightarrow> bool) \<Rightarrow> ('g,'n,'k,'a,'s::linorder,'d,'c) search_access \<Rightarrow> 'g fset \<Rightarrow> 'g fset" where
+  "access_goal_choice_in E rp V A = (let C = ffilter (\<lambda>h. access_is_call V h \<or> access_solvable V h) A;
+      c0 = ffilter (\<lambda>h. access_alternatives V h = 0 \<or> access_pruned V h \<or> access_reusable V h \<or> E h) C in
+    if c0 \<noteq> {||} then access_first_goals V c0
+    else let cp = ffilter rp C in if cp \<noteq> {||} then access_first_goals V cp
+    else let c1 = ffilter (\<lambda>h. access_alternatives V h = 1 \<and> \<not> access_waits V h) C in
+      if c1 \<noteq> {||} then access_first_goals V c1
+    else access_waiting_selection V A)"
+
+lemma access_goal_choice_in_empty: "access_goal_choice_in (\<lambda>h. False) rp V A = access_goal_choice rp V A"
+  by (simp add: access_goal_choice_in_def access_goal_choice_def)
+
+definition access_select_in ::
+    "('g \<Rightarrow> bool) \<Rightarrow> ('g \<Rightarrow> bool) \<Rightarrow> ('g,'n,'k,'a,'s::linorder,'d,'c) search_access \<Rightarrow> ('n,'g) access_selection" where
+  "access_select_in E rp V = (let N = access_construction_nodes V in
+    if N \<noteq> {||} then Access_Construction (access_first_nodes V N)
+    else let S = access_goal_choice_in E rp V (ffilter (\<lambda>h. \<not> (access_holdable V h \<and> access_held V h)) (access_goals V)) in
+      if S = {||} then Access_None else Access_Goals S)"
+
+lemma access_select_in_empty: "access_select_in (\<lambda>h. False) rp V = access_select rp V"
+  by (simp add: access_select_in_def access_select_def access_goal_choice_in_empty Let_def)
+
 lemma access_first_goals_member: "h |\<in>| access_first_goals V H \<Longrightarrow> h |\<in>| H"
   unfolding access_first_goals_def by (rule positioned_first_member)
 
@@ -703,6 +732,17 @@ lemma access_select_construction:
 
 lemma access_select_goals: "access_select rp V = Access_Goals G \<Longrightarrow> h |\<in>| G \<Longrightarrow> h |\<in>| access_goals V"
   by (auto simp: access_select_def Let_def ffilter.rep_eq dest: access_goal_choice_member split: if_splits)
+
+lemma access_goal_choice_in_member: "h |\<in>| access_goal_choice_in E rp V A \<Longrightarrow> h |\<in>| A"
+  by (auto simp: access_goal_choice_in_def Let_def ffilter.rep_eq
+    dest: access_first_goals_member access_waiting_selection_member split: if_splits)
+
+lemma access_select_in_construction:
+  "access_select_in E rp V = Access_Construction N \<Longrightarrow> n |\<in>| N \<Longrightarrow> n |\<in>| access_construction_nodes V"
+  by (auto simp: access_select_in_def Let_def dest: access_first_nodes_member split: if_splits)
+
+lemma access_select_in_goals: "access_select_in E rp V = Access_Goals G \<Longrightarrow> h |\<in>| G \<Longrightarrow> h |\<in>| access_goals V"
+  by (auto simp: access_select_in_def Let_def ffilter.rep_eq dest: access_goal_choice_in_member split: if_splits)
 
 context access_formed
 begin
@@ -784,11 +824,12 @@ proof -
     using s1[symmetric] s2[symmetric] by (simp add: fimage_ffilter_value if_distrib[of "fimage (access_goal V)"])
 qed
 
-lemma goal_choice:
+lemma goal_choice_in:
   assumes A: "\<And>h. h |\<in>| A \<Longrightarrow> h |\<in>| access_goals V"
     and rp: "\<And>h. h |\<in>| A \<Longrightarrow> rp h \<longleftrightarrow> pr st (access_goal V h)"
-  shows "fimage (access_goal V) (access_goal_choice rp V A) =
-      finite_goal_choice pr P st (resolution_pending st) (fimage (access_goal V) A)"
+    and E: "\<And>h. h |\<in>| A \<Longrightarrow> E h \<longleftrightarrow> finite_table_closes \<Theta> (access_goal V h)"
+  shows "fimage (access_goal V) (access_goal_choice_in E rp V A) =
+      finite_goal_choice_in \<Theta> pr P st (resolution_pending st) (fimage (access_goal V) A)"
 proof -
   let ?C = "ffilter (\<lambda>h. finite_candidate_goal (access_goal V h)) A"
   have C: "ffilter (\<lambda>h. access_is_call V h \<or> access_solvable V h) A = ?C"
@@ -798,16 +839,17 @@ proof -
       using is_call[OF A[OF h]] solvable[OF A[OF h]] by (simp add: finite_candidate_goal_def)
   qed
   have inC: "\<And>h. h |\<in>| ?C \<Longrightarrow> h |\<in>| access_goals V" using A by (simp add: ffilter.rep_eq)
-  have c0: "ffilter (\<lambda>h. access_alternatives V h = 0 \<or> access_pruned V h \<or> access_reusable V h) ?C =
+  have c0: "ffilter (\<lambda>h. access_alternatives V h = 0 \<or> access_pruned V h \<or> access_reusable V h \<or> E h) ?C =
       ffilter (\<lambda>h. finite_goal_alternatives P (access_goal V h) = 0 \<or> finite_pruned st (access_goal V h) \<or>
-        finite_reusable st (access_goal V h)) ?C"
+        finite_reusable st (access_goal V h) \<or> finite_table_closes \<Theta> (access_goal V h)) ?C"
   proof (rule ffilter_cong_on)
-    fix h assume "h |\<in>| ?C"
+    fix h assume hC: "h |\<in>| ?C"
     then have h: "h |\<in>| access_goals V" by (rule inC)
-    show "(access_alternatives V h = 0 \<or> access_pruned V h \<or> access_reusable V h) \<longleftrightarrow>
+    have hA: "h |\<in>| A" using hC by (simp add: ffilter.rep_eq)
+    show "(access_alternatives V h = 0 \<or> access_pruned V h \<or> access_reusable V h \<or> E h) \<longleftrightarrow>
         (finite_goal_alternatives P (access_goal V h) = 0 \<or> finite_pruned st (access_goal V h) \<or>
-        finite_reusable st (access_goal V h))"
-      using alternatives[OF h] pruned[OF h] reusable[OF h] by simp
+        finite_reusable st (access_goal V h) \<or> finite_table_closes \<Theta> (access_goal V h))"
+      using alternatives[OF h] pruned[OF h] reusable[OF h] E[OF hA] by simp
   qed
   have cp: "ffilter rp ?C = ffilter (\<lambda>h. pr st (access_goal V h)) ?C"
     by (rule ffilter_cong_on) (use rp in \<open>auto simp: ffilter.rep_eq\<close>)
@@ -822,14 +864,14 @@ proof -
   qed
   note w = waiting_selection[where A=A, OF A]
   let ?D0 = "ffilter (\<lambda>h. finite_goal_alternatives P (access_goal V h) = 0 \<or> finite_pruned st (access_goal V h) \<or>
-        finite_reusable st (access_goal V h)) ?C"
+        finite_reusable st (access_goal V h) \<or> finite_table_closes \<Theta> (access_goal V h)) ?C"
   let ?Dp = "ffilter (\<lambda>h. pr st (access_goal V h)) ?C"
   let ?D1 = "ffilter (\<lambda>h. finite_goal_alternatives P (access_goal V h) = 1 \<and> \<not> finite_goal_waits st (access_goal V h)) ?C"
-  have l: "access_goal_choice rp V A = (if ?D0 \<noteq> {||} then access_first_goals V ?D0
+  have l: "access_goal_choice_in E rp V A = (if ?D0 \<noteq> {||} then access_first_goals V ?D0
       else if ?Dp \<noteq> {||} then access_first_goals V ?Dp
       else if ?D1 \<noteq> {||} then access_first_goals V ?D1 else access_waiting_selection V A)"
-    unfolding access_goal_choice_def Let_def C c0 cp c1 by (rule refl)
-  have r: "finite_goal_choice pr P st (resolution_pending st) (fimage (access_goal V) A) =
+    unfolding access_goal_choice_in_def Let_def C c0 cp c1 by (rule refl)
+  have r: "finite_goal_choice_in \<Theta> pr P st (resolution_pending st) (fimage (access_goal V) A) =
       (if fimage (access_goal V) ?D0 \<noteq> {||} then finite_first_goals (fimage (access_goal V) ?D0)
        else if fimage (access_goal V) ?Dp \<noteq> {||} then finite_first_goals (fimage (access_goal V) ?Dp)
        else if fimage (access_goal V) ?D1 \<noteq> {||} then finite_first_goals (fimage (access_goal V) ?D1)
@@ -845,11 +887,22 @@ proof -
     by (simp add: if_distrib[of "fimage (access_goal V)"])
 qed
 
-theorem select:
+lemma goal_choice:
+  assumes A: "\<And>h. h |\<in>| A \<Longrightarrow> h |\<in>| access_goals V"
+    and rp: "\<And>h. h |\<in>| A \<Longrightarrow> rp h \<longleftrightarrow> pr st (access_goal V h)"
+  shows "fimage (access_goal V) (access_goal_choice rp V A) =
+      finite_goal_choice pr P st (resolution_pending st) (fimage (access_goal V) A)"
+proof -
+  have E0: "\<And>h. h |\<in>| A \<Longrightarrow> False \<longleftrightarrow> finite_table_closes resolution_empty_table (access_goal V h)" by simp
+  show ?thesis by (rule goal_choice_in[where pr=pr, OF A rp E0, unfolded access_goal_choice_in_empty])
+qed
+
+theorem select_in:
   assumes rp: "\<And>h. h |\<in>| access_goals V \<Longrightarrow> rp h \<longleftrightarrow> pr st (access_goal V h)"
-  shows "access_selection_value V (access_select rp V) = finite_resolution_select_at pr \<kappa> P st"
-    and "access_select rp V = Access_Construction N \<Longrightarrow> n |\<in>| N \<Longrightarrow> n |\<in>| access_construction_nodes V"
-    and "access_select rp V = Access_Goals G \<Longrightarrow> h |\<in>| G \<Longrightarrow> h |\<in>| access_goals V"
+    and E: "\<And>h. h |\<in>| access_goals V \<Longrightarrow> E h \<longleftrightarrow> finite_table_closes \<Theta> (access_goal V h)"
+  shows "access_selection_value V (access_select_in E rp V) = finite_resolution_select_in \<Theta> pr \<kappa> P st"
+    and "access_select_in E rp V = Access_Construction N \<Longrightarrow> n |\<in>| N \<Longrightarrow> n |\<in>| access_construction_nodes V"
+    and "access_select_in E rp V = Access_Goals G \<Longrightarrow> h |\<in>| G \<Longrightarrow> h |\<in>| access_goals V"
 proof -
   let ?H = "ffilter (\<lambda>h. \<not> (access_holdable V h \<and> access_held V h)) (access_goals V)"
   have H: "\<And>h. h |\<in>| ?H \<Longrightarrow> h |\<in>| access_goals V" by (simp add: ffilter.rep_eq)
@@ -862,23 +915,33 @@ proof -
   then have hd: "fimage (access_goal V) ?H = ffilter (\<lambda>g. \<not> finite_held \<kappa> st g) (resolution_pending st)"
     by (simp add: pending fimage_ffilter_value)
   have rpH: "\<And>h. h |\<in>| ?H \<Longrightarrow> rp h \<longleftrightarrow> pr st (access_goal V h)" using rp H by blast
-  note cn = construction_nodes and ch = goal_choice[where A="?H" and rp=rp and pr=pr, OF H rpH]
+  have EH: "\<And>h. h |\<in>| ?H \<Longrightarrow> E h \<longleftrightarrow> finite_table_closes \<Theta> (access_goal V h)" using E H by blast
+  note cn = construction_nodes and ch = goal_choice_in[where A="?H" and rp=rp and pr=pr, OF H rpH EH]
   have fn: "fimage (access_node V) (access_first_nodes V (access_construction_nodes V)) =
       finite_first_nodes (fimage (access_node V) (access_construction_nodes V))"
     by (rule first_nodes) (rule access_construction_nodes_at)
-  show "access_selection_value V (access_select rp V) = finite_resolution_select_at pr \<kappa> P st"
-    unfolding access_select_def finite_resolution_select_in_def Let_def
+  show "access_selection_value V (access_select_in E rp V) = finite_resolution_select_in \<Theta> pr \<kappa> P st"
+    unfolding access_select_in_def finite_resolution_select_in_def Let_def
     using cn[symmetric] hd[symmetric] ch[symmetric] fn
     by (simp add: if_distrib[of "access_selection_value V"])
-  show "access_select rp V = Access_Construction N \<Longrightarrow> n |\<in>| N \<Longrightarrow> n |\<in>| access_construction_nodes V"
-    by (auto simp: access_select_def Let_def dest: access_first_nodes_member split: if_splits)
-  show "access_select rp V = Access_Goals G \<Longrightarrow> h |\<in>| G \<Longrightarrow> h |\<in>| access_goals V"
-  proof -
-    assume "access_select rp V = Access_Goals G" "h |\<in>| G"
-    then have "h |\<in>| access_goal_choice rp V ?H" by (auto simp: access_select_def Let_def split: if_splits)
-    then have "h |\<in>| ?H" by (rule access_goal_choice_member)
-    then show ?thesis by (rule H)
-  qed
+  show "access_select_in E rp V = Access_Construction N \<Longrightarrow> n |\<in>| N \<Longrightarrow> n |\<in>| access_construction_nodes V"
+    by (rule access_select_in_construction)
+  show "access_select_in E rp V = Access_Goals G \<Longrightarrow> h |\<in>| G \<Longrightarrow> h |\<in>| access_goals V"
+    by (rule access_select_in_goals)
+qed
+
+theorem select:
+  assumes rp: "\<And>h. h |\<in>| access_goals V \<Longrightarrow> rp h \<longleftrightarrow> pr st (access_goal V h)"
+  shows "access_selection_value V (access_select rp V) = finite_resolution_select_at pr \<kappa> P st"
+    and "access_select rp V = Access_Construction N \<Longrightarrow> n |\<in>| N \<Longrightarrow> n |\<in>| access_construction_nodes V"
+    and "access_select rp V = Access_Goals G \<Longrightarrow> h |\<in>| G \<Longrightarrow> h |\<in>| access_goals V"
+proof -
+  have E0: "\<And>h. h |\<in>| access_goals V \<Longrightarrow> False \<longleftrightarrow> finite_table_closes resolution_empty_table (access_goal V h)"
+    by simp
+  note s = select_in[where pr=pr, OF rp E0, unfolded access_select_in_empty]
+  show "access_selection_value V (access_select rp V) = finite_resolution_select_at pr \<kappa> P st" by (rule s(1))
+  show "access_select rp V = Access_Construction N \<Longrightarrow> n |\<in>| N \<Longrightarrow> n |\<in>| access_construction_nodes V" by (rule s(2))
+  show "access_select rp V = Access_Goals G \<Longrightarrow> h |\<in>| G \<Longrightarrow> h |\<in>| access_goals V" by (rule s(3))
 qed
 
 end
@@ -904,6 +967,20 @@ definition access_settled :: "('g,'n,'k,'a,'s::linorder,'d,'c) search_access \<R
 
 definition access_single :: "('g,'n,'k,'a,'s::linorder,'d,'c) search_access \<Rightarrow> 'g \<Rightarrow> bool" where
   "access_single V h \<longleftrightarrow> access_alternatives V h = 1 \<and> \<not> access_waits V h"
+
+lemma access_goal_choice_classes_in:
+  "access_goal_choice_in E rp V A = (let c0 = ffilter (\<lambda>h. access_candidate V h \<and> (access_settled V h \<or> E h)) A in
+    if c0 \<noteq> {||} then access_first_goals V c0
+    else let cp = ffilter rp (ffilter (access_candidate V) A) in if cp \<noteq> {||} then access_first_goals V cp
+    else let c1 = ffilter (\<lambda>h. access_candidate V h \<and> access_single V h) A in
+      if c1 \<noteq> {||} then access_first_goals V c1
+    else access_waiting_selection V A)"
+proof -
+  have e: "ffilter F (ffilter G A) = ffilter (\<lambda>h. G h \<and> F h) A" for F G by (rule fset_eqI) (auto simp: ffilter.rep_eq)
+  show ?thesis
+    unfolding access_goal_choice_in_def access_candidate_def access_settled_def access_single_def Let_def
+    by (simp add: e disj_assoc)
+qed
 
 lemma access_goal_choice_classes:
   "access_goal_choice rp V A = (let c0 = ffilter (\<lambda>h. access_candidate V h \<and> access_settled V h) A in
@@ -1109,6 +1186,24 @@ definition represented_goal_outcome :: "('r,'g,'n,'k,'a,'s,'d,'c) resolution_rep
       else Resolution_Outcome {||} {|Resolution_Witnessed (access_witnesses V) (access_goal V h)|})
     else finite_outcome_union (fimage rec S))"
 
+text \<open>
+  The search at a table of certified calls (task 876): its selection reads the table's closing test of the state it
+  stands at, an argument as the priority is, and its successors are R3's at the table; today's search is its instance
+  at the test that closes nothing (@{text represented_search_in_empty}).
+\<close>
+
+primrec represented_search_in :: "('r,'g,'n,'k,'a,'s::linorder,'d,'c) resolution_representation \<Rightarrow> ('r \<Rightarrow> 'g \<Rightarrow> bool) \<Rightarrow>
+    ('r \<Rightarrow> 'g \<Rightarrow> bool) \<Rightarrow> ('a,'s,'d,'c) finite_witness_construction \<Rightarrow> ('a,'s,'d,'c) finite_schema_system \<Rightarrow> nat \<Rightarrow> 'r \<Rightarrow>
+    ('a,'s,'d,'c) resolution_outcome" where
+  "represented_search_in R E rp \<kappa> P 0 r = (if rep_empty R r then Resolution_Outcome {|rep_project R r|} {||}
+    else Resolution_Outcome {||} {|Resolution_Cut (fimage (access_goal (rep_access R r)) (access_goals (rep_access R r)))|})"
+| "represented_search_in R E rp \<kappa> P (Suc n) r = (if rep_empty R r then Resolution_Outcome {|rep_project R r|} {||}
+    else let r' = rep_refresh R r; V = rep_access R r' in (case access_select_in (E r') (rp r') V of
+      Access_Construction N \<Rightarrow> finite_outcome_union (fimage (\<lambda>m. represented_search_in R E rp \<kappa> P n (rep_construct R r' m)) N)
+    | Access_Goals G \<Rightarrow> finite_outcome_union (fimage (represented_goal_outcome R (represented_search_in R E rp \<kappa> P n) r' V) G)
+    | Access_None \<Rightarrow> Resolution_Outcome {||}
+        (finsert (Resolution_Stuck (fimage (access_goal V) (access_goals V))) (finite_unconstructed \<kappa> P (rep_project R r')))))"
+
 primrec represented_search :: "('r,'g,'n,'k,'a,'s::linorder,'d,'c) resolution_representation \<Rightarrow> ('r \<Rightarrow> 'g \<Rightarrow> bool) \<Rightarrow>
     ('a,'s,'d,'c) finite_witness_construction \<Rightarrow> ('a,'s,'d,'c) finite_schema_system \<Rightarrow> nat \<Rightarrow> 'r \<Rightarrow>
     ('a,'s,'d,'c) resolution_outcome" where
@@ -1121,6 +1216,36 @@ primrec represented_search :: "('r,'g,'n,'k,'a,'s::linorder,'d,'c) resolution_re
     | Access_None \<Rightarrow> Resolution_Outcome {||}
         (finsert (Resolution_Stuck (fimage (access_goal V) (access_goals V))) (finite_unconstructed \<kappa> P (rep_project R r')))))"
 
+lemma represented_search_in_empty:
+  "represented_search_in R (\<lambda>s h. False) rp \<kappa> P n = represented_search R rp \<kappa> P n"
+proof (induction n)
+  case 0
+  show ?case by (simp add: fun_eq_iff)
+next
+  case (Suc n)
+  show ?case
+  proof (rule ext)
+    fix r
+    show "represented_search_in R (\<lambda>s h. False) rp \<kappa> P (Suc n) r = represented_search R rp \<kappa> P (Suc n) r"
+      unfolding represented_search_in.simps represented_search.simps Suc.IH access_select_in_empty by (rule refl)
+  qed
+qed
+
+lemma represented_goal_outcome_in:
+  assumes V: "access_formed \<kappa> P (rep_access R r) (rep_project R r)" and h: "h |\<in>| access_goals (rep_access R r)"
+    and succ: "fimage (rep_project R) (rep_successors R r h) =
+      finite_goal_successors_in \<Theta> P (rep_project R r) (access_goal (rep_access R r) h)"
+    and rec: "\<And>s. s |\<in>| rep_successors R r h \<Longrightarrow> recI s = recA (rep_project R s)"
+  shows "represented_goal_outcome R recI r (rep_access R r) h =
+      finite_goal_outcome_in \<Theta> recA P (rep_project R r) (access_goal (rep_access R r) h)"
+proof -
+  interpret access_formed \<kappa> P "rep_access R r" "rep_project R r" by (rule V)
+  have img: "fimage recI (rep_successors R r h) = fimage recA (fimage (rep_project R) (rep_successors R r h))"
+    unfolding fset.map_comp comp_def by (rule fset.map_cong0) (simp add: rec)
+  show ?thesis using img succ[symmetric] pruned[OF h] witnesses
+    by (simp add: represented_goal_outcome_def finite_goal_outcome_in_def Let_def)
+qed
+
 lemma represented_goal_outcome:
   assumes V: "access_formed \<kappa> P (rep_access R r) (rep_project R r)" and h: "h |\<in>| access_goals (rep_access R r)"
     and succ: "fimage (rep_project R) (rep_successors R r h) =
@@ -1128,12 +1253,90 @@ lemma represented_goal_outcome:
     and rec: "\<And>s. s |\<in>| rep_successors R r h \<Longrightarrow> recI s = recA (rep_project R s)"
   shows "represented_goal_outcome R recI r (rep_access R r) h =
       finite_goal_outcome recA P (rep_project R r) (access_goal (rep_access R r) h)"
-proof -
-  interpret access_formed \<kappa> P "rep_access R r" "rep_project R r" by (rule V)
-  have img: "fimage recI (rep_successors R r h) = fimage recA (fimage (rep_project R) (rep_successors R r h))"
-    unfolding fset.map_comp comp_def by (rule fset.map_cong0) (simp add: rec)
-  show ?thesis using img succ[symmetric] pruned[OF h] witnesses
-    by (simp add: represented_goal_outcome_def finite_goal_outcome_in_def Let_def)
+  using V h succ rec by (rule represented_goal_outcome_in)
+
+theorem represented_search_in:
+  assumes F: "F r"
+    and access: "\<And>s. F s \<Longrightarrow> access_formed \<kappa> P (rep_access R s) (rep_project R s)"
+    and empty: "\<And>s. F s \<Longrightarrow> rep_empty R s \<longleftrightarrow> resolution_pending (rep_project R s) = {||}"
+    and refresh: "\<And>s. F s \<Longrightarrow> F (rep_refresh R s) \<and> rep_project R (rep_refresh R s) = rep_project R s"
+    and construct: "\<And>s m. F s \<Longrightarrow> m |\<in>| access_construction_nodes (rep_access R s) \<Longrightarrow>
+      F (rep_construct R s m) \<and>
+      rep_project R (rep_construct R s m) = finite_construction_step \<kappa> P (rep_project R s) (access_node (rep_access R s) m)"
+    and successors: "\<And>s h. F s \<Longrightarrow> h |\<in>| access_goals (rep_access R s) \<Longrightarrow>
+      fimage (rep_project R) (rep_successors R s h) =
+        finite_goal_successors_in \<Theta> P (rep_project R s) (access_goal (rep_access R s) h) \<and>
+      (\<forall>s'. s' |\<in>| rep_successors R s h \<longrightarrow> F s')"
+    and closes: "\<And>s h. F s \<Longrightarrow> h |\<in>| access_goals (rep_access R s) \<Longrightarrow>
+      E s h \<longleftrightarrow> finite_table_closes \<Theta> (access_goal (rep_access R s) h)"
+    and rp: "\<And>s h. F s \<Longrightarrow> h |\<in>| access_goals (rep_access R s) \<Longrightarrow> rp s h \<longleftrightarrow> pr (rep_project R s) (access_goal (rep_access R s) h)"
+  shows "represented_search_in R E rp \<kappa> P n r =
+      finite_resolution_search_by_in \<Theta> (finite_resolution_select_in \<Theta> pr \<kappa> P) \<kappa> P n (rep_project R r)"
+  using F
+proof (induction n arbitrary: r)
+  case 0
+  interpret access_formed \<kappa> P "rep_access R r" "rep_project R r" by (rule access[OF 0])
+  show ?case using empty[OF 0] pending by simp
+next
+  case (Suc n)
+  let ?r = "rep_refresh R r" let ?V = "rep_access R ?r"
+  let ?rec = "finite_resolution_search_by_in \<Theta> (finite_resolution_select_in \<Theta> pr \<kappa> P) \<kappa> P n"
+  have f: "F ?r" and p: "rep_project R ?r = rep_project R r" using refresh[OF Suc.prems] by simp_all
+  interpret v: access_formed \<kappa> P ?V "rep_project R ?r" by (rule access[OF f])
+  have rp': "\<And>h. h |\<in>| access_goals ?V \<Longrightarrow> rp ?r h \<longleftrightarrow> pr (rep_project R ?r) (access_goal ?V h)" by (rule rp[OF f])
+  have sel1: "access_selection_value ?V (access_select_in (E ?r) (rp ?r) ?V) =
+      finite_resolution_select_in \<Theta> pr \<kappa> P (rep_project R ?r)"
+    using rp[OF f] closes[OF f] by (rule v.select_in(1))
+  have rec: "\<And>s. F s \<Longrightarrow> represented_search_in R E rp \<kappa> P n s = ?rec (rep_project R s)" by (rule Suc.IH)
+  show ?case
+  proof (cases "resolution_pending (rep_project R r) = {||}")
+    case True
+    then show ?thesis using empty[OF Suc.prems] by simp
+  next
+    case False
+    have ne: "\<not> rep_empty R r" using False empty[OF Suc.prems] by simp
+    show ?thesis
+    proof (cases "access_select_in (E ?r) (rp ?r) ?V")
+      case (Access_Construction N)
+      have s: "finite_resolution_select_in \<Theta> pr \<kappa> P (rep_project R r) = Select_Construction (fimage (access_node ?V) N)"
+        using sel1 Access_Construction p by simp
+      have "fimage (\<lambda>m. represented_search_in R E rp \<kappa> P n (rep_construct R ?r m)) N =
+          fimage ?rec (fimage (finite_construction_step \<kappa> P (rep_project R r)) (fimage (access_node ?V) N))"
+        unfolding fset.map_comp comp_def
+      proof (rule fset.map_cong0)
+        fix m assume "m \<in> fset N"
+        then have c: "m |\<in>| access_construction_nodes ?V" using access_select_in_construction[OF Access_Construction] by blast
+        show "represented_search_in R E rp \<kappa> P n (rep_construct R ?r m) =
+            ?rec (finite_construction_step \<kappa> P (rep_project R r) (access_node ?V m))"
+          using rec construct[OF f c] p by simp
+      qed
+      then show ?thesis using ne False s Access_Construction by (simp add: Let_def)
+    next
+      case (Access_Goals G)
+      have s: "finite_resolution_select_in \<Theta> pr \<kappa> P (rep_project R r) = Select_Goals (fimage (access_goal ?V) G)"
+        using sel1 Access_Goals p by simp
+      have "fimage (represented_goal_outcome R (represented_search_in R E rp \<kappa> P n) ?r ?V) G =
+          fimage (finite_goal_outcome_in \<Theta> ?rec P (rep_project R r)) (fimage (access_goal ?V) G)"
+        unfolding fset.map_comp comp_def
+      proof (rule fset.map_cong0)
+        fix h assume "h \<in> fset G"
+        then have h: "h |\<in>| access_goals ?V" using access_select_in_goals[OF Access_Goals] by blast
+        note sc = successors[OF f h]
+        have "represented_goal_outcome R (represented_search_in R E rp \<kappa> P n) ?r ?V h =
+            finite_goal_outcome_in \<Theta> ?rec P (rep_project R ?r) (access_goal ?V h)"
+          by (rule represented_goal_outcome_in[OF access[OF f] h conjunct1[OF sc]]) (use sc rec in blast)
+        then show "represented_goal_outcome R (represented_search_in R E rp \<kappa> P n) ?r ?V h =
+            finite_goal_outcome_in \<Theta> ?rec P (rep_project R r) (access_goal ?V h)"
+          using p by simp
+      qed
+      then show ?thesis using ne False s Access_Goals by (simp add: Let_def)
+    next
+      case Access_None
+      have s: "finite_resolution_select_in \<Theta> pr \<kappa> P (rep_project R r) = Select_None"
+        using sel1 Access_None p by simp
+      then show ?thesis using ne False Access_None p v.pending by (simp add: Let_def)
+    qed
+  qed
 qed
 
 theorem represented_search:
@@ -1150,70 +1353,13 @@ theorem represented_search:
     and rp: "\<And>s h. F s \<Longrightarrow> h |\<in>| access_goals (rep_access R s) \<Longrightarrow> rp s h \<longleftrightarrow> pr (rep_project R s) (access_goal (rep_access R s) h)"
   shows "represented_search R rp \<kappa> P n r =
       finite_resolution_search_by (finite_resolution_select_at pr \<kappa> P) \<kappa> P n (rep_project R r)"
-  using F
-proof (induction n arbitrary: r)
-  case 0
-  interpret access_formed \<kappa> P "rep_access R r" "rep_project R r" by (rule access[OF 0])
-  show ?case using empty[OF 0] pending by simp
-next
-  case (Suc n)
-  let ?r = "rep_refresh R r" let ?V = "rep_access R ?r"
-  let ?rec = "finite_resolution_search_by (finite_resolution_select_at pr \<kappa> P) \<kappa> P n"
-  have f: "F ?r" and p: "rep_project R ?r = rep_project R r" using refresh[OF Suc.prems] by simp_all
-  interpret v: access_formed \<kappa> P ?V "rep_project R ?r" by (rule access[OF f])
-  have rp': "\<And>h. h |\<in>| access_goals ?V \<Longrightarrow> rp ?r h \<longleftrightarrow> pr (rep_project R ?r) (access_goal ?V h)" by (rule rp[OF f])
-  have sel1: "access_selection_value ?V (access_select (rp ?r) ?V) = finite_resolution_select_at pr \<kappa> P (rep_project R ?r)"
-    by (rule v.select(1)) (rule rp[OF f])
-  have rec: "\<And>s. F s \<Longrightarrow> represented_search R rp \<kappa> P n s = ?rec (rep_project R s)" by (rule Suc.IH)
-  show ?case
-  proof (cases "resolution_pending (rep_project R r) = {||}")
-    case True
-    then show ?thesis using empty[OF Suc.prems] by simp
-  next
-    case False
-    have ne: "\<not> rep_empty R r" using False empty[OF Suc.prems] by simp
-    show ?thesis
-    proof (cases "access_select (rp ?r) ?V")
-      case (Access_Construction N)
-      have s: "finite_resolution_select_at pr \<kappa> P (rep_project R r) = Select_Construction (fimage (access_node ?V) N)"
-        using sel1 Access_Construction p by simp
-      have "fimage (\<lambda>m. represented_search R rp \<kappa> P n (rep_construct R ?r m)) N =
-          fimage ?rec (fimage (finite_construction_step \<kappa> P (rep_project R r)) (fimage (access_node ?V) N))"
-        unfolding fset.map_comp comp_def
-      proof (rule fset.map_cong0)
-        fix m assume "m \<in> fset N"
-        then have c: "m |\<in>| access_construction_nodes ?V" using access_select_construction[OF Access_Construction] by blast
-        show "represented_search R rp \<kappa> P n (rep_construct R ?r m) =
-            ?rec (finite_construction_step \<kappa> P (rep_project R r) (access_node ?V m))"
-          using rec construct[OF f c] p by simp
-      qed
-      then show ?thesis using ne False s Access_Construction by (simp add: Let_def)
-    next
-      case (Access_Goals G)
-      have s: "finite_resolution_select_at pr \<kappa> P (rep_project R r) = Select_Goals (fimage (access_goal ?V) G)"
-        using sel1 Access_Goals p by simp
-      have "fimage (represented_goal_outcome R (represented_search R rp \<kappa> P n) ?r ?V) G =
-          fimage (finite_goal_outcome ?rec P (rep_project R r)) (fimage (access_goal ?V) G)"
-        unfolding fset.map_comp comp_def
-      proof (rule fset.map_cong0)
-        fix h assume "h \<in> fset G"
-        then have h: "h |\<in>| access_goals ?V" using access_select_goals[OF Access_Goals] by blast
-        note sc = successors[OF f h]
-        have "represented_goal_outcome R (represented_search R rp \<kappa> P n) ?r ?V h =
-            finite_goal_outcome ?rec P (rep_project R ?r) (access_goal ?V h)"
-          by (rule represented_goal_outcome[OF access[OF f] h conjunct1[OF sc]]) (use sc rec in blast)
-        then show "represented_goal_outcome R (represented_search R rp \<kappa> P n) ?r ?V h =
-            finite_goal_outcome ?rec P (rep_project R r) (access_goal ?V h)"
-          using p by simp
-      qed
-      then show ?thesis using ne False s Access_Goals by (simp add: Let_def)
-    next
-      case Access_None
-      have s: "finite_resolution_select_at pr \<kappa> P (rep_project R r) = Select_None"
-        using sel1 Access_None p by simp
-      then show ?thesis using ne False Access_None p v.pending by (simp add: Let_def)
-    qed
-  qed
+proof -
+  have closes: "\<And>s h. F s \<Longrightarrow> h |\<in>| access_goals (rep_access R s) \<Longrightarrow>
+      False \<longleftrightarrow> finite_table_closes resolution_empty_table (access_goal (rep_access R s) h)" by simp
+  have "represented_search_in R (\<lambda>s h. False) rp \<kappa> P n r =
+      finite_resolution_search_by (finite_resolution_select_at pr \<kappa> P) \<kappa> P n (rep_project R r)"
+    by (rule represented_search_in[where pr=pr, OF F access empty refresh construct successors closes rp])
+  then show ?thesis by (simp only: represented_search_in_empty)
 qed
 
 text \<open>
@@ -1234,13 +1380,13 @@ primrec selected_search :: "('r,'g,'n,'k,'a,'s::linorder,'d,'c) resolution_repre
     | Access_None \<Rightarrow> Resolution_Outcome {||}
         (finsert (Resolution_Stuck (fimage (access_goal V) (access_goals V))) (finite_unconstructed \<kappa> P (rep_project R r')))))"
 
-theorem selected_search:
+theorem selected_search_in:
   assumes F: "F r"
     and refresh: "\<And>s. F s \<Longrightarrow> F (rep_refresh R s)"
     and construct: "\<And>s m. F s \<Longrightarrow> m |\<in>| access_construction_nodes (rep_access R s) \<Longrightarrow> F (rep_construct R s m)"
     and successors: "\<And>s h s'. F s \<Longrightarrow> h |\<in>| access_goals (rep_access R s) \<Longrightarrow> s' |\<in>| rep_successors R s h \<Longrightarrow> F s'"
-    and sel: "\<And>s. F s \<Longrightarrow> sel s = access_select (rp s) (rep_access R s)"
-  shows "selected_search R sel \<kappa> P n r = represented_search R rp \<kappa> P n r"
+    and sel: "\<And>s. F s \<Longrightarrow> sel s = access_select_in (E s) (rp s) (rep_access R s)"
+  shows "selected_search R sel \<kappa> P n r = represented_search_in R E rp \<kappa> P n r"
   using F
 proof (induction n arbitrary: r)
   case 0
@@ -1250,30 +1396,45 @@ next
   let ?r = "rep_refresh R r" let ?V = "rep_access R ?r"
   have f: "F ?r" by (rule refresh[OF Suc.prems])
   have c: "fimage (\<lambda>m. selected_search R sel \<kappa> P n (rep_construct R ?r m)) N =
-      fimage (\<lambda>m. represented_search R rp \<kappa> P n (rep_construct R ?r m)) N"
-    if "access_select (rp ?r) ?V = Access_Construction N" for N
+      fimage (\<lambda>m. represented_search_in R E rp \<kappa> P n (rep_construct R ?r m)) N"
+    if "access_select_in (E ?r) (rp ?r) ?V = Access_Construction N" for N
   proof (rule fset.map_cong0)
     fix m assume "m \<in> fset N"
-    then have "m |\<in>| access_construction_nodes ?V" using access_select_construction[OF that] by blast
-    then show "selected_search R sel \<kappa> P n (rep_construct R ?r m) = represented_search R rp \<kappa> P n (rep_construct R ?r m)"
+    then have "m |\<in>| access_construction_nodes ?V" using access_select_in_construction[OF that] by blast
+    then show "selected_search R sel \<kappa> P n (rep_construct R ?r m) = represented_search_in R E rp \<kappa> P n (rep_construct R ?r m)"
       by (rule Suc.IH[OF construct[OF f]])
   qed
   have g: "fimage (represented_goal_outcome R (selected_search R sel \<kappa> P n) ?r ?V) G =
-      fimage (represented_goal_outcome R (represented_search R rp \<kappa> P n) ?r ?V) G"
-    if "access_select (rp ?r) ?V = Access_Goals G" for G
+      fimage (represented_goal_outcome R (represented_search_in R E rp \<kappa> P n) ?r ?V) G"
+    if "access_select_in (E ?r) (rp ?r) ?V = Access_Goals G" for G
   proof (rule fset.map_cong0)
     fix h assume "h \<in> fset G"
-    then have h: "h |\<in>| access_goals ?V" using access_select_goals[OF that] by blast
+    then have h: "h |\<in>| access_goals ?V" using access_select_in_goals[OF that] by blast
     have "fimage (selected_search R sel \<kappa> P n) (rep_successors R ?r h) =
-        fimage (represented_search R rp \<kappa> P n) (rep_successors R ?r h)"
+        fimage (represented_search_in R E rp \<kappa> P n) (rep_successors R ?r h)"
       by (rule fset.map_cong0) (rule Suc.IH[OF successors[OF f h]], simp)
     then show "represented_goal_outcome R (selected_search R sel \<kappa> P n) ?r ?V h =
-        represented_goal_outcome R (represented_search R rp \<kappa> P n) ?r ?V h"
+        represented_goal_outcome R (represented_search_in R E rp \<kappa> P n) ?r ?V h"
       by (simp add: represented_goal_outcome_def Let_def)
   qed
   show ?case
-    unfolding selected_search.simps represented_search.simps Let_def sel[OF f]
-    by (cases "access_select (rp ?r) ?V") (simp_all add: c g)
+    unfolding selected_search.simps represented_search_in.simps Let_def sel[OF f]
+    by (cases "access_select_in (E ?r) (rp ?r) ?V") (simp_all add: c g)
+qed
+
+theorem selected_search:
+  assumes F: "F r"
+    and refresh: "\<And>s. F s \<Longrightarrow> F (rep_refresh R s)"
+    and construct: "\<And>s m. F s \<Longrightarrow> m |\<in>| access_construction_nodes (rep_access R s) \<Longrightarrow> F (rep_construct R s m)"
+    and successors: "\<And>s h s'. F s \<Longrightarrow> h |\<in>| access_goals (rep_access R s) \<Longrightarrow> s' |\<in>| rep_successors R s h \<Longrightarrow> F s'"
+    and sel: "\<And>s. F s \<Longrightarrow> sel s = access_select (rp s) (rep_access R s)"
+  shows "selected_search R sel \<kappa> P n r = represented_search R rp \<kappa> P n r"
+proof -
+  have sel': "\<And>s. F s \<Longrightarrow> sel s = access_select_in (\<lambda>h. False) (rp s) (rep_access R s)"
+    using sel by (simp add: access_select_in_empty)
+  have "selected_search R sel \<kappa> P n r = represented_search_in R (\<lambda>s h. False) rp \<kappa> P n r"
+    by (rule selected_search_in[OF F refresh construct successors sel'])
+  then show ?thesis by (simp only: represented_search_in_empty)
 qed
 
 end

@@ -99,18 +99,6 @@ definition finite_varied_construction ::
     witness_value = (\<lambda>Q d T B b. let Vs = finite_varied_values P \<kappa> d T B b in
       if Vs = {|fthe_elem Vs|} then fthe_elem Vs else None)\<rparr>"
 
-lemma finite_clause_site_member:
-  "(d,T) |\<in>| fimage (\<lambda>z. (fst (fst z),snd z)) C \<longleftrightarrow> (\<exists>c. ((d,c),T) |\<in>| C)"
-proof
-  assume "(d,T) |\<in>| fimage (\<lambda>z. (fst (fst z),snd z)) C"
-  then obtain z where z: "z |\<in>| C" "(d,T) = (fst (fst z),snd z)" by (auto simp: fimage.rep_eq)
-  then have "((d,snd (fst z)),T) = z" by (cases z) auto
-  then show "\<exists>c. ((d,c),T) |\<in>| C" using z(1) by metis
-next
-  assume "\<exists>c. ((d,c),T) |\<in>| C"
-  then obtain c where "((d,c),T) |\<in>| C" by blast
-  from fimageI[OF this, of "\<lambda>z. (fst (fst z),snd z)"] show "(d,T) |\<in>| fimage (\<lambda>z. (fst (fst z),snd z)) C" by simp
-qed
 
 lemma finite_varied_clause_registered_member:
   "b |\<in>| finite_varied_clause_registered \<kappa> d T ((d',c),S) \<longleftrightarrow> d' = d \<and>

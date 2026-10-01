@@ -1,5 +1,5 @@
 theory Factor_Deferred_Search
-  imports Factor_Shared_Search Shared_Binding_Stores
+  imports Factor_Shared_Search Shared_Binding_Stores Ranged_Carrier_Indexes "HOL-Library.IArray"
 begin
 
 section \<open>The deferred search\<close>
@@ -53,6 +53,7 @@ record (overloaded) ('a,'s::linorder,'d,'c) deferred_search =
   deferred_names :: "'a list"
   deferred_records :: "(nat, 's list \<times> (deferred_key, unit) rbt) rbt"
   deferred_holders :: "(deferred_key, nat fset) rbt"
+  deferred_goal_records :: "('s list, (deferred_key, unit) rbt) rbt"
 
 definition deferred_key :: "('a,'s::linorder,'d,'c) deferred_search \<Rightarrow> ('s,'a) resolution_variable \<Rightarrow> deferred_key" where
   "deferred_key d x = (position_number (deferred_positions d) (fst (fst x)), snd (fst x),
@@ -226,9 +227,29 @@ definition deferred_parts_formed :: "('a,'s,'d,'c) finite_witness_construction \
     (\<forall>n q K. RBT.lookup (deferred_records d) n = Some (q, K) \<longrightarrow> n \<noteq> 0 \<and>
       n = position_number (deferred_positions d) q \<and> RBT.lookup (shared_nodes (search_state (deferred_inner d))) q \<noteq> None)"
 
+text \<open>
+  A goal's clause (D3a, task 977): its record, kept at the goal's position, holds exactly the keys of its variables, every
+  one numbered, as a node's record holds its call's. A goal without a record is a call goal at the root: its variables
+  stand at the root position, numbered only once a node stands there, and the bind reads it by its own cache (D1b'').
+  A record at a position where no goal stands is never read.
+\<close>
+
+definition shared_root_goal :: "('a,'s,'d,'c) shared_goal \<Rightarrow> bool" where
+  "shared_root_goal g \<longleftrightarrow> (case g of Shared_Call_Goal q r e p \<Rightarrow> q = [] | Shared_Material_Goal q r M \<Rightarrow> False)"
+
+lemma shared_root_goal_iff: "shared_root_goal g \<longleftrightarrow> (\<exists>rr e p. g = Shared_Call_Goal [] rr e p)"
+  by (cases g) (auto simp: shared_root_goal_def)
+
+definition deferred_goal_formed :: "('a,'s::linorder,'d,'c) deferred_search \<Rightarrow> 's list \<Rightarrow> bool" where
+  "deferred_goal_formed d q \<longleftrightarrow> (\<forall>h. RBT.lookup (shared_goals (search_state (deferred_inner d))) q = Some h \<longrightarrow>
+    (case RBT.lookup (deferred_goal_records d) q of None \<Rightarrow> shared_root_goal (shared_entry_goal h)
+    | Some K \<Rightarrow> set (RBT.keys K) = deferred_key d ` fset (shared_goal_variables (shared_entry_goal h)) \<and>
+        fBall (shared_goal_variables (shared_entry_goal h)) (deferred_numbered d)))"
+
 definition deferred_formed :: "('a,'s,'d,'c) finite_witness_construction \<Rightarrow> ('a,'s,'d,'c) finite_schema_system \<Rightarrow>
     ('a,'s::linorder,'d,'c) deferred_search \<Rightarrow> bool" where
-  "deferred_formed \<kappa> P d \<longleftrightarrow> deferred_parts_formed \<kappa> P d \<and> (\<forall>q. deferred_node_formed d q)"
+  "deferred_formed \<kappa> P d \<longleftrightarrow> deferred_parts_formed \<kappa> P d \<and> (\<forall>q. deferred_node_formed d q) \<and>
+    (\<forall>q. deferred_goal_formed d q)"
 
 lemma deferred_formedD:
   assumes "deferred_formed \<kappa> P d"
@@ -248,7 +269,79 @@ lemma deferred_formedD:
     "\<And>n q K. RBT.lookup (deferred_records d) n = Some (q, K) \<Longrightarrow>
       RBT.lookup (shared_nodes (search_state (deferred_inner d))) q \<noteq> None"
     "\<And>q. deferred_node_formed d q"
+    "\<And>q. deferred_goal_formed d q"
   using assms unfolding deferred_formed_def deferred_parts_formed_def by blast+
+
+lemma deferred_goal_formedD:
+  assumes "deferred_goal_formed d q" and "RBT.lookup (shared_goals (search_state (deferred_inner d))) q = Some h"
+  shows "RBT.lookup (deferred_goal_records d) q = None \<Longrightarrow> shared_root_goal (shared_entry_goal h)"
+    and "RBT.lookup (deferred_goal_records d) q = Some K \<Longrightarrow>
+      set (RBT.keys K) = deferred_key d ` fset (shared_goal_variables (shared_entry_goal h))"
+    and "RBT.lookup (deferred_goal_records d) q = Some K \<Longrightarrow>
+      x |\<in>| shared_goal_variables (shared_entry_goal h) \<Longrightarrow> deferred_numbered d x"
+  using assms unfolding deferred_goal_formed_def by auto
+
+text \<open>
+  A goal's clause depends on the goal's variables, whether it is a root call goal, its record and the keys of its
+  numbered variables: a step keeping these keeps the clause.
+\<close>
+
+lemma deferred_goal_formed_cong:
+  assumes f: "deferred_goal_formed d q"
+    and goals: "\<And>h'. RBT.lookup (shared_goals (search_state (deferred_inner d'))) q = Some h' \<Longrightarrow>
+      \<exists>h. RBT.lookup (shared_goals (search_state (deferred_inner d))) q = Some h \<and>
+        shared_goal_variables (shared_entry_goal h') = shared_goal_variables (shared_entry_goal h) \<and>
+        (shared_root_goal (shared_entry_goal h') \<longleftrightarrow> shared_root_goal (shared_entry_goal h))"
+    and recs: "RBT.lookup (deferred_goal_records d') q = RBT.lookup (deferred_goal_records d) q"
+    and keys: "\<And>x. deferred_numbered d x \<Longrightarrow> deferred_key d' x = deferred_key d x \<and> deferred_numbered d' x"
+  shows "deferred_goal_formed d' q"
+  unfolding deferred_goal_formed_def
+proof (intro allI impI)
+  fix h' assume at': "RBT.lookup (shared_goals (search_state (deferred_inner d'))) q = Some h'"
+  obtain h where at: "RBT.lookup (shared_goals (search_state (deferred_inner d))) q = Some h"
+    and v: "shared_goal_variables (shared_entry_goal h') = shared_goal_variables (shared_entry_goal h)"
+    and rt: "shared_root_goal (shared_entry_goal h') \<longleftrightarrow> shared_root_goal (shared_entry_goal h)" using goals[OF at'] by blast
+  show "case RBT.lookup (deferred_goal_records d') q of None \<Rightarrow> shared_root_goal (shared_entry_goal h')
+    | Some K \<Rightarrow> set (RBT.keys K) = deferred_key d' ` fset (shared_goal_variables (shared_entry_goal h')) \<and>
+        fBall (shared_goal_variables (shared_entry_goal h')) (deferred_numbered d')"
+  proof (cases "RBT.lookup (deferred_goal_records d) q")
+    case None
+    then show ?thesis using recs rt deferred_goal_formedD(1)[OF f at] by simp
+  next
+    case (Some K)
+    have k: "set (RBT.keys K) = deferred_key d ` fset (shared_goal_variables (shared_entry_goal h))"
+      by (rule deferred_goal_formedD(2)[OF f at Some])
+    have n: "\<And>x. x |\<in>| shared_goal_variables (shared_entry_goal h) \<Longrightarrow> deferred_numbered d x"
+      by (rule deferred_goal_formedD(3)[OF f at Some])
+    have ke: "deferred_key d' ` fset (shared_goal_variables (shared_entry_goal h)) =
+        deferred_key d ` fset (shared_goal_variables (shared_entry_goal h))"
+      using keys n by (auto simp: image_iff)
+    have nu: "fBall (shared_goal_variables (shared_entry_goal h)) (deferred_numbered d')" using keys n by blast
+    show ?thesis using recs Some k v ke nu by simp
+  qed
+qed
+
+lemma deferred_goal_formed_same:
+  assumes f: "deferred_goal_formed d q"
+    and goals: "\<And>h'. RBT.lookup (shared_goals (search_state (deferred_inner d'))) q = Some h' \<Longrightarrow>
+      \<exists>h. RBT.lookup (shared_goals (search_state (deferred_inner d))) q = Some h \<and> shared_entry_goal h' = shared_entry_goal h"
+    and recs: "RBT.lookup (deferred_goal_records d') q = RBT.lookup (deferred_goal_records d) q"
+    and keys: "\<And>x. deferred_numbered d x \<Longrightarrow> deferred_key d' x = deferred_key d x \<and> deferred_numbered d' x"
+  shows "deferred_goal_formed d' q"
+  by (rule deferred_goal_formed_cong[OF f _ recs keys]) (fastforce dest: goals)
+
+lemma deferred_goal_records_update_key [simp]: "deferred_key (d\<lparr>deferred_goal_records := G\<rparr>) = deferred_key d"
+  by (simp add: fun_eq_iff deferred_key_def)
+
+lemma deferred_goal_records_update [simp]:
+  "deferred_numbered (d\<lparr>deferred_goal_records := G\<rparr>) = deferred_numbered d"
+  "deferred_store (d\<lparr>deferred_goal_records := G\<rparr>) = deferred_store d"
+  by (simp_all add: fun_eq_iff deferred_numbered_def deferred_store_def)
+
+lemma deferred_goal_records_update_formed [simp]:
+  "deferred_parts_formed \<kappa> P (d\<lparr>deferred_goal_records := G\<rparr>) = deferred_parts_formed \<kappa> P d"
+  "deferred_node_formed (d\<lparr>deferred_goal_records := G\<rparr>) = deferred_node_formed d"
+  by (simp_all add: fun_eq_iff deferred_parts_formed_def deferred_node_formed_def)
 
 lemma deferred_node_formedD:
   assumes "deferred_node_formed d q" and "RBT.lookup (shared_nodes (search_state (deferred_inner d))) q = Some hn"
@@ -295,6 +388,38 @@ definition deferred_access :: "('a,'s,'d,'c) finite_witness_construction \<Right
     access_free := deferred_free \<kappa> d,
     access_value_none := \<lambda>hn a. finite_registered_value \<kappa> P (deferred_node d hn) a = None,
     access_call_variables := deferred_call_variables d\<rparr>"
+
+text \<open>
+  A key is decoded only where the access reads a node's call variables, through an array of the numbered positions made
+  once where the access is built (review 904's follow-up 2), never through the reversed numbering at each key.
+\<close>
+
+definition deferred_decode_in :: "'s list iarray \<Rightarrow> ('a,'s::linorder,'d,'c) deferred_search \<Rightarrow> deferred_key \<Rightarrow>
+    ('s,'a) resolution_variable" where
+  "deferred_decode_in A d k = (case k of (n,b,m) \<Rightarrow> ((A !! (n - 1), b), deferred_names d ! (m - 1)))"
+
+definition deferred_call_variables_in :: "'s list iarray \<Rightarrow> ('a,'s::linorder,'d,'c) deferred_search \<Rightarrow>
+    ('a,'s,'d,'c) shared_node_entry \<Rightarrow> ('s,'a) resolution_variable fset" where
+  "deferred_call_variables_in A d hn = (case RBT.lookup (deferred_records d)
+      (position_number (deferred_positions d) (shared_derivation_position (shared_entry_node hn))) of
+    None \<Rightarrow> {||} | Some z \<Rightarrow> fimage (deferred_decode_in A d) (fset_of_list (RBT.keys (snd z))))"
+
+lemma deferred_call_variables_in:
+  "deferred_call_variables_in (IArray (rev (snd (snd (deferred_positions d))))) d = deferred_call_variables d"
+proof (rule ext)
+  fix hn
+  have e: "deferred_decode_in (IArray (rev (snd (snd (deferred_positions d))))) d = deferred_decode d"
+    by (simp add: fun_eq_iff deferred_decode_in_def deferred_decode_def split: prod.split)
+  show "deferred_call_variables_in (IArray (rev (snd (snd (deferred_positions d))))) d hn = deferred_call_variables d hn"
+    unfolding deferred_call_variables_in_def deferred_call_variables_def e ..
+qed
+
+lemma deferred_access_code [code]:
+  "deferred_access \<kappa> P d = (let A = IArray (rev (snd (snd (deferred_positions d)))) in
+    (shared_access \<kappa> P (deferred_inner d))\<lparr>access_node := deferred_node d, access_free := deferred_free \<kappa> d,
+      access_value_none := \<lambda>hn a. finite_registered_value \<kappa> P (deferred_node d hn) a = None,
+      access_call_variables := deferred_call_variables_in A d\<rparr>)"
+  by (simp add: deferred_access_def deferred_call_variables_in)
 
 lemma deferred_node_entry:
   assumes d: "deferred_formed \<kappa> P d" and n: "RBT.lookup (shared_nodes (search_state (deferred_inner d))) q = Some hn"
@@ -783,6 +908,32 @@ proof -
   qed
 qed
 
+lemma deferred_renumbered_goal_records:
+  assumes re: "deferred_renumbered d d'"
+  shows "deferred_goal_records d' = deferred_goal_records d"
+proof -
+  have e: "d' = d\<lparr>deferred_positions := deferred_positions d', deferred_names := deferred_names d'\<rparr>"
+    using re by (simp add: deferred_renumbered_def)
+  show ?thesis by (subst e) simp
+qed
+
+lemma deferred_renumbered_goal:
+  assumes re: "deferred_renumbered d d'" and parts: "deferred_parts_formed \<kappa> P d" and gf: "deferred_goal_formed d q"
+  shows "deferred_goal_formed d' q"
+proof -
+  have N: "positions_numbered (deferred_positions d)" using parts by (simp add: deferred_parts_formed_def)
+  show ?thesis
+  proof (rule deferred_goal_formed_same[OF gf])
+    show "\<And>h'. RBT.lookup (shared_goals (search_state (deferred_inner d'))) q = Some h' \<Longrightarrow>
+      \<exists>h. RBT.lookup (shared_goals (search_state (deferred_inner d))) q = Some h \<and> shared_entry_goal h' = shared_entry_goal h"
+      using deferred_renumbered_fields(1)[OF re] by simp
+    show "RBT.lookup (deferred_goal_records d') q = RBT.lookup (deferred_goal_records d) q"
+      using deferred_renumbered_goal_records[OF re] by simp
+    show "\<And>x. deferred_numbered d x \<Longrightarrow> deferred_key d' x = deferred_key d x \<and> deferred_numbered d' x"
+      using deferred_renumbered_key[OF re N] by blast
+  qed
+qed
+
 subsection \<open>Recording a node\<close>
 
 text \<open>
@@ -1035,6 +1186,209 @@ proof -
   qed
 qed
 
+subsection \<open>Recording a goal\<close>
+
+text \<open>
+  D3a (task 977). A goal is recorded at its position: the names of its variables numbered, its record the keyed set of
+  its variables over @{const deferred_key}, as a node's. A call goal at the root is not recorded: its variables stand at
+  the root position, unnumbered while no node stands there, and the bind reads it by its cache.
+\<close>
+
+fun shared_goal_variable_list :: "('a,'s,'d,'c) shared_goal \<Rightarrow> ('s,'a) resolution_variable list" where
+  "shared_goal_variable_list (Shared_Call_Goal q r d p) = shared_variable_list p"
+| "shared_goal_variable_list (Shared_Material_Goal q r M) = shared_variable_list (shared_material_source M) @
+    shared_variable_list (shared_material_atoms M) @ shared_variable_list (shared_material_edges M) @
+    shared_variable_list (shared_material_counts M) @ shared_variable_list (shared_material_functions M)"
+
+lemma shared_goal_variable_list:
+  "shared_goal_formed T g \<Longrightarrow> set (shared_goal_variable_list g) = fset (shared_goal_variables g)"
+  by (cases g) (auto simp: shared_material_formed_def shared_material_variables_def shared_variable_list)
+
+lemma deferred_record_node_goal_records [simp]:
+  "deferred_goal_records (deferred_record_node q p d) = deferred_goal_records d"
+  by (simp add: deferred_record_node_def deferred_record_at_def deferred_renumber_def Let_def)
+
+lemma deferred_record_node_keys:
+  assumes parts: "deferred_parts_formed \<kappa> P d" and x: "deferred_numbered d x"
+  shows "deferred_key (deferred_record_node q p d) x = deferred_key d x \<and> deferred_numbered (deferred_record_node q p d) x"
+proof -
+  let ?d1 = "deferred_renumber q p d"
+  have N: "positions_numbered (deferred_positions d)" using parts by (simp add: deferred_parts_formed_def)
+  obtain T where T: "keyed_reference_state id (deferred_positions d) T" using N by (auto simp: positions_numbered_def)
+  have T1: "keyed_reference_state id (deferred_positions ?d1) (snd (value_reference_step q T))"
+    using keyed_reference_step_table[OF T] by simp
+  obtain U where U: "snd (value_reference_step q T) = T @ U"
+    using value_reference_add_extends(1)[of q T] by (auto simp: value_reference_step_table)
+  have re: "deferred_renumbered d ?d1"
+  proof -
+    have "\<forall>T'. keyed_reference_state id (deferred_positions d) T' \<longrightarrow>
+        (\<exists>U. keyed_reference_state id (deferred_positions ?d1) (T' @ U))"
+    proof (intro allI impI)
+      fix T' assume "keyed_reference_state id (deferred_positions d) T'"
+      then have "T' = T" using T by (cases "deferred_positions d") (simp add: keyed_reference_state_def)
+      then show "\<exists>U. keyed_reference_state id (deferred_positions ?d1) (T' @ U)" using T1 U by auto
+    qed
+    then show ?thesis using deferred_number_names(1) by (simp add: deferred_renumbered_def deferred_renumber_def)
+  qed
+  have k: "deferred_key (deferred_record_node q p d) = deferred_key ?d1"
+    by (simp add: deferred_record_node_def deferred_record_at_def Let_def fun_eq_iff deferred_key_def)
+  have n: "deferred_numbered (deferred_record_node q p d) = deferred_numbered ?d1"
+    by (simp add: deferred_record_node_def deferred_record_at_def Let_def fun_eq_iff deferred_numbered_def)
+  show ?thesis using deferred_renumbered_key[OF re N x] k n by simp
+qed
+
+definition deferred_record_goal :: "'s::linorder list \<Rightarrow> ('a,'s,'d,'c) deferred_search \<Rightarrow> ('a,'s,'d,'c) deferred_search" where
+  "deferred_record_goal p d = (case RBT.lookup (shared_goals (search_state (deferred_inner d))) p of None \<Rightarrow> d
+    | Some h \<Rightarrow> if shared_root_goal (shared_entry_goal h) then d else
+      (let vs = shared_goal_variable_list (shared_entry_goal h);
+        d1 = d\<lparr>deferred_names := deferred_number_names (map snd vs) (deferred_names d)\<rparr> in
+      d1\<lparr>deferred_goal_records := RBT.insert p (fold (\<lambda>k t. RBT.insert k () t) (map (deferred_key d1) vs) RBT.empty)
+        (deferred_goal_records d1)\<rparr>))"
+
+definition deferred_record_goals :: "'s::linorder list list \<Rightarrow> ('a,'s,'d,'c) deferred_search \<Rightarrow> ('a,'s,'d,'c) deferred_search" where
+  "deferred_record_goals ps d = fold deferred_record_goal ps d"
+
+lemma deferred_record_goal:
+  assumes parts: "deferred_parts_formed \<kappa> P d"
+    and placed: "\<forall>h x. RBT.lookup (shared_goals (search_state (deferred_inner d))) p = Some h \<longrightarrow>
+      \<not> shared_root_goal (shared_entry_goal h) \<longrightarrow> x |\<in>| shared_goal_variables (shared_entry_goal h) \<longrightarrow>
+      position_number (deferred_positions d) (fst (fst x)) \<noteq> 0"
+    and root: "\<forall>h. RBT.lookup (shared_goals (search_state (deferred_inner d))) p = Some h \<longrightarrow>
+      shared_root_goal (shared_entry_goal h) \<longrightarrow> RBT.lookup (deferred_goal_records d) p = None"
+  shows "deferred_parts_formed \<kappa> P (deferred_record_goal p d) \<and> deferred_goal_formed (deferred_record_goal p d) p \<and>
+    (\<forall>q. q \<noteq> p \<longrightarrow> deferred_goal_formed d q \<longrightarrow> deferred_goal_formed (deferred_record_goal p d) q) \<and>
+    (\<forall>q. deferred_node_formed d q \<longrightarrow> deferred_node_formed (deferred_record_goal p d) q) \<and>
+    deferred_inner (deferred_record_goal p d) = deferred_inner d \<and> deferred_store (deferred_record_goal p d) = deferred_store d \<and>
+    deferred_positions (deferred_record_goal p d) = deferred_positions d \<and>
+    deferred_records (deferred_record_goal p d) = deferred_records d \<and>
+    deferred_holders (deferred_record_goal p d) = deferred_holders d \<and> deferred_tree (deferred_record_goal p d) = deferred_tree d \<and>
+    (\<forall>q. q \<noteq> p \<longrightarrow> RBT.lookup (deferred_goal_records (deferred_record_goal p d)) q = RBT.lookup (deferred_goal_records d) q) \<and>
+    (\<forall>x. deferred_numbered d x \<longrightarrow> deferred_key (deferred_record_goal p d) x = deferred_key d x \<and>
+      deferred_numbered (deferred_record_goal p d) x)"
+proof -
+  let ?s = "search_state (deferred_inner d)"
+  show ?thesis
+  proof (cases "RBT.lookup (shared_goals ?s) p")
+    case None
+    have e: "deferred_record_goal p d = d" by (simp add: deferred_record_goal_def None)
+    have "deferred_goal_formed d p" by (simp add: deferred_goal_formed_def None)
+    then show ?thesis using parts e by simp
+  next
+    case (Some h)
+    show ?thesis
+    proof (cases "shared_root_goal (shared_entry_goal h)")
+      case True
+      have e: "deferred_record_goal p d = d" by (simp add: deferred_record_goal_def Some True)
+      have "deferred_goal_formed d p" using root[rule_format, OF Some True] Some True by (simp add: deferred_goal_formed_def)
+      then show ?thesis using parts e by simp
+    next
+      case False
+      let ?vs = "shared_goal_variable_list (shared_entry_goal h)"
+      let ?d1 = "d\<lparr>deferred_names := deferred_number_names (map snd ?vs) (deferred_names d)\<rparr>"
+      let ?K = "fold (\<lambda>k t. RBT.insert k () t) (map (deferred_key ?d1) ?vs) RBT.empty"
+      have e: "deferred_record_goal p d = ?d1\<lparr>deferred_goal_records := RBT.insert p ?K (deferred_goal_records ?d1)\<rparr>"
+        by (simp add: deferred_record_goal_def Some False Let_def)
+      have re: "deferred_renumbered d ?d1"
+        unfolding deferred_renumbered_def using deferred_number_names(1)[of "map snd ?vs" "deferred_names d"]
+        by (auto intro!: exI[where x = "[]"])
+      have N: "positions_numbered (deferred_positions d)" using parts by (simp add: deferred_parts_formed_def)
+      have parts1: "deferred_parts_formed \<kappa> P ?d1" by (rule deferred_renumbered_parts[OF re parts])
+      have st1: "deferred_store ?d1 = deferred_store d" by (rule deferred_renumbered_store[OF re parts])
+      have gf: "shared_goal_formed (search_table (deferred_inner d)) (shared_entry_goal h)"
+        using shared_entries_formed(1)[OF search_formedD(1)[OF conjunct1[OF parts[unfolded deferred_parts_formed_def]]] Some]
+        by (simp add: goal_entry_formed_def)
+      have vl: "set ?vs = fset (shared_goal_variables (shared_entry_goal h))" by (rule shared_goal_variable_list[OF gf])
+      have num: "deferred_numbered ?d1 x" if "x |\<in>| shared_goal_variables (shared_entry_goal h)" for x
+      proof -
+        have a: "position_number (deferred_positions ?d1) (fst (fst x)) \<noteq> 0" using placed[rule_format, OF Some False that] by simp
+        have "snd x \<in> set (deferred_names ?d1)" using that vl deferred_number_names(2) by force
+        then show ?thesis using a name_number_nonzero[of "deferred_names ?d1" "snd x"] unfolding deferred_numbered_def by blast
+      qed
+      have keys: "set (RBT.keys ?K) = deferred_key ?d1 ` fset (shared_goal_variables (shared_entry_goal h))"
+        using fold_insert_unit_keys[of "map (deferred_key ?d1) ?vs" RBT.empty] vl by simp
+      have kE: "\<And>x. deferred_numbered d x \<Longrightarrow> deferred_key ?d1 x = deferred_key d x \<and> deferred_numbered ?d1 x"
+        using deferred_renumbered_key[OF re N] by blast
+      have gp: "deferred_goal_formed (deferred_record_goal p d) p"
+        unfolding deferred_goal_formed_def e using Some keys num by auto
+      have go: "deferred_goal_formed (deferred_record_goal p d) q" if ne: "q \<noteq> p" and f: "deferred_goal_formed d q" for q
+        by (rule deferred_goal_formed_same[OF f]) (use ne kE in \<open>simp_all add: e\<close>)
+      have nf: "deferred_node_formed (deferred_record_goal p d) q" if "deferred_node_formed d q" for q
+        using deferred_renumbered_node[OF re parts that] e by simp
+      show ?thesis using parts1 gp go nf st1 kE e by simp
+    qed
+  qed
+qed
+
+lemma deferred_record_goals:
+  assumes "deferred_parts_formed \<kappa> P d"
+    and "\<forall>p h x. p \<in> set ps \<longrightarrow> RBT.lookup (shared_goals (search_state (deferred_inner d))) p = Some h \<longrightarrow>
+      \<not> shared_root_goal (shared_entry_goal h) \<longrightarrow> x |\<in>| shared_goal_variables (shared_entry_goal h) \<longrightarrow>
+      position_number (deferred_positions d) (fst (fst x)) \<noteq> 0"
+    and "\<forall>p h. p \<in> set ps \<longrightarrow> RBT.lookup (shared_goals (search_state (deferred_inner d))) p = Some h \<longrightarrow>
+      shared_root_goal (shared_entry_goal h) \<longrightarrow> RBT.lookup (deferred_goal_records d) p = None"
+    and "\<forall>q. q \<notin> set ps \<longrightarrow> deferred_goal_formed d q"
+  shows "deferred_parts_formed \<kappa> P (deferred_record_goals ps d) \<and> (\<forall>q. deferred_goal_formed (deferred_record_goals ps d) q) \<and>
+    (\<forall>q. deferred_node_formed d q \<longrightarrow> deferred_node_formed (deferred_record_goals ps d) q) \<and>
+    deferred_inner (deferred_record_goals ps d) = deferred_inner d \<and> deferred_store (deferred_record_goals ps d) = deferred_store d \<and>
+    deferred_positions (deferred_record_goals ps d) = deferred_positions d \<and>
+    deferred_records (deferred_record_goals ps d) = deferred_records d \<and>
+    deferred_holders (deferred_record_goals ps d) = deferred_holders d \<and>
+    deferred_tree (deferred_record_goals ps d) = deferred_tree d"
+  using assms unfolding deferred_record_goals_def
+proof (induction ps arbitrary: d)
+  case Nil
+  then show ?case by simp
+next
+  case (Cons p ps)
+  let ?d' = "deferred_record_goal p d"
+  have pl: "\<forall>h x. RBT.lookup (shared_goals (search_state (deferred_inner d))) p = Some h \<longrightarrow>
+      \<not> shared_root_goal (shared_entry_goal h) \<longrightarrow> x |\<in>| shared_goal_variables (shared_entry_goal h) \<longrightarrow>
+      position_number (deferred_positions d) (fst (fst x)) \<noteq> 0"
+    by (intro allI impI) (rule Cons.prems(2)[rule_format], auto)
+  have rt: "\<forall>h. RBT.lookup (shared_goals (search_state (deferred_inner d))) p = Some h \<longrightarrow>
+      shared_root_goal (shared_entry_goal h) \<longrightarrow> RBT.lookup (deferred_goal_records d) p = None" using Cons.prems(3) by simp
+  note R = deferred_record_goal[OF Cons.prems(1) pl rt]
+  have parts': "deferred_parts_formed \<kappa> P ?d'" using R by blast
+  have inner': "deferred_inner ?d' = deferred_inner d" using R by blast
+  have pos': "deferred_positions ?d' = deferred_positions d" using R by blast
+  have pl': "\<forall>p' h x. p' \<in> set ps \<longrightarrow> RBT.lookup (shared_goals (search_state (deferred_inner ?d'))) p' = Some h \<longrightarrow>
+      \<not> shared_root_goal (shared_entry_goal h) \<longrightarrow> x |\<in>| shared_goal_variables (shared_entry_goal h) \<longrightarrow>
+      position_number (deferred_positions ?d') (fst (fst x)) \<noteq> 0"
+    unfolding inner' pos' by (intro allI impI) (rule Cons.prems(2)[rule_format], auto)
+  have rt': "\<forall>p' h. p' \<in> set ps \<longrightarrow> RBT.lookup (shared_goals (search_state (deferred_inner ?d'))) p' = Some h \<longrightarrow>
+      shared_root_goal (shared_entry_goal h) \<longrightarrow> RBT.lookup (deferred_goal_records ?d') p' = None"
+  proof (intro allI impI)
+    fix p' h assume m: "p' \<in> set ps" and a: "RBT.lookup (shared_goals (search_state (deferred_inner ?d'))) p' = Some h"
+      and r: "shared_root_goal (shared_entry_goal h)"
+    have a0: "RBT.lookup (shared_goals (search_state (deferred_inner d))) p' = Some h" using a inner' by simp
+    have n0: "RBT.lookup (deferred_goal_records d) p' = None" using Cons.prems(3) m a0 r by simp
+    show "RBT.lookup (deferred_goal_records ?d') p' = None"
+    proof (cases "p' = p")
+      case True
+      then have "?d' = d" using a0 r by (simp add: deferred_record_goal_def)
+      then show ?thesis using n0 by simp
+    next
+      case False
+      then show ?thesis using R n0 by simp
+    qed
+  qed
+  have ot': "\<forall>q. q \<notin> set ps \<longrightarrow> deferred_goal_formed ?d' q"
+  proof (intro allI impI)
+    fix q assume q: "q \<notin> set ps"
+    show "deferred_goal_formed ?d' q"
+    proof (cases "q = p")
+      case True
+      then show ?thesis using R by blast
+    next
+      case False
+      then have "deferred_goal_formed d q" using Cons.prems(4) q by simp
+      then show ?thesis using R False by blast
+    qed
+  qed
+  note IH = Cons.IH[OF parts' pl' rt' ot']
+  show ?case using IH R by auto
+qed
+
 subsection \<open>The deferred search of an R3 state\<close>
 
 text \<open>
@@ -1076,10 +1430,12 @@ lemma shared_goal_project_call:
 definition deferred_of :: "('a,'s,'d,'c) finite_schema_system \<Rightarrow> ('a,'s::linorder,'d,'c) resolution_state \<Rightarrow>
     ('a,'s,'d,'c) deferred_search" where
   "deferred_of P st = (let r = search_of P st; es = RBT.entries (shared_nodes (search_state r)) in
-    fold (\<lambda>z d. deferred_record_node (fst z) (shared_derivation_call (shared_entry_node (snd z))) d) es
-      \<lparr>deferred_inner = r, deferred_tree = binding_tree_empty,
-       deferred_positions = snd (keyed_reference_sequence id (map fst es) (RBT.empty, 0, [])),
-       deferred_names = [], deferred_records = RBT.empty, deferred_holders = RBT.empty\<rparr>)"
+    deferred_record_goals (RBT.keys (shared_goals (search_state r)))
+      (fold (\<lambda>z d. deferred_record_node (fst z) (shared_derivation_call (shared_entry_node (snd z))) d) es
+        \<lparr>deferred_inner = r, deferred_tree = binding_tree_empty,
+         deferred_positions = snd (keyed_reference_sequence id (map fst es) (RBT.empty, 0, [])),
+         deferred_names = [], deferred_records = RBT.empty, deferred_holders = RBT.empty,
+         deferred_goal_records = RBT.empty\<rparr>))"
 
 lemma binding_tree_store_empty: "binding_tree_store key binding_tree_empty = binding_store_empty"
   by (simp add: binding_tree_store_def binding_tree_empty_def binding_store_empty_def)
@@ -1091,10 +1447,12 @@ text \<open>
 
 definition deferred_of_search :: "('a,'s::linorder,'d,'c) shared_search \<Rightarrow> ('a,'s,'d,'c) deferred_search" where
   "deferred_of_search r = (let es = RBT.entries (shared_nodes (search_state r)) in
-    fold (\<lambda>z d. deferred_record_node (fst z) (shared_derivation_call (shared_entry_node (snd z))) d) es
-      \<lparr>deferred_inner = r, deferred_tree = binding_tree_empty,
-       deferred_positions = snd (keyed_reference_sequence id (map fst es) (RBT.empty, 0, [])),
-       deferred_names = [], deferred_records = RBT.empty, deferred_holders = RBT.empty\<rparr>)"
+    deferred_record_goals (RBT.keys (shared_goals (search_state r)))
+      (fold (\<lambda>z d. deferred_record_node (fst z) (shared_derivation_call (shared_entry_node (snd z))) d) es
+        \<lparr>deferred_inner = r, deferred_tree = binding_tree_empty,
+         deferred_positions = snd (keyed_reference_sequence id (map fst es) (RBT.empty, 0, [])),
+         deferred_names = [], deferred_records = RBT.empty, deferred_holders = RBT.empty,
+         deferred_goal_records = RBT.empty\<rparr>))"
 
 lemma deferred_of_search_of: "deferred_of P st = deferred_of_search (search_of P st)"
   by (simp add: deferred_of_def deferred_of_search_def Let_def)
@@ -1110,7 +1468,7 @@ proof -
   let ?N0 = "snd (keyed_reference_sequence id (map fst ?es) (RBT.empty, 0, []))"
   let ?Ts = "snd (value_reference_sequence (map fst ?es) [])"
   let ?ds = "\<lparr>deferred_inner = ?r, deferred_tree = binding_tree_empty, deferred_positions = ?N0,
-    deferred_names = [], deferred_records = RBT.empty, deferred_holders = RBT.empty\<rparr>
+    deferred_names = [], deferred_records = RBT.empty, deferred_holders = RBT.empty, deferred_goal_records = RBT.empty\<rparr>
     :: ('a,'s,'d,'c) deferred_search"
   have r: "search_formed \<kappa> P ?r" and pr: "search_project ?r = st" using r0 pr0 by simp_all
   have K: "search_classes_formed ?r" using K0 .
@@ -1223,7 +1581,8 @@ proof -
     qed
     show ?case using IH by (simp add: z step_def)
   qed
-  have dof: "deferred_of_search r = fold step ?es ?ds" by (simp add: deferred_of_search_def step_def Let_def)
+  have dof: "deferred_of_search r = deferred_record_goals (RBT.keys (shared_goals ?s)) (fold step ?es ?ds)"
+    by (simp add: deferred_of_search_def step_def Let_def)
   have npos0: "\<forall>q. RBT.lookup (shared_nodes ?s) q \<noteq> None \<longrightarrow> position_number (deferred_positions ?ds) q \<noteq> 0"
   proof (intro allI impI)
     fix q assume "RBT.lookup (shared_nodes ?s) q \<noteq> None"
@@ -1233,22 +1592,57 @@ proof -
   have in0: "deferred_inner ?ds = ?r" by simp
   have nf0: "\<forall>q\<in>{}. deferred_node_formed ?ds q" by simp
   note F = fold[where Q = "{}", OF parts0 in0 st0 npos0 nf0 order_refl]
-  have allq: "deferred_node_formed (deferred_of_search r) q" for q
+  have allq: "deferred_node_formed (fold step ?es ?ds) q" for q
   proof (cases "RBT.lookup (shared_nodes ?s) q")
     case None
-    then show ?thesis using F dof by (simp add: deferred_node_formed_def)
+    then show ?thesis using F by (simp add: deferred_node_formed_def)
   next
     case (Some hn)
     then have "map_of ?es q = Some hn" by (simp add: RBT.map_of_entries)
     then have "(q, hn) \<in> set ?es" by (rule map_of_SomeD)
     then have qm: "q \<in> fst ` set ?es" by (rule rev_image_eqI) simp
     have Fn: "\<forall>q. q \<in> {} \<union> fst ` set ?es \<longrightarrow> deferred_node_formed (fold step ?es ?ds) q" using F by blast
-    show ?thesis unfolding dof using Fn qm by blast
+    show ?thesis using Fn qm by blast
   qed
-  show "deferred_formed \<kappa> P (deferred_of_search r)" using F dof allq by (simp add: deferred_formed_def)
-  show inner: "deferred_inner (deferred_of_search r) = r" using F dof by simp
+  let ?d0 = "fold step ?es ?ds"
+  have gr0: "deferred_goal_records ?d0 = RBT.empty"
+    by (subst fold_value_kept[where g = deferred_goal_records]) (simp_all add: step_def)
+  have parts0': "deferred_parts_formed \<kappa> P ?d0" and in0': "deferred_inner ?d0 = ?r"
+    and npos: "\<forall>q. RBT.lookup (shared_nodes ?s) q \<noteq> None \<longrightarrow> position_number (deferred_positions ?d0) q \<noteq> 0"
+    using F by blast+
+  have pl: "position_number (deferred_positions ?d0) (fst (fst x)) \<noteq> 0"
+    if "p \<in> set (RBT.keys (shared_goals ?s))" and a: "RBT.lookup (shared_goals (search_state (deferred_inner ?d0))) p = Some h"
+      and nr: "\<not> shared_root_goal (shared_entry_goal h)" and x: "x |\<in>| shared_goal_variables (shared_entry_goal h)" for p h x
+  proof -
+    have "binding_map (deferred_store ?d0) x = None \<and>
+        (RBT.lookup (shared_nodes (search_state (deferred_inner ?d0))) (fst (fst x)) \<noteq> None \<or>
+          (fst (fst x) = [] \<and> (\<exists>rr e p. shared_entry_goal h = Shared_Call_Goal [] rr e p)))"
+      using parts0' a x unfolding deferred_parts_formed_def by blast
+    then have "RBT.lookup (shared_nodes ?s) (fst (fst x)) \<noteq> None" using nr in0' by (auto simp: shared_root_goal_iff)
+    then show ?thesis using npos by blast
+  qed
+  have ot: "deferred_goal_formed ?d0 q" if "q \<notin> set (RBT.keys (shared_goals ?s))" for q
+  proof -
+    have "RBT.lookup (shared_goals ?s) q = None" using that RBT.lookup_keys[of "shared_goals ?s"] by auto
+    then show ?thesis using in0' by (simp add: deferred_goal_formed_def)
+  qed
+  have plA: "\<forall>p h x. p \<in> set (RBT.keys (shared_goals ?s)) \<longrightarrow>
+      RBT.lookup (shared_goals (search_state (deferred_inner ?d0))) p = Some h \<longrightarrow>
+      \<not> shared_root_goal (shared_entry_goal h) \<longrightarrow> x |\<in>| shared_goal_variables (shared_entry_goal h) \<longrightarrow>
+      position_number (deferred_positions ?d0) (fst (fst x)) \<noteq> 0" using pl by blast
+  have rtA: "\<forall>p h. p \<in> set (RBT.keys (shared_goals ?s)) \<longrightarrow>
+      RBT.lookup (shared_goals (search_state (deferred_inner ?d0))) p = Some h \<longrightarrow>
+      shared_root_goal (shared_entry_goal h) \<longrightarrow> RBT.lookup (deferred_goal_records ?d0) p = None" using gr0 by simp
+  have otA: "\<forall>q. q \<notin> set (RBT.keys (shared_goals ?s)) \<longrightarrow> deferred_goal_formed ?d0 q" using ot by blast
+  note G = deferred_record_goals[OF parts0' plA rtA otA]
+  have G': "deferred_parts_formed \<kappa> P (deferred_of_search r) \<and> (\<forall>q. deferred_goal_formed (deferred_of_search r) q) \<and>
+      (\<forall>q. deferred_node_formed ?d0 q \<longrightarrow> deferred_node_formed (deferred_of_search r) q) \<and>
+      deferred_inner (deferred_of_search r) = deferred_inner ?d0 \<and> deferred_store (deferred_of_search r) = deferred_store ?d0"
+    unfolding dof using G by simp
+  show "deferred_formed \<kappa> P (deferred_of_search r)" using G' allq by (simp add: deferred_formed_def)
+  show inner: "deferred_inner (deferred_of_search r) = r" using G' in0' by simp
   have sv: "deferred_substitution (deferred_of_search r) = Finite_Variable"
-    using F dof by (simp add: fun_eq_iff deferred_substitution_def binding_substitution_def binding_resolve_empty)
+    using F G' by (simp add: fun_eq_iff deferred_substitution_def binding_substitution_def binding_resolve_empty)
   have g: "fimage (resolution_goal_substitute Finite_Variable) (resolution_pending st) = resolution_pending st"
     by (rule fimage_fixed) (rule resolution_goal_substitute_outside, simp)
   have n: "fimage (resolution_node_substitute Finite_Variable) (resolution_nodes st) = resolution_nodes st"
@@ -2141,6 +2535,30 @@ text \<open>
   rest as @{thm [source] deferred_ground_node} states it.
 \<close>
 
+lemma deferred_memoize_kept:
+  shows "deferred_positions (deferred_memoize_from n r x d) = deferred_positions d \<and>
+      deferred_names (deferred_memoize_from n r x d) = deferred_names d \<and>
+      deferred_goal_records (deferred_memoize_from n r x d) = deferred_goal_records d \<and>
+      shared_goals (search_state (deferred_inner (deferred_memoize_from n r x d))) = shared_goals (search_state (deferred_inner d))"
+    and "deferred_positions (deferred_memoize_list n r xs d) = deferred_positions d \<and>
+      deferred_names (deferred_memoize_list n r xs d) = deferred_names d \<and>
+      deferred_goal_records (deferred_memoize_list n r xs d) = deferred_goal_records d \<and>
+      shared_goals (search_state (deferred_inner (deferred_memoize_list n r xs d))) = shared_goals (search_state (deferred_inner d))"
+  by (induction n r x d and n r xs d rule: deferred_memoize_from_deferred_memoize_list.induct)
+    (auto simp: deferred_memoize_at_def search_share_def shared_reshare_def split: option.splits prod.splits)
+
+lemma deferred_ground_kept:
+  "deferred_positions (deferred_ground q d) = deferred_positions d"
+  "deferred_names (deferred_ground q d) = deferred_names d"
+  "deferred_goal_records (deferred_ground q d) = deferred_goal_records d"
+  "RBT.lookup (shared_goals (search_state (deferred_inner (deferred_ground q d)))) p =
+    RBT.lookup (shared_goals (search_state (deferred_inner d))) p"
+  by (simp_all add: deferred_ground_def deferred_ground_node_def deferred_memoize_node_def deferred_memoize_kept
+      shared_put_node_def shared_replace_def shared_reshare_def search_update_def split: option.splits prod.splits)
+
+lemma deferred_memoize_node_goal_records: "deferred_goal_records (deferred_memoize_node q d) = deferred_goal_records d"
+  by (simp add: deferred_memoize_node_def deferred_memoize_kept split: option.split)
+
 theorem deferred_ground:
   assumes parts: "deferred_parts_formed \<kappa> P d"
     and at: "RBT.lookup (shared_nodes (search_state (deferred_inner d))) q = Some hn"
@@ -2173,7 +2591,7 @@ proof -
   note G = deferred_ground_node[OF pm atm grm]
   have eq: "deferred_ground q d = deferred_ground_node q ?m" by (simp add: deferred_ground_def)
   have md0: "?m = d\<lparr>deferred_inner := deferred_inner ?m, deferred_tree := deferred_tree ?m\<rparr>"
-    using mf(1-4) by simp
+    using mf(1-4) deferred_memoize_node_goal_records[of q d] by simp
   obtain r0 K0 where md: "?m = d\<lparr>deferred_inner := r0, deferred_tree := K0\<rparr>" using md0 by blast
   obtain r' where e: "deferred_ground_node q ?m = ?m\<lparr>deferred_inner := r'\<rparr>" using G(2) by blast
   have e': "deferred_ground q d = d\<lparr>deferred_inner := r', deferred_tree := K0\<rparr>" using eq e md by simp
@@ -2292,19 +2710,59 @@ definition deferred_node_stale :: "('s,'a) resolution_variable binding_store \<R
     position_number (deferred_positions d) q \<noteq> 0 \<and>
     (\<exists>K. RBT.lookup (deferred_records d) (position_number (deferred_positions d) q) = Some (q, K) \<and>
       set (RBT.keys K) = deferred_key d ` fset (shared_pattern_variables (binding_resolve S (shared_derivation_call (shared_entry_node hn))))) \<and>
-    fBall (shared_pattern_variables (binding_resolve S (shared_derivation_call (shared_entry_node hn)))) (deferred_numbered d))"
+    fBall (shared_pattern_variables (binding_resolve S (shared_derivation_call (shared_entry_node hn)))) (deferred_numbered d) \<and>
+    fBall (shared_pattern_variables (binding_resolve S (shared_derivation_call (shared_entry_node hn))))
+      (\<lambda>x. position_number (deferred_positions d) q |\<in>| tree_bucket (deferred_holders d) (deferred_key d x)))"
 
-definition deferred_update_keys :: "('a,'s::linorder,'d,'c) deferred_search \<Rightarrow>
+text \<open>
+  D3a (task 977): the update reads the domain's keys, not the record's. The keys of the domain and of each image's
+  variables are computed once for the unifier (@{text deferred_domain_keys}); at a record holding one of the domain's
+  keys those keys are removed and their images' keys inserted, the node added to the holders of the inserted keys only
+  (the record's other keys already hold it), and no key is decoded. A nonempty record holding none of the domain's keys
+  is left as it is.
+\<close>
+
+definition deferred_domain_keys :: "('a,'s::linorder,'d,'c) deferred_search \<Rightarrow>
     (('s,'a) resolution_variable \<Rightarrow> ('s,'a) resolution_variable shared_pattern) \<Rightarrow> ('s,'a) resolution_variable fset \<Rightarrow>
-    (deferred_key, unit) rbt \<Rightarrow> deferred_key list" where
-  "deferred_update_keys d \<sigma> D K = concat (map (\<lambda>k. if deferred_decode d k |\<in>| D
-      then map (deferred_key d) (shared_variable_list (\<sigma> (deferred_decode d k))) else [k]) (RBT.keys K))"
+    (deferred_key \<times> deferred_key list) list" where
+  "deferred_domain_keys d \<sigma> D = sorted_list_of_fset
+    (fimage (\<lambda>a. (deferred_key d a, map (deferred_key d) (shared_variable_list (\<sigma> a)))) D)"
+
+definition deferred_record_update :: "(deferred_key \<times> deferred_key list) list \<Rightarrow> (deferred_key, unit) rbt \<Rightarrow>
+    (deferred_key, unit) rbt \<times> deferred_key list" where
+  "deferred_record_update Dk K = (let H = filter (\<lambda>y. RBT.lookup K (fst y) \<noteq> None) Dk; I = concat (map snd H) in
+    (fold (\<lambda>k t. RBT.insert k () t) I (fold (\<lambda>y t. RBT.delete (fst y) t) H K), I))"
+
+definition deferred_record_put :: "nat \<Rightarrow> 's::linorder list \<Rightarrow> (deferred_key, unit) rbt \<Rightarrow> deferred_key fset \<Rightarrow>
+    ('a,'s,'d,'c) deferred_search \<Rightarrow> ('a,'s,'d,'c) deferred_search" where
+  "deferred_record_put n q K X d = d\<lparr>deferred_records := RBT.insert n (q, K) (deferred_records d),
+    deferred_holders := tree_add n X (deferred_holders d)\<rparr>"
+
+definition deferred_update_at :: "(deferred_key \<times> deferred_key list) list \<Rightarrow> nat \<Rightarrow>
+    ('a,'s::linorder,'d,'c) deferred_search \<Rightarrow> ('a,'s,'d,'c) deferred_search" where
+  "deferred_update_at Dk n d = (case RBT.lookup (deferred_records d) n of None \<Rightarrow> d | Some z \<Rightarrow>
+    if \<not> RBT.is_empty (snd z) \<and> list_all (\<lambda>y. RBT.lookup (snd z) (fst y) = None) Dk then d else
+    (case deferred_record_update Dk (snd z) of (K', I) \<Rightarrow>
+      let d1 = deferred_record_put n (fst z) K' (fset_of_list I) d in
+      if RBT.is_empty K' then deferred_ground (fst z) d1 else d1))"
 
 definition deferred_update :: "(('s,'a) resolution_variable \<Rightarrow> ('s,'a) resolution_variable shared_pattern) \<Rightarrow>
     ('s,'a) resolution_variable fset \<Rightarrow> nat \<Rightarrow> ('a,'s::linorder,'d,'c) deferred_search \<Rightarrow> ('a,'s,'d,'c) deferred_search" where
-  "deferred_update \<sigma> D n d = (case RBT.lookup (deferred_records d) n of None \<Rightarrow> d | Some z \<Rightarrow>
-    (let ks = deferred_update_keys d \<sigma> D (snd z); d1 = deferred_record_at n (fst z) ks d in
-      if ks = [] then deferred_ground (fst z) d1 else d1))"
+  "deferred_update \<sigma> D n d = deferred_update_at (deferred_domain_keys d \<sigma> D) n d"
+
+lemma fold_delete_keys: "set (RBT.keys (fold (\<lambda>y t. RBT.delete (f y) t) ys t)) = set (RBT.keys t) - f ` set ys"
+proof -
+  have "dom (RBT.lookup (fold (\<lambda>y t. RBT.delete (f y) t) ys t)) = dom (RBT.lookup t) - f ` set ys"
+    by (induction ys arbitrary: t) auto
+  then show ?thesis by (simp add: RBT.lookup_keys)
+qed
+
+lemma rbt_is_empty_keys: "RBT.is_empty K \<longleftrightarrow> set (RBT.keys K) = {}"
+proof -
+  have "RBT.is_empty K \<longleftrightarrow> RBT.lookup K = Map.empty" by simp
+  also have "\<dots> \<longleftrightarrow> dom (RBT.lookup K) = {}" by auto
+  finally show ?thesis by (simp add: RBT.lookup_keys)
+qed
 
 lemma deferred_record_at_key [simp]: "deferred_key (deferred_record_at n q ks d) = deferred_key d"
   by (simp add: fun_eq_iff deferred_key_def)
@@ -2332,6 +2790,51 @@ proof -
     fix n' q' K' assume "RBT.lookup (deferred_records (deferred_record_at n q ks d)) n' = Some (q', K')"
     then show "n' \<noteq> 0 \<and> n' = position_number (deferred_positions (deferred_record_at n q ks d)) q' \<and>
         RBT.lookup (shared_nodes (search_state (deferred_inner (deferred_record_at n q ks d)))) q' \<noteq> None"
+      using b[of n' q' K'] n at by (cases "n' = n") simp_all
+  qed
+  show ?thesis using parts rc unfolding deferred_parts_formed_def by simp
+qed
+
+lemma deferred_record_at_goal_records [simp]:
+  "deferred_goal_records (deferred_record_at n q ks d) = deferred_goal_records d"
+  by (simp add: deferred_record_at_def)
+
+lemma deferred_record_put_fields [simp]:
+  "deferred_inner (deferred_record_put n q K X d) = deferred_inner d"
+  "deferred_tree (deferred_record_put n q K X d) = deferred_tree d"
+  "deferred_positions (deferred_record_put n q K X d) = deferred_positions d"
+  "deferred_names (deferred_record_put n q K X d) = deferred_names d"
+  "deferred_goal_records (deferred_record_put n q K X d) = deferred_goal_records d"
+  "deferred_records (deferred_record_put n q K X d) = RBT.insert n (q, K) (deferred_records d)"
+  "deferred_holders (deferred_record_put n q K X d) = tree_add n X (deferred_holders d)"
+  by (simp_all add: deferred_record_put_def)
+
+lemma deferred_record_put_key [simp]: "deferred_key (deferred_record_put n q K X d) = deferred_key d"
+  by (simp add: fun_eq_iff deferred_key_def)
+
+lemma deferred_record_put_store [simp]:
+  "deferred_numbered (deferred_record_put n q K X d) = deferred_numbered d"
+  "deferred_store (deferred_record_put n q K X d) = deferred_store d"
+  by (simp_all add: fun_eq_iff deferred_numbered_def deferred_store_def)
+
+lemma deferred_record_put_project [simp]: "deferred_project (deferred_record_put n q K X d) = deferred_project d"
+  by (simp add: deferred_project_def deferred_substitution_def[abs_def])
+
+lemma deferred_record_put_parts:
+  assumes parts: "deferred_parts_formed \<kappa> P d" and n: "n \<noteq> 0" "n = position_number (deferred_positions d) q"
+    and at: "RBT.lookup (shared_nodes (search_state (deferred_inner d))) q \<noteq> None"
+  shows "deferred_parts_formed \<kappa> P (deferred_record_put n q K X d)"
+proof -
+  have b: "\<And>n' q' K'. RBT.lookup (deferred_records d) n' = Some (q', K') \<Longrightarrow> n' \<noteq> 0 \<and>
+      n' = position_number (deferred_positions d) q' \<and> RBT.lookup (shared_nodes (search_state (deferred_inner d))) q' \<noteq> None"
+    using parts unfolding deferred_parts_formed_def by blast
+  have rc: "\<forall>n' q' K'. RBT.lookup (deferred_records (deferred_record_put n q K X d)) n' = Some (q', K') \<longrightarrow> n' \<noteq> 0 \<and>
+      n' = position_number (deferred_positions (deferred_record_put n q K X d)) q' \<and>
+      RBT.lookup (shared_nodes (search_state (deferred_inner (deferred_record_put n q K X d)))) q' \<noteq> None"
+  proof (intro allI impI)
+    fix n' q' K' assume "RBT.lookup (deferred_records (deferred_record_put n q K X d)) n' = Some (q', K')"
+    then show "n' \<noteq> 0 \<and> n' = position_number (deferred_positions (deferred_record_put n q K X d)) q' \<and>
+        RBT.lookup (shared_nodes (search_state (deferred_inner (deferred_record_put n q K X d)))) q' \<noteq> None"
       using b[of n' q' K'] n at by (cases "n' = n") simp_all
   qed
   show ?thesis using parts rc unfolding deferred_parts_formed_def by simp
@@ -2366,8 +2869,8 @@ lemma deferred_update:
     and "deferred_positions (deferred_update \<sigma> D n d) = deferred_positions d"
     and "deferred_names (deferred_update \<sigma> D n d) = deferred_names d"
     and "table_extends (search_table (deferred_inner d)) (search_table (deferred_inner (deferred_update \<sigma> D n d)))"
-    and "deferred_records (deferred_update \<sigma> D n d) =
-      RBT.insert n (q, fold (\<lambda>k t. RBT.insert k () t) (deferred_update_keys d \<sigma> D K) RBT.empty) (deferred_records d)"
+    and "\<And>n'. n' \<noteq> n \<Longrightarrow> RBT.lookup (deferred_records (deferred_update \<sigma> D n d)) n' = RBT.lookup (deferred_records d) n'"
+    and "\<exists>K'. RBT.lookup (deferred_records (deferred_update \<sigma> D n d)) n = Some (q, K')"
 proof -
   let ?r = "deferred_inner d" let ?s = "search_state ?r" let ?T = "search_table ?r"
   have r: "search_formed \<kappa> P ?r" and N: "positions_numbered (deferred_positions d)"
@@ -2383,106 +2886,161 @@ proof -
   have cf: "shared_pattern_formed ?T ?c"
     using shared_entries_formed(2)[OF s at] by (simp add: node_entry_formed_def shared_derivation_formed_def)
   have keysK: "set (RBT.keys K) = deferred_key d ` fset ?V" and numV: "\<And>x. x |\<in>| ?V \<Longrightarrow> deferred_numbered d x"
+    and holdV: "\<And>x. x |\<in>| ?V \<Longrightarrow> n |\<in>| tree_bucket (deferred_holders d) (deferred_key d x)"
     using stale at rec nq unfolding deferred_node_stale_def by auto
   have V': "x |\<in>| ?V' \<longleftrightarrow> x |\<in>| ?V \<and> x |\<notin>| D \<or> (\<exists>a. a |\<in>| ?V \<and> a |\<in>| D \<and> x |\<in>| shared_pattern_variables (\<sigma> a))" for x
     using store_bind_variables[OF S ready cf] store_memoized_variables[OF st S0 tf0 c0[rule_format, OF at]] by simp
   have \<sigma>f: "\<And>a. a |\<in>| D \<Longrightarrow> shared_pattern_formed ?T (\<sigma> a)" using ready unfolding unifier_ready_def by blast
   have \<sigma>vl: "set (shared_variable_list (\<sigma> a)) = fset (shared_pattern_variables (\<sigma> a))" if "a |\<in>| D" for a
     by (rule shared_variable_list[OF \<sigma>f[OF that]])
-  have dk: "deferred_decode d (deferred_key d x) = x" if "x |\<in>| ?V" for x using deferred_decode_key[OF N numV[OF that]] .
-  let ?ks = "deferred_update_keys d \<sigma> D K"
-  have ks: "set ?ks = deferred_key d ` fset ?V'"
+  have inK: "RBT.lookup K (deferred_key d a) \<noteq> None \<longleftrightarrow> a |\<in>| ?V" for a
+  proof
+    assume "RBT.lookup K (deferred_key d a) \<noteq> None"
+    then have "deferred_key d a \<in> set (RBT.keys K)" by (simp add: RBT.lookup_keys[symmetric] domIff)
+    then obtain x where x: "x |\<in>| ?V" "deferred_key d x = deferred_key d a" unfolding keysK by auto
+    have an: "deferred_numbered d a"
+    proof (rule ccontr)
+      assume "\<not> deferred_numbered d a"
+      then show False using deferred_key_zero[of d a x] numV[OF x(1)] x(2) by simp
+    qed
+    have "x = a" using deferred_key_inj[OF N numV[OF x(1)] an] x(2) by blast
+    then show "a |\<in>| ?V" using x(1) by simp
+  next
+    assume "a |\<in>| ?V"
+    then have "deferred_key d a \<in> set (RBT.keys K)" unfolding keysK by blast
+    then show "RBT.lookup K (deferred_key d a) \<noteq> None" by (simp add: RBT.lookup_keys[symmetric] domIff)
+  qed
+  let ?Dk = "deferred_domain_keys d \<sigma> D"
+  let ?H = "filter (\<lambda>y. RBT.lookup K (fst y) \<noteq> None) ?Dk"
+  let ?I = "concat (map snd ?H)"
+  let ?K' = "fold (\<lambda>k t. RBT.insert k () t) ?I (fold (\<lambda>y t. RBT.delete (fst y) t) ?H K)"
+  have Dk: "y \<in> set ?Dk \<longleftrightarrow> (\<exists>a. a |\<in>| D \<and> y = (deferred_key d a, map (deferred_key d) (shared_variable_list (\<sigma> a))))" for y
+    by (auto simp: deferred_domain_keys_def)
+  have H: "y \<in> set ?H \<longleftrightarrow> (\<exists>a. a |\<in>| D \<and> a |\<in>| ?V \<and> y = (deferred_key d a, map (deferred_key d) (shared_variable_list (\<sigma> a))))"
+    for y
+  proof
+    assume "y \<in> set ?H"
+    then have y: "y \<in> set ?Dk" "RBT.lookup K (fst y) \<noteq> None" by simp_all
+    then obtain a where a: "a |\<in>| D" "y = (deferred_key d a, map (deferred_key d) (shared_variable_list (\<sigma> a)))"
+      using Dk by blast
+    have "a |\<in>| ?V" using y(2) a(2) inK[of a] by simp
+    then show "\<exists>a. a |\<in>| D \<and> a |\<in>| ?V \<and> y = (deferred_key d a, map (deferred_key d) (shared_variable_list (\<sigma> a)))"
+      using a by blast
+  next
+    assume "\<exists>a. a |\<in>| D \<and> a |\<in>| ?V \<and> y = (deferred_key d a, map (deferred_key d) (shared_variable_list (\<sigma> a)))"
+    then obtain a where a: "a |\<in>| D" "a |\<in>| ?V" "y = (deferred_key d a, map (deferred_key d) (shared_variable_list (\<sigma> a)))"
+      by blast
+    have "y \<in> set ?Dk" using Dk a by blast
+    moreover have "RBT.lookup K (fst y) \<noteq> None" using inK[of a] a by simp
+    ultimately show "y \<in> set ?H" by simp
+  qed
+  have I: "z \<in> set ?I \<longleftrightarrow> (\<exists>a b. a |\<in>| D \<and> a |\<in>| ?V \<and> b |\<in>| shared_pattern_variables (\<sigma> a) \<and> z = deferred_key d b)"
+    for z
   proof -
-    have mem: "z \<in> set ?ks \<longleftrightarrow> (\<exists>x. x |\<in>| ?V \<and> (if x |\<in>| D
-        then z \<in> deferred_key d ` fset (shared_pattern_variables (\<sigma> x)) else z = deferred_key d x))" for z
+    have "z \<in> set ?I \<longleftrightarrow> (\<exists>y\<in>set ?H. z \<in> set (snd y))" unfolding set_concat set_map by blast
+    also have "\<dots> \<longleftrightarrow> (\<exists>a. a |\<in>| D \<and> a |\<in>| ?V \<and> z \<in> deferred_key d ` set (shared_variable_list (\<sigma> a)))"
+    proof
+      assume "\<exists>y\<in>set ?H. z \<in> set (snd y)"
+      then obtain y where y: "y \<in> set ?H" "z \<in> set (snd y)" by blast
+      obtain a where a: "a |\<in>| D" "a |\<in>| ?V" "y = (deferred_key d a, map (deferred_key d) (shared_variable_list (\<sigma> a)))"
+        using H y(1) by blast
+      have "z \<in> deferred_key d ` set (shared_variable_list (\<sigma> a))" using y(2) unfolding a(3) by simp
+      then show "\<exists>a. a |\<in>| D \<and> a |\<in>| ?V \<and> z \<in> deferred_key d ` set (shared_variable_list (\<sigma> a))" using a(1,2) by blast
+    next
+      assume "\<exists>a. a |\<in>| D \<and> a |\<in>| ?V \<and> z \<in> deferred_key d ` set (shared_variable_list (\<sigma> a))"
+      then obtain a where a: "a |\<in>| D" "a |\<in>| ?V" "z \<in> deferred_key d ` set (shared_variable_list (\<sigma> a))" by blast
+      have y: "(deferred_key d a, map (deferred_key d) (shared_variable_list (\<sigma> a))) \<in> set ?H" using H a(1,2) by blast
+      have "z \<in> set (snd (deferred_key d a, map (deferred_key d) (shared_variable_list (\<sigma> a))))"
+        using a(3) by (simp only: snd_conv set_map)
+      then show "\<exists>y\<in>set ?H. z \<in> set (snd y)" using y by blast
+    qed
+    also have "\<dots> \<longleftrightarrow> (\<exists>a b. a |\<in>| D \<and> a |\<in>| ?V \<and> b |\<in>| shared_pattern_variables (\<sigma> a) \<and> z = deferred_key d b)"
     proof -
-      have "z \<in> set ?ks \<longleftrightarrow> (\<exists>k\<in>set (RBT.keys K). z \<in> set (if deferred_decode d k |\<in>| D
-          then map (deferred_key d) (shared_variable_list (\<sigma> (deferred_decode d k))) else [k]))"
-        by (simp only: deferred_update_keys_def set_concat set_map image_image UN_iff)
-      also have "\<dots> \<longleftrightarrow> (\<exists>x. x |\<in>| ?V \<and> z \<in> set (if x |\<in>| D
-          then map (deferred_key d) (shared_variable_list (\<sigma> x)) else [deferred_key d x]))"
-      proof
-        assume "\<exists>k\<in>set (RBT.keys K). z \<in> set (if deferred_decode d k |\<in>| D
-          then map (deferred_key d) (shared_variable_list (\<sigma> (deferred_decode d k))) else [k])"
-        then obtain k where k: "k \<in> set (RBT.keys K)" and zk: "z \<in> set (if deferred_decode d k |\<in>| D
-          then map (deferred_key d) (shared_variable_list (\<sigma> (deferred_decode d k))) else [k])" by blast
-        from k obtain x where x: "x |\<in>| ?V" "k = deferred_key d x" unfolding keysK by blast
-        show "\<exists>x. x |\<in>| ?V \<and> z \<in> set (if x |\<in>| D
-          then map (deferred_key d) (shared_variable_list (\<sigma> x)) else [deferred_key d x])"
-        proof -
-          have "z \<in> set (if x |\<in>| D then map (deferred_key d) (shared_variable_list (\<sigma> x)) else [deferred_key d x])"
-            using zk unfolding x(2) dk[OF x(1)] .
-          then show ?thesis using x(1) by blast
-        qed
-      next
-        assume "\<exists>x. x |\<in>| ?V \<and> z \<in> set (if x |\<in>| D
-          then map (deferred_key d) (shared_variable_list (\<sigma> x)) else [deferred_key d x])"
-        then obtain x where x: "x |\<in>| ?V" and zx: "z \<in> set (if x |\<in>| D
-          then map (deferred_key d) (shared_variable_list (\<sigma> x)) else [deferred_key d x])" by blast
-        have kx: "deferred_key d x \<in> set (RBT.keys K)" using x unfolding keysK by blast
-        show "\<exists>k\<in>set (RBT.keys K). z \<in> set (if deferred_decode d k |\<in>| D
-          then map (deferred_key d) (shared_variable_list (\<sigma> (deferred_decode d k))) else [k])"
-        proof -
-          have "z \<in> set (if deferred_decode d (deferred_key d x) |\<in>| D then map (deferred_key d)
-              (shared_variable_list (\<sigma> (deferred_decode d (deferred_key d x)))) else [deferred_key d x])"
-            unfolding dk[OF x] by (rule zx)
-          then show ?thesis using kx by blast
-        qed
-      qed
-      also have "\<dots> \<longleftrightarrow> (\<exists>x. x |\<in>| ?V \<and> (if x |\<in>| D
-          then z \<in> deferred_key d ` fset (shared_pattern_variables (\<sigma> x)) else z = deferred_key d x))"
-        using \<sigma>vl by (auto split: if_splits)
-      finally show ?thesis .
+      have "z \<in> deferred_key d ` set (shared_variable_list (\<sigma> a)) \<longleftrightarrow>
+          (\<exists>b. b |\<in>| shared_pattern_variables (\<sigma> a) \<and> z = deferred_key d b)" if "a |\<in>| D" for a
+        unfolding \<sigma>vl[OF that] by blast
+      then show ?thesis by blast
     qed
-    show ?thesis
-    proof (rule set_eqI)
-      fix z show "z \<in> set ?ks \<longleftrightarrow> z \<in> deferred_key d ` fset ?V'"
+    finally show ?thesis .
+  qed
+  have Hk: "z \<in> fst ` set ?H \<longleftrightarrow> (\<exists>a. a |\<in>| D \<and> a |\<in>| ?V \<and> z = deferred_key d a)" for z
+  proof
+    assume "z \<in> fst ` set ?H"
+    then obtain y where y: "y \<in> set ?H" "z = fst y" by blast
+    obtain a where a: "a |\<in>| D" "a |\<in>| ?V" "y = (deferred_key d a, map (deferred_key d) (shared_variable_list (\<sigma> a)))"
+      using H y(1) by blast
+    have "z = deferred_key d a" using a(3) y(2) by simp
+    then show "\<exists>a. a |\<in>| D \<and> a |\<in>| ?V \<and> z = deferred_key d a" using a(1,2) by blast
+  next
+    assume "\<exists>a. a |\<in>| D \<and> a |\<in>| ?V \<and> z = deferred_key d a"
+    then obtain a where a: "a |\<in>| D" "a |\<in>| ?V" "z = deferred_key d a" by blast
+    have y: "(deferred_key d a, map (deferred_key d) (shared_variable_list (\<sigma> a))) \<in> set ?H" using H a(1,2) by blast
+    have "z = fst (deferred_key d a, map (deferred_key d) (shared_variable_list (\<sigma> a)))" using a(3) by (simp only: fst_conv)
+    then show "z \<in> fst ` set ?H" using y by blast
+  qed
+  have keys': "set (RBT.keys ?K') = deferred_key d ` fset ?V'"
+  proof (rule set_eqI)
+    fix z
+    have "z \<in> set (RBT.keys ?K') \<longleftrightarrow> z \<in> set ?I \<or> (z \<in> set (RBT.keys K) \<and> z \<notin> fst ` set ?H)"
+      by (simp add: fold_insert_unit_keys fold_delete_keys)
+    also have "\<dots> \<longleftrightarrow> z \<in> deferred_key d ` fset ?V'"
+    proof
+      assume "z \<in> set ?I \<or> (z \<in> set (RBT.keys K) \<and> z \<notin> fst ` set ?H)"
+      then show "z \<in> deferred_key d ` fset ?V'"
       proof
-        assume "z \<in> set ?ks"
-        then obtain x where x: "x |\<in>| ?V" and zx: "if x |\<in>| D
-            then z \<in> deferred_key d ` fset (shared_pattern_variables (\<sigma> x)) else z = deferred_key d x"
-          unfolding mem by blast
-        show "z \<in> deferred_key d ` fset ?V'"
-        proof (cases "x |\<in>| D")
-          case True
-          then obtain y where y: "y |\<in>| shared_pattern_variables (\<sigma> x)" "z = deferred_key d y" using zx by auto
-          have "y |\<in>| ?V'" unfolding V' using x True y(1) by blast
-          then show ?thesis using y(2) by blast
-        next
-          case False
-          have "x |\<in>| ?V'" unfolding V' using x False by blast
-          then show ?thesis using zx False by auto
-        qed
+        assume "z \<in> set ?I"
+        then obtain a b where ab: "a |\<in>| D" "a |\<in>| ?V" "b |\<in>| shared_pattern_variables (\<sigma> a)" "z = deferred_key d b"
+          using I by blast
+        have "b |\<in>| ?V'" using V'[of b] ab by blast
+        then show ?thesis using ab(4) by blast
       next
-        assume "z \<in> deferred_key d ` fset ?V'"
-        then obtain y where y1: "y |\<in>| ?V'" and y2: "z = deferred_key d y" by blast
-        from y1[unfolded V'] show "z \<in> set ?ks"
-        proof (elim disjE conjE exE)
-          assume "y |\<in>| ?V" "y |\<notin>| D"
-          then show ?thesis unfolding mem using y2 by (intro exI[of _ y]) auto
-        next
-          fix a assume "a |\<in>| ?V" "a |\<in>| D" "y |\<in>| shared_pattern_variables (\<sigma> a)"
-          then show ?thesis unfolding mem using y2 by (intro exI[of _ a]) auto
+        assume z: "z \<in> set (RBT.keys K) \<and> z \<notin> fst ` set ?H"
+        then obtain x where x: "x |\<in>| ?V" "z = deferred_key d x" unfolding keysK by blast
+        have "x |\<notin>| D" using z x Hk by blast
+        then have "x |\<in>| ?V'" using V'[of x] x(1) by blast
+        then show ?thesis using x(2) by blast
+      qed
+    next
+      assume "z \<in> deferred_key d ` fset ?V'"
+      then obtain y where y: "y |\<in>| ?V'" "z = deferred_key d y" by blast
+      from y(1)[unfolded V'] show "z \<in> set ?I \<or> (z \<in> set (RBT.keys K) \<and> z \<notin> fst ` set ?H)"
+      proof (elim disjE conjE exE)
+        assume yV: "y |\<in>| ?V" and yD: "y |\<notin>| D"
+        have "z \<notin> fst ` set ?H"
+        proof
+          assume "z \<in> fst ` set ?H"
+          then obtain a where a: "a |\<in>| D" "a |\<in>| ?V" "z = deferred_key d a" using Hk by blast
+          have "a = y" using deferred_key_inj[OF N numV[OF a(2)] numV[OF yV]] a(3) y(2) by simp
+          then show False using a(1) yD by simp
         qed
+        then show ?thesis using yV y(2) keysK by blast
+      next
+        fix a assume "a |\<in>| ?V" "a |\<in>| D" "y |\<in>| shared_pattern_variables (\<sigma> a)"
+        then show ?thesis using I y(2) by blast
       qed
     qed
+    finally show "z \<in> set (RBT.keys ?K') \<longleftrightarrow> z \<in> deferred_key d ` fset ?V'" .
   qed
   have numV': "deferred_numbered d x" if "x |\<in>| ?V'" for x using that numV num unfolding V' by blast
-  let ?d1 = "deferred_record_at n q ?ks d"
-  have eq: "deferred_update \<sigma> D n d = (if ?ks = [] then deferred_ground q ?d1 else ?d1)"
-    by (simp add: deferred_update_def rec Let_def)
-  have parts1: "deferred_parts_formed \<kappa> P ?d1" using deferred_record_at_parts[OF parts] nq by blast
-  have at1: "RBT.lookup (shared_nodes (search_state (deferred_inner ?d1))) q = Some hn" using at by simp
-  have rec1: "RBT.lookup (deferred_records ?d1) (position_number (deferred_positions ?d1) q) =
-      Some (q, fold (\<lambda>k t. RBT.insert k () t) ?ks RBT.empty)" using nq by simp
-  have keys1: "set (RBT.keys (fold (\<lambda>k t. RBT.insert k () t) ?ks RBT.empty)) = deferred_key d ` fset ?V'"
-    using fold_insert_unit_keys[of ?ks RBT.empty] ks by simp
-  have nf1: "deferred_node_formed ?d1 q" if ne: "?ks \<noteq> []"
+  let ?d1 = "deferred_record_put n q ?K' (fset_of_list ?I) d"
+  have hold1: "n |\<in>| tree_bucket (deferred_holders ?d1) (deferred_key ?d1 x)" if "x |\<in>| ?V'" for x
   proof -
-    have "?V' \<noteq> {||}" using ne ks by auto
-    then show ?thesis unfolding deferred_node_formed_def
-      using at1 nq rec1 keys1 numV' by (auto simp: fset_of_list_elem ks)
+    from that[unfolded V'] show ?thesis
+    proof (elim disjE conjE exE)
+      assume "x |\<in>| ?V" "x |\<notin>| D"
+      then show ?thesis using holdV by simp
+    next
+      fix a assume "a |\<in>| ?V" "a |\<in>| D" "x |\<in>| shared_pattern_variables (\<sigma> a)"
+      then have "deferred_key d x \<in> set ?I" using I by blast
+      then show ?thesis by (simp add: fset_of_list_elem)
+    qed
   qed
+  have eqU: "deferred_update \<sigma> D n d = (if \<not> RBT.is_empty K \<and> list_all (\<lambda>y. RBT.lookup K (fst y) = None) ?Dk then d
+      else if RBT.is_empty ?K' then deferred_ground q ?d1 else ?d1)"
+    by (simp add: deferred_update_def deferred_update_at_def rec deferred_record_update_def Let_def)
+  have parts1: "deferred_parts_formed \<kappa> P ?d1" using deferred_record_put_parts[OF parts] nq by blast
+  have at1: "RBT.lookup (shared_nodes (search_state (deferred_inner ?d1))) q = Some hn" using at by simp
+  have rec1: "RBT.lookup (deferred_records ?d1) (position_number (deferred_positions ?d1) q) = Some (q, ?K')" using nq by simp
   have other_rec: "RBT.lookup (deferred_records ?d1) (position_number (deferred_positions d) q') =
       RBT.lookup (deferred_records d) (position_number (deferred_positions d) q')"
     if ne: "q' \<noteq> q" and n0: "position_number (deferred_positions d) q' \<noteq> 0" for q'
@@ -2513,105 +3071,125 @@ proof -
     fix hn' assume a': "RBT.lookup (shared_nodes (search_state (deferred_inner ?d1))) q' = Some hn'"
     have a: "RBT.lookup (shared_nodes ?s) q' = Some hn'" using a' by simp
     have q'0: "position_number (deferred_positions d) q' \<noteq> 0" using sf a unfolding deferred_node_stale_def by blast
+    have r': "RBT.lookup (deferred_records ?d1) (position_number (deferred_positions ?d1) q') =
+        RBT.lookup (deferred_records d) (position_number (deferred_positions d) q')" using other_rec[OF ne q'0] by simp
     show "position_number (deferred_positions ?d1) q' \<noteq> 0 \<and>
       (\<exists>K. RBT.lookup (deferred_records ?d1) (position_number (deferred_positions ?d1) q') = Some (q', K) \<and>
         set (RBT.keys K) = deferred_key ?d1 ` fset (shared_pattern_variables (binding_resolve S (shared_derivation_call (shared_entry_node hn'))))) \<and>
-      fBall (shared_pattern_variables (binding_resolve S (shared_derivation_call (shared_entry_node hn')))) (deferred_numbered ?d1)"
-      using sf a other_rec[OF ne q'0] unfolding deferred_node_stale_def by auto
+      fBall (shared_pattern_variables (binding_resolve S (shared_derivation_call (shared_entry_node hn')))) (deferred_numbered ?d1) \<and>
+      fBall (shared_pattern_variables (binding_resolve S (shared_derivation_call (shared_entry_node hn'))))
+        (\<lambda>x. position_number (deferred_positions ?d1) q' |\<in>| tree_bucket (deferred_holders ?d1) (deferred_key ?d1 x))"
+      using sf a r' unfolding deferred_node_stale_def by auto
   qed
-  show "deferred_records (deferred_update \<sigma> D n d) =
-      RBT.insert n (q, fold (\<lambda>k t. RBT.insert k () t) ?ks RBT.empty) (deferred_records d)"
-  proof (cases "?ks = []")
-    case True
-    obtain r' K' where "deferred_ground q ?d1 = ?d1\<lparr>deferred_inner := r', deferred_tree := K'\<rparr>"
-      using deferred_ground(2)[OF parts1 at1] True ks by auto
-    then show ?thesis using eq True by simp
-  qed (use eq in simp)
-  show "deferred_parts_formed \<kappa> P (deferred_update \<sigma> D n d)"
-       "deferred_node_formed (deferred_update \<sigma> D n d) q"
-       "\<And>q'. q' \<noteq> q \<Longrightarrow> deferred_node_formed d q' \<Longrightarrow> deferred_node_formed (deferred_update \<sigma> D n d) q'"
-       "\<And>q'. q' \<noteq> q \<Longrightarrow> deferred_node_stale S d q' \<Longrightarrow> deferred_node_stale S (deferred_update \<sigma> D n d) q'"
-       "deferred_project (deferred_update \<sigma> D n d) = deferred_project d"
-       "store_memoized (search_table (deferred_inner d)) (deferred_store d) (search_table (deferred_inner (deferred_update \<sigma> D n d))) (deferred_store (deferred_update \<sigma> D n d))"
-       "deferred_positions (deferred_update \<sigma> D n d) = deferred_positions d"
-       "deferred_names (deferred_update \<sigma> D n d) = deferred_names d"
-       "table_extends (search_table (deferred_inner d)) (search_table (deferred_inner (deferred_update \<sigma> D n d)))"
-  proof -
-    consider (ground) "?ks = []" | (kept) "?ks \<noteq> []" by blast
-    then have all: "deferred_parts_formed \<kappa> P (deferred_update \<sigma> D n d) \<and> deferred_node_formed (deferred_update \<sigma> D n d) q \<and>
+  have Sd: "binding_store_formed ?T (deferred_store d)" using parts unfolding deferred_parts_formed_def by blast
+  consider (skip) "\<not> RBT.is_empty K \<and> list_all (\<lambda>y. RBT.lookup K (fst y) = None) ?Dk"
+    | (ground) "\<not> (\<not> RBT.is_empty K \<and> list_all (\<lambda>y. RBT.lookup K (fst y) = None) ?Dk)" "RBT.is_empty ?K'"
+    | (kept) "\<not> (\<not> RBT.is_empty K \<and> list_all (\<lambda>y. RBT.lookup K (fst y) = None) ?Dk)" "\<not> RBT.is_empty ?K'" by blast
+  then have all: "deferred_parts_formed \<kappa> P (deferred_update \<sigma> D n d) \<and> deferred_node_formed (deferred_update \<sigma> D n d) q \<and>
       (\<forall>q'. q' \<noteq> q \<longrightarrow> deferred_node_formed d q' \<longrightarrow> deferred_node_formed (deferred_update \<sigma> D n d) q') \<and>
       (\<forall>q'. q' \<noteq> q \<longrightarrow> deferred_node_stale S d q' \<longrightarrow> deferred_node_stale S (deferred_update \<sigma> D n d) q') \<and>
       deferred_project (deferred_update \<sigma> D n d) = deferred_project d \<and>
       store_memoized (search_table (deferred_inner d)) (deferred_store d) (search_table (deferred_inner (deferred_update \<sigma> D n d))) (deferred_store (deferred_update \<sigma> D n d)) \<and>
       deferred_positions (deferred_update \<sigma> D n d) = deferred_positions d \<and>
       deferred_names (deferred_update \<sigma> D n d) = deferred_names d \<and>
-      table_extends (search_table (deferred_inner d)) (search_table (deferred_inner (deferred_update \<sigma> D n d)))"
-    proof cases
-      case ground
-      have gr: "shared_pattern_variables (deferred_call ?d1 hn) = {||}" using ground ks by auto
-      note G = deferred_ground[OF parts1 at1 gr]
-      obtain r' K' where e': "deferred_ground q ?d1 = ?d1\<lparr>deferred_inner := r', deferred_tree := K'\<rparr>"
-        and sm': "store_memoized (search_table (deferred_inner ?d1)) (deferred_store ?d1) (search_table r')
-          (deferred_store (?d1\<lparr>deferred_inner := r', deferred_tree := K'\<rparr>))" using G(2) by blast
-      have ext': "table_extends ?T (search_table r')" using G(8) e' by simp
-      have nfq: "deferred_node_formed (deferred_ground q ?d1) q"
-        using G(6)[of "fold (\<lambda>k t. RBT.insert k () t) ?ks RBT.empty"] rec1 nq keys1 ground ks by auto
-      have n3: "\<And>p. p \<noteq> q \<Longrightarrow> RBT.lookup (shared_nodes (search_state r')) p =
-          RBT.lookup (shared_nodes (search_state (deferred_inner d))) p" using G(3) e' by simp
-      have stale_g: "deferred_node_stale S (deferred_ground q ?d1) q'" if ne: "q' \<noteq> q" and sf: "deferred_node_stale S ?d1 q'" for q'
-        using sf n3[OF ne] unfolding deferred_node_stale_def e' by simp
-      have upd: "deferred_update \<sigma> D n d = deferred_ground q ?d1" using eq ground by simp
-      show ?thesis unfolding upd
-      proof (intro conjI allI impI)
-        show "deferred_parts_formed \<kappa> P (deferred_ground q ?d1)" by (rule G(1))
-        show "deferred_node_formed (deferred_ground q ?d1) q" by (rule nfq)
-        show "deferred_node_formed (deferred_ground q ?d1) q'" if "q' \<noteq> q" "deferred_node_formed d q'" for q'
-          using G(5)[OF that(1) other1[OF that]] .
-        show "deferred_node_stale S (deferred_ground q ?d1) q'" if "q' \<noteq> q" "deferred_node_stale S d q'" for q'
-          using stale_g[OF that(1) stale1[OF that]] .
-        show "deferred_project (deferred_ground q ?d1) = deferred_project d" using G(7) by simp
-        show "store_memoized (search_table (deferred_inner d)) (deferred_store d)
-            (search_table (deferred_inner (deferred_ground q ?d1))) (deferred_store (deferred_ground q ?d1))"
-          using sm' e' by simp
-        show "deferred_positions (deferred_ground q ?d1) = deferred_positions d" using e' by simp
-        show "deferred_names (deferred_ground q ?d1) = deferred_names d" using e' by simp
-        show "table_extends (search_table (deferred_inner d)) (search_table (deferred_inner (deferred_ground q ?d1)))"
-          using ext' e' by simp
-      qed
-    next
-      case kept
-      have upd: "deferred_update \<sigma> D n d = ?d1" using eq kept by simp
-      show ?thesis unfolding upd
-      proof (intro conjI allI impI)
-        show "deferred_parts_formed \<kappa> P ?d1" by (rule parts1)
-        show "deferred_node_formed ?d1 q" by (rule nf1[OF kept])
-        show "deferred_node_formed ?d1 q'" if "q' \<noteq> q" "deferred_node_formed d q'" for q' using other1[OF that] .
-        show "deferred_node_stale S ?d1 q'" if "q' \<noteq> q" "deferred_node_stale S d q'" for q' using stale1[OF that] .
-        show "deferred_project ?d1 = deferred_project d" by simp
-        show "store_memoized (search_table (deferred_inner d)) (deferred_store d) (search_table (deferred_inner ?d1))
-            (deferred_store ?d1)"
-        proof -
-          have Sd: "binding_store_formed ?T (deferred_store d)" using parts unfolding deferred_parts_formed_def by blast
-          show ?thesis using store_memoized_refl[OF Sd tf] by simp
-        qed
-        show "deferred_positions ?d1 = deferred_positions d" by simp
-        show "deferred_names ?d1 = deferred_names d" by simp
-        show "table_extends (search_table (deferred_inner d)) (search_table (deferred_inner ?d1))"
-          by (simp add: table_extends_refl)
-      qed
+      table_extends (search_table (deferred_inner d)) (search_table (deferred_inner (deferred_update \<sigma> D n d))) \<and>
+      (\<forall>n'. n' \<noteq> n \<longrightarrow> RBT.lookup (deferred_records (deferred_update \<sigma> D n d)) n' = RBT.lookup (deferred_records d) n') \<and>
+      (\<exists>K'. RBT.lookup (deferred_records (deferred_update \<sigma> D n d)) n = Some (q, K'))"
+  proof cases
+    case skip
+    have upd: "deferred_update \<sigma> D n d = d" unfolding eqU if_P[OF skip] by (rule refl)
+    have dj: "\<not> (a |\<in>| ?V \<and> a |\<in>| D)" for a
+    proof
+      assume a: "a |\<in>| ?V \<and> a |\<in>| D"
+      then have "(deferred_key d a, map (deferred_key d) (shared_variable_list (\<sigma> a))) \<in> set ?Dk" using Dk by blast
+      then have "RBT.lookup K (deferred_key d a) = None" using skip by (auto simp: list_all_iff)
+      then show False using inK a by blast
     qed
-    show "deferred_parts_formed \<kappa> P (deferred_update \<sigma> D n d)" using all by blast
-    show "deferred_node_formed (deferred_update \<sigma> D n d) q" using all by blast
-    show "\<And>q'. q' \<noteq> q \<Longrightarrow> deferred_node_formed d q' \<Longrightarrow> deferred_node_formed (deferred_update \<sigma> D n d) q'" using all by blast
-    show "\<And>q'. q' \<noteq> q \<Longrightarrow> deferred_node_stale S d q' \<Longrightarrow> deferred_node_stale S (deferred_update \<sigma> D n d) q'"
-      using all by blast
-    show "deferred_project (deferred_update \<sigma> D n d) = deferred_project d" using all by blast
-    show "store_memoized (search_table (deferred_inner d)) (deferred_store d) (search_table (deferred_inner (deferred_update \<sigma> D n d))) (deferred_store (deferred_update \<sigma> D n d))" using all by blast
-    show "deferred_positions (deferred_update \<sigma> D n d) = deferred_positions d" using all by blast
-    show "deferred_names (deferred_update \<sigma> D n d) = deferred_names d" using all by blast
-    show "table_extends (search_table (deferred_inner d)) (search_table (deferred_inner (deferred_update \<sigma> D n d)))"
-      using all by blast
+    have VV: "?V' = ?V" by (rule fset_eqI) (use V' dj in blast)
+    have ne: "?V \<noteq> {||}"
+    proof
+      assume "?V = {||}"
+      then have "set (RBT.keys K) = {}" using keysK by simp
+      then show False using skip rbt_is_empty_keys by blast
+    qed
+    have nfq: "deferred_node_formed d q"
+      unfolding deferred_node_formed_def using nq rec keysK numV holdV VV ne at by auto
+    show ?thesis unfolding upd using parts nfq store_memoized_refl[OF Sd tf] rec by (simp add: table_extends_refl)
+  next
+    case ground
+    have gr: "shared_pattern_variables (deferred_call ?d1 hn) = {||}"
+      using ground(2) keys' rbt_is_empty_keys[of ?K'] by auto
+    note G = deferred_ground[OF parts1 at1 gr]
+    obtain r' K' where e': "deferred_ground q ?d1 = ?d1\<lparr>deferred_inner := r', deferred_tree := K'\<rparr>"
+      and sm': "store_memoized (search_table (deferred_inner ?d1)) (deferred_store ?d1) (search_table r')
+        (deferred_store (?d1\<lparr>deferred_inner := r', deferred_tree := K'\<rparr>))" using G(2) by blast
+    have ext': "table_extends ?T (search_table r')" using G(8) e' by simp
+    have nfq: "deferred_node_formed (deferred_ground q ?d1) q"
+      using G(6)[of ?K'] rec1 nq keys' ground(2) rbt_is_empty_keys[of ?K'] by auto
+    have n3: "\<And>p. p \<noteq> q \<Longrightarrow> RBT.lookup (shared_nodes (search_state r')) p =
+        RBT.lookup (shared_nodes (search_state (deferred_inner d))) p" using G(3) e' by simp
+    have stale_g: "deferred_node_stale S (deferred_ground q ?d1) q'" if ne: "q' \<noteq> q" and sf: "deferred_node_stale S ?d1 q'" for q'
+      using sf n3[OF ne] unfolding deferred_node_stale_def e' by simp
+    have upd: "deferred_update \<sigma> D n d = deferred_ground q ?d1"
+      unfolding eqU if_not_P[OF ground(1)] if_P[OF ground(2)] by (rule refl)
+    show ?thesis unfolding upd
+    proof (intro conjI allI impI)
+      show "deferred_parts_formed \<kappa> P (deferred_ground q ?d1)" by (rule G(1))
+      show "deferred_node_formed (deferred_ground q ?d1) q" by (rule nfq)
+      show "deferred_node_formed (deferred_ground q ?d1) q'" if "q' \<noteq> q" "deferred_node_formed d q'" for q'
+        using G(5)[OF that(1) other1[OF that]] .
+      show "deferred_node_stale S (deferred_ground q ?d1) q'" if "q' \<noteq> q" "deferred_node_stale S d q'" for q'
+        using stale_g[OF that(1) stale1[OF that]] .
+      show "deferred_project (deferred_ground q ?d1) = deferred_project d" using G(7) by simp
+      show "store_memoized (search_table (deferred_inner d)) (deferred_store d)
+          (search_table (deferred_inner (deferred_ground q ?d1))) (deferred_store (deferred_ground q ?d1))"
+        using sm' e' by simp
+      show "deferred_positions (deferred_ground q ?d1) = deferred_positions d" using e' by simp
+      show "deferred_names (deferred_ground q ?d1) = deferred_names d" using e' by simp
+      show "table_extends (search_table (deferred_inner d)) (search_table (deferred_inner (deferred_ground q ?d1)))"
+        using ext' e' by simp
+      show "RBT.lookup (deferred_records (deferred_ground q ?d1)) n' = RBT.lookup (deferred_records d) n'" if "n' \<noteq> n" for n'
+        using e' that by simp
+      show "\<exists>K'. RBT.lookup (deferred_records (deferred_ground q ?d1)) n = Some (q, K')" using e' by simp
+    qed
+  next
+    case kept
+    have upd: "deferred_update \<sigma> D n d = ?d1" unfolding eqU if_not_P[OF kept(1)] if_not_P[OF kept(2)] by (rule refl)
+    have ne: "?V' \<noteq> {||}" using kept(2) keys' rbt_is_empty_keys[of ?K'] by auto
+    have nf1: "deferred_node_formed ?d1 q"
+      unfolding deferred_node_formed_def using at1 nq rec1 keys' numV' hold1 ne by auto
+    show ?thesis unfolding upd
+    proof (intro conjI allI impI)
+      show "deferred_parts_formed \<kappa> P ?d1" by (rule parts1)
+      show "deferred_node_formed ?d1 q" by (rule nf1)
+      show "deferred_node_formed ?d1 q'" if "q' \<noteq> q" "deferred_node_formed d q'" for q' using other1[OF that] .
+      show "deferred_node_stale S ?d1 q'" if "q' \<noteq> q" "deferred_node_stale S d q'" for q' using stale1[OF that] .
+      show "deferred_project ?d1 = deferred_project d" by simp
+      show "store_memoized (search_table (deferred_inner d)) (deferred_store d) (search_table (deferred_inner ?d1))
+          (deferred_store ?d1)" using store_memoized_refl[OF Sd tf] by simp
+      show "deferred_positions ?d1 = deferred_positions d" by simp
+      show "deferred_names ?d1 = deferred_names d" by simp
+      show "table_extends (search_table (deferred_inner d)) (search_table (deferred_inner ?d1))"
+        by (simp add: table_extends_refl)
+      show "RBT.lookup (deferred_records ?d1) n' = RBT.lookup (deferred_records d) n'" if "n' \<noteq> n" for n'
+        using that by simp
+      show "\<exists>K'. RBT.lookup (deferred_records ?d1) n = Some (q, K')" by simp
+    qed
   qed
+  show "deferred_parts_formed \<kappa> P (deferred_update \<sigma> D n d)" using all by blast
+  show "deferred_node_formed (deferred_update \<sigma> D n d) q" using all by blast
+  show "\<And>q'. q' \<noteq> q \<Longrightarrow> deferred_node_formed d q' \<Longrightarrow> deferred_node_formed (deferred_update \<sigma> D n d) q'" using all by blast
+  show "\<And>q'. q' \<noteq> q \<Longrightarrow> deferred_node_stale S d q' \<Longrightarrow> deferred_node_stale S (deferred_update \<sigma> D n d) q'"
+    using all by blast
+  show "deferred_project (deferred_update \<sigma> D n d) = deferred_project d" using all by blast
+  show "store_memoized (search_table (deferred_inner d)) (deferred_store d) (search_table (deferred_inner (deferred_update \<sigma> D n d))) (deferred_store (deferred_update \<sigma> D n d))" using all by blast
+  show "deferred_positions (deferred_update \<sigma> D n d) = deferred_positions d" using all by blast
+  show "deferred_names (deferred_update \<sigma> D n d) = deferred_names d" using all by blast
+  show "table_extends (search_table (deferred_inner d)) (search_table (deferred_inner (deferred_update \<sigma> D n d)))"
+    using all by blast
+  show "\<And>n'. n' \<noteq> n \<Longrightarrow> RBT.lookup (deferred_records (deferred_update \<sigma> D n d)) n' = RBT.lookup (deferred_records d) n'"
+    using all by blast
+  show "\<exists>K'. RBT.lookup (deferred_records (deferred_update \<sigma> D n d)) n = Some (q, K')" using all by blast
 qed
 
 lemma deferred_ground_node_nodes:
@@ -2633,11 +3211,33 @@ lemma deferred_ground_nodes:
   by (simp add: deferred_ground_def deferred_ground_node_nodes deferred_memoize_node_def deferred_memoize_nodes
       split: option.splits)
 
+lemma deferred_update_at_kept:
+  "deferred_positions (deferred_update_at Dk n d) = deferred_positions d"
+  "deferred_names (deferred_update_at Dk n d) = deferred_names d"
+  "deferred_goal_records (deferred_update_at Dk n d) = deferred_goal_records d"
+  "RBT.lookup (shared_goals (search_state (deferred_inner (deferred_update_at Dk n d)))) p =
+    RBT.lookup (shared_goals (search_state (deferred_inner d))) p"
+  by (simp_all add: deferred_update_at_def deferred_record_update_def Let_def deferred_ground_kept
+      split: option.split prod.split)
+
+lemma deferred_update_at_key [simp]: "deferred_key (deferred_update_at Dk n d) = deferred_key d"
+  by (simp add: fun_eq_iff deferred_key_def deferred_update_at_kept)
+
+lemma deferred_update_at_fold:
+  "fold (deferred_update_at (deferred_domain_keys d \<sigma> D)) ns d = fold (deferred_update \<sigma> D) ns d"
+proof (induction ns arbitrary: d)
+  case (Cons n ns)
+  have k: "deferred_domain_keys (deferred_update_at (deferred_domain_keys d \<sigma> D) n d) \<sigma> D = deferred_domain_keys d \<sigma> D"
+    by (simp add: deferred_domain_keys_def)
+  show ?case using Cons.IH[of "deferred_update_at (deferred_domain_keys d \<sigma> D) n d"] k by (simp add: deferred_update_def)
+qed simp
+
 lemma deferred_update_nodes:
   "RBT.lookup (deferred_records d) n = Some (q, K) \<Longrightarrow> p \<noteq> q \<Longrightarrow>
     RBT.lookup (shared_nodes (search_state (deferred_inner (deferred_update \<sigma> D n d)))) p =
     RBT.lookup (shared_nodes (search_state (deferred_inner d))) p"
-  by (simp add: deferred_update_def Let_def deferred_ground_nodes)
+  by (simp add: deferred_update_def deferred_update_at_def deferred_record_update_def Let_def deferred_ground_nodes
+      split: prod.split)
 
 lemma deferred_numbered_cong:
   "deferred_positions d' = deferred_positions d \<Longrightarrow> deferred_names d' = deferred_names d \<Longrightarrow>
@@ -2662,6 +3262,7 @@ lemma deferred_update_fold:
     and "table_formed T0" and "binding_store_formed T0 (store_bind S \<sigma> D)"
     and "\<forall>q hn. RBT.lookup (shared_nodes (search_state (deferred_inner d))) q = Some hn \<longrightarrow>
       position_number (deferred_positions d) q \<in> set ns \<longrightarrow> shared_pattern_formed T0 (shared_derivation_call (shared_entry_node hn))"
+    and "\<forall>q. deferred_goal_formed d q"
   shows "deferred_formed \<kappa> P (fold (deferred_update \<sigma> D) ns d) \<and>
     deferred_project (fold (deferred_update \<sigma> D) ns d) = deferred_project d \<and>
     store_memoized (search_table (deferred_inner d)) (deferred_store d)
@@ -2684,7 +3285,7 @@ next
   show ?case
   proof (cases "RBT.lookup (deferred_records d) n")
     case None
-    have u: "deferred_update \<sigma> D n d = d" by (simp add: deferred_update_def None)
+    have u: "deferred_update \<sigma> D n d = d" by (simp add: deferred_update_def deferred_update_at_def None)
     have st': "\<forall>q. RBT.lookup (shared_nodes (search_state (deferred_inner d))) q \<noteq> None \<longrightarrow>
         position_number (deferred_positions d) q \<in> set ns \<longrightarrow> deferred_node_stale S d q" using Cons.prems(7) by simp
     have fm': "\<forall>q. position_number (deferred_positions d) q \<notin> set ns \<longrightarrow> deferred_node_formed d q"
@@ -2716,7 +3317,7 @@ next
       have c0n: "\<forall>q hn. RBT.lookup (shared_nodes (search_state (deferred_inner d))) q = Some hn \<longrightarrow>
           position_number (deferred_positions d) q \<in> set ns \<longrightarrow>
           shared_pattern_formed T0 (shared_derivation_call (shared_entry_node hn))" using Cons.prems(11) by simp
-      show ?thesis using Cons.IH[OF Cons.prems(1-5) nsd st' fm' Cons.prems(9,10) c0n] .
+      show ?thesis using Cons.IH[OF Cons.prems(1-5) nsd st' fm' Cons.prems(9,10) c0n Cons.prems(12)] .
     qed
     show ?thesis using IH u by simp
   next
@@ -2791,10 +3392,739 @@ next
           using a deferred_update_nodes[OF rec ne[OF m']] by simp
         then show "shared_pattern_formed T0 (shared_derivation_call (shared_entry_node hn))" using Cons.prems(11) m' by simp
       qed
-      show ?thesis using Cons.IH[OF U(1) S' ready' st' num' nsd stale' formed' Cons.prems(9,10) c0'] .
+      have goal': "\<forall>q. deferred_goal_formed ?d' q"
+      proof
+        fix q'' show "deferred_goal_formed ?d' q''"
+        proof (rule deferred_goal_formed_same[OF Cons.prems(12)[rule_format, of q'']])
+          show "\<And>h'. RBT.lookup (shared_goals (search_state (deferred_inner ?d'))) q'' = Some h' \<Longrightarrow>
+            \<exists>h. RBT.lookup (shared_goals (search_state (deferred_inner d))) q'' = Some h \<and> shared_entry_goal h' = shared_entry_goal h"
+            by (simp add: deferred_update_def deferred_update_at_kept)
+          show "RBT.lookup (deferred_goal_records ?d') q'' = RBT.lookup (deferred_goal_records d) q''"
+            by (simp add: deferred_update_def deferred_update_at_kept)
+          show "\<And>x. deferred_numbered d x \<Longrightarrow> deferred_key ?d' x = deferred_key d x \<and> deferred_numbered ?d' x"
+            using numE U(7) U(8) by (simp add: deferred_key_def)
+        qed
+      qed
+      show ?thesis using Cons.IH[OF U(1) S' ready' st' num' nsd stale' formed' Cons.prems(9,10) c0' goal'] .
     qed
     show ?thesis using IH U(5) store_memoized_trans[OF U(6) conjunct2[OF conjunct2[OF IH]] tf] by simp
   qed
+qed
+
+subsection \<open>The goal side of the bind, written by difference\<close>
+
+text \<open>
+  D3a (task 977). A goal the domain reaches is substituted and re-entered as the shared search does it
+  (@{const shared_goal_entry_substitute}), but its record decides whether the domain reaches it (the domain's keys looked
+  up in the record), the holder index gains the goal's position at its images' variables' position parts only (the old
+  parts already hold it: the holder index is a superset), and the registered buckets change only where the record's
+  difference adds a registered position or removes the last registered key of one (a range of the record's keys). A call
+  goal at the root, which has no record, is substituted through the shared search's own step.
+\<close>
+
+lemma resolution_goal_substitute_variables:
+  "z |\<in>| resolution_goal_variables (resolution_goal_substitute \<tau> g) \<longleftrightarrow>
+    (\<exists>c. c |\<in>| resolution_goal_variables g \<and> z |\<in>| finite_pattern_variables (\<tau> c))"
+proof -
+  have p: "z |\<in>| finite_pattern_variables (finite_pattern_substitute \<tau> p) \<longleftrightarrow>
+      (\<exists>c. c |\<in>| finite_pattern_variables p \<and> z |\<in>| finite_pattern_variables (\<tau> c))" for p
+    by (induction p) auto
+  show ?thesis by (cases g) (auto simp: p finite_material_variables_def finite_material_pattern_substitute_def)
+qed
+
+lemma root_call_goal_substitute [simp]: "root_call_goal (resolution_goal_substitute \<tau> g) = root_call_goal g"
+  by (cases g) (simp_all add: root_call_goal_def)
+
+lemma shared_root_goal_project: "shared_root_goal g \<longleftrightarrow> root_call_goal (shared_goal_project T g)"
+  by (cases g) (simp_all add: shared_root_goal_def root_call_goal_def)
+
+lemma shared_goal_substituted_variables:
+  assumes x: "share_state_formed x" and h: "goal_entry_formed P (share_state_table x) q h"
+    and \<sigma>f: "\<And>a. shared_pattern_formed (share_state_table x) (\<sigma> a)" and \<sigma>c: "\<And>a. shared_collapsed (\<sigma> a)"
+    and out: "\<forall>a. a |\<notin>| D \<longrightarrow> \<sigma> a = Shared_Variable a"
+  shows "z |\<in>| shared_goal_variables (shared_entry_goal (fst (shared_goal_entry_substitute P \<sigma> D h x))) \<longleftrightarrow>
+    (z |\<in>| shared_goal_variables (shared_entry_goal h) \<and> z |\<notin>| D) \<or>
+    (\<exists>a. a |\<in>| shared_goal_variables (shared_entry_goal h) \<and> a |\<in>| D \<and> z |\<in>| shared_pattern_variables (\<sigma> a))"
+proof -
+  note k = shared_goal_entry_substitute[where D = D, OF x h \<sigma>f \<sigma>c out[rule_format]]
+  let ?x' = "snd (shared_goal_entry_substitute P \<sigma> D h x)" and ?h' = "fst (shared_goal_entry_substitute P \<sigma> D h x)"
+  let ?\<tau> = "\<lambda>a. shared_pattern_project (share_state_table x) (\<sigma> a)"
+  have hf': "goal_entry_formed P (share_state_table ?x') q ?h'" using k by blast
+  have pj: "shared_goal_project (share_state_table ?x') (shared_entry_goal ?h') =
+      resolution_goal_substitute ?\<tau> (shared_goal_project (share_state_table x) (shared_entry_goal h))" using k by blast
+  have tv: "finite_pattern_variables (?\<tau> a) = shared_pattern_variables (\<sigma> a)" for a
+    using shared_pattern_variables_project[OF \<sigma>f[of a]] by simp
+  have sv: "shared_pattern_variables (\<sigma> c) = {|c|}" if "c |\<notin>| D" for c using out[rule_format, OF that] by simp
+  have e: "z |\<in>| shared_goal_variables (shared_entry_goal ?h') \<longleftrightarrow>
+      (\<exists>c. c |\<in>| shared_goal_variables (shared_entry_goal h) \<and> z |\<in>| shared_pattern_variables (\<sigma> c))"
+    unfolding goal_entry_variables[OF hf'] pj resolution_goal_substitute_variables goal_entry_variables[OF h] tv ..
+  show ?thesis unfolding e
+  proof
+    assume "\<exists>c. c |\<in>| shared_goal_variables (shared_entry_goal h) \<and> z |\<in>| shared_pattern_variables (\<sigma> c)"
+    then obtain c where c: "c |\<in>| shared_goal_variables (shared_entry_goal h)" "z |\<in>| shared_pattern_variables (\<sigma> c)"
+      by blast
+    show "(z |\<in>| shared_goal_variables (shared_entry_goal h) \<and> z |\<notin>| D) \<or>
+      (\<exists>a. a |\<in>| shared_goal_variables (shared_entry_goal h) \<and> a |\<in>| D \<and> z |\<in>| shared_pattern_variables (\<sigma> a))"
+    proof (cases "c |\<in>| D")
+      case True
+      then show ?thesis using c by blast
+    next
+      case False
+      then show ?thesis using c sv[OF False] by simp
+    qed
+  next
+    assume "(z |\<in>| shared_goal_variables (shared_entry_goal h) \<and> z |\<notin>| D) \<or>
+      (\<exists>a. a |\<in>| shared_goal_variables (shared_entry_goal h) \<and> a |\<in>| D \<and> z |\<in>| shared_pattern_variables (\<sigma> a))"
+    then show "\<exists>c. c |\<in>| shared_goal_variables (shared_entry_goal h) \<and> z |\<in>| shared_pattern_variables (\<sigma> c)"
+    proof (elim disjE conjE exE)
+      assume zh: "z |\<in>| shared_goal_variables (shared_entry_goal h)" and zD: "z |\<notin>| D"
+      have "z |\<in>| shared_pattern_variables (\<sigma> z)" using sv[OF zD] by simp
+      then show ?thesis using zh by blast
+    next
+      fix a assume "a |\<in>| shared_goal_variables (shared_entry_goal h)" "a |\<in>| D" "z |\<in>| shared_pattern_variables (\<sigma> a)"
+      then show ?thesis by blast
+    qed
+  qed
+qed
+
+text \<open>
+  The goal at a position written with its holders added at the given position parts only: every other field as
+  @{const shared_replace} writes a goal whose node stays.
+\<close>
+
+definition shared_goal_write :: "'s::linorder list \<Rightarrow> ('a,'s,'d,'c) shared_goal_entry \<Rightarrow> 's list fset \<Rightarrow>
+    ('a,'s,'d,'c) shared_state \<Rightarrow> ('a,'s,'d,'c) shared_state" where
+  "shared_goal_write q h A s = s\<lparr>shared_goals := tree_option_put (shared_goals s) q (Some h),
+    shared_holders := tree_add q A (shared_holders s),
+    shared_open := open_count_put (shared_goals s) (shared_open s) q True,
+    shared_goal_calls := tree_move q
+      (case_option {||} (\<lambda>h. shared_goal_call_refs (shared_entry_goal h)) (RBT.lookup (shared_goals s) q))
+      (shared_goal_call_refs (shared_entry_goal h)) (shared_goal_calls s)\<rparr>"
+
+lemma shared_goal_write:
+  assumes s: "shared_state_formed \<kappa> P s" and at: "RBT.lookup (shared_goals s) q = Some h0"
+    and h: "goal_entry_formed P (shared_state_table s) q h"
+    and A: "\<forall>x. x |\<in>| shared_goal_variables (shared_entry_goal h) \<longrightarrow>
+      x |\<notin>| shared_goal_variables (shared_entry_goal h0) \<longrightarrow> fst (fst x) |\<in>| A"
+  shows "shared_state_formed \<kappa> P (shared_goal_write q h A s)"
+    and "shared_state_table (shared_goal_write q h A s) = shared_state_table s"
+    and "\<And>p. RBT.lookup (shared_goals (shared_goal_write q h A s)) p = (if p = q then Some h else RBT.lookup (shared_goals s) p)"
+    and "shared_nodes (shared_goal_write q h A s) = shared_nodes s"
+    and "shared_witnesses (shared_goal_write q h A s) = shared_witnesses s"
+proof -
+  let ?T = "shared_state_table s" and ?s' = "shared_goal_write q h A s"
+  have rec0: "shared_recorded_at s p" for p using s by (simp add: shared_state_formed_def)
+  have rec: "shared_recorded_at ?s' p" for p
+  proof (cases "p = q")
+    case True
+    show ?thesis unfolding shared_recorded_at_def True
+    proof (intro conjI allI impI)
+      fix h' x assume a: "RBT.lookup (shared_goals ?s') q = Some h'" and x: "x |\<in>| shared_goal_variables (shared_entry_goal h')"
+      have h': "h' = h" using a by (simp add: shared_goal_write_def)
+      show "q |\<in>| tree_bucket (shared_holders ?s') (fst (fst x))"
+      proof (cases "x |\<in>| shared_goal_variables (shared_entry_goal h0)")
+        case True
+        then have "q |\<in>| tree_bucket (shared_holders s) (fst (fst x))"
+          using rec0[of q] at unfolding shared_recorded_at_def by blast
+        then show ?thesis by (simp add: shared_goal_write_def)
+      next
+        case False
+        then show ?thesis using A[rule_format, OF x[unfolded h'] False] by (simp add: shared_goal_write_def)
+      qed
+    next
+      fix hn x assume a: "RBT.lookup (shared_nodes ?s') q = Some hn" and x: "x |\<in>| shared_entry_variables hn"
+      have a0: "RBT.lookup (shared_nodes s) q = Some hn" using a by (simp add: shared_goal_write_def)
+      have "q |\<in>| tree_bucket (shared_holders s) (fst (fst x))"
+        using rec0[of q] a0 x unfolding shared_recorded_at_def by blast
+      then show "q |\<in>| tree_bucket (shared_holders ?s') (fst (fst x))" by (simp add: shared_goal_write_def)
+    next
+      fix h' i assume a: "RBT.lookup (shared_goals ?s') q = Some h'" and i: "i |\<in>| shared_goal_call_refs (shared_entry_goal h')"
+      then show "q |\<in>| tree_bucket (shared_goal_calls ?s') i" by (simp add: shared_goal_write_def tree_move)
+    next
+      fix hn i assume a: "RBT.lookup (shared_nodes ?s') q = Some hn"
+        and i: "i |\<in>| shared_call_refs (shared_derivation_call (shared_entry_node hn))"
+      then show "q |\<in>| tree_bucket (shared_node_calls ?s') i"
+        using rec0[of q] by (simp add: shared_recorded_at_def shared_goal_write_def)
+    qed
+  next
+    case False
+    then show ?thesis using rec0[of p] by (auto simp: shared_recorded_at_def shared_goal_write_def tree_move)
+  qed
+  have gcalls: "i < length ?T" if "y |\<in>| tree_bucket (shared_goal_calls ?s') i" for i y
+  proof (cases "i |\<in>| shared_goal_call_refs (shared_entry_goal h)")
+    case True
+    then show ?thesis using h shared_goal_call_refs_formed[of ?T] by (auto simp: goal_entry_formed_def)
+  next
+    case False
+    then have "y |\<in>| tree_bucket (shared_goal_calls s) i" using that
+      by (auto simp: shared_goal_write_def tree_move split: if_splits)
+    then show ?thesis using s by (auto simp: shared_state_formed_def)
+  qed
+  have counts: "tree_count (shared_open ?s') p = open_count (shared_goals ?s') p" for p
+  proof -
+    have "\<And>p. tree_count (shared_open s) p = open_count (shared_goals s) p" using s by (simp add: shared_state_formed_def)
+    from open_count_put_formed[OF this, of q "Some h" p] show ?thesis by (simp add: shared_goal_write_def)
+  qed
+  have gs: "\<And>p h'. RBT.lookup (shared_goals ?s') p = Some h' \<Longrightarrow> goal_entry_formed P ?T p h'"
+    using h shared_entries_formed(1)[OF s] by (auto simp: shared_goal_write_def split: if_splits)
+  have ns: "\<And>p hn. RBT.lookup (shared_nodes ?s') p = Some hn \<Longrightarrow> node_entry_formed ?T p hn"
+    using shared_entries_formed(2)[OF s] by (simp add: shared_goal_write_def)
+  have c1: "\<forall>i y. y |\<in>| tree_bucket (shared_goal_calls ?s') i \<longrightarrow> i < length (shared_state_table ?s')"
+    using gcalls by (simp add: shared_goal_write_def)
+  have c2: "\<forall>i y. y |\<in>| tree_bucket (shared_node_calls ?s') i \<longrightarrow> i < length (shared_state_table ?s')"
+    using s by (simp add: shared_goal_write_def shared_state_formed_def)
+  have g1: "\<forall>p h'. RBT.lookup (shared_goals ?s') p = Some h' \<longrightarrow> goal_entry_formed P (shared_state_table ?s') p h'"
+    using gs by (simp add: shared_goal_write_def)
+  have n1: "\<forall>p hn. RBT.lookup (shared_nodes ?s') p = Some hn \<longrightarrow> node_entry_formed (shared_state_table ?s') p hn"
+    using ns by (simp add: shared_goal_write_def)
+  have o1: "\<forall>p. tree_count (shared_open ?s') p = open_count (shared_goals ?s') p" using counts by simp
+  have u1: "\<forall>p a hn. a |\<in>| tree_bucket (shared_unconstructed ?s') p \<longrightarrow> RBT.lookup (shared_nodes ?s') p = Some hn \<longrightarrow>
+      finite_registered_value \<kappa> P (shared_derivation_project (shared_state_table ?s') (shared_entry_node hn)) a = None"
+    using s by (simp add: shared_goal_write_def shared_state_formed_def)
+  have sh: "share_state_formed (shared_sharing ?s')" "position_index_formed (shared_sharing ?s') (shared_positions ?s')"
+    using s by (simp_all add: shared_goal_write_def shared_state_formed_def)
+  show "shared_state_formed \<kappa> P ?s'" unfolding shared_state_formed_def using sh g1 n1 c1 c2 rec o1 u1 by blast
+  show "shared_state_table ?s' = ?T" by (simp add: shared_goal_write_def)
+  show "\<And>p. RBT.lookup (shared_goals ?s') p = (if p = q then Some h else RBT.lookup (shared_goals s) p)"
+    by (simp add: shared_goal_write_def)
+  show "shared_nodes ?s' = shared_nodes s" by (simp add: shared_goal_write_def)
+  show "shared_witnesses ?s' = shared_witnesses s" by (simp add: shared_goal_write_def)
+qed
+
+text \<open>The registered buckets moved at the positions a difference adds and removes, every other bucket kept.\<close>
+
+definition tree_shift :: "'q \<Rightarrow> 'k::linorder list \<Rightarrow> 'k list \<Rightarrow> ('k,'q fset) rbt \<Rightarrow> ('k,'q fset) rbt" where
+  "tree_shift q A R t = fold (\<lambda>p t. tree_bucket_put t p (tree_bucket t p |-| {|q|})) R
+    (fold (\<lambda>p t. tree_bucket_put t p (finsert q (tree_bucket t p))) A t)"
+
+lemma tree_shift:
+  "tree_bucket (tree_shift q A R t) p = (if p \<in> set R then tree_bucket t p |-| {|q|}
+    else if p \<in> set A then finsert q (tree_bucket t p) else tree_bucket t p)"
+proof -
+  have a: "tree_bucket (fold (\<lambda>p t. tree_bucket_put t p (finsert q (tree_bucket t p))) A t) p =
+      (if p \<in> set A then finsert q (tree_bucket t p) else tree_bucket t p)" for t
+    by (induction A arbitrary: t) auto
+  have r: "tree_bucket (fold (\<lambda>p t. tree_bucket_put t p (tree_bucket t p |-| {|q|})) R t) p =
+      (if p \<in> set R then tree_bucket t p |-| {|q|} else tree_bucket t p)" for t
+    by (induction R arbitrary: t) auto
+  show ?thesis by (auto simp: tree_shift_def r a)
+qed
+
+definition search_goal_write :: "'s list \<Rightarrow> ('a,'s,'d,'c) shared_state \<Rightarrow> 's list list \<Rightarrow> 's list list \<Rightarrow>
+    ('a,'s::linorder,'d,'c) shared_search \<Rightarrow> ('a,'s,'d,'c) shared_search" where
+  "search_goal_write q s' A R r = r\<lparr>search_state := s', search_registered := tree_shift q A R (search_registered r),
+    search_classes := classes_update (classes_touched q (search_state r) s') s' (search_classes r),
+    search_closed := closed_put q s' (search_index r) (search_closed r)\<rparr>"
+
+lemma search_goal_write_update:
+  "search_goal_write q s' A R r = (search_update q s' r)\<lparr>search_registered := tree_shift q A R (search_registered r)\<rparr>"
+  by (simp add: search_goal_write_def search_update_def)
+
+lemma search_goal_write:
+  assumes r: "search_formed \<kappa> P r" and K: "search_classes_formed r" and s': "shared_state_formed \<kappa> P s'"
+    and ext: "table_extends (search_table r) (shared_state_table s')"
+    and same: "\<forall>p. p \<noteq> q \<longrightarrow> RBT.lookup (shared_goals s') p = RBT.lookup (shared_goals (search_state r)) p"
+    and nodes: "\<forall>p. p \<noteq> q \<longrightarrow> RBT.lookup (shared_nodes s') p = RBT.lookup (shared_nodes (search_state r)) p"
+    and at0: "RBT.lookup (shared_goals (search_state r)) q = Some h0" and at: "RBT.lookup (shared_goals s') q = Some h"
+    and A: "\<forall>p. p |\<in>| shared_goal_registered h \<longrightarrow> p |\<notin>| shared_goal_registered h0 \<longrightarrow> p \<in> set A"
+    and R: "\<forall>p. p \<in> set R \<longrightarrow> p |\<notin>| shared_goal_registered h"
+  shows "search_formed \<kappa> P (search_goal_write q s' A R r)" and "search_classes_formed (search_goal_write q s' A R r)"
+    and "search_state (search_goal_write q s' A R r) = s'"
+proof -
+  have u: "search_formed \<kappa> P (search_update q s' r)" by (rule search_update[OF r s' ext]) (use same in blast)
+  have Ku: "search_classes_formed (search_update q s' r)"
+    by (rule search_update_classes[OF r K u ext]) (use same nodes in blast)+
+  have reg0: "search_registered_formed r" using r by (simp add: search_formed_def)
+  let ?t = "tree_shift q A R (search_registered r)"
+  have reg: "search_registered_formed ((search_update q s' r)\<lparr>search_registered := ?t\<rparr>)"
+    unfolding search_registered_formed_def
+  proof (intro allI impI)
+    fix p h' z assume a: "RBT.lookup (shared_goals (search_state ((search_update q s' r)\<lparr>search_registered := ?t\<rparr>))) p = Some h'"
+      and z: "z |\<in>| shared_goal_registered h'"
+    have a': "RBT.lookup (shared_goals s') p = Some h'" using a by (simp add: search_update_def)
+    show "p |\<in>| tree_bucket (search_registered ((search_update q s' r)\<lparr>search_registered := ?t\<rparr>)) z"
+    proof (cases "p = q")
+      case True
+      then have hh: "h' = h" using a' at by simp
+      have zR: "z \<notin> set R" using R z hh by blast
+      show ?thesis
+      proof (cases "z |\<in>| shared_goal_registered h0")
+        case True
+        then have "q |\<in>| tree_bucket (search_registered r) z" using reg0 at0 by (simp add: search_registered_formed_def)
+        then show ?thesis using \<open>p = q\<close> zR by (simp add: tree_shift)
+      next
+        case False
+        then have "z \<in> set A" using A z hh by blast
+        then show ?thesis using \<open>p = q\<close> zR by (simp add: tree_shift)
+      qed
+    next
+      case False
+      then have "RBT.lookup (shared_goals (search_state r)) p = Some h'" using a' same False by simp
+      then have "p |\<in>| tree_bucket (search_registered r) z" using reg0 z by (simp add: search_registered_formed_def)
+      then show ?thesis using False by (simp add: tree_shift)
+    qed
+  qed
+  have vals: "search_values_formed \<kappa> P ((search_update q s' r)\<lparr>search_registered := ?t\<rparr>) =
+      search_values_formed \<kappa> P (search_update q s' r)" by (simp add: search_values_formed_def)
+  have clos: "search_closing_formed ((search_update q s' r)\<lparr>search_registered := ?t\<rparr>) =
+      search_closing_formed (search_update q s' r)"
+    unfolding search_closing_formed_def search_closes_def by (simp cong: option.case_cong)
+  have uf: "shared_state_formed \<kappa> P (search_state (search_update q s' r)) \<and> search_values_formed \<kappa> P (search_update q s' r) \<and>
+      search_closing_formed (search_update q s' r)" using u by (simp add: search_formed_def)
+  show "search_formed \<kappa> P (search_goal_write q s' A R r)"
+    unfolding search_goal_write_update search_formed_def using uf reg vals clos by simp
+  show "search_classes_formed (search_goal_write q s' A R r)" using Ku by (simp add: search_goal_write_update)
+  show "search_state (search_goal_write q s' A R r) = s'" by (simp add: search_goal_write_def)
+qed
+
+text \<open>
+  The step at one position the holder index gives: no goal, kept; a goal without a record (the root call goal),
+  substituted through the shared search's step; a goal whose record holds none of the domain's keys, kept; otherwise the
+  goal substituted and re-entered, its record and the indexes written by the difference.
+\<close>
+
+definition deferred_goal_at :: "('a,'s,'d,'c) finite_schema_system \<Rightarrow>
+    (('s,'a) resolution_variable \<Rightarrow> ('s,'a) resolution_variable shared_pattern) \<Rightarrow> ('s,'a) resolution_variable fset \<Rightarrow>
+    (('s,'a) resolution_variable \<times> deferred_key \<times> ('s,'a) resolution_variable list) list \<Rightarrow>
+    's::linorder list \<Rightarrow> ('a,'s,'d,'c) deferred_search \<Rightarrow> ('a,'s,'d,'c) deferred_search" where
+  "deferred_goal_at P \<sigma> D Dg q d = (let r = deferred_inner d; s = search_state r in
+    case RBT.lookup (shared_goals s) q of None \<Rightarrow> d
+    | Some h \<Rightarrow> (case RBT.lookup (deferred_goal_records d) q of
+        None \<Rightarrow> d\<lparr>deferred_inner := search_goal_substitute_at P \<sigma> D q r\<rparr>
+      | Some K \<Rightarrow> (let H = filter (\<lambda>z. RBT.lookup K (fst (snd z)) \<noteq> None) Dg in
+        if H = [] then d else
+        (case shared_goal_substitute \<sigma> D (shared_entry_goal h) (shared_sharing s) of (g', x') \<Rightarrow>
+          case enter_goal P x' g' of (h', x) \<Rightarrow>
+          let I = concat (map (\<lambda>z. snd (snd z)) H);
+            K' = fold (\<lambda>k t. RBT.insert k () t) (map (deferred_key d) I)
+              (fold (\<lambda>z t. RBT.delete (fst (snd z)) t) H K);
+            A = map (\<lambda>y. fst (fst y)) (filter (\<lambda>y. snd (fst y)) I);
+            R = map (\<lambda>z. fst (fst (fst z))) (filter (\<lambda>z. snd (fst (fst z)) \<and>
+              tree_range K' (\<lambda>k. k < (fst (fst (snd z)), True, 0)) (\<lambda>k. fst (fst (snd z)) < fst k) = []) H)
+          in d\<lparr>deferred_inner := search_goal_write q
+              (shared_goal_write q h' (fset_of_list (map (\<lambda>y. fst (fst y)) I)) (shared_reshare x s)) A R r,
+            deferred_goal_records := RBT.insert q K' (deferred_goal_records d)\<rparr>))))"
+
+lemma deferred_goal_at:
+  assumes r: "search_formed \<kappa> P (deferred_inner d)" and K: "search_classes_formed (deferred_inner d)"
+    and \<sigma>f: "\<And>a. shared_pattern_formed (search_table (deferred_inner d)) (\<sigma> a)" and \<sigma>c: "\<And>a. shared_collapsed (\<sigma> a)"
+    and out: "\<forall>a. a |\<notin>| D \<longrightarrow> \<sigma> a = Shared_Variable a"
+    and Dg: "\<And>z. z \<in> set Dg \<longleftrightarrow> (\<exists>a. a |\<in>| D \<and> z = (a, deferred_key d a, shared_variable_list (\<sigma> a)))"
+    and N: "positions_numbered (deferred_positions d)"
+    and numI: "\<forall>a b. a |\<in>| D \<longrightarrow> b |\<in>| shared_pattern_variables (\<sigma> a) \<longrightarrow> deferred_numbered d b"
+    and gf: "deferred_goal_formed d q"
+  shows "search_formed \<kappa> P (deferred_inner (deferred_goal_at P \<sigma> D Dg q d)) \<and>
+    search_classes_formed (deferred_inner (deferred_goal_at P \<sigma> D Dg q d)) \<and>
+    table_extends (search_table (deferred_inner d)) (search_table (deferred_inner (deferred_goal_at P \<sigma> D Dg q d))) \<and>
+    (\<forall>p. RBT.lookup (shared_nodes (search_state (deferred_inner (deferred_goal_at P \<sigma> D Dg q d)))) p =
+      RBT.lookup (shared_nodes (search_state (deferred_inner d))) p) \<and>
+    shared_goal_view (search_state (deferred_inner (deferred_goal_at P \<sigma> D Dg q d))) q =
+      map_option (resolution_goal_substitute (\<lambda>a. shared_pattern_project (search_table (deferred_inner d)) (\<sigma> a)))
+        (shared_goal_view (search_state (deferred_inner d)) q) \<and>
+    (\<forall>p. p \<noteq> q \<longrightarrow> RBT.lookup (shared_goals (search_state (deferred_inner (deferred_goal_at P \<sigma> D Dg q d)))) p =
+      RBT.lookup (shared_goals (search_state (deferred_inner d))) p) \<and>
+    shared_witnesses (search_state (deferred_inner (deferred_goal_at P \<sigma> D Dg q d))) =
+      shared_witnesses (search_state (deferred_inner d)) \<and>
+    deferred_goal_formed (deferred_goal_at P \<sigma> D Dg q d) q \<and>
+    (\<forall>p. p \<noteq> q \<longrightarrow> RBT.lookup (deferred_goal_records (deferred_goal_at P \<sigma> D Dg q d)) p =
+      RBT.lookup (deferred_goal_records d) p) \<and>
+    deferred_positions (deferred_goal_at P \<sigma> D Dg q d) = deferred_positions d \<and>
+    deferred_names (deferred_goal_at P \<sigma> D Dg q d) = deferred_names d \<and>
+    deferred_tree (deferred_goal_at P \<sigma> D Dg q d) = deferred_tree d \<and>
+    deferred_records (deferred_goal_at P \<sigma> D Dg q d) = deferred_records d \<and>
+    deferred_holders (deferred_goal_at P \<sigma> D Dg q d) = deferred_holders d"
+proof -
+  let ?r = "deferred_inner d" let ?s = "search_state ?r" let ?T = "search_table ?r"
+  let ?\<tau> = "\<lambda>a. shared_pattern_project ?T (\<sigma> a)"
+  let ?d' = "deferred_goal_at P \<sigma> D Dg q d"
+  have s: "shared_state_formed \<kappa> P ?s" using search_formedD(1)[OF r] .
+  have tf: "table_formed ?T" using shared_entries_formed(4)[OF s] .
+  have outA: "\<forall>a. a |\<notin>| D \<longrightarrow> \<sigma> a = Shared_Variable a" using out by blast
+  show ?thesis
+  proof (cases "RBT.lookup (shared_goals ?s) q")
+    case None
+    have e: "?d' = d" by (simp add: deferred_goal_at_def None Let_def)
+    have "deferred_goal_formed d q" by (simp add: deferred_goal_formed_def None)
+    then show ?thesis using e r K None by (simp add: shared_goal_view_def table_extends_refl)
+  next
+    case (Some h)
+    note at = Some
+    have hf: "goal_entry_formed P ?T q h" using shared_entries_formed(1)[OF s at] .
+    show ?thesis
+    proof (cases "RBT.lookup (deferred_goal_records d) q")
+      case None
+      note gN = None
+      have root: "shared_root_goal (shared_entry_goal h)" by (rule deferred_goal_formedD(1)[OF gf at gN])
+      let ?r1 = "search_goal_substitute_at P \<sigma> D q ?r"
+      have e: "?d' = d\<lparr>deferred_inner := ?r1\<rparr>" by (simp add: deferred_goal_at_def at gN Let_def)
+      note k = shared_goal_substitute_at[where D = D and q = q, OF s \<sigma>f \<sigma>c outA]
+      have f1: "search_formed \<kappa> P ?r1" unfolding search_goal_substitute_at_def
+        by (rule search_update[OF r]) (simp_all add: k(1) k(2) k(3))
+      have K1: "search_classes_formed ?r1" unfolding search_goal_substitute_at_def
+        by (rule search_update_classes[OF r K f1[unfolded search_goal_substitute_at_def]]) (simp_all add: k(2) k(3) k(4))
+      have st1: "search_state ?r1 = shared_goal_substitute_at P \<sigma> D q ?s"
+        by (simp add: search_goal_substitute_at_def search_update_def)
+      have gv: "shared_goal_view (search_state ?r1) q = map_option (resolution_goal_substitute ?\<tau>) (shared_goal_view ?s q)"
+        using k(5) st1 by simp
+      obtain h' where h': "RBT.lookup (shared_goals (search_state ?r1)) q = Some h'"
+        using gv at by (cases "RBT.lookup (shared_goals (search_state ?r1)) q") (simp_all add: shared_goal_view_def)
+      have pj: "shared_goal_project (search_table ?r1) (shared_entry_goal h') =
+          resolution_goal_substitute ?\<tau> (shared_goal_project ?T (shared_entry_goal h))"
+        using gv h' at by (simp add: shared_goal_view_def)
+      have root': "shared_root_goal (shared_entry_goal h')"
+        using root pj shared_root_goal_project[of "shared_entry_goal h'" "search_table ?r1"]
+          shared_root_goal_project[of "shared_entry_goal h" ?T] by simp
+      have gq: "deferred_goal_formed ?d' q" unfolding deferred_goal_formed_def e using h' gN root' by simp
+      have ext1: "table_extends ?T (search_table ?r1)" using k(2) st1 by simp
+      have nodes1: "\<forall>p. RBT.lookup (shared_nodes (search_state ?r1)) p = RBT.lookup (shared_nodes ?s) p" using k(4) st1 by simp
+      have goals1: "\<forall>p. p \<noteq> q \<longrightarrow> RBT.lookup (shared_goals (search_state ?r1)) p = RBT.lookup (shared_goals ?s) p"
+        using k(3) st1 by simp
+      have w1: "shared_witnesses (search_state ?r1) = shared_witnesses ?s" using k(6) st1 by simp
+      show ?thesis unfolding e using f1 K1 ext1 nodes1 gv goals1 w1 gq[unfolded e] by simp
+    next
+      case (Some K)
+      note gK = Some
+      let ?V = "shared_goal_variables (shared_entry_goal h)"
+      have keysK: "set (RBT.keys K) = deferred_key d ` fset ?V" by (rule deferred_goal_formedD(2)[OF gf at gK])
+      have numV: "\<And>x. x |\<in>| ?V \<Longrightarrow> deferred_numbered d x" by (rule deferred_goal_formedD(3)[OF gf at gK])
+      have inK: "RBT.lookup K (deferred_key d a) \<noteq> None \<longleftrightarrow> a |\<in>| ?V" for a
+      proof
+        assume "RBT.lookup K (deferred_key d a) \<noteq> None"
+        then have "deferred_key d a \<in> set (RBT.keys K)" by (simp add: RBT.lookup_keys[symmetric] domIff)
+        then obtain x where x: "x |\<in>| ?V" "deferred_key d x = deferred_key d a" unfolding keysK by auto
+        have an: "deferred_numbered d a"
+        proof (rule ccontr)
+          assume "\<not> deferred_numbered d a"
+          then show False using deferred_key_zero[of d a x] numV[OF x(1)] x(2) by simp
+        qed
+        have "x = a" using deferred_key_inj[OF N numV[OF x(1)] an] x(2) by blast
+        then show "a |\<in>| ?V" using x(1) by simp
+      next
+        assume "a |\<in>| ?V"
+        then have "deferred_key d a \<in> set (RBT.keys K)" unfolding keysK by blast
+        then show "RBT.lookup K (deferred_key d a) \<noteq> None" by (simp add: RBT.lookup_keys[symmetric] domIff)
+      qed
+      let ?H = "filter (\<lambda>z. RBT.lookup K (fst (snd z)) \<noteq> None) Dg"
+      have H: "z \<in> set ?H \<longleftrightarrow> (\<exists>a. a |\<in>| D \<and> a |\<in>| ?V \<and> z = (a, deferred_key d a, shared_variable_list (\<sigma> a)))" for z
+        using Dg inK by auto
+      show ?thesis
+      proof (cases "?H = []")
+        case True
+        have e: "?d' = d" using True by (simp add: deferred_goal_at_def at gK Let_def)
+        have disj: "a |\<notin>| D" if "a |\<in>| ?V" for a
+        proof
+          assume "a |\<in>| D"
+          then have "(a, deferred_key d a, shared_variable_list (\<sigma> a)) \<in> set ?H" using H that by blast
+          then show False unfolding True by simp
+        qed
+        have fixg: "resolution_goal_substitute ?\<tau> (shared_goal_project ?T (shared_entry_goal h)) =
+            shared_goal_project ?T (shared_entry_goal h)"
+        proof (rule resolution_goal_substitute_outside)
+          fix y assume "y |\<in>| resolution_goal_variables (shared_goal_project ?T (shared_entry_goal h))"
+          then have "y |\<in>| ?V" using goal_entry_variables[OF hf] by simp
+          then have "y |\<notin>| D" by (rule disj)
+          then show "?\<tau> y = Finite_Variable y" using out[rule_format] by simp
+        qed
+        show ?thesis using e r K gf fixg at by (simp add: shared_goal_view_def table_extends_refl)
+      next
+        case False
+        note hit = False
+        obtain g' x' where gx: "shared_goal_substitute \<sigma> D (shared_entry_goal h) (shared_sharing ?s) = (g', x')"
+          by (cases "shared_goal_substitute \<sigma> D (shared_entry_goal h) (shared_sharing ?s)")
+        obtain h' x where hx: "enter_goal P x' g' = (h', x)" by (cases "enter_goal P x' g'")
+        have meet: "?V |\<inter>| D \<noteq> {||}"
+        proof -
+          obtain z where "z \<in> set ?H" using last_in_set[OF hit] by blast
+          then obtain a where "a |\<in>| D" "a |\<in>| ?V" using H by blast
+          then show ?thesis by blast
+        qed
+        have esub: "shared_goal_entry_substitute P \<sigma> D h (shared_sharing ?s) = (h', x)"
+          using meet gx hx by (simp add: shared_goal_entry_substitute_def)
+        have x0: "share_state_formed (shared_sharing ?s)" using shared_entries_formed(3)[OF s] .
+        note k = shared_goal_entry_substitute[where D = D, OF x0 hf \<sigma>f \<sigma>c out[rule_format]]
+        have xf: "share_state_formed x" and ext: "table_extends ?T (share_state_table x)"
+          and hf': "goal_entry_formed P (share_state_table x) q h'"
+          and pj: "shared_goal_project (share_state_table x) (shared_entry_goal h') =
+            resolution_goal_substitute ?\<tau> (shared_goal_project ?T (shared_entry_goal h))"
+          using k esub by simp_all
+        have vars': "z |\<in>| shared_goal_variables (shared_entry_goal h') \<longleftrightarrow>
+            (z |\<in>| ?V \<and> z |\<notin>| D) \<or> (\<exists>a. a |\<in>| ?V \<and> a |\<in>| D \<and> z |\<in>| shared_pattern_variables (\<sigma> a))" for z
+          using shared_goal_substituted_variables[OF x0 hf \<sigma>f \<sigma>c out, of z] esub by simp
+        let ?I = "concat (map (\<lambda>z. snd (snd z)) ?H)"
+        let ?K' = "fold (\<lambda>k t. RBT.insert k () t) (map (deferred_key d) ?I) (fold (\<lambda>z t. RBT.delete (fst (snd z)) t) ?H K)"
+        let ?A = "map (\<lambda>y. fst (fst y)) (filter (\<lambda>y. snd (fst y)) ?I)"
+        let ?R = "map (\<lambda>z. fst (fst (fst z))) (filter (\<lambda>z. snd (fst (fst z)) \<and>
+          tree_range ?K' (\<lambda>k. k < (fst (fst (snd z)), True, 0)) (\<lambda>k. fst (fst (snd z)) < fst k) = []) ?H)"
+        let ?s1 = "shared_reshare x ?s"
+        define s2 where "s2 = shared_goal_write q h' (fset_of_list (map (\<lambda>y. fst (fst y)) ?I)) ?s1"
+        define r2 where "r2 = search_goal_write q s2 ?A ?R ?r"
+        let ?s2 = "s2"
+        let ?r2 = "r2"
+        have e: "?d' = d\<lparr>deferred_inner := ?r2, deferred_goal_records := RBT.insert q ?K' (deferred_goal_records d)\<rparr>"
+          using hit unfolding r2_def s2_def by (simp add: deferred_goal_at_def at gK gx hx Let_def)
+        have I: "y \<in> set ?I \<longleftrightarrow> (\<exists>a. a |\<in>| D \<and> a |\<in>| ?V \<and> y |\<in>| shared_pattern_variables (\<sigma> a))" for y
+        proof
+          assume "y \<in> set ?I"
+          then obtain w where w: "w \<in> set ?H" "y \<in> set (snd (snd w))" unfolding set_concat set_map by blast
+          obtain a where a: "a |\<in>| D" "a |\<in>| ?V" "w = (a, deferred_key d a, shared_variable_list (\<sigma> a))"
+            using H w(1) by blast
+          have "y \<in> set (shared_variable_list (\<sigma> a))" using w(2) unfolding a(3) by simp
+          then have "y |\<in>| shared_pattern_variables (\<sigma> a)" using shared_variable_list[OF \<sigma>f] by simp
+          then show "\<exists>a. a |\<in>| D \<and> a |\<in>| ?V \<and> y |\<in>| shared_pattern_variables (\<sigma> a)" using a(1,2) by blast
+        next
+          assume "\<exists>a. a |\<in>| D \<and> a |\<in>| ?V \<and> y |\<in>| shared_pattern_variables (\<sigma> a)"
+          then obtain a where a: "a |\<in>| D" "a |\<in>| ?V" "y |\<in>| shared_pattern_variables (\<sigma> a)" by blast
+          have w: "(a, deferred_key d a, shared_variable_list (\<sigma> a)) \<in> set ?H" using H a(1,2) by blast
+          have "y \<in> set (snd (snd (a, deferred_key d a, shared_variable_list (\<sigma> a))))"
+            using a(3) shared_variable_list[OF \<sigma>f] by simp
+          then show "y \<in> set ?I" using w unfolding set_concat set_map by blast
+        qed
+        have Hk: "z \<in> (\<lambda>z. fst (snd z)) ` set ?H \<longleftrightarrow> (\<exists>a. a |\<in>| D \<and> a |\<in>| ?V \<and> z = deferred_key d a)" for z
+        proof
+          assume "z \<in> (\<lambda>z. fst (snd z)) ` set ?H"
+          then obtain w where w: "w \<in> set ?H" "z = fst (snd w)" by blast
+          obtain a where a: "a |\<in>| D" "a |\<in>| ?V" "w = (a, deferred_key d a, shared_variable_list (\<sigma> a))"
+            using H w(1) by blast
+          have "z = deferred_key d a" using w(2) a(3) by simp
+          then show "\<exists>a. a |\<in>| D \<and> a |\<in>| ?V \<and> z = deferred_key d a" using a(1,2) by blast
+        next
+          assume "\<exists>a. a |\<in>| D \<and> a |\<in>| ?V \<and> z = deferred_key d a"
+          then obtain a where a: "a |\<in>| D" "a |\<in>| ?V" "z = deferred_key d a" by blast
+          have w: "(a, deferred_key d a, shared_variable_list (\<sigma> a)) \<in> set ?H" using H a(1,2) by blast
+          have "z = fst (snd (a, deferred_key d a, shared_variable_list (\<sigma> a)))" using a(3) by simp
+          then show "z \<in> (\<lambda>z. fst (snd z)) ` set ?H" using w by blast
+        qed
+        have keys': "set (RBT.keys ?K') = deferred_key d ` fset (shared_goal_variables (shared_entry_goal h'))"
+        proof (rule set_eqI)
+          fix z
+          have "z \<in> set (RBT.keys ?K') \<longleftrightarrow> z \<in> deferred_key d ` set ?I \<or>
+              (z \<in> set (RBT.keys K) \<and> z \<notin> (\<lambda>z. fst (snd z)) ` set ?H)"
+            by (simp add: fold_insert_unit_keys fold_delete_keys)
+          also have "\<dots> \<longleftrightarrow> z \<in> deferred_key d ` fset (shared_goal_variables (shared_entry_goal h'))"
+          proof
+            assume "z \<in> deferred_key d ` set ?I \<or> (z \<in> set (RBT.keys K) \<and> z \<notin> (\<lambda>z. fst (snd z)) ` set ?H)"
+            then show "z \<in> deferred_key d ` fset (shared_goal_variables (shared_entry_goal h'))"
+            proof
+              assume "z \<in> deferred_key d ` set ?I"
+              then obtain b a where ab: "a |\<in>| D" "a |\<in>| ?V" "b |\<in>| shared_pattern_variables (\<sigma> a)" "z = deferred_key d b"
+                using I by blast
+              have "b |\<in>| shared_goal_variables (shared_entry_goal h')" using vars'[of b] ab by blast
+              then show ?thesis using ab(4) by blast
+            next
+              assume z: "z \<in> set (RBT.keys K) \<and> z \<notin> (\<lambda>z. fst (snd z)) ` set ?H"
+              then obtain y where y: "y |\<in>| ?V" "z = deferred_key d y" unfolding keysK by blast
+              have "y |\<notin>| D" using z y Hk by blast
+              then have "y |\<in>| shared_goal_variables (shared_entry_goal h')" using vars'[of y] y(1) by blast
+              then show ?thesis using y(2) by blast
+            qed
+          next
+            assume "z \<in> deferred_key d ` fset (shared_goal_variables (shared_entry_goal h'))"
+            then obtain y where y: "y |\<in>| shared_goal_variables (shared_entry_goal h')" "z = deferred_key d y" by blast
+            from y(1)[unfolded vars'] show "z \<in> deferred_key d ` set ?I \<or>
+                (z \<in> set (RBT.keys K) \<and> z \<notin> (\<lambda>z. fst (snd z)) ` set ?H)"
+            proof (elim disjE conjE exE)
+              assume yV: "y |\<in>| ?V" and yD: "y |\<notin>| D"
+              have "z \<notin> (\<lambda>z. fst (snd z)) ` set ?H"
+              proof
+                assume "z \<in> (\<lambda>z. fst (snd z)) ` set ?H"
+                then obtain a where a: "a |\<in>| D" "a |\<in>| ?V" "z = deferred_key d a" using Hk by blast
+                have "a = y" using deferred_key_inj[OF N numV[OF a(2)] numV[OF yV]] a(3) y(2) by simp
+                then show False using a(1) yD by simp
+              qed
+              then show ?thesis using yV y(2) keysK by blast
+            next
+              fix a assume "a |\<in>| ?V" "a |\<in>| D" "y |\<in>| shared_pattern_variables (\<sigma> a)"
+              then show ?thesis using I y(2) by blast
+            qed
+          qed
+          finally show "z \<in> set (RBT.keys ?K') \<longleftrightarrow> z \<in> deferred_key d ` fset (shared_goal_variables (shared_entry_goal h'))" .
+        qed
+        have num': "deferred_numbered d y" if "y |\<in>| shared_goal_variables (shared_entry_goal h')" for y
+          using that[unfolded vars'] numV numI by blast
+        have s1: "shared_state_formed \<kappa> P ?s1" using shared_reshare(1)[OF s xf ext] .
+        have at1: "RBT.lookup (shared_goals ?s1) q = Some h" using at by (simp add: shared_reshare_def)
+        have hf1: "goal_entry_formed P (shared_state_table ?s1) q h'" using hf' by (simp add: shared_reshare_def)
+        have Apos: "\<forall>y. y |\<in>| shared_goal_variables (shared_entry_goal h') \<longrightarrow>
+            y |\<notin>| shared_goal_variables (shared_entry_goal h) \<longrightarrow> fst (fst y) |\<in>| fset_of_list (map (\<lambda>y. fst (fst y)) ?I)"
+        proof (intro allI impI)
+          fix y assume y: "y |\<in>| shared_goal_variables (shared_entry_goal h')"
+            and n: "y |\<notin>| shared_goal_variables (shared_entry_goal h)"
+          obtain a where "a |\<in>| ?V" "a |\<in>| D" "y |\<in>| shared_pattern_variables (\<sigma> a)" using y[unfolded vars'] n by blast
+          then have "y \<in> set ?I" using I by blast
+          then show "fst (fst y) |\<in>| fset_of_list (map (\<lambda>y. fst (fst y)) ?I)" by (simp add: fset_of_list_elem)
+        qed
+        note W = shared_goal_write[OF s1 at1 hf1 Apos, folded s2_def]
+        have s2: "shared_state_formed \<kappa> P ?s2" by (rule W(1))
+        have ext2: "table_extends ?T (shared_state_table ?s2)" using ext W(2) by (simp add: shared_reshare_def)
+        have same2: "\<forall>p. p \<noteq> q \<longrightarrow> RBT.lookup (shared_goals ?s2) p = RBT.lookup (shared_goals ?s) p"
+          using W(3) by (simp add: shared_reshare_def)
+        have nodes2: "\<And>p. RBT.lookup (shared_nodes ?s2) p = RBT.lookup (shared_nodes ?s) p"
+          using W(4) by (simp add: shared_reshare_def)
+        have at2: "RBT.lookup (shared_goals ?s2) q = Some h'" by (simp only: W(3) if_True simp_thms)
+        have regA: "\<forall>p. p |\<in>| shared_goal_registered h' \<longrightarrow> p |\<notin>| shared_goal_registered h \<longrightarrow> p \<in> set ?A"
+        proof (intro allI impI)
+          fix p assume p1: "p |\<in>| shared_goal_registered h'" and p0: "p |\<notin>| shared_goal_registered h"
+          obtain a0 where y: "((p,True),a0) |\<in>| shared_goal_variables (shared_entry_goal h')"
+            using p1 unfolding shared_goal_registered_member by blast
+          have "((p,True),a0) |\<notin>| ?V" using p0 unfolding shared_goal_registered_member by blast
+          then obtain a where "a |\<in>| ?V" "a |\<in>| D" "((p,True),a0) |\<in>| shared_pattern_variables (\<sigma> a)"
+            using y[unfolded vars'] by blast
+          then have pI: "((p,True),a0) \<in> set ?I" using I by blast
+          have pF: "((p,True),a0) \<in> set (filter (\<lambda>y. snd (fst y)) ?I)"
+            using pI by (simp only: set_filter mem_Collect_eq prod.sel simp_thms)
+          show "p \<in> set ?A" unfolding set_map by (rule rev_image_eqI[OF pF]) (simp only: prod.sel)
+        qed
+        have regR: "\<forall>p. p \<in> set ?R \<longrightarrow> p |\<notin>| shared_goal_registered h'"
+        proof (intro allI impI notI)
+          fix p assume p: "p \<in> set ?R" and reg: "p |\<in>| shared_goal_registered h'"
+          obtain z where zf: "z \<in> set (filter (\<lambda>z. snd (fst (fst z)) \<and>
+              tree_range ?K' (\<lambda>k. k < (fst (fst (snd z)), True, 0)) (\<lambda>k. fst (fst (snd z)) < fst k) = []) ?H)"
+            and pz: "p = fst (fst (fst z))" using p unfolding set_map by blast
+          have z: "z \<in> set ?H" "snd (fst (fst z))"
+            "tree_range ?K' (\<lambda>k. k < (fst (fst (snd z)), True, 0)) (\<lambda>k. fst (fst (snd z)) < fst k) = []"
+            using zf by (simp_all only: set_filter mem_Collect_eq simp_thms)
+          obtain a where a: "a |\<in>| D" "a |\<in>| ?V" "z = (a, deferred_key d a, shared_variable_list (\<sigma> a))" using H z(1) by blast
+          obtain b where b: "((p,True),b) |\<in>| shared_goal_variables (shared_entry_goal h')"
+            using reg unfolding shared_goal_registered_member by blast
+          let ?n = "fst (deferred_key d a)"
+          have kb: "deferred_key d ((p,True),b) \<in> set (RBT.keys ?K')" using keys' b by blast
+          have fk: "fst (deferred_key d ((p,True),b)) = ?n" using pz a(3) by (simp add: deferred_key_def)
+          have LR: "key_range (\<lambda>k. k < (?n, True, 0)) (\<lambda>k. ?n < fst k)"
+            unfolding key_range_def by (auto simp: less_eq_prod_def less_prod_def)
+          have inr: "\<not> deferred_key d ((p,True),b) < (?n, True, 0) \<and> \<not> ?n < fst (deferred_key d ((p,True),b))"
+            using fk by (auto simp: deferred_key_def less_prod_def)
+          have "(deferred_key d ((p,True),b), ()) \<in> set (RBT.entries ?K')" using kb by (simp add: RBT.keys_entries)
+          then have inT: "(deferred_key d ((p,True),b), ()) \<in> set (tree_range ?K' (\<lambda>k. k < (?n, True, 0)) (\<lambda>k. ?n < fst k))"
+            using inr by (simp add: tree_range_entries[OF LR])
+          have emp: "tree_range ?K' (\<lambda>k. k < (?n, True, 0)) (\<lambda>k. ?n < fst k) = []"
+            using z(3) unfolding a(3) by (simp only: prod.sel)
+          show False using inT unfolding emp by simp
+        qed
+        have nodes2': "\<forall>p. p \<noteq> q \<longrightarrow> RBT.lookup (shared_nodes ?s2) p = RBT.lookup (shared_nodes ?s) p" using nodes2 by simp
+        note G = search_goal_write[OF r K s2 ext2 same2 nodes2' at at2 regA regR, folded r2_def]
+        have gq: "deferred_goal_formed ?d' q" unfolding deferred_goal_formed_def e using G(3) at2 keys' num' by simp
+        have vq: "shared_goal_view (search_state ?r2) q = map_option (resolution_goal_substitute ?\<tau>) (shared_goal_view ?s q)"
+          using G(3) at2 at pj W(2) by (simp add: shared_goal_view_def shared_reshare_def)
+        have w2: "shared_witnesses (search_state ?r2) = shared_witnesses ?s" using G(3) W(5) by (simp add: shared_reshare_def)
+        have t2: "search_table ?r2 = shared_state_table ?s2" using G(3) by simp
+        show ?thesis unfolding e using G(1,2,3) ext2 t2 nodes2 vq same2 w2 gq[unfolded e] by auto
+      qed
+    qed
+  qed
+qed
+
+lemma deferred_goals_fold:
+  assumes r: "search_formed \<kappa> P (deferred_inner d)" and K: "search_classes_formed (deferred_inner d)"
+    and tf0: "table_formed T0" and ext: "table_extends T0 (search_table (deferred_inner d))"
+    and \<sigma>f: "\<And>a. shared_pattern_formed T0 (\<sigma> a)" and \<sigma>c: "\<And>a. shared_collapsed (\<sigma> a)"
+    and out: "\<forall>a. a |\<notin>| D \<longrightarrow> \<sigma> a = Shared_Variable a"
+    and Dg: "\<And>z. z \<in> set Dg \<longleftrightarrow> (\<exists>a. a |\<in>| D \<and> z = (a, deferred_key d a, shared_variable_list (\<sigma> a)))"
+    and N: "positions_numbered (deferred_positions d)"
+    and numI: "\<forall>a b. a |\<in>| D \<longrightarrow> b |\<in>| shared_pattern_variables (\<sigma> a) \<longrightarrow> deferred_numbered d b"
+    and gf: "\<And>q. deferred_goal_formed d q" and qs: "distinct qs"
+  shows "search_formed \<kappa> P (deferred_inner (fold (deferred_goal_at P \<sigma> D Dg) qs d)) \<and>
+    search_classes_formed (deferred_inner (fold (deferred_goal_at P \<sigma> D Dg) qs d)) \<and>
+    table_extends T0 (search_table (deferred_inner (fold (deferred_goal_at P \<sigma> D Dg) qs d))) \<and>
+    (\<forall>p. RBT.lookup (shared_nodes (search_state (deferred_inner (fold (deferred_goal_at P \<sigma> D Dg) qs d)))) p =
+      RBT.lookup (shared_nodes (search_state (deferred_inner d))) p) \<and>
+    (\<forall>p. shared_goal_view (search_state (deferred_inner (fold (deferred_goal_at P \<sigma> D Dg) qs d))) p = (if p \<in> set qs then
+      map_option (resolution_goal_substitute (\<lambda>a. shared_pattern_project T0 (\<sigma> a)))
+        (shared_goal_view (search_state (deferred_inner d)) p)
+      else shared_goal_view (search_state (deferred_inner d)) p)) \<and>
+    (\<forall>p. shared_node_view (search_state (deferred_inner (fold (deferred_goal_at P \<sigma> D Dg) qs d))) p =
+      shared_node_view (search_state (deferred_inner d)) p) \<and>
+    shared_witnesses (search_state (deferred_inner (fold (deferred_goal_at P \<sigma> D Dg) qs d))) =
+      shared_witnesses (search_state (deferred_inner d)) \<and>
+    (\<forall>q. deferred_goal_formed (fold (deferred_goal_at P \<sigma> D Dg) qs d) q) \<and>
+    deferred_positions (fold (deferred_goal_at P \<sigma> D Dg) qs d) = deferred_positions d \<and>
+    deferred_names (fold (deferred_goal_at P \<sigma> D Dg) qs d) = deferred_names d \<and>
+    deferred_tree (fold (deferred_goal_at P \<sigma> D Dg) qs d) = deferred_tree d \<and>
+    deferred_records (fold (deferred_goal_at P \<sigma> D Dg) qs d) = deferred_records d \<and>
+    deferred_holders (fold (deferred_goal_at P \<sigma> D Dg) qs d) = deferred_holders d"
+  using r K ext Dg N numI gf qs
+proof (induction qs arbitrary: d)
+  case Nil
+  then show ?case by simp
+next
+  case (Cons q qs)
+  let ?d1 = "deferred_goal_at P \<sigma> D Dg q d"
+  have s: "shared_state_formed \<kappa> P (search_state (deferred_inner d))" using search_formedD(1)[OF Cons.prems(1)] .
+  have tf1: "table_formed (search_table (deferred_inner d))" using shared_entries_formed(4)[OF s] .
+  have \<sigma>t: "\<And>a. shared_pattern_formed (search_table (deferred_inner d)) (\<sigma> a)"
+    using shared_pattern_extends(1)[OF tf0 \<sigma>f Cons.prems(3)] .
+  have \<tau>: "(\<lambda>a. shared_pattern_project (search_table (deferred_inner d)) (\<sigma> a)) = (\<lambda>a. shared_pattern_project T0 (\<sigma> a))"
+    using shared_pattern_extends(2)[OF tf0 \<sigma>f Cons.prems(3)] by simp
+  note A = deferred_goal_at[OF Cons.prems(1,2) \<sigma>t \<sigma>c out Cons.prems(4,5,6) Cons.prems(7)[of q]]
+  have keysE: "deferred_key ?d1 = deferred_key d" using A by (simp add: fun_eq_iff deferred_key_def)
+  have numE: "deferred_numbered ?d1 = deferred_numbered d" using A by (simp add: fun_eq_iff deferred_numbered_def)
+  have T1: "table_extends (search_table (deferred_inner d)) (search_table (deferred_inner ?d1))" using A by blast
+  have r1: "search_formed \<kappa> P (deferred_inner ?d1)" and K1: "search_classes_formed (deferred_inner ?d1)" using A by blast+
+  have e1: "table_extends T0 (search_table (deferred_inner ?d1))" using table_extends_trans[OF Cons.prems(3) T1] .
+  have Dg1: "\<And>z. z \<in> set Dg \<longleftrightarrow> (\<exists>a. a |\<in>| D \<and> z = (a, deferred_key ?d1 a, shared_variable_list (\<sigma> a)))"
+    using Cons.prems(4) keysE by simp
+  have N1: "positions_numbered (deferred_positions ?d1)" using Cons.prems(5) A by simp
+  have numI1: "\<forall>a b. a |\<in>| D \<longrightarrow> b |\<in>| shared_pattern_variables (\<sigma> a) \<longrightarrow> deferred_numbered ?d1 b"
+    using Cons.prems(6) numE by simp
+  have gf1: "deferred_goal_formed ?d1 q'" for q'
+  proof (cases "q' = q")
+    case True
+    then show ?thesis using A by simp
+  next
+    case False
+    show ?thesis
+    proof (rule deferred_goal_formed_same[OF Cons.prems(7)[of q']])
+      show "\<And>h'. RBT.lookup (shared_goals (search_state (deferred_inner ?d1))) q' = Some h' \<Longrightarrow>
+          \<exists>h. RBT.lookup (shared_goals (search_state (deferred_inner d))) q' = Some h \<and> shared_entry_goal h' = shared_entry_goal h"
+        using A False by simp
+      show "RBT.lookup (deferred_goal_records ?d1) q' = RBT.lookup (deferred_goal_records d) q'" using A False by simp
+      show "\<And>x. deferred_numbered d x \<Longrightarrow> deferred_key ?d1 x = deferred_key d x \<and> deferred_numbered ?d1 x"
+        using keysE numE by simp
+    qed
+  qed
+  have qsd: "distinct qs" and nq: "q \<notin> set qs" using Cons.prems(8) by simp_all
+  have v1: "shared_goal_view (search_state (deferred_inner ?d1)) p = (if p = q then
+      map_option (resolution_goal_substitute (\<lambda>a. shared_pattern_project T0 (\<sigma> a))) (shared_goal_view (search_state (deferred_inner d)) p)
+      else shared_goal_view (search_state (deferred_inner d)) p)" for p
+  proof (cases "p = q")
+    case True
+    then show ?thesis using A \<tau> by simp
+  next
+    case False
+    show ?thesis
+    proof (cases "RBT.lookup (shared_goals (search_state (deferred_inner d))) p")
+      case (Some h)
+      have "RBT.lookup (shared_goals (search_state (deferred_inner ?d1))) p = Some h" using A False Some by simp
+      then show ?thesis using goal_entry_extends[OF tf1 shared_entries_formed(1)[OF s Some] T1] Some False
+        by (simp add: shared_goal_view_def)
+    next
+      case None
+      have "RBT.lookup (shared_goals (search_state (deferred_inner ?d1))) p = None" using A False None by simp
+      then show ?thesis using None False by (simp add: shared_goal_view_def)
+    qed
+  qed
+  have n1: "shared_node_view (search_state (deferred_inner ?d1)) p = shared_node_view (search_state (deferred_inner d)) p" for p
+  proof (cases "RBT.lookup (shared_nodes (search_state (deferred_inner d))) p")
+    case (Some hn)
+    have "RBT.lookup (shared_nodes (search_state (deferred_inner ?d1))) p = Some hn" using A Some by simp
+    then show ?thesis using node_entry_extends[OF tf1 shared_entries_formed(2)[OF s Some] T1] Some
+      by (simp add: shared_node_view_def)
+  next
+    case None
+    have "RBT.lookup (shared_nodes (search_state (deferred_inner ?d1))) p = None" using A None by simp
+    then show ?thesis using None by (simp add: shared_node_view_def)
+  qed
+  note IH = Cons.IH[OF r1 K1 e1 Dg1 N1 numI1 gf1 qsd]
+  have gv: "shared_goal_view (search_state (deferred_inner (fold (deferred_goal_at P \<sigma> D Dg) qs ?d1))) p = (if p \<in> set (q # qs) then
+      map_option (resolution_goal_substitute (\<lambda>a. shared_pattern_project T0 (\<sigma> a))) (shared_goal_view (search_state (deferred_inner d)) p)
+      else shared_goal_view (search_state (deferred_inner d)) p)" for p
+  proof (cases "p = q")
+    case True
+    then show ?thesis using IH nq v1[of q] by simp
+  next
+    case False
+    then show ?thesis using IH v1[of p] by simp
+  qed
+  show ?case using IH gv n1 A by simp
 qed
 
 subsection \<open>The deferred bind\<close>
@@ -2816,11 +4146,13 @@ definition deferred_bind :: "('a,'s,'d,'c) finite_schema_system \<Rightarrow>
     (('s,'a) resolution_variable \<times> ('s,'a) resolution_variable shared_pattern) list \<Rightarrow>
     ('a,'s::linorder,'d,'c) deferred_search \<Rightarrow> ('a,'s,'d,'c) deferred_search" where
   "deferred_bind P s d = (case keyed_collapse_bindings s (shared_sharing (search_state (deferred_inner d))) of (s', x) \<Rightarrow>
-    let D = shared_binding_domain s';
+    let D = shared_binding_domain s'; \<sigma> = shared_binding_substitution s';
       d1 = d\<lparr>deferred_names := deferred_number_names (deferred_bound_names s') (deferred_names d)\<rparr>;
-      d2 = (d1\<lparr>deferred_tree := binding_tree_bind (deferred_key d1) (deferred_tree d1) s'\<rparr>)\<lparr>deferred_inner :=
-        search_goal_substitute P (shared_binding_substitution s') D (search_share x (deferred_inner d1))\<rparr>
-    in fold (deferred_update (shared_binding_substitution s') D)
+      Dg = map (\<lambda>a. (a, deferred_key d1 a, shared_variable_list (\<sigma> a))) (map fst s');
+      r1 = search_share x (deferred_inner d1);
+      d2 = fold (deferred_goal_at P \<sigma> D Dg) (sorted_list_of_fset (shared_substitute_positions D (search_state r1)))
+        ((d1\<lparr>deferred_tree := binding_tree_bind (deferred_key d1) (deferred_tree d1) s'\<rparr>)\<lparr>deferred_inner := r1\<rparr>)
+    in fold (deferred_update_at (deferred_domain_keys d2 \<sigma> D))
       (sorted_list_of_fset (ffUnion (fimage (\<lambda>a. tree_bucket (deferred_holders d2) (deferred_key d2 a)) D))) d2)"
 
 lemma derivation_resolve_extends:
@@ -2954,47 +4286,83 @@ proof -
     then show ?thesis using numL imgD a b by blast
   qed
   let ?K1 = "binding_tree_bind (deferred_key ?d1) (deferred_tree d) s'"
-  let ?r2 = "search_goal_substitute P ?\<sigma> ?D (search_share x ?r)"
-  let ?d2 = "(?d1\<lparr>deferred_tree := ?K1\<rparr>)\<lparr>deferred_inner := ?r2\<rparr>"
+  let ?Dg = "map (\<lambda>a. (a, deferred_key ?d1 a, shared_variable_list (?\<sigma> a))) (map fst s')"
+  let ?r1 = "search_share x ?r"
+  let ?d0 = "(?d1\<lparr>deferred_tree := ?K1\<rparr>)\<lparr>deferred_inner := ?r1\<rparr>"
+  let ?qs = "sorted_list_of_fset (shared_substitute_positions ?D (search_state ?r1))"
+  define d2 where "d2 = fold (deferred_goal_at P ?\<sigma> ?D ?Dg) ?qs ?d0"
+  let ?d2 = "d2"
+  let ?r2 = "deferred_inner ?d2"
   let ?ns = "sorted_list_of_fset (ffUnion (fimage (\<lambda>a. tree_bucket (deferred_holders ?d2) (deferred_key ?d2 a)) ?D))"
-  have eq: "deferred_bind P s d = fold (deferred_update ?\<sigma> ?D) ?ns ?d2" by (simp add: deferred_bind_def kc Let_def)
+  have eq0: "deferred_bind P s d = fold (deferred_update_at (deferred_domain_keys ?d2 ?\<sigma> ?D)) ?ns ?d2"
+    unfolding d2_def by (simp add: deferred_bind_def kc Let_def)
+  have eq: "deferred_bind P s d = fold (deferred_update ?\<sigma> ?D) ?ns ?d2" using eq0 deferred_update_at_fold by simp
+  have r1: "search_formed \<kappa> P ?r1" using search_share(1)[OF r xf extx] .
+  have tbl1: "search_table ?r1 = ?Tx" using search_share(3)[OF r xf extx] .
+  have K1: "search_classes_formed ?r1" by (rule search_share_classes[OF r xf extx K])
+  have s1f: "shared_state_formed \<kappa> P (search_state ?r1)" using search_formedD(1)[OF r1] .
+  have gf0: "deferred_goal_formed ?d0 q" for q
+  proof (rule deferred_goal_formed_same[OF deferred_renumbered_goal[OF re parts deferred_formedD(12)[OF d]]])
+    show "\<And>h'. RBT.lookup (shared_goals (search_state (deferred_inner ?d0))) q = Some h' \<Longrightarrow>
+      \<exists>h. RBT.lookup (shared_goals (search_state (deferred_inner ?d1))) q = Some h \<and> shared_entry_goal h' = shared_entry_goal h"
+      using search_share(4)[OF r xf extx] by simp
+    show "RBT.lookup (deferred_goal_records ?d0) q = RBT.lookup (deferred_goal_records ?d1) q" by simp
+    show "\<And>y. deferred_numbered ?d1 y \<Longrightarrow> deferred_key ?d0 y = deferred_key ?d1 y \<and> deferred_numbered ?d0 y" by simp
+  qed
+  have Dg: "z \<in> set ?Dg \<longleftrightarrow> (\<exists>a. a |\<in>| ?D \<and> z = (a, deferred_key ?d0 a, shared_variable_list (?\<sigma> a)))" for z
+    using Dm keys by auto
+  have N0: "positions_numbered (deferred_positions ?d0)" using N by simp
+  have num0: "\<forall>a b. a |\<in>| ?D \<longrightarrow> b |\<in>| shared_pattern_variables (?\<sigma> a) \<longrightarrow> deferred_numbered ?d0 b"
+    using num\<sigma> by auto
+  have outA: "\<forall>a. a |\<notin>| ?D \<longrightarrow> ?\<sigma> a = Shared_Variable a" using out by blast
+  have qsd: "distinct ?qs" by simp
+  have ext0: "table_extends ?Tx (search_table (deferred_inner ?d0))" using tbl1 by (simp add: table_extends_refl)
+  have r0: "search_formed \<kappa> P (deferred_inner ?d0)" and K0: "search_classes_formed (deferred_inner ?d0)" using r1 K1 by simp_all
+  note GS = deferred_goals_fold[OF r0 K0 tfx ext0 \<sigma>f \<sigma>c outA Dg N0 num0 gf0 qsd, folded d2_def]
+  have r2: "search_formed \<kappa> P ?r2" and K2: "search_classes_formed ?r2" and ext2: "table_extends ?Tx (search_table ?r2)"
+    using GS by simp_all
+  have E2: "deferred_positions ?d2 = deferred_positions d" "deferred_names ?d2 = deferred_names ?d1"
+    "deferred_tree ?d2 = ?K1" "deferred_records ?d2 = deferred_records d" "deferred_holders ?d2 = deferred_holders d"
+    using GS by simp_all
+  have keyE2: "deferred_key ?d2 = deferred_key ?d1" using E2 by (simp add: fun_eq_iff deferred_key_def)
+  have numE2: "deferred_numbered ?d2 = deferred_numbered ?d1" using E2 by (simp add: fun_eq_iff deferred_numbered_def)
+  note E2s [simp] = E2 keyE2 numE2
+  have goals2: "\<forall>q. deferred_goal_formed ?d2 q" using GS by simp
   have st2: "deferred_store ?d2 = store_bind ?S ?\<sigma> ?D"
   proof -
     have "deferred_store (?d1\<lparr>deferred_tree := binding_tree_bind (deferred_key ?d1) (deferred_tree ?d1) s'\<rparr>) =
         store_bind (deferred_store ?d1) ?\<sigma> ?D"
       by (rule deferred_store_bind[OF N1]) (metis Dm keys numD)
-    then show ?thesis using st1 by simp
-  qed
-  have r1: "search_formed \<kappa> P (search_share x ?r)" using search_share(1)[OF r xf extx] .
-  have tbl1: "search_table (search_share x ?r) = ?Tx" using search_share(3)[OF r xf extx] .
-  have K1: "search_classes_formed (search_share x ?r)" by (rule search_share_classes[OF r xf extx K])
-  have \<sigma>f1: "\<And>a. shared_pattern_formed (search_table (search_share x ?r)) (?\<sigma> a)" using \<sigma>f tbl1 by simp
-  have r2: "search_formed \<kappa> P ?r2" by (rule search_goal_substitute(1)[OF r1 K1 \<sigma>f1 \<sigma>c]) (rule out)
-  have K2: "search_classes_formed ?r2" by (rule search_goal_substitute(2)[OF r1 K1 \<sigma>f1 \<sigma>c]) (rule out)
-  have ext2: "table_extends ?Tx (search_table ?r2)"
-  proof -
-    have "table_extends (search_table (search_share x ?r)) (search_table ?r2)"
-      by (rule search_goal_substitute(3)[OF r1 K1 \<sigma>f1 \<sigma>c]) (rule out)
-    then show ?thesis using tbl1 by simp
+    moreover have "deferred_store ?d2 = deferred_store (?d1\<lparr>deferred_tree := ?K1\<rparr>)"
+      unfolding deferred_store_def keyE2 E2(3) by (simp add: deferred_key_def)
+    ultimately show ?thesis using st1 by simp
   qed
   let ?T2 = "search_table ?r2"
   have nodes2: "RBT.lookup (shared_nodes (search_state ?r2)) p = RBT.lookup (shared_nodes ?s) p" for p
-  proof -
-    have "RBT.lookup (shared_nodes (search_state ?r2)) p = RBT.lookup (shared_nodes (search_state (search_share x ?r))) p"
-      by (rule search_goal_substitute(4)[OF r1 K1 \<sigma>f1 \<sigma>c]) (rule out)
-    then show ?thesis using search_share(5)[OF r xf extx] by simp
-  qed
+    using GS search_share(5)[OF r xf extx] by simp
   have proj2: "search_project ?r2 = Resolution_State (fimage (resolution_goal_substitute ?\<tau>0) (resolution_pending (search_project ?r)))
       (resolution_nodes (search_project ?r)) (resolution_witnesses (search_project ?r))"
   proof -
-    have "search_project ?r2 = Resolution_State
-        (fimage (resolution_goal_substitute (\<lambda>a. shared_pattern_project (search_table (search_share x ?r)) (?\<sigma> a)))
-          (resolution_pending (search_project (search_share x ?r))))
-        (resolution_nodes (search_project (search_share x ?r))) (resolution_witnesses (search_project (search_share x ?r)))"
-      by (rule search_goal_substitute_project[OF r1 \<sigma>f1 \<sigma>c]) (rule out)
-    moreover have "(\<lambda>a. shared_pattern_project (search_table (search_share x ?r)) (?\<sigma> a)) = ?\<tau>0"
-      using \<tau> tbl1 by (simp add: fun_eq_iff)
-    ultimately show ?thesis using search_share(2)[OF r xf extx] by simp
+    let ?\<tau>x = "\<lambda>a. shared_pattern_project ?Tx (?\<sigma> a)"
+    have \<tau>x: "?\<tau>x = ?\<tau>0" using \<tau> by (simp add: fun_eq_iff)
+    have g: "shared_goal_view (search_state ?r2) p = map_option (resolution_goal_substitute ?\<tau>x) (shared_goal_view (search_state ?r1) p)"
+      for p
+    proof (cases "p \<in> set ?qs")
+      case True
+      then show ?thesis using GS by simp
+    next
+      case False
+      then have pn: "p |\<notin>| shared_substitute_positions ?D (search_state ?r1)" by simp
+      have "shared_goal_view (search_state ?r1) p =
+          map_option (resolution_goal_substitute (\<lambda>a. shared_pattern_project (shared_state_table (search_state ?r1)) (?\<sigma> a)))
+            (shared_goal_view (search_state ?r1) p)"
+        by (rule shared_substitute_unvisited(1)[OF s1f _ pn]) (rule out)
+      then show ?thesis using GS False tbl1 by simp
+    qed
+    have n: "shared_node_view (search_state ?r2) p = map_option id (shared_node_view (search_state ?r1) p)" for p
+      using GS by (simp add: option.map_id)
+    have w: "shared_witnesses (search_state ?r2) = shared_witnesses (search_state ?r1)" using GS by simp
+    show ?thesis using shared_state_project_views[OF g n w] search_share(2)[OF r xf extx] \<tau>x by (simp add: fset.map_id)
   qed
   have T2e: "table_extends ?T ?T2" using table_extends_trans[OF extx ext2] .
   have S2: "binding_store_formed ?T2 ?S" using binding_store_formed_extended[OF S tf] T2e by (simp add: table_extends_def)
@@ -3135,7 +4503,9 @@ proof -
       show "position_number (deferred_positions ?d2) q \<noteq> 0 \<and>
         (\<exists>K. RBT.lookup (deferred_records ?d2) (position_number (deferred_positions ?d2) q) = Some (q, K) \<and>
           set (RBT.keys K) = deferred_key ?d2 ` fset (shared_pattern_variables (binding_resolve ?S (shared_derivation_call (shared_entry_node hn))))) \<and>
-        fBall (shared_pattern_variables (binding_resolve ?S (shared_derivation_call (shared_entry_node hn)))) (deferred_numbered ?d2)"
+        fBall (shared_pattern_variables (binding_resolve ?S (shared_derivation_call (shared_entry_node hn)))) (deferred_numbered ?d2) \<and>
+        fBall (shared_pattern_variables (binding_resolve ?S (shared_derivation_call (shared_entry_node hn))))
+          (\<lambda>x. position_number (deferred_positions ?d2) q |\<in>| tree_bucket (deferred_holders ?d2) (deferred_key ?d2 x))"
         using F st1 by simp
     qed
   qed
@@ -3188,7 +4558,7 @@ proof -
   have c02: "\<forall>q hn. RBT.lookup (shared_nodes (search_state (deferred_inner ?d2))) q = Some hn \<longrightarrow>
       position_number (deferred_positions ?d2) q \<in> set ?ns \<longrightarrow> shared_pattern_formed ?T2 (shared_derivation_call (shared_entry_node hn))"
     using shared_entries_formed(2)[OF r2f] by (auto simp: node_entry_formed_def shared_derivation_formed_def)
-  note FOLD = deferred_update_fold[OF parts2 S2' ready2' st2m num2 nsd stale2 formed2 tf2 S'f c02]
+  note FOLD = deferred_update_fold[OF parts2 S2' ready2' st2m num2 nsd stale2 formed2 tf2 S'f c02 goals2]
   show "deferred_formed \<kappa> P (deferred_bind P s d)" using FOLD eq by simp
   let ?\<sigma>2 = "deferred_substitution ?d2" and ?\<sigma>1 = "deferred_substitution d"
   have \<sigma>2: "?\<sigma>2 = (\<lambda>y. shared_pattern_project ?T2 (binding_substitution (store_bind ?S ?\<sigma> ?D) y))"
@@ -3271,11 +4641,22 @@ lemma finite_clause_node_positioned:
   "x |\<in>| finite_pattern_variables (resolution_node_call (finite_clause_node q e c S)) \<Longrightarrow> fst (fst x) = q"
   by (auto simp: finite_clause_node_def finite_rename_apart_variables)
 
+text \<open>The positions of the goals a placed clause puts below its node: one at each of its premise sockets.\<close>
+
+definition deferred_placed_positions :: "'s::linorder list \<Rightarrow> ('a,'s,'d) finite_factor_schema \<Rightarrow> 's list list" where
+  "deferred_placed_positions q S = sorted_list_of_fset (fimage (\<lambda>z. q @ [fst z]) (finite_schema_premises S) |\<union>|
+    fimage (\<lambda>z. q @ [fst z]) (finite_schema_materials S))"
+
+lemma deferred_placed_positions:
+  "set (deferred_placed_positions q S) = fset (fimage resolution_goal_position (finite_clause_goals q d c S))"
+  by (force simp: deferred_placed_positions_def finite_clause_goals_def fimage.rep_eq)
+
 definition deferred_place :: "('a,'s,'d,'c) finite_schema_system \<Rightarrow> ('a,'s::linorder,'d,'c) deferred_search \<Rightarrow>
     's list \<Rightarrow> 'd \<Rightarrow> 'c \<Rightarrow> ('a,'s,'d) finite_factor_schema \<Rightarrow> ('a,'s,'d,'c) deferred_search" where
   "deferred_place P dd q e c S = (let r' = search_call_place P (deferred_inner dd) q e c S in
     case RBT.lookup (shared_nodes (search_state r')) q of None \<Rightarrow> dd\<lparr>deferred_inner := r'\<rparr>
-    | Some hn \<Rightarrow> deferred_record_node q (shared_derivation_call (shared_entry_node hn)) (dd\<lparr>deferred_inner := r'\<rparr>))"
+    | Some hn \<Rightarrow> deferred_record_goals (deferred_placed_positions q (shared_derivation_schema (shared_entry_node hn)))
+        (deferred_record_node q (shared_derivation_call (shared_entry_node hn)) (dd\<lparr>deferred_inner := r'\<rparr>)))"
 
 theorem deferred_place:
   assumes dd: "deferred_formed \<kappa> P dd" and pl: "search_placeable (search_project (deferred_inner dd))"
@@ -3458,24 +4839,102 @@ proof -
   have plcA: "\<forall>x. x |\<in>| shared_pattern_variables ?c \<longrightarrow>
       fst (fst x) = q \<or> position_number (deferred_positions ?ds) (fst (fst x)) \<noteq> 0" using plc by blast
   note R = deferred_record_node[OF parts0 at0 refl unbA plcA]
-  have eq: "deferred_place P dd q e c S = deferred_record_node q ?c ?ds" by (simp add: deferred_place_def Let_def hq)
-  show "deferred_formed \<kappa> P (deferred_place P dd q e c S)"
-    unfolding eq deferred_formed_def
-  proof (intro conjI allI)
-    show "deferred_parts_formed \<kappa> P (deferred_record_node q ?c ?ds)" by (rule R(1))
-    fix q' show "deferred_node_formed (deferred_record_node q ?c ?ds) q'"
-    proof (cases "q' = q")
-      case True
-      then show ?thesis using R(2) by simp
-    next
-      case False
-      then show ?thesis by (rule R(3)[OF nf0])
-    qed
+  let ?dr = "deferred_record_node q ?c ?ds"
+  have schema: "shared_derivation_schema (shared_entry_node hq) = S"
+    using arg_cong[OF hqp, of resolution_node_schema] by (simp add: shared_derivation_project_def finite_clause_node_def)
+  let ?ps = "deferred_placed_positions q S"
+  have eq: "deferred_place P dd q e c S = deferred_record_goals ?ps ?dr" by (simp add: deferred_place_def Let_def hq schema)
+  have psG: "set ?ps = fset (fimage resolution_goal_position ?G)" by (rule deferred_placed_positions)
+  have dps: "resolution_positions_distinct (search_project ?r')" using CP(3) by (simp add: search_placeable_def)
+  have inr: "deferred_inner ?dr = ?r'" using R(4) by simp
+  have goal_pos: "shared_goal_position (shared_entry_goal h') = p'"
+    if "RBT.lookup (shared_goals (search_state ?r')) p' = Some h'" for p' h'
+    using shared_entries_formed(1)[OF st' that] by (simp add: goal_entry_formed_def)
+  have new_goal: "shared_goal_project ?T' (shared_entry_goal h') |\<in>| ?G"
+    if a: "RBT.lookup (shared_goals (search_state ?r')) p' = Some h'" and p': "p' \<in> set ?ps" for p' h'
+  proof -
+    obtain g0 where g0: "g0 |\<in>| ?G" "resolution_goal_position g0 = p'" using p' psG by auto
+    have gm: "g0 |\<in>| resolution_pending (search_project ?r')" using g0(1) pj by simp
+    have hm: "shared_goal_project ?T' (shared_entry_goal h') |\<in>| resolution_pending (search_project ?r')"
+      unfolding shared_state_project_member(1) using a by blast
+    have "resolution_goal_position (shared_goal_project ?T' (shared_entry_goal h')) = p'" using goal_pos[OF a] by simp
+    then have "shared_goal_project ?T' (shared_entry_goal h') = g0"
+      using dps gm hm g0(2) unfolding resolution_positions_distinct_def by metis
+    then show ?thesis using g0(1) by simp
   qed
+  have pl: "position_number (deferred_positions ?dr) (fst (fst x)) \<noteq> 0"
+    if p': "p' \<in> set ?ps" and a: "RBT.lookup (shared_goals (search_state (deferred_inner ?dr))) p' = Some h'"
+      and nr: "\<not> shared_root_goal (shared_entry_goal h')" and x: "x |\<in>| shared_goal_variables (shared_entry_goal h')" for p' h' x
+  proof -
+    have a': "RBT.lookup (shared_goals (search_state ?r')) p' = Some h'" using a inr by simp
+    have "x |\<in>| resolution_goal_variables (shared_goal_project ?T' (shared_entry_goal h'))"
+      using x goal_entry_variables[OF shared_entries_formed(1)[OF st' a']] by simp
+    then have "fst (fst x) = q" by (rule finite_clause_goals_positioned[OF new_goal[OF a' p']])
+    then show ?thesis using R(7) by simp
+  qed
+  have rt: "RBT.lookup (deferred_goal_records ?dr) p' = None"
+    if p': "p' \<in> set ?ps" and a: "RBT.lookup (shared_goals (search_state (deferred_inner ?dr))) p' = Some h'"
+      and rg: "shared_root_goal (shared_entry_goal h')" for p' h'
+  proof -
+    have a': "RBT.lookup (shared_goals (search_state ?r')) p' = Some h'" using a inr by simp
+    have "p' = []" using goal_pos[OF a'] rg by (auto simp: shared_root_goal_iff)
+    moreover have "p' \<noteq> []" using p' by (auto simp: deferred_placed_positions_def)
+    ultimately show ?thesis by simp
+  qed
+  have ot: "deferred_goal_formed ?dr q'" if q': "q' \<notin> set ?ps" for q'
+  proof (rule deferred_goal_formed_cong[OF deferred_formedD(12)[OF dd, of q']])
+    fix h' assume a: "RBT.lookup (shared_goals (search_state (deferred_inner ?dr))) q' = Some h'"
+    have a': "RBT.lookup (shared_goals (search_state ?r')) q' = Some h'" using a inr by simp
+    let ?g' = "shared_goal_project ?T' (shared_entry_goal h')"
+    have m: "?g' |\<in>| resolution_pending (search_project ?r')" unfolding shared_state_project_member(1) using a' by blast
+    have m': "?g' |\<in>| ?G |\<union>| (resolution_pending ?st |-| {|?g|})" using m unfolding pj resolution_state.sel(1) .
+    have pq: "resolution_goal_position ?g' = q'" using goal_pos[OF a'] by simp
+    have nG: "?g' |\<notin>| ?G" using q' psG pq by force
+    then have old: "?g' |\<in>| resolution_pending ?st" using m' by simp
+    then obtain q0 h0 where h0: "RBT.lookup (shared_goals ?s) q0 = Some h0"
+      and e0: "shared_goal_project ?T (shared_entry_goal h0) = ?g'"
+      unfolding shared_state_project_member(1) by blast
+    have "shared_goal_position (shared_entry_goal h0) = q0"
+      using shared_entries_formed(1)[OF st h0] by (simp add: goal_entry_formed_def)
+    then have q0: "q0 = q'" using e0 pq shared_goal_project_position[of ?T "shared_entry_goal h0"] by simp
+    have v: "shared_goal_variables (shared_entry_goal h') = shared_goal_variables (shared_entry_goal h0)"
+      using goal_entry_variables[OF shared_entries_formed(1)[OF st' a']]
+        goal_entry_variables[OF shared_entries_formed(1)[OF st h0]] e0 by simp
+    have rr: "shared_root_goal (shared_entry_goal h') \<longleftrightarrow> shared_root_goal (shared_entry_goal h0)"
+      using shared_root_goal_project[of "shared_entry_goal h'" ?T'] shared_root_goal_project[of "shared_entry_goal h0" ?T] e0
+      by simp
+    show "\<exists>h. RBT.lookup (shared_goals (search_state (deferred_inner dd))) q' = Some h \<and>
+        shared_goal_variables (shared_entry_goal h') = shared_goal_variables (shared_entry_goal h) \<and>
+        (shared_root_goal (shared_entry_goal h') \<longleftrightarrow> shared_root_goal (shared_entry_goal h))"
+      using h0 q0 v rr by blast
+  next
+    show "RBT.lookup (deferred_goal_records ?dr) q' = RBT.lookup (deferred_goal_records dd) q'" by simp
+  next
+    fix y assume y: "deferred_numbered dd y"
+    have "deferred_key ?dr y = deferred_key ?ds y \<and> deferred_numbered ?dr y"
+      by (rule deferred_record_node_keys[OF parts0]) (use y in simp)
+    then show "deferred_key ?dr y = deferred_key dd y \<and> deferred_numbered ?dr y" by simp
+  qed
+  have plA: "\<forall>p' h' x. p' \<in> set ?ps \<longrightarrow> RBT.lookup (shared_goals (search_state (deferred_inner ?dr))) p' = Some h' \<longrightarrow>
+      \<not> shared_root_goal (shared_entry_goal h') \<longrightarrow> x |\<in>| shared_goal_variables (shared_entry_goal h') \<longrightarrow>
+      position_number (deferred_positions ?dr) (fst (fst x)) \<noteq> 0" using pl by blast
+  have rtA: "\<forall>p' h'. p' \<in> set ?ps \<longrightarrow> RBT.lookup (shared_goals (search_state (deferred_inner ?dr))) p' = Some h' \<longrightarrow>
+      shared_root_goal (shared_entry_goal h') \<longrightarrow> RBT.lookup (deferred_goal_records ?dr) p' = None" using rt by blast
+  have otA: "\<forall>q'. q' \<notin> set ?ps \<longrightarrow> deferred_goal_formed ?dr q'" using ot by blast
+  note G = deferred_record_goals[OF R(1) plA rtA otA]
+  have nfr: "deferred_node_formed ?dr q'" for q'
+  proof (cases "q' = q")
+    case True
+    then show ?thesis using R(2) by simp
+  next
+    case False
+    then show ?thesis by (rule R(3)[OF nf0])
+  qed
+  show "deferred_formed \<kappa> P (deferred_place P dd q e c S)" unfolding eq deferred_formed_def using G nfr by blast
   show "search_placeable (search_project (deferred_inner (deferred_place P dd q e c S)))"
-    unfolding eq R(4) using CP(3) by simp
-  show "deferred_inner (deferred_place P dd q e c S) = ?r'" unfolding eq R(4) by simp
-  show "deferred_store (deferred_place P dd q e c S) = deferred_store dd" unfolding eq R(5) by simp
+    unfolding eq using G inr CP(3) by simp
+  show "deferred_inner (deferred_place P dd q e c S) = ?r'" unfolding eq using G inr by simp
+  show "deferred_store (deferred_place P dd q e c S) = deferred_store dd" unfolding eq using G R(5) by simp
   show "deferred_project (deferred_place P dd q e c S) = Resolution_State
       (?G |\<union>| (resolution_pending (deferred_project dd) |-| {|?g|}))
       (finsert ?nd (resolution_nodes (deferred_project dd))) (resolution_witnesses (deferred_project dd))"
@@ -3519,8 +4978,10 @@ proof -
         unfolding shared_state_project_member(1) by blast
       show "resolution_goal_substitute ?\<sigma> z = z" using deferred_goal_fixed[OF dd h0] e0 by blast
     qed
+    have sg: "deferred_substitution (deferred_record_goals ?ps ?dr) = deferred_substitution ?dr"
+      using G by (simp add: fun_eq_iff deferred_substitution_def)
     have "deferred_project (deferred_place P dd q e c S) = resolution_state_substitute ?\<sigma> (search_project ?r')"
-      unfolding eq using \<sigma>' R(4) by (simp add: deferred_project_def)
+      unfolding eq using sg \<sigma>' G R(4) by (simp add: deferred_project_def)
     also have "\<dots> = Resolution_State (?G |\<union>| (resolution_pending ?st |-| {|?g|}))
         (finsert ?nd (fimage (resolution_node_substitute ?\<sigma>) (resolution_nodes ?st))) (resolution_witnesses ?st)"
       unfolding pj resolution_state_substitute_def using Gfix Nfix pend by (simp add: fimage_funion)
@@ -3694,6 +5155,15 @@ proof -
       using parts nodes unfolding deferred_parts_formed_def by simp
   qed
   moreover have "deferred_node_formed ?d q" for q using nf[of q] nodes by (simp add: deferred_node_formed_def)
+  moreover have "deferred_goal_formed ?d q" for q
+  proof (rule deferred_goal_formed_same[OF deferred_formedD(12)[OF d]])
+    show "\<And>h'. RBT.lookup (shared_goals (search_state (deferred_inner ?d))) q = Some h' \<Longrightarrow>
+      \<exists>h. RBT.lookup (shared_goals (search_state (deferred_inner d))) q = Some h \<and> shared_entry_goal h' = shared_entry_goal h"
+      using entries by fastforce
+    show "RBT.lookup (deferred_goal_records ?d) q = RBT.lookup (deferred_goal_records d) q" by simp
+    show "\<And>y. deferred_numbered d y \<Longrightarrow> deferred_key ?d y = deferred_key d y \<and> deferred_numbered ?d y"
+      by (simp add: deferred_key_def deferred_numbered_def)
+  qed
   ultimately show ?thesis by (simp add: deferred_formed_def)
 qed
 
@@ -3835,7 +5305,8 @@ definition deferred_at :: "'s::linorder list \<Rightarrow> ('a,'s,'d,'c) deferre
     ('a,'s,'d,'c) deferred_search" where
   "deferred_at q d r = (case RBT.lookup (shared_nodes (search_state r)) q of None \<Rightarrow> d\<lparr>deferred_inner := r\<rparr>
     | Some hn \<Rightarrow> if RBT.lookup (shared_nodes (search_state (deferred_inner d))) q = None
-      then deferred_record_node q (shared_derivation_call (shared_entry_node hn)) (d\<lparr>deferred_inner := r\<rparr>)
+      then deferred_record_goals (deferred_placed_positions q (shared_derivation_schema (shared_entry_node hn)))
+        (deferred_record_node q (shared_derivation_call (shared_entry_node hn)) (d\<lparr>deferred_inner := r\<rparr>))
       else d\<lparr>deferred_inner := r\<rparr>)"
 
 lemma deferred_at_place:
@@ -4216,16 +5687,6 @@ text \<open>
 lemma plain_grounds_member: "t |\<in>| pattern_grounds (\<tau> a) \<Longrightarrow> a |\<in>| D \<Longrightarrow> t |\<in>| plain_grounds \<tau> D"
   by (auto simp: plain_grounds_def ffUnion.rep_eq fimage.rep_eq)
 
-fun shared_goal_variable_list :: "('a,'s,'d,'c) shared_goal \<Rightarrow> ('s,'a) resolution_variable list" where
-  "shared_goal_variable_list (Shared_Call_Goal q r d p) = shared_variable_list p"
-| "shared_goal_variable_list (Shared_Material_Goal q r M) = shared_variable_list (shared_material_source M) @
-    shared_variable_list (shared_material_atoms M) @ shared_variable_list (shared_material_edges M) @
-    shared_variable_list (shared_material_counts M) @ shared_variable_list (shared_material_functions M)"
-
-lemma shared_goal_variable_list:
-  "shared_goal_formed T g \<Longrightarrow> set (shared_goal_variable_list g) = fset (shared_goal_variables g)"
-  by (cases g) (auto simp: shared_material_formed_def shared_material_variables_def shared_variable_list)
-
 definition deferred_constructed_variables :: "('a,'s::linorder,'d,'c) deferred_search \<Rightarrow> 's list \<Rightarrow> 'a fset \<Rightarrow>
     ('s,'a) resolution_variable list" where
   "deferred_constructed_variables d q C = remdups (filter (\<lambda>x. fst x = (q,True) \<and> snd x |\<in>| C)
@@ -4580,7 +6041,7 @@ lemma deferred_frame_ground [simp]:
   "search_frame (deferred_inner (deferred_ground q d)) = search_frame (deferred_inner d)"
   "search_frame (deferred_inner (deferred_update \<sigma> D n d)) = search_frame (deferred_inner d)"
   by (simp_all add: deferred_memoize_node_def deferred_ground_node_def deferred_ground_def deferred_update_def
-    deferred_frame_memoize Let_def split: option.split prod.split if_split)
+    deferred_update_at_def deferred_record_update_def deferred_frame_memoize Let_def split: option.split prod.split if_split)
 
 lemma search_frame_goal_substitute [simp]:
   "search_frame (search_goal_substitute_at P \<sigma> D q r) = search_frame r"
@@ -4590,15 +6051,35 @@ lemma search_frame_goal_substitutes [simp]:
   "search_frame (search_goal_substitute P \<sigma> D r) = search_frame r"
   unfolding search_goal_substitute_def by (rule fold_value_kept) simp
 
+lemma deferred_frame_record_goal [simp]:
+  "search_frame (deferred_inner (deferred_record_goal p d)) = search_frame (deferred_inner d)"
+  by (simp add: deferred_record_goal_def Let_def split: option.split)
+
+lemma deferred_frame_record_goals [simp]:
+  "search_frame (deferred_inner (deferred_record_goals ps d)) = search_frame (deferred_inner d)"
+  unfolding deferred_record_goals_def by (rule fold_value_kept) simp
+
+lemma deferred_frame_update_at [simp]:
+  "search_frame (deferred_inner (deferred_update_at Dk n d)) = search_frame (deferred_inner d)"
+  by (simp add: deferred_update_at_def deferred_record_update_def Let_def split: option.split prod.split)
+
+lemma search_frame_goal_write [simp]: "search_frame (search_goal_write q s' A R r) = search_frame r"
+  by (simp add: search_goal_write_def search_frame_def)
+
+lemma deferred_frame_goal_at [simp]:
+  "search_frame (deferred_inner (deferred_goal_at P \<sigma> D Dg q d)) = search_frame (deferred_inner d)"
+  by (simp add: deferred_goal_at_def Let_def split: option.split prod.split)
+
 lemma deferred_frame_bind [simp]:
   "search_frame (deferred_inner (deferred_bind P s d)) = search_frame (deferred_inner d)"
 proof -
   obtain s' x where k: "keyed_collapse_bindings s (shared_sharing (search_state (deferred_inner d))) = (s',x)"
     by (cases "keyed_collapse_bindings s (shared_sharing (search_state (deferred_inner d)))")
   let ?g = "\<lambda>d. search_frame (deferred_inner d)"
-  have u: "?g (deferred_update (shared_binding_substitution s') (shared_binding_domain s') n t) = ?g t" for n t by simp
+  have u: "?g (deferred_update_at Dk n t) = ?g t" for Dk n t by simp
+  have v: "?g (deferred_goal_at P (shared_binding_substitution s') (shared_binding_domain s') Dg q t) = ?g t" for Dg q t by simp
   show ?thesis unfolding deferred_bind_def k Let_def prod.case
-    by (subst fold_value_kept[where g = ?g, OF u]) simp
+    by (subst fold_value_kept[where g = ?g, OF u], subst fold_value_kept[where g = ?g, OF v]) simp
 qed
 
 lemma deferred_frame_steps [simp]:

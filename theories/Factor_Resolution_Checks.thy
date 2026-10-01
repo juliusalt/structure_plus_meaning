@@ -2498,6 +2498,276 @@ lemma moded_check_graph_true_listed_code [code]:
     (finite_state_graph_true_in (listed_table es) P d t)"
   by (simp only: moded_check_graph_true_listed_def moded_check_graph_true_in_def moded_deferred_route_search_in_exact)
 
+section \<open>The route's search keeping its found states\<close>
+
+text \<open>
+  The route's search at a listed table keeping its found states (task 1003): the route's search over the deferred
+  committed representation at the table (@{const moded_deferred_route_search_in}), its outcome keeping each found
+  state's representation (@{text moded_deferred_route_keeping_in}). Its projection is the route's search
+  (@{text moded_deferred_route_keeping_in_project}); at the route's commitment and raisers every kept representation is
+  formed and projects to the state kept beside it (@{text moded_deferred_route_keeping_in_formed}), and so reads its
+  found state's calls (@{text moded_deferred_route_keeping_in_reads}): the sharing of its shared state represents the
+  formed table, and a node whose call is a ground reference there (@{text shared_call_references}) holds the term at
+  that reference, from the shared state's formation (@{text shared_state_reads_calls},
+  @{text deferred_committed_reads_calls}; a ground call is kept by the deferred substitution,
+  @{text finite_exact_term_pattern_substitute}).
+\<close>
+
+
+definition shared_call_references :: "('a,'s::linorder,'d,'c) shared_state \<Rightarrow> 's list \<Rightarrow> nat option" where
+  "shared_call_references s q = (case RBT.lookup (shared_nodes s) q of None \<Rightarrow> None
+    | Some hn \<Rightarrow> (case shared_derivation_call (shared_entry_node hn) of Shared_Ground i \<Rightarrow> Some i | _ \<Rightarrow> None))"
+
+lemma shared_state_ground_calls:
+  assumes formed: "shared_state_formed \<kappa> P s"
+    and m: "m |\<in>| resolution_nodes (shared_state_project s)"
+    and i: "shared_call_references s (resolution_node_position m) = Some i"
+  shows "\<exists>u. reference_term (shared_state_table s) i = Some u \<and> resolution_node_call m = finite_exact_term_pattern u"
+proof -
+  let ?T = "shared_state_table s"
+  obtain hn where hn: "hn |\<in>| tree_values (shared_nodes s)"
+    and mh: "m = shared_derivation_project ?T (shared_entry_node hn)"
+    using m by (auto simp: shared_state_project_fields)
+  obtain q where q: "RBT.lookup (shared_nodes s) q = Some hn" using hn by (auto simp: tree_values_member)
+  have nf: "node_entry_formed ?T q hn" using formed q by (auto simp: shared_state_formed_def)
+  have pos: "resolution_node_position m = q" using nf mh
+    by (simp add: node_entry_formed_def shared_derivation_project_def read_derivation_project_def)
+  have call: "shared_derivation_call (shared_entry_node hn) = Shared_Ground i"
+    using i q pos by (auto simp: shared_call_references_def split: shared_pattern.splits)
+  have b: "i < length ?T" using nf call by (simp add: node_entry_formed_def shared_derivation_formed_def)
+  have tf: "table_formed ?T" using formed by (simp add: shared_state_formed_def share_state_formed_def)
+  obtain u where u: "reference_term ?T i = Some u" using table_formed_decodes[OF tf b] by blast
+  have "resolution_node_call m = finite_exact_term_pattern u"
+    using mh call u by (simp add: shared_derivation_project_def read_derivation_project_def reference_term_def)
+  then show ?thesis using u by blast
+qed
+
+lemma shared_state_reads_calls:
+  assumes formed: "shared_state_formed \<kappa> P s"
+  shows "finite_reads_calls (shared_call_references s) (shared_sharing s) (resolution_nodes (shared_state_project s))"
+proof -
+  have r: "keyed_state_represents (shared_sharing s) (shared_state_table s)" and t: "table_formed (shared_state_table s)"
+    using formed by (simp_all add: shared_state_formed_def share_state_formed_def)
+  have c: "reference_term (shared_state_table s) i = Some (finite_residual_term (resolution_node_call m))"
+    if m: "m |\<in>| resolution_nodes (shared_state_project s)"
+      and i: "shared_call_references s (resolution_node_position m) = Some i" for m i
+    using shared_state_ground_calls[OF formed m i] by auto
+  show ?thesis unfolding finite_reads_calls_def using r t c by blast
+qed
+
+lemma deferred_committed_reads_calls:
+  assumes formed: "deferred_committed_formed \<kappa> P s"
+  shows "finite_reads_calls (shared_call_references (search_state (committed_inner s)))
+    (shared_sharing (search_state (committed_inner s))) (resolution_nodes (deferred_committed_project s))"
+proof (cases s)
+  case (Inr r)
+  have "shared_state_formed \<kappa> P (search_state r)" using formed Inr by (simp add: search_formed_def)
+  then show ?thesis using Inr by (simp add: shared_state_reads_calls)
+next
+  case (Inl d)
+  let ?s = "search_state (deferred_inner d)"
+  have f: "shared_state_formed \<kappa> P ?s" using formed Inl
+    by (simp add: deferred_formed_def deferred_parts_formed_def search_formed_def)
+  have r: "keyed_state_represents (shared_sharing ?s) (shared_state_table ?s)" and t: "table_formed (shared_state_table ?s)"
+    using f by (simp_all add: shared_state_formed_def share_state_formed_def)
+  have c: "reference_term (shared_state_table ?s) i = Some (finite_residual_term (resolution_node_call m'))"
+    if m': "m' |\<in>| resolution_nodes (deferred_project d)"
+      and i: "shared_call_references ?s (resolution_node_position m') = Some i" for m' i
+  proof -
+    obtain m where m: "m |\<in>| resolution_nodes (shared_state_project ?s)"
+      and mm: "m' = resolution_node_substitute (deferred_substitution d) m"
+      using m' by (auto simp: deferred_project_def resolution_state_substitute_def)
+    have pc: "resolution_node_position m' = resolution_node_position m \<and>
+        resolution_node_call m' = finite_pattern_substitute (deferred_substitution d) (resolution_node_call m)"
+      using mm by (cases m) simp
+    have i': "shared_call_references ?s (resolution_node_position m) = Some i" using i pc by simp
+    obtain u where u: "reference_term (shared_state_table ?s) i = Some u"
+      and e: "resolution_node_call m = finite_exact_term_pattern u"
+      using shared_state_ground_calls[OF f m i'] by blast
+    show ?thesis using u e pc by (simp add: finite_exact_term_pattern_substitute)
+  qed
+  show ?thesis unfolding finite_reads_calls_def Inl committed_inner.simps deferred_committed_project.simps
+    using r t c by blast
+qed
+
+definition moded_deferred_route_keeping_in ::
+    "(('d\<times>finite_factor_term)\<times>('a,'s,'c) finite_schema_proof) list \<Rightarrow>
+      ('a,'s::linorder,'d,'c) finite_witness_construction \<Rightarrow> ('a,'s,'d,'c) finite_schema_system \<Rightarrow>
+      ('a,'s,'d,'v) produced_declarations \<Rightarrow> ('a,'s,'d) resolution_declarations \<Rightarrow> 'd resolution_modes \<Rightarrow>
+      (('a,'s,'d,'c) shared_goal_entry,('a,'s,'d,'c) shared_node_entry,nat,'a,'s,'d,'c) access_commitment \<Rightarrow>
+      ('d \<times> 'c \<times> 's) fset \<Rightarrow> 's list option \<Rightarrow> 'd \<Rightarrow> finite_factor_term \<Rightarrow> nat \<Rightarrow>
+      ('a,'s,'d,'c,('a,'s,'d,'c) deferred_search + ('a,'s,'d,'c) shared_search) represented_outcome" where
+  "moded_deferred_route_keeping_in es \<kappa> P D Dm M Kc X F0 d t n =
+    (let gd = (\<lambda>s h. shared_raising_guard X (resolution_declarations.truncate D) M (shared_entry_goal h));
+      gr = (\<lambda>r h. shared_raising_guard X (resolution_declarations.truncate D) M (shared_entry_goal h));
+      Cs = map fst es in
+    keeping_committed_search (deferred_committed_representation_in \<kappa> P Cs)
+      (commitment_tests (deferred_committed_representation_in \<kappa> P Cs) deferred_commitment_access Kc Dm M gd) gd
+      (deferred_focus_empty \<kappa> P) (\<lambda>F s V x. route_select_in \<kappa> P Kc Dm M gr F (committed_inner s) V x)
+      (\<lambda>F s V. (deferred_commitment_access s,True)) \<kappa> P n F0 {||} (deferred_committed_of_in Cs P (finite_initial_state d t)))"
+
+lemma moded_deferred_route_keeping_in_project:
+  "represented_outcome_project (moded_deferred_route_keeping_in es \<kappa> P D Dm M Kc X F0 d t n) =
+    moded_deferred_route_search_in es \<kappa> P m D \<Phi> Dm M Kc X True F0 d t n"
+  by (simp only: moded_deferred_route_keeping_in_def moded_deferred_route_search_in_def Let_def if_True
+    keeping_committed_search_project)
+
+lemma commitment_tests_keeping:
+  "keeping_goal_outcome R (commitment_tests R ce Kc Dm M gd) gd rec F B r V (E,b) h =
+    keeping_goal_outcome R (commitment_tests R ce Kc Dm M gd) gd rec F B r V (E,b') h"
+  by (simp add: keeping_goal_outcome_def commitment_tests_def Let_def)
+
+theorem moded_deferred_route_keeping_in_formed:
+  assumes sock: "clause_sockets_distinct P"
+    and y: "y |\<in>| represented_found (moded_deferred_route_keeping_in es \<kappa> P D Dm M (access_narrowed_commitment P m D \<Phi>)
+      (finite_declared_raisers P (resolution_declarations.truncate D)) F0 d t n)"
+  shows "deferred_raised_in \<kappa> P (map fst es) (snd y) \<and> deferred_committed_project (snd y) = fst y"
+proof -
+  let ?Q = "deferred_committed_representation_in \<kappa> P (map fst es)"
+  let ?gd = "\<lambda>s h. shared_raising_guard (finite_declared_raisers P (resolution_declarations.truncate D))
+    (resolution_declarations.truncate D) M (shared_entry_goal h)"
+  let ?T = "commitment_tests ?Q deferred_commitment_access (access_narrowed_commitment P m D \<Phi>) Dm M ?gd"
+  have L: "selected_representation_formed_in ?Q (deferred_raised_in \<kappa> P (map fst es)) \<kappa> P (listed_table es)
+    (finite_narrowed_commitment P m D \<Phi>) (finite_moded_priority (finite_narrowed_commitment P m D \<Phi>) Dm M) ?T ?gd
+    (\<lambda>s. search_closes (committed_inner s)) (deferred_focus_empty \<kappa> P)
+    (\<lambda>F s V x. route_select_in \<kappa> P (access_narrowed_commitment P m D \<Phi>) Dm M
+      (\<lambda>r h. shared_raising_guard (finite_declared_raisers P (resolution_declarations.truncate D))
+        (resolution_declarations.truncate D) M (shared_entry_goal h)) F (committed_inner s) V x)
+    (\<lambda>F s V. (deferred_commitment_access s,True))"
+    by (rule deferred_route_formed_in[OF sock listed_table_calls])
+  have k: "keeping_goal_outcome ?Q ?T ?gd rec F B s (rep_access ?Q s) (deferred_commitment_access s,True) =
+      keeping_goal_outcome ?Q ?T ?gd rec F B s (rep_access ?Q s) (tests_prepare ?T F s (rep_access ?Q s))"
+    if "deferred_raised_in \<kappa> P (map fst es) s" for rec F B s
+    by (intro ext) (simp only: commitment_tests_prepare commitment_tests_keeping)
+  have f: "deferred_raised_in \<kappa> P (map fst es) (deferred_committed_of_in (map fst es) P (finite_initial_state d t))"
+    using deferred_committed_of_in[OF finite_initial_state_placeable[of d t], where P=P and C="map fst es"]
+      finite_initial_state_raised[of P d t] by (simp add: deferred_raised_in_def)
+  show ?thesis
+    using selected_representation_formed_in.keeping_found_formed[OF L k f
+        y[unfolded moded_deferred_route_keeping_in_def Let_def]]
+    by (simp add: deferred_committed_in_fields)
+qed
+
+corollary moded_deferred_route_keeping_in_reads:
+  assumes sock: "clause_sockets_distinct P"
+    and y: "y |\<in>| represented_found (moded_deferred_route_keeping_in es \<kappa> P D Dm M (access_narrowed_commitment P m D \<Phi>)
+      (finite_declared_raisers P (resolution_declarations.truncate D)) F0 d t n)"
+  shows "finite_reads_calls (shared_call_references (search_state (committed_inner (snd y))))
+    (shared_sharing (search_state (committed_inner (snd y)))) (resolution_nodes (fst y))"
+proof -
+  have "deferred_raised_in \<kappa> P (map fst es) (snd y) \<and> deferred_committed_project (snd y) = fst y"
+    by (rule moded_deferred_route_keeping_in_formed[OF sock y])
+  then show ?thesis using deferred_committed_reads_calls[of \<kappa> P "snd y"] by (simp add: deferred_raised_in_def)
+qed
+
+lemma fBex_fimage_iff: "fBex (fimage f A) Q \<longleftrightarrow> fBex A (\<lambda>x. Q (f x))"
+  including fset.lifting by transfer auto
+
+lemma fBex_member_cong: "(\<And>x. x |\<in>| A \<Longrightarrow> Q x \<longleftrightarrow> Q' x) \<Longrightarrow> fBex A Q \<longleftrightarrow> fBex A Q'"
+  including fset.lifting by transfer blast
+
+text \<open>
+  The route constants read the kept states (task 1003): at a program whose clause sockets are distinct, the graph
+  truth and the graph verdicts of the check search at a listed table read each found state's calls from the
+  representation the search kept it at (@{const finite_read_graph_true_in}, @{const finite_read_graph_verdicts_in}),
+  equal to C's at the found state (@{text finite_read_graph_true_in_exact}, @{text finite_read_graph_verdicts_in_exact});
+  the constants' meaning is unchanged.
+\<close>
+
+declare moded_check_graph_true_listed_code [code del] moded_check_graph_verdicts_listed_code [code del]
+
+lemma moded_check_graph_true_listed_kept [code]:
+  "moded_check_graph_true_listed es \<kappa> P m D \<Phi> Dm M d t n = (if clause_sockets_distinct P
+    then fBex (represented_found (moded_deferred_route_keeping_in es \<kappa> P D Dm M (access_narrowed_commitment P m D \<Phi>)
+        (finite_declared_raisers P (resolution_declarations.truncate D)) (Some []) d t n))
+      (\<lambda>y. finite_read_graph_true_in (listed_table es) P d t (shared_call_references (search_state (committed_inner (snd y))))
+        (shared_sharing (search_state (committed_inner (snd y)))) (fst y))
+    else fBex (resolution_found (moded_deferred_route_search_in es \<kappa> P m D \<Phi> Dm M (access_narrowed_commitment P m D \<Phi>)
+        (finite_declared_raisers P (resolution_declarations.truncate D)) (clause_sockets_distinct P) (Some []) d t n))
+      (finite_state_graph_true_in (listed_table es) P d t))"
+proof (cases "clause_sockets_distinct P")
+  case False
+  then show ?thesis by (simp only: moded_check_graph_true_listed_code if_False)
+next
+  case True
+  let ?K = "moded_deferred_route_keeping_in es \<kappa> P D Dm M (access_narrowed_commitment P m D \<Phi>)
+    (finite_declared_raisers P (resolution_declarations.truncate D)) (Some []) d t n"
+  have p: "resolution_found (moded_deferred_route_search_in es \<kappa> P m D \<Phi> Dm M (access_narrowed_commitment P m D \<Phi>)
+      (finite_declared_raisers P (resolution_declarations.truncate D)) (clause_sockets_distinct P) (Some []) d t n) =
+      fimage fst (represented_found ?K)"
+    using arg_cong[OF moded_deferred_route_keeping_in_project[of es \<kappa> P D Dm M "access_narrowed_commitment P m D \<Phi>"
+      "finite_declared_raisers P (resolution_declarations.truncate D)" "Some []" d t n m \<Phi>], of resolution_found] True
+    by simp
+  have r: "finite_read_graph_true_in (listed_table es) P d t (shared_call_references (search_state (committed_inner (snd y))))
+      (shared_sharing (search_state (committed_inner (snd y)))) (fst y) = finite_state_graph_true_in (listed_table es) P d t (fst y)"
+    if "y |\<in>| represented_found ?K" for y
+    by (rule finite_read_graph_true_in_exact[OF moded_deferred_route_keeping_in_reads[OF True that]])
+  show ?thesis unfolding moded_check_graph_true_listed_code p fBex_fimage_iff if_P[OF True]
+    by (rule fBex_member_cong) (simp only: r)
+qed
+
+lemma moded_check_graph_verdicts_listed_kept [code]:
+  "moded_check_graph_verdicts_listed es \<kappa> P m D \<Phi> Dm M d t n = (if clause_sockets_distinct P
+    then ffUnion (fimage (\<lambda>y. finite_read_graph_verdicts_in (listed_table es) P d t
+        (shared_call_references (search_state (committed_inner (snd y))))
+        (shared_sharing (search_state (committed_inner (snd y)))) (fst y))
+      (represented_found (moded_deferred_route_keeping_in es \<kappa> P D Dm M (access_narrowed_commitment P m D \<Phi>)
+        (finite_declared_raisers P (resolution_declarations.truncate D)) (Some []) d t n)))
+    else ffUnion (fimage (finite_state_graph_verdicts_in (listed_table es) P d t) (resolution_found
+      (moded_deferred_route_search_in es \<kappa> P m D \<Phi> Dm M (access_narrowed_commitment P m D \<Phi>)
+        (finite_declared_raisers P (resolution_declarations.truncate D)) (clause_sockets_distinct P) (Some []) d t n))))"
+proof (cases "clause_sockets_distinct P")
+  case False
+  then show ?thesis by (simp only: moded_check_graph_verdicts_listed_code if_False)
+next
+  case True
+  let ?K = "moded_deferred_route_keeping_in es \<kappa> P D Dm M (access_narrowed_commitment P m D \<Phi>)
+    (finite_declared_raisers P (resolution_declarations.truncate D)) (Some []) d t n"
+  have p: "resolution_found (moded_deferred_route_search_in es \<kappa> P m D \<Phi> Dm M (access_narrowed_commitment P m D \<Phi>)
+      (finite_declared_raisers P (resolution_declarations.truncate D)) (clause_sockets_distinct P) (Some []) d t n) =
+      fimage fst (represented_found ?K)"
+    using arg_cong[OF moded_deferred_route_keeping_in_project[of es \<kappa> P D Dm M "access_narrowed_commitment P m D \<Phi>"
+      "finite_declared_raisers P (resolution_declarations.truncate D)" "Some []" d t n m \<Phi>], of resolution_found] True
+    by simp
+  have r: "finite_read_graph_verdicts_in (listed_table es) P d t (shared_call_references (search_state (committed_inner (snd y))))
+      (shared_sharing (search_state (committed_inner (snd y)))) (fst y) = finite_state_graph_verdicts_in (listed_table es) P d t (fst y)"
+    if "y |\<in>| represented_found ?K" for y
+    by (rule finite_read_graph_verdicts_in_exact[OF moded_deferred_route_keeping_in_reads[OF True that]])
+  have "fimage (\<lambda>y. finite_read_graph_verdicts_in (listed_table es) P d t
+        (shared_call_references (search_state (committed_inner (snd y))))
+        (shared_sharing (search_state (committed_inner (snd y)))) (fst y)) (represented_found ?K) =
+      fimage (finite_state_graph_verdicts_in (listed_table es) P d t) (fimage fst (represented_found ?K))"
+    unfolding fset.map_comp comp_def by (rule fset.map_cong0) (simp only: r)
+  then show ?thesis unfolding moded_check_graph_verdicts_listed_code p if_P[OF True] by simp
+qed
+
+text \<open>
+  The check's truth is complete at a table (review 994's follow-up 3): wherever the check search finds a state at a
+  table whose calls are true, the check's graph truth holds, from the committed search's found-state invariant at the
+  table (@{text finite_committed_search_by_found_in}), whose root held gives the closed state a root node, and the
+  graph truth at a found state (@{text finite_state_graph_true_in_found}).
+\<close>
+
+theorem moded_check_graph_true_in_found:
+  assumes true: "finite_table_true P \<Theta>" and Pf: "finite_system_formed P" and tf: "finite_term_formed t"
+    and \<kappa>: "finite_witness_construction_formed \<kappa>"
+    and found: "st |\<in>| resolution_found (finite_committed_search_by_in \<Theta>
+      (finite_resolution_select_in \<Theta> (finite_moded_priority (finite_narrowed_commitment P m D \<Phi>) Dm M) \<kappa> P) \<kappa>
+      (finite_narrowed_commitment P m D \<Phi>) P n (Some []) {||} (finite_initial_state d t))"
+  shows "moded_check_graph_true_in \<Theta> \<kappa> P m D \<Phi> Dm M d t n"
+proof -
+  have I: "resolution_invariant_in \<Theta> P d t st \<and> finite_focus_pending (Some []) st = {||}"
+    by (rule finite_committed_search_by_found_in[OF \<kappa> finite_resolution_select_goals_in
+      resolution_initial_invariant_in[OF Pf tf] found])
+  have closed: "resolution_pending st = {||}"
+    using I finite_root_focus_pending[of "Some []" st] by (simp add: resolution_focused_def)
+  obtain nd where nd: "nd |\<in>| resolution_nodes st" and root: "resolution_node_position nd = []"
+    using I closed by (auto simp: resolution_invariant_in_def resolution_root_held_def)
+  have "finite_state_graph_true_in \<Theta> P d t st"
+    by (rule finite_state_graph_true_in_found[OF true conjunct1[OF I] closed nd root])
+  then show ?thesis unfolding moded_check_graph_true_in_def using found by (blast intro: fBexI)
+qed
+
 text \<open>
   Item (7) at a demand (task 989, review 971's follow-up 3), at the moded selection where #547 and #399 read the check
   forms: each call of the demand with GT4's graph verdicts of its check search at the table

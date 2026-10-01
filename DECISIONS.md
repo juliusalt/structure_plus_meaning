@@ -22193,6 +22193,22 @@ What is decided.
    k = 32, C 1.45 ms a node today, 0.69 with C3, 0.40 over read rows; the rest is the links' re-share of every premise
    instance and the instance checks' term comparisons, which walk the artifact an anchor and stay ∝ k^≈2.5 — reading
    them over references is the follow-up that makes the search keep its shared found states.
+   (task 1003) The search keeps its shared found states: `keeping_committed_search` is the selected search over an
+   outcome keeping each found state beside the representation it was found at (`represented_outcome`), a committed
+   sub-search's states continued as the selected search continues them, through `rep_share`; its projection is the
+   selected search on every input (`keeping_committed_search_project`), and at a formed selected representation every
+   kept representation is formed and projects to its state (`keeping_found_formed`), at the route
+   (`moded_deferred_route_keeping_in`, `_formed`) and at the shared representation (`shared_keeping_committed_search_in`).
+   A kept state reads its found state's calls (`deferred_committed_reads_calls`, from `shared_state_formed`: the sharing
+   state represents the formed table, and a node whose call is a ground reference holds the term there), so the route
+   constants' graph truth and graph verdicts read the kept states (`moded_check_graph_true_listed_kept`,
+   `moded_check_graph_verdicts_listed_kept`) and no sharing state is built beside the check. The check's truth is
+   complete at a table: it holds wherever the check search finds a state at a table whose calls are true, the
+   invariant's root held giving the closed state its root node (`moded_check_graph_true_in_found`, review 994's follow-up 3). The leaves' formation stays the scan
+   `finite_share_leaves_formed`: measured under a millisecond against 0.2–0.9 s for the check, its flag (review 994's
+   follow-up 1) is next-edits item 436, taken at a measured need. Measured (task 1003's `measurement.md`): at 11,
+   k = 23/32, the graph truth 0.36/1.36 s today, 0.22/0.91 s read from the kept states (0.54 ms a node at k = 32), every
+   node's call read by reference; the rest is #1002's per-node check over references.
 
 Limits. The table is shared and indexed once a representation (once a call), the re-share of a found state and the
 substitution outside the deferred bind both reading the sharing state made there (`deferred_substitute_carried`): a

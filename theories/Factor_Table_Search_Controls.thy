@@ -24,6 +24,12 @@ text \<open>
   GT2a's forms at the table computed by their own equations, at both calls and at the demand of both; the demand accepts
   the true call; at the table whose certificate the checker refuses the demand's graph verdicts accept the true call
   alone (@{const moded_demand_graph_true_listed}).
+
+  The route constants read from the kept states (task 1003), in the same evaluation: the check search's graph truth and
+  graph verdicts at the listed tables, computed through their code equations over the representations the route's
+  search keeping its found states kept them at (@{thm [source] moded_check_graph_true_listed_kept},
+  @{thm [source] moded_check_graph_verdicts_listed_kept}), equal today's, read over the route's found states, at both
+  calls and at the refused certificate; the kept representation reads the root's call by reference.
 \<close>
 
 
@@ -112,7 +118,28 @@ lemma table_search_controls:
     moded_demand_graph_true_listed table_unaccepted_entries no_witness_construction table_control_program 0
       table_route_declarations {||} no_declarations {||} table_route_demand 3 = {|(1,Finite_Payload [1])|} \<and>
     moded_check_graph_true_listed table_unaccepted_entries no_witness_construction table_control_program 0
-      table_route_declarations {||} no_declarations {||} 1 (Finite_Payload [1]) 3)"
+      table_route_declarations {||} no_declarations {||} 1 (Finite_Payload [1]) 3 \<and>
+    moded_check_graph_true_listed table_search_entries no_witness_construction table_control_program 0
+      table_route_declarations {||} no_declarations {||} 1 (Finite_Payload [1]) 3 =
+      fBex (resolution_found (table_route_search table_search_entries (Finite_Payload [1]) 3))
+        (finite_state_graph_true_in (listed_table table_search_entries) table_control_program 1 (Finite_Payload [1])) \<and>
+    moded_check_graph_true_listed table_search_entries no_witness_construction table_control_program 0
+      table_route_declarations {||} no_declarations {||} 1 (Finite_Payload [2]) 3 =
+      fBex (resolution_found (table_route_search table_search_entries (Finite_Payload [2]) 3))
+        (finite_state_graph_true_in (listed_table table_search_entries) table_control_program 1 (Finite_Payload [2])) \<and>
+    moded_check_graph_true_listed table_unaccepted_entries no_witness_construction table_control_program 0
+      table_route_declarations {||} no_declarations {||} 1 (Finite_Payload [1]) 3 =
+      fBex (resolution_found (table_route_search table_unaccepted_entries (Finite_Payload [1]) 3))
+        (finite_state_graph_true_in (listed_table table_unaccepted_entries) table_control_program 1 (Finite_Payload [1])) \<and>
+    moded_check_graph_verdicts_listed table_unaccepted_entries no_witness_construction table_control_program 0
+      table_route_declarations {||} no_declarations {||} 1 (Finite_Payload [1]) 3 =
+      ffUnion (fimage (finite_state_graph_verdicts_in (listed_table table_unaccepted_entries) table_control_program 1
+        (Finite_Payload [1])) (resolution_found (table_route_search table_unaccepted_entries (Finite_Payload [1]) 3))) \<and>
+    fBex (represented_found (moded_deferred_route_keeping_in table_search_entries no_witness_construction table_control_program
+        table_route_declarations no_declarations {||} (access_narrowed_commitment table_control_program 0 table_route_declarations {||})
+        (finite_declared_raisers table_control_program (resolution_declarations.truncate table_route_declarations)) (Some []) 1
+        (Finite_Payload [1]) 3))
+      (\<lambda>y. shared_call_references (search_state (committed_inner (snd y))) [] \<noteq> None))"
   by eval
 
 end

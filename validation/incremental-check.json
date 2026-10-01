@@ -1,6 +1,6 @@
 {
- "base_receipt_sha256": "9c9608181ddf7d26e15e98baa5a402411ac9732630b6375488d9394ea9d06e77",
- "checked_content_sha256": "10c91b341c1be1d556d6459d1c4750b14c5da5e40211b11e4f6db4b95b0740bb",
+ "base_receipt_sha256": "862b2ed82698facbdbf02ec31896b175c2af58866d149eb4a5ba751cdc751e38",
+ "checked_content_sha256": "810c47c3110a5203d6717b96a86959d0961ba694be2672e800fd0cd8347460f2",
  "host_tests": {
   "kernel": {
    "exit_code": 0,
@@ -17,17 +17,17 @@
    "ran": 314,
    "skipped": 0,
    "tail": [
-    "{\"status\": \"failed\", \"error\": \"[Errno 2] No such file or directory: '/tmp/tmp8wpyovnf/no-project/theories/Development_Answer_a2d8d6490cc2.thy'\"}"
+    "{\"status\": \"failed\", \"error\": \"[Errno 2] No such file or directory: '/tmp/tmpjjumki76/no-project/theories/Development_Answer_a2d8d6490cc2.thy'\"}"
    ]
   }
  },
  "phases": {
-  "base_and_impact": 0.52,
+  "base_and_impact": 0.46,
   "execution_impact": 0.0,
   "export": 0.0,
-  "proof": 243.08,
-  "recipe_impact": 0.52,
-  "recipes_and_host_tests": 12.2
+  "proof": 203.34,
+  "recipe_impact": 0.38,
+  "recipes_and_host_tests": 11.4
  },
  "rebuilt_theories": [
   "Development_First_Problem_Additions_Controls",
@@ -35,16 +35,18 @@
   "Development_Given_Declarations_Execution",
   "Development_Given_Table",
   "Development_Given_Waiting_Controls",
+  "Factor_Access_Commitments",
   "Factor_Check_Controls",
   "Factor_Commitment_Controls",
   "Factor_Deferred_Commitment_Controls",
+  "Factor_Deferred_Commitments",
   "Factor_Input_Production_Controls",
   "Factor_Least_Query_Controls",
   "Factor_Mode_Controls",
   "Factor_Narrowed_Controls",
   "Factor_Resolution_Checks",
   "Factor_Resolution_Controls",
-  "Factor_Resolution_Graph_Checks",
+  "Factor_Shared_Commitments",
   "Factor_Table_Search_Controls"
  ],
  "recipes": {
@@ -205,8 +207,8 @@
    "status": "unchanged"
   }
  },
- "reused_theories": 1984,
- "seconds": 264.83,
+ "reused_theories": 1982,
+ "seconds": 222.91,
  "source_checks": {
   "missing_theory_files": [],
   "proof_escape_matches": [],

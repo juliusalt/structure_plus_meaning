@@ -25,8 +25,10 @@ candidate by its additions over the given).
 **The first problem's route**, each build with its review. Landed: the recording (#581, #583), the posing #397 with its
 one-citation recording #562, and #928's additions line so far: AX1 #930 (`Factor_Environment_Additions`), AX2a #932
 with the fixes #955, #959 and #960 (`Factor_Extension_Packages`), AX3a #936 (`Development_First_Problem_Additions`, the
-guard over additions). Open, from #929's briefs and q177, q178: AX2b #934 (G2's bound registered, complete in W4a's
-form) → AX2c #961 (continuing it: l at 961/0 over 965, G3's and G4's witnesses at 985 and 989) → AX4 #940 (the
+guard over additions), AX2b #934 (`0733a5a4`, `Factor_Extension_Registrations`: G2's bound registered in W2's form and
+complete in W4a's; its entry "The added part's bound is the reach over the least environment's edges", a bound rather
+than the least). Open, from #929's briefs and q177, q178: AX2c #961 (l at 961/0 over 965, G3's and G4's witnesses at
+985 and 989) → AX4 #940 (the
 registrations, records and modes carried to the new asked installation and its committing instance); AX3b #938 (the
 asked program re-rooted at the guard over additions, presented with `extension_package_system` a piece, installed, the
 posing recorded again, admission controls at the check form) → AX4; AX5 #962 (the refusals by socket at the committing
@@ -48,8 +50,11 @@ of certified ground calls every judgment's search closes, its validity checked o
 candidate's part is its additions (#928). Landed: the table through R3–R5 and C (GT1a–GT2c, GT4–GT4c), GT5 #845, W5
 #847, VK1 #920, GT2b (#889, #922), #942 (every discharge valued at a true table), VK2 #924 (the given's committing
 instance, `Development_Given_Query_Parameters`) and #953 (its premise discharged at the given). Open: VK2's controls
-#956 (its code equations make the committing instance executable; 77 refused there, the first test of q178's course;
-whether a query meets a root-held committable goal, on which task 918's answer 4 waits); GT3 #876 → GT6 #878 (the table
+#956 (the carried record's code equations, landing without its controls: a query step at the committing instance costs
+about 400 times the plain one, q179) → #966 (continuing it: the carried record tabulated once per record, then 77
+refused and resolved there, the first test of q178's course, and whether a query meets a root-held committable goal,
+on which task 918's answer 4 waits) → AX5 #962; #967 (the construction's value computed once per construction, after
+#966 and WC3 #916) → R7 #542; GT3 #876 → GT6 #878 (the table
 produced once, a run of hours, its record `validation/given-table.json`, after #875's fixes and the prediction #965) →
 #542, #547, #707, #399. The table is the readers' part, its guard part retired by AX4, so GT6, #875 and #965 do not
 wait on the AX line; #547 does not wait on VK2.
@@ -80,12 +85,12 @@ the index form's retirement and the machinery's native verification stage; on Q1
 #407 with their reviews), the translation into Isabelle and the verification frame (#947, #950). The bootstrap loop's
 landed lines are kept and none is extended (#376); their remains are under Open and in `.build/plans/next-edits.md`.
 
-**Shape and order.** No build waits on a review. The longest chains, 12 deep, end at #450: AX2b #934 → AX2c #961 → AX4
+**Shape and order.** No build waits on a review. The longest chains, 11 deep, end at #450: AX2c #961 → AX4
 #940 → #948 → R7 #542 → #707 → #399 → #709 → #553 → #447 → #449 → #450, and #875 → #965 → GT6 #878 → R7 (GT3 #876
 beside) about as long; GT6's hours make the resolver's pole critical, the AX line has slack. Nothing is added after the tail until
 it shortens (the approval build, Open 142, waits for that); splices before a task are placed at any depth. The queue is
 the planner's choice, a residual until the selection problem's native answer (Q2): the running tasks with their
-reviews, the pole #875 → #965 and GT3 → GT6, the AX line (#934, #938, #961, #956, #940, #962), the rewrite briefs, then the
+reviews, the pole #875 → #965 and GT3 → GT6, the AX line (#938, #961, #956, #940, #962), the rewrite briefs, then the
 route in its chains' order, each review after its build; #887 after R7's review. Word changes are serialized; none is
 queued.
 
@@ -224,7 +229,7 @@ What landed that open work builds on; each theory's contract is its THEORY_MAP.m
 REASONING_REUSE.md's, how it went `PLANNING_LOG.md`.
 
 - **The entries** (`DECISIONS.md`): #378, #376, #381, #383, #428, #460 (withdrawn by Q27), #482 and #560, #495 and #496
-  with their additions and corrections, the entries of #613, #782, #817, #928 and #947; each design's verdict in its
+  with their additions and corrections, the entries of #613, #782, #817, #928, #934 and #947; each design's verdict in its
   `verdict.md`, the attributions #481, #644, #715, #829, #830, #851, #886, #896 and #944 in their `result.md`.
 - **The package and the given**: `Development_Package_Program` (derived again at a landing that changes one of its six
   programs, Q18 (c)), `Development_Given_Readers`, `Development_Given_Program`, `Development_Given_Installation`, their
@@ -232,7 +237,7 @@ REASONING_REUSE.md's, how it went `PLANNING_LOG.md`.
   `Development_Native_State` (`development_given_value`).
 - **The guards, the asked relation and the request**: `Development_First_Problem_Guard`, `Factor_Package_Additions`,
   `Factor_Payload_Audit`, `Development_First_Problem_Asked`; the additions line `Factor_Environment_Additions`,
-  `Factor_Extension_Packages`, `Development_First_Problem_Additions`; non-nominality in `Presentation_Equivariance`,
+  `Factor_Extension_Packages`, `Factor_Extension_Registrations`, `Development_First_Problem_Additions`; non-nominality in `Presentation_Equivariance`,
   `Factor_Use_Actions`, `Factor_Use_Renaming`; `Factor_Package_Requests`, `Development_First_Request_Program`.
 - **The criticism's notions**: `Criticism_Samples`, `Criticism_Use_Samples`, `Criticism_Octet_Samples`,
   `Factor_Stated_Leaves`, `Factor_Stated_Leaves_Program`; E1 `Factor_Implemented_Base_Evaluation`;
@@ -312,9 +317,18 @@ a theory before briefing a task that edits it.
 
 ## Now
 
-- **Under way**: AX2b #934 landing its bound part (q177, q178); AX3b #938, its brief rewritten; GT3 #876; startable:
-  #875 (re-planned within its room) and #956. What each open task's first session was mailed is in
-  `.build/plans/mailed.md`.
+- **Under way**: AX3b #938, GT3 #876, #956 (landing its code equations; q179 answered), AX2c #961; #875 startable.
+- **Unanswered when plan-137 ended — q180** (implement-961, `.build/tasks/961/q1.md`): (A) l's registration over 965 is
+  complete in W4a's form only on the domain where g presents E and (a, b) its additions (two rows at one use with
+  different artifacts, or g not an environment value, break it); its proposals: a domain premise holding l (957's
+  clause calling G1's formation reader 954, AX2a's program) or a W4a form with a domain premise — plan-137 leaned to the
+  latter, discharged where the judgment's pair presents (g, a), if that holds at the committing instance; meanwhile
+  #961 proves the registration and its completeness on the domain. (B) At 985/0 and 989/0, l, q and k cannot be
+  registered in W2's form (each premise holding one has another free variable); its proposal: AX3a's clauses read l
+  through a view holding 79, 47 and the list site, as 961/0 reads 964 — an edit of
+  `Development_First_Problem_Additions`, on which AX3b #938 builds now, so with or after #938. Also unsent: a mail to
+  #547 that its refusal at 561 through the merge at W5's plain instance may stay unresolved (q178), to report or bring
+  to the planner. What each open task's first session was mailed is in `.build/plans/mailed.md`.
 - **What the next events ask**: Q34's answer; #875's figures — the step attributed and its fixes, placed before GT6 and
   #965's prediction; the checking fold measured at samples, the kept forms (q162) and FI's remaining costs, and with them the re-run of #718's 77 and 79
   fixtures with review 858's attributions (next-edits 364–366); #956's 77 refusal at the committing instance (q178's

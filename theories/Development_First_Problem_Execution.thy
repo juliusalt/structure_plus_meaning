@@ -58,4 +58,46 @@ end
 
 ML \<open>val _ = First_Problem_Execution.owner_records ()\<close>
 
+section \<open>The posing over additions, recorded and read back at every load\<close>
+
+text \<open>
+  Task 938: the first problem posed again over the asked relation over additions
+  (@{const development_first_problem_additions_posing}), recorded at every load beside the owner records: compiled in
+  one @{text ML} block with the owner record of 18:53, the citing recording, the report and its read-back, recorded and
+  reported by @{text First_Problem_Execution.posing}, then read back as the owner records are
+  (@{const development_owner_record_read_back}): the payload's data target is the recorded generation's payload and
+  its locus, and its one predecessor is the owner record's generation; each step timed. A posing that returns no
+  generation, whose cause is not the owner record's, or that does not read back, refuses the theory. The posing above
+  keeps its form: compiled where it is called. At the posing's 1,980,357 payload addresses the recording took 18.4 s
+  (9.3 \<mu>s an address) and this read-back 15.7 s (task 938); checking the recorded generation at its site again
+  (@{const finite_check_generation}, the certificate's own reading) took 62 s, and is left to the certificate
+  (@{thm [source] development_first_problem_additions_posing_recorded}).
+\<close>
+
+definition first_problem_posing_read_back :: "finite_factor_term \<Rightarrow>
+    (local_address option finite_artifact_environment\<times>local_address option\<times>finite_generation) option \<Rightarrow>
+    (local_address option finite_artifact_environment\<times>local_address option\<times>finite_generation) option \<Rightarrow> bool option" where
+  "first_problem_posing_read_back t c r=map_option (\<lambda>(B,u,G). development_data_target t=Some (generation_payload G) \<and>
+    generation_locus G=generation_payload G \<and>
+    generation_predecessors G=(case c of Some (H,v,A) \<Rightarrow> {|A|} | None \<Rightarrow> {||})) r"
+
+lemma first_problem_additions_posing_recording:
+  "development_first_problem_additions_posing=
+    Option.bind development_owner_record_1853 (development_citing_generation development_first_problem_additions_payload)"
+  by (fact development_first_problem_additions_posing_def)
+
+ML \<open>
+local
+  val record = @{code development_owner_record_1853}
+  val payload = @{code development_first_problem_additions_payload}
+  val posed = First_Problem_Execution.timed "posing over additions, recorded"
+    (fn () => First_Problem_Execution.posing record @{code development_citing_generation} @{code native_state_report}
+      payload) ()
+  val read = First_Problem_Execution.timed "posing over additions read back"
+    (@{code first_problem_posing_read_back} payload record) posed
+in
+  val _ = if read = SOME true then () else error "FIRST PROBLEM posing over additions: not read back"
+end
+\<close>
+
 end

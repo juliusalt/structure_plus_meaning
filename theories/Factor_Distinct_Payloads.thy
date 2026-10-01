@@ -69,9 +69,9 @@ definition carrier_projection_cons_schema :: "(nat,nat,nat) factor_schema" where
 definition distinct_payloads_material :: "nat material_pattern" where
   "distinct_payloads_material =
     \<lparr>material_source=Pattern_Variable 2, material_atoms=Pattern_Variable 1,
-      material_edges=Pattern_Target (Whole_Artifact empty_artifact),
-      material_counts=Pattern_Target (Whole_Artifact empty_artifact),
-      material_functions=Pattern_Target (Whole_Artifact empty_artifact)\<rparr>"
+      material_edges=Pattern_Payload [],
+      material_counts=Pattern_Payload [],
+      material_functions=Pattern_Payload []\<rparr>"
 
 definition distinct_payloads_schema :: "(nat,nat,nat) factor_schema" where
   "distinct_payloads_schema =
@@ -218,7 +218,7 @@ theorem carrier_projection_positive_exact:
 lemma distinct_payloads_instance_material:
   assumes inst: "schema_instance distinct_payloads_schema V t Q"
     and material: "schema_material_satisfied distinct_payloads_schema V"
-  shows "\<exists>s a. material_observation s a (enumeration_term []) (enumeration_term []) (enumeration_term []) \<and>
+  shows "\<exists>s a. material_observation s a (data_list_term []) (data_list_term []) (data_list_term []) \<and>
     (0,0,Pair_Term a t)\<in>Q"
 proof -
   have head: "(0,t)\<in>V" using inst by (simp add: schema_instance_def distinct_payloads_schema_def)
@@ -226,7 +226,7 @@ proof -
     and observation: "material_observation s a e b f"
     using material by (auto simp: schema_material_satisfied_def distinct_payloads_schema_def
       material_pattern_satisfied_def)
-  have atoms: "(1,a)\<in>V" and shape: "e=enumeration_term []" "b=enumeration_term []" "f=enumeration_term []"
+  have atoms: "(1,a)\<in>V" and shape: "e=data_list_term []" "b=data_list_term []" "f=data_list_term []"
     using fields by (auto simp: material_pattern_instance_def distinct_payloads_material_def)
   have premise: "pattern_instance V (Pattern_Pair (Pattern_Variable 1) (Pattern_Variable 0)) (Pair_Term a t)"
     using head atoms by simp
@@ -246,7 +246,7 @@ proof -
     and material: "schema_material_satisfied distinct_payloads_schema V"
     using admitted by (auto simp: admitted_schema_instance_def distinct_payloads_system_def)
   obtain s a where observation:
-    "material_observation s a (enumeration_term []) (enumeration_term []) (enumeration_term [])"
+    "material_observation s a (data_list_term []) (data_list_term []) (data_list_term [])"
     and member: "(0,0,Pair_Term a t)\<in>Q"
     using distinct_payloads_instance_material[OF inst material] by blast
   have project: "carrier_payload_projection a t"
@@ -277,7 +277,7 @@ proof -
       rra_formed_def basis_formed_def basis_values_def bag_support_def single_valued_def)
   have enumeration: "artifact_enumeration ?R A [] [] []"
     using rf different by (simp add: artifact_enumeration_def)
-  have observed: "material_observation ?s ?a (enumeration_term []) (enumeration_term []) (enumeration_term [])"
+  have observed: "material_observation ?s ?a (data_list_term []) (data_list_term []) (data_list_term [])"
     using material_observation_exact[of ?R A "[]" "[]" "[]"] enumeration by simp
   have project: "carrier_payload_projection ?a ?t"
     by (rule carrier_payload_projection_material[OF rf, THEN iffD2]) (simp_all add: enumerated_artifact_def)
@@ -289,11 +289,11 @@ proof -
     using terms by (auto simp: carrier_projection_variables term_bindings_formed_def single_valued_def rel_dom_def)
   have schema: "schema_instance distinct_payloads_schema ?V ?t {(0,0,Pair_Term ?a ?t)}"
     using bindings by (auto simp: schema_instance_def distinct_payloads_schema_def schema_formed_def
-      distinct_payloads_material_def material_pattern_formed_def material_fields_def
+      distinct_payloads_material_def material_pattern_formed_def material_fields_def octets_formed_def
       schema_premise_instance_def single_valued_def rel_dom_def)
   have fields: "material_pattern_instance ?V distinct_payloads_material ?s ?a
-    (enumeration_term []) (enumeration_term []) (enumeration_term [])"
-    by (simp add: material_pattern_instance_def distinct_payloads_material_def)
+    (data_list_term []) (data_list_term []) (data_list_term [])"
+    by (simp add: material_pattern_instance_def distinct_payloads_material_def octets_formed_def)
   have material: "schema_material_satisfied distinct_payloads_schema ?V"
     using fields observed by (auto simp: schema_material_satisfied_def distinct_payloads_schema_def
       material_pattern_satisfied_def; blast)

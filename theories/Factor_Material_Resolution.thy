@@ -8,8 +8,9 @@ text \<open>
   observed artifact when it is ground, and the solution is then the one binding that binds the source
   to that artifact's whole target and every anchor to its occurrence, or none. A premise whose source is
   ground has as solutions the enumerations of that source. A premise with neither waits: that outcome
-  is kept apart from a premise with no solution. The solution reads the atoms' payloads as addresses,
-  the material equation's own reading, and compares variables for equality alone.
+  is kept apart from a premise with no solution. The solution reads the payloads of the atoms, the
+  incidences and the attachments as addresses, the material equation's own reading, and compares
+  variables for equality alone.
 \<close>
 
 section \<open>Every list with the same multiset\<close>
@@ -115,9 +116,9 @@ fun finite_material_tuple :: "finite_exact_artifact \<Rightarrow>
     finite_factor_term \<times> finite_factor_term \<times> finite_factor_term \<times> finite_factor_term \<times> finite_factor_term" where
   "finite_material_tuple C (A,E,B,F) = (Finite_Target (Finite_Whole C),
     finite_enumeration_term (map (finite_atom_term C) A),
-    finite_enumeration_term (map (finite_incidence_term C) E),
-    finite_enumeration_term (map (finite_attachment_term C) B),
-    finite_enumeration_term (map (finite_attachment_term C) F))"
+    finite_data_sequence (map finite_incidence_data E),
+    finite_data_sequence (map finite_address_pair_data B),
+    finite_data_sequence (map finite_address_pair_data F))"
 
 lemma finite_material_arguments_tuple:
   "finite_material_arguments C = finite_material_tuple C (finite_artifact_rows C)"
@@ -125,20 +126,25 @@ lemma finite_material_arguments_tuple:
 
 lemma finite_material_term_reads:
   "finite_atom_read C (finite_atom_term C a) = Some a"
-  "finite_incidence_read C (finite_incidence_term C e) = Some e"
-  "finite_attachment_read C (finite_attachment_term C p) = Some p"
-  by (auto simp: finite_atom_term_def finite_occurrence_term_def finite_incidence_term_def
-    finite_attachment_term_def split: prod.splits)
+  "finite_incidence_read (finite_incidence_data e) = Some e"
+  "finite_attachment_read (finite_address_pair_data p) = Some p"
+  by (auto simp: finite_atom_term_def finite_occurrence_term_def finite_incidence_data_def
+    finite_address_pair_data_def split: prod.splits)
 
 lemma finite_enumeration_read_term:
   assumes "\<And>x. rd (mk x) = Some x"
   shows "finite_enumeration_read rd (finite_enumeration_term (map mk xs)) = Some xs"
   using assms by (rule finite_list_read_term) simp
 
+lemma finite_data_list_read_term:
+  assumes "\<And>x. rd (mk x) = Some x"
+  shows "finite_list_read (Finite_Payload []) rd (finite_data_sequence (map mk xs)) = Some xs"
+  using assms by (rule finite_list_read_term) simp
+
 lemma finite_material_read_injective:
   "finite_atom_read C u = Some x \<Longrightarrow> finite_atom_read C u' = Some x \<Longrightarrow> u = u'"
-  "finite_incidence_read C u = Some e \<Longrightarrow> finite_incidence_read C u' = Some e \<Longrightarrow> u = u'"
-  "finite_attachment_read C u = Some p \<Longrightarrow> finite_attachment_read C u' = Some p \<Longrightarrow> u = u'"
+  "finite_incidence_read u = Some e \<Longrightarrow> finite_incidence_read u' = Some e \<Longrightarrow> u = u'"
+  "finite_attachment_read u = Some p \<Longrightarrow> finite_attachment_read u' = Some p \<Longrightarrow> u = u'"
     apply (metis finite_atom_read_correct decode_finite_term_injective)
    apply (metis finite_incidence_read_correct decode_finite_term_injective)
   apply (metis finite_attachment_read_correct decode_finite_term_injective)
@@ -157,10 +163,9 @@ lemma finite_material_satisfied_witness:
   obtains C A E B F where "finite_artifact_enumeration C A E B F"
     "finite_pattern_instance V (finite_material_source M) (Finite_Target (Finite_Whole C))"
     "finite_pattern_instance V (finite_material_atoms M) (finite_enumeration_term (map (finite_atom_term C) A))"
-    "finite_pattern_instance V (finite_material_edges M) (finite_enumeration_term (map (finite_incidence_term C) E))"
-    "finite_pattern_instance V (finite_material_counts M) (finite_enumeration_term (map (finite_attachment_term C) B))"
-    "finite_pattern_instance V (finite_material_functions M)
-      (finite_enumeration_term (map (finite_attachment_term C) F))"
+    "finite_pattern_instance V (finite_material_edges M) (finite_data_sequence (map finite_incidence_data E))"
+    "finite_pattern_instance V (finite_material_counts M) (finite_data_sequence (map finite_address_pair_data B))"
+    "finite_pattern_instance V (finite_material_functions M) (finite_data_sequence (map finite_address_pair_data F))"
 proof -
   obtain s a e b f where inst: "finite_pattern_instance V (finite_material_source M) s"
       "finite_pattern_instance V (finite_material_atoms M) a"
@@ -176,23 +181,25 @@ proof -
   qed (use obs in auto)
   obtain A E B F where en: "finite_artifact_enumeration C A E B F"
     and ra: "finite_enumeration_read (finite_atom_read C) a = Some A"
-    and re: "finite_enumeration_read (finite_incidence_read C) e = Some E"
-    and rb: "finite_enumeration_read (finite_attachment_read C) b = Some B"
-    and rf: "finite_enumeration_read (finite_attachment_read C) f = Some F"
+    and re: "finite_list_read (Finite_Payload []) finite_incidence_read e = Some E"
+    and rb: "finite_list_read (Finite_Payload []) finite_attachment_read b = Some B"
+    and rf: "finite_list_read (Finite_Payload []) finite_attachment_read f = Some F"
     using obs unfolding s finite_material_observation_whole by blast
   have reads: "finite_enumeration_read (finite_atom_read C) (finite_enumeration_term (map (finite_atom_term C) A)) = Some A"
-    "finite_enumeration_read (finite_incidence_read C) (finite_enumeration_term (map (finite_incidence_term C) E)) = Some E"
-    "finite_enumeration_read (finite_attachment_read C) (finite_enumeration_term (map (finite_attachment_term C) B)) = Some B"
-    "finite_enumeration_read (finite_attachment_read C) (finite_enumeration_term (map (finite_attachment_term C) F)) = Some F"
-    by (rule finite_enumeration_read_term, rule finite_material_term_reads)+
+    by (rule finite_enumeration_read_term, rule finite_material_term_reads)
+  have data_reads:
+    "finite_list_read (Finite_Payload []) finite_incidence_read (finite_data_sequence (map finite_incidence_data E)) = Some E"
+    "finite_list_read (Finite_Payload []) finite_attachment_read (finite_data_sequence (map finite_address_pair_data B)) = Some B"
+    "finite_list_read (Finite_Payload []) finite_attachment_read (finite_data_sequence (map finite_address_pair_data F)) = Some F"
+    by (rule finite_data_list_read_term, rule finite_material_term_reads)+
   have terms: "a = finite_enumeration_term (map (finite_atom_term C) A)"
-    "e = finite_enumeration_term (map (finite_incidence_term C) E)"
-    "b = finite_enumeration_term (map (finite_attachment_term C) B)"
-    "f = finite_enumeration_term (map (finite_attachment_term C) F)"
-    using finite_enumeration_read_injective[OF finite_material_read_injective(1) ra reads(1)]
-      finite_enumeration_read_injective[OF finite_material_read_injective(2) re reads(2)]
-      finite_enumeration_read_injective[OF finite_material_read_injective(3) rb reads(3)]
-      finite_enumeration_read_injective[OF finite_material_read_injective(3) rf reads(4)]
+    "e = finite_data_sequence (map finite_incidence_data E)"
+    "b = finite_data_sequence (map finite_address_pair_data B)"
+    "f = finite_data_sequence (map finite_address_pair_data F)"
+    using finite_enumeration_read_injective[OF finite_material_read_injective(1) ra reads]
+      finite_list_read_injective[OF finite_material_read_injective(2) re data_reads(1)]
+      finite_list_read_injective[OF finite_material_read_injective(3) rb data_reads(2)]
+      finite_list_read_injective[OF finite_material_read_injective(3) rf data_reads(3)]
     by simp_all
   show thesis using inst unfolding s terms by (rule that[OF en])
 qed
@@ -202,9 +209,9 @@ section \<open>The skeleton of a material premise\<close>
 text \<open>
   A skeleton position is read, has no reading though it holds no variable, or is open. The atoms field
   is an enumeration pattern whose entries pair a payload, the atom's address, with an anchor pattern.
-  An anchor of an incidence or an attachment is read when it is a ground occurrence, whose address it
-  states, or a variable an atom's entry holds, whose address is that atom's; a variable no atom's entry
-  holds is open. The skeleton has no reading when some position has none, whatever else is still open:
+  The incidences and the attachments are data-list patterns whose entries pair payloads: an address or a
+  value is read where a payload stands and is open where a variable does. The skeleton has no reading
+  when some position has none, whatever else is still open:
   an entry with no reading has none under every substitution of the open parts, while every solution's
   instance reads, so no binding satisfies the premise. Otherwise the skeleton is read when every
   position is, and open when some position holds a variable or an unheld anchor variable.
@@ -342,26 +349,24 @@ definition finite_atom_entry ::
       (case x of Finite_Pattern_Payload a \<Rightarrow> Reading (a,q) | _ \<Rightarrow> ground_reading x)
     | _ \<Rightarrow> ground_reading p)"
 
-definition finite_anchor_address ::
-    "(local_address \<times> 'a finite_term_pattern) list \<Rightarrow> 'a finite_term_pattern \<Rightarrow> local_address material_reading" where
-  "finite_anchor_address es q = (case q of
-      Finite_Variable v \<Rightarrow> (case map_of (map (\<lambda>(a,p). (p,a)) es) q of Some a \<Rightarrow> Reading a | None \<Rightarrow> Open_Reading)
-    | Finite_Pattern_Target (Finite_Anchor D a) \<Rightarrow> Reading a
-    | _ \<Rightarrow> ground_reading q)"
+text \<open>
+  A payload entry reads the payload it states, an address or a value. An attachment entry pairs two, as
+  @{const address_pair_data} pairs an address and a value; an incidence entry pairs a payload with an
+  attachment-shaped entry, as @{const incidence_data} pairs an address with a pair of addresses.
+\<close>
 
-definition finite_incidence_entry :: "(local_address \<times> 'a finite_term_pattern) list \<Rightarrow>
-    'a finite_term_pattern \<Rightarrow> (local_address \<times> local_address \<times> local_address) material_reading" where
-  "finite_incidence_entry es p = (case p of Finite_Pattern_Pair x (Finite_Pattern_Pair y z) \<Rightarrow>
-      reading_pair (finite_anchor_address es x) (reading_pair (finite_anchor_address es y) (finite_anchor_address es z))
+definition finite_payload_entry :: "'a finite_term_pattern \<Rightarrow> octets material_reading" where
+  "finite_payload_entry w = (case w of Finite_Pattern_Payload v \<Rightarrow> Reading v | _ \<Rightarrow> ground_reading w)"
+
+definition finite_attachment_entry :: "'a finite_term_pattern \<Rightarrow> (local_address \<times> octets) material_reading" where
+  "finite_attachment_entry p = (case p of Finite_Pattern_Pair x w \<Rightarrow>
+      reading_pair (finite_payload_entry x) (finite_payload_entry w)
     | _ \<Rightarrow> ground_reading p)"
 
-definition finite_attachment_value :: "'a finite_term_pattern \<Rightarrow> octets material_reading" where
-  "finite_attachment_value w = (case w of Finite_Pattern_Payload v \<Rightarrow> Reading v | _ \<Rightarrow> ground_reading w)"
-
-definition finite_attachment_entry :: "(local_address \<times> 'a finite_term_pattern) list \<Rightarrow>
-    'a finite_term_pattern \<Rightarrow> (local_address \<times> octets) material_reading" where
-  "finite_attachment_entry es p = (case p of Finite_Pattern_Pair x w \<Rightarrow>
-      reading_pair (finite_anchor_address es x) (finite_attachment_value w)
+definition finite_incidence_entry ::
+    "'a finite_term_pattern \<Rightarrow> (local_address \<times> local_address \<times> local_address) material_reading" where
+  "finite_incidence_entry p = (case p of Finite_Pattern_Pair x q \<Rightarrow>
+      reading_pair (finite_payload_entry x) (finite_attachment_entry q)
     | _ \<Rightarrow> ground_reading p)"
 
 fun finite_atom_entries :: "'a finite_term_pattern \<Rightarrow> (local_address \<times> 'a finite_term_pattern) list" where
@@ -376,12 +381,11 @@ lemma finite_atom_entries_read:
 definition finite_material_skeleton :: "'a finite_material_pattern \<Rightarrow>
     (local_address list \<times> (local_address \<times> local_address \<times> local_address) list \<times>
       (local_address \<times> octets) list \<times> (local_address \<times> octets) list) material_reading" where
-  "finite_material_skeleton M = (let es = finite_atom_entries (finite_material_atoms M) in
-    map_material_reading (\<lambda>(es,E,B,F). (map fst es,E,B,F))
+  "finite_material_skeleton M = map_material_reading (\<lambda>(es,E,B,F). (map fst es,E,B,F))
       (reading_pair (finite_enumeration_pattern_read finite_atom_entry (finite_material_atoms M))
-        (reading_pair (finite_enumeration_pattern_read (finite_incidence_entry es) (finite_material_edges M))
-          (reading_pair (finite_enumeration_pattern_read (finite_attachment_entry es) (finite_material_counts M))
-            (finite_enumeration_pattern_read (finite_attachment_entry es) (finite_material_functions M))))))"
+        (reading_pair (finite_list_pattern_read (Finite_Payload []) finite_incidence_entry (finite_material_edges M))
+          (reading_pair (finite_list_pattern_read (Finite_Payload []) finite_attachment_entry (finite_material_counts M))
+            (finite_list_pattern_read (Finite_Payload []) finite_attachment_entry (finite_material_functions M)))))"
 
 lemma finite_pattern_instance_shapes:
   "finite_pattern_instance V p (Finite_Pair a b) \<Longrightarrow> (\<exists>v. p = Finite_Variable v) \<or>
@@ -393,15 +397,12 @@ lemma finite_pattern_instance_shapes:
 lemma finite_material_read_shapes:
   "finite_occurrence_read C u = Some a \<Longrightarrow> u = Finite_Target (Finite_Anchor C a)"
   "finite_atom_read C u = Some y \<Longrightarrow> \<exists>x. u = Finite_Pair (Finite_Payload y) x \<and> finite_occurrence_read C x = Some y"
-  "finite_incidence_read C u = Some e \<Longrightarrow> \<exists>ux uy uz. u = Finite_Pair ux (Finite_Pair uy uz) \<and>
-    finite_occurrence_read C ux = Some (fst e) \<and> finite_occurrence_read C uy = Some (fst (snd e)) \<and>
-    finite_occurrence_read C uz = Some (snd (snd e))"
-  "finite_attachment_read C u = Some p \<Longrightarrow> \<exists>ux. u = Finite_Pair ux (Finite_Payload (snd p)) \<and>
-    finite_occurrence_read C ux = Some (fst p)"
+  "finite_incidence_read u = Some e \<Longrightarrow> u = finite_incidence_data e"
+  "finite_attachment_read u = Some p \<Longrightarrow> u = finite_address_pair_data p"
      apply (cases u; auto split: finite_exact_target.splits if_splits)
     apply (induction C u rule: finite_atom_read.induct; auto split: if_splits)
-   apply (induction C u rule: finite_incidence_read.induct; auto split: option.splits)
-  apply (induction C u rule: finite_attachment_read.induct; auto split: option.splits)
+   apply (metis finite_incidence_read_correct decode_finite_term_injective finite_material_entry_decodings(3))
+  apply (metis finite_attachment_read_correct decode_finite_term_injective finite_material_entry_decodings(4))
   done
 
 lemma finite_atom_entry_instance:
@@ -419,163 +420,117 @@ proof -
     by (auto simp: finite_atom_entry_def dest!: finite_pattern_instance_shapes(2))
 qed
 
-lemma finite_anchor_address_instance:
-  assumes functional: "finite_relation_functional V"
-    and held: "\<forall>e\<in>set es. \<exists>u. finite_pattern_instance V (snd e) u \<and> finite_occurrence_read C u = Some (fst e)"
-    and address: "finite_anchor_address es q = Reading a0"
-    and inst_u: "finite_pattern_instance V q u" and read: "finite_occurrence_read C u = Some a"
-  shows "a0 = a"
-proof (cases q)
-  case (Finite_Variable v)
-  then have "(a0,q) \<in> set es" using address map_of_SomeD[of "map (\<lambda>(a,p). (p,a)) es" q a0]
-    by (auto simp: finite_anchor_address_def split: option.splits)
-  then obtain u' where u': "finite_pattern_instance V q u'" "finite_occurrence_read C u' = Some a0"
-    using held by fastforce
-  have "u' = u" using functional u'(1) inst_u Finite_Variable
-    by (auto simp: finite_relation_functional_correct single_valued_def)
-  then show ?thesis using u'(2) read by simp
-next
-  case (Finite_Pattern_Target x)
-  then show ?thesis using address inst_u read
-    by (cases x) (auto simp: finite_anchor_address_def split: if_splits)
-next
-  case (Finite_Pattern_Payload v)
-  then show ?thesis using address by (simp add: finite_anchor_address_def)
-next
-  case (Finite_Pattern_Pair p p')
-  then show ?thesis using address by (simp add: finite_anchor_address_def)
-qed
+lemma finite_payload_entry_instance:
+  "finite_payload_entry q = Reading v \<Longrightarrow> finite_pattern_instance V q u \<Longrightarrow> u = Finite_Payload v"
+  by (auto simp: finite_payload_entry_def split: finite_term_pattern.splits finite_factor_term.splits)
 
-lemma finite_anchor_address_unreadable:
-  assumes entry: "finite_anchor_address es q = Unreadable" and inst_u: "finite_pattern_instance V q u"
-    and read: "finite_occurrence_read C u = Some a"
-  shows False
-  using finite_pattern_instance_shapes(3)[OF inst_u[unfolded finite_material_read_shapes(1)[OF read]]] entry
-  by (auto simp: finite_anchor_address_def split: option.splits)
-
-lemma finite_incidence_entry_instance:
-  assumes functional: "finite_relation_functional V"
-    and held: "\<forall>e\<in>set es. \<exists>u. finite_pattern_instance V (snd e) u \<and> finite_occurrence_read C u = Some (fst e)"
-  shows "finite_incidence_entry es q = Reading e0 \<Longrightarrow> finite_pattern_instance V q u \<Longrightarrow>
-    finite_incidence_read C u = Some e \<Longrightarrow> e0 = e"
-proof -
-  assume entry: "finite_incidence_entry es q = Reading e0" and inst_u: "finite_pattern_instance V q u"
-    and read: "finite_incidence_read C u = Some e"
-  obtain x y z where q: "q = Finite_Pattern_Pair x (Finite_Pattern_Pair y z)"
-    using entry by (auto simp: finite_incidence_entry_def split: finite_term_pattern.splits)
-  obtain a0 b0 c0 where anchors: "finite_anchor_address es x = Reading a0" "finite_anchor_address es y = Reading b0"
-      "finite_anchor_address es z = Reading c0" and e0: "e0 = (a0,b0,c0)"
-    using entry by (auto simp: q finite_incidence_entry_def reading_pair_reading)
-  obtain ux uy uz where u: "u = Finite_Pair ux (Finite_Pair uy uz)" and ix: "finite_pattern_instance V x ux"
-      and iy: "finite_pattern_instance V y uy" and iz: "finite_pattern_instance V z uz"
-    using inst_u by (auto simp: q split: finite_factor_term.splits)
-  obtain a b c where e: "e = (a,b,c)" by (cases e) auto
-  have reads: "finite_occurrence_read C ux = Some a \<and> finite_occurrence_read C uy = Some b \<and>
-      finite_occurrence_read C uz = Some c"
-    using read by (simp only: u e finite_incidence_read_pair)
-  show "e0 = e"
-    using finite_anchor_address_instance[OF functional held anchors(1) ix]
-      finite_anchor_address_instance[OF functional held anchors(2) iy]
-      finite_anchor_address_instance[OF functional held anchors(3) iz] reads e0 e by simp
-qed
-
-lemma finite_incidence_entry_unreadable:
-  assumes entry: "finite_incidence_entry es q = Unreadable" and inst_u: "finite_pattern_instance V q u"
-    and read: "finite_incidence_read C u = Some e"
-  shows False
-proof -
-  obtain ux uy uz where u: "u = Finite_Pair ux (Finite_Pair uy uz)"
-    and reads: "finite_occurrence_read C ux = Some (fst e)" "finite_occurrence_read C uy = Some (fst (snd e))"
-      "finite_occurrence_read C uz = Some (snd (snd e))"
-    using finite_material_read_shapes(3)[OF read] by blast
-  show False
-  proof (cases "\<exists>x y z. q = Finite_Pattern_Pair x (Finite_Pattern_Pair y z)")
-    case True
-    then obtain x y z where q: "q = Finite_Pattern_Pair x (Finite_Pattern_Pair y z)" by blast
-    have ix: "finite_pattern_instance V x ux" and iy: "finite_pattern_instance V y uy"
-      and iz: "finite_pattern_instance V z uz" using inst_u by (simp_all add: q u)
-    have "finite_anchor_address es x = Unreadable \<or> finite_anchor_address es y = Unreadable \<or>
-        finite_anchor_address es z = Unreadable"
-      using entry by (auto simp: q finite_incidence_entry_def dest!: reading_pair_unreadable)
-    then show False using finite_anchor_address_unreadable[OF _ ix reads(1)]
-      finite_anchor_address_unreadable[OF _ iy reads(2)] finite_anchor_address_unreadable[OF _ iz reads(3)] by blast
-  next
-    case False
-    show False using finite_pattern_instance_shapes(1)[OF inst_u[unfolded u]] entry False
-      by (auto simp: finite_incidence_entry_def ground_reading_def dest!: finite_pattern_instance_shapes(1)
-        split: finite_term_pattern.splits)
-  qed
-qed
+lemma finite_payload_entry_unreadable:
+  "finite_payload_entry q = Unreadable \<Longrightarrow> finite_pattern_instance V q (Finite_Payload v) \<Longrightarrow> False"
+  using finite_pattern_instance_shapes(2)[of V q v] by (auto simp: finite_payload_entry_def ground_reading_def)
 
 lemma finite_attachment_entry_instance:
-  assumes functional: "finite_relation_functional V"
-    and held: "\<forall>e\<in>set es. \<exists>u. finite_pattern_instance V (snd e) u \<and> finite_occurrence_read C u = Some (fst e)"
-  shows "finite_attachment_entry es q = Reading e0 \<Longrightarrow> finite_pattern_instance V q u \<Longrightarrow>
-    finite_attachment_read C u = Some e \<Longrightarrow> e0 = e"
+  assumes entry: "finite_attachment_entry q = Reading e0" and inst_u: "finite_pattern_instance V q u"
+    and read: "finite_attachment_read u = Some e"
+  shows "e0 = e"
 proof -
-  assume entry: "finite_attachment_entry es q = Reading e0" and inst_u: "finite_pattern_instance V q u"
-    and read: "finite_attachment_read C u = Some e"
   obtain x w where q: "q = Finite_Pattern_Pair x w"
     using entry by (auto simp: finite_attachment_entry_def split: finite_term_pattern.splits)
-  obtain a0 v where anchor: "finite_anchor_address es x = Reading a0" and val_w: "finite_attachment_value w = Reading v"
-    and e0: "e0 = (a0,v)"
+  obtain a v where ax: "finite_payload_entry x = Reading a" and vw: "finite_payload_entry w = Reading v"
+    and e0: "e0 = (a,v)"
     using entry by (auto simp: q finite_attachment_entry_def reading_pair_reading)
-  have w: "w = Finite_Pattern_Payload v"
-    using val_w by (auto simp: finite_attachment_value_def split: finite_term_pattern.splits)
-  obtain ux where u: "u = Finite_Pair ux (Finite_Payload v)" and ix: "finite_pattern_instance V x ux"
-    using inst_u by (auto simp: q w split: finite_factor_term.splits)
-  obtain a b where e: "e = (a,b)" by (cases e) auto
-  have reads: "b = v \<and> finite_occurrence_read C ux = Some a"
-    using read by (simp only: u e finite_attachment_read_pair)
-  show "e0 = e" using finite_anchor_address_instance[OF functional held anchor ix] reads e0 e by simp
+  obtain ux uw where u: "u = Finite_Pair ux uw" and ix: "finite_pattern_instance V x ux"
+      and iw: "finite_pattern_instance V w uw"
+    using inst_u by (auto simp: q split: finite_factor_term.splits)
+  have "u = finite_address_pair_data (a,v)"
+    using finite_payload_entry_instance[OF ax ix] finite_payload_entry_instance[OF vw iw] u
+    by (simp add: finite_address_pair_data_def)
+  then show "e0 = e" using read e0 finite_material_term_reads(3) by simp
+qed
+
+lemma finite_incidence_entry_instance:
+  assumes entry: "finite_incidence_entry q = Reading e0" and inst_u: "finite_pattern_instance V q u"
+    and read: "finite_incidence_read u = Some e"
+  shows "e0 = e"
+proof -
+  obtain x w where q: "q = Finite_Pattern_Pair x w"
+    using entry by (auto simp: finite_incidence_entry_def split: finite_term_pattern.splits)
+  obtain a p where ax: "finite_payload_entry x = Reading a" and pw: "finite_attachment_entry w = Reading p"
+    and e0: "e0 = (a,p)"
+    using entry by (auto simp: q finite_incidence_entry_def reading_pair_reading)
+  obtain ux uw where u: "u = Finite_Pair ux uw" and ix: "finite_pattern_instance V x ux"
+      and iw: "finite_pattern_instance V w uw"
+    using inst_u by (auto simp: q split: finite_factor_term.splits)
+  obtain a' p' where e: "e = (a',p')" by (cases e)
+  have parts: "ux = Finite_Payload a'" "uw = finite_address_pair_data p'"
+    using finite_material_read_shapes(3)[OF read] u e by (simp_all add: finite_incidence_data_def)
+  have "a = a'" using finite_payload_entry_instance[OF ax ix] parts(1) by simp
+  moreover have "p = p'"
+    using finite_attachment_entry_instance[OF pw iw, of p'] parts(2) finite_material_term_reads(3) by simp
+  ultimately show "e0 = e" using e0 e by simp
 qed
 
 lemma finite_attachment_entry_unreadable:
-  assumes entry: "finite_attachment_entry es q = Unreadable" and inst_u: "finite_pattern_instance V q u"
-    and read: "finite_attachment_read C u = Some p"
+  assumes entry: "finite_attachment_entry q = Unreadable" and inst_u: "finite_pattern_instance V q u"
+    and read: "finite_attachment_read u = Some p"
   shows False
 proof -
-  obtain ux where u: "u = Finite_Pair ux (Finite_Payload (snd p))"
-    and occ: "finite_occurrence_read C ux = Some (fst p)"
-    using finite_material_read_shapes(4)[OF read] by blast
+  have u: "u = Finite_Pair (Finite_Payload (fst p)) (Finite_Payload (snd p))"
+    using finite_material_read_shapes(4)[OF read] by (cases p) (simp add: finite_address_pair_data_def)
   show False
   proof (cases q)
     case (Finite_Pattern_Pair x w)
-    have ix: "finite_pattern_instance V x ux" and iw: "finite_pattern_instance V w (Finite_Payload (snd p))"
+    have ix: "finite_pattern_instance V x (Finite_Payload (fst p))"
+      and iw: "finite_pattern_instance V w (Finite_Payload (snd p))"
       using inst_u by (simp_all add: Finite_Pattern_Pair u)
-    have "finite_anchor_address es x = Unreadable \<or> finite_attachment_value w = Unreadable"
+    have "finite_payload_entry x = Unreadable \<or> finite_payload_entry w = Unreadable"
       using entry by (auto simp: Finite_Pattern_Pair finite_attachment_entry_def dest!: reading_pair_unreadable)
-    then show False using finite_anchor_address_unreadable[OF _ ix occ] finite_pattern_instance_shapes(2)[OF iw]
-      by (auto simp: finite_attachment_value_def)
+    then show False using finite_payload_entry_unreadable[OF _ ix] finite_payload_entry_unreadable[OF _ iw] by blast
   qed (use entry inst_u u in \<open>auto simp: finite_attachment_entry_def\<close>)
+qed
+
+lemma finite_incidence_entry_unreadable:
+  assumes entry: "finite_incidence_entry q = Unreadable" and inst_u: "finite_pattern_instance V q u"
+    and read: "finite_incidence_read u = Some e"
+  shows False
+proof -
+  have u: "u = Finite_Pair (Finite_Payload (fst e)) (finite_address_pair_data (snd e))"
+    using finite_material_read_shapes(3)[OF read] by (cases e) (simp add: finite_incidence_data_def)
+  show False
+  proof (cases q)
+    case (Finite_Pattern_Pair x w)
+    have ix: "finite_pattern_instance V x (Finite_Payload (fst e))"
+      and iw: "finite_pattern_instance V w (finite_address_pair_data (snd e))"
+      using inst_u by (simp_all add: Finite_Pattern_Pair u)
+    have "finite_payload_entry x = Unreadable \<or> finite_attachment_entry w = Unreadable"
+      using entry by (auto simp: Finite_Pattern_Pair finite_incidence_entry_def dest!: reading_pair_unreadable)
+    then show False using finite_payload_entry_unreadable[OF _ ix]
+      finite_attachment_entry_unreadable[OF _ iw finite_material_term_reads(3)] by blast
+  qed (use entry inst_u u in \<open>auto simp: finite_incidence_entry_def\<close>)
 qed
 
 lemma finite_material_entries_unreadable:
   "finite_atom_entry q = Unreadable \<Longrightarrow> finite_pattern_instance V q u \<Longrightarrow> finite_atom_read C u \<noteq> Some y"
-  "finite_incidence_entry es q = Unreadable \<Longrightarrow> finite_pattern_instance V q u \<Longrightarrow>
-    finite_incidence_read C u \<noteq> Some e"
-  "finite_attachment_entry es q = Unreadable \<Longrightarrow> finite_pattern_instance V q u \<Longrightarrow>
-    finite_attachment_read C u \<noteq> Some p"
+  "finite_incidence_entry q = Unreadable \<Longrightarrow> finite_pattern_instance V q u \<Longrightarrow>
+    finite_incidence_read u \<noteq> Some e"
+  "finite_attachment_entry q = Unreadable \<Longrightarrow> finite_pattern_instance V q u \<Longrightarrow>
+    finite_attachment_read u \<noteq> Some p"
   using finite_atom_entry_unreadable finite_incidence_entry_unreadable finite_attachment_entry_unreadable by blast+
 
 lemma finite_material_skeleton_read:
   assumes skeleton: "finite_material_skeleton M = Reading (A0,E0,B0,F0)"
   obtains es where "finite_enumeration_pattern_read finite_atom_entry (finite_material_atoms M) = Reading es"
-    "finite_enumeration_pattern_read (finite_incidence_entry es) (finite_material_edges M) = Reading E0"
-    "finite_enumeration_pattern_read (finite_attachment_entry es) (finite_material_counts M) = Reading B0"
-    "finite_enumeration_pattern_read (finite_attachment_entry es) (finite_material_functions M) = Reading F0"
+    "finite_list_pattern_read (Finite_Payload []) finite_incidence_entry (finite_material_edges M) = Reading E0"
+    "finite_list_pattern_read (Finite_Payload []) finite_attachment_entry (finite_material_counts M) = Reading B0"
+    "finite_list_pattern_read (Finite_Payload []) finite_attachment_entry (finite_material_functions M) = Reading F0"
     "A0 = map fst es"
 proof -
-  obtain es where es: "finite_enumeration_pattern_read finite_atom_entry (finite_material_atoms M) = Reading es"
-    and rest: "finite_enumeration_pattern_read (finite_incidence_entry (finite_atom_entries (finite_material_atoms M)))
-        (finite_material_edges M) = Reading E0"
-      "finite_enumeration_pattern_read (finite_attachment_entry (finite_atom_entries (finite_material_atoms M)))
-        (finite_material_counts M) = Reading B0"
-      "finite_enumeration_pattern_read (finite_attachment_entry (finite_atom_entries (finite_material_atoms M)))
-        (finite_material_functions M) = Reading F0"
+  from skeleton obtain es where es: "finite_enumeration_pattern_read finite_atom_entry (finite_material_atoms M) = Reading es"
+    and rest: "finite_list_pattern_read (Finite_Payload []) finite_incidence_entry (finite_material_edges M) = Reading E0"
+      "finite_list_pattern_read (Finite_Payload []) finite_attachment_entry (finite_material_counts M) = Reading B0"
+      "finite_list_pattern_read (Finite_Payload []) finite_attachment_entry (finite_material_functions M) = Reading F0"
     and A0: "A0 = map fst es"
-    using skeleton by (auto simp: finite_material_skeleton_def Let_def map_reading_cases reading_pair_reading)
-  show thesis using that[OF es] rest A0 unfolding finite_atom_entries_read[OF es] by blast
+    by (auto simp: finite_material_skeleton_def map_reading_cases reading_pair_reading)
+  show thesis by (rule that[OF es rest A0])
 qed
 
 text \<open>
@@ -596,48 +551,43 @@ lemmas finite_enumeration_pattern_read_pair_unreadable =
 lemma finite_material_skeleton_unreadable_iff:
   "finite_material_skeleton M = Unreadable \<longleftrightarrow>
     finite_enumeration_pattern_read finite_atom_entry (finite_material_atoms M) = Unreadable \<or>
-    finite_enumeration_pattern_read (finite_incidence_entry (finite_atom_entries (finite_material_atoms M)))
-      (finite_material_edges M) = Unreadable \<or>
-    finite_enumeration_pattern_read (finite_attachment_entry (finite_atom_entries (finite_material_atoms M)))
-      (finite_material_counts M) = Unreadable \<or>
-    finite_enumeration_pattern_read (finite_attachment_entry (finite_atom_entries (finite_material_atoms M)))
-      (finite_material_functions M) = Unreadable"
-  by (simp add: finite_material_skeleton_def Let_def map_reading_cases reading_pair_unreadable_iff)
+    finite_list_pattern_read (Finite_Payload []) finite_incidence_entry (finite_material_edges M) = Unreadable \<or>
+    finite_list_pattern_read (Finite_Payload []) finite_attachment_entry (finite_material_counts M) = Unreadable \<or>
+    finite_list_pattern_read (Finite_Payload []) finite_attachment_entry (finite_material_functions M) = Unreadable"
+  by (simp add: finite_material_skeleton_def map_reading_cases reading_pair_unreadable_iff)
 
 theorem finite_material_skeleton_determined:
   assumes skeleton: "finite_material_skeleton M = Reading (A0,E0,B0,F0)"
     and functional: "finite_relation_functional V"
     and atoms: "finite_pattern_instance V (finite_material_atoms M) (finite_enumeration_term (map (finite_atom_term C) A))"
-    and edges: "finite_pattern_instance V (finite_material_edges M) (finite_enumeration_term (map (finite_incidence_term C) E))"
-    and counts: "finite_pattern_instance V (finite_material_counts M)
-      (finite_enumeration_term (map (finite_attachment_term C) B))"
-    and fns: "finite_pattern_instance V (finite_material_functions M)
-      (finite_enumeration_term (map (finite_attachment_term C) F))"
+    and edges: "finite_pattern_instance V (finite_material_edges M) (finite_data_sequence (map finite_incidence_data E))"
+    and counts: "finite_pattern_instance V (finite_material_counts M) (finite_data_sequence (map finite_address_pair_data B))"
+    and fns: "finite_pattern_instance V (finite_material_functions M) (finite_data_sequence (map finite_address_pair_data F))"
   shows "A = A0 \<and> E = E0 \<and> B = B0 \<and> F = F0"
 proof -
   obtain es where es: "finite_enumeration_pattern_read finite_atom_entry (finite_material_atoms M) = Reading es"
-    and E0: "finite_enumeration_pattern_read (finite_incidence_entry es) (finite_material_edges M) = Reading E0"
-    and B0: "finite_enumeration_pattern_read (finite_attachment_entry es) (finite_material_counts M) = Reading B0"
-    and F0: "finite_enumeration_pattern_read (finite_attachment_entry es) (finite_material_functions M) = Reading F0"
+    and E0: "finite_list_pattern_read (Finite_Payload []) finite_incidence_entry (finite_material_edges M) = Reading E0"
+    and B0: "finite_list_pattern_read (Finite_Payload []) finite_attachment_entry (finite_material_counts M) = Reading B0"
+    and F0: "finite_list_pattern_read (Finite_Payload []) finite_attachment_entry (finite_material_functions M) = Reading F0"
     and A0: "A0 = map fst es"
     by (rule finite_material_skeleton_read[OF skeleton])
   have reads: "finite_enumeration_read (finite_atom_read C) (finite_enumeration_term (map (finite_atom_term C) A)) = Some A"
-    "finite_enumeration_read (finite_incidence_read C) (finite_enumeration_term (map (finite_incidence_term C) E)) = Some E"
-    "finite_enumeration_read (finite_attachment_read C) (finite_enumeration_term (map (finite_attachment_term C) B)) = Some B"
-    "finite_enumeration_read (finite_attachment_read C) (finite_enumeration_term (map (finite_attachment_term C) F)) = Some F"
-    by (rule finite_enumeration_read_term, rule finite_material_term_reads)+
+    by (rule finite_enumeration_read_term, rule finite_material_term_reads)
+  have data_reads:
+    "finite_list_read (Finite_Payload []) finite_incidence_read (finite_data_sequence (map finite_incidence_data E)) = Some E"
+    "finite_list_read (Finite_Payload []) finite_attachment_read (finite_data_sequence (map finite_address_pair_data B)) = Some B"
+    "finite_list_read (Finite_Payload []) finite_attachment_read (finite_data_sequence (map finite_address_pair_data F)) = Some F"
+    by (rule finite_data_list_read_term, rule finite_material_term_reads)+
   have rows: "list_all2 (\<lambda>e y. y = fst e \<and> (\<exists>u'. finite_pattern_instance V (snd e) u' \<and>
       finite_occurrence_read C u' = Some (fst e))) es A"
-    by (rule finite_enumeration_pattern_instance[OF finite_atom_entry_instance es atoms reads(1)])
-  then have A: "A = map fst es"
-    and held: "\<forall>e\<in>set es. \<exists>u. finite_pattern_instance V (snd e) u \<and> finite_occurrence_read C u = Some (fst e)"
-    by (simp_all add: list_all2_function_restricted)
+    by (rule finite_enumeration_pattern_instance[OF finite_atom_entry_instance es atoms reads])
+  then have A: "A = map fst es" by (simp add: list_all2_function_restricted)
   have "list_all2 (=) E0 E"
-    by (rule finite_enumeration_pattern_instance[OF finite_incidence_entry_instance[OF functional held] E0 edges reads(2)])
+    by (rule finite_list_pattern_instance[OF finite_incidence_entry_instance E0 edges data_reads(1)])
   moreover have "list_all2 (=) B0 B"
-    by (rule finite_enumeration_pattern_instance[OF finite_attachment_entry_instance[OF functional held] B0 counts reads(3)])
+    by (rule finite_list_pattern_instance[OF finite_attachment_entry_instance B0 counts data_reads(2)])
   moreover have "list_all2 (=) F0 F"
-    by (rule finite_enumeration_pattern_instance[OF finite_attachment_entry_instance[OF functional held] F0 fns reads(4)])
+    by (rule finite_list_pattern_instance[OF finite_attachment_entry_instance F0 fns data_reads(3)])
   ultimately show ?thesis using A A0 by (simp add: list.rel_eq)
 qed
 
@@ -651,38 +601,36 @@ proof
   obtain C A E B F where en: "finite_artifact_enumeration C A E B F"
     and inst: "finite_pattern_instance V (finite_material_source M) (Finite_Target (Finite_Whole C))"
       "finite_pattern_instance V (finite_material_atoms M) (finite_enumeration_term (map (finite_atom_term C) A))"
-      "finite_pattern_instance V (finite_material_edges M) (finite_enumeration_term (map (finite_incidence_term C) E))"
-      "finite_pattern_instance V (finite_material_counts M) (finite_enumeration_term (map (finite_attachment_term C) B))"
-      "finite_pattern_instance V (finite_material_functions M)
-        (finite_enumeration_term (map (finite_attachment_term C) F))"
+      "finite_pattern_instance V (finite_material_edges M) (finite_data_sequence (map finite_incidence_data E))"
+      "finite_pattern_instance V (finite_material_counts M) (finite_data_sequence (map finite_address_pair_data B))"
+      "finite_pattern_instance V (finite_material_functions M) (finite_data_sequence (map finite_address_pair_data F))"
     by (rule finite_material_satisfied_witness[OF sat])
   have reads: "finite_enumeration_read (finite_atom_read C) (finite_enumeration_term (map (finite_atom_term C) A)) = Some A"
-    "finite_enumeration_read (finite_incidence_read C) (finite_enumeration_term (map (finite_incidence_term C) E)) = Some E"
-    "finite_enumeration_read (finite_attachment_read C) (finite_enumeration_term (map (finite_attachment_term C) B)) = Some B"
-    "finite_enumeration_read (finite_attachment_read C) (finite_enumeration_term (map (finite_attachment_term C) F)) = Some F"
-    by (rule finite_enumeration_read_term, rule finite_material_term_reads)+
+    by (rule finite_enumeration_read_term, rule finite_material_term_reads)
+  have data_reads:
+    "finite_list_read (Finite_Payload []) finite_incidence_read (finite_data_sequence (map finite_incidence_data E)) = Some E"
+    "finite_list_read (Finite_Payload []) finite_attachment_read (finite_data_sequence (map finite_address_pair_data B)) = Some B"
+    "finite_list_read (Finite_Payload []) finite_attachment_read (finite_data_sequence (map finite_address_pair_data F)) = Some F"
+    by (rule finite_data_list_read_term, rule finite_material_term_reads)+
   have i1: "\<forall>q u y. finite_atom_entry q = Unreadable \<longrightarrow> finite_pattern_instance V q u \<longrightarrow>
       finite_atom_read C u \<noteq> Some y"
     using finite_material_entries_unreadable(1) by blast
-  have i2: "\<forall>q u y. finite_incidence_entry es q = Unreadable \<longrightarrow> finite_pattern_instance V q u \<longrightarrow>
-      finite_incidence_read C u \<noteq> Some y" for es
+  have i2: "\<forall>q u y. finite_incidence_entry q = Unreadable \<longrightarrow> finite_pattern_instance V q u \<longrightarrow>
+      finite_incidence_read u \<noteq> Some y"
     using finite_material_entries_unreadable(2) by blast
-  have i3: "\<forall>q u y. finite_attachment_entry es q = Unreadable \<longrightarrow> finite_pattern_instance V q u \<longrightarrow>
-      finite_attachment_read C u \<noteq> Some y" for es
+  have i3: "\<forall>q u y. finite_attachment_entry q = Unreadable \<longrightarrow> finite_pattern_instance V q u \<longrightarrow>
+      finite_attachment_read u \<noteq> Some y"
     using finite_material_entries_unreadable(3) by blast
   have "finite_enumeration_pattern_read finite_atom_entry (finite_material_atoms M) = Unreadable \<or>
-      finite_enumeration_pattern_read (finite_incidence_entry (finite_atom_entries (finite_material_atoms M)))
-        (finite_material_edges M) = Unreadable \<or>
-      finite_enumeration_pattern_read (finite_attachment_entry (finite_atom_entries (finite_material_atoms M)))
-        (finite_material_counts M) = Unreadable \<or>
-      finite_enumeration_pattern_read (finite_attachment_entry (finite_atom_entries (finite_material_atoms M)))
-        (finite_material_functions M) = Unreadable"
-    using skeleton by (auto simp: finite_material_skeleton_def Let_def map_reading_cases dest!: reading_pair_unreadable)
+      finite_list_pattern_read (Finite_Payload []) finite_incidence_entry (finite_material_edges M) = Unreadable \<or>
+      finite_list_pattern_read (Finite_Payload []) finite_attachment_entry (finite_material_counts M) = Unreadable \<or>
+      finite_list_pattern_read (Finite_Payload []) finite_attachment_entry (finite_material_functions M) = Unreadable"
+    using skeleton by (simp add: finite_material_skeleton_unreadable_iff)
   then show False
-    using finite_enumeration_pattern_unreadable[OF i1 _ inst(2) reads(1)]
-      finite_enumeration_pattern_unreadable[OF i2 _ inst(3) reads(2)]
-      finite_enumeration_pattern_unreadable[OF i3 _ inst(4) reads(3)]
-      finite_enumeration_pattern_unreadable[OF i3 _ inst(5) reads(4)]
+    using finite_enumeration_pattern_unreadable[OF i1 _ inst(2) reads]
+      finite_list_pattern_unreadable[OF i2 _ inst(3) data_reads(1)]
+      finite_list_pattern_unreadable[OF i3 _ inst(4) data_reads(2)]
+      finite_list_pattern_unreadable[OF i3 _ inst(5) data_reads(3)]
     by blast
 qed
 
@@ -886,10 +834,10 @@ proof -
   obtain C A E B F where en: "finite_artifact_enumeration C A E B F"
     and inst: "finite_pattern_instance V (finite_material_source M) (Finite_Target (Finite_Whole C))"
       "finite_pattern_instance V (finite_material_atoms M) (finite_enumeration_term (map (finite_atom_term C) A))"
-      "finite_pattern_instance V (finite_material_edges M) (finite_enumeration_term (map (finite_incidence_term C) E))"
-      "finite_pattern_instance V (finite_material_counts M) (finite_enumeration_term (map (finite_attachment_term C) B))"
+      "finite_pattern_instance V (finite_material_edges M) (finite_data_sequence (map finite_incidence_data E))"
+      "finite_pattern_instance V (finite_material_counts M) (finite_data_sequence (map finite_address_pair_data B))"
       "finite_pattern_instance V (finite_material_functions M)
-        (finite_enumeration_term (map (finite_attachment_term C) F))"
+        (finite_data_sequence (map finite_address_pair_data F))"
     by (rule finite_material_satisfied_witness[OF sat])
   have member: "\<And>ts. finite_material_tuple C (A,E,B,F) \<in> set ts \<Longrightarrow>
       ffilter (\<lambda>x. fst x |\<in>| finite_material_variables M) V |\<in>| finite_material_candidates M ts"
@@ -982,10 +930,10 @@ proof -
   obtain C A' E' B' F' where en: "finite_artifact_enumeration C A' E' B' F'"
     and inst: "finite_pattern_instance V (finite_material_source M) (Finite_Target (Finite_Whole C))"
       "finite_pattern_instance V (finite_material_atoms M) (finite_enumeration_term (map (finite_atom_term C) A'))"
-      "finite_pattern_instance V (finite_material_edges M) (finite_enumeration_term (map (finite_incidence_term C) E'))"
-      "finite_pattern_instance V (finite_material_counts M) (finite_enumeration_term (map (finite_attachment_term C) B'))"
+      "finite_pattern_instance V (finite_material_edges M) (finite_data_sequence (map finite_incidence_data E'))"
+      "finite_pattern_instance V (finite_material_counts M) (finite_data_sequence (map finite_address_pair_data B'))"
       "finite_pattern_instance V (finite_material_functions M)
-        (finite_enumeration_term (map (finite_attachment_term C) F'))"
+        (finite_data_sequence (map finite_address_pair_data F'))"
     by (rule finite_material_satisfied_witness[OF sat])
   have same: "A' = A \<and> E' = E \<and> B' = B \<and> F' = F"
     using finite_material_skeleton_determined[OF skeleton functional inst(2-5)] .
@@ -1031,11 +979,11 @@ proof -
     obtain C' A' E' B' F' where en: "finite_artifact_enumeration C' A' E' B' F'"
       and inst: "finite_pattern_instance W (finite_material_source M) (Finite_Target (Finite_Whole C'))"
         "finite_pattern_instance W (finite_material_atoms M) (finite_enumeration_term (map (finite_atom_term C') A'))"
-        "finite_pattern_instance W (finite_material_edges M) (finite_enumeration_term (map (finite_incidence_term C') E'))"
+        "finite_pattern_instance W (finite_material_edges M) (finite_data_sequence (map finite_incidence_data E'))"
         "finite_pattern_instance W (finite_material_counts M)
-          (finite_enumeration_term (map (finite_attachment_term C') B'))"
+          (finite_data_sequence (map finite_address_pair_data B'))"
         "finite_pattern_instance W (finite_material_functions M)
-          (finite_enumeration_term (map (finite_attachment_term C') F'))"
+          (finite_data_sequence (map finite_address_pair_data F'))"
       by (rule finite_material_satisfied_witness[OF sat])
     have "C' = C" using inst(1) source by simp
     then have "finite_exact_formed C" using en unfolding finite_artifact_enumeration_def by blast

@@ -26,35 +26,35 @@ qed
 theorem material_incidence_head:
   "(\<exists>a z b f. material_observation s a (Pair_Term x z) b f) \<longleftrightarrow>
     (\<exists>R e. exact_formed R \<and> e \<in> rra_incidence (object_structure R) \<and>
-      s=Target_Term (Whole_Artifact R) \<and> x=incidence_term R e)"
+      s=Target_Term (Whole_Artifact R) \<and> x=incidence_data e)"
 proof
   assume observed: "\<exists>a z b f. material_observation s a (Pair_Term x z) b f"
   obtain R A E B F z where enumeration: "artifact_enumeration R A E B F"
     and source: "s=Target_Term (Whole_Artifact R)"
-    and edge_terms: "Pair_Term x z = enumeration_term (map (incidence_term R) E)"
+    and edge_terms: "Pair_Term x z = data_list_term (map incidence_data E)"
     using observed by (auto simp: material_observation_def)
   have nonempty: "E \<noteq> []" using edge_terms by auto
   obtain e es where list: "E=e#es" using nonempty by (cases E) auto
-  have head: "x=incidence_term R e" using edge_terms list by simp
+  have head: "x=incidence_data e" using edge_terms list by simp
   have formed: "exact_formed R" by (rule artifact_enumeration_material(1)[OF enumeration])
   have member: "e \<in> rra_incidence (object_structure R)"
     using artifact_enumeration_material(3)[OF enumeration] list by auto
   show "\<exists>R e. exact_formed R \<and> e \<in> rra_incidence (object_structure R) \<and>
-    s=Target_Term (Whole_Artifact R) \<and> x=incidence_term R e"
+    s=Target_Term (Whole_Artifact R) \<and> x=incidence_data e"
     using formed member source head by blast
 next
   assume witness: "\<exists>R e. exact_formed R \<and> e \<in> rra_incidence (object_structure R) \<and>
-    s=Target_Term (Whole_Artifact R) \<and> x=incidence_term R e"
+    s=Target_Term (Whole_Artifact R) \<and> x=incidence_data e"
   obtain R e where source: "exact_formed R" "e \<in> rra_incidence (object_structure R)"
-    "s=Target_Term (Whole_Artifact R)" "x=incidence_term R e"
+    "s=Target_Term (Whole_Artifact R)" "x=incidence_data e"
     using witness by blast
   obtain A E B F where enumeration: "artifact_enumeration R A (e#E) B F"
     using artifact_enumeration_incidence_first[OF source(1,2)] by blast
   have observed: "material_observation s
     (enumeration_term (map (atom_term R) A))
-    (Pair_Term x (enumeration_term (map (incidence_term R) E)))
-    (enumeration_term (map (attachment_term R) B))
-    (enumeration_term (map (attachment_term R) F))"
+    (Pair_Term x (data_list_term (map incidence_data E)))
+    (data_list_term (map address_pair_data B))
+    (data_list_term (map address_pair_data F))"
     using material_observation_exact[of R A "e#E" B F] enumeration source(3,4) by simp
   show "\<exists>a z b f. material_observation s a (Pair_Term x z) b f" using observed by blast
 qed
@@ -118,7 +118,7 @@ lemma incidence_query_instance_sound:
   assumes inst: "schema_instance incidence_query_schema V t Q"
     and material: "schema_material_satisfied incidence_query_schema V"
   shows "\<exists>R e. exact_formed R \<and> e \<in> rra_incidence (object_structure R) \<and>
-    t=Pair_Term (Target_Term (Whole_Artifact R)) (incidence_term R e)"
+    t=Pair_Term (Target_Term (Whole_Artifact R)) (incidence_data e)"
 proof -
   have sv: "single_valued V"
     using inst by (simp add: schema_instance_def term_bindings_formed_def)
@@ -140,7 +140,7 @@ qed
 theorem incidence_query_exact:
   "((),t) \<in> positive_meaning incidence_query_system \<longleftrightarrow>
     (\<exists>R e. exact_formed R \<and> e \<in> rra_incidence (object_structure R) \<and>
-      t=Pair_Term (Target_Term (Whole_Artifact R)) (incidence_term R e))"
+      t=Pair_Term (Target_Term (Whole_Artifact R)) (incidence_data e))"
 proof
   assume holds: "((),t) \<in> positive_meaning incidence_query_system"
   obtain c V Q where admitted: "admitted_schema_instance incidence_query_system () c V t Q"
@@ -149,32 +149,32 @@ proof
     and material: "schema_material_satisfied incidence_query_schema V"
     using admitted by (auto simp: admitted_schema_instance_def incidence_query_system_def)
   show "\<exists>R e. exact_formed R \<and> e \<in> rra_incidence (object_structure R) \<and>
-    t=Pair_Term (Target_Term (Whole_Artifact R)) (incidence_term R e)"
+    t=Pair_Term (Target_Term (Whole_Artifact R)) (incidence_data e)"
     by (rule incidence_query_instance_sound[OF inst material])
 next
   assume witness: "\<exists>R e. exact_formed R \<and> e \<in> rra_incidence (object_structure R) \<and>
-    t=Pair_Term (Target_Term (Whole_Artifact R)) (incidence_term R e)"
+    t=Pair_Term (Target_Term (Whole_Artifact R)) (incidence_data e)"
   then obtain R e where source: "exact_formed R" "e \<in> rra_incidence (object_structure R)"
-    "t=Pair_Term (Target_Term (Whole_Artifact R)) (incidence_term R e)" by blast
+    "t=Pair_Term (Target_Term (Whole_Artifact R)) (incidence_data e)" by blast
   have complete: "\<exists>a z b f. material_observation (Target_Term (Whole_Artifact R)) a
-    (Pair_Term (incidence_term R e) z) b f"
+    (Pair_Term (incidence_data e) z) b f"
     by (simp only: material_incidence_head) (use source(1,2) in blast)
   show "((),t) \<in> positive_meaning incidence_query_system"
     using complete incidence_query_admits_material source(3) by blast
 qed
 
 corollary incidence_query_at:
-  "((),Pair_Term (Target_Term (Whole_Artifact R)) (incidence_term R e)) \<in>
+  "((),Pair_Term (Target_Term (Whole_Artifact R)) (incidence_data e)) \<in>
     positive_meaning incidence_query_system \<longleftrightarrow>
     exact_formed R \<and> e \<in> rra_incidence (object_structure R)"
 proof
-  assume holds: "((),Pair_Term (Target_Term (Whole_Artifact R)) (incidence_term R e)) \<in>
+  assume holds: "((),Pair_Term (Target_Term (Whole_Artifact R)) (incidence_data e)) \<in>
     positive_meaning incidence_query_system"
   then show "exact_formed R \<and> e \<in> rra_incidence (object_structure R)"
-    by (auto simp: incidence_query_exact dest: injD[OF incidence_term_injective])
+    by (auto simp: incidence_query_exact dest: injD[OF incidence_data_injective])
 next
   assume source: "exact_formed R \<and> e \<in> rra_incidence (object_structure R)"
-  show "((),Pair_Term (Target_Term (Whole_Artifact R)) (incidence_term R e)) \<in>
+  show "((),Pair_Term (Target_Term (Whole_Artifact R)) (incidence_data e)) \<in>
     positive_meaning incidence_query_system"
     by (simp only: incidence_query_exact)
        (rule exI[of _ R], rule exI[of _ e]; use source in blast)
@@ -208,13 +208,13 @@ qed
 theorem four_relation_queries:
   assumes formed: "exact_formed R" and four: "four_structure_at R r F"
     and fields: "record_at R r ps [cr,oh,eh,nh,bh]"
-  shows "((),Pair_Term (Target_Term (Whole_Artifact R)) (incidence_term R (oh,a,b))) \<in>
+  shows "((),Pair_Term (Target_Term (Whole_Artifact R)) (incidence_data (oh,a,b))) \<in>
       positive_meaning incidence_query_system \<longleftrightarrow> (a,b) \<in> four_own F"
-    "((),Pair_Term (Target_Term (Whole_Artifact R)) (incidence_term R (eh,a,b))) \<in>
+    "((),Pair_Term (Target_Term (Whole_Artifact R)) (incidence_data (eh,a,b))) \<in>
       positive_meaning incidence_query_system \<longleftrightarrow> (a,b) \<in> four_end F"
-    "((),Pair_Term (Target_Term (Whole_Artifact R)) (incidence_term R (nh,a,b))) \<in>
+    "((),Pair_Term (Target_Term (Whole_Artifact R)) (incidence_data (nh,a,b))) \<in>
       positive_meaning incidence_query_system \<longleftrightarrow> (a,b) \<in> four_next F"
-    "((),Pair_Term (Target_Term (Whole_Artifact R)) (incidence_term R (bh,a,b))) \<in>
+    "((),Pair_Term (Target_Term (Whole_Artifact R)) (incidence_data (bh,a,b))) \<in>
       positive_meaning incidence_query_system \<longleftrightarrow> (a,b) \<in> four_bind F"
   by (simp_all add: incidence_query_at formed four_structure_fields[OF four fields] headed_incidence_def)
 

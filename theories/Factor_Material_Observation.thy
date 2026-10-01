@@ -246,32 +246,73 @@ proof -
     by (auto simp: enumeration_term_formed attachment_term_def occurrence_term_formed split: prod.splits)
 qed
 
+text \<open>
+  The incidence and the attachments of an enumeration, in the artifact data class's address form: each a data
+  list of address payloads (and values), formed whenever the enumeration is.
+\<close>
+
+lemma artifact_enumeration_data_formed:
+  assumes enumeration: "artifact_enumeration R A E B F"
+  shows "term_formed (data_list_term (map incidence_data E))"
+    "term_formed (data_list_term (map address_pair_data B))"
+    "term_formed (data_list_term (map address_pair_data F))"
+proof -
+  have formed: "exact_formed R" and atoms: "set A = rra_carrier (object_structure R)"
+    and bags: "set B = bag_support (object_data R)"
+    and funcs: "set F = functional_bindings (object_data R)"
+    using artifact_enumeration_material[OF enumeration] by auto
+  have support: "\<forall>z\<in>set E. fst z\<in>set A \<and> fst (snd z)\<in>set A \<and> snd (snd z)\<in>set A"
+    "fst ` set B\<subseteq>set A" "fst ` set F\<subseteq>set A"
+    by (rule artifact_enumeration_support[OF enumeration])+
+  have address: "\<And>a. a \<in> set A \<Longrightarrow> octets_formed a"
+    using formed atoms by (auto simp: exact_formed_def)
+  have stored: "\<And>a v. (a,v) \<in> set B \<union> set F \<Longrightarrow> octets_formed v"
+  proof -
+    fix a v assume member: "(a,v) \<in> set B \<union> set F"
+    have "v \<in> basis_values (object_data R)"
+      using member bags funcs by (auto simp: basis_values_def intro: rev_image_eqI)
+    then show "octets_formed v" using formed by (auto simp: exact_formed_def)
+  qed
+  have pair: "\<And>z. z \<in> set B \<union> set F \<Longrightarrow> term_formed (address_pair_data z)"
+  proof -
+    fix z assume z: "z \<in> set B \<union> set F"
+    obtain a v where zv: "z = (a,v)" by (cases z)
+    have "a \<in> set A" using z support(2,3) zv by (auto simp: image_subset_iff)
+    then show "term_formed (address_pair_data z)" using address stored[of a v] z zv by (simp add: address_pair_data_def)
+  qed
+  have triple: "\<And>z. z \<in> set E \<Longrightarrow> term_formed (incidence_data z)"
+    using address support(1) by (auto simp: incidence_data_def address_pair_data_def)
+  show "term_formed (data_list_term (map incidence_data E))" by (simp add: data_list_term_formed triple)
+  show "term_formed (data_list_term (map address_pair_data B))"
+    "term_formed (data_list_term (map address_pair_data F))" by (simp_all add: data_list_term_formed pair)
+qed
+
 definition material_observation ::
   "factor_term \<Rightarrow> factor_term \<Rightarrow> factor_term \<Rightarrow> factor_term \<Rightarrow> factor_term \<Rightarrow> bool" where
   "material_observation source atoms edges counts functions \<longleftrightarrow>
     (\<exists>R A E B F. artifact_enumeration R A E B F \<and> source = Target_Term (Whole_Artifact R) \<and>
       atoms = enumeration_term (map (atom_term R) A) \<and>
-      edges = enumeration_term (map (incidence_term R) E) \<and>
-      counts = enumeration_term (map (attachment_term R) B) \<and>
-      functions = enumeration_term (map (attachment_term R) F))"
+      edges = data_list_term (map incidence_data E) \<and>
+      counts = data_list_term (map address_pair_data B) \<and>
+      functions = data_list_term (map address_pair_data F))"
 
 lemma material_observation_formed:
   assumes "material_observation source atoms edges counts functions"
   shows "term_formed source \<and> term_formed atoms \<and> term_formed edges \<and>
     term_formed counts \<and> term_formed functions"
-  using assms artifact_enumeration_material(1) artifact_enumeration_terms_formed
+  using assms artifact_enumeration_material(1) artifact_enumeration_terms_formed(1) artifact_enumeration_data_formed
   by (auto simp: material_observation_def)
 
 theorem material_observation_incidence_empty:
   assumes "material_observation (Target_Term (Whole_Artifact R)) atoms edges counts functions"
-  shows "edges = enumeration_term [] \<longleftrightarrow> rra_incidence (object_structure R) = {}"
+  shows "edges = data_list_term [] \<longleftrightarrow> rra_incidence (object_structure R) = {}"
 proof -
   obtain A E B F where enumeration: "artifact_enumeration R A E B F"
-    and encoding: "edges = enumeration_term (map (incidence_term R) E)"
+    and encoding: "edges = data_list_term (map incidence_data E)"
     using assms by (auto simp: material_observation_def)
   have actual: "set E = rra_incidence (object_structure R)"
     by (rule artifact_enumeration_material(3)[OF enumeration])
-  show ?thesis by (simp only: encoding enumeration_term_injective) (simp add: actual[symmetric])
+  show ?thesis by (simp only: encoding data_list_term_injective) (simp add: actual[symmetric])
 qed
 
 theorem material_observation_total:
@@ -283,24 +324,24 @@ theorem material_observation_total:
 theorem material_observation_exact:
   "material_observation (Target_Term (Whole_Artifact R))
     (enumeration_term (map (atom_term R) A))
-    (enumeration_term (map (incidence_term R) E))
-    (enumeration_term (map (attachment_term R) B))
-    (enumeration_term (map (attachment_term R) F)) \<longleftrightarrow> artifact_enumeration R A E B F"
+    (data_list_term (map incidence_data E))
+    (data_list_term (map address_pair_data B))
+    (data_list_term (map address_pair_data F)) \<longleftrightarrow> artifact_enumeration R A E B F"
 proof -
   have atom_inj: "inj (atom_term R)" by (rule atom_term_injective)
   show ?thesis
-    by (auto simp: material_observation_def enumeration_term_injective
-        inj_map_eq_map[OF atom_inj] inj_map_eq_map[OF incidence_term_injective]
-        inj_map_eq_map[OF attachment_term_injective])
+    by (auto simp: material_observation_def enumeration_term_injective data_list_term_injective
+        inj_map_eq_map[OF atom_inj] inj_map_eq_map[OF incidence_data_injective]
+        inj_map_eq_map[OF address_pair_data_injective])
 qed
 
 theorem material_observation_rejects_omitted_incidence:
   assumes "artifact_enumeration R A E B F" "e \<in> set E"
   shows "\<not> material_observation (Target_Term (Whole_Artifact R))
     (enumeration_term (map (atom_term R) A))
-    (enumeration_term (map (incidence_term R) (remove1 e E)))
-    (enumeration_term (map (attachment_term R) B))
-    (enumeration_term (map (attachment_term R) F))"
+    (data_list_term (map incidence_data (remove1 e E)))
+    (data_list_term (map address_pair_data B))
+    (data_list_term (map address_pair_data F))"
 proof -
   have distinct: "distinct E" using assms(1) by (simp add: artifact_enumeration_def)
   have source: "set E = rra_incidence (object_structure R)"
@@ -331,17 +372,23 @@ text \<open>
   A material observation checks one complete equation over the existing RRA
   object basis. It invokes no semantic judgment or externally supplied reader.
   Each carrier entry links its actual address, as an opaque payload, to its
-  exact occurrence anchor. Incidences and attachments use those anchors. This
-  exposes the identity boundary required by occurrence citations without
-  interpreting address bytes as operation selectors. Other payload bytes remain
-  opaque values. Set-valued tables have no repeated entry. Anonymous attachments
-  use exactly their original multiplicities.
+  exact occurrence anchor. Incidences and attachments are observed in address
+  form, as the artifact's data class presents them: data lists of address
+  payloads and values, related to the anchors through the carrier entries inside
+  this check alone. This exposes the identity boundary required by occurrence
+  citations without interpreting address bytes as operation selectors: a program
+  compares addresses for equality only. Other payload bytes remain opaque values.
+  Set-valued tables have no repeated entry. Anonymous attachments use exactly
+  their original multiplicities. The anchor-form presentations of incidences and
+  attachments (@{const incidence_term}, @{const attachment_term}) remain, recovered
+  from the address form through the atoms.
 
   An enumeration is an explicitly ordered ordinary argument. Different orders
   with the same complete tables satisfy this particular observation relation;
   no order is assigned to the source artifact, and no rule about reordering
-  arbitrary semantic premises follows. The empty enumeration uses the unique
-  empty formed artifact. No coordinate or attached name selects an observation.
+  arbitrary semantic premises follows. The empty atom enumeration uses the unique
+  empty formed artifact, the empty data list the empty payload. No coordinate or
+  attached name selects an observation.
 
   This theory establishes the material relation and native quotations of its
   arguments. Integrating the relation into recovered semantic schemas requires

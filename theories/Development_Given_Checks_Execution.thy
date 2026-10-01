@@ -188,30 +188,32 @@ text \<open>
   Each row: the verdict (resolved: @{term "Some True"}; unresolved: @{term None}), the diagnoses' kinds, O1's count and
   the five counts (states, and at 5 dead ends, single steps and branchings; productions met at 12).
 
-  113/7 at 230, R3's least bound: resolved at both forms, in 400 states at the check form against 413 at the committed
+  113/7 at 230, R3's least bound: resolved at both forms, in 394 states at the check form against 401 at the committed
   form at @{term None}: below the ground root 5's four dead ends go and 7's bag checks keep their first found state.
   77/1 and 77/2 are unresolved at both forms, with the same states and counts: 77's search stands under 37's committed
   goal at 75.0/1, whose output is free until 12's production, so its joins are unions at both forms; 12(t4,t4), the
   produced check, stands under its own ground focus at both. The production of 12's input at 37.0/2 is met once at
   77/1 at 200 and 400 and at 77/2 at 300 and 400 (77/2 at 200 is cut before 37), as correction (15) predicts. Past it
-  77/1 at 400 spends its states in 12's check: 249 single steps, 31 dead ends and 32 branchings at 5 (correction (15)'s
-  census: 246, 31, 32), 30 of the dead ends below a ground focus, and 31 blocks searched after a block cut at the bound:
+  77/1 at 400 spends its states in 12's check: 249 single steps, 34 dead ends and 34 branchings at 5 (correction (15)'s
+  census: 246, 31, 32), 33 of the dead ends below a ground focus, and 33 blocks searched after a block cut at the bound:
   where the check is cut, its first join searches the next block as a union does. Every row is cut at the bound or
-  left by a witnessed failure; none refutes.
+  left by a witnessed failure; none refutes. Since M2 (task 998), 10 calls 0 alone beside its material premise: 113/7
+  takes fewer states (400 and 413 before), and within the same bounds 77's searches reach further (77/2 at 300: 308
+  states before; 77/1 at 400: 830, with 31 dead ends, 32 branchings, 30 and 31; 77/2 at 400: 430).
 \<close>
 
 lemma given_checks_controls:
-  "given_checks_run True given_input_declarations lookup_frames 7 230 = (Some True, [], 400, (400,0,3,4,0,0,0)) \<and>
-   given_checks_run False given_input_declarations lookup_frames 7 230 = (Some True, [], 413, (413,4,6,4,0,0,0)) \<and>
+  "given_checks_run True given_input_declarations lookup_frames 7 230 = (Some True, [], 394, (394,0,3,4,0,0,0)) \<and>
+   given_checks_run False given_input_declarations lookup_frames 7 230 = (Some True, [], 401, (401,4,6,4,0,0,0)) \<and>
    given_checks_run True given_input_declarations lookup_frames 1 200 = (None, [0,2], 220, (220,2,22,2,1,1,1)) \<and>
    given_checks_run True given_input_declarations lookup_frames 2 200 = (None, [0], 201, (201,0,12,0,0,0,0)) \<and>
-   given_checks_run True given_input_declarations lookup_frames 2 300 = (None, [0,2], 308, (308,1,19,2,1,0,1)) \<and>
-   given_checks_run False given_input_declarations lookup_frames 2 300 = (None, [0,2], 308, (308,1,19,2,1,0,1)) \<and>
+   given_checks_run True given_input_declarations lookup_frames 2 300 = (None, [0,2], 330, (330,2,41,2,1,1,1)) \<and>
+   given_checks_run False given_input_declarations lookup_frames 2 300 = (None, [0,2], 330, (330,2,41,2,1,1,1)) \<and>
    given_checks_kinds (given_checks_result True given_input_declarations lookup_frames 1 400) = [0,2] \<and>
-   given_checks_counted True given_input_declarations lookup_frames 1 400 = (830,31,249,32,1,30,31) \<and>
-   given_checks_counted False given_input_declarations lookup_frames 1 400 = (830,31,249,32,1,30,31) \<and>
+   given_checks_counted True given_input_declarations lookup_frames 1 400 = (875,34,249,34,1,33,33) \<and>
+   given_checks_counted False given_input_declarations lookup_frames 1 400 = (875,34,249,34,1,33,33) \<and>
    given_checks_kinds (given_checks_result True given_input_declarations lookup_frames 2 400) = [0,2] \<and>
-   given_checks_counted True given_input_declarations lookup_frames 2 400 = (430,2,41,2,1,1,1)"
+   given_checks_counted True given_input_declarations lookup_frames 2 400 = (451,2,50,5,1,1,4)"
   by eval
 
 

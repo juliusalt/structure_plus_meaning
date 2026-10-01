@@ -15,27 +15,25 @@ definition finite_occurrence_term where
   "finite_occurrence_term C a=Finite_Target (Finite_Anchor C a)"
 definition finite_atom_term where
   "finite_atom_term C a=Finite_Pair (Finite_Payload a) (finite_occurrence_term C a)"
-definition finite_incidence_term where
-  "finite_incidence_term C q=(case q of (a,b,c) \<Rightarrow>
-    Finite_Pair (finite_occurrence_term C a) (Finite_Pair (finite_occurrence_term C b) (finite_occurrence_term C c)))"
-definition finite_attachment_term where
-  "finite_attachment_term C q=(case q of (a,p) \<Rightarrow>
-    Finite_Pair (finite_occurrence_term C a) (Finite_Payload p))"
+definition finite_address_pair_data where
+  "finite_address_pair_data q=(case q of (a,v) \<Rightarrow> Finite_Pair (Finite_Payload a) (Finite_Payload v))"
+definition finite_incidence_data where
+  "finite_incidence_data q=(case q of (a,z) \<Rightarrow> Finite_Pair (Finite_Payload a) (finite_address_pair_data z))"
 
 lemma finite_material_entry_decodings [simp]:
   "decode_finite_term (finite_occurrence_term C a)=occurrence_term (decode_finite_object C) a"
   "decode_finite_term (finite_atom_term C a)=atom_term (decode_finite_object C) a"
-  "decode_finite_term (finite_incidence_term C e)=incidence_term (decode_finite_object C) e"
-  "decode_finite_term (finite_attachment_term C p)=attachment_term (decode_finite_object C) p"
-  by (simp_all add: finite_occurrence_term_def finite_atom_term_def finite_incidence_term_def finite_attachment_term_def
-    occurrence_term_def atom_term_def incidence_term_def attachment_term_def split: prod.splits)
+  "decode_finite_term (finite_incidence_data e)=incidence_data e"
+  "decode_finite_term (finite_address_pair_data p)=address_pair_data p"
+  by (simp_all add: finite_occurrence_term_def finite_atom_term_def finite_incidence_data_def finite_address_pair_data_def
+    occurrence_term_def atom_term_def incidence_data_def address_pair_data_def split: prod.splits)
 
 definition finite_material_arguments where
   "finite_material_arguments C=(case finite_artifact_rows C of (A,E,B,F) \<Rightarrow>
     (Finite_Target (Finite_Whole C),finite_enumeration_term (map (finite_atom_term C) A),
-      finite_enumeration_term (map (finite_incidence_term C) E),
-      finite_enumeration_term (map (finite_attachment_term C) B),
-      finite_enumeration_term (map (finite_attachment_term C) F)))"
+      finite_data_sequence (map finite_incidence_data E),
+      finite_data_sequence (map finite_address_pair_data B),
+      finite_data_sequence (map finite_address_pair_data F)))"
 
 lemma finite_artifact_rows_enumeration:
   assumes rows: "finite_artifact_rows C=(A,E,B,F)"
@@ -50,9 +48,9 @@ proof -
   obtain A E B F where rows: "finite_artifact_rows C=(A,E,B,F)" by (cases "finite_artifact_rows C") auto
   have fields: "s=Finite_Target (Finite_Whole C)"
     "a=finite_enumeration_term (map (finite_atom_term C) A)"
-    "e=finite_enumeration_term (map (finite_incidence_term C) E)"
-    "b=finite_enumeration_term (map (finite_attachment_term C) B)"
-    "f=finite_enumeration_term (map (finite_attachment_term C) F)"
+    "e=finite_data_sequence (map finite_incidence_data E)"
+    "b=finite_data_sequence (map finite_address_pair_data B)"
+    "f=finite_data_sequence (map finite_address_pair_data F)"
     using args by (simp_all add: finite_material_arguments_def rows)
   show ?thesis
     by (simp add: fields finite_material_observation_correct map_map comp_def
@@ -82,10 +80,10 @@ qed
 
 text \<open>
   The existing complete artifact-row constructor supplies every carrier entry,
-  incidence and attachment occurrence. The material operands retain exact
-  occurrence anchors to that same source. Their empty enumeration is the
-  existing whole empty artifact; a payload-and-pair data-list terminator does
-  not present that enumeration. Literal patterns for these complete operands
+  incidence and attachment occurrence. The atoms retain exact occurrence anchors
+  to that same source, their empty enumeration the existing whole empty artifact;
+  incidences and attachments are finite data sequences of address payloads and
+  values, ending at the empty payload. Literal patterns for these complete operands
   satisfy the original material condition exactly when the source is formed.
 \<close>
 

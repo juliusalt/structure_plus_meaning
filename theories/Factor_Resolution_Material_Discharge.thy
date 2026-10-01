@@ -373,12 +373,12 @@ text \<open>The canonical tuple of a formed artifact is an observation of it: it
 lemma finite_canonical_observation:
   assumes formed: "finite_exact_formed C" and rows: "finite_artifact_rows C = (A,E,B,F)"
   shows "finite_material_observation (Finite_Target (Finite_Whole C))
-    (finite_enumeration_term (map (finite_atom_term C) A)) (finite_enumeration_term (map (finite_incidence_term C) E))
-    (finite_enumeration_term (map (finite_attachment_term C) B)) (finite_enumeration_term (map (finite_attachment_term C) F))"
+    (finite_enumeration_term (map (finite_atom_term C) A)) (finite_data_sequence (map finite_incidence_data E))
+    (finite_data_sequence (map finite_address_pair_data B)) (finite_data_sequence (map finite_address_pair_data F))"
 proof -
   have "finite_material_arguments C = (Finite_Target (Finite_Whole C),
-      finite_enumeration_term (map (finite_atom_term C) A), finite_enumeration_term (map (finite_incidence_term C) E),
-      finite_enumeration_term (map (finite_attachment_term C) B), finite_enumeration_term (map (finite_attachment_term C) F))"
+      finite_enumeration_term (map (finite_atom_term C) A), finite_data_sequence (map finite_incidence_data E),
+      finite_data_sequence (map finite_address_pair_data B), finite_data_sequence (map finite_address_pair_data F))"
     by (simp add: finite_material_arguments_def rows)
   then show ?thesis using finite_material_arguments_exact formed by blast
 qed
@@ -2075,9 +2075,9 @@ proof -
   have Rf: "finite_exact_formed R" by (rule finite_material_source_formed[OF gsat source])
   obtain A E Bs Fs where rows: "finite_artifact_rows R = (A,E,Bs,Fs)" by (cases "finite_artifact_rows R") auto
   let ?a0 = "finite_enumeration_term (map (finite_atom_term R) A)"
-  let ?e0 = "finite_enumeration_term (map (finite_incidence_term R) E)"
-  let ?b0 = "finite_enumeration_term (map (finite_attachment_term R) Bs)"
-  let ?f0 = "finite_enumeration_term (map (finite_attachment_term R) Fs)"
+  let ?e0 = "finite_data_sequence (map finite_incidence_data E)"
+  let ?b0 = "finite_data_sequence (map finite_address_pair_data Bs)"
+  let ?f0 = "finite_data_sequence (map finite_address_pair_data Fs)"
   have canon: "finite_material_observation (Finite_Target (Finite_Whole R)) ?a0 ?e0 ?b0 ?f0"
     by (rule finite_canonical_observation[OF Rf rows])
   define gm where "gm = hA(x1 := decode_finite_term ?a0, x2 := decode_finite_term ?e0, x3 := decode_finite_term ?b0,
@@ -2518,9 +2518,9 @@ proof -
     have Rf: "finite_exact_formed R" by (rule finite_material_source_formed[OF gsat source])
     obtain A E Bs Fs where rows: "finite_artifact_rows R = (A,E,Bs,Fs)" by (cases "finite_artifact_rows R") auto
     let ?a0 = "finite_enumeration_term (map (finite_atom_term R) A)"
-    let ?e0 = "finite_enumeration_term (map (finite_incidence_term R) E)"
-    let ?b0 = "finite_enumeration_term (map (finite_attachment_term R) Bs)"
-    let ?f0 = "finite_enumeration_term (map (finite_attachment_term R) Fs)"
+    let ?e0 = "finite_data_sequence (map finite_incidence_data E)"
+    let ?b0 = "finite_data_sequence (map finite_address_pair_data Bs)"
+    let ?f0 = "finite_data_sequence (map finite_address_pair_data Fs)"
     have canon: "finite_material_observation (Finite_Target (Finite_Whole R)) ?a0 ?e0 ?b0 ?f0"
       by (rule finite_canonical_observation[OF Rf rows])
     define \<theta>1 where "\<theta>1 = \<theta>(w1 := ?a0, w2 := ?e0, w3 := ?b0, w4 := ?f0)"

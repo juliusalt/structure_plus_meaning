@@ -7,7 +7,7 @@ section \<open>The spine of a pattern\<close>
 
 text \<open>
   D3b1m of DECISIONS.md, task 495's entry, its addition "The chain's holders kept (D3', task 981)", (b). A material
-  premise reads each of its four fields as an enumeration along its spine, the chain of right children of pairs: its
+  premise reads each of its four fields as a list along its spine, the chain of right children of pairs: its
   entries, the left children, each read by the field's entry reader, and its end, the first part that is no pair. The
   spine's tail is the variable ending it, if one does. A substitution that binds none of the entries' variables extends
   the spine by its tail's image and leaves the entries as they stand.
@@ -162,105 +162,79 @@ qed
 section \<open>Readings along a spine\<close>
 
 text \<open>
-  An enumeration read along a spine has no reading exactly where an entry has none or its end has none; where the
+  A list read along a spine has no reading exactly where an entry has none or its end has none; where the
   spine ends in a variable and no entry lacks a reading, it is open, whatever the entries read.
 \<close>
 
-lemma finite_enumeration_graft_unreadable:
-  "finite_enumeration_pattern_read rd (finite_spine_graft es t) = Unreadable \<longleftrightarrow>
-    (\<exists>e\<in>set es. rd e = Unreadable) \<or> finite_enumeration_pattern_read rd t = Unreadable"
+lemma finite_list_graft_unreadable:
+  "finite_list_pattern_read z rd (finite_spine_graft es t) = Unreadable \<longleftrightarrow>
+    (\<exists>e\<in>set es. rd e = Unreadable) \<or> finite_list_pattern_read z rd t = Unreadable"
   by (induction es) (auto simp: map_reading_cases reading_pair_unreadable_iff)
 
-lemma finite_enumeration_spine_unreadable:
-  "finite_enumeration_pattern_read rd p = Unreadable \<longleftrightarrow>
+lemma finite_list_spine_unreadable:
+  "finite_list_pattern_read z rd p = Unreadable \<longleftrightarrow>
     (\<exists>e\<in>set (finite_spine_entries p). rd e = Unreadable) \<or>
-    finite_enumeration_pattern_read rd (finite_spine_end p) = Unreadable"
-  using finite_enumeration_graft_unreadable[of rd "finite_spine_entries p" "finite_spine_end p"]
+    finite_list_pattern_read z rd (finite_spine_end p) = Unreadable"
+  using finite_list_graft_unreadable[of z rd "finite_spine_entries p" "finite_spine_end p"]
   by (simp add: finite_spine_decompose)
 
-lemma finite_enumeration_unreadable_cong:
+lemma finite_list_unreadable_cong:
   assumes "\<And>e. rd e = Unreadable \<longleftrightarrow> rd' e = Unreadable"
-  shows "finite_enumeration_pattern_read rd p = Unreadable \<longleftrightarrow>
-    finite_enumeration_pattern_read rd' p = Unreadable"
+  shows "finite_list_pattern_read z rd p = Unreadable \<longleftrightarrow> finite_list_pattern_read z rd' p = Unreadable"
   by (induction p) (auto simp: map_reading_cases reading_pair_unreadable_iff assms)
 
-theorem finite_enumeration_tail_open:
-  assumes "finite_spine_tail p \<noteq> None" "finite_enumeration_pattern_read rd p \<noteq> Unreadable"
-  shows "finite_enumeration_pattern_read rd p = Open_Reading"
+theorem finite_list_tail_open:
+  assumes "finite_spine_tail p \<noteq> None" "finite_list_pattern_read z rd p \<noteq> Unreadable"
+  shows "finite_list_pattern_read z rd p = Open_Reading"
   using assms by (induction p) (auto simp: map_reading_cases reading_pair_open reading_pair_unreadable_iff)
 
-corollary finite_enumeration_tail_entries_open:
+corollary finite_list_tail_entries_open:
   assumes tail: "finite_spine_tail p \<noteq> None"
     and entries: "\<And>e. e \<in> set (finite_spine_entries p) \<Longrightarrow> rd e \<noteq> Unreadable"
-  shows "finite_enumeration_pattern_read rd p = Open_Reading"
-proof (rule finite_enumeration_tail_open[OF tail])
+  shows "finite_list_pattern_read z rd p = Open_Reading"
+proof (rule finite_list_tail_open[OF tail])
   obtain a where "finite_spine_end p = Finite_Variable a"
     using tail by (cases "finite_spine_tail p") (auto simp: finite_spine_tail_end)
-  then show "finite_enumeration_pattern_read rd p \<noteq> Unreadable"
-    using entries by (auto simp: finite_enumeration_spine_unreadable[of rd p])
+  then show "finite_list_pattern_read z rd p \<noteq> Unreadable"
+    using entries by (auto simp: finite_list_spine_unreadable[of z rd p])
 qed
-
-section \<open>The anchors' independence\<close>
-
-text \<open>
-  An anchor is read against the atom entries, but whether it has no reading is not: a variable anchor is found or
-  open, never unreadable. So whether an incidence or an attachment entry has no reading, and whether a field read
-  along its spine has none, is a property of that field's own pattern. The atom entry reads no anchor.
-\<close>
-
-lemma finite_anchor_address_unreadable_iff:
-  "finite_anchor_address es q = Unreadable \<longleftrightarrow>
-    finite_pattern_variables q = {||} \<and> (\<forall>D a. q \<noteq> Finite_Pattern_Target (Finite_Anchor D a))"
-  by (auto simp: finite_anchor_address_def ground_reading_def
-      split: finite_term_pattern.splits finite_exact_target.splits option.splits)
-
-theorem finite_anchor_address_independent:
-  "finite_anchor_address es q = Unreadable \<longleftrightarrow> finite_anchor_address es' q = Unreadable"
-  by (simp add: finite_anchor_address_unreadable_iff)
-
-theorem finite_incidence_entry_independent:
-  "finite_incidence_entry es p = Unreadable \<longleftrightarrow> finite_incidence_entry es' p = Unreadable"
-  by (auto simp: finite_incidence_entry_def reading_pair_unreadable_iff finite_anchor_address_unreadable_iff
-      split: finite_term_pattern.splits)
-
-theorem finite_attachment_entry_independent:
-  "finite_attachment_entry es p = Unreadable \<longleftrightarrow> finite_attachment_entry es' p = Unreadable"
-  by (auto simp: finite_attachment_entry_def reading_pair_unreadable_iff finite_anchor_address_unreadable_iff
-      split: finite_term_pattern.splits)
-
-corollary finite_incidence_read_independent:
-  "finite_enumeration_pattern_read (finite_incidence_entry es) p = Unreadable \<longleftrightarrow>
-    finite_enumeration_pattern_read (finite_incidence_entry es') p = Unreadable"
-  by (rule finite_enumeration_unreadable_cong) (rule finite_incidence_entry_independent)
-
-corollary finite_attachment_read_independent:
-  "finite_enumeration_pattern_read (finite_attachment_entry es) p = Unreadable \<longleftrightarrow>
-    finite_enumeration_pattern_read (finite_attachment_entry es') p = Unreadable"
-  by (rule finite_enumeration_unreadable_cong) (rule finite_attachment_entry_independent)
 
 section \<open>A material pattern's fields\<close>
 
 text \<open>
-  The four fields with their readers: the atoms (0), the edges (1, read by incidence entries) and the counts and the
-  functions (2, read by attachment entries). A field's unreadability is read with no atom entries, which by the
-  anchors' independence is its unreadability against any.
+  Each field is read as a list along its spine, at its terminator and by its entry reader: the atoms at the empty
+  artifact's whole target by atom entries, the edges at the empty payload by incidence entries, the counts and the
+  functions at the empty payload by attachment entries. A field's kind is its terminator and its entry reader, the
+  reader's values forgotten: whether a field has no reading depends on its terminator and on which entries have none.
 \<close>
 
-definition finite_material_read_fields :: "'a finite_material_pattern \<Rightarrow> (nat \<times> 'a finite_term_pattern) list" where
-  "finite_material_read_fields M = [(0, finite_material_atoms M), (1, finite_material_edges M),
-    (2, finite_material_counts M), (2, finite_material_functions M)]"
+type_synonym 'a material_field_kind = "finite_factor_term \<times> ('a finite_term_pattern \<Rightarrow> unit material_reading)"
+
+definition finite_field_kind ::
+    "finite_factor_term \<Rightarrow> ('a finite_term_pattern \<Rightarrow> 'x material_reading) \<Rightarrow> 'a material_field_kind" where
+  "finite_field_kind z rd = (z, \<lambda>e. map_material_reading (\<lambda>_. ()) (rd e))"
+
+definition finite_material_read_fields ::
+    "'a finite_material_pattern \<Rightarrow> ('a material_field_kind \<times> 'a finite_term_pattern) list" where
+  "finite_material_read_fields M = [
+    (finite_field_kind (Finite_Target (Finite_Whole finite_empty_artifact)) finite_atom_entry, finite_material_atoms M),
+    (finite_field_kind (Finite_Payload []) finite_incidence_entry, finite_material_edges M),
+    (finite_field_kind (Finite_Payload []) finite_attachment_entry, finite_material_counts M),
+    (finite_field_kind (Finite_Payload []) finite_attachment_entry, finite_material_functions M)]"
 
 definition finite_material_spine_fields :: "'a finite_material_pattern \<Rightarrow> 'a finite_term_pattern list" where
   "finite_material_spine_fields M = map snd (finite_material_read_fields M)"
 
-definition finite_field_entry_unreadable :: "nat \<Rightarrow> 'a finite_term_pattern \<Rightarrow> bool" where
-  "finite_field_entry_unreadable k e \<longleftrightarrow> (if k = 0 then finite_atom_entry e = Unreadable
-    else if k = 1 then finite_incidence_entry [] e = Unreadable else finite_attachment_entry [] e = Unreadable)"
+definition finite_field_entry_unreadable :: "'a material_field_kind \<Rightarrow> 'a finite_term_pattern \<Rightarrow> bool" where
+  "finite_field_entry_unreadable k e \<longleftrightarrow> snd k e = Unreadable"
 
-definition finite_field_unreadable :: "nat \<Rightarrow> 'a finite_term_pattern \<Rightarrow> bool" where
-  "finite_field_unreadable k p \<longleftrightarrow> (if k = 0 then finite_enumeration_pattern_read finite_atom_entry p = Unreadable
-    else if k = 1 then finite_enumeration_pattern_read (finite_incidence_entry []) p = Unreadable
-    else finite_enumeration_pattern_read (finite_attachment_entry []) p = Unreadable)"
+definition finite_field_unreadable :: "'a material_field_kind \<Rightarrow> 'a finite_term_pattern \<Rightarrow> bool" where
+  "finite_field_unreadable k p \<longleftrightarrow> finite_list_pattern_read (fst k) (snd k) p = Unreadable"
+
+lemma finite_field_kind_unreadable:
+  "finite_field_unreadable (finite_field_kind z rd) p \<longleftrightarrow> finite_list_pattern_read z rd p = Unreadable"
+  unfolding finite_field_unreadable_def finite_field_kind_def fst_conv snd_conv
+  by (rule finite_list_unreadable_cong) (simp add: map_reading_cases)
 
 lemma finite_field_unreadable_variable [simp]: "\<not> finite_field_unreadable k (Finite_Variable a)"
   by (simp add: finite_field_unreadable_def)
@@ -268,8 +242,7 @@ lemma finite_field_unreadable_variable [simp]: "\<not> finite_field_unreadable k
 lemma finite_field_unreadable_graft:
   "finite_field_unreadable k (finite_spine_graft es t) \<longleftrightarrow>
     (\<exists>e\<in>set es. finite_field_entry_unreadable k e) \<or> finite_field_unreadable k t"
-  by (cases "k = 0"; cases "k = 1")
-    (simp_all add: finite_field_unreadable_def finite_field_entry_unreadable_def finite_enumeration_graft_unreadable)
+  by (simp add: finite_field_unreadable_def finite_field_entry_unreadable_def finite_list_graft_unreadable)
 
 lemma finite_material_field_variable:
   "f \<in> set (finite_material_spine_fields M) \<Longrightarrow> a |\<in>| finite_pattern_variables f \<Longrightarrow> a |\<in>| finite_material_variables M"
@@ -278,23 +251,19 @@ lemma finite_material_field_variable:
 theorem finite_material_skeleton_unreadable_fields:
   "finite_material_skeleton M = Unreadable \<longleftrightarrow>
     (\<exists>(k,f)\<in>set (finite_material_read_fields M). finite_field_unreadable k f)"
-  by (auto simp: finite_material_skeleton_unreadable_iff finite_material_read_fields_def finite_field_unreadable_def
-      finite_incidence_read_independent[of "finite_atom_entries (finite_material_atoms M)" _ "[]"]
-      finite_attachment_read_independent[of "finite_atom_entries (finite_material_atoms M)" _ "[]"])
+  by (auto simp: finite_material_skeleton_unreadable_iff finite_material_read_fields_def finite_field_kind_unreadable)
 
 theorem finite_material_skeleton_open:
   assumes readable: "\<forall>(k,f)\<in>set (finite_material_read_fields M). \<not> finite_field_unreadable k f"
     and tail: "\<exists>f\<in>set (finite_material_spine_fields M). finite_spine_tail f \<noteq> None"
   shows "finite_material_skeleton M = Open_Reading"
 proof -
-  let ?es = "finite_atom_entries (finite_material_atoms M)"
   let ?a = "finite_enumeration_pattern_read finite_atom_entry (finite_material_atoms M)"
-  let ?b = "finite_enumeration_pattern_read (finite_incidence_entry ?es) (finite_material_edges M)"
-  let ?c = "finite_enumeration_pattern_read (finite_attachment_entry ?es) (finite_material_counts M)"
-  let ?d = "finite_enumeration_pattern_read (finite_attachment_entry ?es) (finite_material_functions M)"
+  let ?b = "finite_list_pattern_read (Finite_Payload []) finite_incidence_entry (finite_material_edges M)"
+  let ?c = "finite_list_pattern_read (Finite_Payload []) finite_attachment_entry (finite_material_counts M)"
+  let ?d = "finite_list_pattern_read (Finite_Payload []) finite_attachment_entry (finite_material_functions M)"
   have u: "?a \<noteq> Unreadable" "?b \<noteq> Unreadable" "?c \<noteq> Unreadable" "?d \<noteq> Unreadable"
-    using readable by (simp_all add: finite_material_read_fields_def finite_field_unreadable_def
-      finite_incidence_read_independent[of ?es _ "[]"] finite_attachment_read_independent[of ?es _ "[]"])
+    using readable by (simp_all add: finite_material_read_fields_def finite_field_kind_unreadable)
   from tail obtain f where f: "f \<in> set (finite_material_spine_fields M)" "finite_spine_tail f \<noteq> None" by blast
   have "f = finite_material_atoms M \<or> f = finite_material_edges M \<or> f = finite_material_counts M \<or>
       f = finite_material_functions M"
@@ -302,19 +271,23 @@ proof -
   then have "?a = Open_Reading \<or> ?b = Open_Reading \<or> ?c = Open_Reading \<or> ?d = Open_Reading"
   proof (elim disjE)
     assume "f = finite_material_atoms M"
-    then show ?thesis using finite_enumeration_tail_open[OF f(2), of finite_atom_entry] u(1) by simp
+    then show ?thesis using finite_list_tail_open[OF f(2), where z="Finite_Target (Finite_Whole finite_empty_artifact)"
+      and rd=finite_atom_entry] u(1) by simp
   next
     assume "f = finite_material_edges M"
-    then show ?thesis using finite_enumeration_tail_open[OF f(2), of "finite_incidence_entry ?es"] u(2) by simp
+    then show ?thesis using finite_list_tail_open[OF f(2), where z="Finite_Payload []" and rd=finite_incidence_entry]
+      u(2) by simp
   next
     assume "f = finite_material_counts M"
-    then show ?thesis using finite_enumeration_tail_open[OF f(2), of "finite_attachment_entry ?es"] u(3) by simp
+    then show ?thesis using finite_list_tail_open[OF f(2), where z="Finite_Payload []" and rd=finite_attachment_entry]
+      u(3) by simp
   next
     assume "f = finite_material_functions M"
-    then show ?thesis using finite_enumeration_tail_open[OF f(2), of "finite_attachment_entry ?es"] u(4) by simp
+    then show ?thesis using finite_list_tail_open[OF f(2), where z="Finite_Payload []" and rd=finite_attachment_entry]
+      u(4) by simp
   qed
   then show ?thesis using u
-    by (auto simp: finite_material_skeleton_def Let_def map_reading_cases reading_pair_open reading_pair_unreadable_iff)
+    by (auto simp: finite_material_skeleton_def map_reading_cases reading_pair_open reading_pair_unreadable_iff)
 qed
 
 section \<open>The tails of a material pattern\<close>
@@ -895,25 +868,23 @@ proof -
   then show ?thesis by (simp add: shared_spine_tails_def finite_spine_tails_def)
 qed
 
-fun shared_enumeration_read :: "('a finite_term_pattern \<Rightarrow> 'x material_reading) \<Rightarrow> shape list \<Rightarrow>
+fun shared_list_read :: "finite_factor_term \<Rightarrow> ('a finite_term_pattern \<Rightarrow> 'x material_reading) \<Rightarrow> shape list \<Rightarrow>
     'a shared_pattern \<Rightarrow> 'x list material_reading" where
-  "shared_enumeration_read rd T (Shared_Variable a) = Open_Reading"
-| "shared_enumeration_read rd T (Shared_Ground i) =
-    finite_enumeration_pattern_read rd (shared_pattern_project T (Shared_Ground i))"
-| "shared_enumeration_read rd T (Shared_Node A p q) = map_material_reading (\<lambda>(x,xs). x#xs)
-    (reading_pair (rd (shared_pattern_project T p)) (shared_enumeration_read rd T q))"
+  "shared_list_read z rd T (Shared_Variable a) = Open_Reading"
+| "shared_list_read z rd T (Shared_Ground i) =
+    finite_list_pattern_read z rd (shared_pattern_project T (Shared_Ground i))"
+| "shared_list_read z rd T (Shared_Node A p q) = map_material_reading (\<lambda>(x,xs). x#xs)
+    (reading_pair (rd (shared_pattern_project T p)) (shared_list_read z rd T q))"
 
-theorem shared_enumeration_read_project:
-  "shared_enumeration_read rd T s = finite_enumeration_pattern_read rd (shared_pattern_project T s)"
+theorem shared_list_read_project:
+  "shared_list_read z rd T s = finite_list_pattern_read z rd (shared_pattern_project T s)"
   by (induction s) simp_all
 
-definition shared_field_unreadable :: "nat \<Rightarrow> shape list \<Rightarrow> 'a shared_pattern \<Rightarrow> bool" where
-  "shared_field_unreadable k T s \<longleftrightarrow> (if k = 0 then shared_enumeration_read finite_atom_entry T s = Unreadable
-    else if k = 1 then shared_enumeration_read (finite_incidence_entry []) T s = Unreadable
-    else shared_enumeration_read (finite_attachment_entry []) T s = Unreadable)"
+definition shared_field_unreadable :: "'a material_field_kind \<Rightarrow> shape list \<Rightarrow> 'a shared_pattern \<Rightarrow> bool" where
+  "shared_field_unreadable k T s \<longleftrightarrow> shared_list_read (fst k) (snd k) T s = Unreadable"
 
 theorem shared_field_unreadable_project:
   "shared_field_unreadable k T s \<longleftrightarrow> finite_field_unreadable k (shared_pattern_project T s)"
-  by (simp add: shared_field_unreadable_def finite_field_unreadable_def shared_enumeration_read_project)
+  by (simp add: shared_field_unreadable_def finite_field_unreadable_def shared_list_read_project)
 
 end

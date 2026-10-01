@@ -23,9 +23,8 @@ definition site_one_atoms :: "octets list \<Rightarrow> nat finite_term_pattern"
 
 definition site_one_material :: "octets list \<Rightarrow> nat finite_material_pattern" where
   "site_one_material as = \<lparr>finite_material_source=Finite_Variable 2, finite_material_atoms=site_one_atoms as,
-    finite_material_edges=Finite_Pattern_Target (Finite_Whole finite_empty_artifact),
-    finite_material_counts=Finite_Pattern_Target (Finite_Whole finite_empty_artifact),
-    finite_material_functions=Finite_Pattern_Target (Finite_Whole finite_empty_artifact)\<rparr>"
+    finite_material_edges=Finite_Pattern_Payload [], finite_material_counts=Finite_Pattern_Payload [],
+    finite_material_functions=Finite_Pattern_Payload []\<rparr>"
 
 lemma site_one_material_decoded:
   "decode_finite_material (site_one_material as) =
@@ -42,9 +41,8 @@ text \<open>
 definition finite_distinct_payloads_material :: "nat finite_material_pattern" where
   "finite_distinct_payloads_material = \<lparr>finite_material_source=Finite_Variable 2,
     finite_material_atoms=Finite_Variable 1,
-    finite_material_edges=Finite_Pattern_Target (Finite_Whole finite_empty_artifact),
-    finite_material_counts=Finite_Pattern_Target (Finite_Whole finite_empty_artifact),
-    finite_material_functions=Finite_Pattern_Target (Finite_Whole finite_empty_artifact)\<rparr>"
+    finite_material_edges=Finite_Pattern_Payload [], finite_material_counts=Finite_Pattern_Payload [],
+    finite_material_functions=Finite_Pattern_Payload []\<rparr>"
 
 definition finite_distinct_payloads_system :: "(nat,nat,nat,nat) finite_schema_system" where
   "finite_distinct_payloads_system = \<lparr>finite_system_interfaces={|(0,Finite_Variable 0),(1,Finite_Variable 0)|},
@@ -325,7 +323,7 @@ abbreviation material_control_artifact :: finite_exact_artifact where
 
 definition material_control_answer :: "local_address list \<Rightarrow> nat finite_term_pattern" where
   "material_control_answer as = finite_exact_term_pattern (Finite_Pair
-    (finite_enumeration_term (map (finite_atom_term material_control_artifact) as)) (finite_enumeration_term []))"
+    (finite_enumeration_term (map (finite_atom_term material_control_artifact) as)) (Finite_Payload []))"
 
 definition material_control_clause :: "(nat,nat,nat) finite_factor_schema" where
   "material_control_clause = \<lparr>finite_schema_conclusion=Finite_Pattern_Payload [],
@@ -363,12 +361,9 @@ definition premise_only_material :: "nat finite_term_pattern \<Rightarrow> nat f
     \<lparr>finite_material_source=src,
       finite_material_atoms=finite_exact_term_pattern
         (finite_enumeration_term (map (finite_atom_term material_control_artifact) A)),
-      finite_material_edges=finite_exact_term_pattern
-        (finite_enumeration_term (map (finite_incidence_term material_control_artifact) E)),
-      finite_material_counts=finite_exact_term_pattern
-        (finite_enumeration_term (map (finite_attachment_term material_control_artifact) B)),
-      finite_material_functions=finite_exact_term_pattern
-        (finite_enumeration_term (map (finite_attachment_term material_control_artifact) F))\<rparr>)"
+      finite_material_edges=finite_exact_term_pattern (finite_data_sequence (map finite_incidence_data E)),
+      finite_material_counts=finite_exact_term_pattern (finite_data_sequence (map finite_address_pair_data B)),
+      finite_material_functions=finite_exact_term_pattern (finite_data_sequence (map finite_address_pair_data F))\<rparr>)"
 
 definition premise_only_clause :: "nat finite_term_pattern \<Rightarrow> (nat,nat,nat) finite_factor_schema" where
   "premise_only_clause src = \<lparr>finite_schema_conclusion=Finite_Variable 0,
@@ -780,7 +775,7 @@ lemma resolution_controls:
     finite_material_resolution (site_one_material [[1],[1]]) = Material_Solutions {||} \<and>
     finite_material_resolution (site_one_material []) =
       Material_Solutions {|{|(2,Finite_Target (Finite_Whole finite_empty_artifact))|}|} \<and>
-    finite_material_resolution ((site_one_material [[1]])\<lparr>finite_material_edges:=Finite_Pattern_Payload []\<rparr>) =
+    finite_material_resolution ((site_one_material [[1]])\<lparr>finite_material_edges:=Finite_Pattern_Target (Finite_Whole finite_empty_artifact)\<rparr>) =
       Material_Solutions {||} \<and>
     finite_resolution_verdict (finite_program_resolution no_witness_construction finite_distinct_payloads_system 1
       (control_payload_list [[1],[2]]) 12) = Some True \<and>
@@ -853,9 +848,9 @@ lemma resolution_controls:
     finite_resolution_verdict (finite_program_resolution no_witness_construction finite_rooted_given_readers 11
       (reading_control_atom_dropped (reading_control_chain_value 8)) 3000) = Some False \<and>
     finite_resolution_verdict (finite_committed_resolution no_witness_construction (finite_declared_commitment no_declarations)
-      finite_rooted_given_readers 11 (reading_control_atom_dropped reading_control_large) 3000) = Some False \<and>
+      finite_rooted_given_readers 11 (reading_control_atom_dropped (reading_control_sized 18)) 3000) = Some False \<and>
     finite_resolution_verdict (finite_program_resolution no_witness_construction finite_rooted_given_readers 11
-      (reading_control_atom_dropped reading_control_large) 3000) = Some False) \<and>
+      (reading_control_atom_dropped (reading_control_sized 18)) 3000) = Some False) \<and>
     (finite_resolution_verdict (finite_program_resolution no_witness_construction reuse_control_program 1
       (Finite_Payload [1]) 20) = Some True \<and>
     reuse_control_found_nodes 1 (Finite_Payload [1]) 20 = {|3|} \<and>
@@ -941,7 +936,7 @@ lemma site_one_material_controls:
     finite_material_resolution (site_one_material [[1],[1]]) = Material_Solutions {||} \<and>
     finite_material_resolution (site_one_material []) =
       Material_Solutions {|{|(2,Finite_Target (Finite_Whole finite_empty_artifact))|}|} \<and>
-    finite_material_resolution ((site_one_material [[1]])\<lparr>finite_material_edges:=Finite_Pattern_Payload []\<rparr>) =
+    finite_material_resolution ((site_one_material [[1]])\<lparr>finite_material_edges:=Finite_Pattern_Target (Finite_Whole finite_empty_artifact)\<rparr>) =
       Material_Solutions {||} \<and>
     finite_resolution_verdict (finite_program_resolution no_witness_construction finite_distinct_payloads_system 1
       (control_payload_list [[1],[2]]) 12) = Some True \<and>
@@ -1020,9 +1015,9 @@ lemma reading_control_refuted:
     finite_resolution_verdict (finite_program_resolution no_witness_construction finite_rooted_given_readers 11
       (reading_control_atom_dropped (reading_control_chain_value 8)) 3000) = Some False \<and>
     finite_resolution_verdict (finite_committed_resolution no_witness_construction (finite_declared_commitment no_declarations)
-      finite_rooted_given_readers 11 (reading_control_atom_dropped reading_control_large) 3000) = Some False \<and>
+      finite_rooted_given_readers 11 (reading_control_atom_dropped (reading_control_sized 18)) 3000) = Some False \<and>
     finite_resolution_verdict (finite_program_resolution no_witness_construction finite_rooted_given_readers 11
-      (reading_control_atom_dropped reading_control_large) 3000) = Some False"
+      (reading_control_atom_dropped (reading_control_sized 18)) 3000) = Some False"
   by (rule resolution_controls[THEN conjunct2, THEN conjunct2, THEN conjunct2, THEN conjunct2, THEN conjunct2, THEN conjunct2, THEN conjunct2, THEN conjunct1])
 
 lemma reuse_control:

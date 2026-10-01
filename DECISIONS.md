@@ -455,6 +455,13 @@ to its bytes and introduces no new RRA primitive.
 
 ## Complete material equations and direct opaque values
 
+[Corrected in part by "The material premise observes an artifact's incidence and attachments as its data class presents
+them: its atoms keep each address beside its anchor, and artifact admission is linear" below (M2, task 998): the
+incidence, counted and functional tables are no longer term enumerations over occurrence anchors but data lists in the
+artifact data class's address form (`data_list_term` of `incidence_data` and `address_pair_data`, the empty table the
+empty payload); only the carrier's entries keep the enumeration form, each address beside its anchor, and the anchor
+form of incidences and attachments (`incidence_term`, `attachment_term`) is recovered through them.]
+
 The material observation primitive checks an independently supplied exact
 artifact against four complete finite tables. Carrier, incidence, and functional
 entries have no duplicates; anonymous attachments retain their exact counts.
@@ -1818,6 +1825,12 @@ Comparison of generations, general native checking, reflection, and amendment
 remain to be completed. Environment comparison is derived below.
 
 ## Artifact admission derives from complete observed material
+
+[Corrected in part by "The material premise observes an artifact's incidence and attachments as its data class presents
+them: its atoms keep each address beside its anchor, and artifact admission is linear" below (M2, task 998): the
+observation now states the incidence and attachment lists as the data, so 10's clause has one ordinary premise, 0's
+carrier projection, beside its material premise (sockets 1–3 to 9 removed, nothing renumbered); 8, 9 and their
+conversion theorems stay, the anchor form read through the atoms, 9 no longer called by 10.]
 
 The complete material equation already exposes every artifact table and pairs
 each occurrence anchor with its exact original address. Two ordinary lookup
@@ -19459,7 +19472,10 @@ in the recount.
   does not depend on the atom entries the incidence and attachment entries read their anchors against
   (`finite_anchor_address`: a variable anchor is found or open, never unreadable), so whether a field is unreadable is a
   property of that field's own pattern. (2) A field whose spine ends in a variable and that holds no unreadable entry
-  is open, whatever its entries' anchors resolve to.
+  is open, whatever its entries' anchors resolve to. [Since M2 (task 998) the incidence and attachment entries read
+  payloads alone, no anchor, and each field is read at its own terminator (the edges, counts and functions at the empty
+  payload): (1) holds by construction, `finite_anchor_address` and the anchors' independence are retired, and a field's
+  kind carries its terminator and entry reader (`finite_field_kind`).]
 - *Eligible.* A material goal not at the root, no node at its position, whose resolution waits; raised at any socket,
   declared or not. Beside its record it keeps its *tail keys*: for each field whose spine in the resolution ends in a
   variable standing nowhere else in the resolution, that variable's key, read at its entry by a walk along the field's
@@ -22474,6 +22490,26 @@ owner declines: F4, Q33-free, its figures above; the join stays at 10's projecti
 - GT6's environment-level part is not addressed here.
 - F1's exactness rests on the observation's theorems re-proved in M2; an observation of an unformed artifact is refused
   as now.
+
+**M2 as built (task 998).** The observation, its executable side, R1, 1's and 10's clauses and their contracts as
+decided; the statements listed as kept are kept. Three choices of the build. (i) The row readers are one each:
+`finite_incidence_read` and `finite_attachment_read` read payloads alone, no artifact consulted, and
+Factor_Finite_Artifact_Value_Readers' own copies (`finite_incidence_value_read`, `finite_address_pair_value_read`) are
+retired for them. (ii) R1's incidence and attachment entries read payloads (`finite_payload_entry`, the former
+`finite_attachment_value`, which now reads an address as well as a value); no entry reads an anchor against the atom
+entries, so `finite_anchor_address` had no use left and is retired rather than kept for "the atoms alone" (the atom
+entry never read through it), with the anchors' independence in Factor_Material_Tails, now true by construction. (iii)
+Review 984's follow-up 2: a field's kind is carried with it as its terminator and its entry reader, values forgotten
+(`finite_field_kind`), in place of numeric tags. Measured by one evaluation (Factor_Material_Reading_Controls): 11
+resolves in k + 4 states at the chains k = 1, 2, 3, 8 and at #968's 1-, 5- and 18-address artifacts (5, 6, 7, 12;
+5, 9, 22; before: 17, 60, 117, 612 at the chains, 2,782 at the 18-address artifact), R4 resolving beside it where
+k ≤ 5. The given's searches at 113/7 take fewer states and, within the same bounds, 77's and 55's reach further
+(Development_Given_Modes_Execution, _Checks_Execution, _Waiting_Controls). Recorded words that differ, each a subject
+holding literal material premises whose relational fields are now data lists (Factor_Program_Evaluation_Investigation's
+`program_evaluation_material`, read by native evaluation and, through its cases, by the native histories, derivations,
+certificates and the four certificate cycles): native-evaluation, native-histories, native-derivations,
+native-certificates, certificate-coverage, certificate-development, certificate-input-development,
+certificate-scope-repair, re-recorded in M2's landing; every other word is equal.
 
 Recorded 2026-10-01.
 

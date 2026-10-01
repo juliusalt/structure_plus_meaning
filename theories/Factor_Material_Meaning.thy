@@ -36,7 +36,7 @@ lemma nonempty_material_enumeration_has_pair:
   shows "\<exists>h t. e=Pair_Term h t"
 proof -
   obtain A E B F where enumeration: "artifact_enumeration R A E B F"
-    and encoding: "e=enumeration_term (map (incidence_term R) E)"
+    and encoding: "e=data_list_term (map incidence_data E)"
     using observed by (auto simp: material_observation_def)
   have actual: "set E = rra_incidence (object_structure R)"
     by (rule artifact_enumeration_material(3)[OF enumeration])

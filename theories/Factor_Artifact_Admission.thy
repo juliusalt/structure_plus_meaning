@@ -13,13 +13,9 @@ definition artifact_projection_material :: "nat material_pattern" where
 definition artifact_projection_schema :: "(nat,nat,nat) factor_schema" where
   "artifact_projection_schema=
     \<lparr>schema_conclusion=Pattern_Pair (Pattern_Variable 0)
-        (Pattern_Pair (Pattern_Variable 5) (Pattern_Pair (Pattern_Variable 6)
-          (Pattern_Pair (Pattern_Variable 7) (Pattern_Variable 8)))),
-      schema_premises=
-        {(0,0,Pattern_Pair (Pattern_Variable 1) (Pattern_Variable 5)),
-         (1,9,Pattern_Pair (Pattern_Variable 1) (Pattern_Pair (Pattern_Variable 2) (Pattern_Variable 6))),
-         (2,9,Pattern_Pair (Pattern_Variable 1) (Pattern_Pair (Pattern_Variable 3) (Pattern_Variable 7))),
-         (3,9,Pattern_Pair (Pattern_Variable 1) (Pattern_Pair (Pattern_Variable 4) (Pattern_Variable 8)))},
+        (Pattern_Pair (Pattern_Variable 5) (Pattern_Pair (Pattern_Variable 2)
+          (Pattern_Pair (Pattern_Variable 3) (Pattern_Variable 4)))),
+      schema_premises={(0,0,Pattern_Pair (Pattern_Variable 1) (Pattern_Variable 5))},
       schema_material_premises={(4,artifact_projection_material)}\<rparr>"
 
 definition artifact_projection_system :: "(nat,nat,nat,nat) schema_system" where
@@ -66,34 +62,22 @@ proof -
   have schema: "S=artifact_projection_schema" using clause by simp
   have observation: "material_observation (v 0) (v 1) (v 2) (v 3) (v 4)"
     using material by (simp add: schema artifact_projection_schema_def artifact_projection_material_def)
-  have children:
-    "(0,Pair_Term (v 1) (v 5))\<in>positive_meaning material_data_system"
-    "(9,material_projection_argument (v 1) (v 2) (v 6))\<in>positive_meaning material_data_system"
-    "(9,material_projection_argument (v 1) (v 3) (v 7))\<in>positive_meaning material_data_system"
-    "(9,material_projection_argument (v 1) (v 4) (v 8))\<in>positive_meaning material_data_system"
-    using support artifact_projection_old_meaning[of 0] artifact_projection_old_meaning[of 9]
-    by (auto simp: schema artifact_projection_schema_def)
+  have carrier: "(0,Pair_Term (v 1) (v 5))\<in>positive_meaning material_data_system"
+    using support artifact_projection_old_meaning[of 0] by (auto simp: schema artifact_projection_schema_def)
   obtain R A E B F where enumeration: "artifact_enumeration R A E B F"
     and fields: "v 0=Target_Term (Whole_Artifact R)"
       "v 1=enumeration_term (map (atom_term R) A)"
-      "v 2=enumeration_term (map (incidence_term R) E)"
-      "v 3=enumeration_term (map (attachment_term R) B)"
-      "v 4=enumeration_term (map (attachment_term R) F)"
+      "v 2=data_list_term (map incidence_data E)"
+      "v 3=data_list_term (map address_pair_data B)"
+      "v 4=data_list_term (map address_pair_data F)"
     using observation unfolding material_observation_def by blast
   have formed: "exact_formed R" and atoms: "set A=rra_carrier (object_structure R)"
     using artifact_enumeration_material[OF enumeration] by auto
   have inside: "set A\<subseteq>rra_carrier (object_structure R)" using atoms by simp
   have outputs: "v 5=data_list_term (map Payload_Term A)"
-    "v 6=data_list_term (map incidence_data E)"
-    "v 7=data_list_term (map address_pair_data B)"
-    "v 8=data_list_term (map address_pair_data F)"
-    using children material_data_carrier[OF formed inside, of "v 5"]
-      material_projection_incidence_list[OF formed atoms artifact_enumeration_terms_formed(2)[OF enumeration], of "v 6"]
-      material_projection_attachment_list[OF formed atoms artifact_enumeration_terms_formed(3)[OF enumeration], of "v 7"]
-      material_projection_attachment_list[OF formed atoms artifact_enumeration_terms_formed(4)[OF enumeration], of "v 8"]
-    by (auto simp: fields[simplified])
-  have presented: "artifact_value_presents R (artifact_fields_term (v 5) (v 6) (v 7) (v 8))"
-    using enumeration outputs by (auto simp: artifact_value_presents_def artifact_data_term_def)
+    using carrier material_data_carrier[OF formed inside, of "v 5"] by (auto simp: fields[simplified])
+  have presented: "artifact_value_presents R (artifact_fields_term (v 5) (v 2) (v 3) (v 4))"
+    using enumeration outputs fields(3-5) by (auto simp: artifact_value_presents_def artifact_data_term_def)
   show ?thesis using head fields(1) presented
     by (auto simp: schema artifact_projection_schema_def)
 qed
@@ -106,37 +90,25 @@ proof -
     using present unfolding artifact_value_presents_def by blast
   let ?s="Target_Term (Whole_Artifact R)"
   let ?a="enumeration_term (map (atom_term R) A)"
-  let ?e="enumeration_term (map (incidence_term R) E)"
-  let ?b="enumeration_term (map (attachment_term R) B)"
-  let ?f="enumeration_term (map (attachment_term R) F)"
+  let ?e="data_list_term (map incidence_data E)"
+  let ?b="data_list_term (map address_pair_data B)"
+  let ?f="data_list_term (map address_pair_data F)"
   let ?da="data_list_term (map Payload_Term A)"
-  let ?de="data_list_term (map incidence_data E)"
-  let ?db="data_list_term (map address_pair_data B)"
-  let ?df="data_list_term (map address_pair_data F)"
   have formed: "exact_formed R" and atoms: "set A=rra_carrier (object_structure R)"
     using artifact_enumeration_material[OF enumeration] by auto
   have inside: "set A\<subseteq>rra_carrier (object_structure R)" using atoms by simp
   have observation: "material_observation ?s ?a ?e ?b ?f"
     using enumeration by (simp only: material_observation_exact)
   have terms: "term_formed ?s" "term_formed ?a" "term_formed ?e" "term_formed ?b" "term_formed ?f"
-    "term_formed ?da" "term_formed ?de" "term_formed ?db" "term_formed ?df"
+    "term_formed ?da"
     using material_observation_formed[OF observation] artifact_data_term_formed[OF enumeration]
     by (auto simp: artifact_data_term_def)
-  have projections: "(0,Pair_Term ?a ?da)\<in>positive_meaning material_data_system"
-    "(9,material_projection_argument ?a ?e ?de)\<in>positive_meaning material_data_system"
-    "(9,material_projection_argument ?a ?b ?db)\<in>positive_meaning material_data_system"
-    "(9,material_projection_argument ?a ?f ?df)\<in>positive_meaning material_data_system"
-    by (simp_all add: material_data_carrier[OF formed inside]
-      material_projection_incidence_list[OF formed atoms terms(3)]
-      material_projection_attachment_list[OF formed atoms terms(4)]
-      material_projection_attachment_list[OF formed atoms terms(5)])
+  have projection: "(0,Pair_Term ?a ?da)\<in>positive_meaning material_data_system"
+    by (simp add: material_data_carrier[OF formed inside])
   have lifted: "(0,Pair_Term ?a ?da)\<in>positive_meaning artifact_projection_system"
-    "(9,material_projection_argument ?a ?e ?de)\<in>positive_meaning artifact_projection_system"
-    "(9,material_projection_argument ?a ?b ?db)\<in>positive_meaning artifact_projection_system"
-    "(9,material_projection_argument ?a ?f ?df)\<in>positive_meaning artifact_projection_system"
-    using projections artifact_projection_old_meaning[of 0] artifact_projection_old_meaning[of 9] by auto
+    using projection artifact_projection_old_meaning[of 0] by auto
   let ?v="\<lambda>i::nat. if i=0 then ?s else if i=1 then ?a else if i=2 then ?e else if i=3 then ?b
-    else if i=4 then ?f else if i=5 then ?da else if i=6 then ?de else if i=7 then ?db else ?df"
+    else if i=4 then ?f else ?da"
   have result: "(10,evaluate_pattern ?v (schema_conclusion artifact_projection_schema))
     \<in>positive_meaning artifact_projection_system"
     by (rule material_positive_valuation_step[where c=0])

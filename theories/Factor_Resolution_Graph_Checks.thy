@@ -2421,34 +2421,46 @@ definition finite_indexed_premise_nodes ::
     if C \<noteq> {||} then C else finite_first_nodes (fset_of_list (filter (\<lambda>m. resolution_node_site m = e \<and>
       finite_position_left (resolution_node_position m) q) (concat (map (finite_group_lookup G) (sorted_list_of_fset IR))))))"
 
-lemma finite_indexed_premise_nodes_exact:
+text \<open>
+  A premise's nodes are read through the two indexes from the references of the premise's instances
+  (@{text finite_premise_reference_nodes}); any set of references that holds a node's reference exactly when the node's
+  call is an instance gives the premise's nodes (@{text finite_premise_reference_nodes_exact}). The instances shared
+  again are one such set (@{text finite_indexed_premise_nodes_references}), the instance's reference by substituting the
+  node's bindings another (@{text finite_bound_premise_nodes}).
+\<close>
+
+definition finite_premise_reference_nodes ::
+    "('s list, ('a,'s::linorder,'d,'c) resolution_node \<times> nat) rbt \<Rightarrow> (nat, ('a,'s,'d,'c) resolution_node list) rbt \<Rightarrow>
+      nat fset \<Rightarrow> ('a,'s,'d,'c) resolution_node \<Rightarrow> 's \<Rightarrow> 'd \<Rightarrow> ('a,'s,'d,'c) resolution_node fset" where
+  "finite_premise_reference_nodes PI G IR nd s e = (let q = resolution_node_position nd@[s];
+      C = (case RBT.lookup PI q of None \<Rightarrow> {||}
+        | Some (m,r) \<Rightarrow> if resolution_node_site m = e \<and> r |\<in>| IR then {|m|} else {||}) in
+    if C \<noteq> {||} then C else finite_first_nodes (fset_of_list (filter (\<lambda>m. resolution_node_site m = e \<and>
+      finite_position_left (resolution_node_position m) q) (concat (map (finite_group_lookup G) (sorted_list_of_fset IR))))))"
+
+lemma finite_indexed_premise_nodes_references:
+  "finite_indexed_premise_nodes PI G q0 nd s e p = finite_premise_reference_nodes PI G
+    (fimage (\<lambda>x. fst (keyed_share_term x q0)) (finite_pattern_instances (finite_node_values nd) p)) nd s e"
+  by (simp only: finite_indexed_premise_nodes_def finite_premise_reference_nodes_def Let_def)
+
+lemma finite_premise_reference_nodes_exact:
   assumes distinct: "\<And>m m'. m |\<in>| N \<Longrightarrow> m' |\<in>| N \<Longrightarrow> resolution_node_position m=resolution_node_position m' \<Longrightarrow> m=m'"
     and PI: "\<And>q m r. RBT.lookup PI q = Some (m,r) \<longleftrightarrow> m |\<in>| N \<and> resolution_node_position m = q \<and>
       finite_term_keyed q0 r (finite_residual_term (resolution_node_call m))"
     and G: "\<And>r m. m \<in> set (finite_group_lookup G r) \<longleftrightarrow> m |\<in>| N \<and>
       finite_term_keyed q0 r (finite_residual_term (resolution_node_call m))"
     and keyed: "\<And>m. m |\<in>| N \<Longrightarrow> \<exists>r. finite_term_keyed q0 r (finite_residual_term (resolution_node_call m))"
-  shows "finite_indexed_premise_nodes PI G q0 nd s e p = finite_premise_nodes N nd s e p"
+    and IR: "\<And>m r. m |\<in>| N \<Longrightarrow> finite_term_keyed q0 r (finite_residual_term (resolution_node_call m)) \<Longrightarrow>
+      r |\<in>| IR \<longleftrightarrow> finite_residual_term (resolution_node_call m) |\<in>| finite_pattern_instances (finite_node_values nd) p"
+  shows "finite_premise_reference_nodes PI G IR nd s e = finite_premise_nodes N nd s e p"
 proof -
   let ?q = "resolution_node_position nd@[s]"
   let ?I = "finite_pattern_instances (finite_node_values nd) p"
-  let ?IR = "fimage (\<lambda>x. fst (keyed_share_term x q0)) ?I"
+  let ?IR = "IR"
   let ?res = "\<lambda>m. finite_residual_term (resolution_node_call m)"
   let ?F = "ffilter (\<lambda>m. resolution_node_site m=e \<and> finite_residual_term (resolution_node_call m) |\<in>| ?I) N"
-  have K: "r |\<in>| ?IR \<longleftrightarrow> ?res m |\<in>| ?I" if key: "finite_term_keyed q0 r (?res m)" for m r
-  proof -
-    have kx: "fst (keyed_share_term x q0) = r \<longleftrightarrow> x = ?res m" for x using key by (simp add: finite_term_keyed_def)
-    show ?thesis
-    proof
-      assume "r |\<in>| ?IR"
-      then obtain x where x: "x |\<in>| ?I" "r = fst (keyed_share_term x q0)" by auto
-      then have "x = ?res m" using kx[of x] by simp
-      then show "?res m |\<in>| ?I" using x(1) by simp
-    next
-      assume "?res m |\<in>| ?I"
-      then show "r |\<in>| ?IR" using kx[of "?res m"] by force
-    qed
-  qed
+  have K: "r |\<in>| ?IR \<longleftrightarrow> ?res m |\<in>| ?I" if "m |\<in>| N" "finite_term_keyed q0 r (?res m)" for m r
+    using IR[OF that] by simp
   have C: "(case RBT.lookup PI ?q of None \<Rightarrow> {||}
         | Some (m,r) \<Rightarrow> if resolution_node_site m = e \<and> r |\<in>| ?IR then {|m|} else {||}) =
       ffilter (\<lambda>m. resolution_node_position m=?q) ?F"
@@ -2493,7 +2505,7 @@ proof -
     have "ffilter (\<lambda>m. resolution_node_position m=?q) ?F =
         (if resolution_node_site m1 = e \<and> ?res m1 |\<in>| ?I then {|m1|} else {||})"
       by (rule fset_eqI) (simp only: mem, auto)
-    then show ?thesis using v K[OF m1(3)] by simp
+    then show ?thesis using v K[OF m1(1) m1(3)] by simp
   qed
   let ?L = "filter (\<lambda>m. resolution_node_site m = e \<and> finite_position_left (resolution_node_position m) ?q)
     (concat (map (finite_group_lookup G) (sorted_list_of_fset ?IR)))"
@@ -2518,7 +2530,33 @@ proof -
     show "m |\<in>| fset_of_list ?L \<longleftrightarrow> m |\<in>| ffilter (\<lambda>m. finite_position_left (resolution_node_position m) ?q) ?F"
       using group by (simp only: memL resolution_ffilter_member) blast
   qed
-  show ?thesis unfolding finite_indexed_premise_nodes_def finite_premise_nodes_def Let_def C L ..
+  show ?thesis unfolding finite_premise_reference_nodes_def finite_premise_nodes_def Let_def C L ..
+qed
+
+lemma finite_indexed_premise_nodes_exact:
+  assumes distinct: "\<And>m m'. m |\<in>| N \<Longrightarrow> m' |\<in>| N \<Longrightarrow> resolution_node_position m=resolution_node_position m' \<Longrightarrow> m=m'"
+    and PI: "\<And>q m r. RBT.lookup PI q = Some (m,r) \<longleftrightarrow> m |\<in>| N \<and> resolution_node_position m = q \<and>
+      finite_term_keyed q0 r (finite_residual_term (resolution_node_call m))"
+    and G: "\<And>r m. m \<in> set (finite_group_lookup G r) \<longleftrightarrow> m |\<in>| N \<and>
+      finite_term_keyed q0 r (finite_residual_term (resolution_node_call m))"
+    and keyed: "\<And>m. m |\<in>| N \<Longrightarrow> \<exists>r. finite_term_keyed q0 r (finite_residual_term (resolution_node_call m))"
+  shows "finite_indexed_premise_nodes PI G q0 nd s e p = finite_premise_nodes N nd s e p"
+  unfolding finite_indexed_premise_nodes_references
+proof (rule finite_premise_reference_nodes_exact[OF distinct PI G keyed])
+  fix m r assume "m |\<in>| N" and key: "finite_term_keyed q0 r (finite_residual_term (resolution_node_call m))"
+  let ?I = "finite_pattern_instances (finite_node_values nd) p"
+  let ?res = "finite_residual_term (resolution_node_call m)"
+  have kx: "fst (keyed_share_term x q0) = r \<longleftrightarrow> x = ?res" for x using key by (simp add: finite_term_keyed_def)
+  show "r |\<in>| fimage (\<lambda>x. fst (keyed_share_term x q0)) ?I \<longleftrightarrow> ?res |\<in>| ?I"
+  proof
+    assume "r |\<in>| fimage (\<lambda>x. fst (keyed_share_term x q0)) ?I"
+    then obtain x where x: "x |\<in>| ?I" "r = fst (keyed_share_term x q0)" by auto
+    then have "x = ?res" using kx[of x] by simp
+    then show "?res |\<in>| ?I" using x(1) by simp
+  next
+    assume "?res |\<in>| ?I"
+    then show "r |\<in>| fimage (\<lambda>x. fst (keyed_share_term x q0)) ?I" using kx[of ?res] by force
+  qed
 qed
 
 definition finite_indexed_links ::
@@ -2550,17 +2588,31 @@ text \<open>
   links and, at a table, by the table links alike.
 \<close>
 
-lemma finite_read_index_exact:
+text \<open>
+  What the rows read from a representation give the indexes: the table the rows' sharing state represents, extending the
+  one read, each node's position and group found by its call's reference, and each such reference decoding the call.
+\<close>
+
+lemma finite_read_index_facts:
   assumes listed: "finite_post_listed (fset N) ns" and rep0: "keyed_state_represents q T" and f0: "table_formed T"
     and L: "\<forall>m\<in>set ns. \<forall>i. L (resolution_node_position m) = Some i \<longrightarrow>
       reference_term T i = Some (finite_residual_term (resolution_node_call m))"
     and run: "finite_read_rows L ns q = (rows,q0)"
-  shows "finite_indexed_premise_nodes (finite_position_index rows) (finite_group_index rows) q0 nd s e p =
-    finite_premise_nodes N nd s e p"
+  obtains T' where "keyed_state_represents q0 T'" "table_formed T'"
+    "\<And>i u. reference_term T i = Some u \<Longrightarrow> reference_term T' i = Some u"
+    "\<And>q m r. RBT.lookup (finite_position_index rows) q = Some (m,r) \<longleftrightarrow>
+      m |\<in>| N \<and> resolution_node_position m = q \<and> finite_term_keyed q0 r (finite_residual_term (resolution_node_call m))"
+    "\<And>r m. m \<in> set (finite_group_lookup (finite_group_index rows) r) \<longleftrightarrow>
+      m |\<in>| N \<and> finite_term_keyed q0 r (finite_residual_term (resolution_node_call m))"
+    "\<And>m. m |\<in>| N \<Longrightarrow> \<exists>r. finite_term_keyed q0 r (finite_residual_term (resolution_node_call m))"
+    "\<And>m m'. m |\<in>| N \<Longrightarrow> m' |\<in>| N \<Longrightarrow> resolution_node_position m=resolution_node_position m' \<Longrightarrow> m=m'"
+    "\<And>m r. m |\<in>| N \<Longrightarrow> finite_term_keyed q0 r (finite_residual_term (resolution_node_call m)) \<Longrightarrow>
+      reference_term T' r = Some (finite_residual_term (resolution_node_call m))"
 proof -
   note P = finite_post_listed_positions[OF listed]
   let ?res = "\<lambda>m. finite_residual_term (resolution_node_call m)"
   obtain T' where rep: "keyed_state_represents q0 T'" and ft: "table_formed T'" and fsts: "map fst rows = ns"
+      and pres: "\<forall>i u. reference_term T i = Some u \<longrightarrow> reference_term T' i = Some u"
       and rw: "\<forall>row\<in>set rows. fst (snd row) = ?res (fst row) \<and> reference_term T' (snd (snd row)) = Some (fst (snd row))"
     using finite_read_rows_exact[OF rep0 f0 L] run by auto
   have keyed: "finite_term_keyed q0 (snd (snd row)) (?res (fst row))" if row: "row \<in> set rows" for row
@@ -2602,6 +2654,34 @@ proof -
   have ex: "\<exists>r. finite_term_keyed q0 r (?res m)" if "m |\<in>| N" for m using exists[OF that] keyed by blast
   have dist: "m=m'" if "m |\<in>| N" "m' |\<in>| N" "resolution_node_position m=resolution_node_position m'" for m m'
     using P(3) that by blast
+  have refd: "reference_term T' r = Some (?res m)" if mN: "m |\<in>| N" and k: "finite_term_keyed q0 r (?res m)" for m r
+  proof -
+    obtain row where row: "row \<in> set rows" "fst row = m" using exists[OF mN] by blast
+    have "snd (snd row) = r" using unique[OF keyed[OF row(1)]] k row(2) by blast
+    then show ?thesis using rw row by auto
+  qed
+  show ?thesis by (rule that[OF rep ft _ PI G ex dist refd]) (use pres in blast)
+qed
+
+lemma finite_read_index_exact:
+  assumes listed: "finite_post_listed (fset N) ns" and rep0: "keyed_state_represents q T" and f0: "table_formed T"
+    and L: "\<forall>m\<in>set ns. \<forall>i. L (resolution_node_position m) = Some i \<longrightarrow>
+      reference_term T i = Some (finite_residual_term (resolution_node_call m))"
+    and run: "finite_read_rows L ns q = (rows,q0)"
+  shows "finite_indexed_premise_nodes (finite_position_index rows) (finite_group_index rows) q0 nd s e p =
+    finite_premise_nodes N nd s e p"
+proof (rule finite_read_index_facts[OF listed rep0 f0 L run])
+  fix T'
+  assume "keyed_state_represents q0 T'" "table_formed T'"
+    "\<And>i u. reference_term T i = Some u \<Longrightarrow> reference_term T' i = Some u"
+    and PI: "\<And>q m r. RBT.lookup (finite_position_index rows) q = Some (m,r) \<longleftrightarrow>
+      m |\<in>| N \<and> resolution_node_position m = q \<and> finite_term_keyed q0 r (finite_residual_term (resolution_node_call m))"
+    and G: "\<And>r m. m \<in> set (finite_group_lookup (finite_group_index rows) r) \<longleftrightarrow>
+      m |\<in>| N \<and> finite_term_keyed q0 r (finite_residual_term (resolution_node_call m))"
+    and ex: "\<And>m. m |\<in>| N \<Longrightarrow> \<exists>r. finite_term_keyed q0 r (finite_residual_term (resolution_node_call m))"
+    and dist: "\<And>m m'. m |\<in>| N \<Longrightarrow> m' |\<in>| N \<Longrightarrow> resolution_node_position m=resolution_node_position m' \<Longrightarrow> m=m'"
+    and "\<And>m r. m |\<in>| N \<Longrightarrow> finite_term_keyed q0 r (finite_residual_term (resolution_node_call m)) \<Longrightarrow>
+      reference_term T' r = Some (finite_residual_term (resolution_node_call m))"
   show ?thesis by (rule finite_indexed_premise_nodes_exact[OF dist PI G ex])
 qed
 
@@ -3780,54 +3860,107 @@ proof -
   qed
 qed
 
+text \<open>
+  A reached check reads, at each reached row, the functionality of its links and a test of the row, stated once
+  (@{text finite_rows_reached_check}); two tests that agree on the rows give the same check
+  (@{text finite_rows_reached_cong}). C's check is its instance at the admitted instance's test
+  (@{text finite_indexed_reached_by}), C3's at the formed test, which forms each table link's call once, in its call's
+  formation (@{text finite_formed_row_check}), and the check over references at a test that reads references
+  (@{text finite_reference_reached_graph_check}).
+\<close>
+
+definition finite_rows_reached_check ::
+    "(('a,'s,'d,'c) resolution_node \<times> ('s \<times> ('a,'s,'d,'c) resolution_node) fset \<times>
+        ('s \<times> ('a,'s,'d,'c) resolution_node) fset \<Rightarrow> bool) \<Rightarrow>
+      ('a,'s::linorder,'d,'c) finite_schema_system \<Rightarrow> 'd \<Rightarrow> finite_factor_term \<Rightarrow>
+      (('a,'s,'d,'c) resolution_node \<times> ('s \<times> ('a,'s,'d,'c) resolution_node) fset \<times>
+        ('s \<times> ('a,'s,'d,'c) resolution_node) fset) list \<Rightarrow> ('s list, unit) rbt \<Rightarrow> ('a,'s,'d,'c) resolution_node \<Rightarrow> bool" where
+  "finite_rows_reached_check \<chi> P d t LS R nd = (
+    resolution_node_site nd=d \<and> finite_residual_term (resolution_node_call nd)=t \<and> finite_system_formed P \<and>
+    list_all (\<lambda>(m,L,TL). RBT.lookup R (resolution_node_position m) \<noteq> None \<longrightarrow> finite_relation_functional (L |\<union>| TL) \<and>
+      \<chi> (m,L,TL)) LS)"
+
+lemma finite_rows_reached_cong:
+  assumes same: "\<And>row. row \<in> set LS \<Longrightarrow> \<chi> row = \<chi>' row"
+  shows "finite_rows_reached_check \<chi> P d t LS R nd = finite_rows_reached_check \<chi>' P d t LS R nd"
+proof -
+  have "list_all (\<lambda>row. case row of (m,L,TL) \<Rightarrow> RBT.lookup R (resolution_node_position m) \<noteq> None \<longrightarrow>
+      finite_relation_functional (L |\<union>| TL) \<and> \<chi> (m,L,TL)) LS =
+    list_all (\<lambda>row. case row of (m,L,TL) \<Rightarrow> RBT.lookup R (resolution_node_position m) \<noteq> None \<longrightarrow>
+      finite_relation_functional (L |\<union>| TL) \<and> \<chi>' (m,L,TL)) LS"
+  proof (rule list.pred_cong[OF refl], goal_cases)
+    case (1 row)
+    obtain m L TL where rr: "row = (m,L,TL)" by (cases row) auto
+    show ?case using same[OF 1] rr by simp
+  qed
+  then show ?thesis by (simp only: finite_rows_reached_check_def)
+qed
+
+definition finite_indexed_row_check ::
+    "('a,'s,'d,'c) finite_schema_system \<Rightarrow> ('a,'s,'d,'c) resolution_node \<times> ('s \<times> ('a,'s,'d,'c) resolution_node) fset \<times>
+        ('s \<times> ('a,'s,'d,'c) resolution_node) fset \<Rightarrow> bool" where
+  "finite_indexed_row_check P row = (case row of (m,L,TL) \<Rightarrow>
+    finite_admitted_instance_at P (resolution_node_site m) (resolution_node_clause m) (finite_node_values m)
+      (finite_residual_term (resolution_node_call m))
+      (fimage (\<lambda>(s,m'). (s,resolution_node_site m',finite_residual_term (resolution_node_call m'))) (L |\<union>| TL)) \<and>
+    fBall TL (\<lambda>(s,a). finite_schema_call_formed P (resolution_node_site a) (finite_residual_term (resolution_node_call a))))"
+
+definition finite_formed_row_check ::
+    "('a,'s,'d,'c) finite_schema_system \<Rightarrow> ('a,'s,'d,'c) resolution_node \<times> ('s \<times> ('a,'s,'d,'c) resolution_node) fset \<times>
+        ('s \<times> ('a,'s,'d,'c) resolution_node) fset \<Rightarrow> bool" where
+  "finite_formed_row_check P row = (case row of (m,L,TL) \<Rightarrow>
+    finite_admitted_instance_formed_at P (resolution_node_site m) (resolution_node_clause m) (finite_node_values m)
+      (finite_residual_term (resolution_node_call m))
+      (fimage (\<lambda>(s,m'). (s,resolution_node_site m',finite_residual_term (resolution_node_call m'))) (L |\<union>| TL)) \<and>
+    fBall TL (\<lambda>(s,a). finite_schema_call_formed P (resolution_node_site a) (finite_residual_term (resolution_node_call a))))"
+
+lemma finite_indexed_reached_by:
+  "finite_indexed_reached_graph_check P d t LS R nd = finite_rows_reached_check (finite_indexed_row_check P) P d t LS R nd"
+  by (simp add: finite_indexed_reached_graph_check_def finite_rows_reached_check_def finite_indexed_row_check_def)
+
 definition finite_formed_reached_graph_check ::
     "('a,'s::linorder,'d,'c) finite_schema_system \<Rightarrow> 'd \<Rightarrow> finite_factor_term \<Rightarrow>
       (('a,'s,'d,'c) resolution_node \<times> ('s \<times> ('a,'s,'d,'c) resolution_node) fset \<times>
         ('s \<times> ('a,'s,'d,'c) resolution_node) fset) list \<Rightarrow> ('s list, unit) rbt \<Rightarrow> ('a,'s,'d,'c) resolution_node \<Rightarrow> bool" where
-  "finite_formed_reached_graph_check P d t LS R nd = (
-    resolution_node_site nd=d \<and> finite_residual_term (resolution_node_call nd)=t \<and> finite_system_formed P \<and>
-    list_all (\<lambda>(m,L,TL). RBT.lookup R (resolution_node_position m) \<noteq> None \<longrightarrow> finite_relation_functional (L |\<union>| TL) \<and>
-      fBall TL (\<lambda>(s,a). finite_term_formed (finite_residual_term (resolution_node_call a))) \<and>
-      finite_admitted_instance_formed_at P (resolution_node_site m) (resolution_node_clause m) (finite_node_values m)
-        (finite_residual_term (resolution_node_call m))
-        (fimage (\<lambda>(s,m'). (s,resolution_node_site m',finite_residual_term (resolution_node_call m'))) (L |\<union>| TL)) \<and>
-      fBall TL (\<lambda>(s,a). finite_schema_call_formed P (resolution_node_site a) (finite_residual_term (resolution_node_call a)))) LS)"
+  "finite_formed_reached_graph_check P d t LS R nd = finite_rows_reached_check (finite_formed_row_check P) P d t LS R nd"
+
+lemma finite_schema_call_formed_term: "finite_schema_call_formed P d x \<Longrightarrow> finite_term_formed x"
+  by (auto simp: finite_schema_call_formed_def finite_pattern_accepts_matches)
 
 lemma finite_formed_reached_graph_check_exact:
   assumes rows: "\<And>m L TL. (m,L,TL) \<in> set LS \<Longrightarrow> finite_term_formed (finite_residual_term (resolution_node_call m)) \<and>
       fBall L (\<lambda>(s,m'). finite_term_formed (finite_residual_term (resolution_node_call m')))"
   shows "finite_formed_reached_graph_check P d t LS R nd = finite_indexed_reached_graph_check P d t LS R nd"
-proof -
-  let ?Q = "\<lambda>L TL. fimage (\<lambda>(s,m'). (s,resolution_node_site m',finite_residual_term (resolution_node_call m'))) (L |\<union>| TL)"
-  have row: "finite_admitted_instance_at P (resolution_node_site m) (resolution_node_clause m) (finite_node_values m)
-        (finite_residual_term (resolution_node_call m)) (?Q L TL) \<longleftrightarrow>
-      fBall TL (\<lambda>(s,a). finite_term_formed (finite_residual_term (resolution_node_call a))) \<and>
-      finite_admitted_instance_formed_at P (resolution_node_site m) (resolution_node_clause m) (finite_node_values m)
-        (finite_residual_term (resolution_node_call m)) (?Q L TL)" if mem: "(m,L,TL) \<in> set LS" for m L TL
-  proof -
-    have fm: "finite_term_formed (finite_residual_term (resolution_node_call m))"
-      and fl: "fBall L (\<lambda>(s,m'). finite_term_formed (finite_residual_term (resolution_node_call m')))"
-      using rows[OF mem] by blast+
-    have img: "fBall (?Q L TL) (\<lambda>(s,e,x). F x) \<longleftrightarrow>
-        fBall L (\<lambda>(s,a). F (finite_residual_term (resolution_node_call a))) \<and>
-        fBall TL (\<lambda>(s,a). F (finite_residual_term (resolution_node_call a)))" for F
-      by (auto simp: split_beta)
-    have "fBall (?Q L TL) (\<lambda>(s,e,x). finite_term_formed x) \<longleftrightarrow>
-        fBall TL (\<lambda>(s,a). finite_term_formed (finite_residual_term (resolution_node_call a)))"
-      using fl img[of finite_term_formed] by blast
-    then show ?thesis by (simp only: finite_admitted_instance_at_formed fm simp_thms)
+  unfolding finite_formed_reached_graph_check_def finite_indexed_reached_by
+proof (rule finite_rows_reached_cong)
+  fix row assume r: "row \<in> set LS"
+  obtain m L TL where rr: "row = (m,L,TL)" by (cases row) auto
+  have fm: "finite_term_formed (finite_residual_term (resolution_node_call m))"
+    and fl: "fBall L (\<lambda>(s,m'). finite_term_formed (finite_residual_term (resolution_node_call m')))"
+    using rows r rr by blast+
+  let ?Q = "fimage (\<lambda>(s,m'). (s,resolution_node_site m',finite_residual_term (resolution_node_call m'))) (L |\<union>| TL)"
+  let ?C = "fBall TL (\<lambda>(s,a). finite_schema_call_formed P (resolution_node_site a) (finite_residual_term (resolution_node_call a)))"
+  have qf: "fBall ?Q (\<lambda>(s,e,x). finite_term_formed x)" if c: ?C
+  proof (rule fBallI)
+    fix z assume z: "z |\<in>| ?Q"
+    then obtain s m' where sm: "(s,m') |\<in>| L |\<union>| TL"
+      and zz: "z = (s,resolution_node_site m',finite_residual_term (resolution_node_call m'))" by force
+    have "finite_term_formed (finite_residual_term (resolution_node_call m'))"
+    proof (cases "(s,m') |\<in>| L")
+      case True
+      then show ?thesis using fbspec[OF fl True] by simp
+    next
+      case False
+      then have "(s,m') |\<in>| TL" using sm by simp
+      then have "finite_schema_call_formed P (resolution_node_site m') (finite_residual_term (resolution_node_call m'))"
+        using fbspec[OF c] by force
+      then show ?thesis by (rule finite_schema_call_formed_term)
+    qed
+    then show "case z of (s,e,x) \<Rightarrow> finite_term_formed x" using zz by simp
   qed
-  have "list_all (\<lambda>(m,L,TL). RBT.lookup R (resolution_node_position m) \<noteq> None \<longrightarrow> finite_relation_functional (L |\<union>| TL) \<and>
-      fBall TL (\<lambda>(s,a). finite_term_formed (finite_residual_term (resolution_node_call a))) \<and>
-      finite_admitted_instance_formed_at P (resolution_node_site m) (resolution_node_clause m) (finite_node_values m)
-        (finite_residual_term (resolution_node_call m)) (?Q L TL) \<and>
-      fBall TL (\<lambda>(s,a). finite_schema_call_formed P (resolution_node_site a) (finite_residual_term (resolution_node_call a)))) LS \<longleftrightarrow>
-    list_all (\<lambda>(m,L,TL). RBT.lookup R (resolution_node_position m) \<noteq> None \<longrightarrow> finite_relation_functional (L |\<union>| TL) \<and>
-      finite_admitted_instance_at P (resolution_node_site m) (resolution_node_clause m) (finite_node_values m)
-        (finite_residual_term (resolution_node_call m)) (?Q L TL) \<and>
-      fBall TL (\<lambda>(s,a). finite_schema_call_formed P (resolution_node_site a) (finite_residual_term (resolution_node_call a)))) LS"
-    unfolding list_all_iff using row by fastforce
-  then show ?thesis by (simp only: finite_formed_reached_graph_check_def finite_indexed_reached_graph_check_def)
+  show "finite_formed_row_check P row = finite_indexed_row_check P row"
+    unfolding rr finite_formed_row_check_def finite_indexed_row_check_def prod.case finite_admitted_instance_at_formed
+    using fm qf by blast
 qed
 
 definition finite_share_leaves_formed :: "share_state \<Rightarrow> bool" where
@@ -4041,96 +4174,996 @@ proof -
   qed
 qed
 
+section \<open>The per-node check over references\<close>
+
 text \<open>
-  C's three readings over the rows a representation gives: where the nodes are listed, the indexed forms of the code
-  equations above over the read rows, formation read once where the table's leaves are formed; where they are not
-  listed, C's forms themselves.
+  A node of a found state holds its call, its values and its premises' calls; at 11 each holds the artifact's anchors,
+  each the whole artifact, so a check that shares a premise instance again or compares two of these terms walks them
+  (task 993's measurement). Over a formed table that holds them a term is its reference: two references are equal
+  exactly when their terms are (@{text reference_term_injective}), and a pair is read one level through its shape. With
+  the node's bindings given as references (@{text finite_bindings_read}), a pattern's instance is a reference: the
+  bindings' references substituted at the pattern's variables, and each leaf and pair the substitution makes found in
+  the table's keyed index without extending the table (@{text finite_instance_reference}), an instance the table does
+  not hold being no node's call (@{text finite_instance_reference_exact}). An interface matches a call by reading the
+  call's shapes from its reference (@{text finite_reference_bindings}, @{text finite_reference_matched_exact}). C3's
+  admitted instance (@{const finite_admitted_instance_formed_at}) is then read over references
+  (@{text finite_admitted_instance_reference_at}), equal to it wherever the references read the terms
+  (@{text finite_admitted_instance_reference_exact}).
 \<close>
+
+lemma finite_relation_functional_value_image:
+  assumes inj: "\<And>u v. u |\<in>| fimage snd R \<Longrightarrow> v |\<in>| fimage snd R \<Longrightarrow> g u = g v \<Longrightarrow> u = v"
+  shows "finite_relation_functional (fimage (\<lambda>(s,v). (s,g v)) R) \<longleftrightarrow> finite_relation_functional R"
+proof
+  assume f: "finite_relation_functional (fimage (\<lambda>(s,v). (s,g v)) R)"
+  show "finite_relation_functional R"
+  proof (rule finite_relation_functional_intro)
+    fix a u v assume u: "(a,u) |\<in>| R" and v: "(a,v) |\<in>| R"
+    have "(a,g u) |\<in>| fimage (\<lambda>(s,v). (s,g v)) R" "(a,g v) |\<in>| fimage (\<lambda>(s,v). (s,g v)) R"
+      using fimageI[OF u, of "\<lambda>(s,v). (s,g v)"] fimageI[OF v, of "\<lambda>(s,v). (s,g v)"] by simp_all
+    then have "g u = g v" by (rule finite_relation_functional_at[OF f])
+    moreover have "u |\<in>| fimage snd R" "v |\<in>| fimage snd R"
+      using fimageI[OF u, of snd] fimageI[OF v, of snd] by simp_all
+    ultimately show "u = v" using inj by blast
+  qed
+next
+  assume f: "finite_relation_functional R"
+  show "finite_relation_functional (fimage (\<lambda>(s,v). (s,g v)) R)"
+  proof (rule finite_relation_functional_intro)
+    fix a u v assume u: "(a,u) |\<in>| fimage (\<lambda>(s,v). (s,g v)) R" and v: "(a,v) |\<in>| fimage (\<lambda>(s,v). (s,g v)) R"
+    obtain u' where u': "(a,u') |\<in>| R" "u = g u'" using u by force
+    obtain v' where v': "(a,v') |\<in>| R" "v = g v'" using v by force
+    show "u = v" using finite_relation_functional_at[OF f u'(1) v'(1)] u'(2) v'(2) by simp
+  qed
+qed
+
+subsection \<open>A shape the table holds, found in its keyed index\<close>
+
+definition finite_shape_found :: "share_state \<Rightarrow> shape \<Rightarrow> nat option" where
+  "finite_shape_found q s = RBT.lookup (fst q) (shape_key s)"
+
+definition finite_shape_at :: "share_state \<Rightarrow> nat \<Rightarrow> shape option" where
+  "finite_shape_at q i = RBT.lookup (snd (snd q)) i"
+
+lemma finite_shape_found_read:
+  assumes rep: "keyed_state_represents q T" and tf: "table_formed T"
+  shows "finite_shape_found q s = Some r \<longleftrightarrow> value_reference_read T r = Some s"
+proof -
+  obtain M n P where qq: "q = (M,n,P)" by (cases q) auto
+  have found: "finite_shape_found q s = value_reference_index s T"
+    using rep by (simp add: qq finite_shape_found_def keyed_state_represents_def keyed_table_state_def)
+  have d: "distinct T" using tf by (simp add: table_formed_def)
+  show ?thesis
+  proof
+    assume "finite_shape_found q s = Some r"
+    then have "r < length T \<and> T!r = s" using found value_reference_index_read by metis
+    then show "value_reference_read T r = Some s" by (simp add: read_some)
+  next
+    assume "value_reference_read T r = Some s"
+    then show "finite_shape_found q s = Some r" using found value_reference_index_distinct_read[OF d] by simp
+  qed
+qed
+
+lemma finite_shape_at_read:
+  assumes rep: "keyed_state_represents q T"
+  shows "finite_shape_at q i = value_reference_read T i"
+proof -
+  obtain M n P where qq: "q = (M,n,P)" by (cases q) auto
+  show ?thesis using rep by (simp add: qq finite_shape_at_def keyed_state_represents_def keyed_table_state_def)
+qed
+
+lemma finite_leaf_found:
+  assumes rep: "keyed_state_represents q T" and tf: "table_formed T" and i: "reference_term T i = Some y"
+  shows "finite_shape_found q (Leaf_Shape l) = Some i \<longleftrightarrow> y = leaf_term l"
+proof -
+  have "value_reference_read T i = Some (Leaf_Shape l) \<longleftrightarrow> y = leaf_term l"
+  proof
+    assume "value_reference_read T i = Some (Leaf_Shape l)"
+    then have "reference_term T i = Some (leaf_term l)" by (rule reference_factor_leaf)
+    then show "y = leaf_term l" using i by simp
+  next
+    assume "y = leaf_term l"
+    then have "reference_term T i = Some (leaf_term l)" using i by simp
+    then show "value_reference_read T i = Some (Leaf_Shape l)" by (rule reference_factor_leaf_read)
+  qed
+  then show ?thesis by (simp only: finite_shape_found_read[OF rep tf])
+qed
+
+subsection \<open>Bindings read as references\<close>
+
+text \<open>
+  A node's bindings are read by a list of references when each variable the list keys has a reference the table
+  decodes, and the node binds exactly the decoded terms at exactly the keyed variables. The bindings are then
+  functional, and their domain is the list's keys.
+\<close>
+
+definition finite_bindings_read :: "shape list \<Rightarrow> ('a \<times> nat) list \<Rightarrow> ('a \<times> finite_factor_term) fset \<Rightarrow> bool" where
+  "finite_bindings_read T B V \<longleftrightarrow> (\<forall>a r. map_of B a = Some r \<longrightarrow> (\<exists>u. reference_term T r = Some u)) \<and>
+    (\<forall>a x. (a,x) |\<in>| V \<longleftrightarrow> (\<exists>r. map_of B a = Some r \<and> reference_term T r = Some x))"
+
+lemma finite_bindings_read_member:
+  "finite_bindings_read T B V \<Longrightarrow> (a,x) |\<in>| V \<longleftrightarrow> (\<exists>r. map_of B a = Some r \<and> reference_term T r = Some x)"
+  by (simp add: finite_bindings_read_def)
+
+lemma finite_bindings_read_functional:
+  assumes read: "finite_bindings_read T B V"
+  shows "finite_relation_functional V"
+proof (rule finite_relation_functional_intro)
+  fix a u w assume u: "(a,u) |\<in>| V" and w: "(a,w) |\<in>| V"
+  obtain r where r: "map_of B a = Some r" "reference_term T r = Some u" using finite_bindings_read_member[OF read] u by blast
+  obtain r' where r': "map_of B a = Some r'" "reference_term T r' = Some w" using finite_bindings_read_member[OF read] w by blast
+  show "u = w" using r r' by simp
+qed
+
+lemma finite_bindings_read_domain:
+  assumes read: "finite_bindings_read T B V"
+  shows "fimage fst V = fset_of_list (map fst B)"
+proof (rule fset_eqI)
+  fix a
+  have "a |\<in>| fimage fst V \<longleftrightarrow> (\<exists>x. (a,x) |\<in>| V)" by force
+  also have "\<dots> \<longleftrightarrow> map_of B a \<noteq> None"
+  proof
+    assume "\<exists>x. (a,x) |\<in>| V"
+    then show "map_of B a \<noteq> None" using finite_bindings_read_member[OF read] by blast
+  next
+    assume "map_of B a \<noteq> None"
+    then obtain r where r: "map_of B a = Some r" by blast
+    then obtain x where "reference_term T r = Some x" using read unfolding finite_bindings_read_def by blast
+    then show "\<exists>x. (a,x) |\<in>| V" using finite_bindings_read_member[OF read] r by blast
+  qed
+  also have "\<dots> \<longleftrightarrow> a |\<in>| fset_of_list (map fst B)"
+    by (simp add: map_of_eq_None_iff fset_of_list_elem fset_of_list.rep_eq)
+  finally show "a |\<in>| fimage fst V \<longleftrightarrow> a |\<in>| fset_of_list (map fst B)" .
+qed
+
+lemma finite_bindings_read_extends:
+  assumes read: "finite_bindings_read T B V" and ext: "\<And>i u. reference_term T i = Some u \<Longrightarrow> reference_term T' i = Some u"
+  shows "finite_bindings_read T' B V"
+proof -
+  have held: "\<exists>u. reference_term T r = Some u" if "map_of B a = Some r" for a r
+    using read that unfolding finite_bindings_read_def by blast
+  have same: "reference_term T' r = Some x \<longleftrightarrow> reference_term T r = Some x" if "map_of B a = Some r" for a r x
+    using held[OF that] ext by force
+  have "(a,x) |\<in>| V \<longleftrightarrow> (\<exists>r. map_of B a = Some r \<and> reference_term T' r = Some x)" for a x
+    using finite_bindings_read_member[OF read, of a x] same by blast
+  moreover have "\<exists>u. reference_term T' r = Some u" if "map_of B a = Some r" for a r
+    using held[OF that] ext by blast
+  ultimately show ?thesis unfolding finite_bindings_read_def by blast
+qed
+
+subsection \<open>A pattern's instance by its reference\<close>
+
+text \<open>
+  The instance of a pattern under the bindings' references, built bottom-up as the keyed substitution builds it
+  (@{text keyed_share_node}), each leaf and pair it makes looked up in the table's keyed index and never added: where
+  the table holds the instance its reference is returned, and where it does not, nothing, so an instance is compared
+  with a node's call by comparing two numbers. A literal of the pattern is an instance only where it is formed, as
+  @{const finite_pattern_instances} has it.
+\<close>
+
+fun finite_instance_reference :: "share_state \<Rightarrow> ('a \<Rightarrow> nat option) \<Rightarrow> 'a finite_term_pattern \<Rightarrow> nat option" where
+  "finite_instance_reference q \<sigma> (Finite_Variable a) = \<sigma> a"
+| "finite_instance_reference q \<sigma> (Finite_Pattern_Target x) =
+    (if finite_target_formed x then finite_shape_found q (Leaf_Shape (Target_Leaf x)) else None)"
+| "finite_instance_reference q \<sigma> (Finite_Pattern_Payload v) =
+    (if octets_formed v then finite_shape_found q (Leaf_Shape (Payload_Leaf v)) else None)"
+| "finite_instance_reference q \<sigma> (Finite_Pattern_Pair p r) =
+    (case finite_instance_reference q \<sigma> p of None \<Rightarrow> None | Some i \<Rightarrow>
+      (case finite_instance_reference q \<sigma> r of None \<Rightarrow> None | Some j \<Rightarrow> finite_shape_found q (Pair_Shape i j)))"
+
+lemma finite_instance_reference_exact:
+  assumes rep: "keyed_state_represents q T" and tf: "table_formed T"
+    and \<sigma>: "\<And>a x. (a,x) |\<in>| V \<longleftrightarrow> (\<exists>r. \<sigma> a = Some r \<and> reference_term T r = Some x)"
+  shows "reference_term T i = Some y \<Longrightarrow>
+    finite_instance_reference q \<sigma> p = Some i \<longleftrightarrow> y |\<in>| finite_pattern_instances V p"
+proof (induction p arbitrary: i y)
+  case (Finite_Variable a)
+  have "(a,y) |\<in>| V \<longleftrightarrow> \<sigma> a = Some i"
+  proof
+    assume "(a,y) |\<in>| V"
+    then obtain r where r: "\<sigma> a = Some r" "reference_term T r = Some y" using \<sigma> by blast
+    have "r = i" by (rule reference_term_injective[OF tf r(2) Finite_Variable.prems])
+    then show "\<sigma> a = Some i" using r by simp
+  next
+    assume "\<sigma> a = Some i"
+    then show "(a,y) |\<in>| V" using \<sigma> Finite_Variable.prems by blast
+  qed
+  then show ?case by (force simp: fimage_iff)
+next
+  case (Finite_Pattern_Target x)
+  show ?case using finite_leaf_found[OF rep tf Finite_Pattern_Target.prems, of "Target_Leaf x"] by simp
+next
+  case (Finite_Pattern_Payload v)
+  show ?case using finite_leaf_found[OF rep tf Finite_Pattern_Payload.prems, of "Payload_Leaf v"] by simp
+next
+  case (Finite_Pattern_Pair p r)
+  have mem: "y |\<in>| finite_pattern_instances V (Finite_Pattern_Pair p r) \<longleftrightarrow>
+      (\<exists>x z. y = Finite_Pair x z \<and> x |\<in>| finite_pattern_instances V p \<and> z |\<in>| finite_pattern_instances V r)"
+    by (auto simp: ffUnion_fimage_iff)
+  from Finite_Pattern_Pair.prems show ?case
+  proof (cases rule: reference_term_cases)
+    case (leaf l)
+    have "finite_shape_found q (Pair_Shape j k) \<noteq> Some i" for j k
+      using leaf(1) by (simp add: finite_shape_found_read[OF rep tf])
+    then have "finite_instance_reference q \<sigma> (Finite_Pattern_Pair p r) \<noteq> Some i"
+      by (simp split: option.splits)
+    moreover have "y |\<notin>| finite_pattern_instances V (Finite_Pattern_Pair p r)"
+      using leaf(2) mem leaf_term_not_pair by metis
+    ultimately show ?thesis by blast
+  next
+    case (pair j k x z)
+    have found: "finite_shape_found q (Pair_Shape j' k') = Some i \<longleftrightarrow> j' = j \<and> k' = k" for j' k'
+      using pair(1) by (auto simp: finite_shape_found_read[OF rep tf])
+    have "finite_instance_reference q \<sigma> (Finite_Pattern_Pair p r) = Some i \<longleftrightarrow>
+        finite_instance_reference q \<sigma> p = Some j \<and> finite_instance_reference q \<sigma> r = Some k"
+      by (auto simp: found split: option.splits)
+    then show ?thesis using Finite_Pattern_Pair.IH(1)[OF pair(4)] Finite_Pattern_Pair.IH(2)[OF pair(5)] mem pair(6)
+      by auto
+  qed
+qed
+
+subsection \<open>An interface matched over references\<close>
+
+text \<open>
+  Matching reads the call's shapes from its reference: a variable binds the reference it meets, a literal is the leaf
+  the table holds there, and a pair is read one level through its shape. Two bindings of one variable are compared as
+  references.
+\<close>
+
+fun finite_reference_bindings :: "share_state \<Rightarrow> 'a finite_term_pattern \<Rightarrow> nat \<Rightarrow> ('a \<times> nat) fset option" where
+  "finite_reference_bindings q (Finite_Variable a) i = Some {|(a,i)|}"
+| "finite_reference_bindings q (Finite_Pattern_Target x) i =
+    (if finite_target_formed x \<and> finite_shape_found q (Leaf_Shape (Target_Leaf x)) = Some i then Some {||} else None)"
+| "finite_reference_bindings q (Finite_Pattern_Payload v) i =
+    (if octets_formed v \<and> finite_shape_found q (Leaf_Shape (Payload_Leaf v)) = Some i then Some {||} else None)"
+| "finite_reference_bindings q (Finite_Pattern_Pair p r) i = (case finite_shape_at q i of
+      Some (Pair_Shape j k) \<Rightarrow> (case finite_reference_bindings q p j of None \<Rightarrow> None
+        | Some A \<Rightarrow> (case finite_reference_bindings q r k of None \<Rightarrow> None | Some B \<Rightarrow> Some (A |\<union>| B)))
+    | _ \<Rightarrow> None)"
+
+definition finite_reference_matched :: "share_state \<Rightarrow> 'a finite_term_pattern \<Rightarrow> nat \<Rightarrow> bool" where
+  "finite_reference_matched q p i \<longleftrightarrow> (case finite_reference_bindings q p i of None \<Rightarrow> False
+    | Some A \<Rightarrow> finite_relation_functional A)"
+
+lemma finite_matching_instance_mono:
+  "finite_matching_bindings p t |\<subseteq>| W \<Longrightarrow>
+    finite_pattern_instance W p t \<longleftrightarrow> finite_pattern_instance (finite_matching_bindings p t) p t"
+proof (induction p arbitrary: t W)
+  case (Finite_Pattern_Pair p r)
+  show ?case
+  proof (cases t)
+    case (Finite_Pair x z)
+    have sub: "finite_matching_bindings p x |\<subseteq>| W" "finite_matching_bindings r z |\<subseteq>| W"
+      "finite_matching_bindings p x |\<subseteq>| finite_matching_bindings p x |\<union>| finite_matching_bindings r z"
+      "finite_matching_bindings r z |\<subseteq>| finite_matching_bindings p x |\<union>| finite_matching_bindings r z"
+      using Finite_Pattern_Pair.prems Finite_Pair by auto
+    show ?thesis using Finite_Pattern_Pair.IH(1)[OF sub(1)] Finite_Pattern_Pair.IH(2)[OF sub(2)]
+      Finite_Pattern_Pair.IH(1)[OF sub(3)] Finite_Pattern_Pair.IH(2)[OF sub(4)] Finite_Pair by simp
+  qed simp_all
+qed simp_all
+
+lemma finite_matching_instance_domain:
+  "finite_pattern_instance (finite_matching_bindings p t) p t \<Longrightarrow>
+    fimage fst (finite_matching_bindings p t) = finite_pattern_variables p"
+proof (induction p arbitrary: t)
+  case (Finite_Pattern_Pair p r)
+  obtain x z where t: "t = Finite_Pair x z" using Finite_Pattern_Pair.prems by (cases t) simp_all
+  have sub: "finite_matching_bindings p x |\<subseteq>| finite_matching_bindings p x |\<union>| finite_matching_bindings r z"
+    "finite_matching_bindings r z |\<subseteq>| finite_matching_bindings p x |\<union>| finite_matching_bindings r z" by auto
+  have i: "finite_pattern_instance (finite_matching_bindings p x) p x" "finite_pattern_instance (finite_matching_bindings r z) r z"
+    using Finite_Pattern_Pair.prems t finite_matching_instance_mono[OF sub(1)] finite_matching_instance_mono[OF sub(2)]
+    by simp_all
+  show ?case using Finite_Pattern_Pair.IH(1)[OF i(1)] Finite_Pattern_Pair.IH(2)[OF i(2)] t by (simp add: fimage_funion)
+qed simp_all
+
+lemma finite_reference_bindings_exact:
+  assumes rep: "keyed_state_represents q T" and tf: "table_formed T"
+  shows "reference_term T i = Some t \<Longrightarrow>
+    (finite_reference_bindings q p i = None \<longleftrightarrow> \<not> finite_pattern_instance (finite_matching_bindings p t) p t) \<and>
+    (\<forall>A. finite_reference_bindings q p i = Some A \<longrightarrow> fBall A (\<lambda>(a,j). \<exists>u. reference_term T j = Some u) \<and>
+      fimage (\<lambda>(a,j). (a,the (reference_term T j))) A = finite_matching_bindings p t)"
+proof (induction p arbitrary: i t)
+  case (Finite_Variable a)
+  then show ?case by simp
+next
+  case (Finite_Pattern_Target x)
+  show ?case using finite_leaf_found[OF rep tf Finite_Pattern_Target.prems, of "Target_Leaf x"] by auto
+next
+  case (Finite_Pattern_Payload v)
+  show ?case using finite_leaf_found[OF rep tf Finite_Pattern_Payload.prems, of "Payload_Leaf v"] by auto
+next
+  case (Finite_Pattern_Pair p r)
+  from Finite_Pattern_Pair.prems show ?case
+  proof (cases rule: reference_term_cases)
+    case (leaf l)
+    have none: "finite_reference_bindings q (Finite_Pattern_Pair p r) i = None"
+      using leaf(1) by (simp add: finite_shape_at_read[OF rep])
+    have "\<not> finite_pattern_instance (finite_matching_bindings (Finite_Pattern_Pair p r) t) (Finite_Pattern_Pair p r) t"
+      using leaf(2) by (cases l) simp_all
+    then show ?thesis using none by simp
+  next
+    case (pair j k x z)
+    have at: "finite_shape_at q i = Some (Pair_Shape j k)" using pair(1) by (simp add: finite_shape_at_read[OF rep])
+    note IHp = Finite_Pattern_Pair.IH(1)[OF pair(4)] and IHr = Finite_Pattern_Pair.IH(2)[OF pair(5)]
+    have sub: "finite_matching_bindings p x |\<subseteq>| finite_matching_bindings p x |\<union>| finite_matching_bindings r z"
+      "finite_matching_bindings r z |\<subseteq>| finite_matching_bindings p x |\<union>| finite_matching_bindings r z" by auto
+    have inst: "finite_pattern_instance (finite_matching_bindings (Finite_Pattern_Pair p r) t) (Finite_Pattern_Pair p r) t \<longleftrightarrow>
+        finite_pattern_instance (finite_matching_bindings p x) p x \<and> finite_pattern_instance (finite_matching_bindings r z) r z"
+      using pair(6) finite_matching_instance_mono[OF sub(1)] finite_matching_instance_mono[OF sub(2)] by simp
+    show ?thesis
+    proof (cases "finite_reference_bindings q p j")
+      case None
+      then show ?thesis using at IHp inst by simp
+    next
+      case (Some A)
+      show ?thesis
+      proof (cases "finite_reference_bindings q r k")
+        case None
+        then show ?thesis using at IHr inst Some by simp
+      next
+        case (Some B)
+        then show ?thesis using at IHp IHr inst \<open>finite_reference_bindings q p j = Some A\<close> pair(6)
+          by (auto simp: fimage_funion)
+      qed
+    qed
+  qed
+qed
+
+lemma finite_reference_matched_exact:
+  assumes rep: "keyed_state_represents q T" and tf: "table_formed T" and t: "reference_term T i = Some t"
+  shows "finite_reference_matched q p i \<longleftrightarrow> finite_pattern_matched p t"
+proof (cases "finite_reference_bindings q p i")
+  case None
+  then have "\<not> finite_pattern_instance (finite_matching_bindings p t) p t"
+    using finite_reference_bindings_exact[OF rep tf t, of p] by simp
+  then show ?thesis using None by (simp add: finite_reference_matched_def finite_pattern_matched_def)
+next
+  case (Some A)
+  have held: "fBall A (\<lambda>(a,j). \<exists>u. reference_term T j = Some u)"
+    and img: "fimage (\<lambda>(a,j). (a,the (reference_term T j))) A = finite_matching_bindings p t"
+    and inst: "finite_pattern_instance (finite_matching_bindings p t) p t"
+    using finite_reference_bindings_exact[OF rep tf t, of p] Some by simp_all
+  have inj: "u = v" if u: "u |\<in>| fimage snd A" and v: "v |\<in>| fimage snd A"
+    and e: "the (reference_term T u) = the (reference_term T v)" for u v
+  proof -
+    obtain a b where au: "(a,u) |\<in>| A" and bv: "(b,v) |\<in>| A" using u v by force
+    obtain x where x: "reference_term T u = Some x" using fbspec[OF held au] by auto
+    obtain y where y: "reference_term T v = Some y" using fbspec[OF held bv] by auto
+    have xy: "x = y" using x y e by simp
+    show "u = v" by (rule reference_term_injective[OF tf x]) (use y xy in simp)
+  qed
+  have "finite_relation_functional (finite_matching_bindings p t) \<longleftrightarrow> finite_relation_functional A"
+    unfolding img[symmetric] by (rule finite_relation_functional_value_image[OF inj])
+  then show ?thesis using Some inst finite_matching_instance_domain[OF inst]
+    by (simp add: finite_reference_matched_def finite_pattern_matched_def)
+qed
+
+subsection \<open>The admitted instance over references\<close>
+
+text \<open>
+  C3's admitted instance with the call, the bindings and the premise calls read as references: the interfaces matched
+  over references, the bindings' domain read off their list, each instance compared with its call as a reference, and
+  the premise calls compared as references. The values no call holds are formed and the material satisfied as C3 has
+  them, over the values.
+\<close>
+
+definition finite_admitted_instance_reference_at ::
+    "('a,'s,'d,'c) finite_schema_system \<Rightarrow> share_state \<Rightarrow> 'd \<Rightarrow> 'c \<Rightarrow> ('a \<times> nat) list \<Rightarrow>
+      ('a \<times> finite_factor_term) fset \<Rightarrow> nat \<Rightarrow> ('s \<times> ('d \<times> nat)) fset \<Rightarrow> bool" where
+  "finite_admitted_instance_reference_at P q d c B V i QR \<longleftrightarrow>
+    fBex (finite_system_interfaces P) (\<lambda>(e,p). e=d \<and> finite_reference_matched q p i) \<and>
+    fBex (finite_system_clauses P) (\<lambda>((e,k),S). e=d \<and> k=c \<and> finite_schema_formed S \<and>
+      fset_of_list (map fst B) = finite_schema_variables S \<and>
+      fBall V (\<lambda>(a,x). a |\<in>| finite_schema_call_variables S \<or> finite_term_formed x) \<and>
+      finite_instance_reference q (map_of B) (finite_schema_conclusion S) = Some i \<and>
+      finite_relation_functional QR \<and> fimage fst QR = fimage fst (finite_schema_premises S) \<and>
+      fBall (finite_schema_premises S) (\<lambda>(s,e,p). fBex QR (\<lambda>(r,e',j). r=s \<and> e'=e \<and>
+        finite_instance_reference q (map_of B) p = Some j)) \<and>
+      finite_schema_material_satisfied S V) \<and>
+    fBall QR (\<lambda>(s,e,j). fBex (finite_system_interfaces P) (\<lambda>(e',p). e'=e \<and> finite_reference_matched q p j))"
+
+lemma finite_admitted_instance_reference_exact:
+  assumes rep: "keyed_state_represents q T" and tf: "table_formed T" and read: "finite_bindings_read T B V"
+    and t: "reference_term T i = Some t"
+    and held: "fBall QR (\<lambda>(s,e,j). \<exists>u. reference_term T j = Some u)"
+    and Q: "Q = fimage (\<lambda>(s,e,j). (s,e,the (reference_term T j))) QR"
+  shows "finite_admitted_instance_reference_at P q d c B V i QR \<longleftrightarrow> finite_admitted_instance_formed_at P d c V t Q"
+proof -
+  have \<sigma>: "\<And>a x. (a,x) |\<in>| V \<longleftrightarrow> (\<exists>r. map_of B a = Some r \<and> reference_term T r = Some x)"
+    by (rule finite_bindings_read_member[OF read])
+  have inst: "finite_pattern_instance V p u \<longleftrightarrow> finite_instance_reference q (map_of B) p = Some j"
+    if "reference_term T j = Some u" for p u j
+    using finite_instance_reference_exact[OF rep tf \<sigma> that, of p] by (simp add: finite_pattern_instances_member)
+  have fV: "finite_relation_functional V" by (rule finite_bindings_read_functional[OF read])
+  have dV: "fimage fst V = fset_of_list (map fst B)" by (rule finite_bindings_read_domain[OF read])
+  have dec: "reference_term T j = Some (the (reference_term T j))" if "(s,e,j) |\<in>| QR" for s e j
+    using fbspec[OF held that] by auto
+  have I1: "finite_pattern_matched p t \<longleftrightarrow> finite_reference_matched q p i" for p
+    by (simp add: finite_reference_matched_exact[OF rep tf t])
+  have I3: "fBall Q (\<lambda>(s,e,x). fBex (finite_system_interfaces P) (\<lambda>(e',p). e'=e \<and> finite_pattern_matched p x)) \<longleftrightarrow>
+      fBall QR (\<lambda>(s,e,j). fBex (finite_system_interfaces P) (\<lambda>(e',p). e'=e \<and> finite_reference_matched q p j))"
+  proof -
+    have pw: "finite_pattern_matched p (the (reference_term T j)) \<longleftrightarrow> finite_reference_matched q p j"
+      if "(s,e,j) |\<in>| QR" for s e j p
+      by (simp add: finite_reference_matched_exact[OF rep tf dec[OF that]])
+    have img: "fBall Q Pm \<longleftrightarrow> fBall QR (\<lambda>x. Pm ((\<lambda>(s,e,j). (s,e,the (reference_term T j))) x))" for Pm
+      unfolding Q by auto
+    show ?thesis unfolding img
+    proof (rule fBall_cong[OF refl], goal_cases)
+      case (1 x)
+      obtain s e j where xx: "x = (s,e,j)" by (cases x) auto
+      show ?case using 1 xx by (simp add: pw)
+    qed
+  qed
+  have Qimg: "Q = fimage (\<lambda>(s,v). (s,(\<lambda>(e,j). (e,the (reference_term T j))) v)) QR"
+    unfolding Q by (rule fimage_cong[OF refl]) auto
+  have injQ: "u = v" if mu: "u |\<in>| fimage snd QR" and mv: "v |\<in>| fimage snd QR"
+      and same: "(\<lambda>(e,j). (e,the (reference_term T j))) u = (\<lambda>(e,j). (e,the (reference_term T j))) v" for u v
+  proof -
+    obtain s e j s' e' j' where u: "u = (e,j)" "(s,e,j) |\<in>| QR" and v: "v = (e',j')" "(s',e',j') |\<in>| QR"
+      using mu mv by force
+    have tj: "the (reference_term T j) = the (reference_term T j')" and ee: "e = e'" using same u v by simp_all
+    have "j = j'" by (rule reference_term_injective[OF tf dec[OF u(2)]]) (use dec[OF v(2)] tj in simp)
+    then show "u = v" using u(1) v(1) ee by simp
+  qed
+  have fQ: "finite_relation_functional Q \<longleftrightarrow> finite_relation_functional QR"
+    unfolding Qimg by (rule finite_relation_functional_value_image[OF injQ])
+  have kQ: "fimage fst Q = fimage fst QR" unfolding Q by (rule fset_eqI) force
+  have pQ: "fBex Q (\<lambda>(r,e,x). r=s \<and> e=d' \<and> finite_pattern_instance V p x) \<longleftrightarrow>
+      fBex QR (\<lambda>(r,e',j). r=s \<and> e'=d' \<and> finite_instance_reference q (map_of B) p = Some j)" for s d' p
+  proof -
+    have pw: "finite_pattern_instance V p (the (reference_term T j)) \<longleftrightarrow>
+        finite_instance_reference q (map_of B) p = Some j" if "(r,e,j) |\<in>| QR" for r e j
+      by (rule inst[OF dec[OF that]])
+    have img: "fBex Q Pm \<longleftrightarrow> fBex QR (\<lambda>x. Pm ((\<lambda>(s,e,j). (s,e,the (reference_term T j))) x))" for Pm
+      unfolding Q by auto
+    show ?thesis unfolding img
+    proof (rule fBex_cong[OF refl], goal_cases)
+      case (1 x)
+      obtain r e j where xx: "x = (r,e,j)" by (cases x) auto
+      show ?case using 1 xx by (simp add: pw)
+    qed
+  qed
+  have prem: "finite_schema_premise_instance S V Q \<longleftrightarrow> finite_relation_functional QR \<and>
+      fimage fst QR = fimage fst (finite_schema_premises S) \<and>
+      fBall (finite_schema_premises S) (\<lambda>(s,e,p). fBex QR (\<lambda>(r,e',j). r=s \<and> e'=e \<and>
+        finite_instance_reference q (map_of B) p = Some j))" for S
+    unfolding finite_schema_premise_instance_def fQ kQ by (simp only: pQ)
+  have cl: "(e=d \<and> k=c \<and> finite_schema_formed S \<and>
+      finite_relation_functional V \<and> fimage fst V = finite_schema_variables S \<and>
+      fBall V (\<lambda>(a,x). a |\<in>| finite_schema_call_variables S \<or> finite_term_formed x) \<and>
+      finite_pattern_instance V (finite_schema_conclusion S) t \<and> finite_schema_premise_instance S V Q \<and>
+      finite_schema_material_satisfied S V) \<longleftrightarrow>
+    (e=d \<and> k=c \<and> finite_schema_formed S \<and>
+      fset_of_list (map fst B) = finite_schema_variables S \<and>
+      fBall V (\<lambda>(a,x). a |\<in>| finite_schema_call_variables S \<or> finite_term_formed x) \<and>
+      finite_instance_reference q (map_of B) (finite_schema_conclusion S) = Some i \<and>
+      finite_relation_functional QR \<and> fimage fst QR = fimage fst (finite_schema_premises S) \<and>
+      fBall (finite_schema_premises S) (\<lambda>(s,e,p). fBex QR (\<lambda>(r,e',j). r=s \<and> e'=e \<and>
+        finite_instance_reference q (map_of B) p = Some j)) \<and>
+      finite_schema_material_satisfied S V)" for e k S
+    using fV dV inst[OF t, of "finite_schema_conclusion S"] prem[of S] by simp
+  have C: "fBex (finite_system_clauses P) (\<lambda>((e,k),S). e=d \<and> k=c \<and> finite_schema_formed S \<and>
+      finite_relation_functional V \<and> fimage fst V = finite_schema_variables S \<and>
+      fBall V (\<lambda>(a,x). a |\<in>| finite_schema_call_variables S \<or> finite_term_formed x) \<and>
+      finite_pattern_instance V (finite_schema_conclusion S) t \<and> finite_schema_premise_instance S V Q \<and>
+      finite_schema_material_satisfied S V) \<longleftrightarrow>
+    fBex (finite_system_clauses P) (\<lambda>((e,k),S). e=d \<and> k=c \<and> finite_schema_formed S \<and>
+      fset_of_list (map fst B) = finite_schema_variables S \<and>
+      fBall V (\<lambda>(a,x). a |\<in>| finite_schema_call_variables S \<or> finite_term_formed x) \<and>
+      finite_instance_reference q (map_of B) (finite_schema_conclusion S) = Some i \<and>
+      finite_relation_functional QR \<and> fimage fst QR = fimage fst (finite_schema_premises S) \<and>
+      fBall (finite_schema_premises S) (\<lambda>(s,e,p). fBex QR (\<lambda>(r,e',j). r=s \<and> e'=e \<and>
+        finite_instance_reference q (map_of B) p = Some j)) \<and>
+      finite_schema_material_satisfied S V)"
+  proof (rule fBex_cong[OF refl], goal_cases)
+    case (1 x)
+    obtain e k S where x: "x = ((e,k),S)" by (cases x) auto
+    show ?case unfolding x prod.case by (rule cl)
+  qed
+  show ?thesis unfolding finite_admitted_instance_reference_at_def finite_admitted_instance_formed_at_def I3 C
+    by (simp only: I1)
+qed
+
+subsection \<open>The premises' nodes found by the instances' references\<close>
+
+text \<open>
+  Where a node's bindings are read as references, its premises' nodes are found from the reference of each premise
+  instance, made by substituting the bindings (@{const finite_instance_reference}), instead of from every instance shared
+  again; where they are not, the instances are shared again as C2's rows do (@{text finite_bound_premise_nodes_none}).
+  Either finds the premise's nodes (@{text finite_bound_index_exact}).
+\<close>
+
+definition finite_bound_premise_nodes ::
+    "('s list, ('a,'s::linorder,'d,'c) resolution_node \<times> nat) rbt \<Rightarrow> (nat, ('a,'s,'d,'c) resolution_node list) rbt \<Rightarrow>
+      share_state \<Rightarrow> ('a \<times> nat) list option \<Rightarrow> ('a,'s,'d,'c) resolution_node \<Rightarrow> 's \<Rightarrow> 'd \<Rightarrow> 'a finite_term_pattern \<Rightarrow>
+      ('a,'s,'d,'c) resolution_node fset" where
+  "finite_bound_premise_nodes PI G q0 \<beta> nd s e p = finite_premise_reference_nodes PI G (case \<beta> of
+      None \<Rightarrow> fimage (\<lambda>x. fst (keyed_share_term x q0)) (finite_pattern_instances (finite_node_values nd) p)
+    | Some B \<Rightarrow> (case finite_instance_reference q0 (map_of B) p of None \<Rightarrow> {||} | Some r \<Rightarrow> {|r|})) nd s e"
+
+lemma finite_bound_premise_nodes_none:
+  "finite_bound_premise_nodes PI G q0 None nd s e p = finite_indexed_premise_nodes PI G q0 nd s e p"
+  by (simp only: finite_bound_premise_nodes_def finite_indexed_premise_nodes_references option.simps)
+
+definition finite_bound_links ::
+    "('s list, ('a,'s::linorder,'d,'c) resolution_node \<times> nat) rbt \<Rightarrow> (nat, ('a,'s,'d,'c) resolution_node list) rbt \<Rightarrow>
+      share_state \<Rightarrow> ('a \<times> nat) list option \<Rightarrow> ('a,'s,'d,'c) resolution_node \<Rightarrow> ('s \<times> ('a,'s,'d,'c) resolution_node) fset" where
+  "finite_bound_links PI G q0 \<beta> nd = ffUnion (fimage (\<lambda>(s,e,p). fimage (\<lambda>m. (s,m))
+    (finite_bound_premise_nodes PI G q0 \<beta> nd s e p)) (finite_schema_premises (resolution_node_schema nd)))"
+
+definition finite_bound_table_links ::
+    "('a,'s,'d,'c) resolution_table \<Rightarrow> ('s list, ('a,'s::linorder,'d,'c) resolution_node \<times> nat) rbt \<Rightarrow>
+      (nat, ('a,'s,'d,'c) resolution_node list) rbt \<Rightarrow> share_state \<Rightarrow> ('a \<times> nat) list option \<Rightarrow>
+      ('a,'s,'d,'c) resolution_node \<Rightarrow> ('s \<times> ('a,'s,'d,'c) resolution_node) fset" where
+  "finite_bound_table_links \<Theta> PI G q0 \<beta> nd = ffUnion (fimage (\<lambda>(s,e,p).
+      let U = ffilter (\<lambda>u. resolution_table_lookup \<Theta> (e,u) \<noteq> None) (finite_pattern_instances (finite_node_values nd) p) in
+    if U={||} then {||} else if finite_bound_premise_nodes PI G q0 \<beta> nd s e p={||}
+      then fimage (\<lambda>u. (s,finite_table_node nd s e u)) U else {||})
+    (finite_schema_premises (resolution_node_schema nd)))"
+
+lemma finite_bound_index_exact:
+  assumes listed: "finite_post_listed (fset N) ns" and rep0: "keyed_state_represents q T" and f0: "table_formed T"
+    and L: "\<forall>m\<in>set ns. \<forall>i. L (resolution_node_position m) = Some i \<longrightarrow>
+      reference_term T i = Some (finite_residual_term (resolution_node_call m))"
+    and run: "finite_read_rows L ns q = (rows,q0)"
+    and B: "\<And>m B. m |\<in>| N \<Longrightarrow> Bv (resolution_node_position m) = Some B \<Longrightarrow> finite_bindings_read T B (finite_node_values m)"
+    and nd: "nd |\<in>| N"
+  shows "finite_bound_premise_nodes (finite_position_index rows) (finite_group_index rows) q0
+    (Bv (resolution_node_position nd)) nd s e p = finite_premise_nodes N nd s e p"
+proof (rule finite_read_index_facts[OF listed rep0 f0 L run])
+  fix T'
+  assume rep: "keyed_state_represents q0 T'" and ft: "table_formed T'"
+    and pres: "\<And>i u. reference_term T i = Some u \<Longrightarrow> reference_term T' i = Some u"
+    and PI: "\<And>q m r. RBT.lookup (finite_position_index rows) q = Some (m,r) \<longleftrightarrow>
+      m |\<in>| N \<and> resolution_node_position m = q \<and> finite_term_keyed q0 r (finite_residual_term (resolution_node_call m))"
+    and G: "\<And>r m. m \<in> set (finite_group_lookup (finite_group_index rows) r) \<longleftrightarrow>
+      m |\<in>| N \<and> finite_term_keyed q0 r (finite_residual_term (resolution_node_call m))"
+    and ex: "\<And>m. m |\<in>| N \<Longrightarrow> \<exists>r. finite_term_keyed q0 r (finite_residual_term (resolution_node_call m))"
+    and dist: "\<And>m m'. m |\<in>| N \<Longrightarrow> m' |\<in>| N \<Longrightarrow> resolution_node_position m=resolution_node_position m' \<Longrightarrow> m=m'"
+    and refd: "\<And>m r. m |\<in>| N \<Longrightarrow> finite_term_keyed q0 r (finite_residual_term (resolution_node_call m)) \<Longrightarrow>
+      reference_term T' r = Some (finite_residual_term (resolution_node_call m))"
+  show ?thesis
+  proof (cases "Bv (resolution_node_position nd)")
+    case None
+    then show ?thesis using finite_read_index_exact[OF listed rep0 f0 L run, of nd s e p]
+      by (simp only: finite_bound_premise_nodes_none)
+  next
+    case (Some B0)
+    have read: "finite_bindings_read T' B0 (finite_node_values nd)" by (rule finite_bindings_read_extends[OF B[OF nd Some] pres])
+    have \<sigma>: "\<And>a x. (a,x) |\<in>| finite_node_values nd \<longleftrightarrow> (\<exists>r. map_of B0 a = Some r \<and> reference_term T' r = Some x)"
+      by (rule finite_bindings_read_member[OF read])
+    have IR: "r |\<in>| (case finite_instance_reference q0 (map_of B0) p of None \<Rightarrow> {||} | Some r' \<Rightarrow> {|r'|}) \<longleftrightarrow>
+        finite_residual_term (resolution_node_call m) |\<in>| finite_pattern_instances (finite_node_values nd) p"
+      if m: "m |\<in>| N" and k: "finite_term_keyed q0 r (finite_residual_term (resolution_node_call m))" for m r
+      using finite_instance_reference_exact[OF rep ft \<sigma> refd[OF m k], of p] by (auto split: option.splits)
+    show ?thesis unfolding Some finite_bound_premise_nodes_def option.simps
+      by (rule finite_premise_reference_nodes_exact[OF dist PI G ex IR])
+  qed
+qed
+
+subsection \<open>The rows a representation gives, with the bindings it reads\<close>
+
+text \<open>
+  A representation reads the bindings of a node when, at every table it represents, the list it gives at the node's
+  position reads the node's bindings (@{const finite_bindings_read}); the representation that gives no list reads them
+  trivially. The rows over it are C2's rows with each premise's nodes found by the instances' references, the sharing
+  state and its position index returned beside them for the check over references.
+\<close>
+
+definition finite_reads_bindings ::
+    "('s list \<Rightarrow> ('a \<times> nat) list option) \<Rightarrow> share_state \<Rightarrow> ('a,'s,'d,'c) resolution_node fset \<Rightarrow> bool" where
+  "finite_reads_bindings Bv q N \<longleftrightarrow> (\<forall>T. keyed_state_represents q T \<longrightarrow> (\<forall>m B. m |\<in>| N \<longrightarrow>
+    Bv (resolution_node_position m) = Some B \<longrightarrow> finite_bindings_read T B (finite_node_values m)))"
+
+lemma finite_reads_bindings_none: "finite_reads_bindings (\<lambda>_. None) q N"
+  by (simp add: finite_reads_bindings_def)
+
+definition finite_bound_check_rows ::
+    "('a,'s,'d,'c) resolution_table \<Rightarrow> ('s list \<Rightarrow> nat option) \<Rightarrow> ('s list \<Rightarrow> ('a \<times> nat) list option) \<Rightarrow> share_state \<Rightarrow>
+      ('a,'s::linorder,'d,'c) resolution_node list \<Rightarrow>
+      bool \<times> share_state \<times> ('s list, ('a,'s,'d,'c) resolution_node \<times> nat) rbt \<times>
+        (('a,'s,'d,'c) resolution_node \<times> ('s \<times> ('a,'s,'d,'c) resolution_node) fset \<times>
+          ('s \<times> ('a,'s,'d,'c) resolution_node) fset) list" where
+  "finite_bound_check_rows \<Theta> L Bv q ns = (case finite_read_rows L ns q of (rows,q0) \<Rightarrow>
+    let PI = finite_position_index rows; G = finite_group_index rows in
+    (finite_share_leaves_formed q0,q0,PI,map (\<lambda>m. let \<beta> = Bv (resolution_node_position m) in
+      (m,finite_bound_links PI G q0 \<beta> m,finite_bound_table_links \<Theta> PI G q0 \<beta> m)) ns))"
+
+lemma finite_bound_links_none:
+  "finite_bound_links PI G q0 None nd = finite_indexed_links PI G q0 nd"
+  "finite_bound_table_links \<Theta> PI G q0 None nd = finite_indexed_table_links \<Theta> PI G q0 nd"
+  by (simp_all only: finite_bound_links_def finite_indexed_links_def finite_bound_table_links_def
+    finite_indexed_table_links_def finite_bound_premise_nodes_none)
+
+lemma finite_bound_check_rows_none:
+  "finite_bound_check_rows \<Theta> L (\<lambda>_. None) q ns = (case finite_read_check_rows \<Theta> L q ns of (fl,LS) \<Rightarrow>
+    (fl,snd (finite_read_rows L ns q),finite_position_index (fst (finite_read_rows L ns q)),LS))"
+  by (simp add: finite_bound_check_rows_def finite_read_check_rows_def Let_def finite_bound_links_none
+    split: prod.split)
+
+subsection \<open>The check over references\<close>
+
+text \<open>
+  A row whose node's bindings and call the representation reads as references, and which has no table link, is
+  checked over references (@{const finite_admitted_instance_reference_at}), its premise calls read from the position
+  index; any other row is checked as C3 checks it. Over the rows a representation that reads the calls and bindings
+  gives, the check is C's (@{text finite_bound_check_rows_exact}).
+\<close>
+
+definition finite_reference_row_check ::
+    "('a,'s,'d,'c) finite_schema_system \<Rightarrow> share_state \<Rightarrow> ('s list, ('a,'s::linorder,'d,'c) resolution_node \<times> nat) rbt \<Rightarrow>
+      ('s list \<Rightarrow> ('a \<times> nat) list option) \<Rightarrow>
+      ('a,'s,'d,'c) resolution_node \<times> ('s \<times> ('a,'s,'d,'c) resolution_node) fset \<times>
+        ('s \<times> ('a,'s,'d,'c) resolution_node) fset \<Rightarrow> bool" where
+  "finite_reference_row_check P q0 PI Bv row = (case row of (m,L,TL) \<Rightarrow>
+    (case Bv (resolution_node_position m) of None \<Rightarrow> finite_formed_row_check P (m,L,TL)
+    | Some B \<Rightarrow> (case RBT.lookup PI (resolution_node_position m) of None \<Rightarrow> finite_formed_row_check P (m,L,TL)
+      | Some (m',i) \<Rightarrow> if TL = {||} then finite_admitted_instance_reference_at P q0 (resolution_node_site m)
+          (resolution_node_clause m) B (finite_node_values m) i
+          (fimage (\<lambda>(s,m''). (s,resolution_node_site m'',snd (the (RBT.lookup PI (resolution_node_position m''))))) L)
+        else finite_formed_row_check P (m,L,TL))))"
+
+definition finite_reference_reached_graph_check ::
+    "('a,'s::linorder,'d,'c) finite_schema_system \<Rightarrow> share_state \<Rightarrow> ('s list, ('a,'s,'d,'c) resolution_node \<times> nat) rbt \<Rightarrow>
+      ('s list \<Rightarrow> ('a \<times> nat) list option) \<Rightarrow> 'd \<Rightarrow> finite_factor_term \<Rightarrow>
+      (('a,'s,'d,'c) resolution_node \<times> ('s \<times> ('a,'s,'d,'c) resolution_node) fset \<times>
+        ('s \<times> ('a,'s,'d,'c) resolution_node) fset) list \<Rightarrow> ('s list, unit) rbt \<Rightarrow> ('a,'s,'d,'c) resolution_node \<Rightarrow> bool" where
+  "finite_reference_reached_graph_check P q0 PI Bv d t LS R nd =
+    finite_rows_reached_check (finite_reference_row_check P q0 PI Bv) P d t LS R nd"
+
+lemma finite_reference_reached_none:
+  "finite_reference_reached_graph_check P q0 PI (\<lambda>_. None) d t LS = finite_formed_reached_graph_check P d t LS"
+proof -
+  have "finite_reference_row_check P q0 PI (\<lambda>_. None) = finite_formed_row_check P"
+    by (rule ext) (simp add: finite_reference_row_check_def split: prod.split)
+  then show ?thesis by (intro ext) (simp only: finite_reference_reached_graph_check_def finite_formed_reached_graph_check_def)
+qed
+
+lemma finite_reference_row_check_exact:
+  assumes rep: "keyed_state_represents q0 T" and tf: "table_formed T"
+    and PIc: "\<And>q m r. RBT.lookup PI q = Some (m,r) \<longleftrightarrow>
+      m |\<in>| N \<and> resolution_node_position m = q \<and> finite_term_keyed q0 r (finite_residual_term (resolution_node_call m))"
+    and ex: "\<And>m. m |\<in>| N \<Longrightarrow> \<exists>r. finite_term_keyed q0 r (finite_residual_term (resolution_node_call m))"
+    and refd: "\<And>m r. m |\<in>| N \<Longrightarrow> finite_term_keyed q0 r (finite_residual_term (resolution_node_call m)) \<Longrightarrow>
+      reference_term T r = Some (finite_residual_term (resolution_node_call m))"
+    and B: "\<And>m B. m |\<in>| N \<Longrightarrow> Bv (resolution_node_position m) = Some B \<Longrightarrow> finite_bindings_read T B (finite_node_values m)"
+    and m: "m |\<in>| N" and Ln: "\<And>s m''. (s,m'') |\<in>| L \<Longrightarrow> m'' |\<in>| N"
+  shows "finite_reference_row_check P q0 PI Bv (m,L,TL) = finite_formed_row_check P (m,L,TL)"
+proof (cases "Bv (resolution_node_position m)")
+  case None
+  then show ?thesis by (simp add: finite_reference_row_check_def)
+next
+  case (Some B0)
+  obtain r0 where k0: "finite_term_keyed q0 r0 (finite_residual_term (resolution_node_call m))" using ex[OF m] by blast
+  have look: "RBT.lookup PI (resolution_node_position m) = Some (m,r0)" using PIc m k0 by blast
+  have i: "reference_term T r0 = Some (finite_residual_term (resolution_node_call m))" by (rule refd[OF m k0])
+  show ?thesis
+  proof (cases "TL = {||}")
+    case False
+    then show ?thesis using Some look by (simp add: finite_reference_row_check_def)
+  next
+    case True
+    have lk: "\<exists>r. RBT.lookup PI (resolution_node_position m'') = Some (m'',r) \<and>
+        reference_term T r = Some (finite_residual_term (resolution_node_call m''))" if sm: "(s,m'') |\<in>| L" for s m''
+    proof -
+      have mm: "m'' |\<in>| N" by (rule Ln[OF sm])
+      obtain r where k: "finite_term_keyed q0 r (finite_residual_term (resolution_node_call m''))" using ex[OF mm] by blast
+      show ?thesis using PIc mm k refd[OF mm k] by blast
+    qed
+    let ?QR = "fimage (\<lambda>(s,m''). (s,resolution_node_site m'',snd (the (RBT.lookup PI (resolution_node_position m''))))) L"
+    let ?Q = "fimage (\<lambda>(s,m'). (s,resolution_node_site m',finite_residual_term (resolution_node_call m'))) L"
+    have pt: "the (reference_term T (snd (the (RBT.lookup PI (resolution_node_position m''))))) =
+        finite_residual_term (resolution_node_call m'')" and ph: "\<exists>u. reference_term T (snd (the (RBT.lookup PI
+        (resolution_node_position m'')))) = Some u" if sm: "(s,m'') |\<in>| L" for s m''
+      using lk[OF sm] by auto
+    have held: "fBall ?QR (\<lambda>(s,e,j). \<exists>u. reference_term T j = Some u)"
+    proof (rule fBallI)
+      fix z assume "z |\<in>| ?QR"
+      then obtain s m'' where sm: "(s,m'') |\<in>| L"
+        and zz: "z = (s,resolution_node_site m'',snd (the (RBT.lookup PI (resolution_node_position m''))))" by force
+      show "case z of (s,e,j) \<Rightarrow> \<exists>u. reference_term T j = Some u" using ph[OF sm] zz by simp
+    qed
+    have Q: "?Q = fimage (\<lambda>(s,e,j). (s,e,the (reference_term T j))) ?QR"
+      unfolding fset.map_comp
+    proof (rule fimage_cong[OF refl], goal_cases)
+      case (1 x)
+      obtain s m'' where xx: "x = (s,m'')" by (cases x) auto
+      show ?case using pt[of s m''] 1 xx by simp
+    qed
+    have eq: "finite_admitted_instance_reference_at P q0 (resolution_node_site m) (resolution_node_clause m) B0
+        (finite_node_values m) r0 ?QR \<longleftrightarrow>
+      finite_admitted_instance_formed_at P (resolution_node_site m) (resolution_node_clause m) (finite_node_values m)
+        (finite_residual_term (resolution_node_call m)) ?Q"
+      by (rule finite_admitted_instance_reference_exact[OF rep tf B[OF m Some] i held Q])
+    show ?thesis using Some look True eq by (simp add: finite_reference_row_check_def finite_formed_row_check_def)
+  qed
+qed
+
+lemma finite_bound_check_rows_exact:
+  assumes listed: "finite_post_listed (fset N) ns" and reads: "finite_reads_calls L q N"
+    and binds: "finite_reads_bindings Bv q N" and run: "finite_bound_check_rows \<Theta> L Bv q ns = (fl,q0,PI,LS)"
+  shows "LS = finite_indexed_table_rows \<Theta> ns"
+    and "fl \<Longrightarrow> finite_reference_reached_graph_check P q0 PI Bv d t LS = finite_indexed_reached_graph_check P d t LS"
+proof -
+  obtain T where rep: "keyed_state_represents q T" and f: "table_formed T"
+    and held: "\<And>m i. m |\<in>| N \<Longrightarrow> L (resolution_node_position m) = Some i \<Longrightarrow>
+      reference_term T i = Some (finite_residual_term (resolution_node_call m))"
+    using reads unfolding finite_reads_calls_def by blast
+  have setns: "set ns = fset N" using listed by (simp add: finite_post_listed_def)
+  have Lh: "\<forall>m\<in>set ns. \<forall>i. L (resolution_node_position m) = Some i \<longrightarrow>
+      reference_term T i = Some (finite_residual_term (resolution_node_call m))"
+    using held setns by auto
+  have B: "\<And>m B. m |\<in>| N \<Longrightarrow> Bv (resolution_node_position m) = Some B \<Longrightarrow> finite_bindings_read T B (finite_node_values m)"
+    using binds rep unfolding finite_reads_bindings_def by blast
+  obtain rows q0' where rr: "finite_read_rows L ns q = (rows,q0')" by (cases "finite_read_rows L ns q")
+  have run': "finite_bound_check_rows \<Theta> L Bv q ns = (finite_share_leaves_formed q0',q0',finite_position_index rows,
+      map (\<lambda>m. (m,finite_bound_links (finite_position_index rows) (finite_group_index rows) q0'
+        (Bv (resolution_node_position m)) m,
+      finite_bound_table_links \<Theta> (finite_position_index rows) (finite_group_index rows) q0'
+        (Bv (resolution_node_position m)) m)) ns)"
+    using rr by (simp add: finite_bound_check_rows_def Let_def)
+  have fields: "fl = finite_share_leaves_formed q0'" "q0 = q0'" "PI = finite_position_index rows"
+    "LS = map (\<lambda>m. (m,finite_bound_links (finite_position_index rows) (finite_group_index rows) q0'
+        (Bv (resolution_node_position m)) m,
+      finite_bound_table_links \<Theta> (finite_position_index rows) (finite_group_index rows) q0'
+        (Bv (resolution_node_position m)) m)) ns"
+    using run' run by simp_all
+  have nodes: "finite_bound_premise_nodes (finite_position_index rows) (finite_group_index rows) q0'
+      (Bv (resolution_node_position m)) m s e p = finite_premise_nodes N m s e p" if "m |\<in>| N" for m s e p
+    by (rule finite_bound_index_exact[OF listed rep f Lh rr B that])
+  have exact: "LS = map (\<lambda>m. (m,finite_node_links N m,finite_table_links \<Theta> N m)) ns"
+    unfolding fields(4)
+  proof (rule map_cong[OF refl], goal_cases)
+    case (1 m)
+    have m: "m |\<in>| N" using 1 setns by simp
+    show ?case by (simp only: finite_bound_links_def finite_node_links_def finite_bound_table_links_def
+      finite_table_links_def nodes[OF m] Let_def finite_guarded_image)
+  qed
+  show "LS = finite_indexed_table_rows \<Theta> ns" using exact finite_indexed_table_rows_exact[OF listed] by simp
+  assume fl: fl
+  show "finite_reference_reached_graph_check P q0 PI Bv d t LS = finite_indexed_reached_graph_check P d t LS"
+  proof (rule finite_read_index_facts[OF listed rep f Lh rr])
+    fix T'
+    assume rep': "keyed_state_represents q0' T'" and ft': "table_formed T'"
+      and pres: "\<And>i u. reference_term T i = Some u \<Longrightarrow> reference_term T' i = Some u"
+      and PIc: "\<And>q m r. RBT.lookup (finite_position_index rows) q = Some (m,r) \<longleftrightarrow>
+        m |\<in>| N \<and> resolution_node_position m = q \<and> finite_term_keyed q0' r (finite_residual_term (resolution_node_call m))"
+      and "\<And>r m. m \<in> set (finite_group_lookup (finite_group_index rows) r) \<longleftrightarrow>
+        m |\<in>| N \<and> finite_term_keyed q0' r (finite_residual_term (resolution_node_call m))"
+      and ex: "\<And>m. m |\<in>| N \<Longrightarrow> \<exists>r. finite_term_keyed q0' r (finite_residual_term (resolution_node_call m))"
+      and "\<And>m m'. m |\<in>| N \<Longrightarrow> m' |\<in>| N \<Longrightarrow> resolution_node_position m=resolution_node_position m' \<Longrightarrow> m=m'"
+      and refd: "\<And>m r. m |\<in>| N \<Longrightarrow> finite_term_keyed q0' r (finite_residual_term (resolution_node_call m)) \<Longrightarrow>
+        reference_term T' r = Some (finite_residual_term (resolution_node_call m))"
+    have formed: "finite_term_formed (finite_residual_term (resolution_node_call m))" if mN: "m |\<in>| N" for m
+    proof -
+      obtain r where k: "finite_term_keyed q0' r (finite_residual_term (resolution_node_call m))" using ex[OF mN] by blast
+      have "reference_term T' r = Some (finite_residual_term (resolution_node_call m))" by (rule refd[OF mN k])
+      then show ?thesis by (rule finite_share_leaves_formed_reference[OF rep' fl[unfolded fields(1)]])
+    qed
+    have B': "\<And>m B. m |\<in>| N \<Longrightarrow> Bv (resolution_node_position m) = Some B \<Longrightarrow> finite_bindings_read T' B (finite_node_values m)"
+      using finite_bindings_read_extends[OF B pres] by blast
+    have rowsF: "finite_term_formed (finite_residual_term (resolution_node_call m)) \<and>
+        fBall L (\<lambda>(s,m'). finite_term_formed (finite_residual_term (resolution_node_call m')))"
+      if r: "(m,L,TL) \<in> set LS" for m L TL
+    proof -
+      from r have m: "m \<in> set ns" and Lm: "L = finite_node_links N m" unfolding exact by auto
+      have mN: "m |\<in>| N" using m setns by simp
+      have "fBall L (\<lambda>(s,m'). finite_term_formed (finite_residual_term (resolution_node_call m')))"
+        using Lm formed finite_node_links_reach(1) by fastforce
+      then show ?thesis using formed[OF mN] by blast
+    qed
+    have rowR: "finite_reference_row_check P q0' (finite_position_index rows) Bv row = finite_formed_row_check P row"
+      if r: "row \<in> set LS" for row
+    proof -
+      obtain m L TL where rr': "row = (m,L,TL)" by (cases row) auto
+      from r have m: "m \<in> set ns" and Lm: "L = finite_node_links N m" unfolding exact rr' by auto
+      have mN: "m |\<in>| N" using m setns by simp
+      have Ln: "m'' |\<in>| N" if "(s,m'') |\<in>| L" for s m'' using that Lm finite_node_links_reach(1) by blast
+      show ?thesis unfolding rr' by (rule finite_reference_row_check_exact[OF rep' ft' PIc ex refd B' mN Ln])
+    qed
+    show ?thesis
+    proof (intro ext)
+      fix R nd
+      show "finite_reference_reached_graph_check P q0 PI Bv d t LS R nd = finite_indexed_reached_graph_check P d t LS R nd"
+        unfolding fields(2,3) finite_reference_reached_graph_check_def
+        by (simp only: finite_rows_reached_cong[OF rowR] finite_formed_reached_graph_check_def[symmetric]
+          finite_formed_reached_graph_check_exact[OF rowsF])
+    qed
+  qed
+qed
+
+section \<open>C's readings over a representation, stated once\<close>
+
+text \<open>
+  C's three readings of a found state's roots (its verdicts, its graph verdicts and its graph truth) differ only in what
+  they read of a root over the rows; each is a per-root reading of the rows and of a reached check
+  (@{text finite_verdict_roots}, @{text finite_graph_verdict_roots}, @{text finite_true_roots}). Over a representation
+  the rows are read and the reached check is the check over references where the table's leaves are formed, C's
+  otherwise (@{text finite_reading_by}), stated once for the three and equal to C's at the projected state wherever
+  the representation reads the calls and the bindings (@{text finite_reading_by_exact}). C2's three readings are its
+  instances at the representation that reads no binding, their statements kept; the readings over a representation
+  that reads the bindings are @{text finite_bound_verdicts_in}, @{text finite_bound_graph_verdicts_in} and
+  @{text finite_bound_graph_true_in}.
+\<close>
+
+definition finite_reading_by ::
+    "(('a,'s,'d,'c) resolution_state \<Rightarrow> 'r) \<Rightarrow>
+      ((('a,'s,'d,'c) resolution_node \<times> ('s \<times> ('a,'s,'d,'c) resolution_node) fset \<times>
+        ('s \<times> ('a,'s,'d,'c) resolution_node) fset) list \<Rightarrow> (('s list, unit) rbt \<Rightarrow> ('a,'s,'d,'c) resolution_node \<Rightarrow> bool) \<Rightarrow> 'r) \<Rightarrow>
+      ('a,'s::linorder,'d,'c) finite_schema_system \<Rightarrow> 'd \<Rightarrow> finite_factor_term \<Rightarrow> ('a,'s,'d,'c) resolution_table \<Rightarrow>
+      ('s list \<Rightarrow> nat option) \<Rightarrow> ('s list \<Rightarrow> ('a \<times> nat) list option) \<Rightarrow> share_state \<Rightarrow> ('a,'s,'d,'c) resolution_state \<Rightarrow> 'r" where
+  "finite_reading_by C \<rho> P d t \<Theta> L Bv q st = (case finite_post_listing (fset (resolution_nodes st)) of
+      None \<Rightarrow> C st
+    | Some ns \<Rightarrow> (case finite_bound_check_rows \<Theta> L Bv q ns of (fl,q0,PI,LS) \<Rightarrow>
+        \<rho> LS (if fl then finite_reference_reached_graph_check P q0 PI Bv d t LS else finite_indexed_reached_graph_check P d t LS)))"
+
+lemma finite_reading_by_none:
+  "finite_reading_by C \<rho> P d t \<Theta> L (\<lambda>_. None) q st = (case finite_post_listing (fset (resolution_nodes st)) of
+      None \<Rightarrow> C st
+    | Some ns \<Rightarrow> (case finite_read_check_rows \<Theta> L q ns of (fl,LS) \<Rightarrow>
+        \<rho> LS (if fl then finite_formed_reached_graph_check P d t LS else finite_indexed_reached_graph_check P d t LS)))"
+  by (simp add: finite_reading_by_def finite_bound_check_rows_none finite_reference_reached_none
+    split: option.split prod.split)
+
+theorem finite_reading_by_exact:
+  assumes reads: "finite_reads_calls L q (resolution_nodes st)" and binds: "finite_reads_bindings Bv q (resolution_nodes st)"
+    and code: "\<And>ns. finite_post_listing (fset (resolution_nodes st)) = Some ns \<Longrightarrow>
+      C st = \<rho> (finite_indexed_table_rows \<Theta> ns) (finite_indexed_reached_graph_check P d t (finite_indexed_table_rows \<Theta> ns))"
+  shows "finite_reading_by C \<rho> P d t \<Theta> L Bv q st = C st"
+proof (cases "finite_post_listing (fset (resolution_nodes st))")
+  case None
+  then show ?thesis by (simp add: finite_reading_by_def)
+next
+  case (Some ns)
+  have listed: "finite_post_listed (fset (resolution_nodes st)) ns" by (rule finite_post_listing_some[OF Some])
+  obtain fl q0 PI LS where run: "finite_bound_check_rows \<Theta> L Bv q ns = (fl,q0,PI,LS)"
+    by (cases "finite_bound_check_rows \<Theta> L Bv q ns") auto
+  note e = finite_bound_check_rows_exact[OF listed reads binds run]
+  have g: "(if fl then finite_reference_reached_graph_check P q0 PI Bv d t LS else finite_indexed_reached_graph_check P d t LS) =
+      finite_indexed_reached_graph_check P d t LS" using e(2) by simp
+  have "finite_reading_by C \<rho> P d t \<Theta> L Bv q st =
+      \<rho> LS (if fl then finite_reference_reached_graph_check P q0 PI Bv d t LS else finite_indexed_reached_graph_check P d t LS)"
+    using Some run by (simp only: finite_reading_by_def option.simps prod.simps)
+  also have "\<dots> = \<rho> LS (finite_indexed_reached_graph_check P d t LS)" by (simp only: g)
+  also have "\<dots> = C st" using code[OF Some] e(1) by simp
+  finally show ?thesis .
+qed
+
+definition finite_true_roots ::
+    "('a,'s,'d,'c) resolution_state \<Rightarrow> (('a,'s::linorder,'d,'c) resolution_node \<times> ('s \<times> ('a,'s,'d,'c) resolution_node) fset \<times>
+        ('s \<times> ('a,'s,'d,'c) resolution_node) fset) list \<Rightarrow> (('s list, unit) rbt \<Rightarrow> ('a,'s,'d,'c) resolution_node \<Rightarrow> bool) \<Rightarrow> bool" where
+  "finite_true_roots st LS g = fBex (ffilter (\<lambda>nd. resolution_node_position nd=[]) (resolution_nodes st))
+    (\<lambda>nd. g (finite_indexed_reach (map (\<lambda>(m,L,TL). (m,L)) LS) nd) nd)"
+
+definition finite_graph_verdict_roots ::
+    "('a,'s,'d,'c) finite_schema_system \<Rightarrow> 'd \<Rightarrow> finite_factor_term \<Rightarrow> ('a,'s,'d,'c) resolution_table \<Rightarrow>
+      ('a,'s,'d,'c) resolution_state \<Rightarrow> (('a,'s::linorder,'d,'c) resolution_node \<times> ('s \<times> ('a,'s,'d,'c) resolution_node) fset \<times>
+        ('s \<times> ('a,'s,'d,'c) resolution_node) fset) list \<Rightarrow> (('s list, unit) rbt \<Rightarrow> ('a,'s,'d,'c) resolution_node \<Rightarrow> bool) \<Rightarrow>
+      (('a,'s,'c) finite_schema_proof \<times> bool) fset" where
+  "finite_graph_verdict_roots P d t \<Theta> st LS g = (let CT = finite_indexed_certificates_in \<Theta> LS in
+    fimage (\<lambda>nd. let c = the (RBT.lookup CT (resolution_node_position nd)) in
+      (c,g (finite_indexed_reach (map (\<lambda>(m,L,TL). (m,L)) LS) nd) nd \<or> finite_checks_schema_proof P c d t))
+      (ffilter (\<lambda>nd. resolution_node_position nd=[]) (resolution_nodes st)))"
+
+definition finite_verdict_roots ::
+    "('a,'s,'d,'c) finite_schema_system \<Rightarrow> 'd \<Rightarrow> finite_factor_term \<Rightarrow> ('a,'s,'d,'c) resolution_table \<Rightarrow>
+      ('a,'s,'d,'c) resolution_state \<Rightarrow> (('a,'s::linorder,'d,'c) resolution_node \<times> ('s \<times> ('a,'s,'d,'c) resolution_node) fset \<times>
+        ('s \<times> ('a,'s,'d,'c) resolution_node) fset) list \<Rightarrow> (('s list, unit) rbt \<Rightarrow> ('a,'s,'d,'c) resolution_node \<Rightarrow> bool) \<Rightarrow>
+      (('a,'s,'c) finite_schema_proof \<times> bool) fset" where
+  "finite_verdict_roots P d t \<Theta> st LS g = (let CT = finite_indexed_certificates_in \<Theta> LS in
+    fimage (\<lambda>nd. let c = the (RBT.lookup CT (resolution_node_position nd));
+        R = finite_indexed_reach (map (\<lambda>(m,L,TL). (m,L)) LS) nd in
+      (c,(g R nd \<and> finite_indexed_reached_entries P \<Theta> LS R) \<or> finite_checks_schema_proof P c d t))
+      (ffilter (\<lambda>nd. resolution_node_position nd=[]) (resolution_nodes st)))"
+
+lemma finite_indexed_table_graph_check_reached:
+  "finite_indexed_table_graph_check P d t LS =
+    (\<lambda>nd. finite_indexed_reached_graph_check P d t LS (finite_indexed_reach (map (\<lambda>(m,L,TL). (m,L)) LS) nd) nd)"
+  by (rule ext) (simp only: finite_indexed_table_graph_check_def)
+
+lemma finite_formed_table_graph_check_reached:
+  "finite_formed_table_graph_check P d t LS =
+    (\<lambda>nd. finite_formed_reached_graph_check P d t LS (finite_indexed_reach (map (\<lambda>(m,L,TL). (m,L)) LS) nd) nd)"
+  by (rule ext) (simp only: finite_formed_table_graph_check_def)
+
+lemma finite_indexed_table_accepts_reached:
+  "finite_indexed_table_accepts P \<Theta> d t LS = (\<lambda>nd. let R = finite_indexed_reach (map (\<lambda>(m,L,TL). (m,L)) LS) nd in
+    finite_indexed_reached_graph_check P d t LS R nd \<and> finite_indexed_reached_entries P \<Theta> LS R)"
+  by (rule ext) (simp only: finite_indexed_table_accepts_def)
+
+lemma finite_formed_table_accepts_reached:
+  "finite_formed_table_accepts P \<Theta> d t LS = (\<lambda>nd. let R = finite_indexed_reach (map (\<lambda>(m,L,TL). (m,L)) LS) nd in
+    finite_formed_reached_graph_check P d t LS R nd \<and> finite_indexed_reached_entries P \<Theta> LS R)"
+  by (rule ext) (simp only: finite_formed_table_accepts_def)
+
+lemma finite_true_roots_code:
+  assumes "finite_post_listing (fset (resolution_nodes st)) = Some ns"
+  shows "finite_state_graph_true_in \<Theta> P d t st = finite_true_roots st (finite_indexed_table_rows \<Theta> ns)
+    (finite_indexed_reached_graph_check P d t (finite_indexed_table_rows \<Theta> ns))"
+  using assms by (simp add: finite_state_graph_true_in_indexed finite_true_roots_def
+    finite_indexed_table_graph_check_reached Let_def)
+
+lemma finite_graph_verdict_roots_code:
+  assumes "finite_post_listing (fset (resolution_nodes st)) = Some ns"
+  shows "finite_state_graph_verdicts_in \<Theta> P d t st = finite_graph_verdict_roots P d t \<Theta> st (finite_indexed_table_rows \<Theta> ns)
+    (finite_indexed_reached_graph_check P d t (finite_indexed_table_rows \<Theta> ns))"
+  using assms by (simp add: finite_state_graph_verdicts_in_indexed finite_graph_verdict_roots_def
+    finite_indexed_table_graph_check_reached Let_def)
+
+lemma finite_verdict_roots_code:
+  assumes "finite_post_listing (fset (resolution_nodes st)) = Some ns"
+  shows "finite_state_verdicts_in \<Theta> P d t st = finite_verdict_roots P d t \<Theta> st (finite_indexed_table_rows \<Theta> ns)
+    (finite_indexed_reached_graph_check P d t (finite_indexed_table_rows \<Theta> ns))"
+  using assms by (simp add: finite_state_verdicts_in_accepts finite_verdict_roots_def
+    finite_indexed_table_accepts_reached Let_def)
+
+definition finite_bound_verdicts_in ::
+    "('a,'s,'d,'c) resolution_table \<Rightarrow> ('a,'s::linorder,'d,'c) finite_schema_system \<Rightarrow> 'd \<Rightarrow> finite_factor_term \<Rightarrow>
+      ('s list \<Rightarrow> nat option) \<Rightarrow> ('s list \<Rightarrow> ('a \<times> nat) list option) \<Rightarrow> share_state \<Rightarrow> ('a,'s,'d,'c) resolution_state \<Rightarrow>
+      (('a,'s,'c) finite_schema_proof \<times> bool) fset" where
+  "finite_bound_verdicts_in \<Theta> P d t L Bv q st =
+    finite_reading_by (finite_state_verdicts_in \<Theta> P d t) (finite_verdict_roots P d t \<Theta> st) P d t \<Theta> L Bv q st"
+
+definition finite_bound_graph_verdicts_in ::
+    "('a,'s,'d,'c) resolution_table \<Rightarrow> ('a,'s::linorder,'d,'c) finite_schema_system \<Rightarrow> 'd \<Rightarrow> finite_factor_term \<Rightarrow>
+      ('s list \<Rightarrow> nat option) \<Rightarrow> ('s list \<Rightarrow> ('a \<times> nat) list option) \<Rightarrow> share_state \<Rightarrow> ('a,'s,'d,'c) resolution_state \<Rightarrow>
+      (('a,'s,'c) finite_schema_proof \<times> bool) fset" where
+  "finite_bound_graph_verdicts_in \<Theta> P d t L Bv q st =
+    finite_reading_by (finite_state_graph_verdicts_in \<Theta> P d t) (finite_graph_verdict_roots P d t \<Theta> st) P d t \<Theta> L Bv q st"
+
+definition finite_bound_graph_true_in ::
+    "('a,'s,'d,'c) resolution_table \<Rightarrow> ('a,'s::linorder,'d,'c) finite_schema_system \<Rightarrow> 'd \<Rightarrow> finite_factor_term \<Rightarrow>
+      ('s list \<Rightarrow> nat option) \<Rightarrow> ('s list \<Rightarrow> ('a \<times> nat) list option) \<Rightarrow> share_state \<Rightarrow> ('a,'s,'d,'c) resolution_state \<Rightarrow>
+      bool" where
+  "finite_bound_graph_true_in \<Theta> P d t L Bv q st =
+    finite_reading_by (finite_state_graph_true_in \<Theta> P d t) (finite_true_roots st) P d t \<Theta> L Bv q st"
+
+theorem finite_bound_verdicts_in_exact:
+  assumes "finite_reads_calls L q (resolution_nodes st)" "finite_reads_bindings Bv q (resolution_nodes st)"
+  shows "finite_bound_verdicts_in \<Theta> P d t L Bv q st = finite_state_verdicts_in \<Theta> P d t st"
+  unfolding finite_bound_verdicts_in_def by (rule finite_reading_by_exact[OF assms]) (rule finite_verdict_roots_code)
+
+theorem finite_bound_graph_verdicts_in_exact:
+  assumes "finite_reads_calls L q (resolution_nodes st)" "finite_reads_bindings Bv q (resolution_nodes st)"
+  shows "finite_bound_graph_verdicts_in \<Theta> P d t L Bv q st = finite_state_graph_verdicts_in \<Theta> P d t st"
+  unfolding finite_bound_graph_verdicts_in_def
+  by (rule finite_reading_by_exact[OF assms]) (rule finite_graph_verdict_roots_code)
+
+theorem finite_bound_graph_true_in_exact:
+  assumes "finite_reads_calls L q (resolution_nodes st)" "finite_reads_bindings Bv q (resolution_nodes st)"
+  shows "finite_bound_graph_true_in \<Theta> P d t L Bv q st = finite_state_graph_true_in \<Theta> P d t st"
+  unfolding finite_bound_graph_true_in_def by (rule finite_reading_by_exact[OF assms]) (rule finite_true_roots_code)
 
 definition finite_read_verdicts_in ::
     "('a,'s,'d,'c) resolution_table \<Rightarrow> ('a,'s::linorder,'d,'c) finite_schema_system \<Rightarrow> 'd \<Rightarrow> finite_factor_term \<Rightarrow>
       ('s list \<Rightarrow> nat option) \<Rightarrow> share_state \<Rightarrow> ('a,'s,'d,'c) resolution_state \<Rightarrow> (('a,'s,'c) finite_schema_proof \<times> bool) fset" where
-  "finite_read_verdicts_in \<Theta> P d t L q st = (case finite_post_listing (fset (resolution_nodes st)) of
-      None \<Rightarrow> finite_state_verdicts_in \<Theta> P d t st
-    | Some ns \<Rightarrow> (case finite_read_check_rows \<Theta> L q ns of (fl,LS) \<Rightarrow> let CT = finite_indexed_certificates_in \<Theta> LS in
-        fimage (\<lambda>nd. let c = the (RBT.lookup CT (resolution_node_position nd)) in
-          (c,(if fl then finite_formed_table_accepts P \<Theta> d t LS else finite_indexed_table_accepts P \<Theta> d t LS) nd \<or>
-            finite_checks_schema_proof P c d t))
-          (ffilter (\<lambda>nd. resolution_node_position nd=[]) (resolution_nodes st))))"
+  "finite_read_verdicts_in \<Theta> P d t L q st = finite_bound_verdicts_in \<Theta> P d t L (\<lambda>_. None) q st"
 
 definition finite_read_graph_verdicts_in ::
     "('a,'s,'d,'c) resolution_table \<Rightarrow> ('a,'s::linorder,'d,'c) finite_schema_system \<Rightarrow> 'd \<Rightarrow> finite_factor_term \<Rightarrow>
       ('s list \<Rightarrow> nat option) \<Rightarrow> share_state \<Rightarrow> ('a,'s,'d,'c) resolution_state \<Rightarrow> (('a,'s,'c) finite_schema_proof \<times> bool) fset" where
-  "finite_read_graph_verdicts_in \<Theta> P d t L q st = (case finite_post_listing (fset (resolution_nodes st)) of
-      None \<Rightarrow> finite_state_graph_verdicts_in \<Theta> P d t st
-    | Some ns \<Rightarrow> (case finite_read_check_rows \<Theta> L q ns of (fl,LS) \<Rightarrow> let CT = finite_indexed_certificates_in \<Theta> LS in
-        fimage (\<lambda>nd. let c = the (RBT.lookup CT (resolution_node_position nd)) in
-          (c,(if fl then finite_formed_table_graph_check P d t LS else finite_indexed_table_graph_check P d t LS) nd \<or>
-            finite_checks_schema_proof P c d t))
-          (ffilter (\<lambda>nd. resolution_node_position nd=[]) (resolution_nodes st))))"
+  "finite_read_graph_verdicts_in \<Theta> P d t L q st = finite_bound_graph_verdicts_in \<Theta> P d t L (\<lambda>_. None) q st"
 
 definition finite_read_graph_true_in ::
     "('a,'s,'d,'c) resolution_table \<Rightarrow> ('a,'s::linorder,'d,'c) finite_schema_system \<Rightarrow> 'd \<Rightarrow> finite_factor_term \<Rightarrow>
       ('s list \<Rightarrow> nat option) \<Rightarrow> share_state \<Rightarrow> ('a,'s,'d,'c) resolution_state \<Rightarrow> bool" where
-  "finite_read_graph_true_in \<Theta> P d t L q st = (case finite_post_listing (fset (resolution_nodes st)) of
-      None \<Rightarrow> finite_state_graph_true_in \<Theta> P d t st
-    | Some ns \<Rightarrow> (case finite_read_check_rows \<Theta> L q ns of (fl,LS) \<Rightarrow>
-        fBex (ffilter (\<lambda>nd. resolution_node_position nd=[]) (resolution_nodes st))
-          (if fl then finite_formed_table_graph_check P d t LS else finite_indexed_table_graph_check P d t LS)))"
+  "finite_read_graph_true_in \<Theta> P d t L q st = finite_bound_graph_true_in \<Theta> P d t L (\<lambda>_. None) q st"
 
 theorem finite_read_verdicts_in_exact:
   assumes reads: "finite_reads_calls L q (resolution_nodes st)"
   shows "finite_read_verdicts_in \<Theta> P d t L q st = finite_state_verdicts_in \<Theta> P d t st"
-proof (cases "finite_post_listing (fset (resolution_nodes st))")
-  case None
-  then show ?thesis by (simp add: finite_read_verdicts_in_def)
-next
-  case (Some ns)
-  have listed: "finite_post_listed (fset (resolution_nodes st)) ns" by (rule finite_post_listing_some[OF Some])
-  obtain fl where r: "finite_read_check_rows \<Theta> L q ns = (fl,finite_indexed_table_rows \<Theta> ns)"
-    and a: "(if fl then finite_formed_table_accepts P \<Theta> d t (finite_indexed_table_rows \<Theta> ns)
-      else finite_indexed_table_accepts P \<Theta> d t (finite_indexed_table_rows \<Theta> ns)) =
-      finite_indexed_table_accepts P \<Theta> d t (finite_indexed_table_rows \<Theta> ns)"
-    by (rule finite_read_check_rows_indexed[OF listed reads, of \<Theta> P d t]) blast+
-  show ?thesis using Some by (simp only: finite_read_verdicts_in_def finite_state_verdicts_in_accepts r a
-    option.simps prod.simps Let_def)
-qed
+  unfolding finite_read_verdicts_in_def by (rule finite_bound_verdicts_in_exact[OF reads finite_reads_bindings_none])
 
 theorem finite_read_graph_verdicts_in_exact:
   assumes reads: "finite_reads_calls L q (resolution_nodes st)"
   shows "finite_read_graph_verdicts_in \<Theta> P d t L q st = finite_state_graph_verdicts_in \<Theta> P d t st"
-proof (cases "finite_post_listing (fset (resolution_nodes st))")
-  case None
-  then show ?thesis by (simp add: finite_read_graph_verdicts_in_def)
-next
-  case (Some ns)
-  have listed: "finite_post_listed (fset (resolution_nodes st)) ns" by (rule finite_post_listing_some[OF Some])
-  obtain fl where r: "finite_read_check_rows \<Theta> L q ns = (fl,finite_indexed_table_rows \<Theta> ns)"
-    and g: "(if fl then finite_formed_table_graph_check P d t (finite_indexed_table_rows \<Theta> ns)
-      else finite_indexed_table_graph_check P d t (finite_indexed_table_rows \<Theta> ns)) =
-      finite_indexed_table_graph_check P d t (finite_indexed_table_rows \<Theta> ns)"
-    by (rule finite_read_check_rows_indexed[OF listed reads, of \<Theta> P d t]) blast+
-  show ?thesis using Some by (simp only: finite_read_graph_verdicts_in_def finite_state_graph_verdicts_in_indexed r g
-    option.simps prod.simps Let_def)
-qed
+  unfolding finite_read_graph_verdicts_in_def by (rule finite_bound_graph_verdicts_in_exact[OF reads finite_reads_bindings_none])
 
 theorem finite_read_graph_true_in_exact:
   assumes reads: "finite_reads_calls L q (resolution_nodes st)"
   shows "finite_read_graph_true_in \<Theta> P d t L q st = finite_state_graph_true_in \<Theta> P d t st"
-proof (cases "finite_post_listing (fset (resolution_nodes st))")
-  case None
-  then show ?thesis by (simp add: finite_read_graph_true_in_def)
-next
-  case (Some ns)
-  have listed: "finite_post_listed (fset (resolution_nodes st)) ns" by (rule finite_post_listing_some[OF Some])
-  obtain fl where r: "finite_read_check_rows \<Theta> L q ns = (fl,finite_indexed_table_rows \<Theta> ns)"
-    and g: "(if fl then finite_formed_table_graph_check P d t (finite_indexed_table_rows \<Theta> ns)
-      else finite_indexed_table_graph_check P d t (finite_indexed_table_rows \<Theta> ns)) =
-      finite_indexed_table_graph_check P d t (finite_indexed_table_rows \<Theta> ns)"
-    by (rule finite_read_check_rows_indexed[OF listed reads, of \<Theta> P d t]) blast+
-  show ?thesis using Some by (simp only: finite_read_graph_true_in_def finite_state_graph_true_in_indexed r g
-    option.simps prod.simps Let_def)
-qed
+  unfolding finite_read_graph_true_in_def by (rule finite_bound_graph_true_in_exact[OF reads finite_reads_bindings_none])
 
 lemma finite_read_none:
   "finite_read_verdicts_in \<Theta> P d t (\<lambda>_. None) empty_share_state st = finite_state_verdicts_in \<Theta> P d t st"
@@ -4142,8 +5175,8 @@ lemma finite_read_none:
 text \<open>
   C3 on today's path: the code equations of C's verdicts, graph verdicts and graph truth read their rows with the
   formation of the table the rows share (the representation that reads no reference), each equal to C's on every input
-  through the read forms' exactness; the empty table's verdicts are the verdicts at the empty table
-  (@{text finite_state_verdicts_empty}).
+  through the one reading's exactness (@{text finite_reading_by_none}); the empty table's verdicts are the verdicts at
+  the empty table (@{text finite_state_verdicts_empty}).
 \<close>
 
 declare finite_state_verdicts_in_accepts [code del] finite_state_graph_verdicts_in_indexed [code del]
@@ -4167,9 +5200,21 @@ proof (cases "finite_post_listing (fset (resolution_nodes st))")
   then show ?thesis by (simp only: finite_state_verdicts_in_accepts option.simps)
 next
   case (Some ns)
+  obtain fl LS where rc: "finite_read_check_rows \<Theta> (\<lambda>_. None) empty_share_state ns = (fl,LS)"
+    by (cases "finite_read_check_rows \<Theta> (\<lambda>_. None) empty_share_state ns")
   have "finite_state_verdicts_in \<Theta> P d t st = finite_read_verdicts_in \<Theta> P d t (\<lambda>_. None) empty_share_state st"
     by (rule finite_read_none(1)[symmetric])
-  then show ?thesis using Some by (simp only: finite_read_verdicts_in_def option.simps)
+  also have "\<dots> = finite_verdict_roots P d t \<Theta> st LS
+      (if fl then finite_formed_reached_graph_check P d t LS else finite_indexed_reached_graph_check P d t LS)"
+    using Some rc by (simp add: finite_read_verdicts_in_def finite_bound_verdicts_in_def finite_reading_by_none)
+  also have "\<dots> = (let CT = finite_indexed_certificates_in \<Theta> LS in
+      fimage (\<lambda>nd. let c = the (RBT.lookup CT (resolution_node_position nd)) in
+        (c,(if fl then finite_formed_table_accepts P \<Theta> d t LS else finite_indexed_table_accepts P \<Theta> d t LS) nd \<or>
+          finite_checks_schema_proof P c d t))
+        (ffilter (\<lambda>nd. resolution_node_position nd=[]) (resolution_nodes st)))"
+    by (cases fl) (simp_all add: finite_verdict_roots_def finite_formed_table_accepts_reached
+      finite_indexed_table_accepts_reached Let_def)
+  finally show ?thesis using Some rc by simp
 qed
 
 lemma finite_state_graph_verdicts_in_checked [code]:
@@ -4189,9 +5234,21 @@ proof (cases "finite_post_listing (fset (resolution_nodes st))")
   then show ?thesis by (simp only: finite_state_graph_verdicts_in_indexed option.simps)
 next
   case (Some ns)
+  obtain fl LS where rc: "finite_read_check_rows \<Theta> (\<lambda>_. None) empty_share_state ns = (fl,LS)"
+    by (cases "finite_read_check_rows \<Theta> (\<lambda>_. None) empty_share_state ns")
   have "finite_state_graph_verdicts_in \<Theta> P d t st = finite_read_graph_verdicts_in \<Theta> P d t (\<lambda>_. None) empty_share_state st"
     by (rule finite_read_none(2)[symmetric])
-  then show ?thesis using Some by (simp only: finite_read_graph_verdicts_in_def option.simps)
+  also have "\<dots> = finite_graph_verdict_roots P d t \<Theta> st LS
+      (if fl then finite_formed_reached_graph_check P d t LS else finite_indexed_reached_graph_check P d t LS)"
+    using Some rc by (simp add: finite_read_graph_verdicts_in_def finite_bound_graph_verdicts_in_def finite_reading_by_none)
+  also have "\<dots> = (let CT = finite_indexed_certificates_in \<Theta> LS in
+      fimage (\<lambda>nd. let c = the (RBT.lookup CT (resolution_node_position nd)) in
+        (c,(if fl then finite_formed_table_graph_check P d t LS else finite_indexed_table_graph_check P d t LS) nd \<or>
+          finite_checks_schema_proof P c d t))
+        (ffilter (\<lambda>nd. resolution_node_position nd=[]) (resolution_nodes st)))"
+    by (cases fl) (simp_all add: finite_graph_verdict_roots_def finite_formed_table_graph_check_reached
+      finite_indexed_table_graph_check_reached Let_def)
+  finally show ?thesis using Some rc by simp
 qed
 
 lemma finite_state_graph_true_in_checked [code]:
@@ -4206,12 +5263,76 @@ proof (cases "finite_post_listing (fset (resolution_nodes st))")
   then show ?thesis by (simp only: finite_state_graph_true_in_indexed option.simps)
 next
   case (Some ns)
+  obtain fl LS where rc: "finite_read_check_rows \<Theta> (\<lambda>_. None) empty_share_state ns = (fl,LS)"
+    by (cases "finite_read_check_rows \<Theta> (\<lambda>_. None) empty_share_state ns")
   have "finite_state_graph_true_in \<Theta> P d t st = finite_read_graph_true_in \<Theta> P d t (\<lambda>_. None) empty_share_state st"
     by (rule finite_read_none(3)[symmetric])
-  then show ?thesis using Some by (simp only: finite_read_graph_true_in_def option.simps)
+  also have "\<dots> = finite_true_roots st LS
+      (if fl then finite_formed_reached_graph_check P d t LS else finite_indexed_reached_graph_check P d t LS)"
+    using Some rc by (simp add: finite_read_graph_true_in_def finite_bound_graph_true_in_def finite_reading_by_none)
+  also have "\<dots> = fBex (ffilter (\<lambda>nd. resolution_node_position nd=[]) (resolution_nodes st))
+      (if fl then finite_formed_table_graph_check P d t LS else finite_indexed_table_graph_check P d t LS)"
+    by (cases fl) (simp_all add: finite_true_roots_def finite_formed_table_graph_check_reached
+      finite_indexed_table_graph_check_reached)
+  finally show ?thesis using Some rc by simp
 qed
 
 lemma finite_state_verdicts_checked [code]: "finite_state_verdicts P d t st = finite_state_verdicts_in resolution_empty_table P d t st"
   by (simp add: finite_state_verdicts_empty)
+
+section \<open>C3 in the table's production checks\<close>
+
+text \<open>
+  A table's check and its checked production read their rows with the formation of the table the rows share, as C's
+  readings do: where its leaves are formed, the formed check, which forms no call again; each equal to the indexed
+  code equation on every input (@{text finite_read_check_rows_indexed}). The table's production checks nothing, so its
+  code equation is the indexed one as it stands.
+\<close>
+
+declare finite_table_graph_checks_indexed [code del] finite_table_checked_indexed [code del]
+
+lemma finite_table_graph_checks_formed [code]:
+  "finite_table_graph_checks P \<Theta> ((e,u,N,nd)#rows) = (case finite_post_listing (fset N) of
+      None \<Rightarrow> nd |\<in>| N \<and> finite_state_graph_check_in \<Theta> P e u N nd \<and>
+        finite_table_graph_checks P (resolution_table_extend \<Theta> e u (finite_node_proof_in \<Theta> (fcard N) N nd)) rows
+    | Some ns \<Rightarrow> (case finite_read_check_rows \<Theta> (\<lambda>_. None) empty_share_state ns of (fl,LS) \<Rightarrow>
+        nd |\<in>| N \<and> (if fl then finite_formed_table_graph_check P e u LS else finite_indexed_table_graph_check P e u LS) nd \<and>
+        finite_table_graph_checks P (resolution_table_extend \<Theta> e u
+          (the (RBT.lookup (finite_indexed_certificates_in \<Theta> LS) (resolution_node_position nd)))) rows))"
+proof (cases "finite_post_listing (fset N)")
+  case None
+  then show ?thesis by (simp only: finite_table_graph_checks_indexed option.simps)
+next
+  case (Some ns)
+  have listed: "finite_post_listed (fset N) ns" by (rule finite_post_listing_some[OF Some])
+  obtain fl where r: "finite_read_check_rows \<Theta> (\<lambda>_. None) empty_share_state ns = (fl,finite_indexed_table_rows \<Theta> ns)"
+    and g: "(if fl then finite_formed_table_graph_check P e u (finite_indexed_table_rows \<Theta> ns)
+      else finite_indexed_table_graph_check P e u (finite_indexed_table_rows \<Theta> ns)) =
+      finite_indexed_table_graph_check P e u (finite_indexed_table_rows \<Theta> ns)"
+    by (rule finite_read_check_rows_indexed[OF listed finite_reads_calls_none, of \<Theta> P e u]) blast+
+  show ?thesis using Some by (simp only: finite_table_graph_checks_indexed r g option.simps prod.simps Let_def)
+qed
+
+lemma finite_table_checked_formed [code]:
+  "finite_table_checked P \<Theta> ((e,u,N,nd)#rows) = (case finite_post_listing (fset N) of
+      None \<Rightarrow> if nd |\<in>| N \<and> finite_state_graph_check_in \<Theta> P e u N nd
+        then finite_table_checked P (resolution_table_extend \<Theta> e u (finite_node_proof_in \<Theta> (fcard N) N nd)) rows else None
+    | Some ns \<Rightarrow> (case finite_read_check_rows \<Theta> (\<lambda>_. None) empty_share_state ns of (fl,LS) \<Rightarrow>
+        if nd |\<in>| N \<and> (if fl then finite_formed_table_graph_check P e u LS else finite_indexed_table_graph_check P e u LS) nd
+        then finite_table_checked P (resolution_table_extend \<Theta> e u
+          (the (RBT.lookup (finite_indexed_certificates_in \<Theta> LS) (resolution_node_position nd)))) rows else None))"
+proof (cases "finite_post_listing (fset N)")
+  case None
+  then show ?thesis by (simp only: finite_table_checked_indexed option.simps)
+next
+  case (Some ns)
+  have listed: "finite_post_listed (fset N) ns" by (rule finite_post_listing_some[OF Some])
+  obtain fl where r: "finite_read_check_rows \<Theta> (\<lambda>_. None) empty_share_state ns = (fl,finite_indexed_table_rows \<Theta> ns)"
+    and g: "(if fl then finite_formed_table_graph_check P e u (finite_indexed_table_rows \<Theta> ns)
+      else finite_indexed_table_graph_check P e u (finite_indexed_table_rows \<Theta> ns)) =
+      finite_indexed_table_graph_check P e u (finite_indexed_table_rows \<Theta> ns)"
+    by (rule finite_read_check_rows_indexed[OF listed finite_reads_calls_none, of \<Theta> P e u]) blast+
+  show ?thesis using Some by (simp only: finite_table_checked_indexed r g option.simps prod.simps Let_def)
+qed
 
 end

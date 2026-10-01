@@ -672,6 +672,26 @@ definition frames_varied ::
       ('a,'s,'d) resolution_frames \<Rightarrow> ('b,'t,'d) resolution_frames" where
   "frames_varied P N \<Phi> = ffUnion (fimage (varied_frames P N) \<Phi>)"
 
+section \<open>The carried record's code\<close>
+
+text \<open>
+  Task 956. The carried record's guards ask whether a clause stands among a program's clauses at a site, under some
+  clause key, and whether a key is a socket of a decoded clause (@{const varied_sockets}, @{const varied_frames}, and in
+  @{text Factor_Varied_Narrowed_Sockets} the carried registrations and socket sources). Neither has code as stated: the
+  first quantifies over clause keys, the second reads the decoded clause's relations. Both are asked of the finite
+  fields here, as equivalences at every input, so every constant whose definition asks them has code with its
+  definition's value: the clause among the program's clauses read at their sites, and the key among the keys of the
+  clause's premises and materials (@{thm [source] finite_schema_sockets_decoded}). The first rule is
+  @{thm [source] finite_clause_site_member} read backwards.
+\<close>
+
+lemmas finite_clause_member_code [code_unfold] = finite_clause_site_member [symmetric]
+
+lemma finite_schema_socket_code [code_unfold]:
+  "s \<in> schema_sockets (decode_finite_schema S) \<longleftrightarrow>
+    s |\<in>| fimage fst (finite_schema_premises S) |\<union>| fimage fst (finite_schema_materials S)"
+  by (force simp: finite_schema_sockets_decoded)
+
 lemma varied_frames_origin:
   assumes y: "y |\<in>| varied_frames P N (e,S,s,C)"
   obtains c c' T f h where "((e,c),S) |\<in>| finite_system_clauses P" "s \<in> schema_sockets (decode_finite_schema S)"

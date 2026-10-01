@@ -48,20 +48,23 @@ candidate's part is its additions; the table is the readers' part (AX4 retires i
 re-shares; today's selections and searches as instances at the empty table; (7)'s demand and native graph-verdict
 forms, which WC3 carries to the waiting selection) → GT6 #878 (produced once, a run of hours; record
 `validation/given-table.json`) → #542, #547, #707, #399; WC3 #916 after GT3c and D3b3. GT6's brief is rewritten after
-D153 #987, with #965's follow-up 3 (the prediction), the fixes of #972 that remain, review 877's follow-up 1 and review
-971's follow-up 6.
+M2, D3b3, C3 and C2, with D153's prediction (#965's follow-up 3: 11 by k + c, the artifact part about an hour of CPU,
+the environment-level part dominant), review 877's follow-up 1 and review 971's follow-up 6.
 
-**11 at large k, and a search step at depth.** #972: 11 over an artifact of k rows has phase A (the anchor list, about
-1,190 s a call at k = 621) and phase B (about 5.2 k² states, ∝ k^2–2.3 ms a state); with D3a, ordered persistent sets
-and the collapse GT6's 11 is about 40,000 s CPU, its largest call 5,000 s; an address-form material observation, a
-change of notion, brings 11 at the given to minutes. D153 #987 (Open 153) decides the course, what it re-derives and
-which of #972's fixes remain (D3b2, D3b3, ordered sets, the collapse, the check's C2–C3); D3b2 #979, D3b3 #983 and GT6
-wait on it; an owner question if it changes a notion's definition or the Factor language. The deferred search steps in
-about 8 ms at 30–300 steps, 112–147 ms at 300–350, where the given's chain holders are 9's call goals and 10's material
-premise (#875, #973); D3 #969 with D3′ #981 keeps them as placed (predicted 9–12 ms at 300–350): D3b1 #975 landed
-(`Factor_Pattern_Regions`), D3b1m #982 (open tails), D3a #977 (goal records by the variables law, beside GT3c), D3b2
-(after D3a), D3b3 (after D3b2 and D3b1m). q162's held goals and construction nodes (next-edits 384) and FI's remaining
-costs (385): under 1 % at the given, taken at the next restater of the route constants' code if a figure asks.
+**11 at large k, and a search step at depth.** D153 #987 (DECISIONS.md, "The material premise observes an artifact's
+incidence and attachments as its data class presents them: …") decided F1, provisionally (Q35): the material premise's
+incidence, counted and functional fields in address form, the atoms kept, 10 over the data's own fields — 11 at k
+addresses about k + 5 states against about 5.2 k² (GT6's 11 over the given seconds against about 40,000 s CPU after
+every representation fix, #972); F4, Q33-free, is the course if the owner declines. The brief of M1 and M2 #992 (M1
+after the waiting-test fix #991, M2 after M1, one landing re-recording its differing words, after AX4) → D3b3 #983,
+GT6 #878 and the AX2d brief #988; C3 and C2 #993 (the check over a graph: formation once per distinct target, C over
+the found state's shared form) after GT3c → GT6. After F1: D3b3 needed as designed (the atoms' open tail), D3b2 kept as
+its base (its share at the given measured again after M2), D3a as placed; ordered persistent sets and the collapse not
+before GT6. GT6's environment-level part (#965: 17,600–58,500 s sequential at 11–15 ms a state) is now dominant and
+unaddressed; GT6's step (2) measures it. D3: D3b1 #975 and D3b1m #982 landed (`Factor_Pattern_Regions`,
+`Factor_Material_Tails`); D3a #977 beside GT3c; D3b2 after D3a; D3b3 after D3b2 and M2 (review 984's follow-ups 1, 2,
+3 and 7 mailed). q162's held goals and construction nodes (next-edits 384) and FI's remaining costs (385): under 1 % at
+the given, taken at the next restater of the route constants' code if a figure asks.
 
 **The order at a pair node** (correction (16), D2 #907): a waiting class read by the selection alone, never by
 exactness; WC1–WC2b landed; WC3 #916 → #542, #547, #887; R7's figures set 55's clause-trial trigger (Open 152). #887
@@ -74,12 +77,12 @@ and none is extended (#376); their remains are under Open and in `.build/plans/n
 
 **Shape and order.** No build waits on a review, and no task on an investigation (its tree never lands, so the harness
 would hold the dependent); the dependency goes through the brief's Inputs. A guard kept on purpose: AX5 #962 on #986,
-removed when its brief is rewritten. The longest chain runs from D153 #987, D3a #977 and GT3c #989 through
-D3b2 → D3b3 → GT6 → R7 → #707 → #399 → … → #449 → #450; GT6's hours make the resolver's pole critical, the AX line
+removed when its brief is rewritten. The longest chain runs from the waiting-test fix #991 and
+the brief #992 through M1 → M2 → D3b3 → GT6 → R7 → #707 → #399 → … → #449 → #450 (D3a → D3b2 and GT3c → C3/C2 beside it); GT6's hours make the resolver's pole critical, the AX line
 has slack. Nothing is added after the tail until it shortens (the approval build, Open 142, waits); splices before a
-task go at any depth. The queue is the planner's choice, a residual until Q2's native answer: the running tasks with
-their reviews, #966, D153, the pole (D3a, GT3c, then D3b2, D3b3, GT6, WC3), #986, #988, the AX line, the rewrite
-briefs, the route in its chains' order, each review after its build; #887 after R7's review. Word changes are
+task go at any depth. The queue is the planner's choice, a residual until Q2's native answer: the waiting-test fix
+#991 at the head (a low move), the running tasks with their reviews, the pole (#992, C3/C2 #993, D3b2, D3b3, GT6, WC3),
+#986, #988, the AX line, the rewrite briefs, the route in its chains' order, each review after its build; #887 after R7's review. Word changes are
 serialized; none is queued.
 
 ## Decisions
@@ -249,9 +252,11 @@ REASONING_REUSE.md's, how it went `PLANNING_LOG.md`.
 
 ## Open
 
-**The owner's question** (its words in `.claude/orchestration/state/held/owner-questions.md`): **Q34** (Q26 changed):
-whether (c) and (d) of the first problem's test are refused at admission (uses as leaves of their own; G3 at the
-rooted readers' package) or left to criticism and the owner's approval; provisional: criticism (#947).
+**The owner's questions** (their words in `.claude/orchestration/state/held/owner-questions.md`): **Q34** (Q26
+changed): whether (c) and (d) of the first problem's test are refused at admission (uses as leaves of their own; G3 at
+the rooted readers' package) or left to criticism and the owner's approval; provisional: criticism (#947). **Q35**:
+whether the language's material premise observes incidence and attachments in address form, the atoms kept (D153
+#987); provisional: yes, M1 and M2 built on it; F4, Q33-free, if the owner declines.
 
 **To plan, in the order expected** (numbers kept from earlier states):
 - 3. N7, the verdict at a package: a native notion, built when a problem kind asks it.
@@ -262,7 +267,7 @@ rooted readers' package) or left to criticism and the owner's approval; provisio
 - 151. D of correction (11): the produced table for 65 and 56, a design after R7's figures
   (`.build/tasks/766/result.md`, `.build/plans/plan-104/q137.md`), with whether 587 is committed at 588.0/0.
 - 152. 55's clause-trial trigger (correction (16)): R7's figures at the given's 55 calls with the table.
-- 153. 11 at large k, site 8's lookup (Q33 (a)): the design D153 #987.
+- 153. 11 at large k, site 8's lookup (Q33 (a)): decided by D153 #987 (F1, Q35); M1 and M2 briefed by #992.
 - 154. A shared witness for the guard over additions' three readings of the least environment and root family (961,
   985, 989; review 937's 3): decided at R7's measurement of their share.
 - 142. The owner's approval of the first answer (Q23 (c); #947): after #553 and #447, `development_owner_approval` and
@@ -292,12 +297,12 @@ re-root trigger, and a probe past its bound above `Factor_Least_Collections`: 23
 
 ## Now
 
-- **Under way**: AX4 #940 (q183 and q184 answered), D3b1m #982, D3a #977 (q185 answered: three restatements on the
-  producing side). Queued to start: the waiting test's fix (#968's (2)) at the head, #966 (its import lands), D153 #987,
-  GT3c #989 beside D3a, then #986 (after #966) and brief AX2d #988 (after #940).
-- **What the next events ask**: D153's decision — an owner question if it changes a notion's definition or the
-  language; its builds placed before GT6, D3b2, D3b3 and the remaining fixes kept, rewritten or dropped; GT6's brief
-  rewritten. #986's result: AX5's brief rewritten with #968's (4), its guard removed, the controls (77/2 refuted, 77/1
+- **Under way**: AX4 #940 (q183, q184), D3a #977 (q185: three restatements on the producing side), GT3c #989 (q186:
+  `share_resolution_state_from`, `deferred_of_search`). Queued to start: the waiting-test fix #991 at the head, the
+  brief of M1 and M2 #992, #986, C3/C2 #993 (after GT3c), brief AX2d #988 (after #940 and #992).
+- **What the next events ask**: Q35's answer (if no, F4 replaces M1 and M2 and #992 is re-planned); #992's proposal
+  placed (M1, M2 and their reviews; D3b3, GT6 and #988 re-pointed onto M2); GT6's brief rewritten after M2, D3b3, C3 and
+  C2. #986's result: AX5's brief rewritten with #968's (4), its guard removed, the controls (77/2 refuted, 77/1
   resolved at the committing instance) placed as a build; the admissions #968 left unresolved at plain parameters
   (witnessed failures at 5 under 960's and 961's registrations and the l hand-in) judged at the committing instance.
   AX4's landing: #988 briefs AX2d1 and AX2d2 (AX5 and #948

@@ -41,14 +41,17 @@ and keeps its brief.
 **The given's calls, decided once** (#831's section; #496's "77's least bound at the given and at a candidate"): a
 table of certified ground calls every judgment's search closes, its validity checked once over graphs and retained; a
 candidate's part is its additions. Landed through VK2 #924 (`Development_Given_Query_Parameters`, the given's
-committing instance), #953 and #956 (`4cbb135c`, the carried record's code). Open: #966 (the record
-tabulated once per record; 77 refused and resolved at the committing instance, q178's first test; whether a query
-meets a root-held committable goal, on which task 918's answer 4 waits) → AX5 #962; #967 (the construction's value
-once per construction, after #966 and WC3 #916) → R7 #542; GT3 #876 (the table at the plain searches) → GT3b #970 (the
-committed side and the route constants at a table, q181) → GT6 #878 (produced once, a run of hours, its record
-`validation/given-table.json`, after D3's builds, #972's fixes and the prediction recomputed) → #542, #547, #707,
-#399. The table is the readers' part (its guard part retired by AX4), so GT6 and its pole do not wait on the AX line; #547 does not wait on
-VK2.
+committing instance), #953, #956 (`4cbb135c`, the carried record's code) and GT3 #876 (`276cedc3`, the table at the
+plain searches). Open: #966, rescoped by q182 (fix-966's attribution: a committing query step is about 400 times the
+plain one because the lifted moded priority asks the narrowed commitment's framed test at each goal's parent focus,
+about 7 ms a call, not because of the carried record, whose tabulation measured nothing): the priority made cheap
+(#869's raising-socket index, the pending priority once per state, in no theory GT3b or D3 restates), then 77 refused
+and resolved at the committing instance (q178's first test) and whether a query meets a root-held committable goal
+(task 918's answer 4 waits on it) → AX5 #962; #967 (the construction's value once per construction, after #966 and
+WC3 #916) → R7 #542; GT3b #970 (the committed side and the route constants at a table, q181, with review 877's
+follow-ups) → GT6 #878 (produced once, a run of hours, its record `validation/given-table.json`, after D3b2 #979,
+#972's fixes and the prediction recomputed) → #542, #547, #707, #399. The table is the readers' part (its guard part
+retired by AX4), so GT6 and its pole do not wait on the AX line; #547 does not wait on VK2.
 
 **A search step's cost** (#830's, #886's attributions; D1 #890): the deferred search (D1b #903, #926, #945) and the
 deferred committed search (D1d #905) landed, about 8 ms a step at 30–300 steps but 112–147 ms at 300–350. #875
@@ -57,8 +60,13 @@ variables, 331-node patterns near step 340) where D1 assumed clause-sized goals;
 the groundness counters' triggers contribute nothing at the given. D3 #969 (task 495's entry, "The goal side at depth: …")
 decided a combination: D3a (goal variables as records by the variables law, the goal side's writes from the bind's
 difference, node records over the domain's keys) and D3b (call goals at linear undeclared sites kept as placed under the
-store across binds not reaching their region), predicted 11–19 ms a step at 300–350; #974 briefs its builds in the
-order D3b1 now, D3a after GT3b, D3b2 after D3a, D3b1 and the goal-sites investigation #973, then WC3 #916 and GT6 #878.
+store across binds not reaching their region), predicted 11–19 ms a step at 300–350. #973 found that this keeps none of
+the given's chain holders (0 of 250 reached goals at 300–350): three call goals at site 9, whose payload clause repeats
+a variable (65.1 % of the goal side), and 10's material premise at a declared socket (34.4 %); its proposals, (a) a
+nonlinear site's region extended by its repeated variables' subtrees and (b) waiting material premises kept, go to the
+design D3′ (continuing #969). The builds, each with its review: D3b1 #975 (the region, told to state it in (a)'s general
+form), D3a #977 (after GT3b and D3′), D3b2 #979 (after D3a, D3b1 and D3′, its brief rewritten from D3′'s draft), then
+WC3 #916 and GT6 #878.
 #965 found GT6 beyond the machine at the current route: 28–30 M states (11's 25.1 M, S(k) ≈ 5.2 k²), 99.4 % past the
 300th state of their call, a state's cost growing with depth and with the artifact (20–113 ms at k = 151 and 621 at
 shallow states), the check after the search large; near 1 ms a state flat it is 25,100 s CPU and 2,030 s wall on 16
@@ -76,14 +84,16 @@ retirement and the machinery's native verification stage (#376, #378); the verif
 translation into Isabelle and the verification frame (Q18 (a), #947, #950). The bootstrap loop's landed lines are kept
 and none is extended (#376); their remains are under Open and in `.build/plans/next-edits.md`.
 
-**Shape and order.** No build waits on a review. The longest chains end at #450: AX2c #961 → AX4 #940 → #948 → R7
-#542 → #707 → #399 → #709 → #553 → #447 → #449 → #450, and GT3 #876 → GT3b #970 → D3a → D3b2 → WC3 #916 and GT6
-#878 → R7, the deeper once D3's builds are spliced; GT6's hours make the resolver's pole critical, the AX line has slack. Nothing is added after the tail until it
-shortens (the approval build, Open 142, waits for that); splices before a task go at any depth. The queue is the
-planner's choice, a residual until the selection problem's native answer (Q2): the running tasks with their reviews,
-the pole (GT3 → GT3b, #972, #973, #974 and D3's builds → WC3 and GT6), the AX line (#968, #966, #961, #940, #962), the rewrite briefs, then the
-route in its chains' order, each review after its build; #887 after R7's review. Word changes are serialized; none is
-queued.
+**Shape and order.** No build waits on a review, and no task on an investigation: its tree never lands, so the harness
+would hold the dependent for it (#965 never started behind #875); the dependency goes through the brief's Inputs, its
+`result.md`. The one such edge kept is AX5 #962 on #968, a guard until #968's verdict rewrites AX5's brief. The longest
+chain, 14 deep, ends at #450 through GT3b #970 → D3a #977 → D3b2 #979 → WC3 #916 and GT6 #878 → R7 #542 → #707 → #399
+→ … → #449 → #450; GT6's hours make the resolver's pole critical, the AX line (AX2c #961 → AX4 #940 → #948 → R7) has
+slack. Nothing is added after the tail until it shortens (the approval build, Open 142, waits for that); splices before
+a task go at any depth. The queue is the planner's choice, a residual until the selection problem's native answer (Q2):
+the running tasks with their reviews, the pole (GT3b, #972, D3′, D3's builds → WC3 and GT6), the AX line (#966, #968,
+#961, #940, #962), the rewrite briefs, then the route in its chains' order, each review after its build; #887 after
+R7's review. Word changes are serialized; none is queued.
 
 ## Decisions
 
@@ -305,16 +315,19 @@ re-root trigger, and a probe past its bound above `Factor_Least_Collections`: 23
 
 ## Now
 
-- **Under way**: GT3 #876; AX2c #961 (q180 answered: both edits of the guard's program its own, main brought in since
-  #938 landed); startable: #972, #973, #974, #966 (the carried record tabulated, then VK2's controls), #968; GT3b #970
-  continues #876 after it lands (q181).
-- **What the next events ask**: Q34's answer; #974's proposal (D3's builds, WC3 and GT6 re-pointed after D3b2); #972's
-  attribution (the large-k fixes placed before GT6; Open 153 if none brings a state near 1 ms); #973's goal sites; #968's attribution, from which AX5's
-  brief is rewritten (a table of the fixtures' given calls, hand-ins, order; a table at the check form may need GT3's
-  code); #966's 77 refusal at the committing instance (q178's first test) and whether a query meets a root-held
-  committable goal (task 918's answer 4 waits on it); the re-run of #718's 77 and 79 fixtures with review 858's
-  attributions (next-edits 364–366) at a measured need; at AX4's landing #948 and #949 start, their proposals placed by
-  rewrite.
+- **Under way**: GT3b #970 (told review 877's follow-ups), #966 (rescoped, q182), the investigation #972, D3b1 #975
+  (told to state the region in #973's general form), the design D3′ (continuing #969), AX2c #961 (q180's two edits,
+  parked for its check), #968 (re-planned after its partial: 980's states are the given's 26, which a table of 11×3 and
+  26 closes; 26's entry, the code forms' non-return with a construction and the admissions after AX2c remain; told when
+  #961 lands).
+- **What the next events ask**: Q34's answer; #966's priority fix (a theory GT3b or D3 restates, or a statement
+  change, comes to the planner) and its controls (77 refused at the committing instance, q178's first test; a query
+  meeting a root-held committable goal, task 918's answer 4); #972's attribution (the large-k and check fixes placed
+  before GT6; Open 153 if none brings a state near 1 ms); D3′'s addition (D3a's and D3b2's briefs rewritten from its
+  drafts, a D3b3 placed if (b) is one); #968's attribution, from which AX5's brief is rewritten (a table of the fixtures' given calls, hand-ins,
+  order) and its guard edge removed; GT6 #878's brief rewritten after #972's fixes, with #965's follow-up 3 and the
+  follow-ups of review 877 GT3b leaves; the re-run of #718's 77 and 79 fixtures with review 858's attributions
+  (next-edits 364–366) at a measured need; at AX4's landing #948 and #949 start, their proposals placed by rewrite.
 - **Briefs nearest their rooms**: #542, #399 and the samples build #551; #948 and #949 re-estimate them.
 - **The knowledge base** loads near its limit (698K of 742K on 2026-10-01): keep this file lean; a base rebuild is the
   owner's.

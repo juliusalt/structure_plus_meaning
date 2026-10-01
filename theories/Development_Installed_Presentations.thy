@@ -14,8 +14,9 @@ text \<open>
   by matching clauses (V1), and is complete there; completeness is discharged at the numbered program from its
   meanings and carried only by relocation and variation. The installation's alpha variance, proved once, is consumed
   as the verification that the placed and the installed presentations agree, never in place of evaluating the
-  installed one: the native exact form resolves the presentation itself. Its instances (task 688) are the asked
-  relation's installed guard, whose entry 526 stands at @{const asked_entry}, and the first request's installed
+  installed one: the native exact form resolves the presentation itself. Its instances are the asked relation over
+  additions' installed guard (AX4 of task 928's entry), whose entry 990 stands at @{const asked_additions_entry}, and
+  the first request's installed (task 688)
   program, whose entry 561 stands at @{const first_request_entry}.
 \<close>
 
@@ -367,77 +368,99 @@ corollary given_installed_entry_exact:
   using given_installed_exact[OF result given_entry_rooted[OF entry]]
     given_installed_meaning[OF given_entry_rooted[OF entry]] given_installed_entry_meaning[OF entry] by blast+
 
-section \<open>The asked relation's installed guard\<close>
+
+section \<open>The asked relation's installed guard over additions\<close>
 
 text \<open>
-  V3's instance at the asked relation (task 688): the asked program extends the given's readers
-  (@{text asked_extension}), and its installed guard is the program the native package reader returns at
-  @{const asked_environment} and @{const asked_use}. #635's relocated construction, complete at the placed program,
-  varied to that presentation, is the locale's installed construction of the given's registrations, complete there
-  from @{thm [source] asked_construction_complete}, discharged at the asked program from its meanings. The premises
-  V3's general part names are the programs' own facts: the asked program's formation, its agreement with the rooted
-  readers, the construction's formation and its completeness.
+  V3's instance at the asked relation over additions (AX4 of task 928's entry): the program extends the given's
+  readers (@{text asked_additions_extension}), and its installed guard is the program the native package reader
+  returns at @{const asked_additions_environment} and @{const asked_additions_use}. The relocated construction of the
+  given's registrations with the added part's bound (@{const asked_additions_registrations}), complete at the placed
+  program, varied to that presentation, is the locale's installed construction, complete there from
+  @{thm [source] asked_additions_construction_complete}.
 \<close>
 
-definition asked_installed_presentation :: "local_address option finite_native_system" where
-  "asked_installed_presentation=given_readers_extension.installed_presentation finite_asked_program"
+definition asked_additions_installed_presentation :: "local_address option finite_native_system" where
+  "asked_additions_installed_presentation=given_readers_extension.installed_presentation finite_asked_additions_program"
 
-theorem asked_installed_presentation_exact:
-  "asked_installed_presentation |\<in>| finite_native_package_readings asked_environment asked_use []"
-  "\<And>R. R |\<in>| finite_native_package_readings asked_environment asked_use [] \<Longrightarrow> R=asked_installed_presentation"
-  "decode_finite_system asked_installed_presentation=asked_program"
-  using asked_extension.installed_presentation_exact
-  unfolding asked_installed_presentation_def asked_environment_def asked_use_def asked_program_def by blast+
+theorem asked_additions_installed_presentation_exact:
+  "asked_additions_installed_presentation |\<in>| finite_native_package_readings asked_additions_environment
+    asked_additions_use []"
+  "\<And>R. R |\<in>| finite_native_package_readings asked_additions_environment asked_additions_use [] \<Longrightarrow>
+    R=asked_additions_installed_presentation"
+  "decode_finite_system asked_additions_installed_presentation=asked_additions_program"
+  using asked_additions_extension.installed_presentation_exact
+  unfolding asked_additions_installed_presentation_def asked_additions_environment_def asked_additions_use_def
+    asked_additions_program_def
+  by blast+
 
-definition asked_installed_construction where
-  "asked_installed_construction n=finite_varied_construction asked_placed_program asked_installed_presentation
-    (asked_relocated_construction n)"
+definition asked_additions_installed_construction where
+  "asked_additions_installed_construction n=finite_varied_construction asked_additions_placed_program
+    asked_additions_installed_presentation (asked_additions_relocated_construction n)"
 
-lemma asked_installed_construction_locale:
-  "asked_installed_construction n=given_readers_extension.installed_construction finite_asked_program
-    (finite_collection_construction given_witness_registrations n)"
-  by (simp only: asked_installed_construction_def asked_placed_program_def asked_relocated_construction_def
-    asked_installed_presentation_def asked_placement_def asked_extension.installed_construction_def)
+lemma asked_additions_installed_construction_locale:
+  "asked_additions_installed_construction n=given_readers_extension.installed_construction finite_asked_additions_program
+    (finite_collection_construction asked_additions_registrations n)"
+  by (simp only: asked_additions_installed_construction_def asked_additions_placed_program_def
+    asked_additions_relocated_construction_def asked_additions_installed_presentation_def asked_additions_placement_def
+    asked_additions_extension.installed_construction_def)
 
-lemma asked_installed_construction_formed: "finite_witness_construction_formed (asked_installed_construction n)"
-  unfolding asked_installed_construction_def by (rule finite_varied_construction_formed[OF asked_relocated_formed])
+lemma asked_additions_installed_construction_formed:
+  "finite_witness_construction_formed (asked_additions_installed_construction n)"
+  unfolding asked_additions_installed_construction_def
+  by (rule finite_varied_construction_formed[OF asked_additions_relocated_formed])
 
-theorem asked_installed_construction_complete:
-  "finite_construction_complete (asked_installed_construction n) asked_installed_presentation"
-  unfolding asked_installed_construction_locale asked_installed_presentation_def
-  by (rule asked_extension.installed_construction_complete[OF asked_construction_complete])
+theorem asked_additions_installed_construction_complete:
+  "finite_construction_complete (asked_additions_installed_construction n) asked_additions_installed_presentation"
+  unfolding asked_additions_installed_construction_locale asked_additions_installed_presentation_def
+  by (rule asked_additions_extension.installed_construction_complete[OF asked_additions_construction_complete])
 
-theorem asked_installed_resolution_exact:
-  assumes result: "native_committed_resolution (asked_installed_construction n) no_commitment
-      asked_installed_presentation R m=(T,A)"
+theorem asked_additions_installed_resolution_exact:
+  assumes result: "native_committed_resolution (asked_additions_installed_construction n) no_commitment
+      asked_additions_installed_presentation R m=(T,A)"
   shows "fimage fst T=R"
     and "(q,Finite_Resolved C) |\<in>| T \<Longrightarrow> C\<noteq>{||} \<and>
-      fBall C (\<lambda>p. finite_checks_schema_proof asked_installed_presentation p (fst q) (snd q)) \<and>
-      decode_finite_call_term q\<in>positive_meaning asked_program"
-    and "(q,r) |\<in>| T \<Longrightarrow> finite_resolution_refutes r \<Longrightarrow> decode_finite_call_term q\<notin>positive_meaning asked_program"
-    and "A=Some B \<Longrightarrow> schema_system_formed asked_program \<and>
-      fset B={q\<in>fset R. decode_finite_call_term q\<in>positive_meaning asked_program}"
-  using asked_extension.installed_resolution_exact[OF finite_collection_construction_formed asked_construction_complete
-    result[unfolded asked_installed_construction_locale asked_installed_presentation_def],
-    folded asked_installed_presentation_def asked_program_def]
+      fBall C (\<lambda>p. finite_checks_schema_proof asked_additions_installed_presentation p (fst q) (snd q)) \<and>
+      decode_finite_call_term q\<in>positive_meaning asked_additions_program"
+    and "(q,r) |\<in>| T \<Longrightarrow> finite_resolution_refutes r \<Longrightarrow>
+      decode_finite_call_term q\<notin>positive_meaning asked_additions_program"
+    and "A=Some B \<Longrightarrow> schema_system_formed asked_additions_program \<and>
+      fset B={q\<in>fset R. decode_finite_call_term q\<in>positive_meaning asked_additions_program}"
+  using asked_additions_extension.installed_resolution_exact[OF finite_collection_construction_formed
+    asked_additions_construction_complete
+    result[unfolded asked_additions_installed_construction_locale asked_additions_installed_presentation_def],
+    folded asked_additions_installed_presentation_def asked_additions_program_def]
   by blast+
 
 text \<open>
-  At the installed entry the answer is 526's meaning in the asked program, read from the locale's entry form
-  (@{text installed_entry_exact}) at the asked program's own entry.
+  At the installed entry the answer is the guard over additions' meaning at 990, read from the locale's entry form
+  (@{text installed_entry_exact}) at the program's own entry.
 \<close>
 
-corollary asked_installed_exact:
-  assumes result: "native_committed_resolution (asked_installed_construction n) no_commitment
-      asked_installed_presentation R m=(T,A)"
-  shows "((asked_entry,t),Finite_Resolved C) |\<in>| T \<Longrightarrow> (526,decode_finite_term t)\<in>positive_meaning asked_program_system"
-    and "((asked_entry,t),r) |\<in>| T \<Longrightarrow> finite_resolution_refutes r \<Longrightarrow>
-      (526,decode_finite_term t)\<notin>positive_meaning asked_program_system"
-  using asked_extension.installed_entry_exact[OF finite_collection_construction_formed asked_construction_complete
-    result[unfolded asked_installed_construction_locale asked_installed_presentation_def]
-    asked_entry_member[folded finite_asked_program_exact],
-    unfolded finite_asked_program_exact, folded asked_placement_def, folded asked_entry_def]
-  by blast+
+corollary asked_additions_installed_exact:
+  assumes result: "native_committed_resolution (asked_additions_installed_construction n) no_commitment
+      asked_additions_installed_presentation R m=(T,A)"
+  shows "((asked_additions_entry,t),Finite_Resolved C) |\<in>| T \<Longrightarrow>
+      (990,decode_finite_term t)\<in>positive_meaning additions_guard_system"
+    and "((asked_additions_entry,t),r) |\<in>| T \<Longrightarrow> finite_resolution_refutes r \<Longrightarrow>
+      (990,decode_finite_term t)\<notin>positive_meaning additions_guard_system"
+proof -
+  have guard: "(990,x)\<in>positive_meaning asked_additions_program_system \<longleftrightarrow>
+      (990,x)\<in>positive_meaning additions_guard_system" for x
+    by (rule asked_additions_program_guard_meaning[OF asked_additions_entry_member])
+      (simp add: asked_additions_guard_definitions)
+  note entry=asked_additions_extension.installed_entry_exact[OF finite_collection_construction_formed
+    asked_additions_construction_complete
+    result[unfolded asked_additions_installed_construction_locale asked_additions_installed_presentation_def]
+    asked_additions_entry_member[folded finite_asked_additions_program_exact],
+    unfolded finite_asked_additions_program_exact, folded asked_additions_placement_def, folded asked_additions_entry_def]
+  show "((asked_additions_entry,t),Finite_Resolved C) |\<in>| T \<Longrightarrow>
+      (990,decode_finite_term t)\<in>positive_meaning additions_guard_system"
+    using entry guard by blast
+  show "((asked_additions_entry,t),r) |\<in>| T \<Longrightarrow> finite_resolution_refutes r \<Longrightarrow>
+      (990,decode_finite_term t)\<notin>positive_meaning additions_guard_system"
+    using entry guard by blast
+qed
 
 section \<open>The first request's installed program\<close>
 

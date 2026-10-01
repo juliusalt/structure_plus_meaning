@@ -6,8 +6,9 @@ text \<open>
   The control of V3 (task 657) of DECISIONS.md "A checker does not produce", its addition "Registrations and
   declarations reach an installed package by matching its clauses against the placed ones": one evaluation, compiled
   once, over the native package reader's refinements, in a thin theory no theory imports. It reads back the three
-  installed presentations the route evaluates (the given's readers', the asked relation's installed guard, the first
-  request's installed program), each read-back timed apart from its installation, and at 77, 392, 525 and 561, each
+  installed presentations the route evaluates (the given's readers', the asked relation over additions' installed
+  guard, the first request's installed program), each read-back timed apart from its installation, and at 77, 392, 525
+  and 561, and at the asked relation over additions at the added part's bound 960 (AX4), each
   where its numbered program holds it, it finds the match between every placed clause the given's registrations name
   and the installed clauses at its site, and compares what V3's varied construction registers there with what the
   relocated construction registers at the placed clause. The constructions compared are V3's by their definitions
@@ -19,7 +20,7 @@ text \<open>
 
 text \<open>
   The two extensions' installations are evaluated by the code equations their own theories state
-  (@{thm [source] asked_installation_code}, @{thm [source] first_request_installation_code}).
+  (@{thm [source] asked_additions_installation_code}, @{thm [source] first_request_installation_code}).
 \<close>
 
 section \<open>The match at one registered site\<close>
@@ -54,17 +55,37 @@ definition installed_match_site where
 
 text \<open>
   The report of an installation with placement g of the numbered program Q, at the presentation N the reader
-  returned: at every site of ks that Q defines, the match at its placement, over V3's constructions.
+  returned, over the registrations rs: at every site of ks that Q defines, the match at its placement, over V3's
+  constructions. The given's registrations' report is its instance; the asked relation over additions' is at
+  @{const asked_additions_registrations}.
 \<close>
+
+definition installed_registrations_match_report :: "(nat,nat,nat,nat) collection_registration list \<Rightarrow>
+    (nat \<Rightarrow> local_address option definition_site) \<Rightarrow>
+    (nat,nat,nat,nat) finite_schema_system \<Rightarrow> local_address option finite_native_system \<Rightarrow> integer \<Rightarrow> integer list \<Rightarrow>
+    (integer\<times>(integer\<times>integer)\<times>integer\<times>integer list\<times>bool\<times>bool\<times>bool\<times>bool) list" where
+  "installed_registrations_match_report rs g Q N n ks=(let P=finite_rename_system g Q;
+    \<kappa>=finite_relocated_construction g Q (finite_collection_construction rs (nat_of_integer n));
+    \<kappa>'=finite_varied_construction P N \<kappa> in
+    map (\<lambda>k. (integer_of_nat k,installed_match_site P N \<kappa> \<kappa>' (g k)))
+      (filter (\<lambda>k. k |\<in>| finite_system_definitions Q) (map nat_of_integer ks)))"
 
 definition installed_match_report :: "(nat \<Rightarrow> local_address option definition_site) \<Rightarrow>
     (nat,nat,nat,nat) finite_schema_system \<Rightarrow> local_address option finite_native_system \<Rightarrow> integer \<Rightarrow> integer list \<Rightarrow>
     (integer\<times>(integer\<times>integer)\<times>integer\<times>integer list\<times>bool\<times>bool\<times>bool\<times>bool) list" where
-  "installed_match_report g Q N n ks=(let P=finite_rename_system g Q;
-    \<kappa>=finite_relocated_construction g Q (finite_collection_construction given_witness_registrations (nat_of_integer n));
-    \<kappa>'=finite_varied_construction P N \<kappa> in
-    map (\<lambda>k. (integer_of_nat k,installed_match_site P N \<kappa> \<kappa>' (g k)))
-      (filter (\<lambda>k. k |\<in>| finite_system_definitions Q) (map nat_of_integer ks)))"
+  "installed_match_report=installed_registrations_match_report given_witness_registrations"
+
+text \<open>
+  960's registration evaluated with its schema read from the asked program over additions
+  (@{thm [source] asked_additions_bound_schema}), as the given's registrations' are read from the given's readers.
+\<close>
+
+lemma extension_bound_registration_code [code]:
+  "extension_bound_registration=\<lparr>registration_site=960,
+    registration_schema=the (finite_relation_option (finite_system_clauses finite_asked_additions_program) (960,0)),
+    registration_variable=3,registration_families=Single_Family (closure_witness_family 0 2)\<rparr>"
+  by (simp only: asked_additions_bound_schema option.sel extension_bound_registration_def
+    closure_witness_registration_def)
 
 text \<open>The read-back at an installed environment and site, and what the control reports of it.\<close>
 
@@ -103,6 +124,9 @@ struct
   val the_reading = @{code installed_reading}
   val definitions = @{code installed_definition_count}
   val report = @{code installed_match_report}
+  val report_with = @{code installed_registrations_match_report}
+  val additions_registrations = @{code asked_additions_registrations}
+  val additions_sites = [77, 392, 525, 561, 960]
   val sites = [77, 392, 525, 561]
   val bound = 40
   fun read label (env, use) =
@@ -126,12 +150,17 @@ struct
   fun matched label g q n =
     let val rows = timed (label ^ " matched") (fn () => report g q n bound sites) ()
     in List.app (site label) rows end
+  fun matched_with label rs g q n =
+    let val rows = timed (label ^ " matched") (fn () => report_with rs g q n bound additions_sites) ()
+    in List.app (site label) rows end
   fun run () =
     let
       val given = read "given's readers" @{code given_readers_installed}
       val _ = matched "given's readers" @{code given_readers_placement} @{code finite_rooted_given_readers} given
-      val asked = read "asked relation" (@{code asked_environment}, @{code asked_use})
-      val _ = matched "asked relation" @{code asked_placement} @{code finite_asked_program} asked
+      val additions = read "asked relation over additions"
+        (@{code asked_additions_environment}, @{code asked_additions_use})
+      val _ = matched_with "asked relation over additions" additions_registrations @{code asked_additions_placement}
+        @{code finite_asked_additions_program} additions
       val request = read "first request" (@{code first_request_environment}, @{code first_request_use})
       val _ = matched "first request" @{code first_request_placement} @{code finite_first_request_program} request
     in () end

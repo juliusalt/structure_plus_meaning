@@ -484,18 +484,21 @@ theorem installed_input_committed_exact:
 end
 
 text \<open>
-  The record with 12's input production at the asked relation's installed guard (526 in the native course, #707) and
-  at the first request's installed program (561 at the installation, #547, #399): committed with every complete
-  construction of the numbered program. #798's carrying of @{const given_declarations} stands as
-  @{thm [source] asked_installed_declarations_discharged} and @{thm [source] first_request_installed_declarations_discharged}.
+  The record with 12's input production at the asked relation over additions' installed guard (990 in the native
+  course, #707, AX4) and at the first request's installed program (561 at the installation, #547, #399): committed
+  with every complete construction of the numbered program. #798's carrying of @{const given_declarations} stands as
+  @{thm [source] asked_additions_installed_declarations_discharged} and
+  @{thm [source] first_request_installed_declarations_discharged}.
 \<close>
 
-theorem asked_installed_input_declarations_discharged:
-  assumes "finite_witness_construction_formed \<kappa>" "finite_construction_complete \<kappa> finite_asked_program"
-  shows "committed_registrations (asked_extension.installed_construction \<kappa>) asked_installed_presentation m'
-    asked_extension.installed_input_declarations asked_extension.installed_input_frames
-    asked_extension.installed_input_correspondence"
-  unfolding asked_installed_presentation_def by (rule asked_extension.installed_input_committed_registrations[OF assms])
+theorem asked_additions_installed_input_declarations_discharged:
+  assumes "finite_witness_construction_formed \<kappa>" "finite_construction_complete \<kappa> finite_asked_additions_program"
+  shows "committed_registrations (asked_additions_extension.installed_construction \<kappa>)
+    asked_additions_installed_presentation m'
+    asked_additions_extension.installed_input_declarations asked_additions_extension.installed_input_frames
+    asked_additions_extension.installed_input_correspondence"
+  unfolding asked_additions_installed_presentation_def
+  by (rule asked_additions_extension.installed_input_committed_registrations[OF assms])
 
 theorem first_request_installed_input_declarations_discharged:
   assumes "finite_witness_construction_formed \<kappa>" "finite_construction_complete \<kappa> finite_first_request_program"

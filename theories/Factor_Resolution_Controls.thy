@@ -1107,4 +1107,27 @@ corollary implemented_base_control_resolved:
     finite_resolution_verdict_exact[of implemented_base_control "(None,[3])" "Finite_Payload []" 12 True]
   by simp_all
 
+text \<open>
+  The code route of the reads at a sharing state's table (task 1007): every decode, projection, unification and test
+  reads the state's tree of positions only where @{text "share_state_table q"} stands under the reader's head as the
+  code is generated (@{thm [source] share_state_projects}); a @{text let} that binds the bare table, or another reader
+  of it, would read the whole table per call. The control reads the code equations this theory's context holds: the
+  program of the shared search (@{const finite_resolution_search}), of R5's kept committed search
+  (@{const finite_committed_search}) and of @{const table_carry} reaches no @{const share_state_table}. The deferred
+  route's code equations (@{text Factor_Deferred_Search}, @{text Factor_Deferred_Commitments}) stand outside this
+  context and are not checked here.
+\<close>
+
+ML \<open>
+  val _ =
+    let
+      val program = Code_Thingol.consts_program @{context}
+        [@{const_name finite_resolution_search}, @{const_name finite_committed_search}, @{const_name table_carry}]
+    in
+      if Code_Symbol.Graph.defined program (Code_Symbol.Constant @{const_name share_state_table})
+      then error "The resolver's code reaches share_state_table: a reader reads a sharing state's table whole"
+      else ()
+    end
+\<close>
+
 end

@@ -622,6 +622,20 @@ fun finite_solvable_material_goal :: "('a,'s,'d,'c) resolution_goal \<Rightarrow
   "finite_solvable_material_goal (Resolution_Call_Goal q r d p) = False"
 | "finite_solvable_material_goal (Resolution_Material_Goal q r M) = (finite_material_resolution M \<noteq> Material_Waits)"
 
+text \<open>
+  The test reads R1's outcome only for waiting, which the skeleton and the source's groundness decide
+  (@{thm [source] finite_material_resolution_waits}): its code builds no solution set, which at an open skeleton
+  with a ground source is every enumeration of the source's artifact (#968, finding (2)).
+\<close>
+
+declare finite_solvable_material_goal.simps [code del]
+
+lemma finite_solvable_material_goal_code [code]:
+  "finite_solvable_material_goal (Resolution_Call_Goal q r d p) = False"
+  "finite_solvable_material_goal (Resolution_Material_Goal q' r' M) = (case finite_material_skeleton M of
+      Open_Reading \<Rightarrow> finite_pattern_variables (finite_material_source M) = {||} | _ \<Rightarrow> True)"
+  by (simp_all add: finite_material_resolution_waits split: material_reading.split)
+
 definition finite_independent_goal ::
     "('a,'s,'d,'c) resolution_goal fset \<Rightarrow> ('a,'s,'d,'c) resolution_goal \<Rightarrow> bool" where
   "finite_independent_goal G g = (case g of

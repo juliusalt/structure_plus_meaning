@@ -1084,20 +1084,36 @@ definition deferred_of :: "('a,'s,'d,'c) finite_schema_system \<Rightarrow> ('a,
 lemma binding_tree_store_empty: "binding_tree_store key binding_tree_empty = binding_store_empty"
   by (simp add: binding_tree_store_def binding_tree_empty_def binding_store_empty_def)
 
-theorem deferred_of_rooted:
-  fixes st :: "('a,'s::linorder,'d,'c) resolution_state"
-  assumes d: "resolution_positions_distinct st" and v: "search_variables_rooted st"
-  shows "deferred_formed \<kappa> P (deferred_of P st)" and "deferred_project (deferred_of P st) = st"
-    and "deferred_inner (deferred_of P st) = search_of P st"
+text \<open>
+  The deferred state of a shared search records its nodes over that search, whatever table the search was shared
+  from: the deferred state of an R3 state is the one of its shared search (@{text deferred_of_search_of}).
+\<close>
+
+definition deferred_of_search :: "('a,'s::linorder,'d,'c) shared_search \<Rightarrow> ('a,'s,'d,'c) deferred_search" where
+  "deferred_of_search r = (let es = RBT.entries (shared_nodes (search_state r)) in
+    fold (\<lambda>z d. deferred_record_node (fst z) (shared_derivation_call (shared_entry_node (snd z))) d) es
+      \<lparr>deferred_inner = r, deferred_tree = binding_tree_empty,
+       deferred_positions = snd (keyed_reference_sequence id (map fst es) (RBT.empty, 0, [])),
+       deferred_names = [], deferred_records = RBT.empty, deferred_holders = RBT.empty\<rparr>)"
+
+lemma deferred_of_search_of: "deferred_of P st = deferred_of_search (search_of P st)"
+  by (simp add: deferred_of_def deferred_of_search_def Let_def)
+
+theorem deferred_of_search_rooted:
+  fixes r :: "('a,'s::linorder,'d,'c) shared_search" and st :: "('a,'s,'d,'c) resolution_state"
+  assumes r0: "search_formed \<kappa> P r" and K0: "search_classes_formed r" and pr0: "search_project r = st"
+    and v: "search_variables_rooted st"
+  shows "deferred_formed \<kappa> P (deferred_of_search r)" and "deferred_project (deferred_of_search r) = st"
+    and "deferred_inner (deferred_of_search r) = r"
 proof -
-  let ?r = "search_of P st" let ?s = "search_state ?r" let ?es = "RBT.entries (shared_nodes ?s)"
+  let ?r = "r" let ?s = "search_state ?r" let ?es = "RBT.entries (shared_nodes ?s)"
   let ?N0 = "snd (keyed_reference_sequence id (map fst ?es) (RBT.empty, 0, []))"
   let ?Ts = "snd (value_reference_sequence (map fst ?es) [])"
   let ?ds = "\<lparr>deferred_inner = ?r, deferred_tree = binding_tree_empty, deferred_positions = ?N0,
     deferred_names = [], deferred_records = RBT.empty, deferred_holders = RBT.empty\<rparr>
     :: ('a,'s,'d,'c) deferred_search"
-  have r: "search_formed \<kappa> P ?r" and pr: "search_project ?r = st" using search_of[OF d] by simp_all
-  have K: "search_classes_formed ?r" using search_of_classes[OF d] .
+  have r: "search_formed \<kappa> P ?r" and pr: "search_project ?r = st" using r0 pr0 by simp_all
+  have K: "search_classes_formed ?r" using K0 .
   have T0: "keyed_reference_state id ?N0 ?Ts"
     using keyed_reference_sequence_exact[OF inj_on_id keyed_reference_state_empty, of "map fst ?es"] by simp
   have nodepos: "q \<in> set ?Ts" if "RBT.lookup (shared_nodes ?s) q \<noteq> None" for q
@@ -1207,7 +1223,7 @@ proof -
     qed
     show ?case using IH by (simp add: z step_def)
   qed
-  have dof: "deferred_of P st = fold step ?es ?ds" by (simp add: deferred_of_def step_def Let_def)
+  have dof: "deferred_of_search r = fold step ?es ?ds" by (simp add: deferred_of_search_def step_def Let_def)
   have npos0: "\<forall>q. RBT.lookup (shared_nodes ?s) q \<noteq> None \<longrightarrow> position_number (deferred_positions ?ds) q \<noteq> 0"
   proof (intro allI impI)
     fix q assume "RBT.lookup (shared_nodes ?s) q \<noteq> None"
@@ -1217,7 +1233,7 @@ proof -
   have in0: "deferred_inner ?ds = ?r" by simp
   have nf0: "\<forall>q\<in>{}. deferred_node_formed ?ds q" by simp
   note F = fold[where Q = "{}", OF parts0 in0 st0 npos0 nf0 order_refl]
-  have allq: "deferred_node_formed (deferred_of P st) q" for q
+  have allq: "deferred_node_formed (deferred_of_search r) q" for q
   proof (cases "RBT.lookup (shared_nodes ?s) q")
     case None
     then show ?thesis using F dof by (simp add: deferred_node_formed_def)
@@ -1229,17 +1245,25 @@ proof -
     have Fn: "\<forall>q. q \<in> {} \<union> fst ` set ?es \<longrightarrow> deferred_node_formed (fold step ?es ?ds) q" using F by blast
     show ?thesis unfolding dof using Fn qm by blast
   qed
-  show "deferred_formed \<kappa> P (deferred_of P st)" using F dof allq by (simp add: deferred_formed_def)
-  show inner: "deferred_inner (deferred_of P st) = search_of P st" using F dof by simp
-  have sv: "deferred_substitution (deferred_of P st) = Finite_Variable"
+  show "deferred_formed \<kappa> P (deferred_of_search r)" using F dof allq by (simp add: deferred_formed_def)
+  show inner: "deferred_inner (deferred_of_search r) = r" using F dof by simp
+  have sv: "deferred_substitution (deferred_of_search r) = Finite_Variable"
     using F dof by (simp add: fun_eq_iff deferred_substitution_def binding_substitution_def binding_resolve_empty)
   have g: "fimage (resolution_goal_substitute Finite_Variable) (resolution_pending st) = resolution_pending st"
     by (rule fimage_fixed) (rule resolution_goal_substitute_outside, simp)
   have n: "fimage (resolution_node_substitute Finite_Variable) (resolution_nodes st) = resolution_nodes st"
     by (rule fimage_fixed) (rule resolution_node_substitute_outside, simp)
-  show "deferred_project (deferred_of P st) = st"
+  show "deferred_project (deferred_of_search r) = st"
     unfolding deferred_project_def sv inner pr resolution_state_substitute_def g n by (cases st) simp
 qed
+
+theorem deferred_of_rooted:
+  fixes st :: "('a,'s::linorder,'d,'c) resolution_state"
+  assumes d: "resolution_positions_distinct st" and v: "search_variables_rooted st"
+  shows "deferred_formed \<kappa> P (deferred_of P st)" and "deferred_project (deferred_of P st) = st"
+    and "deferred_inner (deferred_of P st) = search_of P st"
+  using deferred_of_search_rooted[OF search_of(1)[OF d] search_of_classes[OF d] search_of(2)[OF d] v]
+  by (simp_all add: deferred_of_search_of)
 
 theorem deferred_of:
   fixes st :: "('a,'s::linorder,'d,'c) resolution_state"

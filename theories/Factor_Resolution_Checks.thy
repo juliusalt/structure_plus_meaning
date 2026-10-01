@@ -1677,6 +1677,53 @@ definition route_select where
     else let W = shared_focused (the F) r V in
       focused_kept_select (admitted_priority_class Kc Dm M (gd r) W (fst x)) (the F) r V W)"
 
+text \<open>
+  The route's selection at a closed class @{text Z} (task 989): today's @{const route_select} at the empty class and the
+  route's selection at a table at the search's own closed class, both read through @{text route_select_at_over}.
+\<close>
+
+definition route_select_at where
+  "route_select_at Z \<kappa> P Kc Dm M gd F r V x = (if F = None \<or> F = Some []
+    then committed_kept_select_at Z \<kappa> P (admitted_priority_class Kc Dm M (gd r) V (fst x)) F r V
+    else let W = shared_focused (the F) r V in
+      focused_kept_select_in Z (admitted_priority_class Kc Dm M (gd r) W (fst x)) (the F) r V W)"
+
+lemma route_select_at_over:
+  fixes N :: "('a,'s::linorder,'d,'c) shared_node_entry \<Rightarrow> ('a,'s,'d,'c) resolution_node"
+    and Fr :: "('a,'s,'d,'c) shared_node_entry \<Rightarrow> 'a fset"
+    and VN :: "('a,'s,'d,'c) shared_node_entry \<Rightarrow> 'a \<Rightarrow> bool"
+    and C :: "('a,'s,'d,'c) shared_node_entry \<Rightarrow> ('s,'a) resolution_variable fset"
+  assumes r: "search_formed \<kappa> P r" and K: "search_classes_formed r"
+    and Z: "\<And>p. RBT.lookup Z p = class_value Ec (shared_goals (search_state r)) p"
+    and EC: "\<And>h. Ec h \<Longrightarrow> shared_goal_is_call (shared_entry_goal h)"
+  defines "V \<equiv> (shared_access \<kappa> P r)\<lparr>access_node := N, access_free := Fr, access_value_none := VN,
+    access_call_variables := C\<rparr>"
+  shows "route_select_at Z \<kappa> P Kc Dm M gd F r V (E,b) = access_select_in Ec (\<lambda>h. gd r h \<and>
+      access_moded_priority_at Kc Dm M (access_focused F V) E (fBex (access_goals (access_focused F V))
+        (\<lambda>h. gd r h \<and> access_commitment_priority Kc (access_focused F V) E h)) h) (access_focused F V)"
+proof (cases "F = None \<or> F = Some []")
+  case True
+  have "route_select_at Z \<kappa> P Kc Dm M gd F r V (E,b) =
+      committed_kept_select_at Z \<kappa> P (admitted_priority_class Kc Dm M (gd r) (access_focused F V) E) F r V"
+    using True by (simp add: route_select_at_def access_focused_whole)
+  also have "\<dots> = access_select_in Ec (\<lambda>h. gd r h \<and> access_moded_priority_at Kc Dm M (access_focused F V) E
+      (fBex (access_goals (access_focused F V)) (\<lambda>h. gd r h \<and> access_commitment_priority Kc (access_focused F V) E h)) h)
+      (access_focused F V)"
+    unfolding V_def by (rule committed_kept_select_at_over[OF r K Z]) (erule EC, rule admitted_priority_class, simp)
+  finally show ?thesis .
+next
+  case False
+  obtain g where g: "F = Some g" and gne: "g \<noteq> []" using False by (cases F) auto
+  have "route_select_at Z \<kappa> P Kc Dm M gd F r V (E,b) = focused_kept_select_in Z
+      (admitted_priority_class Kc Dm M (gd r) (access_focused F V) E) g r V (access_focused F V)"
+    by (simp add: route_select_at_def g gne shared_focused_over[OF r] V_def Let_def)
+  also have "\<dots> = access_select_in Ec (\<lambda>h. gd r h \<and> access_moded_priority_at Kc Dm M (access_focused F V) E
+      (fBex (access_goals (access_focused F V)) (\<lambda>h. gd r h \<and> access_commitment_priority Kc (access_focused F V) E h)) h)
+      (access_focused F V)"
+    unfolding g V_def by (rule focused_kept_select_over_in[OF r K Z]) (erule EC, rule admitted_priority_class, simp)
+  finally show ?thesis .
+qed
+
 lemma route_select_over:
   fixes N :: "('a,'s::linorder,'d,'c) shared_node_entry \<Rightarrow> ('a,'s,'d,'c) resolution_node"
     and Fr :: "('a,'s,'d,'c) shared_node_entry \<Rightarrow> 'a fset"
@@ -1688,27 +1735,16 @@ lemma route_select_over:
   shows "route_select \<kappa> P Kc Dm M gd F r V (E,b) = access_select (\<lambda>h. gd r h \<and> access_moded_priority_at Kc Dm M
       (access_focused F V) E (fBex (access_goals (access_focused F V))
         (\<lambda>h. gd r h \<and> access_commitment_priority Kc (access_focused F V) E h)) h) (access_focused F V)"
-proof (cases "F = None \<or> F = Some []")
-  case True
-  have "route_select \<kappa> P Kc Dm M gd F r V (E,b) =
-      committed_kept_select \<kappa> P (admitted_priority_class Kc Dm M (gd r) (access_focused F V) E) F r V"
-    using True by (simp add: route_select_def access_focused_whole)
-  also have "\<dots> = access_select (\<lambda>h. gd r h \<and> access_moded_priority_at Kc Dm M (access_focused F V) E
-      (fBex (access_goals (access_focused F V)) (\<lambda>h. gd r h \<and> access_commitment_priority Kc (access_focused F V) E h)) h)
-      (access_focused F V)"
-    unfolding V_def by (rule committed_kept_select_over[OF r K]) (rule admitted_priority_class, simp)
-  finally show ?thesis .
-next
-  case False
-  obtain g where g: "F = Some g" and gne: "g \<noteq> []" using False by (cases F) auto
-  have "route_select \<kappa> P Kc Dm M gd F r V (E,b) =
-      focused_kept_select (admitted_priority_class Kc Dm M (gd r) (access_focused F V) E) g r V (access_focused F V)"
-    by (simp add: route_select_def g gne shared_focused_over[OF r] V_def Let_def)
-  also have "\<dots> = access_select (\<lambda>h. gd r h \<and> access_moded_priority_at Kc Dm M (access_focused F V) E
-      (fBex (access_goals (access_focused F V)) (\<lambda>h. gd r h \<and> access_commitment_priority Kc (access_focused F V) E h)) h)
-      (access_focused F V)"
-    unfolding g V_def by (rule focused_kept_select_over[OF r K]) (rule admitted_priority_class, simp)
-  finally show ?thesis .
+proof -
+  have Z: "\<And>p. RBT.lookup RBT.empty p = class_value (\<lambda>h. False) (shared_goals (search_state r)) p"
+    by (simp add: class_value_def split: option.split)
+  have e: "route_select_at RBT.empty \<kappa> P Kc Dm M gd F r V x = route_select \<kappa> P Kc Dm M gd F r V x" for x
+    by (simp add: route_select_at_def route_select_def committed_kept_select_at_empty focused_kept_select_in_empty Let_def)
+  have "route_select_at RBT.empty \<kappa> P Kc Dm M gd F r V (E,b) = access_select_in (\<lambda>h. False) (\<lambda>h. gd r h \<and>
+      access_moded_priority_at Kc Dm M (access_focused F V) E (fBex (access_goals (access_focused F V))
+        (\<lambda>h. gd r h \<and> access_commitment_priority Kc (access_focused F V) E h)) h) (access_focused F V)"
+    unfolding V_def by (rule route_select_at_over[OF r K Z]) simp
+  then show ?thesis by (simp only: e access_select_in_empty)
 qed
 
 lemma route_kept_formed:
@@ -2089,28 +2125,14 @@ lemma route_select_over_in:
   shows "route_select_in \<kappa> P Kc Dm M gd F r V (E,b) = access_select_in (search_closes r) (\<lambda>h. gd r h \<and>
       access_moded_priority_at Kc Dm M (access_focused F V) E (fBex (access_goals (access_focused F V))
         (\<lambda>h. gd r h \<and> access_commitment_priority Kc (access_focused F V) E h)) h) (access_focused F V)"
-proof (cases "F = None \<or> F = Some []")
-  case True
-  have "route_select_in \<kappa> P Kc Dm M gd F r V (E,b) =
-      committed_kept_select_in \<kappa> P (admitted_priority_class Kc Dm M (gd r) (access_focused F V) E) F r V"
-    using True by (simp add: route_select_in_def access_focused_whole)
-  also have "\<dots> = access_select_in (search_closes r) (\<lambda>h. gd r h \<and> access_moded_priority_at Kc Dm M (access_focused F V) E
-      (fBex (access_goals (access_focused F V)) (\<lambda>h. gd r h \<and> access_commitment_priority Kc (access_focused F V) E h)) h)
-      (access_focused F V)"
-    unfolding V_def by (rule committed_kept_select_over_in[OF r K]) (rule admitted_priority_class, simp)
-  finally show ?thesis .
-next
-  case False
-  obtain g where g: "F = Some g" and gne: "g \<noteq> []" using False by (cases F) auto
-  have "route_select_in \<kappa> P Kc Dm M gd F r V (E,b) = focused_kept_select_in (search_closed r)
-      (admitted_priority_class Kc Dm M (gd r) (access_focused F V) E) g r V (access_focused F V)"
-    by (simp add: route_select_in_def g gne shared_focused_over[OF r] V_def Let_def)
-  also have "\<dots> = access_select_in (search_closes r) (\<lambda>h. gd r h \<and> access_moded_priority_at Kc Dm M (access_focused F V) E
-      (fBex (access_goals (access_focused F V)) (\<lambda>h. gd r h \<and> access_commitment_priority Kc (access_focused F V) E h)) h)
-      (access_focused F V)"
-    unfolding g V_def by (rule focused_kept_select_over_in[OF r K search_closed_class[OF r]])
-      (erule search_closes_call, rule admitted_priority_class, simp)
-  finally show ?thesis .
+proof -
+  have e: "route_select_at (search_closed r) \<kappa> P Kc Dm M gd F r V x = route_select_in \<kappa> P Kc Dm M gd F r V x" for x
+    by (simp add: route_select_at_def route_select_in_def committed_kept_select_in_at)
+  have "route_select_at (search_closed r) \<kappa> P Kc Dm M gd F r V (E,b) = access_select_in (search_closes r) (\<lambda>h. gd r h \<and>
+      access_moded_priority_at Kc Dm M (access_focused F V) E (fBex (access_goals (access_focused F V))
+        (\<lambda>h. gd r h \<and> access_commitment_priority Kc (access_focused F V) E h)) h) (access_focused F V)"
+    unfolding V_def by (rule route_select_at_over[OF r K search_closed_class[OF r]]) (erule search_closes_call)
+  then show ?thesis by (simp only: e)
 qed
 
 definition deferred_raised_in :: "('a,'s,'d,'c) finite_witness_construction \<Rightarrow> ('a,'s,'d,'c) finite_schema_system \<Rightarrow>
@@ -2432,9 +2454,91 @@ lemma moded_check_graph_verdicts_listed_code [code]:
   by (simp only: moded_check_graph_verdicts_listed_def moded_check_graph_verdicts_in_def
     moded_deferred_route_search_in_exact)
 
+text \<open>
+  Item (7) at a demand (task 989, review 971's follow-up 3), at the moded selection where #547 and #399 read the check
+  forms: each call of the demand with GT4's graph verdicts of its check search at the table
+  (@{text moded_demand_graph_verdicts_in}), the calls a graph verdict accepts (@{text moded_demand_graph_true_in}), true
+  where the table's calls are true (@{text moded_demand_graph_true_in_true}), and the native form, the two together at a
+  native program as the native check form pairs its results and its demand (@{text native_moded_graph_verdicts_in}).
+  Each at a listed table has its code equation through the route's search (@{text moded_check_graph_verdicts_listed_code}).
+\<close>
+
+definition moded_demand_graph_verdicts_in where
+  "moded_demand_graph_verdicts_in \<Theta> \<kappa> P m D \<Phi> Dm M Q n =
+    fimage (\<lambda>q. (q,moded_check_graph_verdicts_in \<Theta> \<kappa> P m D \<Phi> Dm M (fst q) (snd q) n)) Q"
+
+definition moded_demand_graph_true_in where
+  "moded_demand_graph_true_in \<Theta> \<kappa> P m D \<Phi> Dm M Q n =
+    fimage fst (ffilter (\<lambda>z. fBex (snd z) snd) (moded_demand_graph_verdicts_in \<Theta> \<kappa> P m D \<Phi> Dm M Q n))"
+
+theorem moded_demand_graph_true_in_true:
+  assumes true: "finite_table_true P \<Theta>" and q: "q |\<in>| moded_demand_graph_true_in \<Theta> \<kappa> P m D \<Phi> Dm M Q n"
+  shows "q |\<in>| Q" and "(fst q,decode_finite_term (snd q)) \<in> positive_meaning (decode_finite_system P)"
+proof -
+  have m: "q |\<in>| Q \<and> fBex (moded_check_graph_verdicts_in \<Theta> \<kappa> P m D \<Phi> Dm M (fst q) (snd q) n) snd"
+    using q by (auto simp: moded_demand_graph_true_in_def moded_demand_graph_verdicts_in_def fimage.rep_eq ffilter.rep_eq)
+  then show "q |\<in>| Q" by simp
+  obtain x where x: "x |\<in>| moded_check_graph_verdicts_in \<Theta> \<kappa> P m D \<Phi> Dm M (fst q) (snd q) n" "snd x"
+    using m by (blast elim: fBexE)
+  have "(fst x,True) |\<in>| moded_check_graph_verdicts_in \<Theta> \<kappa> P m D \<Phi> Dm M (fst q) (snd q) n" using x by (cases x) simp
+  then show "(fst q,decode_finite_term (snd q)) \<in> positive_meaning (decode_finite_system P)"
+    by (rule moded_check_graph_verdicts_in_true[OF true])
+qed
+
+definition native_moded_graph_verdicts_in ::
+    "(local_address,local_address,local_address option definition_site,local_address) resolution_table \<Rightarrow>
+      (local_address,local_address,local_address option definition_site,local_address) finite_witness_construction \<Rightarrow>
+      local_address option finite_native_system \<Rightarrow> nat \<Rightarrow>
+      (local_address,local_address,local_address option definition_site,'v) produced_declarations \<Rightarrow>
+      (local_address,local_address,local_address option definition_site) resolution_frames \<Rightarrow>
+      (local_address,local_address,local_address option definition_site) resolution_declarations \<Rightarrow>
+      local_address option definition_site resolution_modes \<Rightarrow>
+      (local_address option definition_site\<times>finite_factor_term) fset \<Rightarrow> nat \<Rightarrow>
+      ((local_address option definition_site\<times>finite_factor_term)\<times>
+        ((local_address,local_address,local_address) finite_schema_proof\<times>bool) fset) fset\<times>
+        (local_address option definition_site\<times>finite_factor_term) fset" where
+  "native_moded_graph_verdicts_in \<Theta> \<kappa> P m D \<Phi> Dm M R n =
+    (moded_demand_graph_verdicts_in \<Theta> \<kappa> P m D \<Phi> Dm M R n, moded_demand_graph_true_in \<Theta> \<kappa> P m D \<Phi> Dm M R n)"
+
+corollary native_moded_graph_verdicts_in_true:
+  assumes true: "finite_table_true P \<Theta>" and result: "native_moded_graph_verdicts_in \<Theta> \<kappa> P m D \<Phi> Dm M R n = (T,A)"
+    and q: "q |\<in>| A"
+  shows "q |\<in>| R" and "(fst q,decode_finite_term (snd q)) \<in> positive_meaning (decode_finite_system P)"
+proof -
+  have A: "A = moded_demand_graph_true_in \<Theta> \<kappa> P m D \<Phi> Dm M R n" using result by (simp add: native_moded_graph_verdicts_in_def)
+  show "q |\<in>| R" and "(fst q,decode_finite_term (snd q)) \<in> positive_meaning (decode_finite_system P)"
+    using moded_demand_graph_true_in_true[OF true q[unfolded A]] by simp_all
+qed
+
+definition moded_demand_graph_verdicts_listed where
+  "moded_demand_graph_verdicts_listed es \<kappa> P m D \<Phi> Dm M Q n = moded_demand_graph_verdicts_in (listed_table es) \<kappa> P m D \<Phi> Dm M Q n"
+
+lemma moded_demand_graph_verdicts_listed_code [code]:
+  "moded_demand_graph_verdicts_listed es \<kappa> P m D \<Phi> Dm M Q n =
+    fimage (\<lambda>q. (q,moded_check_graph_verdicts_listed es \<kappa> P m D \<Phi> Dm M (fst q) (snd q) n)) Q"
+  by (simp only: moded_demand_graph_verdicts_listed_def moded_demand_graph_verdicts_in_def moded_check_graph_verdicts_listed_def)
+
+definition moded_demand_graph_true_listed where
+  "moded_demand_graph_true_listed es \<kappa> P m D \<Phi> Dm M Q n = moded_demand_graph_true_in (listed_table es) \<kappa> P m D \<Phi> Dm M Q n"
+
+lemma moded_demand_graph_true_listed_code [code]:
+  "moded_demand_graph_true_listed es \<kappa> P m D \<Phi> Dm M Q n =
+    fimage fst (ffilter (\<lambda>z. fBex (snd z) snd) (moded_demand_graph_verdicts_listed es \<kappa> P m D \<Phi> Dm M Q n))"
+  by (simp only: moded_demand_graph_true_listed_def moded_demand_graph_true_in_def moded_demand_graph_verdicts_listed_def)
+
+definition native_moded_graph_verdicts_listed where
+  "native_moded_graph_verdicts_listed es \<kappa> P m D \<Phi> Dm M R n = native_moded_graph_verdicts_in (listed_table es) \<kappa> P m D \<Phi> Dm M R n"
+
+lemma native_moded_graph_verdicts_listed_code [code]:
+  "native_moded_graph_verdicts_listed es \<kappa> P m D \<Phi> Dm M R n = (let V = moded_demand_graph_verdicts_listed es \<kappa> P m D \<Phi> Dm M R n in
+    (V, fimage fst (ffilter (\<lambda>z. fBex (snd z) snd) V)))"
+  by (simp add: native_moded_graph_verdicts_listed_def native_moded_graph_verdicts_in_def moded_demand_graph_true_in_def
+    moded_demand_graph_verdicts_listed_def Let_def)
+
 export_code moded_check_resolution_listed moded_committed_resolution_listed moded_check_demand_listed
   moded_committed_demand_listed native_moded_check_resolution_listed native_moded_committed_resolution_listed
-  moded_check_graph_verdicts_listed checking SML
+  moded_check_graph_verdicts_listed moded_demand_graph_verdicts_listed moded_demand_graph_true_listed
+  native_moded_graph_verdicts_listed checking SML
 
 
 text \<open>

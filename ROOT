@@ -1362,6 +1362,8 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Factor_Committing_Query_Parameters
     Factor_Native_Committed_Registrations
     Factor_Reader_Witness_Registrations
+    Factor_Extension_Registrations
+    Factor_Extension_Registration_Controls
     Finite_Presented_Coordinates
     Finite_Presented_Structures
     Finite_Presented_Investigations

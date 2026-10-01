@@ -345,3 +345,20 @@ re-root trigger, and a probe past its bound above `Factor_Least_Collections`: 23
 - **The standing refusals**, so they are not re-derived: the retirement of `Development_Truth`; an observation naming
   problems with a non-singleton subject; re-opening #16's key-assignment parameter; the attribution run and the
   interface index as tasks; teaching the check to refuse an unresolved import before it builds.
+- **Left by plan-139 at its window's end (05:28)**, superseding the Under way line above. Under way: #966 (q182's
+  course), D3b1m #982, #968 (continuing; #961 has landed, so it brings main in for its (3)); GT3b #970 queued again after
+  its partial (the check, (9)'s measurement, `commit.md`; the index once per call accepted; the demand-shared index,
+  (8)'s bottom-up table and review 877's follow-up 1 to GT6). Not handled: (1) #972 accepted, its follow-ups to place:
+  Open 153's design is triggered — no representation fix brings 11's phase B near 1 ms at k ≥ 250 (with D3a, ordered
+  persistent sets and the collapse GT6's 11 is about 40,000 s CPU, the largest call about 5,000 s), while the
+  address-form material observation, a notion change, brings it to minutes and would remove the 9/10 anchor chain D3b2
+  and D3b3 keep at the given. Provisional view: a design of the notion change before GT6, D3b2 and D3b3 (edges to it),
+  an owner question if it changes a notion's definition; then the representation fixes as tasks (ordered sets, a
+  design; the collapse code equation; the check's C1–C3 — `Factor_Resolution_Checks` imports
+  `Factor_Resolution_Graph_Checks` since #970); GT6's brief rewritten (#965's follow-up 3, #972's fixes, review 877's
+  follow-ups GT3b leaves). (2) #961 landed (`cb6f5036`), review 963's follow-ups: AX2d (G3's and G4's registrations: l
+  at 985/0 and 989/0 by `least_rows_family`/`least_bindings_family`, q produced by 79 at views 991 and 992, k at the
+  views; G4's step form a planner's question) before AX4 #940 and AX5 #962, which carry
+  `extension_witness_registrations`; #938's controls' counts (words); `finite_extension_package_program_code`'s descent
+  (a piece presenting `artifact_lookup_system`); site sets stated once (reviews 937's 5, 960's 1); 957's placeholder
+  site field (a design question).

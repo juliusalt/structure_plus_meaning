@@ -611,7 +611,8 @@ text \<open>
   proposed least environment's rows: each is an added row (47 over the added rows) or a row of the given (37 at
   the given's value). 957 admits the proposed least environment (26), its rows so checked and its binding rows any
   enumeration of the set of the added binding rows (47 both ways): the order of a finite relation belongs to no
-  notion. 962 and 963 check that no binding row of the least environment has a given use as its source, by data
+  notion; and it checks the extension's formation (954), so that a least environment is one of a formed extension
+  (task 961). 962 and 963 check that no binding row of the least environment has a given use as its source, by data
   inequality (3). 958 and 959 check a bounded closure's members: an added definition read in the least
   environment with its callees in the bound (76), or a given site at whose use the least environment binds nothing
   (963) and holds the given's row (5 selecting the row at the site's use from the least environment's artifact
@@ -619,7 +620,7 @@ text \<open>
   whose closure is formed in the given (77 at the given's value); a site with bindings in the least environment
   passes only as an added definition, and a local edge from a given site stays in its closure in the given, each
   site there passing as given, so the reach over the least environment's edges from the roots is a bound whenever
-  any is. 960 checks the bound: the roots
+  any is (task 934, @{text Factor_Extension_Registrations.extension_bound_reach_passes}). 960 checks the bound: the roots
   in it (47) and every member checked. 964 reads an added site in a least environment: its root family (79) and
   the bounded closure of its roots (960). 961 is G2: at an added site the least environment (957) and 964 at it; at
   a given site package admission at the given's value (80). The least environment is premise-only at 961, produced
@@ -645,7 +646,8 @@ definition least_environment_schema :: "(nat,nat,nat) factor_schema" where
   "least_environment_schema=data_rule
     (Pattern_Pair (Pattern_Pair data_x (Pattern_Pair data_y data_z)) (Pattern_Pair data_w (Pattern_Variable 4)))
     {(0,26,Pattern_Pair data_w (Pattern_Variable 4)),(1,956,Pattern_Pair (Pattern_Pair data_x data_y) data_w),
-     (2,47,Pattern_Pair data_z (Pattern_Variable 4)),(3,47,Pattern_Pair (Pattern_Variable 4) data_z)}"
+     (2,47,Pattern_Pair data_z (Pattern_Variable 4)),(3,47,Pattern_Pair (Pattern_Variable 4) data_z),
+     (4,954,Pattern_Pair data_x (Pattern_Pair (Pattern_Pair data_y data_z) (Pattern_Payload [])))}"
 
 definition source_absence_schema :: "(nat,nat,nat) factor_schema" where
   "source_absence_schema=data_rule (Pattern_Pair data_x (Pattern_Pair (Pattern_Pair data_y data_z) data_w))
@@ -738,8 +740,100 @@ definition least_row_target_schema :: "(nat,nat,nat) factor_schema" where
 definition least_row_clauses :: "(nat \<times> (nat,nat,nat) factor_schema) set" where
   "least_row_clauses={(0,least_row_site_schema),(1,least_row_source_schema),(2,least_row_target_schema)}"
 
+subsection \<open>The readers the program stands over: package membership and the extension's formation\<close>
+
+text \<open>
+  957 checks the extension's formation (AX1's reader, 954) beside the proposed least environment's rows and bindings,
+  so that a least environment is one of a formed extension (task 961, the planner's q180): the program stands over
+  package membership (83) and the formation reader together. The two agree where both define a site, each being a
+  lineage of the complete data admission program where it defines one.
+\<close>
+
+lemma lookup_complete_definitions:
+  "system_definitions artifact_lookup_system\<subseteq>system_definitions complete_data_admission_system"
+  by (rule whole_agreement_definitions[OF complete_data_lookup_agreement])
+
+lemma membership_complete_definitions:
+  "system_definitions package_membership_system\<subseteq>system_definitions complete_data_admission_system"
+  by (rule whole_agreement_definitions[OF membership_complete_data_agreement])
+
+lemma lookup_formation_agreement:
+  "systems_agree_on artifact_lookup_system extension_formation_system (system_definitions artifact_lookup_system)"
+proof -
+  note below=complete_below
+  have fresh: "d\<notin>system_definitions artifact_lookup_system" if "390\<le>d" for d
+    using lookup_complete_definitions below that by (meson lessThan_iff not_le subsetD)
+  show ?thesis
+    using fresh[of 950] fresh[of 951] fresh[of 952] fresh[of 953] fresh[of 954]
+    by (simp add: systems_agree_on_added extension_formation_system_def added_bindings_system_def
+      added_binding_system_def added_uses_fresh_system_def added_use_fresh_system_def)
+qed
+
+lemma complete_formation_agreement:
+  "systems_agree_on complete_data_admission_system extension_formation_system
+    (system_definitions complete_data_admission_system\<inter>system_definitions extension_formation_system)"
+proof (rule systems_agree_on_subdomain[OF systems_agree_on_transitive[OF
+    systems_agree_on_sym[OF complete_data_lookup_agreement] lookup_formation_agreement]])
+  note below=complete_below
+  show "system_definitions complete_data_admission_system\<inter>system_definitions extension_formation_system\<subseteq>
+      system_definitions artifact_lookup_system"
+    using below by auto
+qed
+
+lemma membership_formation_agreement:
+  "systems_agree_on package_membership_system extension_formation_system
+    (system_definitions package_membership_system\<inter>system_definitions extension_formation_system)"
+proof (rule common_component_overlap_agreement[OF _ complete_formation_agreement])
+  show "systems_agree_on complete_data_admission_system package_membership_system
+      (system_definitions complete_data_admission_system\<inter>system_definitions package_membership_system)"
+    by (rule systems_agree_on_subdomain[OF systems_agree_on_sym[OF membership_complete_data_agreement]]) blast
+  show "system_definitions package_membership_system\<inter>system_definitions extension_formation_system\<subseteq>
+      system_definitions complete_data_admission_system"
+    using membership_complete_definitions by blast
+qed
+
+definition extension_readers_base_system :: "(nat,nat,nat,nat) schema_system" where
+  "extension_readers_base_system=system_union package_membership_system extension_formation_system"
+
+lemma extension_readers_base_formed [simp]: "schema_system_formed extension_readers_base_system"
+  unfolding extension_readers_base_system_def
+  by (rule system_union_agree_formed[OF package_membership_system_formed extension_formation_system_formed
+    membership_formation_agreement])
+
+lemma extension_readers_base_definitions [simp]:
+  "system_definitions extension_readers_base_system=
+    system_definitions package_membership_system\<union>system_definitions extension_formation_system"
+  by (simp add: extension_readers_base_system_def)
+
+lemma extension_readers_base_call:
+  "schema_call_formed extension_readers_base_system d t \<longleftrightarrow>
+    d\<in>system_definitions extension_readers_base_system \<and> term_formed t"
+  unfolding extension_readers_base_system_def
+  by (simp only: system_union_agree_call[OF package_membership_system_formed extension_formation_system_formed
+    membership_formation_agreement] package_membership_call extension_formation_call system_union_definitions Un_iff) blast
+
+lemma extension_readers_base_membership:
+  assumes "d\<in>system_definitions package_membership_system"
+  shows "(d,t)\<in>positive_meaning extension_readers_base_system \<longleftrightarrow> (d,t)\<in>positive_meaning package_membership_system"
+  unfolding extension_readers_base_system_def
+  by (rule system_union_agree_left_locality(2)[OF package_membership_system_formed extension_formation_system_formed
+    membership_formation_agreement assms])
+
+lemma extension_readers_base_below: "system_definitions extension_readers_base_system\<subseteq>{..<955}"
+proof -
+  note below=complete_below
+  show ?thesis using membership_complete_definitions lookup_complete_definitions below by auto
+qed
+
+lemma extension_readers_base_formation:
+  assumes "d\<in>system_definitions extension_formation_system"
+  shows "(d,t)\<in>positive_meaning extension_readers_base_system \<longleftrightarrow> (d,t)\<in>positive_meaning extension_formation_system"
+  unfolding extension_readers_base_system_def
+  by (rule system_union_agree_right_locality(2)[OF package_membership_system_formed extension_formation_system_formed
+    membership_formation_agreement assms])
+
 definition extension_row_system :: "(nat,nat,nat,nat) schema_system" where
-  "extension_row_system=add_view_definition package_membership_system 955 data_x extension_row_clauses"
+  "extension_row_system=add_view_definition extension_readers_base_system 955 data_x extension_row_clauses"
 
 definition extension_rows_system :: "(nat,nat,nat,nat) schema_system" where
   "extension_rows_system=add_view_definition extension_row_system 956 data_x (context_list_clauses 955 956)"
@@ -784,12 +878,12 @@ lemmas extension_package_schema_defs = extension_row_clauses_def extension_row_a
 
 lemma extension_row_system_formed [simp]: "schema_system_formed extension_row_system"
   unfolding extension_row_system_def
-  by (rule add_recursive_definition_formed[OF package_membership_system_formed])
+  by (rule add_recursive_definition_formed[OF extension_readers_base_formed])
     (auto simp: extension_package_schema_defs
       schema_formed_def schema_dependencies_def single_valued_def rel_dom_def rel_ran_def octets_formed_def)
 
 lemma extension_row_definitions [simp]:
-  "system_definitions extension_row_system=insert 955 (system_definitions package_membership_system)"
+  "system_definitions extension_row_system=insert 955 (system_definitions extension_readers_base_system)"
   by (simp add: extension_row_system_def)
 
 lemma extension_rows_system_formed [simp]: "schema_system_formed extension_rows_system"
@@ -904,8 +998,8 @@ lemma extension_package_definitions [simp]:
 
 lemma extension_row_call:
   "schema_call_formed extension_row_system d t \<longleftrightarrow> d\<in>system_definitions extension_row_system \<and> term_formed t"
-  using added_variable_calls[OF package_membership_system_formed
-    extension_row_system_formed[unfolded extension_row_system_def] package_membership_call]
+  using added_variable_calls[OF extension_readers_base_formed
+    extension_row_system_formed[unfolded extension_row_system_def] extension_readers_base_call]
   by (simp only: extension_row_system_def[symmetric])
 
 lemma extension_rows_call:
@@ -974,12 +1068,12 @@ lemma extension_package_call:
     extension_package_system_formed[unfolded extension_package_system_def] least_row_call]
   by (simp only: extension_package_system_def[symmetric])
 
-lemma extension_package_old_meaning:
-  assumes old: "d\<in>system_definitions package_membership_system"
-  shows "(d,t)\<in>positive_meaning extension_package_system \<longleftrightarrow> (d,t)\<in>positive_meaning package_membership_system"
+lemma extension_package_base_meaning:
+  assumes old: "d\<in>system_definitions extension_readers_base_system"
+  shows "(d,t)\<in>positive_meaning extension_package_system \<longleftrightarrow> (d,t)\<in>positive_meaning extension_readers_base_system"
 proof -
-  have step1: "(d,t)\<in>positive_meaning extension_row_system \<longleftrightarrow> (d,t)\<in>positive_meaning package_membership_system"
-    using added_definition_preserves_old(2)[OF package_membership_system_formed
+  have step1: "(d,t)\<in>positive_meaning extension_row_system \<longleftrightarrow> (d,t)\<in>positive_meaning extension_readers_base_system"
+    using added_definition_preserves_old(2)[OF extension_readers_base_formed
       extension_row_system_formed[unfolded extension_row_system_def], of d t] old
     by (auto simp: extension_row_system_def)
   have step2: "(d,t)\<in>positive_meaning extension_rows_system \<longleftrightarrow> (d,t)\<in>positive_meaning extension_row_system"
@@ -1028,6 +1122,44 @@ proof -
     by (auto simp: extension_package_system_def)
   show ?thesis using step1 step2 step3 step3a step3b step4 step5 step6 step6b step6s step6c step7 by simp
 qed
+
+lemma extension_package_old_meaning:
+  assumes old: "d\<in>system_definitions package_membership_system"
+  shows "(d,t)\<in>positive_meaning extension_package_system \<longleftrightarrow> (d,t)\<in>positive_meaning package_membership_system"
+proof -
+  have base: "d\<in>system_definitions extension_readers_base_system"
+    by (simp only: extension_readers_base_definitions Un_iff) (rule disjI1, rule old)
+  show ?thesis using extension_package_base_meaning[OF base, of t] extension_readers_base_membership[OF old, of t]
+    by (rule trans)
+qed
+
+lemma extension_package_formation_meaning:
+  assumes formation: "d\<in>system_definitions extension_formation_system"
+  shows "(d,t)\<in>positive_meaning extension_package_system \<longleftrightarrow> (d,t)\<in>positive_meaning extension_formation_system"
+proof -
+  have base: "d\<in>system_definitions extension_readers_base_system"
+    by (simp only: extension_readers_base_definitions Un_iff) (rule disjI2, rule formation)
+  show ?thesis using extension_package_base_meaning[OF base, of t] extension_readers_base_formation[OF formation, of t]
+    by (rule trans)
+qed
+
+lemma extension_package_base_agreement:
+  "systems_agree_on extension_readers_base_system extension_package_system (system_definitions extension_readers_base_system)"
+proof -
+  have fresh: "d\<notin>system_definitions extension_readers_base_system" if "955\<le>d" for d
+    using extension_readers_base_below that by (meson lessThan_iff not_le subsetD)
+  show ?thesis
+    using fresh[of 955] fresh[of 956] fresh[of 957] fresh[of 958] fresh[of 959] fresh[of 960] fresh[of 961]
+      fresh[of 962] fresh[of 963] fresh[of 964] fresh[of 965] fresh[of 966]
+    by (simp add: systems_agree_on_added extension_package_system_def least_row_system_def stored_row_system_def
+      added_site_system_def bounded_closure_system_def bounded_members_system_def bounded_member_system_def
+      source_absences_system_def source_absence_system_def least_environment_system_def extension_rows_system_def
+      extension_row_system_def)
+qed
+
+lemma extension_package_formation_component:
+  "(954,t)\<in>positive_meaning extension_package_system \<longleftrightarrow> (954,t)\<in>positive_meaning extension_formation_system"
+  by (rule extension_package_formation_meaning) simp
 
 lemma extension_package_components:
   "(26,t)\<in>positive_meaning extension_package_system \<longleftrightarrow> (\<exists>E. environment_value_presents E t)"
@@ -1096,10 +1228,17 @@ lemma extension_package_families:
   "((965,c),S)\<in>system_clauses extension_package_system \<longleftrightarrow> (c,S)\<in>least_row_clauses"
   "((966,c),S)\<in>system_clauses extension_package_system \<longleftrightarrow> (c,S)\<in>stored_row_clauses"
 proof -
-  have owned: "((d,c),S)\<in>system_clauses package_membership_system \<Longrightarrow> d\<in>system_definitions package_membership_system"
-    for d c S using package_membership_system_formed unfolding schema_system_formed_def by blast
-  have absent: "((d,c),S)\<notin>system_clauses package_membership_system" if "d\<in>{955,956,957,958,959,960,961,962,963,964,965,966}" for d c S
-    using that by (auto dest: owned)
+  have owned: "((d,c),S)\<in>system_clauses extension_readers_base_system \<Longrightarrow>
+      d\<in>system_definitions extension_readers_base_system"
+    for d c S using extension_readers_base_formed unfolding schema_system_formed_def by blast
+  have absent: "((d,c),S)\<notin>system_clauses extension_readers_base_system"
+    if d: "d\<in>{955,956,957,958,959,960,961,962,963,964,965,966}" for d c S
+  proof
+    assume "((d,c),S)\<in>system_clauses extension_readers_base_system"
+    then have "d\<in>system_definitions extension_readers_base_system" by (rule owned)
+    from subsetD[OF extension_readers_base_below this] have "d<955" by (simp only: lessThan_iff)
+    then show False using d by auto
+  qed
   show "((955,c),S)\<in>system_clauses extension_package_system \<longleftrightarrow> (c,S)\<in>extension_row_clauses"
     "((956,c),S)\<in>system_clauses extension_package_system \<longleftrightarrow> (c,S)\<in>context_list_clauses 955 956"
     "((957,c),S)\<in>system_clauses extension_package_system \<longleftrightarrow> c=0 \<and> S=least_environment_schema"
@@ -1182,7 +1321,8 @@ lemma least_environment_raw:
     term_formed g \<and> term_formed a \<and> term_formed b \<and> term_formed w \<and> term_formed c \<and>
     (\<exists>L. environment_value_presents L (Pair_Term w c)) \<and>
     (956,Pair_Term (Pair_Term g a) w)\<in>positive_meaning extension_package_system \<and>
-    (47,Pair_Term b c)\<in>positive_meaning data_subset_system \<and> (47,Pair_Term c b)\<in>positive_meaning data_subset_system)"
+    (47,Pair_Term b c)\<in>positive_meaning data_subset_system \<and> (47,Pair_Term c b)\<in>positive_meaning data_subset_system \<and>
+    (954,Pair_Term g (Pair_Term (Pair_Term a b) (Payload_Term [])))\<in>positive_meaning extension_formation_system)"
   (is "?lhs \<longleftrightarrow> ?rhs")
 proof
   assume ?lhs
@@ -1195,9 +1335,11 @@ proof
     t=Pair_Term (Pair_Term (f 0) (Pair_Term (f 1) (f 2))) (Pair_Term (f 3) (f 4)) \<and>
     (\<exists>L. environment_value_presents L (Pair_Term (f 3) (f 4))) \<and>
     (956,Pair_Term (Pair_Term (f 0) (f 1)) (f 3))\<in>positive_meaning extension_package_system \<and>
-    (47,Pair_Term (f 2) (f 4))\<in>positive_meaning data_subset_system \<and> (47,Pair_Term (f 4) (f 2))\<in>positive_meaning data_subset_system"
+    (47,Pair_Term (f 2) (f 4))\<in>positive_meaning data_subset_system \<and> (47,Pair_Term (f 4) (f 2))\<in>positive_meaning data_subset_system \<and>
+    (954,Pair_Term (f 0) (Pair_Term (Pair_Term (f 1) (f 2)) (Payload_Term [])))\<in>positive_meaning extension_formation_system"
     using vars conclusion support
-    by (auto simp: schema least_environment_schema_def schema_variables_def extension_package_components)
+    by (auto simp: schema least_environment_schema_def schema_variables_def extension_package_components
+      extension_package_formation_component)
   then show ?rhs by blast
 next
   assume ?rhs
@@ -1206,12 +1348,13 @@ next
     and admitted: "\<exists>L. environment_value_presents L (Pair_Term w c)"
     and rows: "(956,Pair_Term (Pair_Term g a) w)\<in>positive_meaning extension_package_system"
     and sub: "(47,Pair_Term b c)\<in>positive_meaning data_subset_system" "(47,Pair_Term c b)\<in>positive_meaning data_subset_system"
+    and formation: "(954,Pair_Term g (Pair_Term (Pair_Term a b) (Payload_Term [])))\<in>positive_meaning extension_formation_system"
     by blast
   let ?f="\<lambda>n::nat. if n=0 then g else if n=1 then a else if n=2 then b else if n=3 then w else c"
   have "(957,evaluate_pattern ?f (schema_conclusion least_environment_schema))\<in>positive_meaning extension_package_system"
     by (rule ordinary_positive_valuation_step[where c=0])
-      (use formed admitted rows sub in \<open>auto simp: extension_package_families least_environment_schema_def
-        schema_variables_def extension_package_call extension_package_components\<close>)
+      (use formed admitted rows sub formation in \<open>auto simp: extension_package_families least_environment_schema_def
+        schema_variables_def extension_package_call extension_package_components extension_package_formation_component\<close>)
   then show ?lhs by (simp add: t least_environment_schema_def)
 qed
 
@@ -1788,6 +1931,7 @@ theorem least_environment_complete:
   assumes given: "environment_value_presents E g" and rows: "environment_rows_presents (A,B) (Pair_Term a b)"
     and formed: "environment_formed L" and bindings: "environment_bindings L=B"
     and artifacts: "environment_artifacts L=A\<union>T" and part: "T\<subseteq>environment_artifacts E" and apart: "A\<inter>T={}"
+    and additions: "environment_additions E A B" and ff: "environment_formed (environment_extension E A B)"
   shows "\<exists>l. environment_value_presents L l \<and>
     (957,Pair_Term (Pair_Term g (Pair_Term a b)) l)\<in>positive_meaning extension_package_system"
 proof -
@@ -1839,9 +1983,11 @@ proof -
   have bdata: "data_elements (map binding_data zs)"
     using environment_value_presents_formed[OF present] zs(2) by (intro data_list_elements) simp_all
   have same: "(47,Pair_Term b b)\<in>positive_meaning data_subset_system" using bdata zs(2) by (simp add: data_subset_lists)
+  have formation: "(954,Pair_Term g (Pair_Term (Pair_Term a b) (Payload_Term [])))\<in>positive_meaning extension_formation_system"
+    unfolding extension_formation_exact using given rows additions ff by (auto simp: octets_formed_def)
   have "(957,Pair_Term (Pair_Term g (Pair_Term a b)) (Pair_Term ?w b))\<in>positive_meaning extension_package_system"
     unfolding least_environment_raw
-    by (intro exI[of _ g] exI[of _ a] exI[of _ b] exI[of _ ?w] exI[of _ b]) (use gf af bf wf present list same in auto)
+    by (intro exI[of _ g] exI[of _ a] exI[of _ b] exI[of _ ?w] exI[of _ b]) (use gf af bf wf present list same formation in auto)
   then show ?thesis using present by blast
 qed
 
@@ -2521,7 +2667,7 @@ next
     obtain l where l: "environment_value_presents ?L l"
       "(957,Pair_Term (Pair_Term g (Pair_Term a b)) l)\<in>positive_meaning extension_package_system"
       using least_environment_complete[OF gvalue rows additions_least_formed[OF additions ff]
-        additions_least_bindings[OF additions] additions_least_artifacts[OF additions] part apart] by blast
+        additions_least_bindings[OF additions] additions_least_artifacts[OF additions] part apart additions ff] by blast
     obtain ds where read: "(79,citation_observation_argument l (use_data_term u) (Payload_Term r)
         (data_list_term (map (\<lambda>d. definition_site_value d) ds)))\<in>positive_meaning root_family_reading_system"
       and range: "rel_ran Q=set ds" using root_family_reading_total[OF l(1) family] by blast
@@ -2576,6 +2722,9 @@ proof (unfold renaming_equivariant_def, intro allI impI, goal_cases)
 qed
 
 section \<open>The new programs state the empty payload alone\<close>
+
+lemma extension_readers_base_payloads [lineage_payloads]: "system_payloads extension_readers_base_system\<subseteq>{[]}"
+  unfolding extension_readers_base_system_def by (intro lineage_payload_steps lineage_payloads)
 
 lemma extension_row_system_payloads [lineage_payloads]: "system_payloads extension_row_system\<subseteq>{[]}"
   unfolding extension_row_system_def

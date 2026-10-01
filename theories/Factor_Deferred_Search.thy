@@ -74,7 +74,7 @@ proof -
   obtain T where T: "keyed_reference_state id (deferred_positions d) T" using N by (auto simp: positions_numbered_def)
   obtain M n R where e: "deferred_positions d = (M,n,R)" by (cases "deferred_positions d") auto
   have R: "R = rev T" and M: "\<And>y. RBT.lookup M y = value_reference_index y T"
-    using T by (simp_all add: e keyed_reference_state_def)
+    using T by (simp_all add: e keyed_reference_state_def keyed_table_state_def)
   obtain p b a where xx: "x = ((p,b),a)" by (cases x) auto
   obtain i where i: "RBT.lookup M p = Some i"
     using x by (auto simp: deferred_numbered_def position_number_def e xx split: option.splits)
@@ -140,7 +140,7 @@ proof -
       fimage (\<lambda>z. (fst z, finite_pattern_substitute ?\<sigma> (shared_pattern_project T (snd z)))) (shared_derivation_bindings nd)"
     by (rule fset.map_cong0) (simp add: b)
   show ?thesis using binding_resolve_project[OF S c] B
-    by (simp add: derivation_resolve_def shared_derivation_project_def fset.map_comp comp_def split_def)
+    by (simp add: derivation_resolve_def shared_derivation_project_simps fset.map_comp comp_def split_def)
 qed
 
 subsection \<open>Dereferencing: whether a resolution is a variable\<close>
@@ -508,7 +508,7 @@ proof -
   let ?T = "search_table (deferred_inner d)" and ?S = "deferred_store d" and ?nd = "shared_entry_node hn"
   have B: "resolution_node_bindings (deferred_node d hn) =
       fimage (\<lambda>z. (fst z, shared_pattern_project ?T (binding_resolve ?S (snd z)))) (shared_derivation_bindings ?nd)"
-    by (simp add: deferred_node_def shared_derivation_project_def fset.map_comp comp_def)
+    by (simp add: deferred_node_def shared_derivation_project_simps fset.map_comp comp_def)
   have mem: "(a, Finite_Variable x) |\<in>| resolution_node_bindings (deferred_node d hn) \<longleftrightarrow>
       fBex (shared_derivation_bindings ?nd) (\<lambda>z. fst z = a \<and> binding_deref ?S (snd z) = Shared_Variable x)" for a x
   proof -
@@ -686,7 +686,7 @@ lemma value_reference_add_fold: "set (fold value_reference_add xs T) = set T \<u
 lemma position_number_table:
   assumes "keyed_reference_state id N T"
   shows "position_number N p = (case value_reference_index p T of Some i \<Rightarrow> Suc i | None \<Rightarrow> 0)"
-  using assms by (cases N) (simp add: position_number_def keyed_reference_state_def)
+  using assms by (cases N) (simp add: position_number_def keyed_reference_state_def keyed_table_state_def)
 
 lemma position_number_nonzero:
   assumes "keyed_reference_state id N T"
@@ -1015,7 +1015,7 @@ proof -
         (\<exists>U. keyed_reference_state id (deferred_positions ?d1) (T' @ U))"
     proof (intro allI impI)
       fix T' assume "keyed_reference_state id (deferred_positions d) T'"
-      then have "T' = T" using T by (cases "deferred_positions d") (simp add: keyed_reference_state_def)
+      then have "T' = T" using T by (cases "deferred_positions d") (simp add: keyed_reference_state_def keyed_table_state_def)
       then show "\<exists>U. keyed_reference_state id (deferred_positions ?d1) (T' @ U)" using T1 U by auto
     qed
     then show ?thesis using deferred_number_names(1) by (simp add: deferred_renumbered_def deferred_renumber_def)
@@ -1225,7 +1225,7 @@ proof -
         (\<exists>U. keyed_reference_state id (deferred_positions ?d1) (T' @ U))"
     proof (intro allI impI)
       fix T' assume "keyed_reference_state id (deferred_positions d) T'"
-      then have "T' = T" using T by (cases "deferred_positions d") (simp add: keyed_reference_state_def)
+      then have "T' = T" using T by (cases "deferred_positions d") (simp add: keyed_reference_state_def keyed_table_state_def)
       then show "\<exists>U. keyed_reference_state id (deferred_positions ?d1) (T' @ U)" using T1 U by auto
     qed
     then show ?thesis using deferred_number_names(1) by (simp add: deferred_renumbered_def deferred_renumber_def)
@@ -1492,7 +1492,7 @@ proof -
       unfolding shared_state_project_member(2) by blast
     have "shared_derivation_position (shared_entry_node hn) = q"
       using shared_entries_formed(2)[OF s qh] by (simp add: node_entry_formed_def)
-    then have "q = fst (fst x)" using ndq nd(2) by (auto simp: shared_derivation_project_def)
+    then have "q = fst (fst x)" using ndq nd(2) by (auto simp: shared_derivation_project_simps)
     then show ?thesis using qh by simp
   qed
   have st0: "deferred_store ?ds = binding_store_empty" by (simp add: deferred_store_def binding_tree_store_empty)
@@ -2021,7 +2021,7 @@ proof -
     fimage (\<lambda>z. (fst z, shared_pattern_project T (binding_resolve S (snd z)))) (shared_derivation_bindings nd)"
     by (rule fset.map_cong0) (simp add: b)
   show ?thesis using deferred_ground_fixed[OF S c] B
-    by (simp add: shared_derivation_project_def fset.map_comp comp_def case_prod_beta)
+    by (simp add: shared_derivation_project_simps fset.map_comp comp_def case_prod_beta)
 qed
 
 theorem deferred_ground_node:
@@ -2173,7 +2173,7 @@ proof -
           fimage (\<lambda>z. (fst z, shared_pattern_project ?Ts (binding_resolve ?S (snd z)))) (shared_derivation_bindings ?nd)"
         by (rule fset.map_cong0) (simp add: bp)
       then show ?thesis using c'p
-        by (simp add: shared_derivation_project_def deferred_ground_derivation_def fset.map_comp comp_def)
+        by (simp add: shared_derivation_project_simps deferred_ground_derivation_def fset.map_comp comp_def)
     qed
     have old: "resolution_node_substitute ?\<sigma> (shared_derivation_project ?Ts ?nd) = shared_derivation_project ?T1 ?nd'"
       unfolding old' \<sigma>eq by (rule derivation_resolve_project[OF S ndf, symmetric])
@@ -2189,7 +2189,7 @@ proof -
     have nv: "shared_node_view ?s2 p = map_option k (shared_node_view ?s p)" for p
     proof (cases "p = q")
       case True
-      then show ?thesis using at pos tbl2 nodes2 by (simp add: shared_node_view_def k_def shared_derivation_project_def)
+      then show ?thesis using at pos tbl2 nodes2 by (simp add: shared_node_view_def k_def shared_derivation_project_simps)
     next
       case False
       show ?thesis
@@ -2198,7 +2198,7 @@ proof -
         have p2: "shared_derivation_position (shared_entry_node hn2) = p"
           using shared_entries_formed(2)[OF s Some] by (simp add: node_entry_formed_def)
         from node_entry_extends[OF tf0 shared_entries_formed(2)[OF s Some] ext] Some nodes2[of p] False tbl2 p2 show ?thesis
-          by (simp add: shared_node_view_def k_def shared_derivation_project_def)
+          by (simp add: shared_node_view_def k_def shared_derivation_project_simps)
       qed (simp add: shared_node_view_def nodes2 False)
     qed
     have wv: "shared_witnesses ?s2 = shared_witnesses ?s" by (simp add: shared_put_node_def shared_reshare_def)
@@ -2213,7 +2213,7 @@ proof -
         using xin unfolding shared_state_project_member(2) by blast
       have "shared_derivation_position (shared_entry_node hp) = p"
         using shared_entries_formed(2)[OF s hp] by (simp add: node_entry_formed_def)
-      then have "p = q" using True xe by (simp add: shared_derivation_project_def)
+      then have "p = q" using True xe by (simp add: shared_derivation_project_simps)
       then have "x = shared_derivation_project ?Ts ?nd" using hp at xe by simp
       then show ?thesis using True fixed_new old k_def by simp
     qed (simp add: k_def)
@@ -3581,7 +3581,7 @@ proof -
   have u1: "\<forall>p a hn. a |\<in>| tree_bucket (shared_unconstructed ?s') p \<longrightarrow> RBT.lookup (shared_nodes ?s') p = Some hn \<longrightarrow>
       finite_registered_value \<kappa> P (shared_derivation_project (shared_state_table ?s') (shared_entry_node hn)) a = None"
     using s by (simp add: shared_goal_write_def shared_state_formed_def)
-  have sh: "share_state_formed (shared_sharing ?s')" "position_index_formed (shared_sharing ?s') (shared_positions ?s')"
+  have sh: "share_state_formed (shared_sharing ?s')"
     using s by (simp_all add: shared_goal_write_def shared_state_formed_def)
   show "shared_state_formed \<kappa> P ?s'" unfolding shared_state_formed_def using sh g1 n1 c1 c2 rec o1 u1 by blast
   show "shared_state_table ?s' = ?T" by (simp add: shared_goal_write_def)
@@ -4167,7 +4167,7 @@ proof -
   have B: "fimage (\<lambda>z. (fst z, shared_pattern_project T' (binding_resolve S (snd z)))) (shared_derivation_bindings nd) =
       fimage (\<lambda>z. (fst z, shared_pattern_project T (binding_resolve S (snd z)))) (shared_derivation_bindings nd)"
     by (rule fset.map_cong0) (use e nd in \<open>simp add: shared_derivation_formed_def\<close>)
-  show ?thesis using e[OF c] B by (simp add: shared_derivation_project_def fset.map_comp comp_def)
+  show ?thesis using e[OF c] B by (simp add: shared_derivation_project_simps fset.map_comp comp_def)
 qed
 
 lemma derivation_resolve_bind:
@@ -4186,7 +4186,7 @@ proof -
       (shared_derivation_bindings nd) =
     fimage (\<lambda>z. (fst z, shared_pattern_project T (binding_resolve (store_bind S \<sigma> D) (snd z)))) (shared_derivation_bindings nd)"
     by (rule fset.map_cong0) (use p nd in \<open>simp add: shared_derivation_formed_def\<close>)
-  show ?thesis using p[OF c] B by (simp add: shared_derivation_project_def fset.map_comp comp_def case_prod_beta)
+  show ?thesis using p[OF c] B by (simp add: shared_derivation_project_simps fset.map_comp comp_def case_prod_beta)
 qed
 
 theorem deferred_bind:
@@ -4702,7 +4702,7 @@ proof -
     have "shared_derivation_project ?T (shared_entry_node hn) |\<in>| resolution_nodes ?st"
       unfolding shared_state_project_member(2) using hn by blast
     moreover have "resolution_node_position (shared_derivation_project ?T (shared_entry_node hn)) = q"
-      using nodepos[OF hn] by (simp add: shared_derivation_project_def)
+      using nodepos[OF hn] by (simp add: shared_derivation_project_simps)
     ultimately show False using noq by blast
   qed
   have old_nodes: "RBT.lookup (shared_nodes (search_state ?r')) p' = RBT.lookup (shared_nodes ?s) p'" if "p' \<noteq> q" for p'
@@ -4721,7 +4721,7 @@ proof -
       unfolding shared_state_project_member(2) by blast
     have "shared_derivation_position (shared_entry_node hn) = p'"
       using shared_entries_formed(2)[OF st' hn] by (simp add: node_entry_formed_def)
-    then have "p' = q" using e by (simp add: shared_derivation_project_def finite_clause_node_def)
+    then have "p' = q" using e by (simp add: shared_derivation_project_simps finite_clause_node_def)
     then show ?thesis using hn e by blast
   qed
   then obtain hq where hq: "RBT.lookup (shared_nodes (search_state ?r')) q = Some hq"
@@ -4732,7 +4732,7 @@ proof -
   have cvars: "fst (fst x) = q" if "x |\<in>| shared_pattern_variables ?c" for x
   proof -
     have callp: "shared_pattern_project ?T' ?c = resolution_node_call ?nd"
-      using arg_cong[OF hqp, of resolution_node_call] by (simp add: shared_derivation_project_def)
+      using arg_cong[OF hqp, of resolution_node_call] by (simp add: shared_derivation_project_simps)
     have "x |\<in>| finite_pattern_variables (resolution_node_call ?nd)"
       using that shared_pattern_variables_project[OF cf] callp by simp
     then show ?thesis by (rule finite_clause_node_positioned)
@@ -4841,7 +4841,7 @@ proof -
   note R = deferred_record_node[OF parts0 at0 refl unbA plcA]
   let ?dr = "deferred_record_node q ?c ?ds"
   have schema: "shared_derivation_schema (shared_entry_node hq) = S"
-    using arg_cong[OF hqp, of resolution_node_schema] by (simp add: shared_derivation_project_def finite_clause_node_def)
+    using arg_cong[OF hqp, of resolution_node_schema] by (simp add: shared_derivation_project_simps finite_clause_node_def)
   let ?ps = "deferred_placed_positions q S"
   have eq: "deferred_place P dd q e c S = deferred_record_goals ?ps ?dr" by (simp add: deferred_place_def Let_def hq schema)
   have psG: "set ?ps = fset (fimage resolution_goal_position ?G)" by (rule deferred_placed_positions)
@@ -5201,7 +5201,7 @@ proof -
   have dd: "resolution_positions_distinct (deferred_project d)" using pl by (simp add: search_placeable_def)
   have pos: "resolution_node_position nd = p" if "RBT.lookup (shared_nodes ?s) p = Some hn"
     "nd = shared_derivation_project ?T (shared_entry_node hn)" for p hn nd
-    using shared_entries_formed(2)[OF s that(1)] that(2) by (simp add: node_entry_formed_def shared_derivation_project_def)
+    using shared_entries_formed(2)[OF s that(1)] that(2) by (simp add: node_entry_formed_def shared_derivation_project_simps)
   have d': "resolution_positions_distinct ?st"
     unfolding resolution_positions_distinct_def
   proof (intro conjI allI impI)
@@ -5374,7 +5374,7 @@ proof -
     have gm: "Resolution_Call_Goal q rr e ?p |\<in>| resolution_pending (search_project ?r)"
       unfolding shared_state_project_member(1) using at g by force
     have "resolution_node_position (shared_derivation_project ?T (shared_entry_node hn)) = q"
-      using shared_entries_formed(2)[OF s hn] by (simp add: node_entry_formed_def shared_derivation_project_def)
+      using shared_entries_formed(2)[OF s hn] by (simp add: node_entry_formed_def shared_derivation_project_simps)
     then show False using pli n gm unfolding search_placeable_def resolution_positions_distinct_def by force
   qed
   have pl0: "search_placeable (search_project ?rs)" using h0(2) pli by simp
@@ -5402,7 +5402,7 @@ proof -
       unfolding shared_state_project_member(2) by blast
     have "shared_derivation_position (shared_entry_node hn) = p'"
       using shared_entries_formed(2)[OF search_formedD(1)[OF CP(1)] hn] by (simp add: node_entry_formed_def)
-    then have "p' = q" using ee by (simp add: shared_derivation_project_def finite_clause_node_def)
+    then have "p' = q" using ee by (simp add: shared_derivation_project_simps finite_clause_node_def)
     then show ?thesis using hn by simp
   qed
   have good: "binding_map (deferred_store ?d1) y = None \<and>
@@ -5736,7 +5736,7 @@ proof -
   have hn: "RBT.lookup (shared_nodes ?s) q0 = Some hn"
     using n by (cases "RBT.lookup (shared_nodes ?s) q0") (simp_all add: deferred_access_def shared_access_simps)
   have qq: "?q = q0" using shared_entries_formed(2)[OF st hn] by (simp add: node_entry_formed_def)
-  have ndp: "resolution_node_position ?nd = ?q" by (simp add: deferred_node_def shared_derivation_project_def)
+  have ndp: "resolution_node_position ?nd = ?q" by (simp add: deferred_node_def shared_derivation_project_simps)
   have an: "access_node ?V hn = ?nd" by (simp add: deferred_access_def)
   have C: "?C = finite_constructed \<kappa> P ?G ?nd" using constructed[OF n] an by simp
   have rW: "search_formed \<kappa> P rW" unfolding rW_def using r by (simp add: search_witnesses_update)

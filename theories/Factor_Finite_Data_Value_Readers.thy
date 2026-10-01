@@ -1,5 +1,5 @@
 theory Factor_Finite_Data_Value_Readers
-  imports Factor_Executable_Data_Values Option_List_Maps
+  imports Factor_Executable_Data_Values Factor_Executable_Material Option_List_Maps
 begin
 
 fun finite_payload_value_read :: "finite_factor_term \<Rightarrow> octets option" where
@@ -11,10 +11,10 @@ lemma finite_payload_value_read_exact:
   "finite_payload_value_read t=Some p \<longleftrightarrow> decode_finite_term t=Payload_Term p"
   by (cases t) simp_all
 
-fun finite_data_list_read :: "finite_factor_term \<Rightarrow> finite_factor_term list option" where
-  "finite_data_list_read (Finite_Payload p)=(if p=[] then Some [] else None)"
-| "finite_data_list_read (Finite_Pair x y)=map_option (Cons x) (finite_data_list_read y)"
-| "finite_data_list_read (Finite_Target a)=None"
+text \<open>A data list is read by the list reader at its terminator, the empty payload, each entry kept.\<close>
+
+abbreviation finite_data_list_read :: "finite_factor_term \<Rightarrow> finite_factor_term list option" where
+  "finite_data_list_read \<equiv> finite_list_read (Finite_Payload []) Some"
 
 lemma finite_data_list_read_sequence:
   "finite_data_list_read t=Some xs \<longleftrightarrow> t=finite_data_sequence xs"
@@ -23,8 +23,7 @@ lemma finite_data_list_read_sequence:
 theorem finite_data_list_read_exact:
   "finite_data_list_read t=Some xs \<longleftrightarrow>
     decode_finite_term t=data_list_term (map decode_finite_term xs)"
-  by (simp only: finite_data_list_read_sequence decode_finite_term_injective[symmetric]
-    decode_finite_data_sequence)
+  by (rule finite_list_read_data_correct) simp
 
 lemma finite_data_list_read_complete:
   assumes source: "decode_finite_term t=data_list_term xs"

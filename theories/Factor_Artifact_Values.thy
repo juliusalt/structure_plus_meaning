@@ -4,20 +4,10 @@ begin
 
 section \<open>Complete exact artifact values as self-contained terms\<close>
 
-definition address_pair_data ::
-  "(local_address\<times>octets) \<Rightarrow> factor_term" where
-  "address_pair_data z = Pair_Term (Payload_Term (fst z)) (Payload_Term (snd z))"
-
-definition incidence_data ::
-  "(local_address\<times>local_address\<times>local_address) \<Rightarrow> factor_term" where
-  "incidence_data z =
-    Pair_Term (Payload_Term (fst z)) (address_pair_data (snd z))"
-
-lemma address_pair_data_injective: "inj address_pair_data"
-  by (rule injI) (auto simp: address_pair_data_def)
-
-lemma incidence_data_injective: "inj incidence_data"
-  by (rule injI) (auto simp: incidence_data_def address_pair_data_def)
+text \<open>
+  The artifact's data is built over the data list, incidence and attachment constructions of
+  @{text Factor_Material_Observation}.
+\<close>
 
 definition artifact_data_term ::
   "local_address list \<Rightarrow> (local_address\<times>local_address\<times>local_address) list \<Rightarrow>

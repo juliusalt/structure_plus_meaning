@@ -133,7 +133,7 @@ lemma finite_material_term_reads:
 lemma finite_enumeration_read_term:
   assumes "\<And>x. rd (mk x) = Some x"
   shows "finite_enumeration_read rd (finite_enumeration_term (map mk xs)) = Some xs"
-  using assms by (induction xs) simp_all
+  using assms by (rule finite_list_read_term) simp
 
 lemma finite_material_read_injective:
   "finite_atom_read C u = Some x \<Longrightarrow> finite_atom_read C u' = Some x \<Longrightarrow> u = u'"
@@ -144,25 +144,8 @@ lemma finite_material_read_injective:
   apply (metis finite_attachment_read_correct decode_finite_term_injective)
   done
 
-lemma finite_enumeration_read_injective:
-  assumes inj: "\<And>u u' x. rd u = Some x \<Longrightarrow> rd u' = Some x \<Longrightarrow> u = u'"
-  shows "finite_enumeration_read rd t = Some xs \<Longrightarrow> finite_enumeration_read rd t' = Some xs \<Longrightarrow> t = t'"
-proof (induction t arbitrary: t' xs)
-  case (Finite_Target x)
-  then show ?case by (cases t') (auto split: finite_exact_target.splits if_splits option.splits)
-next
-  case (Finite_Payload v)
-  then show ?case by simp
-next
-  case (Finite_Pair u w)
-  from Finite_Pair.prems(1) obtain y ys where ru: "rd u = Some y"
-    and rw: "finite_enumeration_read rd w = Some ys" and xs: "xs = y#ys"
-    by (auto split: option.splits)
-  from Finite_Pair.prems(2) xs obtain u' w' where t': "t' = Finite_Pair u' w'" and ru': "rd u' = Some y"
-    and rw': "finite_enumeration_read rd w' = Some ys"
-    by (cases t') (auto split: finite_exact_target.splits if_splits option.splits)
-  show ?case using inj[OF ru ru'] Finite_Pair.IH(2)[OF rw rw'] t' by simp
-qed
+lemmas finite_enumeration_read_injective =
+  finite_list_read_injective[where z="Finite_Target (Finite_Whole finite_empty_artifact)"]
 
 text \<open>
   A satisfied material premise is satisfied at the operands of an enumeration: the observation reads
@@ -272,19 +255,32 @@ lemma ground_reading_cases [simp]:
   "ground_reading (Finite_Variable v) = Open_Reading"
   by (simp_all add: ground_reading_def)
 
-fun finite_enumeration_pattern_read ::
-    "('a finite_term_pattern \<Rightarrow> 'x material_reading) \<Rightarrow> 'a finite_term_pattern \<Rightarrow> 'x list material_reading" where
-  "finite_enumeration_pattern_read rd (Finite_Variable v) = Open_Reading"
-| "finite_enumeration_pattern_read rd (Finite_Pattern_Target t) =
-    (if t=Finite_Whole finite_empty_artifact then Reading [] else Unreadable)"
-| "finite_enumeration_pattern_read rd (Finite_Pattern_Payload v) = Unreadable"
-| "finite_enumeration_pattern_read rd (Finite_Pattern_Pair p q) =
-    map_material_reading (\<lambda>(x,xs). x#xs) (reading_pair (rd p) (finite_enumeration_pattern_read rd q))"
+text \<open>
+  A list field is read over its terminator, as the term reader @{const finite_list_read} reads its value: the
+  terminator reads the empty list, any other leaf has no reading under any substitution, a variable is open,
+  and a pair reads its entry and then the rest. The enumeration fields are read at the empty artifact's whole
+  target.
+\<close>
 
-lemma finite_enumeration_pattern_instance:
+fun finite_list_pattern_read ::
+    "finite_factor_term \<Rightarrow> ('a finite_term_pattern \<Rightarrow> 'x material_reading) \<Rightarrow> 'a finite_term_pattern \<Rightarrow>
+      'x list material_reading" where
+  "finite_list_pattern_read z rd (Finite_Variable v) = Open_Reading"
+| "finite_list_pattern_read z rd (Finite_Pattern_Target t) =
+    (if Finite_Target t = z then Reading [] else Unreadable)"
+| "finite_list_pattern_read z rd (Finite_Pattern_Payload v) =
+    (if Finite_Payload v = z then Reading [] else Unreadable)"
+| "finite_list_pattern_read z rd (Finite_Pattern_Pair p q) =
+    map_material_reading (\<lambda>(x,xs). x#xs) (reading_pair (rd p) (finite_list_pattern_read z rd q))"
+
+abbreviation finite_enumeration_pattern_read ::
+    "('a finite_term_pattern \<Rightarrow> 'x material_reading) \<Rightarrow> 'a finite_term_pattern \<Rightarrow> 'x list material_reading" where
+  "finite_enumeration_pattern_read \<equiv> finite_list_pattern_read (Finite_Target (Finite_Whole finite_empty_artifact))"
+
+lemma finite_list_pattern_instance:
   assumes items: "\<And>q u x y. rd q = Reading x \<Longrightarrow> finite_pattern_instance V q u \<Longrightarrow> tread u = Some y \<Longrightarrow> R x y"
-  shows "finite_enumeration_pattern_read rd p = Reading xs \<Longrightarrow> finite_pattern_instance V p t \<Longrightarrow>
-    finite_enumeration_read tread t = Some ys \<Longrightarrow> list_all2 R xs ys"
+  shows "finite_list_pattern_read z rd p = Reading xs \<Longrightarrow> finite_pattern_instance V p t \<Longrightarrow>
+    finite_list_read z tread t = Some ys \<Longrightarrow> list_all2 R xs ys"
 proof (induction p arbitrary: t xs ys)
   case (Finite_Variable v)
   then show ?case by simp
@@ -293,46 +289,52 @@ next
   then show ?case by (auto split: if_splits)
 next
   case (Finite_Pattern_Payload v)
-  then show ?case by simp
+  then show ?case by (auto split: if_splits)
 next
   case (Finite_Pattern_Pair p q)
   from Finite_Pattern_Pair.prems(1) obtain x xs' where px: "rd p = Reading x"
-    and qx: "finite_enumeration_pattern_read rd q = Reading xs'" and xs: "xs = x#xs'"
+    and qx: "finite_list_pattern_read z rd q = Reading xs'" and xs: "xs = x#xs'"
     by (auto simp: map_reading_cases reading_pair_reading)
   from Finite_Pattern_Pair.prems(2) obtain u w where t: "t = Finite_Pair u w"
     and pu: "finite_pattern_instance V p u" and qw: "finite_pattern_instance V q w"
     by (cases t) auto
   from Finite_Pattern_Pair.prems(3) t obtain y ys' where uy: "tread u = Some y"
-    and wy: "finite_enumeration_read tread w = Some ys'" and ys: "ys = y#ys'"
+    and wy: "finite_list_read z tread w = Some ys'" and ys: "ys = y#ys'"
     by (auto split: option.splits)
   show ?case using items[OF px pu uy] Finite_Pattern_Pair.IH(2)[OF qx qw wy] xs ys by simp
 qed
 
-lemma finite_enumeration_pattern_unreadable:
+lemma finite_list_pattern_unreadable:
   assumes items: "\<forall>q u y. rd q = Unreadable \<longrightarrow> finite_pattern_instance V q u \<longrightarrow> tread u \<noteq> Some y"
-  shows "finite_enumeration_pattern_read rd p = Unreadable \<Longrightarrow> finite_pattern_instance V p t \<Longrightarrow>
-    finite_enumeration_read tread t = Some ys \<Longrightarrow> False"
+  shows "finite_list_pattern_read z rd p = Unreadable \<Longrightarrow> finite_pattern_instance V p t \<Longrightarrow>
+    finite_list_read z tread t = Some ys \<Longrightarrow> False"
 proof (induction p arbitrary: t ys)
   case (Finite_Variable v)
   then show ?case by simp
 next
   case (Finite_Pattern_Target x)
-  then show ?case by (auto split: if_splits finite_exact_target.splits)
+  then show ?case by (auto split: if_splits)
 next
   case (Finite_Pattern_Payload v)
-  then show ?case by simp
+  then show ?case by (auto split: if_splits)
 next
   case (Finite_Pattern_Pair p q)
   from Finite_Pattern_Pair.prems(2) obtain u w where t: "t = Finite_Pair u w"
     and pu: "finite_pattern_instance V p u" and qw: "finite_pattern_instance V q w"
     by (cases t) auto
   from Finite_Pattern_Pair.prems(3) t obtain y ys' where uy: "tread u = Some y"
-    and wy: "finite_enumeration_read tread w = Some ys'"
+    and wy: "finite_list_read z tread w = Some ys'"
     by (auto split: option.splits)
-  have "rd p = Unreadable \<or> finite_enumeration_pattern_read rd q = Unreadable"
+  have "rd p = Unreadable \<or> finite_list_pattern_read z rd q = Unreadable"
     using Finite_Pattern_Pair.prems(1) by (auto simp: map_reading_cases dest: reading_pair_unreadable)
   then show ?case using items pu uy Finite_Pattern_Pair.IH(2)[OF _ qw wy] by blast
 qed
+
+lemmas finite_enumeration_pattern_instance =
+  finite_list_pattern_instance[where z="Finite_Target (Finite_Whole finite_empty_artifact)"]
+
+lemmas finite_enumeration_pattern_unreadable =
+  finite_list_pattern_unreadable[where z="Finite_Target (Finite_Whole finite_empty_artifact)"]
 
 definition finite_atom_entry ::
     "'a finite_term_pattern \<Rightarrow> (local_address \<times> 'a finite_term_pattern) material_reading" where
@@ -583,10 +585,13 @@ text \<open>
   field makes the skeleton unreadable whatever the other fields hold.
 \<close>
 
-lemma finite_enumeration_pattern_read_pair_unreadable:
-  "finite_enumeration_pattern_read rd (Finite_Pattern_Pair p q) = Unreadable \<longleftrightarrow>
-    rd p = Unreadable \<or> finite_enumeration_pattern_read rd q = Unreadable"
+lemma finite_list_pattern_read_pair_unreadable:
+  "finite_list_pattern_read z rd (Finite_Pattern_Pair p q) = Unreadable \<longleftrightarrow>
+    rd p = Unreadable \<or> finite_list_pattern_read z rd q = Unreadable"
   by (simp add: map_reading_cases reading_pair_unreadable_iff)
+
+lemmas finite_enumeration_pattern_read_pair_unreadable =
+  finite_list_pattern_read_pair_unreadable[where z="Finite_Target (Finite_Whole finite_empty_artifact)"]
 
 lemma finite_material_skeleton_unreadable_iff:
   "finite_material_skeleton M = Unreadable \<longleftrightarrow>
@@ -847,15 +852,9 @@ text \<open>
 \<close>
 
 theorem finite_material_resolution_unreadable_field:
-  assumes "finite_enumeration_pattern_read finite_atom_entry (finite_material_atoms M) = Unreadable \<or>
-    finite_enumeration_pattern_read (finite_incidence_entry (finite_atom_entries (finite_material_atoms M)))
-      (finite_material_edges M) = Unreadable \<or>
-    finite_enumeration_pattern_read (finite_attachment_entry (finite_atom_entries (finite_material_atoms M)))
-      (finite_material_counts M) = Unreadable \<or>
-    finite_enumeration_pattern_read (finite_attachment_entry (finite_atom_entries (finite_material_atoms M)))
-      (finite_material_functions M) = Unreadable"
+  assumes "finite_material_skeleton M = Unreadable"
   shows "finite_material_resolution M = Material_Solutions {||}"
-  using assms by (simp add: finite_material_resolution_def finite_material_skeleton_unreadable_iff[symmetric])
+  using assms by (simp add: finite_material_resolution_def)
 
 theorem finite_material_resolution_sound:
   assumes res: "finite_material_resolution M = Material_Solutions S" and member: "W |\<in>| S"

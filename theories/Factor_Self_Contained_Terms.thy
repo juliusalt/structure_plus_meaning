@@ -185,48 +185,15 @@ qed
 
 section \<open>Complete finite collections carried by payloads and pairs\<close>
 
-fun data_list_term :: "factor_term list \<Rightarrow> factor_term" where
-  "data_list_term [] = Payload_Term []"
-| "data_list_term (t#ts) = Pair_Term t (data_list_term ts)"
-
-lemma data_list_term_injective:
-  "data_list_term xs=data_list_term ys \<longleftrightarrow> xs=ys"
-  by (induction xs arbitrary: ys) (case_tac ys; auto)+
-
-lemma data_list_term_formed:
-  "term_formed (data_list_term ts) \<longleftrightarrow> (\<forall>t\<in>set ts. term_formed t)"
-  by (induction ts) (auto simp: octets_formed_def)
+text \<open>
+  The data list (@{const data_list_term}) is stated with the material observation
+  (@{text Factor_Material_Observation}); its self-containment and its collection presentations stand here.
+\<close>
 
 lemma data_list_term_self_contained:
   "self_contained_term (data_list_term ts) \<longleftrightarrow>
     (\<forall>t\<in>set ts. self_contained_term t)"
   by (induction ts) auto
-
-lemma data_list_term_member_height:
-  assumes "x\<in>set xs"
-  shows "term_height x<term_height (data_list_term xs)"
-  using assms
-proof (induction xs)
-  case Nil
-  then show ?case by simp
-next
-  case (Cons y ys)
-  show ?case
-  proof (cases "x=y")
-    case True
-    then show ?thesis by simp
-  next
-    case False
-    have inside: "x\<in>set ys" using Cons.prems False by simp
-    have smaller: "term_height x<term_height (data_list_term ys)" by (rule Cons.IH[OF inside])
-    show ?thesis by (rule less_le_trans[OF smaller]) simp
-  qed
-qed
-
-lemma injective_mapped_lists:
-  assumes "inj f"
-  shows "map f xs=map f ys \<longleftrightarrow> xs=ys"
-  using assms by (induction xs arbitrary: ys) (case_tac ys; auto dest: injD)+
 
 definition data_collection_presents ::
   "('a \<Rightarrow> factor_term \<Rightarrow> bool) \<Rightarrow> 'a set \<Rightarrow> factor_term \<Rightarrow> bool" where

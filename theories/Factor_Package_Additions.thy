@@ -1049,4 +1049,9 @@ text \<open>
   the context-list traversal their list site uses, state no payload leaf but the empty one.
 \<close>
 
+text \<open>Every site of the complete data admission program stands below 390.\<close>
+
+lemma complete_below: "system_definitions complete_data_admission_system\<subseteq>{..<390}"
+  by auto
+
 end

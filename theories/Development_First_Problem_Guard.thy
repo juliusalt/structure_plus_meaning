@@ -76,8 +76,6 @@ lemma call_admission_audit_agreement:
     clause_payloads_system_def empty_payload_calls_system_def empty_payload_rows_system_def
     empty_payloads_system_def)
 
-lemma complete_below: "system_definitions complete_data_admission_system\<subseteq>{..<390}"
-  by auto
 
 lemma audit_below: "system_definitions payload_audit_system\<subseteq>{..<506}"
   by auto

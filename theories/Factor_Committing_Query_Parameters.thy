@@ -1,5 +1,6 @@
 theory Factor_Committing_Query_Parameters
   imports Factor_Varied_Narrowed_Transfer Factor_Least_Witness_Registrations Factor_Resolution_Modes
+    Factor_Framed_Commitment_Index
 begin
 
 section \<open>A committing instance of W2's query parameters\<close>
@@ -12,6 +13,14 @@ text \<open>
   varied record's narrowed commitment, the moded priority reading that commitment, at a table of its own. The
   restriction is chosen at the query search alone: at every ground root it is the narrowed commitment
   (@{thm [source] finite_root_kept_ground_in}), so no verdict or check form reads it.
+\<close>
+
+text \<open>
+  The committing instance's tests are the narrowed commitment's, at the ground and lifted parts alike; their code reads
+  the framed test at a goal's raising socket through the index @{text Factor_Framed_Commitment_Index} builds once per
+  record and frames (@{thm [source] finite_framed_commitment_indexed}, @{thm [source] finite_narrowed_commitment_under}),
+  so the moded priority's framed test at a goal's parent focus does not run over every socket view and frame choice
+  (task 966: the edge query of 77's registration at n=40, 3.76 s without that code, 0.17 s with it).
 \<close>
 
 definition committing_parameters ::

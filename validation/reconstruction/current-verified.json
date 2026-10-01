@@ -1,7 +1,7 @@
 {
- "base_receipt_sha256": "6671566c6eced134fdd2c4fe991788bc484e94300d28897ca9cb36c8cc859c5b",
+ "base_receipt_sha256": "04d128922a18508b8e2659678fde930615a8a9c6952be70d9875f47af2a14210",
  "base_theories": 2000,
- "checked_content_sha256": "e0cee9229659e406af1e34d7f785a3e4ae636f04151da10521ec2b3de3b3f6f1",
+ "checked_content_sha256": "ef8b5c322b2475262bf09d1be1927050d803fd315c189b13aa746f98535204ce",
  "complete_native_reports": 74,
  "executed_recipes": 0,
  "host_tests": {
@@ -14,14 +14,14 @@
    "skipped": 0
   }
  },
- "incremental_proof_theories": 18,
+ "incremental_proof_theories": 1,
  "phase_seconds": {
   "base_and_impact": 0.42,
   "execution_impact": 0.0,
   "export": 0.0,
-  "proof": 174.4,
-  "recipe_impact": 0.42,
-  "recipes_and_host_tests": 11.47
+  "proof": 37.58,
+  "recipe_impact": 0.39,
+  "recipes_and_host_tests": 11.2
  },
  "reused_recipes": 0,
  "source_only_reconstructions": [
@@ -547,7 +547,7 @@
   }
  ],
  "status": "accepted",
- "total_seconds": 202.04,
+ "total_seconds": 64.54,
  "unchanged_recipes": 52,
- "workspace_theories": 1999
+ "workspace_theories": 2000
 }

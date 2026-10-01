@@ -19232,7 +19232,10 @@ search keeps its statement.
   across every change outside that region.
 New statements only.
 
-**D3b2 — kept goals in the deferred search.** In `Factor_Deferred_Search` and `Factor_Deferred_Commitments`:
+**D3b2 — kept goals in the deferred search.** [Widened by D3′ below (task 981): a call goal at any site that no
+declaration names is kept while no binding reaches its site's extended region (D3b1's general notion, the linear region
+its instance), D3b2's own; waiting material premises are kept by a build of their own after it, D3b3.] In
+`Factor_Deferred_Search` and `Factor_Deferred_Commitments`:
 - *Formation.* D1b's goal clause — a goal holds no variable the store binds — becomes: every goal is *current* (that
   clause) or *kept*: a call goal not at the root, no node at its position, at a site whose interface and clause heads
   are linear and that no declaration names, its stored pattern holding a leaf, none of the stored pattern's variables at
@@ -19315,7 +19318,7 @@ them, and #965 recomputes GT6's prediction from the step they measure.
 | D3b1 | a new theory above `Factor_Pattern_Unification`, `Factor_Program_Resolution` and `Factor_Shared_Patterns`; `ROOT`; REASONING_REUSE.md's row | regions, linear patterns, the unification and count invariance, the shared read along a region | everything (new) | — | GT3, GT3b, D3a |
 | D3b2 | `Factor_Deferred_Search`, `Factor_Deferred_Commitments`, the control theories | kept goals: the formation's goal clause, the projection, the access's goal fields, the bind's keep and bring-current, the steps, the committed side's goal reads | R3–R5, K2, F2a–F2d, GT2–GT3b; D1b's and D1d's statements but the formation's goal clause and the access's goal fields | D3a, D3b1 | — |
 
-**The order.** D3b1 now: it restates nothing and stands beside GT3 and GT3b. D3a after GT3b #970: GT3 and GT3b restate
+**The order.** [Superseded by D3′'s order below (task 981).] D3b1 now: it restates nothing and stands beside GT3 and GT3b. D3a after GT3b #970: GT3 and GT3b restate
 `Factor_Deferred_Search` and `Factor_Deferred_Commitments` (the table's index, closing and class in the inner shared
 search; the deferred searches' and the route constants' code equations at a table). D3b2 after D3a and D3b1. WC3 #916
 after D3b2, and GT6 #878 after D3b2 beside WC3; #965's prediction recomputed when D3a and D3b2 land. D3 before WC3
@@ -19334,7 +19337,9 @@ it is, and its waiting set is stated over the access, whose `access_variables` D
   selection, at its grounding, at the projection. No test made a step resolves a kept goal; the builder lists every read
   of `access_goal` on the route and where it is made, and a read at a kept goal each step goes to the planner.
 - No goal at a site a declaration names, at a site whose interface or a clause head is not linear, at the root, of a
-  material premise, or whose stored pattern holds no leaf is kept.
+  material premise, or whose stored pattern holds no leaf is kept. [Corrected by D3′ below (task 981): a call goal at
+  a site whose interface or a clause head is not linear is kept through the extended region; a material premise that
+  waits is kept through its fields' open tails (D3b3), at a declared socket too.]
 - The formation of the records, of the kept goals' eligibility and of the indexes is established by the constructors
   and kept by every step, never checked again (REASONING_REUSE.md, "A check made where its premise is established").
 - A number is a key: never presented, never compared across two searches, never read where the position order or a
@@ -19367,7 +19372,9 @@ invariance is a theorem of R2 over finite patterns.
 - The goal side numbered (D1e): D3a leaves a lookup or two at list keys a write; its trigger stands. Groundness counters
   over the store (D1): the node records a bind are 137 at step 350, each a few µs after D3a; their trigger stands.
 
-**Left.** The goals that hold the chain at the given are not yet identified by site: if they stand at declared or
+**Left.** [Answered by #973 and D3′ below (task 981): the chain's holders stand at a nonlinear site (9) and at a
+waiting material premise raised at a declared socket (10's), none at a declared call site.] The goals that hold the
+chain at the given are not yet identified by site: if they stand at declared or
 nonlinear sites, D3b keeps none of them, and the course is records of their views' parts read by the commitment tests
 (at declared sites) or a recount reading the region and the repeated variables' subterms (at nonlinear sites) — measured
 by D3b2, or earlier by an investigation of the sites of the goals the bind reaches at 300–350 (the planner's). The plain
@@ -19375,6 +19382,225 @@ successors and the selection at depth (≈ 6 ms a step at 300–350), D1e and th
 GT6's prediction (#965) at D3a and D3b2.
 
 [Recorded 2026-10-01 (task 969's decision; a design, no theory changes).]
+
+#### The chain's holders kept (D3′, task 981): a call goal kept while no binding reaches its site's extended region, a waiting material premise kept while only its fields' open tails are bound
+
+[Added by task 981, a design, from investigation #973 (`.build/tasks/973/result.md`, its driver
+`.build/tasks/973/draft/theories/M973.thy`, `.build/tasks/973/runs/analysis.txt`): at the given's 77 at steps 300–350
+every bind reaches seven positions, two holding only a node and five goals, always the same five, and D3b as decided
+keeps none of them (0 of 250 reached goals, 0 % of the goal side's 4.366 s; 0 of 845 at 30–300). The chain — the atoms
+list x1 of 10's clause, extended one entry a step by site 0's recursion — is held by three call goals at site 9 (the
+projections of the observed fields, raised at 10.0/1–3), whose payload clause `Pair x (Pair y y)` repeats a variable
+(65.1 % of the goal side), and by 10's material premise (10.0/4), which waits and is raised at a declared socket
+(34.4 %); the recursion's frontier (0.1/0) is 0.4 %. No chain holder is a call goal at a declared site. This addition
+decides what D3b keeps — (a) call goals at nonlinear sites through the region extended by the repeated variables'
+subtrees, (b) waiting material premises kept as placed — what the commitment's tests read of a kept material premise,
+the step predicted again and the builds revised. A design; no theory changes.]
+
+| Earlier proposal or state | Correction |
+|---|---|
+| D3b: a call goal is kept only at a site whose interface and clause heads are linear | A call goal at any site that no declaration names is kept while no binding reaches its site's *extended region*: the positions where the interface or a head has a constructor or a literal, and every position at or below one where a pattern repeats a variable (D3b1's general notion, #975; the linear region its instance) |
+| D3, "What the builds must respect": no goal of a material premise is kept | A material premise that waits is kept as placed while the bind reaches only its fields' open tails, each image read once at its tail (D3b3); at a declared socket too |
+| D3, "Left": at declared sites, records of the views' parts read by the commitment tests | Not needed: no chain holder at the given is a call goal at a declared site (#973) |
+| D3, "Left": at nonlinear sites, a recount reading the region and the repeated variables' subterms | No recount: the count is invariant outside the extended region (D3b1's count form at a nonlinear site), so a kept goal at a nonlinear site is never recounted |
+| D3's prediction: 11–19 ms a step at 300–350, the chain's holders assumed at linear undeclared sites | ≈ 9–12 ms (≈ 11–14 ms at 330–350) with D3a, (a) and (b), the holders kept at their actual sites (below) |
+
+**(a) Call goals: the region extended by the repeated variables' subtrees.**
+- *The notion.* D3b1 states it in #973's general form (#975): a pattern's extended region is its region together with
+  every position at or below a position of a variable the pattern holds at two positions; a site's extended region is
+  the union of its interface's and its clause heads' (renaming apart keeps it). Unifiability of the interface and a
+  head with a goal pattern, hence the goal's count of alternatives (`finite_goal_alternatives`), is kept across every
+  substitution that binds no variable of the goal at a position of the site's extended region: the joint unification of
+  `[(i,g),(h,g)]` is the skeleton at the region, one subproblem per repeated variable over the goal's subterms at its
+  positions — none of whose variables the substitution binds, so unchanged — and one fresh variable at every other
+  position, always solvable. A linear site is the case of no repetition.
+- *Eligible.* A call goal not at the root, no node at its position, its stored pattern holding a leaf, its resolution
+  not ground, at a site no declaration names: the route's raising guard false at its stored entry
+  (`shared_raising_guard`: its site no producer's and no mode's, its raising socket undeclared) and no consumer
+  declaration naming its site (#973's reading of "a declaration names it"). D3's linearity condition is dropped.
+- *Region keys.* The keys of its variables at the positions of its site's extended region, read at its entry by D3b1's
+  shared read along the extended region (a walk along the region's positions that stops at a reference and takes the
+  whole subterm below a repeated variable's positions), kept beside its record. Its stored pattern's variables there are
+  unbound in the store, so its stored pattern and its resolution agree on the extended region and its count is its
+  resolution's. A bind keeps the goal when its domain meets none of its region keys and its record stays nonempty; its
+  record and the indexes are written by D3a's difference; otherwise it is brought current as D3b2 decides.
+- *At site 9.* The region is `{[], [T], [T,F], [T,T]}`, `[T,F]` and `[T,T]` the positions of the repeated `y`: the goal
+  holds the observed field's variable at `[T,F]` and a ground output at `[T,T]` — one region key, never bound at
+  300–350 and bound at 9 of 432 binds at 30–300, where the goal is brought current; the atoms list at `[F]`, outside the
+  region, is bound at every bind and changes nothing the search reads.
+- *What the tests read of a kept call goal.* The count, the kind, the leaf and the key from its stored entry (D3b1); its
+  variables and registered positions from its record; its raising from its stored entry. The priority at it reads its
+  raising and its site only (`access_direct_commitment` the producers' sites first, `framed_socket_test` no entry at an
+  undeclared raising socket, the mode binder the modes' sites first), and the deferred route's guard excludes it from
+  the priority prepared each step. Its pattern is read at its selection, its grounding and the projection, and by the
+  consumer test inside a producer's commitment (`access_producer_commits`) only where it shares a variable with that
+  producer's output — which reads its variables (its record) before its pattern. The builder counts these reads at the
+  given; a count each step goes to the planner.
+
+**(b) Waiting material premises kept as placed.** The form: kept as placed, not left to D3a's records. D3a writes a
+material goal's record and indexes by difference, but its pattern would still be substituted and recounted at every
+bind — 30 ms a step at 300–350, the chain's 140 entries walked by the substitution and again by the skeleton's reading
+in the recount.
+- *What the search reads of a material goal.* Its count, `fcard (finite_material_alternative_set M)`, zero while
+  `finite_material_resolution M` waits; its solvability (`finite_solvable_material_goal`: it does not wait); its kind;
+  its variables and registered positions; and, at its selection and in the commitment's tests, its pattern. A material
+  goal waits exactly when its skeleton (`finite_material_skeleton`) is an open reading and its source holds a variable.
+- *Its readings.* The source is read for its variables only. The skeleton pairs the readings of the four fields, each
+  read as an enumeration (`finite_enumeration_pattern_read`) along its spine: each entry by its field's entry reader
+  (`finite_atom_entry`, `finite_incidence_entry`, `finite_attachment_entry`), the spine's tail a variable (open), the
+  whole empty artifact (closed) or anything else (unreadable); `reading_pair` makes the skeleton unreadable when a field
+  is, and open when no field is unreadable and one is open. Two facts carry the keep. (1) Whether an entry is unreadable
+  does not depend on the atom entries the incidence and attachment entries read their anchors against
+  (`finite_anchor_address`: a variable anchor is found or open, never unreadable), so whether a field is unreadable is a
+  property of that field's own pattern. (2) A field whose spine ends in a variable and that holds no unreadable entry
+  is open, whatever its entries' anchors resolve to.
+- *Eligible.* A material goal not at the root, no node at its position, whose resolution waits; raised at any socket,
+  declared or not. Beside its record it keeps its *tail keys*: for each field whose spine in the resolution ends in a
+  variable standing nowhere else in the resolution, that variable's key, read at its entry by a walk along the field's
+  spine. Its source's variables, never tails, are read through its record.
+- *The image test at a bound spine tail.* A bind keeps the goal when (i) every domain key its record holds is a tail key
+  — so no variable of its source or of an entry is bound; (ii) each bound tail's image, read along its spine as an
+  enumeration by its field's entry reader, is not unreadable — readable entries ending in a variable or in the empty
+  artifact; (iii) the images' spine-tail variables, the fields' new tails, are distinct, each stands in the images only
+  at its own tail, and none is held by the record before the bind; (iv) after the bind some field's tail is a variable —
+  a tail left unbound, or an image ending in one. Then the resolution after the bind waits (D3b1m): its source is
+  unchanged by (i), no field is unreadable by (1), (i) and (ii), and the field of (iv) is open by (2) and (iii). The tail
+  keys are updated from the images (a bound tail key replaced by its image's new tail key, a closed image's by none),
+  the record and the indexes by D3a's difference, and the stored pattern, entry and classes stay untouched. Otherwise
+  the goal is brought current: resolved through the store after the bind (D1a's bind law), re-entered as today (its
+  count recomputed on its resolution once), its tail keys read again where it waits.
+- *At the given.* At every bind of 300–350 the domain meets the material premise's record only at the atoms field's
+  open tail — its source's variable never, edges (a bare variable) never; the image is one readable atom entry (a
+  payload address paired with an anchor) before a fresh tail, the recursion's variable renamed apart: kept at all 50
+  reaches. At 30–300, 3 of 144 binds meet its source, and there it is brought current.
+- *What a kept material goal's readers read.* Its count (zero) and its solvability (false) from its stored entry, equal
+  to its resolution's because both wait — its stored pattern waited when it was entered, its resolution by the
+  invariance. Its kind (material); its variables and registered positions from its record, its holders a superset. It
+  is never a candidate (`finite_candidate_goal`: a material goal is one exactly when it does not wait), so the selection
+  never reaches it and it is never selected; `tests_priority`, `tests_committing` and `tests_material`, read at the
+  goals the selection reaches and at the selected goal, never read it. It is never ground, its source holding a
+  variable. As a sibling of a framed socket, in the waiting class and among the socket holders it is read through its
+  record.
+- *The commitment's material test and priority, at a declared socket.* One read is left: the priority prepared over
+  the guarded goals each step (`commitment_tests`' `tests_prepare`: `gd r h ∧ access_commitment_priority Kc W E h` over
+  every goal), whose material branch decodes the goal (`access_socket_commitment_framed` cases on `access_goal`) — at a
+  kept goal a resolution walking the chain, twice a step (at no focus and at the parent's). So the deferred route's
+  guard (`moded_deferred_route_with`'s `gd` and `gr`, `Factor_Resolution_Checks`) reads, at a material goal, its
+  solvability before anything else: a material goal passes exactly when it is raised at a declared raiser and does not
+  wait (`access_solvable`, from the inner search's entry). Its premise holds: no waiting material goal has a priority at
+  any focus, since the framed commitment's material test (`finite_socket_commitment_framed`) requires
+  `finite_canonical_solutions M ≠ None`, which requires a whole ground source and an open skeleton, where the resolution
+  gives solutions and does not wait; and the mode binder holds at call goals only. No commitment test then reads a kept
+  material goal's pattern, and R5's material commitment is unchanged: a waiting premise is never committed.
+  `moded_deferred_route_with`'s definition is restated and `moded_deferred_route_with_exact` keeps its statement;
+  `commitment_tests`, the access, the commitment's access tests (`access_framed_commitment`) and the shared route stay
+  as they stand. The projection of a waiting premise at a declared socket that the priority makes each step today, at
+  its current pattern, goes with it.
+- *Brought current.* Where (i)–(iv) fail, at its projection, and — once it no longer waits — at its selection. When the
+  chain closes and the projections of its observed fields bind its source, the premise is brought current once and is
+  selected and committed as today.
+
+**The share kept at the given** (#973's counts and seconds, the given's 77, the goal side's work by the goal a bind
+reaches):
+
+| Range | Reached | Kept by (a) | Kept by (b) | Both: goals / goal side's seconds |
+|---|---:|---:|---:|---:|
+| 300–350 (50 binds) | 250 | 150 (2.843 s, 65.1 %) | 50 (1.504 s, 34.4 %) | 200 (80 %) / 4.347 of 4.366 s (99.6 %) |
+| 30–300 (211 binds) | 845 | 423 (1.004 s, 62.9 %) | 141 (≈ 0.49 s, ≈ 30.6 %) | 564 (66.7 %) / ≈ 1.49 of 1.596 s (≈ 93.5 %) |
+| 0–30 (18 binds) | 36 | 0 | 0 | 0 (no leaf, ground after the bind, or region bound) |
+
+At 300–350 the rest is the frontier (0.1/0, site 0: no leaf, its region bound at every bind, 0.019 s), substituted as
+today.
+
+**The step predicted again** (the route at the given, the check form through the deferred committed representation;
+#875's held parts, #973's shares; the runs' seconds, and at 300–350 a step):
+
+| Part | #875 | After D3a | After D3a, D3b2 (a) | After D3a, D3b2 (a), D3b3 (b) |
+|---|---:|---:|---:|---:|
+| At 300–350, a step: the patterns substituted and the alternatives recounted | 51.0 ms | 51.0 ms | ≈ 17.8 ms | ≈ 0.3 ms |
+| — entry tests, holders, registered moves, records | 56.8 ms | ≈ 2.0 ms | ≈ 2.0 ms | ≈ 2.0 ms |
+| — open counts, selection and plain successors | 7.1 ms | 7.1 ms | 7.1 ms | 7.1 ms |
+| A step at 300–350 (330–350) | 115 (147) ms | ≈ 60 (≈ 80) ms | ≈ 27 (≈ 36) ms | ≈ 9–12 (≈ 11–14) ms |
+| The run, 300 steps (library) | 2.42 s | ≈ 1.5 s | ≈ 1.0 s | ≈ 0.7–0.8 s |
+| The run, 350 steps (library) | 8.07 s | ≈ 4.5 s | ≈ 2.3–2.8 s | ≈ 1.2–1.4 s |
+| The run, 30 steps; 77/1 at 200 (library) | 0.253 s; 0.079 s | unchanged | unchanged | unchanged |
+
+Method: the substitution and recount at 300–350 (#875: 42.4 + 8.6 ms) divided among the goals a bind reaches in #973's
+proportions of the goal side (site 9 65.1 %, material 34.4 %, frontier 0.4 %), the kept shares removed; a kept goal's
+own cost at a bind — its region keys looked up or its image read along its spine, its record and tail keys replaced at
+one domain key — a few µs, ≈ 0.1 ms a step for the four; D3a's parts as #969 estimated them; at 330–350 the
+substitution and recount scaled by #973's goal side there (116 against 87 ms); for the runs, the goal entries
+substituted after D3a at 30–300 (≈ 0.84 s) reduced by the kept shares of 30–300. What remains at 300–350 is the
+selection and the plain successors (5.7 ms, unattributed beyond #875's split), the open counts (1.4 ms), D3a's writes
+and the node records (137 a bind, linear in the depth, µs each after D3a) and the frontier: whatever growth with the
+depth is left lies in these. Estimates; D3a, D3b2 and D3b3 each measure their part.
+
+**D3a's place.** Unchanged: after GT3b #970, before D3b2. A kept goal's record, the region or tail keys beside it and
+the indexes it is found by are written by D3a's difference at every bind that reaches it; without D3a every reached goal,
+kept or not, would still have its position added at every variable's position part and its registered buckets moved
+over the union of two sets (34 of 115 ms at 300–350). D3a's 46 % and (a)'s and (b)'s 44 % are different parts of the
+step. D3a's brief does not change.
+
+**The builds.**
+
+| Build | Theories | States | Keeps | After | Beside |
+|---|---|---|---|---|---|
+| D3b1 (#975) | `Factor_Pattern_Regions` (new) | as briefed: the extended region (the linear its instance), the unification and count invariance outside it, the shared read along it | everything (new) | — | D3a, D3b1m |
+| D3b1m | a new theory above `Factor_Material_Resolution`, `Factor_Program_Resolution`, `Factor_Shared_Patterns` and `Factor_Resolution_Lifting` (`Factor_Material_Tails`, the builder's name) | a field's spine tail and a material pattern's tails; unreadable entries independent of the anchors; the waiting invariance under a binding of tails ((i)–(iv) of (b)), its count zero, the new tails; a canonical solution excludes waiting; the shared reads of the tails and of an image's reading, equal to the projection's | everything (new) | — | D3b1, D3a |
+| D3a (#977) | as briefed | as briefed | as briefed | GT3b #970 | D3b1, D3b1m |
+| D3b2 (#979, revised) | `Factor_Deferred_Search`, `Factor_Deferred_Commitments`, the control theories | kept call goals with (a)'s eligibility and region keys; the formation's goal clause, projection, access, bind, steps, F4's holders and the committed side's goal reads through records, as D3 decided | as D3 decided | D3a, D3b1 | — |
+| D3b3 (new) | `Factor_Deferred_Search`, `Factor_Deferred_Commitments`, `Factor_Resolution_Checks` (`moded_deferred_route_with` only), the control theories | kept waiting material premises: the formation's kept-material case, the tail keys, the bind's image test and bring-current, the deferred route's guard with its premise, a control with a kept waiting premise at a declared socket; held measurement past 350 | R3–R5, K2, F2a–F2d, GT2–GT3b, R5's, F2c's and D1d's statements, `moded_deferred_route_with_exact`; D3b2's statements but the formation's goal clause | D3b2, D3b1m | — |
+
+**The order.** D3b1 (#975, in progress) and D3b1m now, beside D3a; D3a after GT3b #970; D3b2 after D3a and D3b1; D3b3
+after D3b2 and D3b1m; WC3 #916 after D3b3, both restating the deferred route's definitions; GT6 #878 after D3b3,
+beside WC3, since GT6 at D3b2 alone would pay the waiting premise's substitution (≈ 18 of ≈ 27 ms a step at 300–350)
+through a run of hours; #965's prediction recomputed when D3a, D3b2 and D3b3 land. (b) is a build of its own: its
+relations — the material case of the formation and the bind, the deferred route's guard and its premise, a control —
+would take D3b2 past a build's room, and it builds on D3b2's records-based goal reads, which every kept goal needs; its
+notion, D3b1m, stands apart because it touches no search theory and so shortens GT6's chain.
+
+**What the builds must respect** (beside D3's list, which they keep):
+- A kept goal's stored entry is read only where its value is its resolution's: at a call goal the count, the kind, the
+  leaf and the key (D3b1); at a material goal the count (zero), the solvability (false) and the kind (D3b1m); its
+  variables and registered positions from its record; its raising from its stored entry, which no substitution changes.
+- A kept material goal waits: its stored pattern and its resolution both wait and its tail keys are exact (each a
+  variable at a field's spine tail standing once in the resolution), established at its entry and kept by every bind
+  through the image test, never checked again.
+- No commitment test reads a kept goal's pattern each step: the deferred route's guard holds at no waiting material goal;
+  the builders list every read of `access_goal` on the route and where it is made, and count at the given the reads at
+  kept goals (the consumer test of (a) among them); a count each step goes to the planner.
+- The guard's premise is proved, not assumed: no waiting material goal has a commitment or a mode at any focus.
+- The extended region is the one notion: D3's linearity condition is gone, a linear site its instance.
+
+**What it relies on** (task 376's test): beside D3's: a kept call goal's eligibility reads its site's interface and
+heads — their extended regions, positions read where the order or a prefix is — whether a declaration names its site,
+and the domain's keys against its region keys; a kept material goal's reads the domain's keys against its record and
+tail keys, and an image's spine and entries through the four entry readers; the waiting invariance and the guard's
+premise are theorems of R1's material resolution over finite patterns; an atom entry's payload is read as its address,
+as R1 reads it.
+
+**Weighed and not taken.**
+- (b) left to D3a's records: the indexes written by difference but the 140-entry pattern substituted and recounted at
+  every bind, 30 ms a step at 300–350 and growing with the depth.
+- A region for material premises in D3b1's sense: the four readers read every entry along each spine, so the region
+  would hold the whole chain; what a bind leaves unchanged is the entries before the tails, which the tail keys and the
+  image test express.
+- The kept material goal decoded where the priority reads it: a resolution walking the chain twice a step, linear in
+  the depth.
+- The commitment's access test (`access_framed_commitment`'s material branch) reading the solvability first in place of
+  the route's guard: the same value, but a definition of the commitment's tests changed, where the guard is the route's
+  parameter for excluding goals with no priority.
+- Material premises kept only where raised at undeclared sockets: none at the given (10.0/4 is raised at R6's declared
+  material socket of 10).
+- Records of views' parts at declared call sites (D3's Left): no chain holder stands there.
+- A recount at nonlinear sites from the region and the repeated subterms (D3's Left): the count is invariant outside
+  the extended region.
+
+**Left.** The consumer test's reads at kept call goals (counted by D3b2); the selection and the plain successors at
+depth (≈ 6 ms a step at 300–350), D1e and the groundness counters on their triggers; whether the step still grows past
+350 once D3b3 lands (its measurement to 1,000 steps and beyond); #965's prediction at D3a, D3b2 and D3b3.
+
+[Recorded 2026-10-01 (task 981's decision; a design, no theory changes).]
 
 ### The given's calls are decided once: a table of certified calls every judgment closes, and the candidate's part each judgment derives
 
@@ -21484,7 +21710,18 @@ theory changes.
     formed package. The added part's bound is a least witness: handed in for an admission (the producer knows its
     package) and collected for a refusal by a registration of W2's family form — base the root family's added sites,
     step an added definition's callees at added uses — its completeness proved once in W4a's form, as 77's
-    (`Factor_Reader_Witness_Registrations.bound_witness_registration_complete`).
+    (`Factor_Reader_Witness_Registrations.bound_witness_registration_complete`). [Corrected by task 961 after review
+    935: the registration landed by task 934 steps over every edge of the least environment l, a given site's local
+    edges included, and the reach it collects is a bound whenever any bound is, not the least one; see the entry "The
+    added part's bound is the reach over the least environment's edges" (`extension_bound_reach_passes`).]
+    [Corrected by task 961 after the planner's q180: (i) 957 also checks the extension's formation (954 at the
+    given's value and the additions), so the premises holding the least environment at 961/0 hold only where the
+    given is an environment value, the additions its rows and bindings and the extension formed: W4a's completeness
+    quantifies over every binding, and off that domain no registration over 965 is complete (two rows at one use,
+    or a stored row of a given that is no value); (ii) G3's and G4's members clauses (985/0, 989/0) read the least
+    environment beside a view (991, 992) whose clause holds the root family (79), the bound (47) and the list site,
+    since W2's form registers a witness only where every premise holding it has no other free variable. See the
+    entry "The least environment is registered over 965 on a formed extension".]
   - G3, the callee boundary: G2's package exists, each of its added members stands at a use of no given artifact (20
     against the given's rows), and each given callee is a member of the given's package (83 at (g, d), the table's); the
     given's package being closed, every given member reached is then the given's. Exact to 392 at (g, c)
@@ -21869,3 +22106,15 @@ the access's `access_call_variables`, which the deferred access reads from a nod
 Task 934 (AX2b of task 928's course (c), G2). Its basis is #955's (F) and #959's (F′): 958's given clauses require that no binding of l has the site's use as its source, and that l's row at that use is the given's (q169, q172). Without F′ no positive family is complete over arbitrary bindings of 960: a definition at a given use may call a site at its own use through a local citation, with no binding (`native_definition_edge_uses`). With F′ such a local edge stays inside the site's closure in the given, whose sites pass as given sites (`bounded_given_edge`). So the reach over l's edges from q is a bound whenever any bound is (`extension_bound_reach_passes`). It need not lie inside every bound, unlike 77's (`closed_bound_least`): a given site's own local callees are reached but need not be listed. The registration is 77's family at 960 (`closure_witness_registration 960 bounded_closure_schema 3 0 2`), complete in W4a's form.
 
 Limit, measured by the control: W2's queries run with no witness construction, so the step query (82 at l) is not answered at plain parameters: 82's reading holds material goals at 10, and R4 leaves the ground edge call open too. The collection therefore gives nothing, so the bound is unresolved, never refuted. It is answered where the search commits at the given's declared sockets (VK2's committing instance), where AX4 #940 carries the registration and AX5 #962 runs it (planner, q178). l's registration over 965 is AX2c #961's (q178).
+
+## The least environment is registered over 965 on a formed extension: one stored row at each needed use
+
+Task 961 (AX2c of task 928's course (c)), after the planner's q180. 961/0's premise-only least environment l is registered in W2's form (`least_environment_registration`, `Factor_Extension_Registrations`): `Paired_Families` of the rows 965 reads at the given, the added rows, the added binding rows and the site's use (`least_row_query`, the row free), keyed by its use, and of the added binding rows 5 selects, keyed by their slot; both identified by equality. Its completeness in W4a's `_in` form (`least_environment_registration_complete_in`) holds at every program meaning 5, 957, 964 and 965 as the readers do, the plain instance by `finite_query_exact_plain`.
+
+Equality, not 12, identifies rows: on the domain no two stored rows share a use (`least_rows_key_unique`: the extension's artifacts are functional, the added uses apart from the given's, each list enumerates its set once), so no identity is needed there, and off it no identity makes the collection complete. The domain is where 957's new formation premise (954) puts it: two counterexamples (two added rows at one use presenting different artifacts; a given that is no value whose table holds a second presentation of an added row) each pass 957 and 964 at some l while every collection over 965 fails, so the domain had to enter a premise holding l (the correction of task 928's entry). `least_row_at_values` is consumed as it stands, its table hypothesis met from the given's value (`environment_value_rows`).
+
+The proof (`least_environment_values_pass`): where some l passes 957 and 964, the collected pair presents l's environment read at the needed uses, the site's use and the endpoints of the added binding rows (`read_environment`); the root family is read there unchanged (`native_root_family_read_environment`); the members of any bound of l at a needed use form a bound of the reading, since the roots and every callee of a member at a needed use stand at a needed use (`located_at_use_edge`, `native_definition_edge_uses`), an added member's definition reading the same there and a given member's row being the given's.
+
+To make 957 call 954, AX2a's program stands over the union of package membership and AX1's formation reader (`extension_readers_base_system`, joined where they agree, `membership_formation_agreement`); `least_environment_raw` gains the formation conjunct and `least_environment_complete` the additions' and the extension's hypotheses (both marked changes, their three callers repaired); `extension_package_sites` names the formation reader's sites. G3's and G4's members clauses read l beside views 991 and 992 (`additions_members_view_schema`), whose clause holds the root family, the bound and the list site; `additions_members_clauses` and `additions_members_rule` take the view site (marked changes), the rule's conclusion unchanged.
+
+The construction the guard over additions refuses through is the given's four registrations, 960's bound and 961's l (`extension_witness_registrations`, complete in W4a's form, `extension_witness_registrations_complete_in`). Limit: G3's and G4's l at 985/0 and 989/0 (the same family at the members clause's variables), their bounds at the views (G3's the reach over l's edges, G4's also over given members read at the given's value) and q produced by 79 there are not registered yet.

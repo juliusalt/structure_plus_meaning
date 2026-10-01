@@ -437,7 +437,7 @@ lemma asked_additions_guard_definitions:
 
 lemma asked_additions_guard_bound:
   "system_definitions additions_guard_system\<subseteq>system_definitions additions_readers_system\<union>
-    {980,981,982,983,984,985,986,987,988,989,990}"
+    {980,981,982,983,984,985,986,987,988,989,990,991,992}"
   by (auto simp: asked_additions_guard_definitions)
 
 lemma asked_additions_complete_guard: "system_definitions complete_data_admission_system\<subseteq>system_definitions guard_readers_system"
@@ -449,7 +449,7 @@ lemma asked_additions_overlap:
 proof
   fix x assume x: "x\<in>system_definitions given_program_system\<inter>system_definitions additions_guard_system"
   have low: "x<506" using x asked_additions_given_below by blast
-  have far: "x\<notin>{980,981,982,983,984,985,986,987,988,989,990}"
+  have far: "x\<notin>{980,981,982,983,984,985,986,987,988,989,990,991,992}"
     "x\<notin>{950,951,952,953,954}" "x\<notin>{955,956,957,958,959,960,961,962,963,964,965,966}"
     "x\<notin>{500,501,502,503,504,505} \<or> x\<in>{500,501,502,503,504,505}"
     using low by auto
@@ -489,9 +489,12 @@ proof -
         system_definitions complete_data_admission_system"
     proof
       fix x assume x: "x\<in>system_definitions extension_package_system\<inter>system_definitions guard_readers_system"
-      have "x\<notin>{955,956,957,958,959,960,961,962,963,964,965,966}" using x guard_low by auto
+      have "x\<in>system_definitions guard_readers_system" using x by (rule IntD2)
+      from subsetD[OF guard_low this] have "x<506" by (simp only: lessThan_iff)
+      then have "x\<notin>{955,956,957,958,959,960,961,962,963,964,965,966}" "x\<notin>{950,951,952,953,954}" by auto
       then show "x\<in>system_definitions complete_data_admission_system"
-        using x membership_complete_definitions unfolding extension_package_sites by blast
+        using x membership_complete_definitions lookup_complete_definitions
+        unfolding extension_package_sites extension_formation_sites by blast
     qed
   qed
   have audit: "systems_agree_on payload_audit_system guard_readers_system
@@ -515,7 +518,7 @@ proof -
       system_definitions guard_readers_system\<inter>system_definitions additions_readers_system"
   proof
     fix x assume x: "x\<in>system_definitions guard_readers_system\<inter>system_definitions additions_guard_system"
-    have "x\<notin>{980,981,982,983,984,985,986,987,988,989,990}" using x guard_low by auto
+    have "x\<notin>{980,981,982,983,984,985,986,987,988,989,990,991,992}" using x guard_low by auto
     then show "x\<in>system_definitions guard_readers_system\<inter>system_definitions additions_readers_system"
       using x asked_additions_guard_bound by blast
   qed

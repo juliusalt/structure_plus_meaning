@@ -478,7 +478,18 @@ proof -
     by (simp only: split image_Un bindings[OF left] bindings[OF right])
 qed
 
-lemma row_witness_family_key: "finite_family_key (row_witness_family c c' l I) (Finite_Pair k a)=Some k"
+subsection \<open>A family keyed by a pair's first component, with no step\<close>
+
+text \<open>
+  Any family with no step whose key is a pair's first component: its key reads that component, and its collection keeps
+  inside its base answers, covers every key and, with no conflict, holds distinct keys. The row families below and
+  the least environment's (@{text Factor_Extension_Registrations}) are its instances.
+\<close>
+
+lemma paired_family_key:
+  fixes F :: "('a,nat,nat) collection_family"
+  assumes keyed: "family_key F=(Finite_Pattern_Pair (Finite_Variable 0) (Finite_Variable 1),0)"
+  shows "finite_family_key F (Finite_Pair k a)=Some k"
 proof -
   define \<theta> :: "nat \<Rightarrow> finite_factor_term" where "\<theta>=(\<lambda>v. if v=0 then k else a)"
   have evaluated: "\<And>t p. (t,p) \<in> set [(Finite_Pair k a,Finite_Pattern_Pair (Finite_Variable 0) (Finite_Variable 1))] \<Longrightarrow>
@@ -494,8 +505,80 @@ proof -
   then have "(0,k) |\<in>| W" by simp
   then have "finite_relation_option W 0=Some k"
     using finite_relation_option_correct[OF finite_inputs_matching_some(1)[OF W(1)]] by blast
-  then show ?thesis by (simp add: finite_family_key_def row_witness_family_def W(1)[simplified])
+  then show ?thesis by (simp add: finite_family_key_def keyed W(1)[simplified])
 qed
+
+theorem keyed_family_rows_in:
+  fixes F :: "('a,nat,nat) collection_family"
+  assumes exact: "finite_query_exact \<Xi> P n" and step: "family_step F=None"
+    and keyed: "family_key F=(Finite_Pattern_Pair (Finite_Variable 0) (Finite_Variable 1),0)"
+    and collect: "finite_family_collection_in \<Xi> P n F B=Some (es,cs)"
+    and base: "decode_finite_term ` finite_family_base_answers P F B=R"
+    and pairs: "\<forall>u\<in>R. \<exists>k a. u=Pair_Term k a"
+  shows "set (map (decode_finite_term \<circ> fst) es) \<subseteq> R"
+    and "\<forall>u\<in>R. \<exists>u'\<in>set (map (decode_finite_term \<circ> fst) es). answer_key u'=answer_key u"
+    and "cs=[] \<Longrightarrow> distinct (map answer_key (map (decode_finite_term \<circ> fst) es))"
+    and "(x,y) \<in> set cs \<Longrightarrow> \<exists>k a b. x=Finite_Pair k a \<and> y=Finite_Pair k b \<and> a\<noteq>b \<and>
+      decode_finite_term x \<in> R \<and> decode_finite_term y \<in> R \<and> \<not> finite_family_identified P F x y"
+proof -
+  have steps: "finite_family_step_answers P F B={}" by (simp add: finite_family_step_answers_def step)
+  have sound: "fst ` set es \<subseteq> finite_family_base_answers P F B"
+    using finite_family_collection_sound(1)[OF collect] by (simp add: steps)
+  have inR: "decode_finite_term e \<in> R" if "e \<in> finite_family_base_answers P F B" for e
+    using that base by blast
+  have pair: "\<exists>k a. e=Finite_Pair k a" if member: "e \<in> finite_family_base_answers P F B" for e
+  proof -
+    obtain k a where "decode_finite_term e=Pair_Term k a" using pairs inR[OF member] by blast
+    then show ?thesis by (auto simp: decode_finite_pair_iff)
+  qed
+  have key: "finite_family_key F (Finite_Pair k a)=Some k" for k a by (rule paired_family_key[OF keyed])
+  show "set (map (decode_finite_term \<circ> fst) es) \<subseteq> R" using sound inR by auto
+  show "\<forall>u\<in>R. \<exists>u'\<in>set (map (decode_finite_term \<circ> fst) es). answer_key u'=answer_key u"
+  proof
+    fix u assume "u \<in> R"
+    then obtain e where e: "e \<in> finite_family_base_answers P F B" "u=decode_finite_term e" using base by blast
+    obtain x where x: "x \<in> fst ` set es" "finite_family_key F x=finite_family_key F e"
+      using finite_family_collection_complete_in(1)[OF exact collect] e(1) unfolding finite_family_covers_def by blast
+    obtain ke ae where ee: "e=Finite_Pair ke ae" using pair[OF e(1)] by blast
+    obtain kx ax where xx: "x=Finite_Pair kx ax" using pair sound x(1) by blast
+    have "kx=ke" using x(2) by (simp add: ee xx key)
+    then have keyed': "answer_key (decode_finite_term x)=answer_key u" using e(2) ee xx by simp
+    obtain y where y: "y \<in> set es" "x=fst y" using x(1) by blast
+    have "decode_finite_term x \<in> set (map (decode_finite_term \<circ> fst) es)"
+      unfolding set_map by (rule image_eqI[of _ _ y]) (simp_all add: y)
+    then show "\<exists>u'\<in>set (map (decode_finite_term \<circ> fst) es). answer_key u'=answer_key u"
+      using keyed' by blast
+  qed
+  show "distinct (map answer_key (map (decode_finite_term \<circ> fst) es))" if none: "cs=[]"
+  proof -
+    have keys: "distinct (map (finite_family_key F \<circ> fst) es)"
+      by (rule finite_family_collection_keys) (use collect none in simp)
+    have inj: "inj_on (answer_key \<circ> (decode_finite_term \<circ> fst)) (set es)"
+    proof (rule inj_onI)
+      fix y z assume y: "y \<in> set es" and z: "z \<in> set es"
+        and same: "(answer_key \<circ> (decode_finite_term \<circ> fst)) y=(answer_key \<circ> (decode_finite_term \<circ> fst)) z"
+      obtain ky ay where yy: "fst y=Finite_Pair ky ay" using pair sound y by blast
+      obtain kz az where zz: "fst z=Finite_Pair kz az" using pair sound z by blast
+      have "(finite_family_key F \<circ> fst) y=(finite_family_key F \<circ> fst) z" using same by (simp add: yy zz key)
+      then show "y=z" using keys y z by (auto simp: distinct_map inj_on_def)
+    qed
+    show ?thesis using keys inj by (simp add: distinct_map)
+  qed
+  show "\<exists>k a b. x=Finite_Pair k a \<and> y=Finite_Pair k b \<and> a\<noteq>b \<and>
+      decode_finite_term x \<in> R \<and> decode_finite_term y \<in> R \<and> \<not> finite_family_identified P F x y"
+    if conflict: "(x,y) \<in> set cs"
+  proof -
+    note c=finite_family_collection_conflicts_in[OF exact collect conflict]
+    obtain kx ax where xx: "x=Finite_Pair kx ax" using pair sound c(1) by blast
+    obtain ky ay where yy: "y=Finite_Pair ky ay" using pair sound c(2) by blast
+    have same: "kx=ky" using c(3) by (simp add: xx yy key)
+    have apart: "ax\<noteq>ay" using c(4) same by (simp add: xx yy)
+    show ?thesis using c(1,2,5) sound inR xx yy same apart by blast
+  qed
+qed
+
+lemma row_witness_family_key: "finite_family_key (row_witness_family c c' l I) (Finite_Pair k a)=Some k"
+  by (rule paired_family_key) (simp add: row_witness_family_def)
 
 theorem row_witness_family_rows_in:
   assumes exact: "finite_query_exact \<Xi> P n" and collect: "finite_family_collection_in \<Xi> P n (row_witness_family c c' l I) B=Some (es,cs)"
@@ -508,62 +591,16 @@ theorem row_witness_family_rows_in:
       decode_finite_term x \<in> R \<and> decode_finite_term y \<in> R \<and>
       \<not> finite_family_identified P (row_witness_family c c' l I) x y"
 proof -
-  let ?F="row_witness_family c c' l I"
-  have step: "finite_family_step_answers P ?F B={}"
-    by (simp add: finite_family_step_answers_def row_witness_family_def)
-  have sound: "fst ` set es \<subseteq> finite_family_base_answers P ?F B"
-    using finite_family_collection_sound(1)[OF collect] by (simp add: step)
-  have inR: "decode_finite_term e \<in> R" if "e \<in> finite_family_base_answers P ?F B" for e
-    using that base by blast
-  have pair: "\<exists>k a. e=Finite_Pair k a" if member: "e \<in> finite_family_base_answers P ?F B" for e
-  proof -
-    obtain k a where "decode_finite_term e=Pair_Term k a" using pairs inR[OF member] by blast
-    then show ?thesis by (auto simp: decode_finite_pair_iff)
-  qed
-  have key: "finite_family_key ?F (Finite_Pair k a)=Some k" for k a by (rule row_witness_family_key)
-  show "set (map (decode_finite_term \<circ> fst) es) \<subseteq> R" using sound inR by auto
-  show "\<forall>u\<in>R. \<exists>u'\<in>set (map (decode_finite_term \<circ> fst) es). answer_key u'=answer_key u"
-  proof
-    fix u assume "u \<in> R"
-    then obtain e where e: "e \<in> finite_family_base_answers P ?F B" "u=decode_finite_term e" using base by blast
-    obtain x where x: "x \<in> fst ` set es" "finite_family_key ?F x=finite_family_key ?F e"
-      using finite_family_collection_complete_in(1)[OF exact collect] e(1) unfolding finite_family_covers_def by blast
-    obtain ke ae where ee: "e=Finite_Pair ke ae" using pair[OF e(1)] by blast
-    obtain kx ax where xx: "x=Finite_Pair kx ax" using pair sound x(1) by blast
-    have "kx=ke" using x(2) by (simp add: ee xx key)
-    then have keyed: "answer_key (decode_finite_term x)=answer_key u" using e(2) ee xx by simp
-    obtain y where y: "y \<in> set es" "x=fst y" using x(1) by blast
-    have "decode_finite_term x \<in> set (map (decode_finite_term \<circ> fst) es)"
-      unfolding set_map by (rule image_eqI[of _ _ y]) (simp_all add: y)
-    then show "\<exists>u'\<in>set (map (decode_finite_term \<circ> fst) es). answer_key u'=answer_key u"
-      using keyed by blast
-  qed
-  show "distinct (map answer_key (map (decode_finite_term \<circ> fst) es))" if none: "cs=[]"
-  proof -
-    have keys: "distinct (map (finite_family_key ?F \<circ> fst) es)"
-      by (rule finite_family_collection_keys) (use collect none in simp)
-    have inj: "inj_on (answer_key \<circ> (decode_finite_term \<circ> fst)) (set es)"
-    proof (rule inj_onI)
-      fix y z assume y: "y \<in> set es" and z: "z \<in> set es"
-        and same: "(answer_key \<circ> (decode_finite_term \<circ> fst)) y=(answer_key \<circ> (decode_finite_term \<circ> fst)) z"
-      obtain ky ay where yy: "fst y=Finite_Pair ky ay" using pair sound y by blast
-      obtain kz az where zz: "fst z=Finite_Pair kz az" using pair sound z by blast
-      have "(finite_family_key ?F \<circ> fst) y=(finite_family_key ?F \<circ> fst) z" using same by (simp add: yy zz key)
-      then show "y=z" using keys y z by (auto simp: distinct_map inj_on_def)
-    qed
-    show ?thesis using keys inj by (simp add: distinct_map)
-  qed
+  have step: "family_step (row_witness_family c c' l I)=None"
+    and key: "family_key (row_witness_family c c' l I)=(Finite_Pattern_Pair (Finite_Variable 0) (Finite_Variable 1),0)"
+    by (simp_all add: row_witness_family_def)
+  note rows=keyed_family_rows_in[OF exact step key collect base pairs]
+  show "set (map (decode_finite_term \<circ> fst) es) \<subseteq> R" by (fact rows(1))
+  show "\<forall>u\<in>R. \<exists>u'\<in>set (map (decode_finite_term \<circ> fst) es). answer_key u'=answer_key u" by (fact rows(2))
+  show "distinct (map answer_key (map (decode_finite_term \<circ> fst) es))" if "cs=[]" using that by (rule rows(3))
   show "\<exists>k a b. x=Finite_Pair k a \<and> y=Finite_Pair k b \<and> a\<noteq>b \<and>
-      decode_finite_term x \<in> R \<and> decode_finite_term y \<in> R \<and> \<not> finite_family_identified P ?F x y"
-    if conflict: "(x,y) \<in> set cs"
-  proof -
-    note c=finite_family_collection_conflicts_in[OF exact collect conflict]
-    obtain kx ax where xx: "x=Finite_Pair kx ax" using pair sound c(1) by blast
-    obtain ky ay where yy: "y=Finite_Pair ky ay" using pair sound c(2) by blast
-    have same: "kx=ky" using c(3) by (simp add: xx yy key)
-    have apart: "ax\<noteq>ay" using c(4) same by (simp add: xx yy)
-    show ?thesis using c(1,2,5) sound inR xx yy same apart by blast
-  qed
+      decode_finite_term x \<in> R \<and> decode_finite_term y \<in> R \<and>
+      \<not> finite_family_identified P (row_witness_family c c' l I) x y" if "(x,y) \<in> set cs" using that by (rule rows(4))
 qed
 
 lemma artifact_row_witness_identity_holds:

@@ -88,6 +88,68 @@ theorem artifact_enumeration_order:
   shows "artifact_enumeration R A E B F \<longleftrightarrow> artifact_enumeration R A' E' B' F'"
   using assms by (simp add: artifact_enumeration_def enumerated_artifact_def)
 
+section \<open>Complete finite collections carried by payloads and pairs\<close>
+
+text \<open>
+  A data list pairs its entries in order before the empty payload; an attachment is its address and value,
+  and an incidence its address triple, as payloads paired. These are the artifact data class's relational
+  constructions (@{text Factor_Artifact_Values}), stated here, below the material observation, so that one
+  construction of each serves every theory that reads them.
+\<close>
+
+fun data_list_term :: "factor_term list \<Rightarrow> factor_term" where
+  "data_list_term [] = Payload_Term []"
+| "data_list_term (t#ts) = Pair_Term t (data_list_term ts)"
+
+lemma data_list_term_injective:
+  "data_list_term xs=data_list_term ys \<longleftrightarrow> xs=ys"
+  by (induction xs arbitrary: ys) (case_tac ys; auto)+
+
+lemma data_list_term_formed:
+  "term_formed (data_list_term ts) \<longleftrightarrow> (\<forall>t\<in>set ts. term_formed t)"
+  by (induction ts) (auto simp: octets_formed_def)
+
+lemma data_list_term_member_height:
+  assumes "x\<in>set xs"
+  shows "term_height x<term_height (data_list_term xs)"
+  using assms
+proof (induction xs)
+  case Nil
+  then show ?case by simp
+next
+  case (Cons y ys)
+  show ?case
+  proof (cases "x=y")
+    case True
+    then show ?thesis by simp
+  next
+    case False
+    have inside: "x\<in>set ys" using Cons.prems False by simp
+    have smaller: "term_height x<term_height (data_list_term ys)" by (rule Cons.IH[OF inside])
+    show ?thesis by (rule less_le_trans[OF smaller]) simp
+  qed
+qed
+
+lemma injective_mapped_lists:
+  assumes "inj f"
+  shows "map f xs=map f ys \<longleftrightarrow> xs=ys"
+  using assms by (induction xs arbitrary: ys) (case_tac ys; auto dest: injD)+
+
+definition address_pair_data ::
+  "(local_address\<times>octets) \<Rightarrow> factor_term" where
+  "address_pair_data z = Pair_Term (Payload_Term (fst z)) (Payload_Term (snd z))"
+
+definition incidence_data ::
+  "(local_address\<times>local_address\<times>local_address) \<Rightarrow> factor_term" where
+  "incidence_data z =
+    Pair_Term (Payload_Term (fst z)) (address_pair_data (snd z))"
+
+lemma address_pair_data_injective: "inj address_pair_data"
+  by (rule injI) (auto simp: address_pair_data_def)
+
+lemma incidence_data_injective: "inj incidence_data"
+  by (rule injI) (auto simp: incidence_data_def address_pair_data_def)
+
 section \<open>Ordinary terms expose the complete enumeration\<close>
 
 fun enumeration_term :: "factor_term list \<Rightarrow> factor_term" where

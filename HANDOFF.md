@@ -60,11 +60,18 @@ and before WC3. GT6 #878 (produced once, a run of hours; record `validation/give
 **11 at large k, and a search step at depth.** D153 #987 decided F1, provisionally (Q35): the material premise's
 relational fields in address form, the atoms kept, 10 over the data's own fields; 11 at k addresses about k + 5
 states against about 5.2 k²; F4, Q33-free, if the owner declines. M1 #996 landed (`9cfa70bc`); M2 #998 (one landing
-re-recording its differing words; review #999) → D3b3 #983, GT6, #1000 and #988. GT6's environment-level part (#965) is dominant and
-unaddressed; GT6's step (2) measures it. D3: D3b1 #975 and D3b1m #982 landed; D3a #977 resumes from the theory it
-installed in its tree; D3b2 #979 after D3a and #995; D3b3 #983 after D3b2 and M2. q162's held goals and construction
-nodes and FI's remaining costs (next-edits 384, 385): under 1 % at the given, taken at the next restater of the route
-constants' code if a figure asks.
+re-recording its differing words; review #999) → D3b3 #983, GT6, #1000 and #988. #1006 (`result.md`): the step past 350 is a
+cubic in D = s − 196 — every bind substitutes and re-enters the chain's four holders (site 9's three projections, 10's
+material premise) — of which D3b2 #979 removes 77 % and D3b3 #983 19 %; a remainder ≈ 3.2×10⁻⁴ D² + 3 ms a step stays
+(the open counts' and classes' carries over 2 (D − 5) levels a step, the selection's scan of the registered positions),
+placed as F-a #1012, F-b1 #1014 (#967 folded) and F-b2 #1016, before GT6 and WC3 #916 (mailed what it takes). GT6's environment level (#965)
+costs at the depth its states stand at, which #1008 measures (continues #1006): with F-a and F-b 2.4×10⁴–1.1×10⁵ s if D
+stays below about 1,050, beyond any per-state fix if D grows one a state. D3: D3b1 #975, D3b1m #982 and D3a #977
+landed; D3b2 is divided at its partial session: #979 the plain side (the kept goals, the route keeping none), #1010
+the committed side (continues #979: the route keeping every call goal, q189, and the measurement past 350); D3b3 #983,
+after both and M2, passes the guard in `moded_deferred_route_with` (mailed). q162's held goals and construction nodes
+(next-edits 384) are F-b's; FI's remaining costs (385) at the next restater of the route constants' code if a figure
+asks.
 
 **The order at a pair node** (correction (16)): a waiting class read by the selection alone; WC1–WC2b landed; WC3
 #916 → #542, #547, #887; R7's figures set 55's clause-trial trigger (Open 152). #887 (review 832's consolidations)
@@ -77,10 +84,10 @@ kept, none extended (#376); their remains are under Open and in `.build/plans/ne
 
 **Shape and order.** No build waits on a review, nor any task on an investigation (its tree never lands): the
 dependency goes through the brief's Inputs, but for the guard AX5 #962 on #1000, removed when its brief is rewritten.
-The longest chain runs M1 → M2 → D3b3 → GT6 → R7 → #707 → #399 → … → #449 → #450; GT6's hours make the resolver's
+The longest chain runs D3b2 #979 → #1010 → D3b3 → F-b1 #1014 → F-b2 #1016 → GT6 → R7 → #707 → #399 → … → #449 → #450; GT6's hours make the resolver's
 pole critical, the AX line has slack. Nothing is added after the tail until it shortens (the approval build, Open 142,
 waits); splices before a task go at any depth. The queue, the planner's choice and a residual until Q2's native
-answer: the pole (D3a, M2, #1002, #1001, #1003, D3b2, D3b3, WC3, GT6), #1000 after M2, the briefs
+answer: the pole (M2, D3b2 #979 and #1010, #1007, #1003, D3b3, F-a #1012, F-b1 #1014, F-b2 #1016, WC3, GT6), #1008, #1009 and #1000 beside it, the briefs
 (#988, #948), the AX line, the route in its chains' order, each review after its build; #887 after R7's review.
 
 ## Decisions
@@ -103,7 +110,7 @@ Taken by the planning episodes, where they are not entries of `DECISIONS.md`.
 - **17:50, 18:12, 18:36**: the native notion of a problem is the loop's product; a design is judged by what its
   identity rests on; a presentation supplies no meaning; a row, a locus, a prefix, a key or a family index is
   structure.
-- **Closed without an answer** (2026-09-30, 10-01): Q1, Q3–Q5, Q8–Q16, Q21, Q22, Q24, Q25; each provisional choice a
+- **Closed without an answer** (2026-09-30, 10-01): Q1, Q3–Q5, Q8–Q16, Q21, Q22, Q24–Q26; each provisional choice a
   generated choice, revisable on a reason.
 - **Nothing of the native loop is built over the bootstrap loop's presentations** (`development_problem`, task 9's
   rows and loci, `readiness_presents`, `state_presents`, `development_rows_present`, `request_presents`), none is
@@ -301,14 +308,20 @@ owner's re-root trigger, and a probe past its bound above `Factor_Least_Collecti
 
 ## Now
 
-- **Under way**: D3a #977 resuming from its installed theory (q185's three restatements accepted); M2 #998; #1001
-  (review 995's consolidations) after D3a.
-- **What the next events ask**: Q35's answer (if no, F4 replaces M1 and M2); #1000's result (after M2): the controls
+- **Under way**: M2 #998; D3b2's plain side #979 (continuing in its tree), then its committed side #1010; #1003 (with
+  review 1004's follow-ups 1, 5 and 7: `Bv` from its kept shared found states); #1007 (review 1001's follow-ups,
+  before GT6); #1008 (the environment level's depth). #1002 landed (`521bd3b2`). The
+  owner closed Q26 (2026-10-01).
+- **What the next events ask**: #1008's result (if the environment level nests one a state, a design before GT6, F-b's
+  builds judged against it); Q35's answer (if no, F4 replaces M1 and M2);
+  #1000's result (after M2): the controls
   (77/1 resolved, 77/2 refuted at the committing instance) placed as a build where F1 suffices, else Open 157 designed;
   the count fix (Open 155) if it is needed; AX5's brief rewritten, its guard removed; M2's landing: #988 briefs AX2d1
   and AX2d2 (AX5 and #948 re-pointed onto AX2d2 at
-  its placement), then #948's proposals placed by rewrite; GT6's brief rewritten after M2, D3b3, C3/C2 and
-  #995. The re-run of #718's 77 and 79 fixtures with review 858's attributions (next-edits 364–366) at a measured
+  its placement), then #948's proposals placed by rewrite; GT6's brief rewritten after M2, D3b3, #1002, #1003,
+  F-a, F-b and #1008, with #1006's c(D) and per-call figures (its (5): 11 ≈ 27 s at k = 621 after M2 and D3b3, ≈ 5 s
+  with F-a and F-b) and its follow-up 4 (each state's depth recorded beside its cost), and the leaves' scan at its tables
+  (next-edits 436, #1003's (3) deferred by q191). The re-run of #718's 77 and 79 fixtures with review 858's attributions (next-edits 364–366) at a measured
   need.
 - **Briefs nearest their rooms**: #542 and #399, which #948 re-estimates; #949 put #551 at about 170K and #449 at
   about 200K.

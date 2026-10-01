@@ -1,6 +1,6 @@
 {
- "base_receipt_sha256": "d5488b3b6fd9704bd743e7df5a58056a3de787fdd5a88799ef5055f4ccd19b16",
- "checked_content_sha256": "82f193c3b92a4a060892220750d7e87ca6ef5e5a364aa01de942c62c6b1385a3",
+ "base_receipt_sha256": "862b2ed82698facbdbf02ec31896b175c2af58866d149eb4a5ba751cdc751e38",
+ "checked_content_sha256": "810c47c3110a5203d6717b96a86959d0961ba694be2672e800fd0cd8347460f2",
  "host_tests": {
   "kernel": {
    "exit_code": 0,
@@ -17,17 +17,17 @@
    "ran": 314,
    "skipped": 0,
    "tail": [
-    "{\"status\": \"failed\", \"error\": \"[Errno 2] No such file or directory: '/tmp/tmplq2z0tg_/no-project/theories/Development_Answer_a2d8d6490cc2.thy'\"}"
+    "{\"status\": \"failed\", \"error\": \"[Errno 2] No such file or directory: '/tmp/tmpjjumki76/no-project/theories/Development_Answer_a2d8d6490cc2.thy'\"}"
    ]
   }
  },
  "phases": {
-  "base_and_impact": 0.6,
+  "base_and_impact": 0.46,
   "execution_impact": 0.0,
   "export": 0.0,
-  "proof": 182.5,
-  "recipe_impact": 0.47,
-  "recipes_and_host_tests": 11.6
+  "proof": 203.34,
+  "recipe_impact": 0.38,
+  "recipes_and_host_tests": 11.4
  },
  "rebuilt_theories": [
   "Development_First_Problem_Additions_Controls",
@@ -35,12 +35,18 @@
   "Development_Given_Declarations_Execution",
   "Development_Given_Table",
   "Development_Given_Waiting_Controls",
+  "Factor_Access_Commitments",
   "Factor_Check_Controls",
+  "Factor_Commitment_Controls",
   "Factor_Deferred_Commitment_Controls",
   "Factor_Deferred_Commitments",
-  "Factor_Deferred_Search",
-  "Factor_Deferred_Search_Controls",
+  "Factor_Input_Production_Controls",
+  "Factor_Least_Query_Controls",
+  "Factor_Mode_Controls",
+  "Factor_Narrowed_Controls",
   "Factor_Resolution_Checks",
+  "Factor_Resolution_Controls",
+  "Factor_Shared_Commitments",
   "Factor_Table_Search_Controls"
  ],
  "recipes": {
@@ -201,8 +207,8 @@
    "status": "unchanged"
   }
  },
- "reused_theories": 1988,
- "seconds": 201.67,
+ "reused_theories": 1982,
+ "seconds": 222.91,
  "source_checks": {
   "missing_theory_files": [],
   "proof_escape_matches": [],

@@ -446,19 +446,13 @@ subsection \<open>The build: the keyed step threaded through the terms\<close>
 type_synonym share_state = "(shape_order_key,nat) rbt \<times> nat \<times> (nat,shape) rbt"
 
 text \<open>
-  The keyed first-occurrence step, for any value and injective key: the table is kept reversed with its
-  length, and an ordered tree maps the key of every held value to its first position. Inserting an absent
-  value's key at the table's length is the index notion's update at the first-occurrence table.
+  The keyed first-occurrence step, stated once for any value, injective key and form of the table: an ordered tree maps
+  the key of every held value to its first position beside the table's length, and an absent value is placed in the
+  table's form by that form's own update (@{text keyed_table_step}), under the relation the form holds to the table
+  (@{text keyed_table_state}). Inserting an absent value's key at the table's length is the index notion's update at
+  the first-occurrence table. The step over a reversed list (@{text keyed_reference_step}) and the sharing state's step
+  over the tree of the table's positions (@{text keyed_share_shape}) are its instances.
 \<close>
-
-definition keyed_reference_step ::
-  "('a \<Rightarrow> 'k::linorder) \<Rightarrow> 'a \<Rightarrow> ('k,nat) rbt\<times>nat\<times>'a list \<Rightarrow> nat\<times>(('k,nat) rbt\<times>nat\<times>'a list)" where
-  "keyed_reference_step key x q=(case q of (M,n,R) \<Rightarrow> (case RBT.lookup M (key x) of
-    Some i \<Rightarrow> (i,q) | None \<Rightarrow> (n,(RBT.insert (key x) n M,Suc n,x#R))))"
-
-definition keyed_reference_state :: "('a \<Rightarrow> 'k::linorder) \<Rightarrow> ('k,nat) rbt\<times>nat\<times>'a list \<Rightarrow> 'a list \<Rightarrow> bool" where
-  "keyed_reference_state key q T \<longleftrightarrow> (case q of (M,n,R) \<Rightarrow> n=length T \<and> R=rev T \<and>
-    (\<forall>y. RBT.lookup M (key y)=value_reference_index y T))"
 
 lemma keyed_reference_insert:
   assumes key: "inj key" and index: "\<And>y. RBT.lookup M (key y)=value_reference_index y T"
@@ -479,25 +473,57 @@ proof -
   then show ?thesis by (metis option.exhaust)
 qed
 
+definition keyed_table_step ::
+  "('a \<Rightarrow> 'k::linorder) \<Rightarrow> (nat \<Rightarrow> 'a \<Rightarrow> 't \<Rightarrow> 't) \<Rightarrow> 'a \<Rightarrow> ('k,nat) rbt\<times>nat\<times>'t \<Rightarrow>
+    nat\<times>(('k,nat) rbt\<times>nat\<times>'t)" where
+  "keyed_table_step key place x q=(case q of (M,n,R) \<Rightarrow> (case RBT.lookup M (key x) of
+    Some i \<Rightarrow> (i,q) | None \<Rightarrow> (n,(RBT.insert (key x) n M,Suc n,place n x R))))"
+
+definition keyed_table_state ::
+  "('a \<Rightarrow> 'k::linorder) \<Rightarrow> ('t \<Rightarrow> 'a list \<Rightarrow> bool) \<Rightarrow> ('k,nat) rbt\<times>nat\<times>'t \<Rightarrow> 'a list \<Rightarrow> bool" where
+  "keyed_table_state key held q T \<longleftrightarrow> (case q of (M,n,R) \<Rightarrow> n=length T \<and> held R T \<and>
+    (\<forall>y. RBT.lookup M (key y)=value_reference_index y T))"
+
+lemma keyed_table_step_exact:
+  assumes key: "inj key" and rep: "keyed_table_state key held q T"
+    and place: "\<And>R T x. held R T \<Longrightarrow> held (place (length T) x R) (T@[x])"
+  shows "fst (keyed_table_step key place x q)=fst (value_reference_step x T) \<and>
+    keyed_table_state key held (snd (keyed_table_step key place x q)) (snd (value_reference_step x T))"
+proof -
+  obtain M n R where q: "q=(M,n,R)" by (cases q) auto
+  have n: "n=length T" and R: "held R T" and index: "\<And>y. RBT.lookup M (key y)=value_reference_index y T"
+    using rep by (simp_all add: q keyed_table_state_def)
+  show ?thesis
+  proof (cases "value_reference_index x T")
+    case (Some i)
+    then show ?thesis using rep index[of x] by (simp add: q keyed_table_step_def value_reference_step_def)
+  next
+    case None
+    have moved: "RBT.lookup (RBT.insert (key x) n M) (key y)=value_reference_index y (T@[x])" for y
+      using keyed_reference_insert[OF key index None] n by simp
+    show ?thesis using None index[of x] n place[OF R, of x] moved
+      by (simp add: q keyed_table_step_def value_reference_step_def keyed_table_state_def)
+  qed
+qed
+
+text \<open>The step over a reversed list: its instance placing an absent value at the list's head.\<close>
+
+definition keyed_reference_step ::
+  "('a \<Rightarrow> 'k::linorder) \<Rightarrow> 'a \<Rightarrow> ('k,nat) rbt\<times>nat\<times>'a list \<Rightarrow> nat\<times>(('k,nat) rbt\<times>nat\<times>'a list)" where
+  "keyed_reference_step key x q=keyed_table_step key (\<lambda>n y R. y#R) x q"
+
+definition keyed_reference_state :: "('a \<Rightarrow> 'k::linorder) \<Rightarrow> ('k,nat) rbt\<times>nat\<times>'a list \<Rightarrow> 'a list \<Rightarrow> bool" where
+  "keyed_reference_state key q T \<longleftrightarrow> keyed_table_state key (\<lambda>R T. R=rev T) q T"
+
 lemma keyed_reference_step_exact:
   assumes key: "inj key" and rep: "keyed_reference_state key q T"
   shows "fst (keyed_reference_step key x q)=fst (value_reference_step x T) \<and>
     keyed_reference_state key (snd (keyed_reference_step key x q)) (snd (value_reference_step x T))"
 proof -
-  obtain M n R where q: "q=(M,n,R)" by (cases q) auto
-  have n: "n=length T" and R: "R=rev T" and index: "\<And>y. RBT.lookup M (key y)=value_reference_index y T"
-    using rep by (simp_all add: q keyed_reference_state_def)
+  have place: "y#R=rev (T@[y])" if "R=rev T" for R T and y :: 'a using that by simp
   show ?thesis
-  proof (cases "value_reference_index x T")
-    case (Some i)
-    then show ?thesis using rep index[of x] by (simp add: q keyed_reference_step_def value_reference_step_def)
-  next
-    case None
-    have moved: "RBT.lookup (RBT.insert (key x) n M) (key y)=value_reference_index y (T@[x])" for y
-      using keyed_reference_insert[OF key index None] n by simp
-    show ?thesis using None index[of x] n R moved
-      by (simp add: q keyed_reference_step_def value_reference_step_def keyed_reference_state_def)
-  qed
+    using keyed_table_step_exact[where place="\<lambda>n y R. y#R" and x=x, OF key rep[unfolded keyed_reference_state_def] place]
+    unfolding keyed_reference_step_def keyed_reference_state_def .
 qed
 
 text \<open>
@@ -531,23 +557,22 @@ next
 qed
 
 lemma keyed_reference_state_table: "keyed_reference_state key q T \<Longrightarrow> T=rev (snd (snd q))"
-  by (cases q) (simp add: keyed_reference_state_def)
+  by (cases q) (simp add: keyed_reference_state_def keyed_table_state_def)
 
 lemma keyed_reference_state_empty: "keyed_reference_state key (RBT.empty,0,[]) []"
-  by (simp add: keyed_reference_state_def)
+  by (simp add: keyed_reference_state_def keyed_table_state_def)
 
 text \<open>
-  The sharing state of shapes is the keyed state's tree of keys and the table's length, with the table held as the
-  tree of its positions: a shape the key tree does not hold is inserted at the table's length in both trees, the index
-  notion's update at each. The empty sharing state holds nothing.
+  The sharing state of shapes is the keyed step's instance at the tree of the table's positions: a shape the key tree
+  does not hold is inserted at the table's length in both trees, the index notion's update at each. The empty sharing
+  state holds nothing.
 \<close>
 
 definition empty_share_state :: share_state where
   "empty_share_state=(RBT.empty,0,RBT.empty)"
 
 definition keyed_share_shape :: "shape \<Rightarrow> share_state \<Rightarrow> nat \<times> share_state" where
-  "keyed_share_shape s q=(case q of (M,n,P) \<Rightarrow> (case RBT.lookup M (shape_key s) of
-    Some i \<Rightarrow> (i,q) | None \<Rightarrow> (n,(RBT.insert (shape_key s) n M,Suc n,RBT.insert n s P))))"
+  "keyed_share_shape s q=keyed_table_step shape_key (\<lambda>n s P. RBT.insert n s P) s q"
 
 fun keyed_share_term :: "finite_factor_term \<Rightarrow> share_state \<Rightarrow> nat \<times> share_state" where
   "keyed_share_term (Finite_Pair t u) q=(case keyed_share_term t q of (i,q1) \<Rightarrow>
@@ -561,18 +586,18 @@ fun keyed_share_terms :: "finite_factor_term list \<Rightarrow> share_state \<Ri
     (case keyed_share_terms ts q1 of (is,q2) \<Rightarrow> (i#is,q2)))"
 
 definition keyed_state_represents :: "share_state \<Rightarrow> shape list \<Rightarrow> bool" where
-  "keyed_state_represents q T \<longleftrightarrow> (case q of (M,n,P) \<Rightarrow> n=length T \<and>
-    (\<forall>i. RBT.lookup P i=value_reference_read T i) \<and> (\<forall>y. RBT.lookup M (shape_key y)=value_reference_index y T))"
+  "keyed_state_represents q T \<longleftrightarrow>
+    keyed_table_state shape_key (\<lambda>P T. \<forall>i. RBT.lookup P i=value_reference_read T i) q T"
 
 lemma keyed_state_represents_empty: "keyed_state_represents empty_share_state []"
-  by (simp add: keyed_state_represents_def empty_share_state_def value_reference_read_def)
+  by (simp add: keyed_state_represents_def keyed_table_state_def empty_share_state_def value_reference_read_def)
 
 lemma keyed_state_positions:
   assumes rep: "keyed_state_represents (M,n,P) T"
   shows "map (\<lambda>i. the (RBT.lookup P i)) [0..<n]=T"
 proof -
   have n: "n=length T" and read: "\<And>i. RBT.lookup P i=value_reference_read T i"
-    using rep by (simp_all add: keyed_state_represents_def)
+    using rep by (simp_all add: keyed_state_represents_def keyed_table_state_def)
   show ?thesis by (rule nth_equalityI) (simp_all add: n read value_reference_read_def)
 qed
 
@@ -581,28 +606,19 @@ lemma keyed_share_shape_exact:
   shows "fst (keyed_share_shape s q)=fst (value_reference_step s T) \<and>
     keyed_state_represents (snd (keyed_share_shape s q)) (snd (value_reference_step s T))"
 proof -
-  obtain M n P where q: "q=(M,n,P)" by (cases q) auto
-  have n: "n=length T" and read: "\<And>i. RBT.lookup P i=value_reference_read T i"
-    and index: "\<And>y. RBT.lookup M (shape_key y)=value_reference_index y T"
-    using rep by (simp_all add: q keyed_state_represents_def)
-  show ?thesis
-  proof (cases "value_reference_index s T")
-    case (Some i)
-    then show ?thesis using rep index[of s] by (simp add: q keyed_share_shape_def value_reference_step_def)
-  next
-    case None
-    have moved: "RBT.lookup (RBT.insert (shape_key s) n M) (shape_key y)=value_reference_index y (T@[s])" for y
-      using keyed_reference_insert[OF shape_key_injective index None] n by simp
-    have placed: "RBT.lookup (RBT.insert n s P) i=value_reference_read (T@[s]) i" for i
-    proof -
-      have "RBT.lookup (RBT.insert n s P) i=Some v \<longleftrightarrow> value_reference_read (T@[s]) i=Some v" for v
-        using tree_map_updates.updated[where i=P and k=n and u=s and k'=i and v=v] read[of i] n
-        by (auto simp: value_reference_read_def nth_append)
-      then show ?thesis by (metis option.exhaust)
-    qed
-    show ?thesis using None index[of s] n moved placed
-      by (simp add: q keyed_share_shape_def value_reference_step_def keyed_state_represents_def)
+  have place: "\<forall>i. RBT.lookup (RBT.insert (length T) y P) i=value_reference_read (T@[y]) i"
+    if read: "\<forall>i. RBT.lookup P i=value_reference_read T i" for P :: "(nat,shape) rbt" and T y
+  proof
+    fix i
+    have "RBT.lookup (RBT.insert (length T) y P) i=Some v \<longleftrightarrow> value_reference_read (T@[y]) i=Some v" for v
+      using tree_map_updates.updated[where i=P and k="length T" and u=y and k'=i and v=v] spec[OF read, of i]
+      by (auto simp: value_reference_read_def nth_append)
+    then show "RBT.lookup (RBT.insert (length T) y P) i=value_reference_read (T@[y]) i" by (metis option.exhaust)
   qed
+  show ?thesis
+    using keyed_table_step_exact[where place="\<lambda>n s P. RBT.insert n s P" and x=s,
+      OF shape_key_injective rep[unfolded keyed_state_represents_def] place]
+    unfolding keyed_share_shape_def keyed_state_represents_def .
 qed
 
 lemma keyed_share_term_exact:
@@ -649,7 +665,8 @@ proof -
   have rep: "keyed_state_represents (M',n,P) (snd (share_terms ts []))" and same: "is'=fst (share_terms ts [])"
     using keyed_share_terms_exact[OF start, of ts] run by simp_all
   have "T=snd (share_terms ts [])" using keyed_state_positions[OF rep] fields(2) by simp
-  then show ?thesis using rep same fields by (cases "share_terms ts []") (simp add: keyed_state_represents_def)
+  then show ?thesis using rep same fields by (cases "share_terms ts []")
+    (simp add: keyed_state_represents_def keyed_table_state_def)
 qed
 
 corollary keyed_shared_family_index:

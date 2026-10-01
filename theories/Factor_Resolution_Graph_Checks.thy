@@ -3468,4 +3468,27 @@ qed
 export_code finite_program_resolution finite_committed_resolution finite_program_resolution_in finite_table_graph_checks
   finite_table_produced finite_table_checked finite_state_graph_verdicts_in checking SML
 
+text \<open>
+  The graph check at a table reads the table's calls alone (task 876, review 844's follow-up): its assertion nodes are
+  the premises whose instance is a call of the table, never an entry's certificate, so two tables of the same calls
+  give the same graph, claims and check.
+\<close>
+
+lemma finite_table_links_calls:
+  assumes calls: "finite_table_calls \<Theta> = finite_table_calls \<Theta>'"
+  shows "finite_table_links \<Theta> N nd = finite_table_links \<Theta>' N nd"
+proof -
+  have l: "(resolution_table_lookup \<Theta> q \<noteq> None) = (resolution_table_lookup \<Theta>' q \<noteq> None)" for q
+    using calls by (cases q) (simp add: finite_table_calls_def set_eq_iff)
+  show ?thesis unfolding finite_table_links_def l by (rule refl)
+qed
+
+lemma finite_state_graph_check_in_calls:
+  assumes calls: "finite_table_calls \<Theta> = finite_table_calls \<Theta>'"
+  shows "finite_state_graph_in \<Theta> N nd = finite_state_graph_in \<Theta>' N nd"
+    and "finite_state_claims_in \<Theta> N nd = finite_state_claims_in \<Theta>' N nd"
+    and "finite_state_graph_check_in \<Theta> P d t N nd = finite_state_graph_check_in \<Theta>' P d t N nd"
+  by (simp_all add: finite_state_graph_in_def finite_state_claims_in_def finite_state_graph_check_in_def
+    finite_table_discharges_def finite_table_links_calls[OF calls])
+
 end

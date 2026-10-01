@@ -4522,4 +4522,323 @@ lemma finite_resolution_search_deferred_code [code]:
 
 export_code finite_resolution_search checking SML
 
+section \<open>The deferred search at a table of certified calls\<close>
+
+text \<open>
+  GT3 (task 876) through D1b's deferred search: the table's index, its closing test and its class stand in the inner
+  shared search the deferred search reads (@{const search_closing_formed}); a goal the index closes is removed from the
+  inner search, its one successor, and the store and the records stand, a closing binding nothing. Every deferred step
+  keeps the inner search's calls and index (@{const search_frame}).
+\<close>
+
+subsection \<open>The deferred steps keep the table's calls and index\<close>
+
+lemma deferred_frame_records [simp]:
+  "search_frame (deferred_inner (deferred_renumber q p d)) = search_frame (deferred_inner d)"
+  "search_frame (deferred_inner (deferred_record_at n q ks d)) = search_frame (deferred_inner d)"
+  "search_frame (deferred_inner (deferred_record_node q p d)) = search_frame (deferred_inner d)"
+  "search_frame (deferred_inner (d\<lparr>deferred_inner := r\<rparr>)) = search_frame r"
+  by (simp_all add: deferred_renumber_def deferred_record_at_def deferred_record_node_def Let_def)
+
+lemma deferred_frame_memoize_at [simp]:
+  "search_frame (deferred_inner (deferred_memoize_at x d)) = search_frame (deferred_inner d)"
+  by (simp add: deferred_memoize_at_def split: option.splits prod.splits)
+
+lemma deferred_frame_memoize:
+  "search_frame (deferred_inner (deferred_memoize_from n r x d)) = search_frame (deferred_inner d)"
+  "search_frame (deferred_inner (deferred_memoize_list n r ys d)) = search_frame (deferred_inner d)"
+  by (induction n r x d and n r ys d rule: deferred_memoize_from_deferred_memoize_list.induct)
+    (auto split: option.splits prod.splits)
+
+lemma deferred_frame_ground [simp]:
+  "search_frame (deferred_inner (deferred_memoize_node q d)) = search_frame (deferred_inner d)"
+  "search_frame (deferred_inner (deferred_ground_node q d)) = search_frame (deferred_inner d)"
+  "search_frame (deferred_inner (deferred_ground q d)) = search_frame (deferred_inner d)"
+  "search_frame (deferred_inner (deferred_update \<sigma> D n d)) = search_frame (deferred_inner d)"
+  by (simp_all add: deferred_memoize_node_def deferred_ground_node_def deferred_ground_def deferred_update_def
+    deferred_frame_memoize Let_def split: option.split prod.split if_split)
+
+lemma search_frame_goal_substitute [simp]:
+  "search_frame (search_goal_substitute_at P \<sigma> D q r) = search_frame r"
+  by (simp add: search_goal_substitute_at_def)
+
+lemma search_frame_goal_substitutes [simp]:
+  "search_frame (search_goal_substitute P \<sigma> D r) = search_frame r"
+  unfolding search_goal_substitute_def by (rule fold_value_kept) simp
+
+lemma deferred_frame_bind [simp]:
+  "search_frame (deferred_inner (deferred_bind P s d)) = search_frame (deferred_inner d)"
+proof -
+  obtain s' x where k: "keyed_collapse_bindings s (shared_sharing (search_state (deferred_inner d))) = (s',x)"
+    by (cases "keyed_collapse_bindings s (shared_sharing (search_state (deferred_inner d)))")
+  let ?g = "\<lambda>d. search_frame (deferred_inner d)"
+  have u: "?g (deferred_update (shared_binding_substitution s') (shared_binding_domain s') n t) = ?g t" for n t by simp
+  show ?thesis unfolding deferred_bind_def k Let_def prod.case
+    by (subst fold_value_kept[where g = ?g, OF u]) simp
+qed
+
+lemma deferred_frame_steps [simp]:
+  "search_frame (deferred_inner (deferred_at q d r)) = search_frame r"
+  "search_frame (deferred_inner (deferred_construct \<kappa> P d hn)) = search_frame (deferred_inner d)"
+  by (simp_all add: deferred_at_def deferred_construct_def Let_def split: option.split)
+
+lemma deferred_successors_frame:
+  "d' |\<in>| deferred_successors \<kappa> P d h \<Longrightarrow> search_frame (deferred_inner d') = search_frame (deferred_inner d)"
+  unfolding deferred_successors_def by (erule search_successors_with_frame) simp_all
+
+subsection \<open>The table attached to the inner search\<close>
+
+definition deferred_attach :: "('d \<times> finite_factor_term) list \<Rightarrow> ('a,'s::linorder,'d,'c) deferred_search \<Rightarrow>
+    ('a,'s,'d,'c) deferred_search" where
+  "deferred_attach C d = d\<lparr>deferred_inner := search_attach C (deferred_inner d)\<rparr>"
+
+lemma deferred_attach:
+  assumes d: "deferred_formed \<kappa> P d"
+  shows "deferred_formed \<kappa> P (deferred_attach C d)" and "deferred_project (deferred_attach C d) = deferred_project d"
+    and "search_calls (deferred_inner (deferred_attach C d)) = C"
+proof -
+  let ?r = "deferred_inner d"
+  have r: "search_formed \<kappa> P ?r" and K: "search_classes_formed ?r" using deferred_formedD(1,2)[OF d] by blast+
+  note h = search_attach[where C = C, OF r]
+  show "deferred_formed \<kappa> P (deferred_attach C d)" unfolding deferred_attach_def
+    by (rule deferred_inner_formed[OF d h(1) h(7)[OF K] h(4)]) (auto simp: h(5,6))
+  show "deferred_project (deferred_attach C d) = deferred_project d"
+    by (simp add: deferred_attach_def deferred_project_def deferred_substitution_extends[OF d h(4)] h(2))
+  show "search_calls (deferred_inner (deferred_attach C d)) = C" by (simp add: deferred_attach_def h(3))
+qed
+
+definition deferred_of_in :: "('d \<times> finite_factor_term) list \<Rightarrow> ('a,'s,'d,'c) finite_schema_system \<Rightarrow>
+    ('a,'s::linorder,'d,'c) resolution_state \<Rightarrow> ('a,'s,'d,'c) deferred_search" where
+  "deferred_of_in C P st = deferred_attach C (deferred_of P st)"
+
+lemma deferred_of_in_rooted:
+  assumes d: "resolution_positions_distinct st" and v: "search_variables_rooted st"
+  shows "deferred_formed \<kappa> P (deferred_of_in C P st)" and "deferred_project (deferred_of_in C P st) = st"
+    and "search_calls (deferred_inner (deferred_of_in C P st)) = C"
+  using deferred_attach[where C = C, OF deferred_of_rooted(1)[OF d v]] deferred_of_rooted(2)[OF d v]
+  by (simp_all add: deferred_of_in_def)
+
+subsection \<open>A goal the table closes has one successor, the store standing\<close>
+
+definition deferred_successors_in :: "('a,'s,'d,'c) finite_witness_construction \<Rightarrow> ('a,'s,'d,'c) finite_schema_system \<Rightarrow>
+    ('a,'s::linorder,'d,'c) deferred_search \<Rightarrow> ('a,'s,'d,'c) shared_goal_entry \<Rightarrow> ('a,'s,'d,'c) deferred_search fset" where
+  "deferred_successors_in \<kappa> P d h = (if search_closes (deferred_inner d) h
+    then {|d\<lparr>deferred_inner := search_remove_goal (shared_goal_position (shared_entry_goal h)) (deferred_inner d)\<rparr>|}
+    else deferred_successors \<kappa> P d h)"
+
+lemma deferred_access_goals [simp]:
+  "access_goals (deferred_access \<kappa> P d) = access_goals (shared_access \<kappa> P (deferred_inner d))"
+  "access_goal (deferred_access \<kappa> P d) = access_goal (shared_access \<kappa> P (deferred_inner d))"
+  by (simp_all add: deferred_access_def)
+
+theorem deferred_successors_in:
+  assumes d: "deferred_formed \<kappa> P d" and pl: "search_placeable (deferred_project d)" and sock: "clause_sockets_distinct P"
+    and h: "h |\<in>| access_goals (deferred_access \<kappa> P d)"
+    and D: "\<And>e t. (e,t) \<in> set (search_calls (deferred_inner d)) \<longleftrightarrow> resolution_table_lookup \<Theta> (e,t) \<noteq> None"
+  shows "fimage deferred_project (deferred_successors_in \<kappa> P d h) =
+      finite_goal_successors_in \<Theta> P (deferred_project d) (access_goal (deferred_access \<kappa> P d) h)"
+    and "d' |\<in>| deferred_successors_in \<kappa> P d h \<Longrightarrow> deferred_formed \<kappa> P d' \<and> search_placeable (deferred_project d') \<and>
+      search_frame (deferred_inner d') = search_frame (deferred_inner d)"
+proof -
+  let ?r = "deferred_inner d" let ?g = "access_goal (deferred_access \<kappa> P d) h"
+  let ?q = "shared_goal_position (shared_entry_goal h)"
+  have r: "search_formed \<kappa> P ?r" using deferred_formedD(1)[OF d] .
+  have s: "shared_state_formed \<kappa> P (search_state ?r)" using search_formedD(1)[OF r] .
+  have hg: "h |\<in>| access_goals (shared_access \<kappa> P ?r)" using h by simp
+  obtain p where p: "RBT.lookup (shared_goals (search_state ?r)) p = Some h"
+    using hg by (auto simp: shared_access_simps tree_values_member)
+  have at: "RBT.lookup (shared_goals (search_state ?r)) ?q = Some h" using p shared_goal_lookup_position[OF s p] by simp
+  have cl: "search_closes ?r h \<longleftrightarrow> finite_table_closes \<Theta> ?g" using search_closes_table[OF r hg D] by simp
+  note rm = deferred_remove_goal[OF d at]
+  have proj: "deferred_project (d\<lparr>deferred_inner := search_remove_goal ?q ?r\<rparr>) = finite_goal_closed (deferred_project d) ?g"
+    using rm(2) by (simp add: shared_access_simps)
+  show "fimage deferred_project (deferred_successors_in \<kappa> P d h) = finite_goal_successors_in \<Theta> P (deferred_project d) ?g"
+  proof (cases "search_closes ?r h")
+    case True
+    then have tc: "finite_table_closes \<Theta> ?g" using cl by simp
+    then obtain q' rr e p' where g: "?g = Resolution_Call_Goal q' rr e p'"
+      by (cases ?g) (simp_all add: finite_table_closes_def)
+    have "finite_goal_successors_in \<Theta> P (deferred_project d) ?g = {|finite_goal_closed (deferred_project d) ?g|}"
+      using tc g by simp
+    then show ?thesis using True proj by (simp add: deferred_successors_in_def)
+  next
+    case False
+    then have nc: "\<not> finite_table_closes \<Theta> ?g" using cl by simp
+    have "fimage deferred_project (deferred_successors_in \<kappa> P d h) = fimage deferred_project (deferred_successors \<kappa> P d h)"
+      using False by (simp add: deferred_successors_in_def)
+    also have "\<dots> = finite_goal_successors P (deferred_project d) ?g" by (rule deferred_successors(1)[OF d pl sock h])
+    also have "\<dots> = finite_goal_successors_in \<Theta> P (deferred_project d) ?g"
+      by (rule finite_goal_successors_in_open[OF nc, symmetric])
+    finally show ?thesis .
+  qed
+  show "d' |\<in>| deferred_successors_in \<kappa> P d h \<Longrightarrow> deferred_formed \<kappa> P d' \<and> search_placeable (deferred_project d') \<and>
+      search_frame (deferred_inner d') = search_frame (deferred_inner d)"
+  proof -
+    assume d': "d' |\<in>| deferred_successors_in \<kappa> P d h"
+    show ?thesis
+    proof (cases "search_closes ?r h")
+      case True
+      then have e: "d' = d\<lparr>deferred_inner := search_remove_goal ?q ?r\<rparr>" using d' by (simp add: deferred_successors_in_def)
+      have "search_placeable (finite_goal_closed (deferred_project d) ?g)"
+        unfolding finite_goal_closed_def by (rule search_placeable_fewer[OF pl])
+      then show ?thesis using rm(1) proj by (simp add: e)
+    next
+      case False
+      then have "d' |\<in>| deferred_successors \<kappa> P d h" using d' by (simp add: deferred_successors_in_def)
+      then show ?thesis using deferred_successors(2)[OF d pl sock h] deferred_successors_frame by blast
+    qed
+  qed
+qed
+
+definition deferred_representation_in :: "('a,'s,'d,'c) finite_witness_construction \<Rightarrow> ('a,'s,'d,'c) finite_schema_system \<Rightarrow>
+    (('a,'s::linorder,'d,'c) deferred_search, ('a,'s,'d,'c) shared_goal_entry, ('a,'s,'d,'c) shared_node_entry,
+      nat, 'a, 's, 'd, 'c) resolution_representation" where
+  "deferred_representation_in \<kappa> P = (deferred_representation \<kappa> P)\<lparr>rep_successors := deferred_successors_in \<kappa> P\<rparr>"
+
+lemma deferred_representation_in_fields [simp]:
+  "rep_access (deferred_representation_in \<kappa> P) = deferred_access \<kappa> P"
+  "rep_empty (deferred_representation_in \<kappa> P) = (\<lambda>d. RBT.is_empty (shared_goals (search_state (deferred_inner d))))"
+  "rep_project (deferred_representation_in \<kappa> P) = deferred_project"
+  "rep_refresh (deferred_representation_in \<kappa> P) = id"
+  "rep_construct (deferred_representation_in \<kappa> P) = deferred_construct \<kappa> P"
+  "rep_successors (deferred_representation_in \<kappa> P) = deferred_successors_in \<kappa> P"
+  by (simp_all add: deferred_representation_in_def deferred_representation_def)
+
+theorem deferred_search_in_rooted:
+  assumes sock: "clause_sockets_distinct P" and pl: "search_placeable st" and v: "search_variables_rooted st"
+    and D: "\<And>e t. (e,t) \<in> set C \<longleftrightarrow> resolution_table_lookup \<Theta> (e,t) \<noteq> None"
+  shows "represented_search_in (deferred_representation_in \<kappa> P) (\<lambda>d. search_closes (deferred_inner d)) (\<lambda>r h. False)
+      \<kappa> P n (deferred_of_in C P st) = finite_resolution_search_in \<Theta> \<kappa> P n st"
+proof -
+  have d: "resolution_positions_distinct st" using pl by (simp add: search_placeable_def)
+  let ?R = "deferred_representation_in \<kappa> P"
+  let ?F = "\<lambda>d. deferred_formed \<kappa> P d \<and> search_placeable (deferred_project d) \<and> search_calls (deferred_inner d) = C"
+  have DC: "\<And>d e t. ?F d \<Longrightarrow> (e,t) \<in> set (search_calls (deferred_inner d)) \<longleftrightarrow> resolution_table_lookup \<Theta> (e,t) \<noteq> None"
+    using D by simp
+  have "represented_search_in ?R (\<lambda>d. search_closes (deferred_inner d)) (\<lambda>r h. False) \<kappa> P n (deferred_of_in C P st) =
+      finite_resolution_search_by_in \<Theta> (finite_resolution_select_in \<Theta> (\<lambda>st g. False) \<kappa> P) \<kappa> P n
+        (rep_project ?R (deferred_of_in C P st))"
+  proof (rule represented_search_in[where F = ?F])
+    show "?F (deferred_of_in C P st)" using deferred_of_in_rooted[OF d v] pl by simp
+  next
+    fix s assume f: "?F s"
+    then show "access_formed \<kappa> P (rep_access ?R s) (rep_project ?R s)" using deferred_access_formed[OF conjunct1[OF f]] by simp
+  next
+    fix s assume f: "?F s"
+    have "resolution_pending (deferred_project s) = fimage (\<lambda>h. shared_goal_project (search_table (deferred_inner s))
+        (shared_entry_goal h)) (tree_values (shared_goals (search_state (deferred_inner s))))"
+      using deferred_pending[OF conjunct1[OF f]] by (simp add: shared_state_project_fields)
+    then show "rep_empty ?R s \<longleftrightarrow> resolution_pending (rep_project ?R s) = {||}" by (simp add: rbt_empty_values)
+  next
+    fix s assume f: "?F s"
+    then show "?F (rep_refresh ?R s) \<and> rep_project ?R (rep_refresh ?R s) = rep_project ?R s" by simp
+  next
+    fix s m assume f: "?F s" and m: "m |\<in>| access_construction_nodes (rep_access ?R s)"
+    obtain q0 where n: "m |\<in>| access_nodes_at (deferred_access \<kappa> P s) q0"
+      using access_construction_nodes_at[of m "deferred_access \<kappa> P s"] m by auto
+    note c = deferred_construct[OF conjunct1[OF f] conjunct1[OF conjunct2[OF f]] n]
+    have "search_calls (deferred_inner (deferred_construct \<kappa> P s m)) = search_calls (deferred_inner s)"
+      using deferred_frame_steps(2)[of \<kappa> P s m] by (simp add: search_frame_def)
+    then show "?F (rep_construct ?R s m) \<and>
+        rep_project ?R (rep_construct ?R s m) = finite_construction_step \<kappa> P (rep_project ?R s) (access_node (rep_access ?R s) m)"
+      using c f by simp
+  next
+    fix s h assume f: "?F s" and h: "h |\<in>| access_goals (rep_access ?R s)"
+    have h': "h |\<in>| access_goals (deferred_access \<kappa> P s)" using h by simp
+    note sc = deferred_successors_in[OF conjunct1[OF f] conjunct1[OF conjunct2[OF f]] sock h' DC[OF f]]
+    show "fimage (rep_project ?R) (rep_successors ?R s h) =
+        finite_goal_successors_in \<Theta> P (rep_project ?R s) (access_goal (rep_access ?R s) h) \<and>
+        (\<forall>s'. s' |\<in>| rep_successors ?R s h \<longrightarrow> ?F s')"
+      using sc(1) sc(2) f by (auto simp: search_frame_def)
+  next
+    fix s h assume f: "?F s" and h: "h |\<in>| access_goals (rep_access ?R s)"
+    have h': "h |\<in>| access_goals (shared_access \<kappa> P (deferred_inner s))" using h by simp
+    show "search_closes (deferred_inner s) h \<longleftrightarrow> finite_table_closes \<Theta> (access_goal (rep_access ?R s) h)"
+      using search_closes_table[OF deferred_formedD(1)[OF conjunct1[OF f]] h' DC[OF f]] by simp
+  next
+    fix s h show "False \<longleftrightarrow> False" by simp
+  qed
+  then show ?thesis using deferred_of_in_rooted(2)[OF d v] by (simp add: finite_resolution_search_in_def)
+qed
+
+subsection \<open>The closing among the inner search's kept classes\<close>
+
+definition deferred_select_in :: "('a,'s,'d,'c) finite_witness_construction \<Rightarrow> ('a,'s,'d,'c) finite_schema_system \<Rightarrow>
+    (('a,'s,'d,'c) shared_goal_entry \<Rightarrow> bool) \<Rightarrow> ('a,'s::linorder,'d,'c) deferred_search \<Rightarrow>
+    (('a,'s,'d,'c) shared_node_entry, ('a,'s,'d,'c) shared_goal_entry) access_selection" where
+  "deferred_select_in \<kappa> P rp d =
+    kept_select_by_in (search_closed (deferred_inner d)) (ffilter rp) (deferred_inner d) (deferred_access \<kappa> P d)"
+
+theorem deferred_select_in:
+  assumes d: "deferred_formed \<kappa> P d"
+  shows "deferred_select_in \<kappa> P rp d = access_select_in (search_closes (deferred_inner d)) rp (deferred_access \<kappa> P d)"
+  unfolding deferred_select_in_def deferred_access_def
+  by (rule kept_select_over_in[OF deferred_formedD(1,2)[OF d] search_closed_class[OF deferred_formedD(1)[OF d]]
+    search_closes_call])
+
+theorem deferred_kept_search_in_rooted:
+  assumes sock: "clause_sockets_distinct P" and pl: "search_placeable st" and v: "search_variables_rooted st"
+    and D: "\<And>e t. (e,t) \<in> set C \<longleftrightarrow> resolution_table_lookup \<Theta> (e,t) \<noteq> None"
+  shows "selected_search (deferred_representation_in \<kappa> P) (deferred_select_in \<kappa> P (\<lambda>h. False)) \<kappa> P n (deferred_of_in C P st) =
+      finite_resolution_search_in \<Theta> \<kappa> P n st"
+proof -
+  have d: "resolution_positions_distinct st" using pl by (simp add: search_placeable_def)
+  let ?R = "deferred_representation_in \<kappa> P"
+  let ?F = "\<lambda>d. deferred_formed \<kappa> P d \<and> search_placeable (deferred_project d) \<and> search_calls (deferred_inner d) = C"
+  have DC: "\<And>d e t. ?F d \<Longrightarrow> (e,t) \<in> set (search_calls (deferred_inner d)) \<longleftrightarrow> resolution_table_lookup \<Theta> (e,t) \<noteq> None"
+    using D by simp
+  have "selected_search ?R (deferred_select_in \<kappa> P (\<lambda>h. False)) \<kappa> P n (deferred_of_in C P st) =
+      represented_search_in ?R (\<lambda>d. search_closes (deferred_inner d)) (\<lambda>r h. False) \<kappa> P n (deferred_of_in C P st)"
+  proof (rule selected_search_in[where F = ?F])
+    show "?F (deferred_of_in C P st)" using deferred_of_in_rooted[OF d v] pl by simp
+  next
+    fix s assume f: "?F s"
+    then show "?F (rep_refresh ?R s)" by simp
+  next
+    fix s m assume f: "?F s" and m: "m |\<in>| access_construction_nodes (rep_access ?R s)"
+    obtain q0 where n: "m |\<in>| access_nodes_at (deferred_access \<kappa> P s) q0"
+      using access_construction_nodes_at[of m "deferred_access \<kappa> P s"] m by auto
+    show "?F (rep_construct ?R s m)"
+      using deferred_construct(1)[OF conjunct1[OF f] conjunct1[OF conjunct2[OF f]] n] deferred_frame_steps(2)[of \<kappa> P s m] f
+      by (simp add: search_frame_def)
+  next
+    fix s h s' assume f: "?F s" and h: "h |\<in>| access_goals (rep_access ?R s)" and s': "s' |\<in>| rep_successors ?R s h"
+    have h': "h |\<in>| access_goals (deferred_access \<kappa> P s)" and s'': "s' |\<in>| deferred_successors_in \<kappa> P s h"
+      using h s' by simp_all
+    note sc = deferred_successors_in[OF conjunct1[OF f] conjunct1[OF conjunct2[OF f]] sock h' DC[OF f]]
+    show "?F s'" using sc(2)[OF s''] f by (simp add: search_frame_def)
+  next
+    fix s assume f: "?F s"
+    show "deferred_select_in \<kappa> P (\<lambda>h. False) s =
+        access_select_in ((\<lambda>d. search_closes (deferred_inner d)) s) ((\<lambda>r h. False) s) (rep_access ?R s)"
+      using deferred_select_in[OF conjunct1[OF f]] by simp
+  qed
+  also have "\<dots> = finite_resolution_search_in \<Theta> \<kappa> P n st" by (rule deferred_search_in_rooted[OF sock pl v D])
+  finally show ?thesis .
+qed
+
+text \<open>
+  The search at a listed table is computed over the deferred search wherever the state's variables are rooted, over
+  the shared search elsewhere, both at the table; D1b's code equation is its instance at the empty table
+  (@{thm [source] finite_resolution_search_listed_empty}).
+\<close>
+
+declare finite_resolution_search_listed_shared_code [code del]
+
+lemma finite_resolution_search_listed_deferred_code [code]:
+  "finite_resolution_search_listed es \<kappa> P n st = (if clause_sockets_distinct P \<and> search_placeable st
+    then (if search_variables_rooted st
+      then selected_search (deferred_representation_in \<kappa> P) (deferred_select_in \<kappa> P (\<lambda>h. False)) \<kappa> P n
+        (deferred_of_in (map fst es) P st)
+      else selected_search (shared_representation_in \<kappa> P) (search_select_in \<kappa> P (\<lambda>h. False)) \<kappa> P n
+        (search_of_in (map fst es) P st))
+    else finite_resolution_search_by_in (listed_table es) (finite_resolution_select_in (listed_table es) (\<lambda>st g. False) \<kappa> P)
+      \<kappa> P n st)"
+  using finite_resolution_search_listed_shared_code[of es \<kappa> P n st]
+    deferred_kept_search_in_rooted[where C = "map fst es" and \<Theta> = "listed_table es", OF _ _ _ listed_table_calls,
+      of P st \<kappa> n]
+  by (auto simp: finite_resolution_search_listed_def)
+
+export_code finite_resolution_search_listed checking SML
+
 end

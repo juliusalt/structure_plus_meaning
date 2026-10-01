@@ -34,18 +34,21 @@ a table whose calls are true: #831's section, #880); at a table a found state's 
 question, stated by #993). #547 keeps its brief (#928 does not reach it).
 
 **The committing instance** (VK2 #924, `Development_Given_Query_Parameters`; q178: refusals through registrations are
-collected only where the query search commits at the given's declared sockets). #986 (continues #966) attributes why
-the edge query (82's definition reading) stays cut at n = 400 and the lifted material test is never called, proposes
-the controls (77/2 refuted, 77/1 resolved), and was mailed #991's follow-ups 1 and 2 (Open 155, 156). AX5's brief is
-rewritten from #968's (4) and #986's result, which guards it. #967 (the construction's value once per construction)
-after #966 and WC3.
+collected only where the query search commits at the given's declared sockets). #986 found the edge query (82's
+definition reading) cut at every bound at both instances: every 82 reading reconstructs an artifact backward from its
+data, 10's source (11's premise-only artifact) open, so the material commitment, which needs a ground source, is never
+tested; even the check at a true ground edge is unresolved at 1,600. Its course, a read-back production (Open 157), is
+weighed against M2 (F1: 10 over the data's own fields, so R1 constructs the source at ground data): #1000 re-runs its
+driver at the program M2 leaves, with #991's follow-ups (Open 155, 156); AX5's brief is rewritten from #1000, #968's
+(4) and #986's result (AX5 guarded on #1000). #967 (the construction's value once per construction) after WC3.
 
 **The given's calls, decided once** (#831's section; #496's "77's least bound …"): a table of certified ground calls
 every judgment's search closes, its validity checked once over graphs and retained; a candidate's part is its
-additions. Landed: GT3 #876, GT3b #970. GT3c #989 hands over what it wrote (the table carried through re-shares and
-attached once per representation; (7)'s demand and native graph-verdict forms). Its measurement put the rest of a
-step's cost at a table in the term table's reads, linear in the calls it holds: the fix #995 (no review), after #989,
-before GT6 #878, C3/C2 #993, D3b2 #979 and WC3 #916. #993 also states the graph check alone at a table, the calls
+additions. Landed: GT3 #876, GT3b #970, GT3c #989 (`3852d3aa`: the table carried through re-shares and shared once
+per representation; (7)'s demand and native graph-verdict forms). Its measurement put the rest of a step's cost at a
+table in the term table's reads (#810's projection code equations copy the whole table into an array at each
+projection): the fix #995 (no review), before GT6 #878, C3/C2 #993, D3b2 #979 and WC3 #916, with review 990's tidies.
+#993 also states the graph check alone at a table, the calls
 lemma and #989's forms over it. GT6 #878 (produced once, a run of hours; record `validation/given-table.json`) →
 #542, #547, #707, #399; its brief is rewritten after M2, D3b3, C3/C2 and #995, with D153's prediction (#965's
 follow-up 3), review 877's follow-up 1, review 971's follow-up 6 and #989's native listed constant.
@@ -69,11 +72,11 @@ translation into Isabelle and the verification frame (Q18 (a), #947, #950). The 
 kept, none extended (#376); their remains are under Open and in `.build/plans/next-edits.md`.
 
 **Shape and order.** No build waits on a review, nor any task on an investigation (its tree never lands): the
-dependency goes through the brief's Inputs, but for the guard AX5 #962 on #986, removed when its brief is rewritten.
+dependency goes through the brief's Inputs, but for the guard AX5 #962 on #1000, removed when its brief is rewritten.
 The longest chain runs M1 → M2 → D3b3 → GT6 → R7 → #707 → #399 → … → #449 → #450; GT6's hours make the resolver's
 pole critical, the AX line has slack. Nothing is added after the tail until it shortens (the approval build, Open 142,
 waits); splices before a task go at any depth. The queue, the planner's choice and a residual until Q2's native
-answer: what hands over first (#989), the pole (#995, D3a, M1, M2, #993, D3b2, D3b3, GT6, WC3), #986, the briefs
+answer: the pole (#995, D3a, M1, M2, #993, D3b2, D3b3, GT6, WC3), #1000 after M2, the briefs
 (#988, #948), the AX line, the route in its chains' order, each review after its build; #887 after R7's review.
 
 ## Decisions
@@ -249,11 +252,15 @@ whether the language's material premise observes incidence and attachments in ad
 #987); provisional: yes, M1 #996 and M2 #998 built on it; F4, Q33-free, if the owner declines.
 
 **To plan, in the order expected** (numbers kept from earlier states):
-- 155. A material goal at a ground whole source with open fields: its count (F1's selection classes) and successors
-  still enumerate R1's solution set; a decision on the canonical solution (#991's follow-up 1, mailed to #986), placed
-  from #986's result before AX5's, R7's and GT6's measurements at 11's hand-ins.
-- 156. The check at 990 at no additions returning at bound 300 (727 states) and not by 330 (#991's follow-up 2, mailed
-  to #986): an investigation of its own if #986's result does not reach it.
+- 155. A material goal at a ground whole source with open fields: the selection's count still enumerates R1's solution
+  set, the commitment covering the successors only; a count bounded at 2, or read through the commitment where it
+  commits (#986's (4)): measured after M2 by #1000, a fix placed from it before AX5's, R7's and GT6's measurements at
+  11's hand-ins.
+- 156. The check at 990 at no additions returning at bound 300 (727 states) and not by 330 (#991's follow-up 2): in
+  #1000.
+- 157. A read-back production (#986's course): 11's artifact and 10's fields produced from 10's head data by the
+  artifact presentation's exact reader, a registration family W2 lacks, declared in the given's record; designed only
+  if #1000 finds that F1 leaves the backward reconstruction.
 - 3. N7, the verdict at a package: a native notion, built when a problem kind asks it.
 - 119. The second and authority problems' requirement families over the first answer (#370's follow-ups in
   `.build/tasks/370/result.md`, #371's notes).
@@ -290,12 +297,12 @@ owner's re-root trigger, and a probe past its bound above `Factor_Least_Collecti
 
 ## Now
 
-- **Under way**: GT3c #989 handing over (its brief rewritten to what it wrote; the rest is #995's, #993's and GT6's);
-  D3a #977 resuming from its installed theory (q185's three restatements accepted); #986 investigating; M1 #996 next
-  on the pole.
-- **What the next events ask**: Q35's answer (if no, F4 replaces M1 and M2); #986's result: AX5's brief rewritten with
-  #968's (4), its guard removed, the controls (77/2 refuted, 77/1 resolved at the committing instance) placed as a
-  build, Open 155 and 156 placed; M2's landing: #988 briefs AX2d1 and AX2d2 (AX5 and #948 re-pointed onto AX2d2 at
+- **Under way**: D3a #977 resuming from its installed theory (q185's three restatements accepted); the term-table fix
+  #995 (q187: the share state's third component the position tree, the empty state named once); M1 #996 next.
+- **What the next events ask**: Q35's answer (if no, F4 replaces M1 and M2); #1000's result (after M2): the controls
+  (77/1 resolved, 77/2 refuted at the committing instance) placed as a build where F1 suffices, else Open 157 designed;
+  the count fix (Open 155) if it is needed; AX5's brief rewritten, its guard removed; M2's landing: #988 briefs AX2d1
+  and AX2d2 (AX5 and #948 re-pointed onto AX2d2 at
   its placement), then #948's proposals placed by rewrite; GT6's brief rewritten after M2, D3b3, C3/C2 and
   #995. The re-run of #718's 77 and 79 fixtures with review 858's attributions (next-edits 364–366) at a measured
   need.

@@ -33,7 +33,7 @@ lemma reading_control_wrong_leaf_refused:
       (finite_material_atoms reading_control_wrong_leaf))) (finite_material_edges reading_control_wrong_leaf) = Open_Reading"
   "finite_pattern_variables (finite_material_source reading_control_wrong_leaf) \<noteq> {||}"
   "finite_material_resolution reading_control_wrong_leaf = Material_Solutions {||}"
-  by (simp_all add: reading_control_wrong_leaf_def finite_material_resolution_unreadable_field finite_atom_entry_def
+  by (simp_all add: reading_control_wrong_leaf_def finite_material_resolution_unreadable_field finite_material_skeleton_unreadable_iff finite_atom_entry_def
     ground_reading_def)
 
 section \<open>11 alone at chain artifacts and at the 18-address artifact of 77/1's environment\<close>

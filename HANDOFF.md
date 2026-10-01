@@ -1,100 +1,90 @@
 # Handoff: the planner's state
 
-What a planner needs to act **now**, and nothing else. Held by every knowledge base, read whole by every designer.
-What was done and how is in `PLANNING_LOG.md`, which no base holds and nothing plans from; a decision of the
-development itself is an entry of `DECISIONS.md` and here a reference; what a task must respect is in its brief. The
-owner's words are in the ledger (`.claude/orchestration/owner-ledger.md`) and are cited here, not restated.
+What a planner needs to act **now**. Held by every knowledge base, read whole by every designer. What was done and how
+is in `PLANNING_LOG.md`, which no base holds; a decision of the development is an entry of `DECISIONS.md`, here a
+reference; what a task must respect is in its brief. The owner's words are in the ledger
+(`.claude/orchestration/owner-ledger.md`), cited here, not restated.
 
 ## Graph
 
 **The direction.** The Q7 order is the owner's: the loop's notions as native definitions (readiness, the verdict of a
-kind and request construction are native), then problems whose subjects are native definitions; its last step, the
-translation into Isabelle, is withdrawn by Q18 (a) (2026-09-30: native content is consumed without Isabelle's
-verification). The third step opens with the native loop's first problem, what a problem is (18:53), then Q2's, how to
-choose the next problem, posed over the first answer, and the authority problem, whose answer the owner approves; every
-distinction a native program relies on comes from a native notion (18:12). The route rests on these entries of
-`DECISIONS.md`, by task: #378 (the least form, an asked relation and a given; the owner's approval an owner record, Q23
-(b), (c)); #376 (the given is the development's package read by the Factor grammar's readers; the request at a package;
-the bootstrap loop's presentations kept exact and unextended); #381 and #383 (the guard's sockets G1 retention, G2
-formation and closure, G3 the callee boundary, G4 the octet audit); #947 (Q18 (a): (a) no requirement, (b) and (d)
-criticism by their samples, (c) criticism by the observation of an added definition's callees, (f) none; G3 the given's
-package, Q34; the first answer admitted, criticized, approved by the owner, consumed); #482 and #560 (a route
-generation costs its payload's size once); #495 (Q27) with its additions, corrections (5)–(16), #831's section and
-#890's addition; #496 (Q28) with #642's addition and #790's section; #928 (Q33: (c) taken, the asked relation reads a
+kind and request construction are native), then problems whose subjects are native definitions; the translation into
+Isabelle is withdrawn by Q18 (a) (native content is consumed without Isabelle's verification). The third step opens
+with the first problem, what a problem is (18:53), then Q2's, how to choose the next problem, posed over the first
+answer, and the authority problem, whose answer the owner approves; every distinction a native program relies on comes
+from a native notion (18:12). The route rests on these entries of `DECISIONS.md`: #378 (the least form, an asked
+relation and a given; the owner's approval an owner record, Q23 (b), (c)); #376 (the given is the development's package
+read by the Factor grammar's readers; the request at a package; the bootstrap loop's presentations kept exact and
+unextended); #381 and #383 (the guard's sockets G1 retention, G2 formation and closure, G3 the callee boundary, G4 the
+octet audit); #947 (Q18 (a)'s consequences: (b) and (d) criticism by samples, (c) by the observation of an added
+definition's callees; G3 the given's package, Q34; the first answer admitted, criticized, approved, consumed); #482 and
+#560 (a route generation costs its payload's size once); #495 (Q27) with its additions, corrections (5)–(16), #831's
+section and #890's addition; #496 (Q28) with #642's addition and #790's section; #928 (Q33: the asked relation reads a
 candidate by its additions over the given).
 
-**The first problem's route**, each build with its review. Landed: the recording (P #581, X′ #583), the posing #397 with
-its one-citation recording #562, AX1 #930 (`Factor_Environment_Additions`), AX2a #932 (`Factor_Extension_Packages`) with
-#955's and #959's fixes (`61e5b7e0`, q169, q170; `d4673a92`: 958's given clauses require l's row at a given site's use
-to be the given's, so local edges stay in the given's closure, q172; a view 965, a row of the least environment, so l
-can have a W2 form, q171). Open: AX2b–AX4 (#928's (c), from the brief #929): the fix #960 (continuing #959, after AX3a
-#936: 965's given rows the stored rows through a view 966, a stored row of a or g, so l's W2 query closes, q175) →
-AX2b #934 (both registrations), and AX3a
-#936 → AX3b #938, which records the posing again → AX4 #940; then two rewrite briefs carry AX1–AX4's hand-overs into
-the briefs they reach, spliced so that nothing they rewrite starts first: #948 the route's (#542, #707, #399, #709,
-#401, #443, #445; #709's with #880's Remains 2, #542's with review 931's 2) and #949 the criticism's (#549, #551, #553,
-#447, #449; with #947's Remains). R7 #542 (the given at the guard's calls in the numbered course) → its native part
-#707 → the answer's judgment and admission #399 → its controls #709 → the transport #401; the first request at the given
-#547 → its packet, issue and execution #443 → its delivery #445; the criticism's observations #549 and samples #551 → its
-record #553 (after #399) → its controls #447 → its route #449 → the owner's approval (Open 142). Every route generation
-is recorded through B2's recording (`development_citing_row_generation_certified`). #547, #707, #399 and GT2 follow
-#831's section (#880): the judgment in two phases at the given's table relocated to the installation, admission through
-the hand-in, refusal through W5's complete construction, soundness at a table whose calls are true. #547 is not reached
-by the asked relation's change and keeps its brief. The rewrite briefs say which edges remain real (#549's and #551's on
-#542, #553's on #709); the planner re-points them when placing.
+**The first problem's route**, each build with its review. Landed: the recording (#581, #583), the posing #397 with its
+one-citation recording #562, and #928's additions line so far: AX1 #930 (`Factor_Environment_Additions`), AX2a #932
+with the fixes #955, #959 and #960 (`Factor_Extension_Packages`), AX3a #936 (`Development_First_Problem_Additions`, the
+guard over additions). Open, from #929's briefs and q177, q178: AX2b #934 (G2's bound registered, complete in W4a's
+form) → AX2c #961 (continuing it: l at 961/0 over 965, G3's and G4's witnesses at 985 and 989) → AX4 #940 (the
+registrations, records and modes carried to the new asked installation and its committing instance); AX3b #938 (the
+asked program re-rooted at the guard over additions, presented with `extension_package_system` a piece, installed, the
+posing recorded again, admission controls at the check form) → AX4; AX5 #962 (the refusals by socket at the committing
+instance at small fixtures, after AX3b, AX2c and #956) → #399. Refusals through registrations are collected only where
+the query search commits at the given's declared sockets, VK2's committing instance: at plain parameters W2's queries
+through a material-observing reader stay unanswered (q178). The rewrite briefs, after AX4, carry AX1–AX4's hand-overs
+into what they reach, placed by rewrite: #948 the route's (#542, #707, #399, #709, #401, #443, #445) and #949 the
+criticism's (#549, #551, #553, #447, #449), each saying which edges stay real. The route: R7 #542 (the given at the
+guard's calls in the numbered course) → its native part #707 → the judgment and admission #399 → its controls #709 →
+the transport #401; the first request at the given #547 → its packet, issue and execution #443 → its delivery #445;
+the criticism's observations #549 and samples #551 → its record #553 (after #399) → its controls #447 → its route #449
+→ the owner's approval (Open 142). Every route generation is recorded through B2's recording
+(`development_citing_row_generation_certified`). #547, #707 and #399 judge in two phases at the given's table relocated
+to the installation: admission through the hand-in, refusal through W5's complete construction, soundness at a table
+whose calls are true (#831's section, #880). #547 is not reached by #928 and keeps its brief.
 
 **The given's calls, decided once** (#831's section; #496's "77's least bound at the given and at a candidate"): a table
-of certified ground calls every judgment's search closes (one successor, never a committed focus), its validity checked
-once over graphs and retained; a judgment in two phases; 77's bound handed in for an admission, W5 for a refusal;
-one-time ≈ 31–34 M states, a judgment's part ≈ 2–5 M (after #928 a candidate's part is its additions). Landed: the table
-through R3–R5 and C (GT1a–GT2c, GT4–GT4c), the given's calls (GT5 #845), W5 #847, VK1 #920, GT2b (#889, #922), #942
-(every discharge valued at a true table; rc's table forms from a true table and rc alone), VK2 #924 (`764262a1`: the
-given's committing instance at a named premise, q167) and #953 (`1bfe59b9`: the given's input record carried to the
-query program, VK2's premise discharged; AX4 and #399 cite the premise-free forms). Open: VK2's controls #956 (after
-D1d, reporting whether a query meets a root-held committable goal, which task 918's answer 4 waits on); GT3 #876 (the
-table in F2's shared representation, after D1d)
-→ GT6 #878 (the table produced once, a run of hours parked for its completion, its record `validation/given-table.json`,
-after #875, which supplies its prediction and worker count) → #542, #547, #707, #399. #547 does not wait on VK2 (its
-refusal at 561 goes through the merge at W5's plain instance). The table is the readers' part, its guard part at (g, g)
-retired by AX4, so GT6 and #875 do not wait on AX1–AX4.
+of certified ground calls every judgment's search closes, its validity checked once over graphs and retained; a
+candidate's part is its additions (#928). Landed: the table through R3–R5 and C (GT1a–GT2c, GT4–GT4c), GT5 #845, W5
+#847, VK1 #920, GT2b (#889, #922), #942 (every discharge valued at a true table), VK2 #924 (the given's committing
+instance, `Development_Given_Query_Parameters`) and #953 (its premise discharged at the given). Open: VK2's controls
+#956 (after D1d: its code equations make the committing instance executable; 77 refused there, the first test of q178's
+course; whether a query meets a root-held committable goal, on which task 918's answer 4 waits); GT3 #876 → GT6 #878
+(the table produced once, a run of hours, its record `validation/given-table.json`, after #875's prediction and worker
+count) → #542, #547, #707, #399. The table is the readers' part, its guard part retired by AX4, so GT6 and #875 do not
+wait on the AX line; #547 does not wait on VK2.
 
-**A search step's cost** (#830's and #886's attributions): landed through D1b's parts #903, #926 and D1b″ #945
-(`467e66a6`: the deferred search, equal to R3's where its variables are placed; a query root on R3's deferred path, the
-committed W2 queries reaching it only through D1d's instance, review 946's 1; a node's ground resolution memoized, q168).
-D1 #890 decided the step at the given's depth: nodes kept as placed under a binding store, 6–8 ms a step predicted at
-30, 300 and 350 steps (10.4 ms measured at 300 on today's base, review 946's 5), GT6 52–85 h on one worker. Open: D1d
-#905 (the deferred committed search and the route through it) → GT3 #876 and #875 (the deferred route held: GT6's
-prediction and worker count, D1e's and the groundness counters' triggers, the records along an open chain; review
-927's 2 and 3 and review 946's 3–5 measured there). Decided
-at #875's figures and placed at the next restater of the route constants' code (WC3 #916 if the figures come before it
-starts): the kept held goals and construction nodes (q162; `.build/tasks/901/result.md` Remains (a)–(e), next-edits
-384) and FI's remaining costs (review 895's 2 and 5, next-edits 385).
+**A search step's cost** (#830's and #886's attributions; D1 #890: nodes kept as placed under a binding store, 6–8 ms a
+step predicted at 30–350 steps, GT6 52–85 h on one worker): landed D1b (#903, #926, #945: the deferred search, a node's
+ground resolution memoized); open D1d #905 (the deferred committed search, the route through it) → GT3 #876 and #875
+(the deferred route held: GT6's prediction and worker count, D1e's and the groundness counters' triggers, reviews 927's
+2–3 and 946's 3–5; first, D1d's steps 300–350 at about 114 ms against 6–9 ms predicted, implement-905's report). At
+#875's figures, placed at the next restater of the route constants' code (WC3 #916 if the
+figures come first): the kept held goals and construction nodes (q162; `.build/tasks/901/result.md` Remains (a)–(e),
+next-edits 384) and FI's remaining costs (review 895's 2 and 5, next-edits 385).
 
-**The order at a pair node** (correction (16), D2 #907): a waiting class of F1's selection, read by the selection alone,
-never by exactness. Landed: WC1 #910, WC2a #912, WC2b #914 (`5f3ae77b`). Open: WC3 #916 (the class at the route, K2's
-constants at the waiting moded selection; after D1d, FI and GT3) → #542, #547, #887, beside GT6, whose table's validity
-does not rest on the order; R7 #542's figures set the trigger of 55's clause trials (Open 152). The consolidation #887
-(review 832's follow-ups) after GT3 and WC3; nothing waits on it.
+**The order at a pair node** (correction (16), D2 #907): a waiting class read by the selection alone, never by
+exactness. Landed WC1–WC2b (#910, #912, #914); open WC3 #916 (the class at the route, K2's constants at the waiting
+moded selection; after D1d, FI and GT3) → #542, #547, #887, beside GT6; R7's figures set the trigger of 55's clause
+trials (Open 152). The consolidation #887 (review 832's follow-ups) after GT3 and WC3; nothing waits on it.
 
-**The probe's cost** (#944): #950 made the two slow proofs fast and deleted the frame (`74e2cd04`); #951 (`6b08d6ab`)
-loads a probe's theories in one call; the start model's refit is not taken (it drives the owner's re-root trigger,
-next-edits 239). A probe still past its bound, as review 925's 8 found above `Factor_Least_Collections` (about 100 s,
-measured before #951), is next-edits 240's measured need.
+**The probe's cost** (#944, #950, #951): two slow proofs made fast, the frame deleted, a probe's theories loaded in one
+call; the start model's refit not taken (it drives the owner's re-root trigger, next-edits 239); a probe past its bound
+above `Factor_Least_Collections` is next-edits 240's measured need.
 
 **Retired**: on #376's and #378's entries the decomposition line, #320's N-builds, #371, #377, the designation by locus,
-the index form's retirement and the machinery's native verification stage; on Q18 (a) the verification request's
-builds #403 and #407 with their reviews, the translation into Isabelle and the verification frame (#947, #950). **The
-bootstrap loop's landed lines** are kept and none is extended (#376); their remains are under Open and in
-`.build/plans/next-edits.md`.
+the index form's retirement and the machinery's native verification stage; on Q18 (a) the verification request (#403,
+#407 with their reviews), the translation into Isabelle and the verification frame (#947, #950). The bootstrap loop's
+landed lines are kept and none is extended (#376); their remains are under Open and in `.build/plans/next-edits.md`.
 
-**Shape and order.** No build waits on a review. The longest chains, 12 deep: AX2b #934 → AX3b #938 → AX4 #940 → #948
-→ R7 #542 → #707 → #399 → #709 → #553 → #447 → #449 → #450, and D1d #905 → GT3 #876 → GT6 #878 → R7 about
-as long; GT6's run of hours makes the resolver's pole the critical one, and the AX line has slack against it. Nothing
-is added after the tail until it shortens (the approval build, Open 142, waits for that); rewrites and splices before a
-task are placed at any depth. The queue is the planner's choice, a residual until the selection problem's native
-answer (Q2): the running tasks with their reviews, the resolver's pole D1d
-→ #875 and GT3 → GT6, AX3a–AX4, #956, the rewrite briefs, then the route in its chains' order, each review right after
-its build; #887 after R7's review. Word changes are serialized; none is queued.
+**Shape and order.** No build waits on a review. The longest chains, 12 deep, end at #450: AX2b #934 → AX2c #961 → AX4
+#940 → #948 → R7 #542 → #707 → #399 → #709 → #553 → #447 → #449 → #450, and D1d #905 → GT3 #876 → GT6 #878 → R7 about
+as long; GT6's hours make the resolver's pole critical, the AX line has slack. Nothing is added after the tail until
+it shortens (the approval build, Open 142, waits for that); splices before a task are placed at any depth. The queue is
+the planner's choice, a residual until the selection problem's native answer (Q2): the running tasks with their
+reviews, the pole D1d → #875, GT3 → GT6, the AX line (#934, #938, #961, #956, #940, #962), the rewrite briefs, then the
+route in its chains' order, each review after its build; #887 after R7's review. Word changes are serialized; none is
+queued.
 
 ## Decisions
 
@@ -108,7 +98,7 @@ Taken by the planning episodes, where they are not entries of `DECISIONS.md`.
   the consequences; Q23 (b) and (c) are the owner's; the parts "covered by other answers" stand as generated choices.
 - **Q27**: the witness-constructing evaluator first; no judgment is decided by an Isabelle-proved counterpart; a missing
   operation is an unmet requirement (#495; Open 39). **Q28**: a checker checks whether what is provided is what is
-  expected; producing is not its part; least witnesses are handed in (#496).
+  expected; producing is not its part; least witnesses are handed in or collected beside it (#496).
 - **Q33**: an implementation is restricted only to implementing its notion correctly; being installed restricts
   nothing. #928 decided (a)–(c); (d), the table's truth at an installation, a generated choice. Briefs saying "the
   given's readers as installed … (Q27, Q28)" are corrected at their next rewrite.
@@ -116,13 +106,13 @@ Taken by the planning episodes, where they are not entries of `DECISIONS.md`.
 - **17:50, 18:12, 18:36**: the native notion of a problem is the loop's product; a design is judged by what its
   identity rests on, not by what its contract avoids; a presentation supplies no meaning, and a row, a locus, a prefix,
   a key or a family index is structure.
-- **Closed without an answer** (2026-09-30, 10-01): Q1, Q3, Q4, Q5, Q8–Q16, Q21, Q22, Q24, Q25; each provisional choice
-  stays a generated choice the work proceeds on, revisable on a reason.
+- **Closed without an answer** (2026-09-30, 10-01): Q1, Q3–Q5, Q8–Q16, Q21, Q22, Q24, Q25; each provisional choice stays
+  a generated choice the work proceeds on, revisable on a reason.
 - **Nothing of the native loop is built over the bootstrap loop's presentations** (`development_problem`, task 9's rows
   and loci, `readiness_presents`, `state_presents`, `development_rows_present`, `request_presents`), and none is
   extended; a build that adds a reliance on a HOL presentation records it (#376, #378).
 - `native_control_plan.md` is the current plan; `plan.md`, `OBLIGATIONS.md` and `GENERALIZATION_REVIEW.md` stay as they
-  are (2026-09-23).
+  are.
 
 **Words and measurements.** Word changes are serialized, their order the planner's: an edge orders two tasks whose
 landings re-record the same files, and a word change's answer records are re-recorded after its landing by a task of
@@ -153,9 +143,12 @@ a positioned labelled history for the certificate path.
   any formed selection (WC2a). Every discharge of the exchange, OS1's open premise and the valued exchange at a table
   are stated where the table's calls are true (`finite_table_true`), the installed programs holding the relocated table
   true, never valid (q163; Q33 (d)).
+- A least witness is collected where the query search constructs what its readers observe: at plain parameters W2's
+  queries through a material-observing reader stay unanswered, so refusals through registrations are exercised at
+  VK2's committing instance (q178).
 - A candidate of the first problem adds its own artifacts and their bindings, sourced at the uses it adds; a binding at
   a given artifact is not a candidate (#928's verdict); the old guard over pairs of site values stays as the notion the
-  additions guard is exact to.
+  guard over additions is exact to.
 - A free socket whose viewed input holds a variable of the parent's head output at its view never commits under the
   test at inputs: a declaration build drops it or declares it at a view apart (review 604's 1).
 - A partial presentation is honest; a total one that maps the omitted case somewhere is not.
@@ -171,8 +164,7 @@ a positioned labelled history for the certificate path.
   `commit.md`, so an Acceptance may say "the repository's check". Batches and trains check the work merged onto main, so
   a task brings main in (`v2.py bring-main`) only when told its lines meet main's. The source checks and the import
   graph are answered at every change that writes a theory; the commit states the harness's record of the session's
-  probes, so a `commit.md` Validation paragraph states only what no record does. No session runs `tools/check.py` (the
-  finalizer's).
+  probes, so a `commit.md` Validation paragraph states only what no record does. No session runs `tools/check.py`.
 - **Naming.** Every theory a task works on is named in its brief (`theories/X.thy` or `X`) and every fact it consumes as
   `Theory.name`: its session is given their statements and relations as it starts, their size out of its room. A
   Deliverable names files, never a directory; a bare name is the task's own folder's unless the root has that file, a
@@ -187,11 +179,11 @@ a positioned labelled history for the certificate path.
   bounded at 60 s unless a measurement holds the machine; its evidence is `probe.summary.json`. An edit to a base theory
   is probed from the tree with the unchanged theories between it and its changed dependents loaded as renamed copies,
   which does not finish within 60 s, so a brief asking for one names what it loads or accepts the repository's check
-  for the combination. A probe starts in about 4.3 s on the one-session base and loads its theories in one
-  `use_theories` call (#951), so one failing theory certifies none of them; a failed proof that does not return stays
-  silent until the 60 s kill (#944). A probe from a tree behind main whose base advanced is refused: `v2.py
-  bring-main`, `--base` at the heap the tree matches, or `--from-heap` for one theory; a changed theory's `export_code …
-  checking` is blanked and named skipped; a past base's sources are read with `--base-sources`.
+  for the combination. A probe starts in about 4.3 s on the one-session base and loads its theories in one call (#951),
+  so one failing theory certifies none of them; a failed proof that does not return stays silent until the 60 s kill
+  (#944). A probe from a tree behind main whose base advanced is refused: `v2.py bring-main`, `--base` at the heap the
+  tree matches, or `--from-heap` for one theory; a changed theory's `export_code … checking` is blanked and named
+  skipped; a past base's sources are read with `--base-sources`.
 - **Evaluations.** A theory that evaluates constructions evaluates them in one evaluation, compiled once (each `value`
   or `@{code}` compiles the term's whole closure, about 5.5 s, while executing it takes 0.4 s, 0.011 s where
   `Native_Execution_Refinements` is in effect). Evidence to retain is constructed in a recipe whose export includes
@@ -225,49 +217,46 @@ a positioned labelled history for the certificate path.
 
 ## Delivered
 
-What landed that open work builds on; each theory's contract is its THEORY_MAP.md row and its reasoning
-REASONING_REUSE.md's, how it went in `PLANNING_LOG.md`.
+What landed that open work builds on; each theory's contract is its THEORY_MAP.md row, its reasoning
+REASONING_REUSE.md's, how it went `PLANNING_LOG.md`.
 
-- **The entries** (`DECISIONS.md`): #378, #376, #381, #383, #428, #460 (withdrawn by Q27), #482 and #560, #495 with its
-  additions and corrections, #496 with its additions, the entries of #613, #782, #817, #928 and #947; each design's
-  verdict in its `verdict.md`, the attributions #481, #644, #715, #829, #830, #851, #886, #896 and #944 in their
-  `result.md`.
+- **The entries** (`DECISIONS.md`): #378, #376, #381, #383, #428, #460 (withdrawn by Q27), #482 and #560, #495 and #496
+  with their additions and corrections, the entries of #613, #782, #817, #928 and #947; each design's verdict in its
+  `verdict.md`, the attributions #481, #644, #715, #829, #830, #851, #886, #896 and #944 in their `result.md`.
 - **The package and the given**: `Development_Package_Program` (derived again at a landing that changes one of its six
   programs, Q18 (c)), `Development_Given_Readers`, `Development_Given_Program`, `Development_Given_Installation`, their
   payloads (`Factor_System_Payloads`, `Factor_Reader_Payloads`, `Factor_Generation_Reader_Payloads`),
   `Development_Native_State` (`development_given_value`).
-- **The guard, the asked relation and the request**: `Development_First_Problem_Guard`, `Factor_Package_Additions`,
-  `Factor_Payload_Audit`, `Development_First_Problem_Asked`, AX1 `Factor_Environment_Additions`, AX2a
-  `Factor_Extension_Packages`; non-nominality in `Presentation_Equivariance`, `Factor_Use_Actions`,
-  `Factor_Use_Renaming`; `Factor_Package_Requests`, `Development_First_Request_Program`.
+- **The guards, the asked relation and the request**: `Development_First_Problem_Guard`, `Factor_Package_Additions`,
+  `Factor_Payload_Audit`, `Development_First_Problem_Asked`; the additions line `Factor_Environment_Additions`,
+  `Factor_Extension_Packages`, `Development_First_Problem_Additions`; non-nominality in `Presentation_Equivariance`,
+  `Factor_Use_Actions`, `Factor_Use_Renaming`; `Factor_Package_Requests`, `Development_First_Request_Program`.
 - **The criticism's notions**: `Criticism_Samples`, `Criticism_Use_Samples`, `Criticism_Octet_Samples`,
-  `Factor_Stated_Leaves`, `Factor_Stated_Leaves_Program`; E1 `Factor_Implemented_Base_Evaluation`; the retired
-  counterparts' readers in `Factor_Finite_Site_Value_Readers`.
+  `Factor_Stated_Leaves`, `Factor_Stated_Leaves_Program`; E1 `Factor_Implemented_Base_Evaluation`;
+  `Factor_Finite_Site_Value_Readers`.
 - **The owner records, the posing and the recording**: `Development_Owner_Records` (`development_citing_row_generation`,
   `development_owner_approval`), `Development_First_Problem`, `Development_First_Problem_Execution`,
   `Factor_Bounded_Generation_Scopes`, `Development_Bounded_Recording` (`development_indexed_generation`), the
   placeholder line (`Factor_Placeholder_Fill`, `_Schemas`, `_Packages`, `Factor_Parametric_Causes`).
-- **The resolving evaluator**, every form at a table (GT1a–GT2c) and the discharges valued at a true table (VK1, GT2b):
-  R1 `Factor_Material_Resolution`, R2 `Factor_Pattern_Unification`, R3 `Factor_Program_Resolution`, R3b
+- **The resolving evaluator**, every form at a table and the discharges valued at a true table: R1
+  `Factor_Material_Resolution`, R2 `Factor_Pattern_Unification`, R3 `Factor_Program_Resolution`, R3b
   `Factor_Resolution_Acceptance`, R4 `Factor_Resolution_Completeness` with `Factor_Resolution_Lifting`, R5
   `Factor_Resolution_Commitments` with its discharges, views, carriers and narrowed theories, `Factor_Resolution_Modes`,
   `Factor_Socket_Waiting`, `Factor_Resolution_Checks` (the check forms and route constants),
   `Factor_Framed_Commitment_Index`, `Factor_Input_Productions`; controls in the `*_Controls` theories and
-  `Factor_Committed_Traces`.
-- **The resolver's states**: `Factor_Shared_Patterns`, `Factor_Indexed_Resolution`, `Factor_Shared_Resolution`,
-  `Factor_Search_Representations`, `Factor_Shared_Search`, `Factor_Shared_Commitments`, `Factor_Access_Commitments`, C
-  `Factor_Resolution_Graph_Checks`, `Shared_Binding_Stores`, `Factor_Deferred_Search`.
+  `Factor_Committed_Traces`; its states `Factor_Shared_Patterns`, `Factor_Indexed_Resolution`,
+  `Factor_Shared_Resolution`, `Factor_Search_Representations`, `Factor_Shared_Search`, `Factor_Shared_Commitments`,
+  `Factor_Access_Commitments`, C `Factor_Resolution_Graph_Checks`, `Shared_Binding_Stores`, `Factor_Deferred_Search`.
 - **The given's declarations**: the `Factor_*_Declarations` theories and `Development_Given_Declarations`, carried in
   `Development_Given_Carried_Declarations` (`given_declarations`), `Development_Given_Frames`,
   `Development_Given_Installed_Declarations`, `Development_Given_Modes`, `Development_Given_Productions`,
   `Development_Given_Installed_Productions`.
 - **The least witnesses**: `Factor_Least_Collections`, `Factor_Least_Witness_Facts`, `Factor_Construction_Holders`,
   `Factor_Least_Witness_Registrations`, the given's, asked, first request's and rooted `*_Registrations`; VK2's
-  committing instance `Development_Given_Query_Parameters`, its premise discharged at the given by #953 (the given's
-  input record carried to the query program).
+  committing instance `Development_Given_Query_Parameters` (`given_query_parameters`, `given_query_exact`).
 - **The clause match and rc's forms**: `Factor_Finite_Schema_Matching`, the `Factor_Varied_*` theories,
   `Development_Installed_Presentations`; `Factor_Committed_Registrations`, `Factor_Native_Committed_Registrations`
-  (rc's forms at a true table, `committed_registrations_in`, `relocated_registrations_in`).
+  (rc's forms at a true table).
 - **The given's table's calls**: `Development_Given_Table` (GT5); K3 `Development_Given_Checks_Execution`.
 - **Briefs whose findings stand**: #434 (the approval record's place, parts (g), (h) and (e)) and #451 (the readings of
   "generation" and "adoption"), each in its `result.md`.
@@ -280,16 +269,18 @@ REASONING_REUSE.md's, how it went in `PLANNING_LOG.md`.
   criticism, #947's choice.
 
 **To plan, in the order expected** (numbers kept from earlier states):
-3. N7, the verdict at a package: a native notion, built when a problem kind asks it (the translation and N8 withdrawn).
+3. N7, the verdict at a package: a native notion, built when a problem kind asks it.
 119. The second and the authority problems' requirement families, posed over the first answer (#370's follow-ups in
    `.build/tasks/370/result.md`, #371's notes).
 121. The criticism's leaf argument for programs with material premises (#381's follow-up 3): every given reader reaches
    one, so part (g) bites at the given's readers too; when demanded, a theory of its own (#434's result).
-151. D of correction (11): the produced table for 65 and 56, a design after R7 #542's figures
-   (`.build/tasks/766/result.md`, `.build/plans/plan-104/q137.md`), with whether 587 is committed at 588.0/0.
-152. The trigger of 55's clause trials (correction (16)): R7 #542's figures at the given's 55 calls with the table.
+151. D of correction (11): the produced table for 65 and 56, a design after R7's figures (`.build/tasks/766/result.md`,
+   `.build/plans/plan-104/q137.md`), with whether 587 is committed at 588.0/0.
+152. The trigger of 55's clause trials (correction (16)): R7's figures at the given's 55 calls with the table.
 153. Site 8's lookup as an index (Q33 (a)): a change of the material observation's fields or of the artifact's data
    class (#928's entry), designed at its trigger — R7's control candidate's added rows' 11s or GT6's production.
+154. A shared witness for the guard over additions' three readings of the least environment and root family (at 961,
+   985 and 989, review 937's follow-up 3): decided at R7's measurement of their share.
 142. The owner's approval of the first answer (Q23 (c); #947's course): after #553 and #447,
    `development_owner_approval` and `development_owner_approval_certified` citing the criticism record's generation;
    then the first problem posed again under the approved answer and the second and authority problems over it; placed
@@ -314,27 +305,25 @@ REASONING_REUSE.md's, how it went in `PLANNING_LOG.md`.
 29. `REASONING_REUSE.md`'s open comparisons (#280's follow-ups).
 
 **At a theory's next edit or a measured need**: the items in `.build/plans/next-edits.md`, which a planner searches for
-a theory before briefing a task that edits it (the probe tool's next edit: next-edits 403, 404).
+a theory before briefing a task that edits it.
 
 ## Now
 
-- **Under way**: AX3a #936 (its review #937 re-queued after its session could not record a verdict while #936 was in
-  its quick fix); AX2b #934 on #959's clauses (`d4673a92`), registering the bound now and l after the fix #960 (q175,
-  `v2.py after 934 960`); the resolver's pole at D1d #905. Review 933's
-  follow-ups were mailed to AX2b #934 (2), AX3a #936 (1, 3, 4) and AX3b #938 (5); review 946's to D1d #905 (1, 2) and
-  #875 (3–5); review 954's 1 and 2 to AX4 #940.
+- **Under way**: D1d #905; AX2b #934 landing its bound part (q177, q178); AX3b #938 startable now, its brief rewritten.
+  What each open task's first session was mailed is in `.build/plans/mailed.md`.
 - **What the next events ask**: Q34's answer; #875's figures — GT6's prediction and worker count, the checking fold
   measured at samples, the kept forms (q162) and FI's remaining costs, and with them the re-run of #718's 77 and 79
-  fixtures with review 858's attributions (next-edits 364–366); #956's observation of a query meeting a root-held
-  committable goal, on which task 918's answer 4 (the kept-socket follow-up) waits; at AX4's landing #948 and #949 start,
-  and their proposals are placed by rewrite.
+  fixtures with review 858's attributions (next-edits 364–366); #956's 77 refusal at the committing instance (q178's
+  course) and its observation of a query meeting a root-held committable goal, on which task 918's answer 4 waits; at
+  AX4's landing #948 and #949 start, their proposals placed by rewrite.
 - **Briefs nearest their rooms**: #542, #399 and the samples build #551; #948 and #949 re-estimate them.
-- **The knowledge base** loads at 701K of its 742K (2026-10-01): keep this file lean; a base rebuild is the owner's.
+- **The knowledge base** loads near its limit (698K of 742K on 2026-10-01): keep this file lean; a base rebuild is the
+  owner's.
 - **The harness's gaps** met by this run's tasks are owed to the owner and listed in `PLANNING_LOG.md` (plan-86,
-  2026-09-26; plan-136, 2026-10-01).
-- **Trees whose work never lands**, the harness's or the owner's to remove: the retired #169's, #324's, #325's,
-  #371's and #176's (its uncommitted changes make the open-tree overlap checks inexact), #143's (an uncommitted note to
-  the bootstrap loop's answer records), and the investigations', whose deliverable is their `result.md`.
+  2026-09-26; plan-136 and plan-137, 2026-10-01: plan-136 stopped by a classifier before its notes).
+- **Trees whose work never lands**, the harness's or the owner's to remove: the retired #169's, #324's, #325's, #371's
+  and #176's (its uncommitted changes make the open-tree overlap checks inexact), #143's (an uncommitted note to the
+  bootstrap loop's answer records), and the investigations', whose deliverable is their `result.md`.
 - **The base** lives at `.build/tasks/base-lasting/`; `.build/complete-20260921a` and `/tmp/structural-accepted` are the
   owner's or the next reboot's.
 - **The standing refusals**, so they are not re-derived: the retirement of `Development_Truth`; an observation naming

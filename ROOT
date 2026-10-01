@@ -1721,6 +1721,7 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Factor_Deferred_Search
     Factor_Shared_Commitments
     Factor_Access_Commitments
+    Factor_Deferred_Commitments
     Factor_Demanded_Package_Readings
     Factor_Shared_Package_Readings
     Factor_Demanded_Graph_Readings
@@ -1969,6 +1970,7 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Development_First_Request_Registrations
     Development_Given_Modes
     Development_Given_Execution_Fixtures
+    Factor_Deferred_Commitment_Controls
     Factor_Deferred_Search_Controls
     Development_Given_Modes_Execution
     Factor_Check_Controls

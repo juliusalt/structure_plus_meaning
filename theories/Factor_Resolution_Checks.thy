@@ -1,6 +1,6 @@
 theory Factor_Resolution_Checks
 imports Factor_Committed_Registrations Factor_Native_Committed_Registrations Factor_Narrowed_Productions
-  Factor_Access_Commitments
+  Factor_Access_Commitments Factor_Deferred_Commitments
   Factor_Input_Productions Factor_Shared_Commitments Factor_Framed_Commitment_Index
 begin
 
@@ -1090,6 +1090,29 @@ definition shared_raised :: "('a,'s,'d,'c) finite_witness_construction \<Rightar
   "shared_raised \<kappa> P r \<longleftrightarrow> search_formed \<kappa> P r \<and> search_placeable (search_project r) \<and>
     finite_goals_raised P (search_project r)"
 
+text \<open>The raising invariant is kept by every structure's steps, whatever representation writes them.\<close>
+
+lemma raised_structure:
+  assumes st: "committed_representation_structure R Fi \<kappa> P"
+    and pl: "\<And>s. Fi s \<Longrightarrow> search_placeable (rep_project R s)"
+  shows "committed_representation_structure R (\<lambda>s. Fi s \<and> finite_goals_raised P (rep_project R s)) \<kappa> P"
+proof (rule committed_structure_invariant[where I = "finite_goals_raised P", OF st], goal_cases)
+  case (1 s nd)
+  then show ?case by (simp add: finite_goals_raised_construction)
+next
+  case (2 s g st')
+  then show ?case using finite_goals_raised_successors[of P "rep_project R s" g st'] pl[OF 2(1)] by simp
+next
+  case (3 s q rr d p st')
+  then show ?case using finite_goals_raised_call[of P "rep_project R s" q rr d p st'] pl[OF 3(1)] by simp
+next
+  case (4 s q rr M Ws st')
+  then show ?case using finite_goals_raised_solutions[of P "rep_project R s" st' q rr M Ws] pl[OF 4(1)] by simp
+next
+  case (5 st \<sigma>)
+  then show ?case by simp
+qed
+
 lemma shared_raised_structure:
   assumes sock: "clause_sockets_distinct P"
   shows "committed_representation_structure (shared_committed_representation \<kappa> P) (shared_raised \<kappa> P) \<kappa> P"
@@ -1099,24 +1122,7 @@ proof -
   have e: "shared_raised \<kappa> P = (\<lambda>s. (search_formed \<kappa> P s \<and> search_placeable (search_project s)) \<and>
       finite_goals_raised P (rep_project (shared_committed_representation \<kappa> P) s))"
     by (simp add: fun_eq_iff shared_raised_def pj)
-  show ?thesis unfolding e
-  proof (rule committed_structure_invariant[where I = "finite_goals_raised P", OF shared_committed_structure[OF sock]],
-      goal_cases)
-    case (1 s nd)
-    then show ?case by (simp add: finite_goals_raised_construction)
-  next
-    case (2 s g st')
-    then show ?case using finite_goals_raised_successors[of P "search_project s" g st'] by (simp add: pj)
-  next
-    case (3 s q rr d p st')
-    then show ?case using finite_goals_raised_call[of P "search_project s" q rr d p st'] by (simp add: pj)
-  next
-    case (4 s q rr M Ws st')
-    then show ?case using finite_goals_raised_solutions[of P "search_project s" st' q rr M Ws] by (simp add: pj)
-  next
-    case (5 st \<sigma>)
-    then show ?case by simp
-  qed
+  show ?thesis unfolding e by (rule raised_structure[OF shared_committed_structure[OF sock]]) (simp add: pj)
 qed
 
 definition finite_declared_raisers ::
@@ -1228,6 +1234,59 @@ text \<open>
   search at the moded selection.
 \<close>
 
+text \<open>
+  The route's tests are formed at every representation whose states keep the raising invariant, whose commitment
+  access is formed, and whose goals are the shared goals it reads the guard on (@{text raising_formed_at}); the shared
+  representation is its instance, and so is the deferred one.
+\<close>
+
+theorem raising_formed_at:
+  assumes st: "committed_representation_structure R Fi \<kappa> P"
+    and ce: "\<And>s. Fi s \<Longrightarrow> commitment_formed \<kappa> P (rep_access R s) (rep_project R s) (ce s)"
+    and rsd: "\<And>s. Fi s \<Longrightarrow> finite_goals_raised P (rep_project R s)"
+    and goal: "\<And>s h. Fi s \<Longrightarrow> h |\<in>| access_goals (rep_access R s) \<Longrightarrow>
+      finite_raising_guard (finite_declared_raisers P (resolution_declarations.truncate D))
+        (resolution_declarations.truncate D) M (access_goal (rep_access R s) h) \<longleftrightarrow>
+      shared_raising_guard (finite_declared_raisers P (resolution_declarations.truncate D))
+        (resolution_declarations.truncate D) M (shared_entry_goal h)"
+  shows "tested_representation_formed R Fi \<kappa> P
+    (finite_narrowed_commitment P m D \<Phi>) (finite_moded_priority (finite_narrowed_commitment P m D \<Phi>) Dm M)
+    (commitment_tests R ce (access_narrowed_commitment P m D \<Phi>)
+      Dm M (\<lambda>s h. shared_raising_guard (finite_declared_raisers P (resolution_declarations.truncate D))
+        (resolution_declarations.truncate D) M (shared_entry_goal h)))
+    (\<lambda>s h. shared_raising_guard (finite_declared_raisers P (resolution_declarations.truncate D))
+      (resolution_declarations.truncate D) M (shared_entry_goal h))"
+proof (rule commitment_tests_formed[OF st], goal_cases)
+  case (1 s)
+  then show ?case by (rule ce)
+next
+  case 2
+  show ?case by (rule access_narrowed_commitment_exact)
+next
+  case (3 s h F)
+  let ?st = "rep_project R s" let ?g = "access_goal (rep_access R s) h"
+  have rs: "finite_goals_raised P ?st" by (rule rsd[OF 3(1)])
+  interpret v: access_formed \<kappa> P "rep_access R s" ?st by (rule committed_representation_structure.access[OF st 3(1)])
+  have g: "?g |\<in>| resolution_pending ?st" by (rule v.goal_in_pending[OF 3(2)])
+  have nd: "finite_nodes_raised P (fimage resolution_node_key (resolution_nodes ?st))"
+    using rs by (simp add: finite_goals_raised_def Let_def)
+  have key: "finite_raised_key (fimage resolution_node_key (resolution_nodes ?st)) (resolution_goal_key ?g)"
+    using rs fimageI[OF g, of resolution_goal_key] unfolding finite_goals_raised_def Let_def by blast
+  have ng: "\<not> finite_raising_guard (finite_declared_raisers P (resolution_declarations.truncate D))
+      (resolution_declarations.truncate D) M ?g"
+    using 3(3) goal[OF 3(1) 3(2)] by simp
+  have fn: "resolution_nodes (finite_focused F ?st) = resolution_nodes ?st" by (simp add: finite_focused_def)
+  have ndF: "finite_nodes_raised P (fimage resolution_node_key (resolution_nodes (finite_focused F ?st)))" using nd fn by simp
+  have keyF: "finite_raised_key (fimage resolution_node_key (resolution_nodes (finite_focused F ?st))) (resolution_goal_key ?g)"
+    using key fn by simp
+  have a: "\<not> commit_call (finite_narrowed_commitment P m D \<Phi>) F ?st ?g \<and>
+      \<not> commit_material (finite_narrowed_commitment P m D \<Phi>) F ?st ?g"
+    using finite_raising_moded_refuses[OF nd key ng] by blast
+  have b: "\<not> finite_moded_priority (finite_narrowed_commitment P m D \<Phi>) Dm M (finite_focused F ?st) ?g"
+    using finite_raising_moded_refuses[OF ndF keyF ng] by blast
+  show ?case using a b by blast
+qed
+
 theorem shared_raising_formed_at:
   assumes st: "committed_representation_structure (shared_committed_representation \<kappa> P) Fi \<kappa> P"
     and fi: "\<And>s. Fi s \<Longrightarrow> shared_raised \<kappa> P s"
@@ -1238,37 +1297,16 @@ theorem shared_raising_formed_at:
         (resolution_declarations.truncate D) M (shared_entry_goal h)))
     (\<lambda>s h. shared_raising_guard (finite_declared_raisers P (resolution_declarations.truncate D))
       (resolution_declarations.truncate D) M (shared_entry_goal h))"
-proof (rule commitment_tests_formed[OF st], goal_cases)
+proof (rule raising_formed_at[OF st], goal_cases)
   case (1 s)
   then show ?case using shared_commitment_formed[of \<kappa> P s] fi[OF 1]
     by (simp add: shared_raised_def shared_committed_representation_def)
 next
-  case 2
-  show ?case by (rule access_narrowed_commitment_exact)
+  case (2 s)
+  then show ?case using fi[OF 2] by (simp add: shared_raised_def shared_committed_representation_def)
 next
-  case (3 s h F)
-  let ?st = "search_project s" let ?g = "access_goal (shared_access \<kappa> P s) h"
-  have f: "search_formed \<kappa> P s" and rs: "finite_goals_raised P ?st" using fi[OF 3(1)] by (simp_all add: shared_raised_def)
-  interpret v: access_formed \<kappa> P "shared_access \<kappa> P s" ?st by (rule shared_access_formed[OF f])
-  have h': "h |\<in>| access_goals (shared_access \<kappa> P s)" using 3(2) by (simp add: shared_committed_representation_def)
-  have g: "?g |\<in>| resolution_pending ?st" by (rule v.goal_in_pending[OF h'])
-  have nd: "finite_nodes_raised P (fimage resolution_node_key (resolution_nodes ?st))"
-    using rs by (simp add: finite_goals_raised_def Let_def)
-  have key: "finite_raised_key (fimage resolution_node_key (resolution_nodes ?st)) (resolution_goal_key ?g)"
-    using rs fimageI[OF g, of resolution_goal_key] unfolding finite_goals_raised_def Let_def by blast
-  have ng: "\<not> finite_raising_guard (finite_declared_raisers P (resolution_declarations.truncate D))
-      (resolution_declarations.truncate D) M ?g"
-    using 3(3) by (simp add: shared_access_simps shared_raising_guard_project)
-  have fn: "resolution_nodes (finite_focused F ?st) = resolution_nodes ?st" by (simp add: finite_focused_def)
-  have ndF: "finite_nodes_raised P (fimage resolution_node_key (resolution_nodes (finite_focused F ?st)))" using nd fn by simp
-  have keyF: "finite_raised_key (fimage resolution_node_key (resolution_nodes (finite_focused F ?st))) (resolution_goal_key ?g)"
-    using key fn by simp
-  have a: "\<not> commit_call (finite_narrowed_commitment P m D \<Phi>) F ?st ?g \<and>
-      \<not> commit_material (finite_narrowed_commitment P m D \<Phi>) F ?st ?g"
-    using finite_raising_moded_refuses[OF nd key ng] by blast
-  have b: "\<not> finite_moded_priority (finite_narrowed_commitment P m D \<Phi>) Dm M (finite_focused F ?st) ?g"
-    using finite_raising_moded_refuses[OF ndF keyF ng] by blast
-  show ?case using a b by (simp add: shared_committed_representation_def)
+  case (3 s h)
+  then show ?case by (simp add: shared_committed_representation_def shared_access_simps shared_raising_guard_project)
 qed
 
 theorem shared_raising_formed:
@@ -1606,6 +1644,40 @@ definition route_select where
     else let W = shared_focused (the F) r V in
       focused_kept_select (admitted_priority_class Kc Dm M (gd r) W (fst x)) (the F) r V W)"
 
+lemma route_select_over:
+  fixes N :: "('a,'s::linorder,'d,'c) shared_node_entry \<Rightarrow> ('a,'s,'d,'c) resolution_node"
+    and Fr :: "('a,'s,'d,'c) shared_node_entry \<Rightarrow> 'a fset"
+    and VN :: "('a,'s,'d,'c) shared_node_entry \<Rightarrow> 'a \<Rightarrow> bool"
+    and C :: "('a,'s,'d,'c) shared_node_entry \<Rightarrow> ('s,'a) resolution_variable fset"
+  assumes r: "search_formed \<kappa> P r" and K: "search_classes_formed r"
+  defines "V \<equiv> (shared_access \<kappa> P r)\<lparr>access_node := N, access_free := Fr, access_value_none := VN,
+    access_call_variables := C\<rparr>"
+  shows "route_select \<kappa> P Kc Dm M gd F r V (E,b) = access_select (\<lambda>h. gd r h \<and> access_moded_priority_at Kc Dm M
+      (access_focused F V) E (fBex (access_goals (access_focused F V))
+        (\<lambda>h. gd r h \<and> access_commitment_priority Kc (access_focused F V) E h)) h) (access_focused F V)"
+proof (cases "F = None \<or> F = Some []")
+  case True
+  have "route_select \<kappa> P Kc Dm M gd F r V (E,b) =
+      committed_kept_select \<kappa> P (admitted_priority_class Kc Dm M (gd r) (access_focused F V) E) F r V"
+    using True by (simp add: route_select_def access_focused_whole)
+  also have "\<dots> = access_select (\<lambda>h. gd r h \<and> access_moded_priority_at Kc Dm M (access_focused F V) E
+      (fBex (access_goals (access_focused F V)) (\<lambda>h. gd r h \<and> access_commitment_priority Kc (access_focused F V) E h)) h)
+      (access_focused F V)"
+    unfolding V_def by (rule committed_kept_select_over[OF r K]) (rule admitted_priority_class, simp)
+  finally show ?thesis .
+next
+  case False
+  obtain g where g: "F = Some g" and gne: "g \<noteq> []" using False by (cases F) auto
+  have "route_select \<kappa> P Kc Dm M gd F r V (E,b) =
+      focused_kept_select (admitted_priority_class Kc Dm M (gd r) (access_focused F V) E) g r V (access_focused F V)"
+    by (simp add: route_select_def g gne shared_focused_over[OF r] V_def Let_def)
+  also have "\<dots> = access_select (\<lambda>h. gd r h \<and> access_moded_priority_at Kc Dm M (access_focused F V) E
+      (fBex (access_goals (access_focused F V)) (\<lambda>h. gd r h \<and> access_commitment_priority Kc (access_focused F V) E h)) h)
+      (access_focused F V)"
+    unfolding g V_def by (rule focused_kept_select_over[OF r K]) (rule admitted_priority_class, simp)
+  finally show ?thesis .
+qed
+
 lemma route_kept_formed:
   assumes tf: "tested_representation_formed (shared_committed_representation \<kappa> P) Fi \<kappa> P K pr
       (commitment_tests (shared_committed_representation \<kappa> P) shared_commitment_access Kc Dm M gd) gd"
@@ -1620,28 +1692,12 @@ next
   case (2 s F)
   have f: "search_formed \<kappa> P s" "search_classes_formed s" using fi[OF 2] by simp_all
   let ?V = "shared_access \<kappa> P s" let ?W = "access_focused F ?V" let ?E = "shared_commitment_access s"
+  have e: "?V\<lparr>access_node := access_node ?V, access_free := access_free ?V, access_value_none := access_value_none ?V,
+      access_call_variables := access_call_variables ?V\<rparr> = ?V" by simp
   have "route_select \<kappa> P Kc Dm M gd F s ?V (?E,True) = access_select (\<lambda>h. gd s h \<and> access_moded_priority_at Kc Dm M ?W ?E
       (fBex (access_goals ?W) (\<lambda>h. gd s h \<and> access_commitment_priority Kc ?W ?E h)) h) ?W"
-  proof (cases "F = None \<or> F = Some []")
-    case True
-    have "route_select \<kappa> P Kc Dm M gd F s ?V (?E,True) =
-        committed_kept_select \<kappa> P (admitted_priority_class Kc Dm M (gd s) ?W ?E) F s ?V"
-      using True by (simp add: route_select_def access_focused_whole)
-    also have "\<dots> = access_select (\<lambda>h. gd s h \<and> access_moded_priority_at Kc Dm M ?W ?E
-        (fBex (access_goals ?W) (\<lambda>h. gd s h \<and> access_commitment_priority Kc ?W ?E h)) h) ?W"
-      by (rule committed_kept_select[OF f]) (rule admitted_priority_class, simp)
-    finally show ?thesis .
-  next
-    case False
-    obtain g where g: "F = Some g" and gne: "g \<noteq> []" using False by (cases F) auto
-    have "route_select \<kappa> P Kc Dm M gd F s ?V (?E,True) =
-        focused_kept_select (admitted_priority_class Kc Dm M (gd s) ?W ?E) g s ?V ?W"
-      by (simp add: route_select_def g gne shared_focused[OF f(1)] Let_def)
-    also have "\<dots> = access_select (\<lambda>h. gd s h \<and> access_moded_priority_at Kc Dm M ?W ?E
-        (fBex (access_goals ?W) (\<lambda>h. gd s h \<and> access_commitment_priority Kc ?W ?E h)) h) ?W"
-      unfolding g by (rule focused_kept_select[OF f]) (rule admitted_priority_class, simp)
-    finally show ?thesis .
-  qed
+    using route_select_over[OF f, where N = "access_node ?V" and Fr = "access_free ?V" and VN = "access_value_none ?V"
+      and C = "access_call_variables ?V", unfolded e] .
   then show ?case by (simp add: shared_committed_representation_def commitment_tests_def Let_def)
 next
   case (3 s F B rec)
@@ -1774,6 +1830,198 @@ lemma native_moded_check_resolution_kept [code]:
     (T,if finite_system_formed P \<and> fBall V (\<lambda>(q,v). v \<noteq> None)
       then Some (fimage fst (ffilter (\<lambda>(q,v). v = Some True) V)) else None))"
   by (simp add: native_moded_check_resolution_route moded_route_with_route Let_def)
+
+subsection \<open>The route over the deferred search\<close>
+
+text \<open>
+  D1d. The route's committed search over the deferred committed representation (@{text Factor_Deferred_Commitments}):
+  the raising invariant kept at its states (@{text raised_structure}), its tests formed at the inner search's commitment
+  access (@{text raising_formed_at}), its selection the route's kept selection over the inner search's classes and the
+  deferred access (@{text route_select_over}). Its search from a state is R5's committed search at the moded
+  selection, as the shared route's is, so the six constants' code equations run through it and the equations through
+  the shared route stand, no longer code.
+\<close>
+
+definition deferred_raised :: "('a,'s,'d,'c) finite_witness_construction \<Rightarrow> ('a,'s,'d,'c) finite_schema_system \<Rightarrow>
+    ('a,'s::linorder,'d,'c) deferred_search + ('a,'s,'d,'c) shared_search \<Rightarrow> bool" where
+  "deferred_raised \<kappa> P s \<longleftrightarrow> deferred_committed_formed \<kappa> P s \<and> finite_goals_raised P (deferred_committed_project s)"
+
+lemma deferred_raised_structure:
+  assumes sock: "clause_sockets_distinct P"
+  shows "committed_representation_structure (deferred_committed_representation \<kappa> P) (deferred_raised \<kappa> P) \<kappa> P"
+proof -
+  have e: "deferred_raised \<kappa> P = (\<lambda>s. deferred_committed_formed \<kappa> P s \<and>
+      finite_goals_raised P (rep_project (deferred_committed_representation \<kappa> P) s))"
+    by (simp add: fun_eq_iff deferred_raised_def deferred_committed_fields)
+  have pl: "search_placeable (rep_project (deferred_committed_representation \<kappa> P) s)"
+    if "deferred_committed_formed \<kappa> P s" for s using that by (cases s) (simp_all add: deferred_committed_fields)
+  show ?thesis unfolding e by (rule raised_structure[OF deferred_committed_structure[OF sock] pl])
+qed
+
+theorem deferred_route_formed:
+  assumes sock: "clause_sockets_distinct P"
+  shows "selected_representation_formed (deferred_committed_representation \<kappa> P) (deferred_raised \<kappa> P) \<kappa> P
+    (finite_narrowed_commitment P m D \<Phi>) (finite_moded_priority (finite_narrowed_commitment P m D \<Phi>) Dm M)
+    (commitment_tests (deferred_committed_representation \<kappa> P) deferred_commitment_access (access_narrowed_commitment P m D \<Phi>)
+      Dm M (\<lambda>s h. shared_raising_guard (finite_declared_raisers P (resolution_declarations.truncate D))
+        (resolution_declarations.truncate D) M (shared_entry_goal h)))
+    (\<lambda>s h. shared_raising_guard (finite_declared_raisers P (resolution_declarations.truncate D))
+      (resolution_declarations.truncate D) M (shared_entry_goal h)) (deferred_focus_empty \<kappa> P)
+    (\<lambda>F s V x. route_select \<kappa> P (access_narrowed_commitment P m D \<Phi>) Dm M
+      (\<lambda>r h. shared_raising_guard (finite_declared_raisers P (resolution_declarations.truncate D))
+        (resolution_declarations.truncate D) M (shared_entry_goal h)) F (committed_inner s) V x)
+    (\<lambda>F s V. (deferred_commitment_access s,True))"
+proof -
+  have tf: "tested_representation_formed (deferred_committed_representation \<kappa> P) (deferred_raised \<kappa> P) \<kappa> P
+    (finite_narrowed_commitment P m D \<Phi>) (finite_moded_priority (finite_narrowed_commitment P m D \<Phi>) Dm M)
+    (commitment_tests (deferred_committed_representation \<kappa> P) deferred_commitment_access (access_narrowed_commitment P m D \<Phi>)
+      Dm M (\<lambda>s h. shared_raising_guard (finite_declared_raisers P (resolution_declarations.truncate D))
+        (resolution_declarations.truncate D) M (shared_entry_goal h)))
+    (\<lambda>s h. shared_raising_guard (finite_declared_raisers P (resolution_declarations.truncate D))
+      (resolution_declarations.truncate D) M (shared_entry_goal h))"
+  proof (rule raising_formed_at[OF deferred_raised_structure[OF sock]], goal_cases)
+    case (1 s)
+    then show ?case using deferred_committed_commitment_formed[of \<kappa> P s] by (simp add: deferred_raised_def)
+  next
+    case (2 s)
+    then show ?case by (simp add: deferred_raised_def deferred_committed_fields)
+  next
+    case (3 s h)
+    then show ?case
+      by (cases s) (simp_all add: deferred_committed_fields deferred_access_def shared_committed_representation_def
+        shared_access_simps shared_raising_guard_project)
+  qed
+  show ?thesis
+  proof (rule selected_representation_formed.intro[OF tf], unfold_locales, goal_cases)
+    case (1 s F)
+    show ?case by (rule deferred_focus_empty)
+  next
+    case (2 s F)
+    have f: "deferred_committed_formed \<kappa> P s" using 2 by (simp add: deferred_raised_def)
+    show ?case
+    proof (cases s)
+      case (Inl d)
+      have r: "search_formed \<kappa> P (deferred_inner d)" and K: "search_classes_formed (deferred_inner d)"
+        using f Inl deferred_formedD(1,2) by auto
+      show ?thesis
+        using Inl route_select_over[OF r K, where N = "deferred_node d" and Fr = "deferred_free \<kappa> d"
+          and VN = "\<lambda>hn a. finite_registered_value \<kappa> P (deferred_node d hn) a = None" and C = "deferred_call_variables d",
+          folded deferred_access_def]
+        by (simp add: deferred_committed_fields commitment_tests_def deferred_commitment_access_def Let_def)
+    next
+      case (Inr r)
+      have r: "search_formed \<kappa> P r" and K: "search_classes_formed r" using f Inr by simp_all
+      let ?V = "shared_access \<kappa> P r"
+      have e: "?V\<lparr>access_node := access_node ?V, access_free := access_free ?V, access_value_none := access_value_none ?V,
+          access_call_variables := access_call_variables ?V\<rparr> = ?V" by simp
+      show ?thesis
+        using Inr route_select_over[OF r K, where N = "access_node ?V" and Fr = "access_free ?V"
+          and VN = "access_value_none ?V" and C = "access_call_variables ?V", unfolded e]
+        by (simp add: deferred_committed_fields commitment_tests_def deferred_commitment_access_def Let_def
+          shared_committed_representation_def)
+    qed
+  next
+    case (3 s F B rec)
+    show ?case by (simp only: commitment_tests_prepare) (rule commitment_tests_outcome)
+  qed
+qed
+
+corollary deferred_route_search:
+  assumes sock: "clause_sockets_distinct P" and pl: "search_placeable st" and rs: "finite_goals_raised P st"
+  shows "selected_committed_search (deferred_committed_representation \<kappa> P)
+      (commitment_tests (deferred_committed_representation \<kappa> P) deferred_commitment_access (access_narrowed_commitment P m D \<Phi>)
+        Dm M (\<lambda>s h. shared_raising_guard (finite_declared_raisers P (resolution_declarations.truncate D))
+          (resolution_declarations.truncate D) M (shared_entry_goal h)))
+      (\<lambda>s h. shared_raising_guard (finite_declared_raisers P (resolution_declarations.truncate D))
+        (resolution_declarations.truncate D) M (shared_entry_goal h)) (deferred_focus_empty \<kappa> P)
+      (\<lambda>F s V x. route_select \<kappa> P (access_narrowed_commitment P m D \<Phi>) Dm M
+        (\<lambda>r h. shared_raising_guard (finite_declared_raisers P (resolution_declarations.truncate D))
+          (resolution_declarations.truncate D) M (shared_entry_goal h)) F (committed_inner s) V x)
+      (\<lambda>F s V. (deferred_commitment_access s,True)) \<kappa> P n F B (deferred_committed_of P st) =
+    finite_committed_search_by (finite_moded_select \<kappa> (finite_narrowed_commitment P m D \<Phi>) Dm M P) \<kappa>
+      (finite_narrowed_commitment P m D \<Phi>) P n F B st"
+proof -
+  have f: "deferred_raised \<kappa> P (deferred_committed_of P st)"
+    using deferred_committed_of(1)[OF pl, of \<kappa> P] deferred_committed_of(2)[OF pl] rs by (simp add: deferred_raised_def)
+  show ?thesis using selected_representation_formed.selected_committed[OF deferred_route_formed[OF sock] f]
+      deferred_committed_of(2)[OF pl]
+    by (simp add: deferred_committed_fields)
+qed
+
+definition moded_deferred_route_with ::
+    "('a,'s::linorder,'d,'c) finite_witness_construction \<Rightarrow> ('a,'s,'d,'c) finite_schema_system \<Rightarrow> nat \<Rightarrow>
+      ('a,'s,'d,'v) produced_declarations \<Rightarrow> ('a,'s,'d) resolution_frames \<Rightarrow> ('a,'s,'d) resolution_declarations \<Rightarrow>
+      'd resolution_modes \<Rightarrow>
+      (('a,'s,'d,'c) shared_goal_entry,('a,'s,'d,'c) shared_node_entry,nat,'a,'s,'d,'c) access_commitment \<Rightarrow>
+      ('d \<times> 'c \<times> 's) fset \<Rightarrow> bool \<Rightarrow> 's list option \<Rightarrow> 'd \<Rightarrow> finite_factor_term \<Rightarrow> nat \<Rightarrow> ('a,'s,'d,'c) finite_resolution_result" where
+  "moded_deferred_route_with \<kappa> P m D \<Phi> Dm M Kc X cs F0 d t n =
+    (let gd = (\<lambda>s h. shared_raising_guard X (resolution_declarations.truncate D) M (shared_entry_goal h));
+      gr = (\<lambda>r h. shared_raising_guard X (resolution_declarations.truncate D) M (shared_entry_goal h)) in
+    finite_outcome_result P d t (if cs
+      then selected_committed_search (deferred_committed_representation \<kappa> P)
+        (commitment_tests (deferred_committed_representation \<kappa> P) deferred_commitment_access Kc Dm M gd) gd
+        (deferred_focus_empty \<kappa> P) (\<lambda>F s V x. route_select \<kappa> P Kc Dm M gr F (committed_inner s) V x)
+        (\<lambda>F s V. (deferred_commitment_access s,True)) \<kappa> P n F0 {||} (deferred_committed_of P (finite_initial_state d t))
+      else finite_committed_search_by (finite_moded_select \<kappa> (finite_narrowed_commitment P m D \<Phi>) Dm M P) \<kappa>
+        (finite_narrowed_commitment P m D \<Phi>) P n F0 {||} (finite_initial_state d t)))"
+
+theorem moded_deferred_route_with_exact:
+  "moded_deferred_route_with \<kappa> P m D \<Phi> Dm M (access_narrowed_commitment P m D \<Phi>)
+      (finite_declared_raisers P (resolution_declarations.truncate D)) (clause_sockets_distinct P) F0 d t n =
+    finite_outcome_result P d t (finite_committed_search_by (finite_moded_select \<kappa> (finite_narrowed_commitment P m D \<Phi>) Dm M P)
+      \<kappa> (finite_narrowed_commitment P m D \<Phi>) P n F0 {||} (finite_initial_state d t))"
+  by (simp add: moded_deferred_route_with_def Let_def
+    deferred_route_search[OF _ finite_initial_state_placeable finite_initial_state_raised])
+
+declare moded_committed_resolution_kept [code del] moded_check_resolution_kept [code del]
+  moded_committed_demand_kept [code del] moded_check_demand_kept [code del]
+  native_moded_committed_resolution_kept [code del] native_moded_check_resolution_kept [code del]
+
+lemma moded_committed_resolution_deferred [code]:
+  "moded_committed_resolution \<kappa> P m D \<Phi> Dm M d t n = moded_deferred_route_with \<kappa> P m D \<Phi> Dm M
+    (access_narrowed_commitment P m D \<Phi>) (finite_declared_raisers P (resolution_declarations.truncate D))
+    (clause_sockets_distinct P) None d t n"
+  by (simp only: moded_committed_resolution_kept moded_route_with_exact moded_deferred_route_with_exact)
+
+lemma moded_check_resolution_deferred [code]:
+  "moded_check_resolution \<kappa> P m D \<Phi> Dm M d t n = moded_deferred_route_with \<kappa> P m D \<Phi> Dm M
+    (access_narrowed_commitment P m D \<Phi>) (finite_declared_raisers P (resolution_declarations.truncate D))
+    (clause_sockets_distinct P) (Some []) d t n"
+  by (simp only: moded_check_resolution_kept moded_route_with_exact moded_deferred_route_with_exact)
+
+lemma moded_committed_demand_deferred [code]:
+  "moded_committed_demand \<kappa> P m D \<Phi> Dm M Q n = (let Kc = access_narrowed_commitment P m D \<Phi>;
+      X = finite_declared_raisers P (resolution_declarations.truncate D); cs = clause_sockets_distinct P;
+      V = fimage (\<lambda>q. (q,finite_resolution_verdict (moded_deferred_route_with \<kappa> P m D \<Phi> Dm M Kc X cs None (fst q) (snd q) n))) Q in
+    if finite_system_formed P \<and> fBall V (\<lambda>(q,v). v \<noteq> None)
+    then Some (fimage fst (ffilter (\<lambda>(q,v). v = Some True) V)) else None)"
+  by (simp only: moded_committed_demand_kept Let_def moded_route_with_exact moded_deferred_route_with_exact)
+
+lemma moded_check_demand_deferred [code]:
+  "moded_check_demand \<kappa> P m D \<Phi> Dm M Q n = (let Kc = access_narrowed_commitment P m D \<Phi>;
+      X = finite_declared_raisers P (resolution_declarations.truncate D); cs = clause_sockets_distinct P;
+      V = fimage (\<lambda>q. (q,finite_resolution_verdict (moded_deferred_route_with \<kappa> P m D \<Phi> Dm M Kc X cs (Some []) (fst q) (snd q) n))) Q in
+    if finite_system_formed P \<and> fBall V (\<lambda>(q,v). v \<noteq> None)
+    then Some (fimage fst (ffilter (\<lambda>(q,v). v = Some True) V)) else None)"
+  by (simp only: moded_check_demand_kept Let_def moded_route_with_exact moded_deferred_route_with_exact)
+
+lemma native_moded_committed_resolution_deferred [code]:
+  "native_moded_committed_resolution \<kappa> P m D \<Phi> Dm M R n = (let Kc = access_narrowed_commitment P m D \<Phi>;
+      X = finite_declared_raisers P (resolution_declarations.truncate D); cs = clause_sockets_distinct P;
+      T = fimage (\<lambda>q. (q,moded_deferred_route_with \<kappa> P m D \<Phi> Dm M Kc X cs None (fst q) (snd q) n)) R;
+      V = fimage (\<lambda>(q,r). (q,finite_resolution_verdict r)) T in
+    (T,if finite_system_formed P \<and> fBall V (\<lambda>(q,v). v \<noteq> None)
+      then Some (fimage fst (ffilter (\<lambda>(q,v). v = Some True) V)) else None))"
+  by (simp only: native_moded_committed_resolution_kept Let_def moded_route_with_exact moded_deferred_route_with_exact)
+
+lemma native_moded_check_resolution_deferred [code]:
+  "native_moded_check_resolution \<kappa> P m D \<Phi> Dm M R n = (let Kc = access_narrowed_commitment P m D \<Phi>;
+      X = finite_declared_raisers P (resolution_declarations.truncate D); cs = clause_sockets_distinct P;
+      T = fimage (\<lambda>q. (q,moded_deferred_route_with \<kappa> P m D \<Phi> Dm M Kc X cs (Some []) (fst q) (snd q) n)) R;
+      V = fimage (\<lambda>(q,r). (q,finite_resolution_verdict r)) T in
+    (T,if finite_system_formed P \<and> fBall V (\<lambda>(q,v). v \<noteq> None)
+      then Some (fimage fst (ffilter (\<lambda>(q,v). v = Some True) V)) else None))"
+  by (simp only: native_moded_check_resolution_kept Let_def moded_route_with_exact moded_deferred_route_with_exact)
 
 export_code moded_committed_resolution moded_check_resolution moded_committed_demand moded_check_demand
   native_moded_committed_resolution native_moded_check_resolution checking SML

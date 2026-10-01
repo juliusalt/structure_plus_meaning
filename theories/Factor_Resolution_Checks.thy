@@ -2455,12 +2455,59 @@ lemma moded_check_graph_verdicts_listed_code [code]:
     moded_deferred_route_search_in_exact)
 
 text \<open>
+  At a table a found state's truth is its graph check alone (task 993, the planner's answer to #989's question;
+  @{const finite_state_graph_true_in}): a call of the check search is true when one of its found states' graph checks
+  holds at the table. It is true where the table's calls are true (@{text moded_check_graph_true_in_true}), and it reads
+  the table by its calls alone, the search as GT2a's (9) reads it (@{text finite_committed_search_calls}) and the graph
+  check as @{text finite_state_graph_true_in_calls} does, so two tables of the same calls give the same truth
+  (@{text moded_check_graph_true_in_calls}); no entry's certificate is checked again.
+\<close>
+
+definition moded_check_graph_true_in where
+  "moded_check_graph_true_in \<Theta> \<kappa> P m D \<Phi> Dm M d t n = fBex (resolution_found (finite_committed_search_by_in \<Theta>
+    (finite_resolution_select_in \<Theta> (finite_moded_priority (finite_narrowed_commitment P m D \<Phi>) Dm M) \<kappa> P) \<kappa>
+    (finite_narrowed_commitment P m D \<Phi>) P n (Some []) {||} (finite_initial_state d t))) (finite_state_graph_true_in \<Theta> P d t)"
+
+theorem moded_check_graph_true_in_true:
+  assumes true: "finite_table_true P \<Theta>" and holds: "moded_check_graph_true_in \<Theta> \<kappa> P m D \<Phi> Dm M d t n"
+  shows "(d,decode_finite_term t) \<in> positive_meaning (decode_finite_system P)"
+proof -
+  obtain st where "finite_state_graph_true_in \<Theta> P d t st"
+    using holds unfolding moded_check_graph_true_in_def by (blast elim: fBexE)
+  then show ?thesis by (rule finite_state_graph_true_in_sound[OF true])
+qed
+
+lemma moded_check_graph_true_in_calls:
+  assumes calls: "finite_table_calls \<Theta> = finite_table_calls \<Theta>'"
+  shows "moded_check_graph_true_in \<Theta> \<kappa> P m D \<Phi> Dm M d t n = moded_check_graph_true_in \<Theta>' \<kappa> P m D \<Phi> Dm M d t n"
+proof -
+  have sel: "finite_resolution_select_in \<Theta> X \<kappa> P = finite_resolution_select_in \<Theta>' X \<kappa> P" for X
+    by (intro ext) (simp only: finite_resolution_select_in_def finite_goal_choice_calls[OF calls])
+  have g: "finite_state_graph_true_in \<Theta> P d t = finite_state_graph_true_in \<Theta>' P d t"
+    by (intro ext) (rule finite_state_graph_true_in_calls[OF calls])
+  show ?thesis by (simp only: moded_check_graph_true_in_def sel g finite_committed_search_calls[OF calls])
+qed
+
+definition moded_check_graph_true_listed where
+  "moded_check_graph_true_listed es \<kappa> P m D \<Phi> Dm M d t n = moded_check_graph_true_in (listed_table es) \<kappa> P m D \<Phi> Dm M d t n"
+
+lemma moded_check_graph_true_listed_code [code]:
+  "moded_check_graph_true_listed es \<kappa> P m D \<Phi> Dm M d t n = fBex (resolution_found
+    (moded_deferred_route_search_in es \<kappa> P m D \<Phi> Dm M (access_narrowed_commitment P m D \<Phi>)
+      (finite_declared_raisers P (resolution_declarations.truncate D)) (clause_sockets_distinct P) (Some []) d t n))
+    (finite_state_graph_true_in (listed_table es) P d t)"
+  by (simp only: moded_check_graph_true_listed_def moded_check_graph_true_in_def moded_deferred_route_search_in_exact)
+
+text \<open>
   Item (7) at a demand (task 989, review 971's follow-up 3), at the moded selection where #547 and #399 read the check
   forms: each call of the demand with GT4's graph verdicts of its check search at the table
-  (@{text moded_demand_graph_verdicts_in}), the calls a graph verdict accepts (@{text moded_demand_graph_true_in}), true
-  where the table's calls are true (@{text moded_demand_graph_true_in_true}), and the native form, the two together at a
-  native program as the native check form pairs its results and its demand (@{text native_moded_graph_verdicts_in}).
-  Each at a listed table has its code equation through the route's search (@{text moded_check_graph_verdicts_listed_code}).
+  (@{text moded_demand_graph_verdicts_in}), the calls whose check search's graph truth holds at the table
+  (@{text moded_demand_graph_true_in}, over the graph check alone since task 993), true where the table's calls are true
+  (@{text moded_demand_graph_true_in_true}) and equal at two tables of the same calls
+  (@{text moded_demand_graph_true_in_calls}), and the native form, the two together at a native program as the native
+  check form pairs its results and its demand (@{text native_moded_graph_verdicts_in}). Each at a listed table has its
+  code equation through the route's search (@{text moded_check_graph_verdicts_listed_code},
+  @{text moded_check_graph_true_listed_code}).
 \<close>
 
 definition moded_demand_graph_verdicts_in where
@@ -2469,21 +2516,23 @@ definition moded_demand_graph_verdicts_in where
 
 definition moded_demand_graph_true_in where
   "moded_demand_graph_true_in \<Theta> \<kappa> P m D \<Phi> Dm M Q n =
-    fimage fst (ffilter (\<lambda>z. fBex (snd z) snd) (moded_demand_graph_verdicts_in \<Theta> \<kappa> P m D \<Phi> Dm M Q n))"
+    ffilter (\<lambda>q. moded_check_graph_true_in \<Theta> \<kappa> P m D \<Phi> Dm M (fst q) (snd q) n) Q"
 
 theorem moded_demand_graph_true_in_true:
   assumes true: "finite_table_true P \<Theta>" and q: "q |\<in>| moded_demand_graph_true_in \<Theta> \<kappa> P m D \<Phi> Dm M Q n"
   shows "q |\<in>| Q" and "(fst q,decode_finite_term (snd q)) \<in> positive_meaning (decode_finite_system P)"
 proof -
-  have m: "q |\<in>| Q \<and> fBex (moded_check_graph_verdicts_in \<Theta> \<kappa> P m D \<Phi> Dm M (fst q) (snd q) n) snd"
-    using q by (auto simp: moded_demand_graph_true_in_def moded_demand_graph_verdicts_in_def fimage.rep_eq ffilter.rep_eq)
+  have m: "q |\<in>| Q \<and> moded_check_graph_true_in \<Theta> \<kappa> P m D \<Phi> Dm M (fst q) (snd q) n"
+    using q by (simp add: moded_demand_graph_true_in_def)
   then show "q |\<in>| Q" by simp
-  obtain x where x: "x |\<in>| moded_check_graph_verdicts_in \<Theta> \<kappa> P m D \<Phi> Dm M (fst q) (snd q) n" "snd x"
-    using m by (blast elim: fBexE)
-  have "(fst x,True) |\<in>| moded_check_graph_verdicts_in \<Theta> \<kappa> P m D \<Phi> Dm M (fst q) (snd q) n" using x by (cases x) simp
-  then show "(fst q,decode_finite_term (snd q)) \<in> positive_meaning (decode_finite_system P)"
-    by (rule moded_check_graph_verdicts_in_true[OF true])
+  show "(fst q,decode_finite_term (snd q)) \<in> positive_meaning (decode_finite_system P)"
+    by (rule moded_check_graph_true_in_true[OF true m[THEN conjunct2]])
 qed
+
+lemma moded_demand_graph_true_in_calls:
+  assumes calls: "finite_table_calls \<Theta> = finite_table_calls \<Theta>'"
+  shows "moded_demand_graph_true_in \<Theta> \<kappa> P m D \<Phi> Dm M Q n = moded_demand_graph_true_in \<Theta>' \<kappa> P m D \<Phi> Dm M Q n"
+  by (simp only: moded_demand_graph_true_in_def moded_check_graph_true_in_calls[OF calls])
 
 definition native_moded_graph_verdicts_in ::
     "(local_address,local_address,local_address option definition_site,local_address) resolution_table \<Rightarrow>
@@ -2523,21 +2572,22 @@ definition moded_demand_graph_true_listed where
 
 lemma moded_demand_graph_true_listed_code [code]:
   "moded_demand_graph_true_listed es \<kappa> P m D \<Phi> Dm M Q n =
-    fimage fst (ffilter (\<lambda>z. fBex (snd z) snd) (moded_demand_graph_verdicts_listed es \<kappa> P m D \<Phi> Dm M Q n))"
-  by (simp only: moded_demand_graph_true_listed_def moded_demand_graph_true_in_def moded_demand_graph_verdicts_listed_def)
+    ffilter (\<lambda>q. moded_check_graph_true_listed es \<kappa> P m D \<Phi> Dm M (fst q) (snd q) n) Q"
+  by (simp only: moded_demand_graph_true_listed_def moded_demand_graph_true_in_def moded_check_graph_true_listed_def)
 
 definition native_moded_graph_verdicts_listed where
   "native_moded_graph_verdicts_listed es \<kappa> P m D \<Phi> Dm M R n = native_moded_graph_verdicts_in (listed_table es) \<kappa> P m D \<Phi> Dm M R n"
 
 lemma native_moded_graph_verdicts_listed_code [code]:
-  "native_moded_graph_verdicts_listed es \<kappa> P m D \<Phi> Dm M R n = (let V = moded_demand_graph_verdicts_listed es \<kappa> P m D \<Phi> Dm M R n in
-    (V, fimage fst (ffilter (\<lambda>z. fBex (snd z) snd) V)))"
-  by (simp add: native_moded_graph_verdicts_listed_def native_moded_graph_verdicts_in_def moded_demand_graph_true_in_def
-    moded_demand_graph_verdicts_listed_def Let_def)
+  "native_moded_graph_verdicts_listed es \<kappa> P m D \<Phi> Dm M R n =
+    (moded_demand_graph_verdicts_listed es \<kappa> P m D \<Phi> Dm M R n, moded_demand_graph_true_listed es \<kappa> P m D \<Phi> Dm M R n)"
+  by (simp only: native_moded_graph_verdicts_listed_def native_moded_graph_verdicts_in_def
+    moded_demand_graph_verdicts_listed_def moded_demand_graph_true_listed_def)
 
 export_code moded_check_resolution_listed moded_committed_resolution_listed moded_check_demand_listed
   moded_committed_demand_listed native_moded_check_resolution_listed native_moded_committed_resolution_listed
-  moded_check_graph_verdicts_listed moded_demand_graph_verdicts_listed moded_demand_graph_true_listed
+  moded_check_graph_verdicts_listed moded_check_graph_true_listed moded_demand_graph_verdicts_listed
+  moded_demand_graph_true_listed
   native_moded_graph_verdicts_listed checking SML
 
 

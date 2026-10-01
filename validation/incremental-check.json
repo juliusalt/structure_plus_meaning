@@ -1,6 +1,6 @@
 {
- "base_receipt_sha256": "04d128922a18508b8e2659678fde930615a8a9c6952be70d9875f47af2a14210",
- "checked_content_sha256": "ef8b5c322b2475262bf09d1be1927050d803fd315c189b13aa746f98535204ce",
+ "base_receipt_sha256": "41fdeebca7bc8c56724f02767f15a22a20f7581e57560204a1036e9b1bf3162d",
+ "checked_content_sha256": "df20405fafc8b201ffe721c7b9b805eab3d40b216bbd7c52dc02e3f1590ef1ee",
  "host_tests": {
   "kernel": {
    "exit_code": 0,
@@ -17,20 +17,41 @@
    "ran": 314,
    "skipped": 0,
    "tail": [
-    "{\"status\": \"failed\", \"error\": \"[Errno 2] No such file or directory: '/tmp/tmpr_9rqij7/no-project/theories/Development_Answer_a2d8d6490cc2.thy'\"}"
+    "{\"status\": \"failed\", \"error\": \"[Errno 2] No such file or directory: '/tmp/tmp3ud2qba2/no-project/theories/Development_Answer_a2d8d6490cc2.thy'\"}"
    ]
   }
  },
  "phases": {
-  "base_and_impact": 0.42,
+  "base_and_impact": 0.49,
   "execution_impact": 0.0,
   "export": 0.0,
-  "proof": 37.58,
-  "recipe_impact": 0.39,
-  "recipes_and_host_tests": 11.2
+  "proof": 248.53,
+  "recipe_impact": 0.4,
+  "recipes_and_host_tests": 11.44
  },
  "rebuilt_theories": [
-  "Factor_Material_Tails"
+  "Development_Asked_Registrations",
+  "Development_First_Problem_Additions_Controls",
+  "Development_First_Problem_Additions_Fixtures",
+  "Development_Given_Checks_Execution",
+  "Development_Given_Declarations_Execution",
+  "Development_Given_Execution_Fixtures",
+  "Development_Given_Frames",
+  "Development_Given_Installed_Declarations",
+  "Development_Given_Installed_Productions",
+  "Development_Given_Modes",
+  "Development_Given_Modes_Execution",
+  "Development_Given_Productions",
+  "Development_Given_Productions_Execution",
+  "Development_Given_Query_Parameters",
+  "Development_Given_Table",
+  "Development_Given_Waiting_Controls",
+  "Development_Installed_Presentations",
+  "Development_Installed_Presentations_Execution",
+  "Factor_Check_Controls",
+  "Factor_Deferred_Commitment_Controls",
+  "Factor_Deferred_Search_Controls",
+  "Factor_Extension_Registration_Controls"
  ],
  "recipes": {
   "allocated-environments": {
@@ -190,8 +211,8 @@
    "status": "unchanged"
   }
  },
- "reused_theories": 1999,
- "seconds": 64.54,
+ "reused_theories": 1978,
+ "seconds": 277.75,
  "source_checks": {
   "missing_theory_files": [],
   "proof_escape_matches": [],
